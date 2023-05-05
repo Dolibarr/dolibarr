@@ -8,6 +8,7 @@
  * Copyright 2013, Leaf Corcoran <leafot@gmail.com>
  * Licensed under MIT or GPLv3, see LICENSE
  */
+
 // phpcs:disable
 /**
  * The LESS compiler and parser.
@@ -52,6 +53,11 @@ class Lessc
 
 	public $importDisabled = false;
 	public $importDir = '';
+
+	public $scope;
+	public $formatter;
+	public $env;
+	public $count;
 
 	protected $numberPrecision = null;
 
@@ -452,6 +458,7 @@ class Lessc
 		$parts = explode("$&$", $tag);
 		$count = 0;
 		foreach ($parts as &$part) {
+			$c = 0;
 			$part = str_replace($this->parentSelector, $replace, $part, $c);
 			$count += $c;
 		}
@@ -755,7 +762,6 @@ class Lessc
 				$orderedArgs = array();
 				$keywordArgs = array();
 				foreach ((array) $args as $arg) {
-					$argval = null;
 					switch ($arg[0]) {
 						case "arg":
 							if (!isset($arg[2])) {
@@ -867,7 +873,7 @@ class Lessc
 
 				break;
 			default:
-				$this->throwError("unknown op: {$prop[0]}\n");
+				$this->throwError("unknown op: $prop[0]\n");
 		}
 	}
 
@@ -1899,7 +1905,7 @@ class Lessc
 		}
 
 		// type based operators
-		$fname = "op_${ltype}_${rtype}";
+		$fname = "op_".$ltype."_".$rtype;
 		if (is_callable(array($this, $fname))) {
 			$out = $this->$fname($op, $left, $right);
 			if (!is_null($out)) {
@@ -2147,6 +2153,7 @@ class Lessc
 	{
 		$this->pushEnv();
 		$parser = new lessc_parser($this, __METHOD__);
+		$value = null;
 		foreach ($args as $name => $strValue) {
 			if ($name[0] !== '@') {
 				$name = '@'.$name;
@@ -2632,6 +2639,10 @@ class lessc_parser
 	// caches preg escaped literals
 	protected static $literalCache = array();
 
+	public $env;
+	public $count;
+
+
 	public function __construct($lessc, $sourceName = null)
 	{
 		$this->eatWhiteDefault = true;
@@ -2698,42 +2709,42 @@ class lessc_parser
 			return $this->env;
 	}
 
-		/**
-		 * Parse a single chunk off the head of the buffer and append it to the
-		 * current parse environment.
-		 * Returns false when the buffer is empty, or when there is an error.
-		 *
-		 * This function is called repeatedly until the entire document is
-		 * parsed.
-		 *
-		 * This parser is most similar to a recursive descent parser. Single
-		 * functions represent discrete grammatical rules for the language, and
-		 * they are able to capture the text that represents those rules.
-		 *
-		 * Consider the function lessc::keyword(). (all parse functions are
-		 * structured the same)
-		 *
-		 * The function takes a single reference argument. When calling the
-		 * function it will attempt to match a keyword on the head of the buffer.
-		 * If it is successful, it will place the keyword in the referenced
-		 * argument, advance the position in the buffer, and return true. If it
-		 * fails then it won't advance the buffer and it will return false.
-		 *
-		 * All of these parse functions are powered by lessc::match(), which behaves
-		 * the same way, but takes a literal regular expression. Sometimes it is
-		 * more convenient to use match instead of creating a new function.
-		 *
-		 * Because of the format of the functions, to parse an entire string of
-		 * grammatical rules, you can chain them together using &&.
-		 *
-		 * But, if some of the rules in the chain succeed before one fails, then
-		 * the buffer position will be left at an invalid state. In order to
-		 * avoid this, lessc::seek() is used to remember and set buffer positions.
-		 *
-		 * Before parsing a chain, use $s = $this->seek() to remember the current
-		 * position into $s. Then if a chain fails, use $this->seek($s) to
-		 * go back where we started.
-		 */
+	/**
+	 * Parse a single chunk off the head of the buffer and append it to the
+	 * current parse environment.
+	 * Returns false when the buffer is empty, or when there is an error.
+	 *
+	 * This function is called repeatedly until the entire document is
+	 * parsed.
+	 *
+	 * This parser is most similar to a recursive descent parser. Single
+	 * functions represent discrete grammatical rules for the language, and
+	 * they are able to capture the text that represents those rules.
+	 *
+	 * Consider the function lessc::keyword(). (all parse functions are
+	 * structured the same)
+	 *
+	 * The function takes a single reference argument. When calling the
+	 * function it will attempt to match a keyword on the head of the buffer.
+	 * If it is successful, it will place the keyword in the referenced
+	 * argument, advance the position in the buffer, and return true. If it
+	 * fails then it won't advance the buffer and it will return false.
+	 *
+	 * All of these parse functions are powered by lessc::match(), which behaves
+	 * the same way, but takes a literal regular expression. Sometimes it is
+	 * more convenient to use match instead of creating a new function.
+	 *
+	 * Because of the format of the functions, to parse an entire string of
+	 * grammatical rules, you can chain them together using &&.
+	 *
+	 * But, if some of the rules in the chain succeed before one fails, then
+	 * the buffer position will be left at an invalid state. In order to
+	 * avoid this, lessc::seek() is used to remember and set buffer positions.
+	 *
+	 * Before parsing a chain, use $s = $this->seek() to remember the current
+	 * position into $s. Then if a chain fails, use $this->seek($s) to
+	 * go back where we started.
+	 */
 	protected function parseChunk()
 	{
 		if (empty($this->buffer)) {
@@ -2744,6 +2755,21 @@ class lessc_parser
 		if ($this->whitespace()) {
 			return true;
 		}
+
+		$key = null;
+		$value = null;
+		$mediaQueries = null;
+		$dirName = null;
+		$dirValue = null;
+		$importValue = null;
+		$guards = null;
+		$tag = null;
+		$args = null;
+		$isVararg = null;
+		$argv = null;
+		$suffix = null;
+		$var = null;
+		$tags = null;
 
 		// setting a property
 		if ($this->keyword($key) && $this->assign() &&
@@ -2892,7 +2918,7 @@ class lessc_parser
 			return true;
 		}
 
-						return false; // got nothing, throw error
+		return false; // got nothing, throw error
 	}
 
 	protected function isDirective($dirname, $directives)
@@ -2921,6 +2947,8 @@ class lessc_parser
 		// a list of expressions
 	protected function expressionList(&$exps)
 	{
+		$exp = null;
+
 		$values = array();
 
 		while ($this->expression($exp)) {
@@ -2941,6 +2969,9 @@ class lessc_parser
 		 */
 	protected function expression(&$out)
 	{
+		$lhs = null;
+		$rhs = null;
+
 		if ($this->value($lhs)) {
 			$out = $this->expHelper($lhs, 0);
 
@@ -2966,6 +2997,9 @@ class lessc_parser
 		 */
 	protected function expHelper($lhs, $minP)
 	{
+		$next = null;
+		$rhs = null;
+
 		$this->inExp = true;
 		$ss = $this->seek();
 
@@ -2977,6 +3011,7 @@ class lessc_parser
 			// whitespace after the operator for it to be an expression
 			$needWhite = $whiteBefore && !$this->inParens;
 
+			$m = array();
 			if ($this->match(self::$operatorString.($needWhite ? '\s' : ''), $m) && self::$precedence[$m[1]] >= $minP) {
 				if (!$this->inParens && isset($this->env->currentProperty) && $m[1] == "/" && empty($this->env->supressedDivision)) {
 					foreach (self::$supressDivisionProps as $pattern) {
@@ -3017,6 +3052,7 @@ class lessc_parser
 		// consume a list of values for a property
 	public function propertyValue(&$value, $keyName = null)
 	{
+		$v = null;
 		$values = array();
 
 		if ($keyName !== null) {
@@ -3050,6 +3086,8 @@ class lessc_parser
 
 	protected function parenValue(&$out)
 	{
+		$exp = null;
+
 		$s = $this->seek();
 
 		// speed shortcut
@@ -3076,6 +3114,11 @@ class lessc_parser
 		// a single value
 	protected function value(&$value)
 	{
+		$inner = null;
+		$word = null;
+		$str = null;
+		$var = null;
+
 		$s = $this->seek();
 
 		// speed shortcut
@@ -3129,6 +3172,7 @@ class lessc_parser
 		}
 
 		// css hack: \0
+		$m = array();
 		if ($this->literal('\\') && $this->match('([0-9]+)', $m)) {
 			$value = array('keyword', '\\'.$m[1]);
 			return true;
@@ -3160,6 +3204,8 @@ class lessc_parser
 
 	protected function mediaQueryList(&$out)
 	{
+		$list = null;
+
 		if ($this->genericList($list, "mediaQuery", ",", false)) {
 			$out = $list[2];
 			return true;
@@ -3169,6 +3215,8 @@ class lessc_parser
 
 	protected function mediaQuery(&$out)
 	{
+		$mediaType = null;
+
 		$s = $this->seek();
 
 		$expressions = null;
@@ -3209,6 +3257,9 @@ class lessc_parser
 
 	protected function mediaExpression(&$out)
 	{
+		$feature = null;
+		$variable = null;
+
 		$s = $this->seek();
 		$value = null;
 		if ($this->literal("(") &&
@@ -3233,6 +3284,9 @@ class lessc_parser
 		// an unbounded string stopped by $end
 	protected function openString($end, &$out, $nestingOpen = null, $rejectStrs = null)
 	{
+		$str = null;
+		$inter = null;
+
 		$oldWhite = $this->eatWhiteDefault;
 		$this->eatWhiteDefault = false;
 
@@ -3249,6 +3303,7 @@ class lessc_parser
 		$nestingLevel = 0;
 
 		$content = array();
+		$m = array();
 		while ($this->match($patt, $m, false)) {
 			if (!empty($m[1])) {
 				$content[] = $m[1];
@@ -3303,6 +3358,8 @@ class lessc_parser
 
 	protected function string(&$out)
 	{
+		$inter = null;
+
 		$s = $this->seek();
 		if ($this->literal('"', false)) {
 			$delim = '"';
@@ -3321,6 +3378,7 @@ class lessc_parser
 			$oldWhite = $this->eatWhiteDefault;
 			$this->eatWhiteDefault = false;
 
+		$m = array();
 		while ($this->match($patt, $m, false)) {
 			$content[] = $m[1];
 			if ($m[2] == "@{") {
@@ -3355,6 +3413,8 @@ class lessc_parser
 
 	protected function interpolation(&$out)
 	{
+		$interp = array();
+
 		$oldWhite = $this->eatWhiteDefault;
 		$this->eatWhiteDefault = true;
 
@@ -3378,6 +3438,8 @@ class lessc_parser
 
 	protected function unit(&$unit)
 	{
+		$m = array();
+
 		// speed shortcut
 		if (isset($this->buffer[$this->count])) {
 			$char = $this->buffer[$this->count];
@@ -3396,6 +3458,8 @@ class lessc_parser
 	// a # color
 	protected function color(&$out)
 	{
+		$m = array();
+
 		if ($this->match('(#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3}))', $m)) {
 			if (strlen($m[1]) > 7) {
 				$out = array("string", "", array($m[1]));
@@ -3415,6 +3479,9 @@ class lessc_parser
 	// delimiter.
 	protected function argumentDef(&$args, &$isVararg)
 	{
+		$value = array();
+		$rhs = null;
+
 		$s = $this->seek();
 		if (!$this->literal('(')) {
 			return false;
@@ -3519,6 +3586,8 @@ class lessc_parser
 		// this accepts a hanging delimiter
 	protected function tags(&$tags, $simple = false, $delim = ',')
 	{
+		$tt = array();
+
 		$tags = array();
 		while ($this->tag($tt, $simple)) {
 			$tags[] = $tt;
@@ -3537,6 +3606,8 @@ class lessc_parser
 		// optionally separated by > (lazy, accepts extra >)
 	protected function mixinTags(&$tags)
 	{
+		$tt = array();
+
 		$tags = array();
 		while ($this->tag($tt, true)) {
 			$tags[] = $tt;
@@ -3553,6 +3624,10 @@ class lessc_parser
 		// a bracketed value (contained within in a tag definition)
 	protected function tagBracket(&$parts, &$hasExpression)
 	{
+		$str = null;
+		$inter = null;
+		$word = null;
+
 		// speed shortcut
 		if (isset($this->buffer[$this->count]) && $this->buffer[$this->count] != "[") {
 			return false;
@@ -3571,6 +3646,7 @@ class lessc_parser
 					break; // get out early
 				}
 
+				$m = array();
 				if ($this->match('\s+', $m)) {
 					$attrParts[] = " ";
 					continue;
@@ -3624,6 +3700,9 @@ class lessc_parser
 		// a space separated list of selectors
 	protected function tag(&$tag, $simple = false)
 	{
+		$interp = null;
+		$unit = null;
+
 		if ($simple) {
 			$chars = '^@,:;{}\][>\(\) "\'';
 		} else {
@@ -3639,6 +3718,7 @@ class lessc_parser
 		$this->eatWhiteDefault = false;
 
 		while (true) {
+			$m =array();
 			if ($this->match('(['.$chars.'0-9]['.$chars.']*)', $m)) {
 				$parts[] = $m[1];
 				if ($simple) {
@@ -3693,6 +3773,11 @@ class lessc_parser
 	{
 		$s = $this->seek();
 
+		$m = array();
+		$value = array();
+		$string = array();
+		$name = null;
+
 		if ($this->match('(%|[\w\-_][\w\-_:\.]+|[\w_])', $m) && $this->literal('(')) {
 			$fname = $m[1];
 
@@ -3737,6 +3822,9 @@ class lessc_parser
 	// consume a less variable
 	protected function variable(&$name)
 	{
+		$sub = null;
+		$name = null;
+
 		$s = $this->seek();
 		if ($this->literal($this->lessc->vPrefix, false) &&
 			($this->variable($sub) || $this->keyword($name))
@@ -3769,6 +3857,7 @@ class lessc_parser
 	// consume a keyword
 	protected function keyword(&$word)
 	{
+		$m = array();
 		if ($this->match('([\w_\-\*!"][\w\-_"]*)', $m)) {
 			$word = $m[1];
 			return true;
@@ -3790,6 +3879,8 @@ class lessc_parser
 
 	protected function guards(&$guards)
 	{
+		$g = null;
+
 		$s = $this->seek();
 
 		if (!$this->literal("when")) {
@@ -3819,6 +3910,8 @@ class lessc_parser
 	// TODO rename to guardGroup
 	protected function guardGroup(&$guardGroup)
 	{
+		$guard = null;
+
 		$s = $this->seek();
 		$guardGroup = array();
 		while ($this->guard($guard)) {
@@ -3839,6 +3932,8 @@ class lessc_parser
 
 	protected function guard(&$guard)
 	{
+		$exp = null;
+
 		$s = $this->seek();
 		$negate = $this->literal("not");
 
@@ -3879,11 +3974,14 @@ class lessc_parser
 			self::$literalCache[$what] = lessc::preg_quote($what);
 		}
 
+		$m = array();
 		return $this->match(self::$literalCache[$what], $m, $eatWhitespace);
 	}
 
 	protected function genericList(&$out, $parseItem, $delim = "", $flatten = true)
 	{
+		$value = null;
+
 		$s = $this->seek();
 		$items = array();
 		while ($this->$parseItem($value)) {
@@ -3920,6 +4018,7 @@ class lessc_parser
 		} else {
 			$validChars = $allowNewline ? "." : "[^\n]";
 		}
+		$m = array();
 		if (!$this->match('('.$validChars.'*?)'.lessc::preg_quote($what), $m, !$until)) {
 			return false;
 		}
@@ -3953,6 +4052,7 @@ class lessc_parser
 	{
 		if ($this->writeComments) {
 			$gotWhite = false;
+			$m = array();
 			while (preg_match(self::$whitePattern, $this->buffer, $m, null, $this->count)) {
 				if (isset($m[1]) && empty($this->seenComments[$this->count])) {
 					$this->append(array("comment", $m[1]));
@@ -4007,6 +4107,7 @@ class lessc_parser
 		}
 
 		// TODO this depends on $this->count
+		$m = array();
 		if ($this->peek("(.*?)(\n|$)", $m, $count)) {
 			throw new exception("$msg: failed at `$m[1]` $loc");
 		} else {
@@ -4085,6 +4186,7 @@ class lessc_parser
 			$newlines = 0;
 			switch ($min[0]) {
 				case 'url(':
+					$m = array();
 					if (preg_match('/url\(.*?\)/', $text, $m, 0, $count)) {
 						$count += strlen($m[0]) - strlen($min[0]);
 					}
@@ -4104,6 +4206,7 @@ class lessc_parser
 					}
 					break;
 				case '/*':
+					$m = array();
 					if (preg_match('/\/\*.*?\*\//s', $text, $m, 0, $count)) {
 						$skip = strlen($m[0]);
 						$newlines = substr_count($m[0], "\n");

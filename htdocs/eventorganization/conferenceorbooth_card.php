@@ -156,6 +156,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
+
 /*
  * View
  */
@@ -402,6 +403,10 @@ if ($action == 'create') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	if ($withproject) {
+		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		print '<input type="hidden" name="fk_project" value="'.GETPOST('fk_project', 'int').'">';
+	}
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}

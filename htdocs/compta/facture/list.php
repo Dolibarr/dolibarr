@@ -935,7 +935,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -993,7 +993,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -1178,7 +1178,7 @@ if ($resql) {
 	if (!empty($user->rights->facture->paiement)) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
-	if (!empty($conf->prelevement->enabled) && !empty($user->rights->prelevement->bons->creer)) {
+	if (isModEnabled('prelevement') && !empty($user->rights->prelevement->bons->creer)) {
 		$langs->load("withdrawals");
 		$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
@@ -1929,10 +1929,7 @@ if ($resql) {
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				$facturestatic->socid = $companystatic->getNomUrl(1, 'company', 15);
-				$userstatic->fetch($obj->fk_user_author);
-				$facturestatic->fk_user_author = $userstatic->getNomUrl(1);
-				print $facturestatic->getKanbanView('');
+				print $facturestatic->getKanbanView('', array('thirdparty'=>$companystatic->getNomUrl(1, 'company', 15), 'userauthor'=>$userstatic->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
@@ -1952,7 +1949,7 @@ if ($resql) {
 
 				// Action column
 				if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-					print '<td class="nowrap" align="center">';
+					print '<td class="nowrap center">';
 					if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
 						if (in_array($obj->id, $arrayofselected)) {
@@ -2430,7 +2427,7 @@ if ($resql) {
 					}
 				}
 				if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
-					print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+					print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ? price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -2440,7 +2437,7 @@ if ($resql) {
 				if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
 					print '<td class="right nowraponall">';
 					print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
-					print '</td>'; // TODO Use a denormalized field
+					print '</td>'; // TODO Use a denormalized field ?
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -2448,14 +2445,14 @@ if ($resql) {
 
 				// Total buying or cost price
 				if (!empty($arrayfields['total_pa']['checked'])) {
-					print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+					print '<td class="right nowrap">'.price($marginInfo['pa_total'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
 				}
 				// Total margin
 				if (!empty($arrayfields['total_margin']['checked'])) {
-					print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+					print '<td class="right nowrap">'.price($marginInfo['total_margin'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -2570,7 +2567,7 @@ if ($resql) {
 				// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 
 				if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-					print '<td class="nowrap" align="center">';
+					print '<td class="nowrap center">';
 					if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
 						if (in_array($obj->id, $arrayofselected)) {
@@ -2589,6 +2586,9 @@ if ($resql) {
 
 			$i++;
 		}
+
+		// Use correct digits number for totals
+		$totalarray['val']['total_margin'] = price2num($totalarray['val']['total_margin'], 'MT');
 
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

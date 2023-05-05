@@ -346,7 +346,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -386,7 +386,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= "&sall=".urlencode($sall);
@@ -754,14 +754,14 @@ if ($resql) {
 					print '<tr><td colspan="12">';
 					print '<div class="box-flex-container kanban">';
 				}
+				// TODO Use a cache on user
 				$usertmp->fetch($obj->id_user);
-				$expensereportstatic->fk_user_author = $usertmp->getNomUrl(1);
 
 				// Output Kanban
 				if ($massactionbutton || $massaction) {
 					$selected = 0;
 
-					print $expensereportstatic->getKanbanView('');
+					print $expensereportstatic->getKanbanView('', array('userauthor' => $usertmp->getNomUrl(1), 'selected' => in_array($expensereportstatic->id, $arrayofselected)));
 				}
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';

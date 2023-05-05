@@ -379,3 +379,38 @@ UPDATE llx_c_country SET numeric_code = '716' WHERE code_iso = 'ZWE';
 -- Generate documents on product batch
 ALTER TABLE llx_product_lot ADD COLUMN model_pdf varchar(255) AFTER scrapping_date;
 ALTER TABLE llx_product_lot ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
+
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN status integer DEFAULT 1;
+
+ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_price_log_fk_product_fournisseur (fk_product_fournisseur);
+ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_price_log_fk_user (fk_user);
+--ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_price_log_fk_multicurrency (fk_multicurrency);
+
+ALTER TABLE llx_bordereau_cheque ADD COLUMN label varchar(255) AFTER ref;
+
+ALTER TABLE llx_societe ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER tva_assuj;
+ALTER TABLE llx_facture_fourn ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER close_note;
+
+ALTER TABLE llx_c_email_templates add COLUMN defaultfortype smallint DEFAULT 0;
+
+ALTER TABLE llx_mailing ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
+ALTER TABLE llx_mailing ADD COLUMN evenunsubscribe smallint DEFAULT 0;
+ALTER TABLE llx_mailing ADD COLUMN name_from varchar(128) AFTER email_from;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_mrp_production ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+
+ALTER TABLE llx_facture ADD COLUMN subtype smallint DEFAULT NULL;
+
+CREATE TABLE llx_c_invoice_subtype (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  entity integer DEFAULT 1,
+  fk_country integer NOT NULL,
+  code varchar(3) NOT NULL,
+  label varchar(100),
+  active tinyint DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
+

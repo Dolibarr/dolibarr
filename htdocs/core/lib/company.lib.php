@@ -128,7 +128,7 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 	$supplier_module_enabled = 0;
-	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if (isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
@@ -179,7 +179,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -881,7 +881,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// Opp amount
 						print '<td class="right">';
 						if ($obj->opp_status_code) {
-							print price($obj->opp_amount, 1, '', 1, -1, -1, '');
+							print '<span class="amount">'.price($obj->opp_amount, 1, '', 1, -1, -1, '').'</span>';
 						}
 						print '</td>';
 						// Opp status
@@ -1038,9 +1038,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			if (!empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
 				$arrayfields["ef.".$key] = array(
 					'label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key],
-					'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key] < 0) ? 0 : 1),
+					'checked'=>((dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1, 1, '1') < 0) ? 0 : 1),
 					'position'=>1000 + $extrafields->attributes[$contactstatic->table_element]['pos'][$key],
-					'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key]) != 3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+					'enabled' => (abs((int) dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1)) != 3 && dol_eval($extrafields->attributes[$contactstatic->table_element]['perms'][$key], 1, 1, '1'))
+				);
 			}
 		}
 	}
@@ -1339,7 +1340,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Photo - Name
 			if (!empty($arrayfields['t.name']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, 1);
 				print $contactstatic->getNomUrl(0, '', 0, '&backtopage='.urlencode($backtopage));
 				print '</td>';
@@ -1347,17 +1348,18 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Job position
 			if (!empty($arrayfields['t.poste']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->poste).'">';
 				if ($obj->poste) {
-					print $obj->poste;
+					print dol_escape_htmltag($obj->poste);
 				}
 				print '</td>';
 			}
 
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
-				print '<td>';
-				print $contactstatic->getBannerAddress('contact', $object);
+				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($addresstoshow)).'">';
+				print $addresstoshow;
 				print '</td>';
 			}
 
@@ -1379,8 +1381,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Birthday
 			if (!empty($arrayfields['t.birthday']['checked'])) {
-				print '<td>';
-				print dol_print_date($obj->birthday);
+				print '<td class="nowraponall">';
+				print dol_print_date($db->jdate($obj->birthday));
 				print '</td>';
 			}
 
@@ -1390,7 +1392,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			}
 
 			if ($showuserlogin) {
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				$tmpuser= new User($db);
 				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
 				if ($resfetch > 0) {
@@ -1433,7 +1435,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					$colspan++;
 				}
 			}
-			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 	} else {
 		$colspan = 1 + ($showuserlogin ? 1 : 0);
@@ -1442,7 +1444,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "\n</table>\n";
 	print '</div>';
@@ -2296,4 +2298,110 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 	} else {
 		return '';
 	}
+}
+
+
+
+/**
+ * Show footer of company in HTML pages
+ *
+ * @param   Societe		$fromcompany	Third party
+ * @param   Translate	$langs			Output language
+ * @param	int			$addformmessage	Add the payment form message
+ * @param	string		$suffix			Suffix to use on constants
+ * @param	Object		$object			Object related to payment
+ * @return	void
+ */
+function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
+{
+	global $conf;
+
+	$reg = array();
+
+	// Juridical status
+	$line1 = "";
+	if ($fromcompany->forme_juridique_code) {
+		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
+	}
+	// Capital
+	if ($fromcompany->capital) {
+		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+	}
+	// Prof Id 1
+	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
+		$field = $langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof1;
+	}
+	// Prof Id 2
+	if ($fromcompany->idprof2) {
+		$field = $langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof2;
+	}
+
+	// Second line of company infos
+	$line2 = "";
+	// Prof Id 3
+	if ($fromcompany->idprof3) {
+		$field = $langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof3;
+	}
+	// Prof Id 4
+	if ($fromcompany->idprof4) {
+		$field = $langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof4;
+	}
+	// IntraCommunautary VAT
+	if ($fromcompany->tva_intra != '') {
+		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
+	}
+
+	print '<!-- htmlPrintOnlinePaymentFooter -->'."\n";
+
+	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
+	print '<br>';
+	if ($addformmessage) {
+		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
+		print '<br>';
+
+		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
+		if (!empty($conf->global->$parammessageform)) {
+			print $langs->transnoentities($conf->global->$parammessageform);
+		} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) {
+			print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
+		}
+
+		// Add other message if VAT exists
+		if (!empty($object->total_vat) || !empty($object->total_tva)) {
+			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
+			if (!empty($conf->global->$parammessageform)) {
+				print $langs->transnoentities($conf->global->$parammessageform);
+			} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) {
+				print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
+			}
+		}
+	}
+
+	print '<span style="font-size: 10px;"><br><hr>'."\n";
+	print $fromcompany->name.'<br>';
+	print $line1;
+	if (strlen($line1.$line2) > 50) {
+		print '<br>';
+	} else {
+		print ' - ';
+	}
+	print $line2;
+	print '</span>';
+	print '</footer>'."\n";
 }

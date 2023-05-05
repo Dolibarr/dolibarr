@@ -66,7 +66,7 @@ $response = "";
 
 $type = $mode;
 
-// Check securitykey
+// Security check
 $securekeyseed = '';
 if ($type == 'proposal') {
 	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');

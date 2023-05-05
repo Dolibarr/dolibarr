@@ -49,6 +49,19 @@ class Salary extends CommonObject
 
 	public $tms;
 
+	// /**
+	//  * @var array	List of child tables. To test if we can delete object.
+	//  */
+	protected $childtables = array('payment_salary' => array('name'=>'SalaryPayment', 'fk_element'=>'fk_salary'));
+
+	// /**
+	//  * @var array    List of child tables. To know object to delete on cascade.
+	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	//  */
+	//protected $childtablesoncascade = array('mymodule_myobjectdet');
+
+
 	/**
 	 * @var int User ID
 	 */
@@ -282,44 +295,12 @@ class Salary extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
+	 *  @param  bool 	$notrigger 	false=launch triggers after, true=disable triggers
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
-		$error = 0;
-
-		// Call trigger
-		$result = $this->call_trigger('SALARY_DELETE', $user);
-		if ($result < 0) return -1;
-		// End call triggers
-
-		// Delete extrafields
-		/*if (!$error)
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary_extrafields";
-			$sql .= " WHERE fk_object = ".((int) $this->id);
-
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->errors[] = $this->db->lasterror();
-				$error++;
-			}
-		}*/
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary";
-		$sql .= " WHERE rowid=".((int) $this->id);
-
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$this->error = "Error ".$this->db->lasterror();
-			return -1;
-		}
-
-		return 1;
+		return $this->deleteCommon($user, $notrigger);
 	}
 
 
@@ -539,11 +520,11 @@ class Salary extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 
@@ -564,7 +545,7 @@ class Salary extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -604,8 +585,8 @@ class Salary extends CommonObject
 		$table = 'payment_salary';
 		$field = 'fk_salary';
 
-		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
+		$sql = "SELECT sum(amount) as amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
@@ -693,9 +674,9 @@ class Salary extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 * Return label of current status
 	 *
-	 * @param	int			$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @param	int			$mode       	0=label long, 1=labels short, 2=Picto + Label short, 3=Picto, 4=Picto + Label long, 5=Label short + Picto
 	 * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 * @return  string						Label
 	 */
@@ -706,7 +687,7 @@ class Salary extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return label of a given status
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
@@ -764,14 +745,20 @@ class Salary extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_user')) {
-			$return .= ' | <span class="info-box-label">'.$this->fk_user.'</span>';
-		}
-		if (property_exists($this, 'type_payment')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("PaymentMode").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+			$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
+			if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
+				$return .= ' <span class="info-box-label opacitymedium small">';
+				if ($langs->trans("PaymentTypeShort".$this->type_payment) != "PaymentTypeShort".$this->type_payment) {
+					$return .= $langs->trans("PaymentTypeShort".$this->type_payment);
+				} elseif ($langs->trans("PaymentType".$this->type_payment) != "PaymentType".$this->type_payment) {
+					$return .= $langs->trans("PaymentType".$this->type_payment);
+				}
+				$return .= '</span>';
+			}
 		}
 		if (method_exists($this, 'LibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';

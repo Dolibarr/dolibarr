@@ -39,7 +39,6 @@ $action = GETPOST('action', 'aZ09');
 $htmlname = GETPOST('htmlname', 'alpha');
 
 
-
 // Security check
 restrictedArea($user, 'facture', $invoice_id, '', '', 'fk_soc', 'rowid');
 

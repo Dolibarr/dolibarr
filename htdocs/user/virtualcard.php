@@ -129,7 +129,9 @@ print '<div class="fichecenter">';
 
 print '<br>';
 
-print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
+if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
+	print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
+}
 
 $param = '&id='.((int) $object->id);
 $param .= '&dol_openinpopup=1';

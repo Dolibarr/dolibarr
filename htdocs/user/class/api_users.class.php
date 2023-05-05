@@ -82,7 +82,7 @@ class Users extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".$this->db->prefix()."user as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user AS t LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".$this->db->prefix()."categorie_user as c";
 		}
@@ -535,7 +535,7 @@ class Users extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".$this->db->prefix()."usergroup as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup AS t LEFT JOIN ".MAIN_DB_PREFIX."usergroup_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if ($group_ids) {
 			$sql .= " AND t.rowid IN (".$this->db->sanitize($group_ids).")";
@@ -747,7 +747,7 @@ class Users extends DolibarrApi
 			unset($cleanObject->clicktodial_loaded);
 
 			unset($cleanObject->datec);
-			unset($cleanObject->datem);
+			unset($cleanObject->tms);
 			unset($cleanObject->members);
 			unset($cleanObject->note);
 			unset($cleanObject->note_private);

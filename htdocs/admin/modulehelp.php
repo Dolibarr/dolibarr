@@ -127,10 +127,10 @@ foreach ($modulesdir as $dir) {
 
 								// We discard modules according to features level (PS: if module is activated we always show it)
 								$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-								if ($objMod->version == 'development' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) {
+								if ($objMod->version == 'development' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
 									$modulequalified = 0;
 								}
-								if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) {
+								if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
 									$modulequalified = 0;
 								}
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) {
@@ -369,14 +369,32 @@ if ($mode == 'desc') {
 
 if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("DependsOn").':</strong> ';
-	if (count($objMod->depends)) {
-		$text .= join(',', $objMod->depends);
+	if (is_array($objMod->depends) && count($objMod->depends)) {
+		$i = 0;
+		foreach ($objMod->depends as $modulestringorarray) {
+			if (is_array($modulestringorarray)) {
+				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+			} else {
+				$text .= ($i ? ', ' : '').$modulestringorarray;
+			}
+			$i++;
+		}
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
+	$text .= '<br>';
+
 	$text .= '<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
-	if (count($objMod->requiredby)) {
-		$text .= join(',', $objMod->requiredby);
+	if (is_array($objMod->requiredby) && count($objMod->requiredby)) {
+		$i = 0;
+		foreach ($objMod->requiredby as $modulestringorarray) {
+			if (is_array($modulestringorarray)) {
+				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+			} else {
+				$text .= ($i ? ', ' : '').$modulestringorarray;
+			}
+			$i++;
+		}
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
@@ -478,7 +496,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers']) {
 		$yesno = 'Yes';
 	} else {
-		$yesno = 'No';
+		$yesno = '<span class="opacitymedium">No</span>';
 	}
 	require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 	$interfaces = new Interfaces($db);

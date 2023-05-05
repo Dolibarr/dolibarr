@@ -53,6 +53,10 @@ addons:
     - php8.1-mysqli
     - php8.1-xml
     - php8.1-intl
+    - php8.2-pgsql
+    - php8.2-mysqli
+    - php8.2-xml
+    - php8.2-intl
     
 env:
   global:
@@ -73,8 +77,8 @@ jobs:
       php: '8.1'
       env: DB=mysql
     - stage: PHP Dev
-      if: type = push AND branch = 17.0
-      php: nightly
+      if: type = push AND branch = developdisabled
+      php: '8.2'
       env: DB=mysql
 
 notifications:
@@ -120,7 +124,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   # phpunit 9 is required for php 8
-  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       composer self-update 2.4.4
       composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
@@ -260,7 +264,7 @@ before_script:
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - |
-    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       # Copy the included pool
       sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
     fi
@@ -473,7 +477,7 @@ script:
 
 - |
   echo "Unit testing"
-  # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
+  # Ensure we catch errors. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   phpunitresult=$?
@@ -501,7 +505,7 @@ after_failure:
   # Show upgrade log files
   for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
   do
-    echo "Debugging informations for file $ficlog"
+    #echo "Debugging informations for file $ficlog"
     #cat $ficlog
   done
   # Show Apache log file

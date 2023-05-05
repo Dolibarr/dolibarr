@@ -57,6 +57,20 @@ class Productlot extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $stats_propale;
+	public $stats_commande;
+	public $stats_contrat;
+	public $stats_facture;
+	public $stats_commande_fournisseur;
+	public $stats_expedition;
+	public $stats_reception;
+	public $stats_mo;
+	public $stats_bom;
+	public $stats_mrptoconsume;
+	public $stats_mrptoproduce;
+	public $stats_facturerec;
+	public $stats_facture_fournisseur;
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -877,9 +891,10 @@ class Productlot extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
-	 * @since v18
-	 * @return array
+	 *
+	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @since 	v18
+	 * @return 	array
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -887,18 +902,19 @@ class Productlot extends CommonObject
 
 		$langs->loadLangs(['stocks', 'productbatch']);
 
-		$datas = [];
 		$option = $params['option'] ?? '';
-		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Batch").'</u>';
-		$datas['divopen'] = '<div width="100%">';
-		$datas['batch'] = '<b>'.$langs->trans('Batch').':</b> '.$this->batch;
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
+		//$datas['divopen'] = '<div width="100%">';
+		$datas['batch'] = '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
 		if ($this->eatby && empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
+			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->db->jdate($this->eatby), 'day');
 		}
 		if ($this->sellby && empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
+			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->db->jdate($this->sellby), 'day');
 		}
-		$datas['divclose'] = '</div>';
+		//$datas['divclose'] = '</div>';
 
 		return $datas;
 	}
@@ -931,11 +947,11 @@ class Productlot extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/product/stock/productlot_card.php?id='.$this->id;
 
@@ -956,7 +972,7 @@ class Productlot extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

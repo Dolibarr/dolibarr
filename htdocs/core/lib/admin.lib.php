@@ -1166,33 +1166,45 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 		if ($withdeps) {
 			if (isset($objMod->depends) && is_array($objMod->depends) && !empty($objMod->depends)) {
 				// Activation of modules this module depends on
-				// this->depends may be array('modModule1', 'mmodModule2') or array('always1'=>"modModule1", 'FR'=>'modModule2')
-				foreach ($objMod->depends as $key => $modulestring) {
+				// this->depends may be array('modModule1', 'mmodModule2') or array('always'=>array('modModule1'), 'FR'=>array('modModule2"))
+				foreach ($objMod->depends as $key => $modulestringorarray) {
 					//var_dump((! is_numeric($key)) && ! preg_match('/^always/', $key) && $mysoc->country_code && ! preg_match('/^'.$mysoc->country_code.'/', $key));exit;
 					if ((!is_numeric($key)) && !preg_match('/^always/', $key) && $mysoc->country_code && !preg_match('/^'.$mysoc->country_code.'/', $key)) {
 						dol_syslog("We are not concerned by dependency with key=".$key." because our country is ".$mysoc->country_code);
 						continue;
 					}
-					$activate = false;
-					foreach ($modulesdir as $dir) {
-						if (file_exists($dir.$modulestring.".class.php")) {
-							$resarray = activateModule($modulestring);
-							if (empty($resarray['errors'])) {
-								$activate = true;
-							} else {
-								foreach ($resarray['errors'] as $errorMessage) {
-									dol_syslog($errorMessage, LOG_ERR);
-								}
-							}
-							break;
-						}
+
+					if (!is_array($modulestringorarray)) {
+						$modulestringorarray = array($modulestringorarray);
 					}
 
-					if ($activate) {
-						$ret['nbmodules'] += $resarray['nbmodules'];
-						$ret['nbperms'] += $resarray['nbperms'];
-					} else {
-						$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
+					foreach ($modulestringorarray as $modulestring) {
+						$activate = false;
+						$activateerr = '';
+						foreach ($modulesdir as $dir) {
+							if (file_exists($dir.$modulestring.".class.php")) {
+								$resarray = activateModule($modulestring);
+								if (empty($resarray['errors'])) {
+									$activate = true;
+								} else {
+									$activateerr = join(', ', $resarray['errors']);
+									foreach ($resarray['errors'] as $errorMessage) {
+										dol_syslog($errorMessage, LOG_ERR);
+									}
+								}
+								break;
+							}
+						}
+
+						if ($activate) {
+							$ret['nbmodules'] += $resarray['nbmodules'];
+							$ret['nbperms'] += $resarray['nbperms'];
+						} else {
+							if ($activateerr) {
+								$ret['errors'][] = $activateerr;
+							}
+							$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
+						}
 					}
 				}
 			}
@@ -1716,7 +1728,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 
 			print '<tr class="oddeven">';
 
-			// Show constant
+			// Show label of parameter
 			print '<td>';
 			if (empty($strictw3c)) {
 				print '<input type="hidden" name="action" value="update">';
@@ -1725,8 +1737,11 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			print '<input type="hidden" name="constname'.(empty($strictw3c) ? '' : '[]').'" value="'.$const.'">';
 			print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 			print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
-
-			print ($label ? $label : $langs->trans('Desc'.$const));
+			if (!empty($tableau[$key]['tooltip'])) {
+				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
+			} else {
+				print ($label ? $label : $langs->trans('Desc'.$const));
+			}
 
 			if ($const == 'ADHERENT_MAILMAN_URL') {
 				print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';

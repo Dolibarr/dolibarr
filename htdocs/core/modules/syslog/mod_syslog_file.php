@@ -125,7 +125,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			}
 		}
 
-		return $suffixinfilename ?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
+		return $suffixinfilename ? preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
 	}
 
 	/**

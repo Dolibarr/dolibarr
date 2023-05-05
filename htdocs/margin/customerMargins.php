@@ -110,7 +110,8 @@ if ($socid > 0) {
 	if ($soc->client) {
 		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td class="maxwidthonsmartphone" colspan="4">';
-		print img_picto('', 'company').$form->select_company($socid, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+		$filter = '(client:IN:1,3)';
+		print img_picto('', 'company').$form->select_company($socid, 'socid', $filter, 1, 0, 0);
 		print '</td></tr>';
 
 		$client = true;
