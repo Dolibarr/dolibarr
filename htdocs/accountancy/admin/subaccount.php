@@ -393,7 +393,7 @@ if ($resql) {
 		// Subaccount label
 		if (!empty($arrayfields['label']['checked'])) {
 			print "<td>";
-			print $obj->nature == 2 ? '<span style = "color: red;"><b>'.$obj->label.' ('.$langs->trans("	Prospect").')</b></span>' : $obj->label;
+			print $obj->nature == 2 ? '<span style = "color: red;"><b>'.$obj->label.' ('.$langs->trans("Prospect").')</b></span>' : $obj->label;
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
