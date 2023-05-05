@@ -764,3 +764,6 @@ ALTER TABLE llx_societe ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER tv
 ALTER TABLE llx_societe_perentity ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER entity;
 ALTER TABLE llx_facture_fourn ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER close_note;
 
+-- Add VAT by region
+ALTER TABLE llx_c_departements ADD COLUMN fk_tva integer DEFAULT NULL AFTER nom;
+

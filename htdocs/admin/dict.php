@@ -197,7 +197,7 @@ $tablib[43] = "DictionaryBatchStatus";
 // Requests to extract data
 $tabsql = array();
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
-$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
+$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.fk_tva, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, r.code_region as state_code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
 $tabsql[4] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
@@ -289,7 +289,7 @@ $tabsqlsort[43] = "code ASC";
 // Field names in select result for dictionary display
 $tabfield = array();
 $tabfield[1] = "code,libelle,country";
-$tabfield[2] = "code,libelle,region_id,region,country"; // "code,libelle,region,country_code-country"
+$tabfield[2] = "code,libelle,region_id,region,country,fk_tva"; // "code,libelle,region,country_code-country"
 $tabfield[3] = "code,libelle,country_id,country";
 $tabfield[4] = "code,label";
 $tabfield[5] = "code,label";
@@ -335,7 +335,7 @@ $tabfield[43] = "code,label";
 // Edit field names for editing a record
 $tabfieldvalue = array();
 $tabfieldvalue[1] = "code,libelle,country";
-$tabfieldvalue[2] = "code,libelle,region"; // "code,libelle,region"
+$tabfieldvalue[2] = "code,libelle,region,fk_tva"; // "code,libelle,region"
 $tabfieldvalue[3] = "code,libelle,country";
 $tabfieldvalue[4] = "code,label";
 $tabfieldvalue[5] = "code,label";
@@ -381,7 +381,7 @@ $tabfieldvalue[43] = "code,label";
 // Field names in the table for inserting a record
 $tabfieldinsert = array();
 $tabfieldinsert[1] = "code,libelle,fk_pays";
-$tabfieldinsert[2] = "code_departement,nom,fk_region";
+$tabfieldinsert[2] = "code_departement,nom,fk_region,fk_tva";
 $tabfieldinsert[3] = "code_region,nom,fk_pays";
 $tabfieldinsert[4] = "code,label";
 $tabfieldinsert[5] = "code,label";
