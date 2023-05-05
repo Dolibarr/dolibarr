@@ -74,57 +74,41 @@ class box_birthdays_members extends ModeleBoxes
 		global $conf, $user, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$memberstatic = new Adherent($this->db);
 
 		$langs->load("boxes");
 
 		$this->max = $max;
 
-		$cachetime = 3600;
-		$fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'.cache';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		$memberstatic = new Adherent($this->db);
-
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMemberNextBirthdays"));
 
 		if ($user->hasRight('adherent', 'lire')) {
-			$cachedir = DOL_DATA_ROOT.'/users/temp';
-			$filename = '/boxbirthdays-members'.$fileid;
-			$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 			$data = array();
-			if ($refresh) {
-				$tmparray = dol_getdate(dol_now(), true);
 
-				$sql = "SELECT u.rowid, u.firstname, u.lastname, u.societe, u.birth, date_format(u.birth, '%d') as daya, u.email, u.statut as status, u.datefin";
-				$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
-				$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
-				$sql .= " AND u.statut = ".Adherent::STATUS_VALIDATED;
-				$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-				$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
-				$sql .= $this->db->plimit($max, 0);
+			$tmparray = dol_getdate(dol_now(), true);
 
-				dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if ($resql) {
-					$num = $this->db->num_rows($resql);
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.societe, u.birth, date_format(u.birth, '%d') as daya, u.email, u.statut as status, u.datefin";
+			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
+			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
+			$sql .= " AND u.statut = ".Adherent::STATUS_VALIDATED;
+			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
+			$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
+			$sql .= $this->db->plimit($max, 0);
 
-					$line = 0;
-					while ($line < $num) {
-						$data[$line] = $this->db->fetch_object($resql);
+			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
 
-						$line++;
-					}
+				$line = 0;
+				while ($line < $num) {
+					$data[$line] = $this->db->fetch_object($resql);
 
-					if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
-						dol_filecache($cachedir, $filename, $data);
-					}
-
-					$this->db->free($resql);
+					$line++;
 				}
-			} else {
-				$data = dol_readcachefile($cachedir, $filename);
+
+				$this->db->free($resql);
 			}
 
 			if (!empty($data)) {

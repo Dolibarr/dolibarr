@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/core/boxes/box_project.php
- *  \ingroup    projet
+ *  \ingroup    project
  *  \brief      Module to show Projet activity of the current Year
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";

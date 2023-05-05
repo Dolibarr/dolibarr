@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_actions.php
+ *	\file       htdocs/core/boxes/box_actions_future.php
  *	\ingroup    actions
  *	\brief      Module to build boxe for events
  */
