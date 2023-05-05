@@ -134,11 +134,11 @@ class box_activity extends ModeleBoxes
 			if ($result) {
 				$num = $this->db->num_rows($result);
 
-				$line = 0;
-				while ($line < $num) {
-					$data[$line] = $this->db->fetch_object($result);
+				$j = 0;
+				while ($j < $num) {
+					$data[$j] = $this->db->fetch_object($result);
 
-					$line++;
+					$j++;
 				}
 
 				$this->db->free($result);

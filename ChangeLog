@@ -173,6 +173,7 @@ NEW: write all fields and their properties in asciidoc format
 NEW: Can add an array of several links in date selector
 NEW: Implement MAIN_ACTIVATE_FILECACHE on bithday widget
 NEW: Add widget "The next upcoming events"
+NEW: Add widget of open opportunities
 
 For developers or integrators:
 ------------------------------
