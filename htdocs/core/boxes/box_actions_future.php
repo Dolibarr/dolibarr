@@ -28,13 +28,13 @@
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 /**
- * Class to manage the box to show last events
+ * Class to manage the box to show events in future
  */
-class box_actions extends ModeleBoxes
+class box_actions_future extends ModeleBoxes
 {
-	public $boxcode = "lastactions";
+	public $boxcode = "futureactions";
 	public $boximg = "object_action";
-	public $boxlabel = "BoxOldestActions";
+	public $boxlabel = "BoxTitleFutureActions";
 	public $depends = array("agenda");
 
 	/**
@@ -77,12 +77,14 @@ class box_actions extends ModeleBoxes
 
 		$this->max = $max;
 
+		$now = dol_now();
+
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$societestatic = new Societe($this->db);
 		$actionstatic = new ActionComm($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestActionsToDo", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleFutureActions", $max));
 
 		if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
@@ -98,7 +100,7 @@ class box_actions extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql .= " WHERE a.fk_action = ta.id";
 			$sql .= " AND a.entity IN (".getEntity('actioncomm').")";
-			$sql .= " AND a.percent >= 0 AND a.percent < 100";
+			//$sql .= " AND a.percent >= 0 AND a.percent < 100";
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 			}
@@ -108,6 +110,7 @@ class box_actions extends ModeleBoxes
 			if (empty($user->rights->agenda->allactions->read)) {
 				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
 			}
+			$sql .= " AND a.datep > '".$this->db->idate($now)."'";
 			$sql .= " ORDER BY a.datep ASC";
 			$sql .= $this->db->plimit($max, 0);
 
