@@ -161,3 +161,4 @@ TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Le montant total de l'ordre d
 WarningSomeDirectDebitOrdersAlreadyExists=Attention : Il y a déjà des ordres de prélèvement automatique en attente (%s) demandés pour un montant de %s
 WarningSomeCreditTransferAlreadyExists=Attention : Il y a déjà des virements en attente (%s) demandés pour un montant de %s
 UsedFor=Utilisé pour %s
+Societe_ribSigned=SEPA mandat signé

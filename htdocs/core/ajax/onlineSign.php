@@ -426,6 +426,7 @@ if ($action == "importSignature") {
 			$langs->load('withdrawals');
 			require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
+			$modelpath = "core/modules/bank/doc/";
 			$object = new CompanyBankAccount($db);
 			$object->fetch($ref);
 			if (!empty($object->id)) {
@@ -459,12 +460,16 @@ if ($action == "importSignature") {
 				if (!$error) {
 					// Defined modele of doc
 					$last_main_doc_file = $object->last_main_doc;
+					$last_modelpdf = $object->model_pdf;
 					$directdownloadlink = $object->getLastMainDocLink('company');    // url to download the $object->last_main_doc
 
 					if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-						$newpdffilename = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . "_signed-" . $date . ".pdf";
-						$sourcefile = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref). "-" . dol_sanitizeFileName($object->rum) . ".pdf";
-
+						$sourcefile = '';
+						$newpdffilename = '';
+						if ($last_modelpdf == 'sepamandate') {
+							$newpdffilename = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . "_signed-" . $date . ".pdf";
+							$sourcefile = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . ".pdf";
+						}
 						if (dol_is_file($sourcefile)) {
 							// We build the new PDF
 							$pdf = pdf_getInstance();
@@ -495,23 +500,58 @@ if ($action == "importSignature") {
 								}
 							}
 
-							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-							// TODO Get position of box from PDF template
-							$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-							$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
-							$wforimg = $s['w'] - 20 - $xforimgstart;
 
-							$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
-							$pdf->SetFont($default_font, '', $default_font_size - 1);
-							$pdf->MultiCell($wforimg, 4, dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
+							// Get position of box from PDF template
+							$file = '';
+							$classname = '';
+							$filefound = '';
+							$dirmodels = array('/');
+							if (is_array($conf->modules_parts['models'])) {
+								$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+							}
+							foreach ($dirmodels as $reldir) {
+								$file = "pdf_" . $last_modelpdf . ".modules.php";
+								// On vérifie l'emplacement du modele
+								$file = dol_buildpath($reldir . $modelpath . $file, 0);
+								if (file_exists($file)) {
+									$filefound = $file;
+									$classname = 'pdf_' . $last_modelpdf;
+									break;
+								}
+								if ($filefound) {
+									break;
+								}
+							}
 
+							if (!$filefound) {
+								$response = $langs->trans("Error") . ' Failed to load doc generator with modelpaths=' . $modelpath . ' - modele=' . $last_modelpdf;
+								dol_syslog($response, LOG_ERR);
+								$error++;
+							}
 
+							if (!$error) {
+								// If PDF template class  was found
+								require_once $file;
 
-							$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
-							$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
+								$objPDF = new $classname($db);
 
-							$pdf->Image($upload_dir . $filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
+								$pdf->SetFont($default_font, '', $default_font_size - 1);
 
+								$xForDate = $objPDF->marge_gauche;
+								$yForDate = $objPDF->page_hauteur - $objPDF->heightforinfotot - $objPDF->heightforfreetext - $objPDF->heightforfooter + 10;
+								$pdf->SetXY($xForDate, $yForDate);
+								$pdf->MultiCell(100, 4, dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
+
+								$xforimgstart = $objPDF->xPosSignArea;
+								$yforimgstart = $yForDate - 5;
+								$wforimg = $s['w'] - 20 - $xforimgstart;
+
+								$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
+								$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
+
+								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+								$pdf->Image($upload_dir . $filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
+							}
 							//$pdf->Close();
 							$pdf->Output($newpdffilename, "F");
 
@@ -543,6 +583,8 @@ if ($action == "importSignature") {
 				if ($online_sign_name) {
 					$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
 				}
+				//$sql .= ", last_main_doc = '" . $db->escape($object->element'..') . "'";
+
 				$sql .= " WHERE rowid = " . ((int) $object->id);
 
 				dol_syslog(__METHOD__, LOG_DEBUG);
@@ -563,7 +605,7 @@ if ($action == "importSignature") {
 				if (!$error) {
 					$db->commit();
 					$response = "success";
-					setEventMessages("PropalSigned", null, 'warnings');
+					setEventMessages(dol_ucfirst($mode)."Signed", null, 'warnings');
 				} else {
 					$db->rollback();
 				}

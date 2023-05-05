@@ -411,7 +411,8 @@ CREATE TABLE llx_c_invoice_subtype (
 
 ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
 
-ALTER TABLE llx_societe_rib ADD COLUMN last_main_doc varchar(255) AFTER currency_code;
+ALTER TABLE llx_societe_rib ADD COLUMN model_pdf varchar(255) AFTER currency_code;
+ALTER TABLE llx_societe_rib ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 ALTER TABLE llx_societe_rib ADD COLUMN date_signature datetime AFTER stripe_account;
 ALTER TABLE llx_societe_rib ADD COLUMN online_sign_ip varchar(48) AFTER date_signature;
 ALTER TABLE llx_societe_rib ADD COLUMN online_sign_name		varchar(64) AFTER online_sign_ip;

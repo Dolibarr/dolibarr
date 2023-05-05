@@ -283,7 +283,7 @@ class CompanyBankAccount extends Account
 		$sql .= ", model_pdf";
 		$sql .= ")";
 		$sql .= " VALUES (".((int) $this->socid).", '".$this->type."', '".$this->db->idate($this->datec)."'";
-		$sql .= "\"".getDolGlobalString()."\"";
+		$sql .= ",\"".$this->db->escape(getDolGlobalString("BANKADDON_PDF"))."\"";
 		$sql .= ")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -419,6 +419,7 @@ class CompanyBankAccount extends Account
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account";
 		$sql .= " ,last_main_doc";
+		$sql .= " ,model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -462,6 +463,7 @@ class CompanyBankAccount extends Account
 				$this->stripe_card_ref = $obj->stripe_card_ref;
 				$this->stripe_account  = $obj->stripe_account;
 				$this->last_main_doc   = $obj->last_main_doc;
+				$this->model_pdf   	   = $obj->model_pdf;
 			}
 			$this->db->free($resql);
 

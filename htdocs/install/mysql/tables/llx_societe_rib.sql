@@ -47,6 +47,7 @@ create table llx_societe_rib
   fk_country     integer,
   currency_code  varchar(3),
 
+  model_pdf		 varchar(255),					-- last template used to generate main document
   last_main_doc	 varchar(255),					-- relative filepath+filename of last main generated document
 
   -- For BAN direct debit feature

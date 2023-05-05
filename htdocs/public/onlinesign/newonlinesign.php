@@ -529,7 +529,7 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 } elseif ($source == 'societe_rib') {
 	$found = true;
-	$langs->loadLangs(array("companies", "commercial"));
+	$langs->loadLangs(array("companies", "commercial", "withdrawals"));
 
 	$result = $object->fetch_thirdparty();
 
@@ -556,13 +556,16 @@ if ($source == 'proposal') {
 	$last_main_doc_file = $object->last_main_doc;
 	$diroutput = $conf->societe->multidir_output[$object->thirdparty->entity].'/'
 			.dol_sanitizeFileName($object->thirdparty->id).'/';
-	if (empty($last_main_doc_file) ||
+	if ((empty($last_main_doc_file) ||
 		!dol_is_file($diroutput
-			.$langs->transnoentitiesnoconv("SepaMandateShort").' '.$object->id."-".dol_sanitizeFileName($object->rum).".pdf")) {
+			.$langs->transnoentitiesnoconv("SepaMandateShort").' '.$object->id."-".dol_sanitizeFileName($object->rum).".pdf"))
+		&& 	$message != "signed") {
 		// It seems document has never been generated, or was generated and then deleted.
 		// So we try to regenerate it with its default template.
-		$defaulttemplate = 'sepamandate';
+		//$defaulttemplate = 'sepamandate';
+		$defaulttemplate = getDolGlobalString("BANKADDON_PDF");
 
+		$object->setDocModel($user, $defaulttemplate);
 		$moreparams = array(
 			'use_companybankid'=>$object->id,
 			'force_dir_output'=>$diroutput

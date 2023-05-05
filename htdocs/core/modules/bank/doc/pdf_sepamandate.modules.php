@@ -51,17 +51,22 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 * @var int Height reserved to output the info and total part
 	 */
-	private $heightforinfotot;
+	public $heightforinfotot;
 
 	/**
 	 * @var int Height reserved to output the free text on last page
 	 */
-	private $heightforfreetext;
+	public $heightforfreetext;
 
 	/**
 	 * @var int Height reserved to output the footer (value include bottom margin)
 	 */
-	private $heightforfooter;
+	public $heightforfooter;
+
+	/**
+	 * @var int x coordinate reserved to output the Signature area
+	 */
+	public $xPosSignArea;
 	/**
 	 *	Constructor
 	 *
@@ -104,6 +109,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->update_main_doc_field=1;
 
 		$this->heightforinfotot=50;
+
+		$this->xPosSignArea=120;
 
 		$this->heightforfreetext = (!empty(getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT')) ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5);
 
@@ -551,7 +558,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$pdf->MultiCell(100, 3, ' ');
 		$pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
 
-		$posx = 120;
+		$posx = $this->xPosSignArea;
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
 		$useborder = 0;
 		$index = 0;
