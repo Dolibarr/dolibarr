@@ -426,8 +426,8 @@ if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)
 						$remaintopay = price2num($facture->total_ttc - $totalpay);
 
 						// hook to finalize the remaining amount, considering e.g. cash discount agreements
-						$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$remaintopay);
-						$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $facture, $action); // Note that $action and $object may have been modified by some hooks
+						$parameters = array('remaintopay'=>$remaintopay);
+						$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $facture, $action); // Note that $action and $object may have been modified by some hooks
 						if ($reshook > 0) {
 							if (!empty($remain = $hookmanager->resArray['remaintopay'])) {
 								$remaintopay = $remain;
@@ -503,8 +503,8 @@ if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 				// hook to finalize the remaining amount, considering e.g. cash discount agreements
-				$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$objecttmp->resteapayer);
-				$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+				$parameters = array('remaintopay'=>$objecttmp->resteapayer);
+				$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook > 0) {
 					if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
 						$objecttmp->resteapayer = $remaintopay;

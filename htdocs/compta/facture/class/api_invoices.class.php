@@ -1416,10 +1416,9 @@ class Invoices extends DolibarrApi
 		$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		// hook to finalize the remaining amount, considering e.g. cash discount agreements
-		$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$resteapayer);
-		$action = 'API_CUSTOMER_INVOICE';
+		$parameters = array('remaintopay'=>$resteapayer);
 		$hookmanager->initHooks(array('apicustomerinvoice'));
-		$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $this->invoice, $action); // Note that $action and $object may have been modified by some hooks
+		$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $this->invoice, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
 				$resteapayer = $remaintopay;
@@ -1570,13 +1569,12 @@ class Invoices extends DolibarrApi
 			$remainstopay = $amount = price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 			// hook to finalize the remaining amount, considering e.g. cash discount agreements
-			$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$remainstopay);
-			$action = 'API_CUSTOMER_INVOICE';
+			$parameters = array('remaintopay'=>$remainstopay);
 			$hookmanager->initHooks(array('apicustomerinvoice'));
-			$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $this->invoice, $action); // Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $this->invoice); // Note that $action and $object may have been modified by some hooks
 			if ($reshook > 0) {
 				if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
-					$remainstopay = $remaintopay;
+					$remainstopay = $amount = $remaintopay;
 				}
 			} elseif ($reshook < 0) {
 				$error++;

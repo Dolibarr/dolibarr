@@ -695,7 +695,7 @@ if ($object->id > 0) {
 
 	// Hook to change amount for other reasons, e.g. apply cash discount for payment before agreed date
 	$parameters = array('remaintopay' => $resteapayer);
-	$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook > 0) {
 		print $hookmanager->resPrint;
 		if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
