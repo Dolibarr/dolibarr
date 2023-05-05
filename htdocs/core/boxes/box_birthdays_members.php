@@ -71,10 +71,17 @@ class box_birthdays_members extends ModeleBoxes
 	 */
 	public function loadBox($max = 20)
 	{
-		global $user, $langs;
+		global $conf, $user, $langs;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		$langs->load("boxes");
 
 		$this->max = $max;
+
+		$cachetime = 3600;
+		$fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'.cache';
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -82,73 +89,90 @@ class box_birthdays_members extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMemberNextBirthdays"));
 
-		if ($user->rights->adherent->lire) {
-			$tmparray = dol_getdate(dol_now(), true);
+		if ($user->hasRight('adherent', 'lire')) {
+			$cachedir = DOL_DATA_ROOT.'/users/temp';
+			$filename = '/boxbirthdays-members'.$fileid;
+			$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
+			$data = array();
+			if ($refresh) {
+				$tmparray = dol_getdate(dol_now(), true);
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth, date_format(u.birth, '%d') as daya, u.email, u.statut as status, u.datefin";
-			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
-			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
-			$sql .= " AND u.statut = ".Adherent::STATUS_VALIDATED;
-			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-			$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
-			$sql .= $this->db->plimit($max, 0);
+				$sql = "SELECT u.rowid, u.firstname, u.lastname, u.societe, u.birth, date_format(u.birth, '%d') as daya, u.email, u.statut as status, u.datefin";
+				$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
+				$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
+				$sql .= " AND u.statut = ".Adherent::STATUS_VALIDATED;
+				$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
+				$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
+				$sql .= $this->db->plimit($max, 0);
 
-			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
+				dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$num = $this->db->num_rows($resql);
 
-				$line = 0;
-				while ($line < $num) {
-					$objp = $this->db->fetch_object($result);
-					$memberstatic->id = $objp->rowid;
-					$memberstatic->firstname = $objp->firstname;
-					$memberstatic->lastname = $objp->lastname;
-					$memberstatic->email = $objp->email;
-					$memberstatic->status = $objp->status;
-					$memberstatic->statut = $memberstatic->status;
-					$memberstatic->datefin = $this->db->jdate($objp->datefin);
-					//$memberstatic->need_subscription = 1;
-					$dateb = $this->db->jdate($objp->birth);
+					$line = 0;
+					while ($line < $num) {
+						$data[$line] = $this->db->fetch_object($resql);
+
+						$line++;
+					}
+
+					if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
+						dol_filecache($cachedir, $filename, $data);
+					}
+
+					$this->db->free($resql);
+				}
+			} else {
+				$data = dol_readcachefile($cachedir, $filename);
+			}
+
+			if (!empty($data)) {
+				$j = 0;
+				while ($j < count($data)) {
+					$memberstatic->id = $data[$j]->rowid;
+					$memberstatic->firstname = $data[$j]->firstname;
+					$memberstatic->lastname = $data[$j]->lastname;
+					$memberstatic->company = $data[$j]->societe;
+					$memberstatic->email = $data[$j]->email;
+					$memberstatic->status = $data[$j]->status;
+					$memberstatic->statut = $data[$j]->status;
+					$memberstatic->datefin = $this->db->jdate($data[$j]->datefin);
+
+					$dateb = $this->db->jdate($data[$j]->birth);
 					$age = date('Y', dol_now()) - date('Y', $dateb);
 
 					$typea = '<i class="fas fa-birthday-cake inline-block"></i>';
 
-					$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$j][0] = array(
 						'td' => '',
 						'text' => $memberstatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
-					$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$j][1] = array(
 						'td' => 'class="center nowraponall"',
 						'text' => dol_print_date($dateb, "day", 'tzserver').' - '.$age.' '.$langs->trans('DurationYears')
 					);
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+					$this->info_box_contents[$j][2] = array(
+						'td' => 'class="right nowraponall"',
 						'text' => $typea,
 						'asis' => 1
 					);
 
-					/*$this->info_box_contents[$line][] = array(
-						'td' => 'class="right" width="18"',
-						'text' => $memberstatic->LibStatut($objp->status, 3)
-					);*/
+					/*$this->info_box_contents[$j][3] = array(
+					 'td' => 'class="right" width="18"',
+					 'text' => $memberstatic->LibStatut($objp->status, 3)
+					 );*/
 
-					$line++;
+					$j++;
 				}
-
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>');
-				}
-
-				$this->db->free($result);
-			} else {
+			}
+			if (is_array($data) && count($data) == 0) {
 				$this->info_box_contents[0][0] = array(
-					'td' => '',
-					'maxlength'=>500,
-					'text' => ($this->db->error().' sql='.$sql)
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>',
 				);
 			}
 		} else {

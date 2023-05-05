@@ -83,10 +83,11 @@ class box_activity extends ModeleBoxes
 
 		$totalnb = 0;
 		$line = 0;
-		$cachetime = 3600;
-		$fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'-r'.($user->hasRight("societe", "client", "voir") ? '1' : '0').'.cache';
 		$now = dol_now();
 		$nbofperiod = 3;
+
+		$cachetime = 3600;
+		$fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'-r'.($user->hasRight("societe", "client", "voir") ? '1' : '0').'.cache';
 
 		if (!empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) {
 			$nbofperiod = $conf->global->MAIN_BOX_ACTIVITY_DURATION;
@@ -134,12 +135,13 @@ class box_activity extends ModeleBoxes
 				if ($result) {
 					$num = $this->db->num_rows($result);
 
-					$j = 0;
-					while ($j < $num) {
-						$data[$j] = $this->db->fetch_object($result);
-						$j++;
+					$line = 0;
+					while ($line < $num) {
+						$data[$line] = $this->db->fetch_object($result);
+
+						$line++;
 					}
-					if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+					if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
 						dol_filecache($cachedir, $filename, $data);
 					}
 					$this->db->free($result);
@@ -188,7 +190,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedProposals"),
+						'text'=>'<span class="opacitymedium">'.$langs->trans("NoRecordedProposals").'</span>',
 					);
 					$line++;
 				}
@@ -234,7 +236,7 @@ class box_activity extends ModeleBoxes
 						$data[$j] = $this->db->fetch_object($result);
 						$j++;
 					}
-					if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+					if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
 						dol_filecache($cachedir, $filename, $data);
 					}
 					$this->db->free($result);
@@ -329,7 +331,7 @@ class box_activity extends ModeleBoxes
 						$data[$j] = $this->db->fetch_object($result);
 						$j++;
 					}
-					if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+					if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
 						dol_filecache($cachedir, $filename, $data);
 					}
 					$this->db->free($result);
@@ -411,7 +413,7 @@ class box_activity extends ModeleBoxes
 						$data[$j] = $this->db->fetch_object($result);
 						$j++;
 					}
-					if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+					if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
 						dol_filecache($cachedir, $filename, $data);
 					}
 					$this->db->free($result);

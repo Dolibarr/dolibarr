@@ -171,6 +171,7 @@ NEW: use more recent model by default
 NEW: VAT can be modified during add of line
 NEW: write all fields and their properties in asciidoc format
 NEW: Can add an array of several links in date selector
+NEW: Implement MAIN_ACTIVATE_FILECACHE on bithday widget
 
 For developers or integrators:
 ------------------------------
