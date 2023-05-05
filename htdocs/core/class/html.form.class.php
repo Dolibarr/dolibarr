@@ -5208,7 +5208,7 @@ class Form
 							$more .= $input['label'] . '</div><div class="tagtd left">';
 						}
 						if ($input['type'] == 'select') {
-							$more .= $this->selectarray($input['name'], $input['values'], !empty($input['default']) ? $input['default'] : '-1', $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
+							$more .= $this->selectarray($input['name'], $input['values'], isset($input['default']) ? $input['default'] : '-1', $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						} else {
 							$more .= $this->multiselectarray($input['name'], $input['values'], is_array($input['default']) ? $input['default'] : [$input['default']], $key_in_label, $value_as_key, $morecss, $translate, $maxlen, $moreattr);
 						}
@@ -8760,9 +8760,10 @@ class Form
             <input type="hidden" class="' . $htmlname . '" name="' . $htmlname . '" value="' . $listcheckedstring . '">
             </dt>
             <dd class="dropdowndd">
-                <div class="multiselectcheckbox' . $htmlname . '">
-                    <ul class="' . $htmlname . ($pos == '1' ? 'left' : '') . '">
-                    ' . $listoffieldsforselection . '
+                <div class="multiselectcheckbox'.$htmlname.'">
+                    <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
+                    <li><input class="inputsearch_dropdownselectedfields width90p minwidth200" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
+                    '.$listoffieldsforselection.'
                     </ul>
                 </div>
             </dd>
@@ -8785,6 +8786,12 @@ class Form
                   // Now, we submit page
                   //$(this).parents(\'form:first\').submit();
               });
+              $("input.inputsearch_dropdownselectedfields").on("keyup", function() {
+			    var value = $(this).val().toLowerCase();
+			    $(\'.multiselectcheckbox'.$htmlname.' li > label\').filter(function() {
+			      $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+			    });
+			  });
 
 
            });

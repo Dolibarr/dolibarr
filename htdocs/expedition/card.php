@@ -2312,6 +2312,9 @@ if ($action == 'create') {
 
 							$qtyalreadysent += $shipmentline_var['qty_shipped'];
 						}
+						if ($j) {
+							$htmltooltip = $langs->trans("QtyInOtherShipments").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
+						}
 					}
 				}
 				print $form->textwithpicto($qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
