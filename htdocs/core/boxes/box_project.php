@@ -106,7 +106,7 @@ class box_project extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
-			$sql .= " AND p.fk_statut = ".(int) $projectstatic::STATUS_VALIDATED; // Only open projects
+			$sql .= " AND p.fk_statut = ".((int) $projectstatic::STATUS_VALIDATED); // Only open projects
 			if (empty($user->rights->projet->all->lire)) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
