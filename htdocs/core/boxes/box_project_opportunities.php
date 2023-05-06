@@ -111,7 +111,7 @@ class box_project_opportunities extends ModeleBoxes
 			$sql .= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
 			$sql .= " AND p.usage_opportunity = 1";
 			$sql .= " AND p.fk_opp_status > 0";
-			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($projectstatic::STATUS_DRAFT.", ".$projectstatic::STATUS_VALIDATED).")"; // draft and open projects
+			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($projectstatic::STATUS_DRAFT.",".$projectstatic::STATUS_VALIDATED).")"; // draft and open projects
 			//$sql .= " AND p.fk_statut = ".((int) $projectstatic::STATUS_VALIDATED); // Only open projects
 			if (empty($user->rights->projet->all->lire)) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
