@@ -57,9 +57,9 @@ class EvalMathTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return InventoryTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
