@@ -118,10 +118,10 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		if (!empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {
 			$this->markTestSkipped(__METHOD__." Company must be setup to have name-firstname in order 'Firstname Lastname'");
 		}
-		if (!empty($conf->global->MAIN_MODULE_LDAP)) {
+		if (isModEnabled('ldap')) {
 			$this->markTestSkipped(__METHOD__." module LDAP must be disabled.");
 		}
-		if (!empty($conf->global->MAIN_MODULE_MAILMANSPIP)) {
+		if (isModEnabled('mailmanspip')) {
 			$this->markTestSkipped(__METHOD__." module MailmanSpip must be disabled.");
 		}
 

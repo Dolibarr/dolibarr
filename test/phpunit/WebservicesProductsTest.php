@@ -123,7 +123,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		if (empty($conf->service->enabled)) {
+		if (!isModuleEnabled('service')) {
 			$this->markTestSkipped("Error: Module service must be enabled.");
 		}
 

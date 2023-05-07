@@ -116,8 +116,9 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		if (empty($conf->global->MAIN_MODULE_SUPPLIERPROPOSAL)) {
+		if (!isModEnabled('supplier_proposal')) {
 			$this->markTestSkipped(__METHOD__." module Supplier proposal must be enabled.");
+			return;
 		}
 
 		print __METHOD__."\n";

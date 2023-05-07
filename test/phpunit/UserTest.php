@@ -114,7 +114,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		if (!empty($conf->global->MAIN_MODULE_LDAP)) {
+		if (isModuleEnabled('ldap')) {
 			$this->markTestSkipped(__METHOD__." module LDAP must be disabled.");
 		}
 
