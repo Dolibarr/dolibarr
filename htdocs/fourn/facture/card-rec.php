@@ -428,13 +428,8 @@ if (empty($reshook)) {
 			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 			$ref_fournisseur = (GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'restricthtml') : '');
 		} else {
-			$idprod = GETPOST('idprodfournprice', 'int');
+			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
-
-			if (!empty($conf->global->MAIN_DISABLE_FREE_LINES) && $idprod <= 0) {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
-				$error++;
-			}
 		}
 
 		$qty = price2num(GETPOST('qty' . $predef, 'alpha'), 'MS', 2);
