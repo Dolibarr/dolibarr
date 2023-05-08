@@ -645,7 +645,7 @@ if ($action == 'edit') {
 						print getDolGlobalString($constname);
 					}
 				} else {
-					print $conf->global->{$constname};
+					print getDolGlobalString($constname);
 				}
 				print '</td></tr>';
 			}

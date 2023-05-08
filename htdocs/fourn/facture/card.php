@@ -69,7 +69,7 @@ if (isModEnabled('incoterm')) {
 }
 
 $id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
-$socid = GETPOST('socid', 'int');
+
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST("confirm");
 $ref = GETPOST('ref', 'alpha');
@@ -110,10 +110,11 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
-$socid = '';
+$socid = GETPOST('socid', 'int');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
+
 $isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 

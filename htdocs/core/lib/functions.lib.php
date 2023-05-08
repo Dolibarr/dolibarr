@@ -103,7 +103,7 @@ function getDolGlobalString($key, $default = '')
 {
 	global $conf;
 	// return $conf->global->$key ?? $default;
-	return (string) (empty($conf->global->$key) ? $default : $conf->global->$key);
+	return (string) (isset($conf->global->$key) ? $conf->global->$key : $default);
 }
 
 /**
@@ -117,7 +117,7 @@ function getDolGlobalInt($key, $default = 0)
 {
 	global $conf;
 	// return $conf->global->$key ?? $default;
-	return (int) (empty($conf->global->$key) ? $default : $conf->global->$key);
+	return (int) (isset($conf->global->$key) ? $conf->global->$key : $default);
 }
 
 /**
@@ -1833,11 +1833,11 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out .= '<!-- a link for button to open url into a dialog popup with backtopagejsfields = '.$backtopagejsfields.' -->';
-	$out .= '<a '.($accesskey ? ' accesskey="'.$accesskey.'"' : '').' class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
+	$out .= '<a '.($accesskey ? ' accesskey="'.$accesskey.'"' : '').' class="cursorpointer reposition button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
 	} elseif ($jsonopen) {
-		$out .= ' href="#" onclick="javascript:'.$jsonopen.'"';
+		$out .= ' href="#" onclick="'.$jsonopen.'"';
 	} else {
 		$out .= ' href="#"';
 	}
@@ -1866,8 +1866,8 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
 	       						},
 								close: function (event, ui) {
-									returnedid = jQuery("#varforreturndialogid'.$name.'").text();
-									returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
+									var returnedid = jQuery("#varforreturndialogid'.$name.'").text();
+									var returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
 									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
 									if (returnedid != "" && returnedid != "div for returned id") {
 										jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
@@ -1879,6 +1879,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 							});
 
 							$tmpdialog.dialog(\'open\');
+							return false;
 						});
 					});
 				</script>';
@@ -5451,7 +5452,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
  *	Print a title with navigation controls for pagination
  *
  *	@param	string	    $titre				Title to show (required)
- *	@param	int   	    $page				Numero of page to show in navigation links (required)
+ *	@param	int|null    $page				Numero of page to show in navigation links (required)
  *	@param	string	    $file				Url of page (required)
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
@@ -5477,6 +5478,8 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
 	$totalnboflines = abs((int) $totalnboflines);
+
+	$page = (int) $page;
 
 	if ($picto == 'setup') {
 		$picto = 'title_setup.png';
@@ -5528,7 +5531,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	}
 	// Show navigation bar
 	$pagelist = '';
-	if ($savlimit != 0 && ((int) $page > 0 || $num > $limit)) {
+	if ($savlimit != 0 && ($page > 0 || $num > $limit)) {
 		if ($totalnboflines) {	// If we know total nb of lines
 			// Define nb of extra page links before and after selected page + ... + first or last
 			$maxnbofpage = (empty($conf->dol_optimize_smallscreen) ? 4 : 0);
@@ -5589,7 +5592,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	}
 
 	if ($savlimit || $morehtmlright || $morehtmlrightbeforearrow) {
-		print_fleche_navigation((int) $page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow, $hidenavigation); // output the div and ul for previous/last completed with page numbers into $pagelist
+		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow, $hidenavigation); // output the div and ul for previous/last completed with page numbers into $pagelist
 	}
 
 	// js to autoselect page field on focus
@@ -5623,7 +5626,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
  *  @param  int             $hideselectlimit    Force to hide select limit
  *  @param	string			$beforearrows		HTML content to show before arrows. Must NOT contains '<li> </li>' tags.
- *  @param  int        		$hidenavigation     Force to hide the arrows and page for navigation
+ *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (select limit, arrows $betweenarrows and $afterarrows but not $beforearrows)
  *	@return	void
  */
 function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $betweenarrows = '', $afterarrows = '', $limit = -1, $totalnboflines = 0, $hideselectlimit = 0, $beforearrows = '', $hidenavigation = 0)
@@ -11253,17 +11256,19 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  * Get an array with properties of an element.
  *
  * @param   string 	$element_type 	Element type (Value of $object->element). Example:
- * 									'action', 'facture', 'project_task',
+ * 									'action', 'facture', 'project', 'project_task' or
  * 									'myobject@mymodule' or
  * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
- * @return  array					(module, classpath, element, subelement, classfile, classname)
+ * @return  array					array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
  * @see fetchObjectByElement()
  */
 function getElementProperties($element_type)
 {
+	global $conf;
+
 	$regs = array();
 
-	$classfile = $classname = $classpath = '';
+	$classfile = $classname = $classpath = $subdir = $dir_output = '';
 
 	// Parse element/subelement
 	$module = $element_type;
@@ -11398,14 +11403,14 @@ function getElementProperties($element_type)
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
-		$element = 'commande';
+		$element = 'order_supplier';
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
 	} elseif ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
-		$element = 'facture';
+		$element = 'invoice_supplier';
 		$subelement = '';
 		$classname = 'FactureFournisseur';
 	} elseif ($element_type == "service") {
@@ -11431,6 +11436,13 @@ function getElementProperties($element_type)
 		$classpath = 'core/class';
 		$module = 'accounting';
 		$subelement = 'fiscalyear';
+	} elseif ($element_type == 'chargesociales') {
+		$classpath = 'compta/sociales/class';
+		$module = 'tax';
+	} elseif ($element_type == 'tva') {
+		$classpath = 'compta/tva/class';
+		$module = 'tax';
+		$subdir = '/vat';
 	}
 
 	if (empty($classfile)) {
@@ -11443,13 +11455,35 @@ function getElementProperties($element_type)
 		$classpath = $module.'/class';
 	}
 
+	//print 'getElementProperties subdir='.$subdir;
+
+	// Set dir_output
+	if ($module && isset($conf->$module)) {	// The generic case
+		if (!empty($conf->$module->multidir_output[$conf->entity])) {
+			$dir_output = $conf->$module->multidir_output[$conf->entity];
+		} elseif (!empty($conf->$module->output[$conf->entity])) {
+			$dir_output = $conf->$module->output[$conf->entity];
+		} elseif (!empty($conf->$module->dir_output)) {
+			$dir_output = $conf->$module->dir_output;
+		}
+	}
+
+	// Overwrite value for special cases
+	if ($element == 'order_supplier') {
+		$dir_output = $conf->fournisseur->commande->dir_output;
+	} elseif ($element == 'invoice_supplier') {
+		$dir_output = $conf->fournisseur->facture->dir_output;
+	}
+	$dir_output .= $subdir;
+
 	$element_properties = array(
 		'module' => $module,
-		'classpath' => $classpath,
 		'element' => $element,
 		'subelement' => $subelement,
+		'classpath' => $classpath,
 		'classfile' => $classfile,
-		'classname' => $classname
+		'classname' => $classname,
+		'dir_output' => $dir_output
 	);
 	return $element_properties;
 }

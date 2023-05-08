@@ -30,6 +30,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -37,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Don extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */

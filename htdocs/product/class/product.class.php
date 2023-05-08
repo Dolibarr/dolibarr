@@ -390,9 +390,14 @@ class Product extends CommonObject
 	public $stats_contrat = array();
 	public $stats_facture = array();
 	public $stats_commande_fournisseur = array();
+	public $stats_expedition = array();
 	public $stats_reception = array();
+	public $stats_mo = array();
+	public $stats_bom = array();
 	public $stats_mrptoconsume = array();
 	public $stats_mrptoproduce = array();
+	public $stats_facturerec = array();
+	public $stats_facture_fournisseur = array();
 
 	//! Size of image
 	public $imgWidth;
@@ -5022,7 +5027,7 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('products');
+		$langs->load('products', 'other');
 
 		$datas = array();
 		$nofetch = !empty($params['nofetch']);

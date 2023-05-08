@@ -78,9 +78,9 @@ function pdf_admin_prepare_head()
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
- *  @param		string		$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
- *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
+ *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		string			$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
+ *  @return     array								Array('width'=>w,'height'=>h,'unit'=>u);
  */
 function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 {

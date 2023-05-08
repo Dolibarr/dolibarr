@@ -94,10 +94,10 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 		} else {
-			global $dolibarr_main_instance_unique_id;
+			global $conf;
 
-			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id.' '.$passworduidhash;
-			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
+			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id.' '.$passworduidhash;
+			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id, $passworduidhash)) {
 				// Clear session
 				unset($_SESSION['dol_login']);
 				$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page

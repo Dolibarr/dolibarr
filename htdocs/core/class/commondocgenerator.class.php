@@ -106,6 +106,11 @@ abstract class CommonDocGenerator
 
 	public $emetteur;
 
+	/**
+	 * @var array	Array of columns
+	 */
+	public $cols;
+
 
 	/**
 	 *	Constructor

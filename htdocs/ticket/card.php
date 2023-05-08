@@ -512,7 +512,7 @@ if (empty($reshook)) {
 	if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
-			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
+			$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
 			exit();
 		}

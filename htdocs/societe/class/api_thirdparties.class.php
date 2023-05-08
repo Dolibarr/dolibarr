@@ -645,7 +645,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
 		}
 
-		if (is_numeric($arrayofcateg) && $arrayofcateg == 0) {	// To fix a return of 0 instead of empty array of method getListForItem
+		if (is_numeric($arrayofcateg) && $arrayofcateg >= 0) {	// To fix a return of 0 instead of empty array of method getListForItem
 			return array();
 		}
 
@@ -657,8 +657,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int		$id				Id of thirdparty
 	 * @param int       $category_id	Id of category
-	 *
-	 * @return mixed
+	 * @return Object|void
 	 *
 	 * @url POST {id}/categories/{category_id}
 	 */
@@ -696,7 +695,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int		$id				Id of thirdparty
 	 * @param int		$category_id	Id of category
 	 *
-	 * @return mixed
+	 * @return Object|void
 	 *
 	 * @url DELETE {id}/categories/{category_id}
 	 */
@@ -1791,7 +1790,7 @@ class Thirdparties extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     Object to clean
-	 * @return  array|mixed         Object with cleaned properties
+	 * @return  Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

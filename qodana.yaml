@@ -102,5 +102,17 @@ exclude:
   - name: JSHint
   - name: ReservedWordUsedAsNameJS
   - name: JSUnusedLocalSymbols
-
-  
+  - name: TrivialIfJS
+  - name: JSJQueryEfficiency
+  - name: JSDuplicatedDeclaration
+  - name: JSUnresolvedLibraryURL
+  - name: UnnecessaryReturnJS
+  - name: UnreachableCodeJS
+  - name: JSUnnecessarySemicolon
+  - name: JSPrimitiveTypeWrapperUsage
+  - name: PhpFullyQualifiedNameUsageInspection
+  - name: PhpDocMissingThrowsInspection
+  - name: UnnecessaryLabelJS
+  - name: JSCheckFunctionSignatures
+  - name: PhpReturnDocTypeMismatchInspection  
+    

@@ -108,11 +108,11 @@ function dolGetRandomBytes($length)
 
 /**
  *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
- *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
+ *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
  *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string
@@ -120,7 +120,7 @@ function dolGetRandomBytes($length)
  */
 function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
 {
-	global $dolibarr_main_instance_unique_id;
+	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
 
 	if ($chain === '' || is_null($chain)) {
@@ -134,7 +134,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 	}
 
 	if (empty($key)) {
-		$key = $dolibarr_main_instance_unique_id;
+		$key = $conf->file->instance_unique_id;
 	}
 	if (empty($ciphering)) {
 		$ciphering = 'AES-256-CTR';
@@ -165,23 +165,23 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 
 /**
  *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
- *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
+ *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @see dolEncrypt(), dol_hash()
  */
 function dolDecrypt($chain, $key = '')
 {
-	global $dolibarr_main_instance_unique_id;
+	global $conf;
 
 	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
 	if (empty($key)) {
-		$key = $dolibarr_main_instance_unique_id;
+		$key = $conf->file->instance_unique_id;
 	}
 
 	$reg = array();
@@ -400,6 +400,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	}
 	if ($features == 'productbatch') {
 		$features = 'produit';
+	}
+	if ($features == 'tax') {
+		$feature2 = 'charges';
 	}
 	if ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		$features = 'fournisseur';

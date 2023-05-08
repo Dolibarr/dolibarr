@@ -2578,18 +2578,18 @@ function top_menu_quickadd()
             });
             $("#topmenu-quickadd-dropdown .dropdown-toggle").on("click", function(event) {
 				console.log("Click on #topmenu-quickadd-dropdown .dropdown-toggle");
-                openQuickAddDropDown();
+                openQuickAddDropDown(event);
             });
 
             // Key map shortcut
-            $(document).keydown(function(e){
-                  if( e.which === 76 && e.ctrlKey && e.shiftKey ){
+            $(document).keydown(function(event){
+                  if ( event.which === 76 && event.ctrlKey && event.shiftKey ){
                      console.log(\'control + shift + l : trigger open quick add dropdown\');
-                     openQuickAddDropDown();
+                     openQuickAddDropDown(event);
                   }
             });
 
-            var openQuickAddDropDown = function() {
+            var openQuickAddDropDown = function(event) {
                 event.preventDefault();
                 $("#topmenu-quickadd-dropdown").toggleClass("open");
                 //$("#top-quickadd-search-input").focus();
@@ -2837,18 +2837,18 @@ function top_menu_bookmark()
 
 	            jQuery("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
 					console.log("Click on #topmenu-bookmark-dropdown .dropdown-toggle");
-					openBookMarkDropDown();
+					openBookMarkDropDown(event);
 	            });
 
 	            // Key map shortcut
-	            jQuery(document).keydown(function(e){
-	                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
-	                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
-	                     openBookMarkDropDown();
+	            jQuery(document).keydown(function(event){
+	                  if( event.which === 77 && event.ctrlKey && event.shiftKey ){
+	                     console.log("Click on control + shift + m : trigger open bookmark dropdown");
+	                     openBookMarkDropDown(event);
 	                  }
 	            });
 
-	            var openBookMarkDropDown = function() {
+	            var openBookMarkDropDown = function(event) {
 	                event.preventDefault();
 	                jQuery("#topmenu-bookmark-dropdown").toggleClass("open");
 	                jQuery("#top-bookmark-search-input").focus();
@@ -2877,7 +2877,18 @@ function top_menu_search()
 	$arrayresult = null;
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This set $arrayresult
 
-	$searchInput = '<input name="search_all" id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
+	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+	// accesskey is for Mac:               CTRL + key for all browsers
+	$stringforfirstkey = $langs->trans("KeyboardShortcut");
+	if ($conf->browser->name == 'chrome') {
+		$stringforfirstkey .= ' ALT +';
+	} elseif ($conf->browser->name == 'firefox') {
+		$stringforfirstkey .= ' ALT + SHIFT +';
+	} else {
+		$stringforfirstkey .= ' CTL +';
+	}
+
+	$searchInput = '<input name="search_all"'.($stringforfirstkey ? ' title="'.dol_escape_htmltag($stringforfirstkey.' s').'"' : '').' accesskey="s" id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
 
 	$defaultAction = '';
 	$buttonList = '<div class="dropdown-global-search-button-list" >';
@@ -3057,12 +3068,22 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 
 			$usedbyinclude = 1;
-
 			$arrayresult = array();
 			include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This make initHooks('searchform') then set $arrayresult
 
 			if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM)) {
-				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY) ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+				// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+				// accesskey is for Mac:               CTRL + key for all browsers
+				$stringforfirstkey = $langs->trans("KeyboardShortcut");
+				if ($conf->browser->name == 'chrome') {
+					$stringforfirstkey .= ' ALT +';
+				} elseif ($conf->browser->name == 'firefox') {
+					$stringforfirstkey .= ' ALT + SHIFT +';
+				} else {
+					$stringforfirstkey .= ' CTL +';
+				}
+
+				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY) ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
 					foreach ($arrayresult as $key => $val) {

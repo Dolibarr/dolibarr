@@ -103,6 +103,11 @@ class Commande extends CommonOrder
 	public $ref_client;
 
 	/**
+	 * @var string Thirdparty ref of order
+	 */
+	public $ref_customer;
+
+	/**
 	 * @var int Contact ID
 	 */
 	public $contactid;
@@ -1245,6 +1250,7 @@ class Commande extends CommonOrder
 		$this->date_validation    = '';
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) {
 			$this->ref_client = '';
+			$this->ref_customer = '';
 		}
 
 		// Do not clone ref_ext
@@ -1383,6 +1389,7 @@ class Commande extends CommonOrder
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
+		$this->ref_customer         = $object->ref_client;
 
 		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN)) {
 			$this->note_private         = $object->note_private;
@@ -2949,6 +2956,7 @@ class Commande extends CommonOrder
 			if (!$error) {
 				$this->oldcopy = clone $this;
 				$this->ref_client = $ref_client;
+				$this->ref_customer = $ref_client;
 			}
 
 			if (!$notrigger && empty($error)) {
@@ -3336,6 +3344,9 @@ class Commande extends CommonOrder
 		}
 		if (isset($this->ref_client)) {
 			$this->ref_client = trim($this->ref_client);
+		}
+		if (isset($this->ref_customer)) {
+			$this->ref_customer = trim($this->ref_customer);
 		}
 		if (isset($this->note) || isset($this->note_private)) {
 			$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));

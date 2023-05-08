@@ -9,6 +9,7 @@
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -582,7 +583,7 @@ if (empty($reshook)) {
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'updateline' && $user->hasRight('ficheinter', 'creer') && GETPOST('save', 'alpha') == $langs->trans("Save")) {
+	} elseif ($action == 'updateline' && $user->hasRight('ficheinter', 'creer') && GETPOST('save', 'alpha')) {
 		// Mise a jour d'une ligne d'intervention
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0) {
@@ -600,7 +601,7 @@ if (empty($reshook)) {
 		$date_inter = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
 		$duration = convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int'));
 
-		$objectline->datei = $date_inter;
+		$objectline->date = $date_inter;
 		$objectline->desc = $desc;
 		$objectline->duration = $duration;
 
@@ -1275,9 +1276,9 @@ if ($action == 'create') {
 	print '<table class="border tableforfield centpercent">';
 
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
-		// Duration
+		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
-		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").')</td>';
 		print '</tr>';
 	}
 

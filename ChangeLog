@@ -15,6 +15,7 @@ NEW: Accountancy - Add specific page to export accounting data rather than the j
 NEW: Accountancy - Add sub-account balance FPC22
 NEW: Accountancy - Manage customer retained warranty FPC21+
 NEW: Accountancy - Manage intra-community VAT on supplier invoices - FPC22
+NEW: Can upload a file with drag and drop on purchase invoice, vats, salaries and social contributions 
 NEW: adapt category and product pictures sizes on takepos
 NEW: Add ability of ODT support to supplier invoices
 NEW: Add a public virtual card page for each user
@@ -169,6 +170,10 @@ NEW: Use by default the domain $dolibarr_main_url_root for SMTP HELO
 NEW: use more recent model by default
 NEW: VAT can be modified during add of line
 NEW: write all fields and their properties in asciidoc format
+NEW: Can add an array of several links in date selector
+NEW: Implement MAIN_ACTIVATE_FILECACHE on bithday widget
+NEW: Add widget "The next upcoming events"
+NEW: Add widget of open opportunities
 
 For developers or integrators:
 ------------------------------
@@ -177,7 +182,7 @@ NEW: triggers on mailing
 NEW: add function for listiong objects from directory
 NEW: Add helplist property to describe fields of obects
 NEW: Add hook in loadLotStock() in html.formproduct.class.php file, add hook 'llxFooter', Add hook online sign
-NEW: Update lib parsedownto 1.7.4, phpspreadsheet lib to v1.12
+NEW: Update lib parsedownto 1.7.4, phpspreadsheet lib to v1.12, ESCPOS v3.0
 NEW: Support contact in post() document API
 NEW: updating in modulbuilder on tab Menu when adding object
 NEW: Add/Edit permissions in ModuleBuilder

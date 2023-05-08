@@ -762,8 +762,12 @@ class EmailCollector extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+
+			return 1;
 		} else {
 			dol_print_error($this->db);
+
+			return -1;
 		}
 	}
 
@@ -3274,7 +3278,7 @@ class EmailCollector extends CommonObject
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    UID email
 	 * @param 	string $destdir	    Target dir for attachments
-	 * @return 	array				Array with number and object
+	 * @return 	void
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
 	{

@@ -144,8 +144,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Create account object
 	 *
-	 * @param array $request_data    Request data
-	 * @return int ID of account
+	 * @param 	array $request_data    	Request data
+	 * @return 	int 					ID of account
 	 */
 	public function post($request_data = null)
 	{
