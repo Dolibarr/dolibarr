@@ -719,7 +719,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * getTooltipContentArray
+	 * Return array of datas to show into a tooltip. This method must be implemented in each object class.
 	 *
 	 * @since v18
 	 * @param array $params params to construct tooltip data

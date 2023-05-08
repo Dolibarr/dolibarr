@@ -10,7 +10,7 @@ chmod g+rwx /var/www/html/conf
 
 if [ ! -d /var/documents ]; then
 	echo "[docker-run] => create volume directory /var/documents ..."
-  	mkdir -p /var/documents
+	mkdir -p /var/documents
 fi
 echo "[docker-run] => Set Permission to www-data for /var/documents"
 chown -R www-data:www-data /var/documents
