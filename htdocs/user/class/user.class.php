@@ -2451,11 +2451,11 @@ class User extends CommonObject
 
 			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 		} else {
-			global $dolibarr_main_instance_unique_id;
+			global $conf;
 
-			//print $password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id;
+			//print $password.'-'.$this->id.'-'.$conf->file->instance_unique_id;
 			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword';
-			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id));
+			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$conf->file->instance_unique_id));
 			if (isModEnabled('multicompany')) {
 				$url .= '&entity='.(!empty($this->entity) ? $this->entity : 1);
 			}
@@ -2746,7 +2746,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 * getTooltipContentArray
+	 * Return array of data to show into tooltips
 	 *
 	 * @param array $params ex option, infologin
 	 * @since v18
@@ -3894,10 +3894,10 @@ class User extends CommonObject
 	 */
 	public function getOnlineVirtualCardUrl($mode = '', $typeofurl = 'external')
 	{
-		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
+		global $dolibarr_main_url_root;
 		global $conf;
 
-		$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
+		$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
 		if (isModEnabled('multicompany')) {
 			$entity_qr = '&entity='.((int) $conf->entity);
 		} else {
