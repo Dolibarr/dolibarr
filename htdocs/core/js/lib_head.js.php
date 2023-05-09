@@ -1276,8 +1276,7 @@ if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUER
 	?>
 // Defined properties for JNotify
 $(document).ready(function() {
-	if (typeof $.jnotify == 'function')
-	{
+	if (typeof $.jnotify == 'function') {
 		$.jnotify.setup({
 			delay: 3000									// the default time to show each notification (in milliseconds)
 			, sticky: false								// determines if the message should be considered "sticky" (user must manually close notification)
@@ -1286,20 +1285,20 @@ $(document).ready(function() {
 			, fadeSpeed: 1000							// the speed to fade messages out (in milliseconds)
 			, slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
 			, classContainer: "jnotify-container"
-				, classNotification: "jnotify-notification"
-					, classBackground: "jnotify-background"
-						, classClose: "jnotify-close"
-							, classMessage: "jnotify-message"
-								, init: null                                // callback that occurs when the main jnotify container is created
-								, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
-								, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
+			, classNotification: "jnotify-notification"
+			, classBackground: "jnotify-background"
+			, classClose: "jnotify-close"
+			, classMessage: "jnotify-message"
+			, init: null                                // callback that occurs when the main jnotify container is created
+			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
+			, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
 		});
 	}
 });
 <?php } ?>
 
-// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
-$(document).ready(function() {
+jQuery(document).ready(function() {
+	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
@@ -1307,6 +1306,9 @@ $(document).ready(function() {
 		jQuery(".id-container").css('width', '100%');
 
 	}
+
+	// Code to set tooltip on search field
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not("maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
 });
 
 
