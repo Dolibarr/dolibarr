@@ -208,8 +208,8 @@ if ($action == 'updatelines' && $usercancreate) {
 
 							if (!$error && $modebatch == "batch") {
 								$sql = "UPDATE ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." SET";
-								$sql .= " eatby = ".($eatby ? "'".$this->db->idate($eatby)."'" : "null");
-								$sql .= " , sellby = ".($sellby ? "'".$this->db->idate($sellby)."'" : "null");
+								$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
+								$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
 								$sql .= " , qty = ".((float) price2num(GETPOST($qty, 'int'), 'MS'));
 								$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
 								$sql .= " AND batch = ".((int) $idline);
