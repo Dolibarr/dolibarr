@@ -164,6 +164,29 @@ if ($action == 'updatelines' && $usercancreate) {
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
 					$error++;
 				}
+				if ($modebatch == "batch") {
+					$sql = "SELECT pb.rowid ";
+					$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps";
+					$sql .= " ON ps.rowid = pb.fk_product_stock";
+					$sql .= " WHERE pb.batch ='".$db->escape($lot)."'";
+					$sql .= " AND ps.fk_product =".((int) GETPOST($prod, 'int')) ;
+					$sql .= " AND ps.fk_entrepot =".((int) GETPOST($ent, 'int')) ;
+					$resql = $db->query($sql);
+					if ($resql) {
+						$num = $db->num_rows($resql);
+						if ($num > 1) {
+							dol_syslog('No dispatch for line '.$key.' as too many combination warehouse, product, batch code was found ('.$num.').');
+							setEventMessages($langs->trans('ErrorTooManyCombinationBatchcode', $numline, $num), null, 'errors');
+							$error++;
+						} elseif ($num < 1) {
+							dol_syslog('No dispatch for line '.$key.' as no combination warehouse, product, batch code was found.');
+							setEventMessages($langs->trans('ErrorNoCombinationBatchcode', $numline), null, 'errors');
+							$error++;
+						}
+						$db->free($resql);
+					}
+				}
 
 				if (!$error) {
 					$qtystart = 0;
@@ -686,9 +709,9 @@ if ($id > 0 || !empty($ref)) {
 						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;*/
 
-						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot, eb.batch, eb.eatby, eb.sellby, cd.fk_product FROM llx_expeditiondet as ed";
-						$sql .= " LEFT JOIN llx_expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-						$sql .= " JOIN llx_commandedet as cd on ed.fk_origin_line = cd.rowid";
+						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot, eb.batch, eb.eatby, eb.sellby, cd.fk_product FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
+						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_origin_line = cd.rowid";
 						$sql .= " WHERE ed.fk_origin_line =".(int) $objp->rowid;
 						$sql .= " AND ed.fk_expedition =".(int) $object->id;
 						$sql .= " ORDER BY ed.rowid, ed.fk_origin_line";

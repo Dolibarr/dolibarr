@@ -77,3 +77,6 @@ DetailWarehouseFormat= W:%s (Qty: %d)
 
 # Other
 DispatchCard = Dispatch card
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
