@@ -1635,8 +1635,13 @@ class FormTicket
 		print '</table>';
 
 		print '<center><br>';
-		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'" />';
-		if ($this->withcancel) {
+		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'"';
+		// Add a javascript test to avoid to forget to submit file before sending email
+		if ($this->withfile == 2 && !empty($conf->use_javascript_ajax)) {
+			print ' onClick="if (document.ticket.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
+		}
+		print ' />';
+		if (!empty($this->withcancel)) {
 			print " &nbsp; &nbsp; ";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
