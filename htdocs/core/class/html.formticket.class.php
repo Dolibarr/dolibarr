@@ -1384,7 +1384,7 @@ class FormTicket
 		print '});
 		</script>';
 
-		print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
+		print '<form method="post" name="ticket" id="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
@@ -1534,6 +1534,14 @@ class FormTicket
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
+			$out .= '    jQuery("#'.$addfileaction.'").prop("disabled", true);';
+			$out .= '    jQuery("#addedfile").on("change", function() {';
+			$out .= '        if (jQuery(this).val().length) {';
+			$out .= '            jQuery("#'.$addfileaction.'").prop("disabled", false);';
+			$out .= '        } else {';
+			$out .= '            jQuery("#'.$addfileaction.'").prop("disabled", true);';
+			$out .= '        }';
+			$out .= '    });';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
 			$out .= '    });';
@@ -1637,6 +1645,23 @@ class FormTicket
 		print '<input type="hidden" name="page_y">'."\n";
 
 		print "</form>\n";
+
+		// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
+		if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
+			print '<script type="text/javascript">';
+			print 'jQuery(document).ready(function () {';
+			print '		$(document).on("keypress", \'#ticket\', function (e) {		/* Note this is called at every key pressed ! */
+	    					var code = e.keyCode || e.which;
+	    					if (code == 13) {
+								console.log("Enter was intercepted and blocked");
+	        					e.preventDefault();
+	        					return false;
+	    					}
+						});';
+			print '})';
+			print '</script>';
+		}
+
 		print "<!-- End form TICKET -->\n";
 	}
 }
