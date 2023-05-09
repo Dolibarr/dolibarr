@@ -23,21 +23,30 @@
  *       \brief      File to return Ajax response on third parties request
  */
 
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1'); // Disables token renewal
-}
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-// If there is no need to load and show top and left menu
-if (!defined("NOLOGIN")) {
-	define("NOLOGIN", '1');
-}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+$idstatus = GETPOST('id', 'int');
+$idprospect = GETPOST('prospectid', 'int');
+$action = GETPOST('action', 'aZ09');
+
+// Security check
+if ($user->socid > 0) {
+	if ($idprospect != $user->socid) {
+		accessforbidden('Not allowed on this thirdparty');
+	}
+}
+
+// var_dump(	$user, 'societe', $idprospect, '&societe');
+$result = restrictedArea($user, 'societe', $idprospect, '&societe');
+
+$permisstiontoupdate = $user->hasRight('societe', 'creer');
 
 /*
  * View
@@ -45,11 +54,8 @@ require '../../main.inc.php';
 
 top_httphead();
 
-$idstatus = GETPOST('id', 'int');
-$idprospect = GETPOST('prospectid', 'int');
-$action = GETPOST('action', 'aZ09');
 
-if ($action === "updatestatusprospect") {
+if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 	$response = '';
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";

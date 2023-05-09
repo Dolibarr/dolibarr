@@ -1912,7 +1912,7 @@ while ($i < $imaxinloop) {
 }
 
 // Line that calls the select_status function by passing it js as the 5th parameter in order to activate the js script
-$formcompany->select_status('status_prospect', null, null, null, "js");
+$formcompany->selectStatus('status_prospect', null, null, null, "js");
 
 // If no record found
 if ($num == 0) {
