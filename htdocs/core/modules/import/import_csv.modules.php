@@ -426,7 +426,7 @@ class ImportCsv extends ModeleImports
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 										$class = $objimport->array_import_convertvalue[0][$val]['class'];
 										$method = $objimport->array_import_convertvalue[0][$val]['method'];
-										if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '') {
+										if (isset($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]) && $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '') {
 											$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
 										} else {
 											$resultload = dol_include_once($file);
@@ -455,6 +455,7 @@ class ImportCsv extends ModeleImports
 												 $errorforthistable++;
 												 $error++;
 												 }*/
+												// TODO no longer have to have the "Chart of Accounts" column first in the csv file ($arrayrecord[0]['val'])
 												$param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
 											}
 
@@ -679,7 +680,7 @@ class ImportCsv extends ModeleImports
 									}
 
 									// Load content of field@table into cache array
-									if (!is_array($this->cachefieldtable[$cachekey])) { // If content of field@table not already loaded into cache
+									if (isset($this->cachefieldtable[$cachekey]) && !is_array($this->cachefieldtable[$cachekey])) { // If content of field@table not already loaded into cache
 										$sql = "SELECT ".$field." as aliasfield FROM ".$table;
 										if (!empty($filter)) {
 											$sql .= ' WHERE '.$filter;
@@ -702,7 +703,7 @@ class ImportCsv extends ModeleImports
 									}
 
 									// Now we check cache is not empty (should not) and key is into cache
-									if (!is_array($this->cachefieldtable[$cachekey]) || !in_array($newval, $this->cachefieldtable[$cachekey])) {
+									if (isset($this->cachefieldtable[$cachekey]) && (!is_array($this->cachefieldtable[$cachekey]) || !in_array($newval, $this->cachefieldtable[$cachekey]))) {
 										$tableforerror = $table;
 										if (!empty($filter)) {
 											$tableforerror .= ':'.$filter;
