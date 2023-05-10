@@ -39,12 +39,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
-error_reporting(E_ALL | E_STRICT);
-
-//print_r($_POST);
-//print_r($_GET);
-//print 'upload_dir='.GETPOST('upload_dir');
-
 $id = GETPOST('fk_element', 'int');
 $element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $elementupload = $element;
@@ -59,7 +53,7 @@ if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// The
 	$usesublevelpermission = '';
 }
 
-//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+//print 'fileupload.php: '.$object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
 // Security check
 if (!empty($user->socid)) {
@@ -71,7 +65,7 @@ if (!empty($user->socid)) {
 
 $result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
 if (!$result) {
-	httponly_accessforbidden('Not allowed by restrictArea');
+	httponly_accessforbidden('Not allowed by restrictArea (module='.$object->module.' table_element='.$object->table_element.')');
 }
 
 
@@ -80,6 +74,7 @@ if (!$result) {
  */
 
 $upload_handler = new FileUpload(null, $id, $elementupload);
+
 
 top_httphead();
 
@@ -103,6 +98,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 			$upload_handler->delete();
 		} else {
 			$upload_handler->post();
+			// Note: even if this return an error on 1 file in post(), we will return http code 200 because error must be managed by the caller (some files may be ok and some in error)
 		}
 		break;
 	case 'DELETE':

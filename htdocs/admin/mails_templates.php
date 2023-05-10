@@ -1222,16 +1222,18 @@ if ($num) {
 						}
 						if ($value == 'type_template') {
 							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							$css = "center";
+							$css = "center tdoverflowmax150";
 						}
 						if ($value == 'lang' && $valuetoshow) {
 							$valuetoshow = $valuetoshow.' - '.$langs->trans("Language_".$valuetoshow);
+							$class .= ' tdoverflowmax100';
 						}
 						if ($value == 'fk_user') {
 							if ($valuetoshow > 0) {
 								$fuser = new User($db);
 								$fuser->fetch($valuetoshow);
 								$valuetoshow = $fuser->getNomUrl(1);
+								$class .= ' tdoverflowmax100';
 							}
 						}
 						if ($value == 'private') {
@@ -1248,7 +1250,8 @@ if ($num) {
 						if (in_array($value, array('joinfiles', 'defaultfortype'))) {
 							$css = "center";
 							if ($valuetoshow) {
-								$valuetoshow = yn(1);
+								//$valuetoshow = yn(1);
+								$valuetoshow = '<input type="checkbox" checked="checked" disabled>';
 							} else {
 								$valuetoshow = '';
 							}
