@@ -767,3 +767,6 @@ ALTER TABLE llx_facture_fourn ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AF
 -- Add VAT by region
 ALTER TABLE llx_c_departements ADD COLUMN fk_tva integer DEFAULT NULL AFTER nom;
 
+-- Per_entity - Rename field
+ALTER TABLE llx_societe_perentity CHANGE COLUMN code_compta accountancy_code_customer varchar(24);
+ALTER TABLE llx_societe_perentity CHANGE COLUMN code_compta_fournisseur accountancy_code_supplier varchar(24);
