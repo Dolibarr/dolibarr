@@ -321,12 +321,18 @@ class modEventOrganization extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$this->export_entities_array[$r]['t.fk_invoice'] = 'invoice';
 		unset($this->export_fields_array[$r]['t.fk_project']);	// Remove field so we can add it at end just after
+		unset($this->export_fields_array[$r]['t.fk_soc']);	// Remove field so we can add it at end just after
+		$this->export_fields_array[$r]['t.fk_invoice'] = 'InvoiceId';
 		$this->export_fields_array[$r]['t.fk_project'] = 'ProjectId';
 		$this->export_fields_array[$r]['p.ref'] = 'ProjectRef';
+		$this->export_fields_array[$r]['t.fk_soc'] = 'IdThirdParty';
 		$this->export_entities_array[$r]['t.fk_project'] = 'project';
 		$this->export_entities_array[$r]['p.ref'] = 'project';
+		$this->export_entities_array[$r]['t.fk_soc'] = 'company';
 		$this->export_TypeFields_array[$r]['t.fk_project'] = 'Numeric';
+		$this->export_TypeFields_array[$r]['t.fk_invoice'] = 'Numeric';
 		$this->export_TypeFields_array[$r]['p.ref'] = 'Text';
+		$this->export_TypeFields_array[$r]['t.fk_soc'] = 'Numeric';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
 		$keyforselect='conferenceorboothattendee'; $keyforaliasextra='extra'; $keyforelement='conferenceorboothattendee';
