@@ -212,11 +212,10 @@ if (empty($reshook)) {
 				$object->ref = $object->getDefaultRef();
 				$object->track_id = null;
 				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref));
-			}
-			else {
+			} else {
 				$object->ref = $getRef;
 			}
-			
+
 			$object->fk_soc = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
 			$object->subject = GETPOST("subject", 'alphanohtml');
 			$object->message = GETPOST("message", 'restricthtml');
