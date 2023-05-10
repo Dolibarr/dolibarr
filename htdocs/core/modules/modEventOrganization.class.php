@@ -427,6 +427,13 @@ class modEventOrganization extends DolibarrModules
 	{
 		global $conf, $langs, $user;
 
+		/*$result = run_sql(DOL_DOCUMENT_ROOT.'/install/mysql/data/llx_c_email_templates.sql', 1, '', 1);
+		if ($result <= 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+		TODO Instead use the array merge of the sql found into llx_c_email_templates for this module
+		*/
+
 		// Permissions
 		$this->remove($options);
 
