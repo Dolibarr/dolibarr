@@ -426,7 +426,7 @@ if (empty($reshook) && $action == 'add') {
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 					// Load traductions files required by page
-					$outputlangs->loadLangs(array("main", "members"));
+					$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 					// Get email content from template
 					$arraydefaultmessage = null;
 
