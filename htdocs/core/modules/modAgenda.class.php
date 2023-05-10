@@ -107,7 +107,10 @@ class modAgenda extends DolibarrModules
 
 		// Boxes
 		//------
-		$this->boxes = array(0=>array('file'=>'box_actions.php', 'enabledbydefaulton'=>'Home'));
+		$this->boxes = array(
+			0=>array('file'=>'box_actions.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_actions_future.php', 'enabledbydefaulton'=>'Home')
+		);
 
 		// Cronjobs
 		//------------

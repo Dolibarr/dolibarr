@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Quatadah Nasdami <quatadah.nasdami@gmail.com>
+ * Copyright (C) 2023 Alexandre Janniaux    <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class InventoryTest extends PHPUnit\Framework\TestCase
+class EvalMathTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;

@@ -658,8 +658,6 @@ class Project extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
 	{
-		global $conf;
-
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
 			dol_syslog(get_class($this)."::fetch Bad parameters", LOG_WARNING);
 			return -1;

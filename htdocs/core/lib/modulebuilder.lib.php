@@ -496,12 +496,14 @@ function compareFirstValue($a, $b)
  * Rewriting all permissions after any actions
  * @param string      $file            filename or path
  * @param array       $permissions     permissions existing in file
- * @param int|null         $key             key for permission needed
+ * @param int|null    $key             key for permission needed
  * @param array|null  $right           $right to update or add
- * @param int         $action          0 for delete, 1 for add, 2 for update
+ * @param string|null $objectname      name of object
+ * @param string|null $module          name of module
+ * @param int         $action          0 for delete, 1 for add, 2 for update, -1 when delete object completly, -2 for generate rights after add
  * @return int                         1 if OK,-1 if KO
  */
-function reWriteAllPermissions($file, $permissions, $key, $right, $action)
+function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
 {
 	$error = 0;
 	$rights = array();
@@ -513,6 +515,42 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 	} elseif ($action == 2 && !empty($right)) {
 		// update right from permissions array
 		array_splice($permissions, array_search($permissions[$key], $permissions), 1, $right);
+	} elseif ($action == -1 && !empty($objectname)) {
+		// when delete object
+		$key = null;
+		$right = null;
+		foreach ($permissions as $perms) {
+			if ($perms[4] === strtolower($objectname)) {
+				array_splice($permissions, array_search($perms, $permissions), 1);
+			}
+		}
+	} elseif ($action == -2 && !empty($objectname) && !empty($module)) {
+		$key= null;
+		$right = null;
+		$objectOfRights = array();
+		//check if object already declared in rights file
+		foreach ($permissions as $right) {
+			$objectOfRights[]= $right[4];
+		}
+		if (in_array(strtolower($objectname), $objectOfRights)) {
+			$error++;
+		} else {
+			$permsToadd = array();
+			$perms = array(
+				'read' => 'Read objects of '.ucfirst($module),
+				'write' => 'Create/Update objects of '.ucfirst($module),
+				'delete' => 'Delete objects of '.ucfirst($module)
+			);
+			$i = 0;
+			foreach ($perms as $index => $value) {
+				$permsToadd[$i][0] = '';
+				$permsToadd[$i][1] = $value;
+				$permsToadd[$i][4] = strtolower($objectname);
+				$permsToadd[$i][5] = $index;
+				array_push($permissions, $permsToadd[$i]);
+				$i++;
+			}
+		}
 	} else {
 		$error++;
 	}

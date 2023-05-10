@@ -299,15 +299,13 @@ class Tva extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         id object
-	 *  @param  User	$user       User that load
+	 *  @param  string	$ref        Ref of VAT (not used yet)
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	public function fetch($id, $user = null)
+	public function fetch($id, $ref = '')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.tms,";
 		$sql .= " t.datep,";
 		$sql .= " t.datev,";
@@ -320,12 +318,11 @@ class Tva extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.fk_account";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
-		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
