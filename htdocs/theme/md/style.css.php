@@ -525,7 +525,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input {
 	line-height: 17px;
-	padding: 4px;
+	padding: 5px;
 	padding-left: 5px;
 }
 select {
@@ -3939,13 +3939,14 @@ div.colorback
 table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
 	<?php
 	if ($userborderontable) { ?>
-	border-left: 1px solid var(--colortopbordertitle1);
-	border-right: 1px solid var(--colortopbordertitle1);
-	<?php } ?>
-}
-table.liste, table.noborder.paymenttable, table.noborder.margintable, table.noborder.tableforcontact, table.formdoc, div.noborder.paymenttable, div.noborder.margintable, div.noborder.tableforcontact {
+	/* border-left: 1px solid var(--colortopbordertitle1);
+	border-right: 1px solid var(--colortopbordertitle1); */
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	<?php } else { ?>
 	border-left: 1px solid #f0f0f0;
 	border-right: 1px solid #f0f0f0;
+	<?php } ?>
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: calc(100% - 2px);	/* -2 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
@@ -3961,7 +3962,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color:  #BBB;
 	border-bottom-style: solid;
 
-	margin: 0px 0px 20px 0px;
+	margin: 0px 0px 15px 0px;
 
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
@@ -4538,8 +4539,10 @@ div .tdtop:not(.tagtdnote) {
 
 /* Prepare to remove class pair - impair */
 
-.noborder > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven),
+.noborder > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven),
+.liste > tbody > tr:nth-child(even):not(.liste_titre):not(.nooddeven),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > table:not(.tableforfieldedit) > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven),
+.liste > tbody > tr:nth-of-type(even):not(.liste_titre):not(.nooddeven),
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre):not(.nooddeven)
 {
 	background: linear-gradient(to bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
@@ -4547,14 +4550,17 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 }
-.noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
+.noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
+.liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .tagtr:nth-child(even):not(:last-of-type) .oddeven.tagtd:not(.liste_titre)
 {
 	border-bottom: 1px solid #ddd;
 }
 
-.noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven),
+.noborder > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
+.liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > table:not(.tableforfieldedit) > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven),
+.liste > tbody > tr:nth-of-type(odd):not(.liste_titre):not(.nooddeven),
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre):not(.nooddeven)
 {
 	background: linear-gradient(to bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
@@ -4562,7 +4568,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 }
-.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
+.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
+.liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
 {
 	border-bottom: 1px solid #ddd;
@@ -6493,11 +6500,11 @@ select.multiselectononeline {
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
-		min-width: 220px !important;
+		min-width: 240px !important;
 	}
 	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
-		min-width: 220px !important;
+		min-width: 240px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {

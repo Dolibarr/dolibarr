@@ -2321,7 +2321,7 @@ function dol_uncompress($inputfile, $outputdir)
 			$res = $zip->open($inputfile);
 			if ($res === true) {
 				//$zip->extractTo($outputdir.'/');
-				// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
+				// We must extract one file at time so we can check that file name does not contain '..' to avoid transversal path of zip built for example using
 				// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
 				// with -l is the range of dot to go back in path.
 				// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
