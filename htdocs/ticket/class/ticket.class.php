@@ -2266,9 +2266,10 @@ class Ticket extends CommonObject
 	 * Files may be renamed during copy to avoid overwriting existing files.
 	 *
 	 * @param	string	$forcetrackid	Force trackid
+	 * @param   int     $public_area    1=Is the public area
 	 * @return	array					Array with final path/name/mime of files.
 	 */
-	public function copyFilesForTicket($forcetrackid = null)
+	public function copyFilesForTicket($forcetrackid = null, $public_area = 0)
 	{
 		global $conf;
 
@@ -2283,7 +2284,11 @@ class Ticket extends CommonObject
 		$maxheightmini = 72;
 
 		$formmail = new FormMail($this->db);
-		$formmail->trackid = (is_null($forcetrackid) ? 'tic'.$this->id : '');
+		if (empty($public_area)) {
+			$formmail->trackid = (is_null($forcetrackid) ? 'tic'.$this->id : '');
+		} else {
+			$formmail->trackid = $this->track_id;
+		}
 		$attachedfiles = $formmail->get_attached_files();
 
 		$filepath = $attachedfiles['paths'];
@@ -2419,7 +2424,7 @@ class Ticket extends CommonObject
 			$send_email = GETPOST('send_email', 'int');
 
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
-			$resarray = $object->copyFilesForTicket();
+			$resarray = $object->copyFilesForTicket(null, $public_area);
 
 			$listofpaths = $resarray['listofpaths'];
 			$listofnames = $resarray['listofnames'];
