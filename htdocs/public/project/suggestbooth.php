@@ -495,11 +495,11 @@ if (empty($reshook) && $action == 'add') {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "members"));
+		$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 		// Get email content from template
 		$arraydefaultmessage = null;
 
-		$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH;
+		$labeltouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH');
 		if (!empty($labeltouse)) {
 			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 		}
@@ -557,7 +557,7 @@ print '<br>';
 
 // Sub banner
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
-print load_fiche_titre($langs->trans("NewSuggestionOfConference"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewSuggestionOfBooth"), '', '', 0, 0, 'center');
 // Welcome message
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
