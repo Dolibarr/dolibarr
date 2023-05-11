@@ -9136,17 +9136,19 @@ class Form
 				print '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
 
 				if (!empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
-					print '<br><form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
+					print '<br>'."\n";
+					print '<!-- form to add a link from anywhere -->'."\n";
+					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
 					print '<input type="hidden" name="id" value="' . $object->id . '">';
 					print '<input type="hidden" name="action" value="addlinkbyref">';
 					print '<input type="hidden" name="token" value="' . newToken() . '">';
 					print '<input type="hidden" name="addlink" value="' . $key . '">';
 					print '<table class="noborder">';
 					print '<tr>';
-					print '<td>' . $langs->trans("Ref") . '</td>';
-					print '<td><input type="text" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
-					print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
-					print '<input type="submit" class="button smallpaddingimp" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
+					//print '<td>' . $langs->trans("Ref") . '</td>';
+					print '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
+					print '<input type="submit" class="button small valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
+					print '<input type="submit" class="button small" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
 					print '</tr>';
 					print '</table>';
 					print '</form>';
@@ -9160,6 +9162,7 @@ class Form
 					$i = 0;
 
 					print '<br>';
+					print '<!-- form to add a link from object to same thirdparty -->'."\n";
 					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
 					print '<input type="hidden" name="action" value="addlink">';
 					print '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -9195,11 +9198,13 @@ class Form
 					}
 					print '</table>';
 					print '<div class="center">';
-					print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly" value="' . $langs->trans('ToLink') . '">';
+					if ($num) {
+						print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly small" value="' . $langs->trans('ToLink') . '">';
+					}
 					if (empty($conf->use_javascript_ajax)) {
-						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 					} else {
-						print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 					}
 					print '</form>';
 					$this->db->free($resqllist);

@@ -527,7 +527,7 @@ class Subscription extends CommonObject
 		$return .= '</span>';
 
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(property_exists($this, 'fk_adherent')? $this->fk_adherent: $this->ref ).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(property_exists($this, 'fk_adherent')? $this->fk_adherent: $this->ref ).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
 			$return .= '<br><span class="info-box-status opacitymedium">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';

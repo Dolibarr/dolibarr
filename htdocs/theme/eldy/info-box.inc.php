@@ -95,8 +95,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
-.info-box-sm .info-box-icon {
-	height: 96px;		/* must match height of info-box-sm .info-box-content */
+.info-box-sm .info-box-icon, .info-box-sm .info-box-img {
+	height: 96px !important;		/* must match height of info-box-sm .info-box-content */
 	width: 78px;
 	font-size: 25px;
 	line-height: 92px;
