@@ -1414,30 +1414,30 @@ if ($action == 'create' || $action == 'presend') {
 
 				// Link to create an intervention
 				// socid is needed otherwise fichinter ask it and forgot origin after form submit :\
-				if (!$object->fk_soc && $user->hasRight("ficheinter", "creer")) {
+				if (empty($object->fk_soc) && $user->hasRight("ficheinter", "creer")) {
 					print dolGetButtonAction($langs->trans('UnableToCreateInterIfNoSocid'), $langs->trans('TicketAddIntervention'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
-				if ($object->fk_soc > 0 && isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $user->rights->ficheinter->creer) {
+				if ($object->fk_soc > 0 && isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ficheinter', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('TicketAddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&token='.newToken().'&socid='. $object->fk_soc.'&origin=ticket_ticket&originid='. $object->id, '');
 				}
 
 				// Close ticket if statut is read
-				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
+				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
 					print dolGetButtonAction('', $langs->trans('CloseTicket'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
 				// Abadon ticket if statut is read
-				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
+				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
 					print dolGetButtonAction('', $langs->trans('AbandonTicket'), 'default', $_SERVER["PHP_SELF"].'?action=abandon&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
 				// Re-open ticket
-				if (!$user->socid && (isset($object->status) && ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED)) && !$user->socid) {
+				if (empty($user->socid) && (isset($object->status) && ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED)) && empty($user->socid)) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
 				// Delete ticket
-				if ($user->rights->ticket->delete && !$user->socid) {
+				if ($user->hasRight('ticket', 'delete') && empty($user->socid)) {
 					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 			}
@@ -1525,9 +1525,10 @@ if ($action == 'create' || $action == 'presend') {
 			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 				$param .= '&contextpage='.$contextpage;
 			}
-			if ($limit > 0 && $limit != $conf->liste_limit) {
+			// TODO list not use $limit
+			/*if ($limit > 0 && $limit != $conf->liste_limit) {
 				$param .= '&limit='.$limit;
-			}
+			}*/
 			if ($actioncode) {
 				$param .= '&actioncode='.urlencode($actioncode);
 			}
