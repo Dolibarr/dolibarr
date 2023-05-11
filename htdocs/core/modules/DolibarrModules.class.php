@@ -1380,139 +1380,118 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Adds cronjobs
-	 *
-	 * @return int             Error count (0 if OK)
-	 */
-	public function insert_cronjobs()
-	{
-		// phpcs:enable
-		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+    /**
+     * Adds cronjobs
+     *
+     * @return int             Error count (0 if OK)
+     */
+    public function insert_cronjobs()
+    {
+        // phpcs:enable
+        include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
+        include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
-		global $conf;
+        global $conf, $user;
 
-		$err = 0;
+        $err = 0;
 
-		if (is_array($this->cronjobs)) {
-			dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
+        if (is_array($this->cronjobs)) {
+            dol_syslog(get_class($this) . "::insert_cronjobs", LOG_DEBUG);
 
-			foreach ($this->cronjobs as $key => $value) {
-				$entity = isset($this->cronjobs[$key]['entity']) ? $this->cronjobs[$key]['entity'] : $conf->entity;
-				$label  = isset($this->cronjobs[$key]['label']) ? $this->cronjobs[$key]['label'] : '';
-				$jobtype = isset($this->cronjobs[$key]['jobtype']) ? $this->cronjobs[$key]['jobtype'] : '';
-				$class  = isset($this->cronjobs[$key]['class']) ? $this->cronjobs[$key]['class'] : '';
-				$objectname  = isset($this->cronjobs[$key]['objectname']) ? $this->cronjobs[$key]['objectname'] : '';
-				$method = isset($this->cronjobs[$key]['method']) ? $this->cronjobs[$key]['method'] : '';
-				$command = isset($this->cronjobs[$key]['command']) ? $this->cronjobs[$key]['command'] : '';
-				$parameters  = isset($this->cronjobs[$key]['parameters']) ? $this->cronjobs[$key]['parameters'] : '';
-				$comment = isset($this->cronjobs[$key]['comment']) ? $this->cronjobs[$key]['comment'] : '';
-				$frequency = isset($this->cronjobs[$key]['frequency']) ? $this->cronjobs[$key]['frequency'] : '';
-				$unitfrequency = isset($this->cronjobs[$key]['unitfrequency']) ? $this->cronjobs[$key]['unitfrequency'] : '';
-				$priority = isset($this->cronjobs[$key]['priority']) ? $this->cronjobs[$key]['priority'] : '';
-				$datestart = isset($this->cronjobs[$key]['datestart']) ? $this->cronjobs[$key]['datestart'] : '';
-				$dateend = isset($this->cronjobs[$key]['dateend']) ? $this->cronjobs[$key]['dateend'] : '';
-				$status = isset($this->cronjobs[$key]['status']) ? $this->cronjobs[$key]['status'] : '';
-				$test = isset($this->cronjobs[$key]['test']) ? $this->cronjobs[$key]['test'] : ''; // Line must be enabled or not (so visible or not)
+            foreach ($this->cronjobs as $key => $value) {
+                $now = dol_now();
 
-				// Search if cron entry already present
-				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
-				$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
-				if ($class) {
-					$sql .= " AND classesname = '".$this->db->escape($class)."'";
-				}
-				if ($objectname) {
-					$sql .= " AND objectname = '".$this->db->escape($objectname)."'";
-				}
-				if ($method) {
-					$sql .= " AND methodename = '".$this->db->escape($method)."'";
-				}
-				if ($command) {
-					$sql .= " AND command = '".$this->db->escape($command)."'";
-				}
-				if ($parameters) {
-					$sql .= " AND params = '".$this->db->escape($parameters)."'";
-				}
-				$sql .= " AND entity = ".((int) $entity); // Must be exact entity
+                $entity = isset($value['entity']) ? $value['entity'] : $conf->entity;
+                $label = isset($value['label']) ? $value['label'] : '';
+                $jobtype = isset($value['jobtype']) ? $value['jobtype'] : '';
+                $classesname = isset($value['class']) ? $value['class'] : '';
+                $objectname = isset($value['objectname']) ? $value['objectname'] : '';
+                $methodename = isset($value['method']) ? $value['method'] : '';
+                $command = isset($value['command']) ? $value['command'] : '';
+                $params = isset($value['parameters']) ? $value['parameters'] : '';
+                $md5params = isset($value['md5params']) ? $value['md5params'] : '';
+                $comment = isset($value['comment']) ? $value['comment'] : '';
+                $frequency = isset($value['frequency']) ? $value['frequency'] : '';
+                $unitfrequency = isset($value['unitfrequency']) ? $value['unitfrequency'] : '';
+                $priority = isset($value['priority']) ? $value['priority'] : '';
+                $datestart = isset($value['datestart']) ? $value['datestart'] : '';
+                $dateend = isset($value['dateend']) ? $value['dateend'] : '';
+                $datenextrun = isset($value['datenextrun']) ? $value['datenextrun'] : $now;
+                $status = isset($value['status']) ? $value['status'] : '';
+                $maxrun = isset($value['maxrun']) ? $value['maxrun'] : 0;
+                $libname = isset($value['libname']) ? $value['libname'] : '';
+                $test = isset($value['test']) ? $value['test'] : ''; // Line must be enabled or not (so visible or not)
 
-				$now = dol_now();
+                // Search if cron entry already present
+                $sql = "SELECT count(*) as nb FROM " . MAIN_DB_PREFIX . "cronjob";
+                $sql .= " WHERE module_name = '" . $this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class) . "'";
+                if ($classesname) {
+                    $sql .= " AND classesname = '" . $this->db->escape($classesname) . "'";
+                }
+                if ($objectname) {
+                    $sql .= " AND objectname = '" . $this->db->escape($objectname) . "'";
+                }
+                if ($methodename) {
+                    $sql .= " AND methodename = '" . $this->db->escape($methodename) . "'";
+                }
+                if ($command) {
+                    $sql .= " AND command = '" . $this->db->escape($command) . "'";
+                }
+                if ($params) {
+                    $sql .= " AND params = '" . $this->db->escape($params) . "'";
+                }
+                $sql .= " AND entity = " . ((int) $entity); // Must be exact entity
 
-				$result = $this->db->query($sql);
-				if ($result) {
-					$obj = $this->db->fetch_object($result);
-					if ($obj->nb == 0) {
-						$this->db->begin();
+                $result = $this->db->query($sql);
+                if (!$result) {
+                    $this->error = $this->db->lasterror();
+                    $err++;
+                    continue;
+                    // else box already registered into database
+                }
 
-						if (!$err) {
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
-							if (is_int($frequency)) {
-								$sql .= ' frequency,';
-							}
-							if (is_int($unitfrequency)) {
-								$sql .= ' unitfrequency,';
-							}
-							if (is_int($priority)) {
-								$sql .= ' priority,';
-							}
-							if (is_int($status)) {
-								$sql .= ' status,';
-							}
-							$sql .= " entity, test)";
-							$sql .= " VALUES (";
-							$sql .= "'".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."', ";
-							$sql .= "'".$this->db->idate($now)."', ";
-							$sql .= ($datestart ? "'".$this->db->idate($datestart)."'" : "'".$this->db->idate($now)."'").", ";
-							$sql .= ($dateend ? "'".$this->db->idate($dateend)."'" : "NULL").", ";
-							$sql .= "'".$this->db->escape($label)."', ";
-							$sql .= "'".$this->db->escape($jobtype)."', ";
-							$sql .= ($class ? "'".$this->db->escape($class)."'" : "null").",";
-							$sql .= ($objectname ? "'".$this->db->escape($objectname)."'" : "null").",";
-							$sql .= ($method ? "'".$this->db->escape($method)."'" : "null").",";
-							$sql .= ($command ? "'".$this->db->escape($command)."'" : "null").",";
-							$sql .= ($parameters ? "'".$this->db->escape($parameters)."'" : "null").",";
-							$sql .= ($comment ? "'".$this->db->escape($comment)."'" : "null").",";
-							if (is_int($frequency)) {
-								$sql .= "'".$this->db->escape($frequency)."', ";
-							}
-							if (is_int($unitfrequency)) {
-								$sql .= "'".$this->db->escape($unitfrequency)."', ";
-							}
-							if (is_int($priority)) {
-								$sql .= "'".$this->db->escape($priority)."', ";
-							}
-							if (is_int($status)) {
-								$sql .= "'".$this->db->escape($status)."', ";
-							}
-							$sql .= $entity.",";
-							$sql .= "'".$this->db->escape($test)."'";
-							$sql .= ")";
+                $obj = $this->db->fetch_object($result);
+                if ($obj->nb > 0) {
+                    continue;
+                }
 
-							$resql = $this->db->query($sql);
-							if (!$resql) {
-								$err++;
-							}
-						}
+                $cronjob = new Cronjob($this->db);
 
-						if (!$err) {
-							$this->db->commit();
-						} else {
-							$this->error = $this->db->lasterror();
-							$this->db->rollback();
-						}
-					}
-					// else box already registered into database
-				} else {
-					$this->error = $this->db->lasterror();
-					$err++;
-				}
-			}
-		}
+                $cronjob->entity = $entity;
+                $cronjob->label = $label;
+                $cronjob->jobtype = $jobtype;
+                $cronjob->classesname = $classesname;
+                $cronjob->objectname = $objectname;
+                $cronjob->methodename = $methodename;
+                $cronjob->command = $command;
+                $cronjob->params = $params;
+                $cronjob->md5params = $md5params;
+                $cronjob->comment = $comment;
+                $cronjob->frequency = $frequency;
+                $cronjob->unitfrequency = $unitfrequency;
+                $cronjob->priority = $priority;
+                $cronjob->datestart = $datestart;
+                $cronjob->dateend = $dateend;
+                $cronjob->datenextrun = $datenextrun;
+                $cronjob->maxrun = $maxrun;
+                $cronjob->status = $status;
+                $cronjob->test = $test;
+                $cronjob->libname = $libname;
+                $cronjob->module_name = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
 
-		return $err;
-	}
+                $retCreate = $cronjob->create($user);
 
+                if ($retCreate < 0) {
+                    $this->error = implode("\n", array_merge([$cronjob->error], $cronjob->errors));
+                    return -1;
+                }
+            }
+        }
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+        return $err;
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Removes boxes
 	 *
