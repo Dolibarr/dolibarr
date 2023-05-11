@@ -556,9 +556,13 @@ if (!$error && $massaction == 'confirm_presend') {
 						$sendcontext = 'standard';
 					}
 
+					// Set tmp user directory (used to convert images embedded as img src=data:image)
+					$vardir = $conf->user->dir_output."/".$user->id;
+					$upload_dir_tmp = $vardir.'/temp'; // TODO Add $keytoavoidconflict in upload_dir path
+
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext);
+					$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 					if ($mailfile->error) {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					} else {
