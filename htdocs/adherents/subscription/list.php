@@ -537,7 +537,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked'])) {
-		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($adherent->firstname).'">'.$adherent->firstname.'</td>';
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($adherent->firstname).'">'.dol_escape_htmltag($adherent->firstname).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -545,7 +545,7 @@ while ($i < min($num, $limit)) {
 
 	// Login
 	if (!empty($arrayfields['d.login']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->login).'">'.$adherent->login.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->login).'">'.dol_escape_htmltag($adherent->login).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -553,7 +553,7 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['t.libelle']['checked'])) {
-		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note_private).'">';
+		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note_private).'" class="tooltip">';
 		print dol_escape_htmltag(dolGetFirstLineOfText($obj->note_private));
 		print '</td>';
 		if (!$i) {
@@ -636,7 +636,7 @@ while ($i < min($num, $limit)) {
 		if (in_array($obj->crowid, $arrayofselected)) {
 			$selected = 1;
 		}
-		print '<input id="cb'.$obj->crowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->crowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '<input id="cb'.$obj->crowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.((int) $obj->crowid).'"'.($selected ? ' checked="checked"' : '').'>';
 	}
 	print '</td>';
 	if (!$i) {
