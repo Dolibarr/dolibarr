@@ -158,7 +158,7 @@ $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.
 $sql .= " d.gender, d.email, d.morphy,";
 $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql .= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
-$sql .= " c.fk_bank as bank, c.note,";
+$sql .= " c.fk_bank as bank, c.note as note_private,";
 $sql .= " b.fk_account";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " JOIN ".MAIN_DB_PREFIX."subscription as c on d.rowid = c.fk_adherent";
@@ -530,14 +530,14 @@ while ($i < min($num, $limit)) {
 
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		print '<td class="tdoverflowmax150">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
+		print '<td class="tdoverflowmax125">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->firstname).'">'.$adherent->firstname.'</td>';
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($adherent->firstname).'">'.$adherent->firstname.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -553,8 +553,8 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['t.libelle']['checked'])) {
-		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note).'">';
-		print $obj->note;
+		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note_private).'">';
+		print dol_escape_htmltag(dolGetFirstLineOfText($obj->note_private));
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
