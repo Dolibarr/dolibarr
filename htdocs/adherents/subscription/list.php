@@ -385,7 +385,7 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 
 if (!empty($arrayfields['d.bank']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth150');
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth100');
 	print '</td>';
 }
 
@@ -563,7 +563,7 @@ while ($i < min($num, $limit)) {
 
 	// Banque
 	if (!empty($arrayfields['d.bank']['checked'])) {
-		print '<td class="tdmaxoverflow150">';
+		print '<td class="tdmaxoverflow100">';
 		if ($obj->fk_account > 0) {
 			$accountstatic->id = $obj->fk_account;
 			$accountstatic->fetch($obj->fk_account);
