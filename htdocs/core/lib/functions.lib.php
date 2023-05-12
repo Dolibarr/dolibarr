@@ -952,7 +952,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				}
 			}
 			break;
-		case 'aZ09arobase':		// great to sanitize objecttype parameter
+		case 'aZ09arobase':		// great to sanitize $objecttype parameter
 			if (!is_array($out)) {
 				$out = trim($out);
 				if (preg_match('/[^a-z0-9_\-\.@]+/i', $out)) {
@@ -960,16 +960,13 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				}
 			}
 			break;
-		case 'aZ09comma':		// great to sanitize sortfield or sortorder params that can be t.abc,t.def_gh
+		case 'aZ09comma':		// great to sanitize $sortfield or $sortorder params that can be 't.abc,t.def_gh'
 			if (!is_array($out)) {
 				$out = trim($out);
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) {
 					$out = '';
 				}
 			}
-			break;
-		case 'nohtml':		// No html
-			$out = dol_string_nohtmltag($out, 0);
 			break;
 		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
@@ -1001,6 +998,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#92', '&#0000092', '&#x2F', '../', '..\\'), '', $out);
 				} while ($oldstringtoclean != $out);
 			}
+			break;
+		case 'nohtml':		// No html
+			$out = dol_string_nohtmltag($out, 0);
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlnolink':
@@ -7391,6 +7391,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
  *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
+ *  @see dolGetFirstLineOfText()
  */
 function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UTF-8', $removelasteolbr = 1)
 {
