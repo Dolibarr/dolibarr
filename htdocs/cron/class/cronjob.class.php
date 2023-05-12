@@ -370,8 +370,8 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->unitfrequency) ? 'NULL' : "'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql .= " ".(!isset($this->frequency) ? '0' : $this->frequency).",";
 		$sql .= " ".(!isset($this->status) ? '0' : $this->status).",";
-		$sql .= " ".$user->id.",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
+		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
 		$sql .= " ".(!isset($this->nbrun) ? '0' : $this->db->escape($this->nbrun)).",";
 		$sql .= " ".(empty($this->maxrun) ? '0' : $this->db->escape($this->maxrun)).",";
