@@ -2422,7 +2422,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				if (! empty($conf->accounting->enabled)) {
 					// Accountancy_code_sell
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
 					print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
 					print '</td></tr>';
@@ -2434,7 +2434,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td></tr>';
 				} else { // For external software
 					// Accountancy_code_sell
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 					print '</td></tr>';
 

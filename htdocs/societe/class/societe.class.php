@@ -1580,6 +1580,8 @@ class Societe extends CommonObject
 
 				// update accountancy for this entity
 				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+					$this->db->query("UPDATE " . MAIN_DB_PREFIX . "societe SET accountancy_code_sell = '', accountancy_code_buy = '' WHERE rowid = " . $this->id . " AND entity = " . $conf->entity);
+
 					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
 
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
