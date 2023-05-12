@@ -3419,7 +3419,7 @@ div.blockvmenupair, div.blockvmenuimpair
 	background: var(--colorbackvmenu1);
 
 	padding-bottom: 10px;
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e8e8e8;
 }
 div.blockvmenubookmarks
 {
@@ -4554,7 +4554,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .tagtr:nth-child(even):not(:last-of-type) .oddeven.tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e8e8e8;
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
@@ -4572,7 +4572,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e8e8e8;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
