@@ -1651,10 +1651,10 @@ if ($action == 'create' && $usercancreate) {
 			if (!$remise_percent) {
 				$remise_percent = $soc->remise_percent;
 			}
-			if (!$dateorder) {
+			/*if (!$dateorder) {
 				// Do not set 0 here (0 for a date is 1970)
-				$dateorder = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE_ODER) ?-1 : '') : $dateorder);
-			}
+				$dateorder = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '') : $dateorder);
+			}*/
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1753,7 +1753,7 @@ if ($action == 'create' && $usercancreate) {
 	print '<form name="crea_commande" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
+	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
 	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_percent.'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
@@ -1797,6 +1797,7 @@ if ($action == 'create' && $usercancreate) {
 					var socid = $(this).val();
 					// reload page
 					$("input[name=action]").val("create");
+					$("input[name=changecompany]").val("1");
 					$("form[name=crea_commande]").submit();
 				});
 			});
@@ -1844,25 +1845,25 @@ if ($action == 'create' && $usercancreate) {
 	// Delivery delay
 	print '<tr class="fielddeliverydelay"><td>'.$langs->trans('AvailabilityPeriod').'</td><td>';
 	print img_picto('', 'clock', 'class="pictofixedwidth"');
-	$form->selectAvailabilityDelay((GETPOSTISSET('availability_id')?GETPOST('availability_id'):$availability_id), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+	$form->selectAvailabilityDelay((GETPOSTISSET('availability_id') ? GETPOST('availability_id') : $availability_id), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
 	print '</td></tr>';
 
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id')?GETPOST('cond_reglement_id'):$cond_reglement_id), 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
+	print $form->getSelectConditionsPaiements(((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id') : $cond_reglement_id), 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id')?GETPOST('mode_reglement_id'):$mode_reglement_id), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements(((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id', 'int') != 0) ? GETPOST('mode_reglement_id') : $mode_reglement_id), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
 	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && isModEnabled("banque")) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((GETPOSTISSET('fk_account')?GETPOST('fk_account'):$fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(((GETPOSTISSET('fk_account') && GETPOST('fk_account', 'int') != 0) ? GETPOST('fk_account') : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
@@ -1870,7 +1871,7 @@ if ($action == 'create' && $usercancreate) {
 	if (isModEnabled('expedition')) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
 		print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
-		$form->selectShippingMethod((GETPOSTISSET('shipping_method_id')?GETPOST('shipping_method_id'):$shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+		$form->selectShippingMethod(((GETPOSTISSET('shipping_method_id') && GETPOST('shipping_method_id', 'int') != 0) ? GETPOST('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}
 

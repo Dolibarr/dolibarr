@@ -145,7 +145,7 @@ OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or par
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page

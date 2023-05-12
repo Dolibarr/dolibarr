@@ -862,7 +862,12 @@ class Categorie extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
 		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
 		$sql .= " AND c.fk_categorie = ".((int) $this->id);
-		$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+		// Compatibility with actioncomm table which has id instead of rowid
+		if ($this->MAP_OBJ_TABLE[$type] == "actioncomm" || $type == "actioncomm") {
+			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
+		} else {
+			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+		}
 		// Protection for external users
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
 			$sql .= " AND o.rowid = ".((int) $user->socid);

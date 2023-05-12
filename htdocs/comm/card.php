@@ -1419,6 +1419,7 @@ if ($object->id > 0) {
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.entity';
+		$sql .= ', f.date_lim_reglement as dl';
 		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as status';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
@@ -1427,7 +1428,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc,';
-		$sql .= ' f.entity, f.datef, f.datec, f.paye, f.fk_statut,';
+		$sql .= ' f.entity, f.date_lim_reglement, f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";
 

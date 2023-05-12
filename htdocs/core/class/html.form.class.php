@@ -246,7 +246,7 @@ class Form
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
 				}
-				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata)) {
+				if (preg_match('/^(string|safehtmlstring|email|url)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.(empty($tmp[1]) ? '' : ' size="'.$tmp[1].'"').' autofocus>';
 				} elseif (preg_match('/^(integer)/', $typeofdata)) {
@@ -320,6 +320,8 @@ class Form
 			} else {
 				if (preg_match('/^(email)/', $typeofdata)) {
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
+				} elseif (preg_match('/^url/', $typeofdata)) {
+					$ret .= dol_print_url($value, '_blank', 32, 1);
 				} elseif (preg_match('/^(amount|numeric)/', $typeofdata)) {
 					$ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
 				} elseif (preg_match('/^(checkbox)/', $typeofdata)) {
