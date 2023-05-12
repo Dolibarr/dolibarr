@@ -21,15 +21,16 @@
  */
 
 /**
- *	\file       htdocs/comm/propal/note.php
+ *	\file       htdocs/supplier_proposal/note.php
  *	\ingroup    propal
- *	\brief      Fiche d'information sur une proposition commerciale
+ *	\brief      Page to show notes of a supplier proposal request
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 // Load translation files required by the page
@@ -52,6 +53,8 @@ $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal');
 
 $object = new SupplierProposal($db);
 
+$usercancreate = $user->hasRight("supplier_propal", "write");
+
 
 
 /*
@@ -72,10 +75,6 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Notes');
-$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
-
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
@@ -87,6 +86,10 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
+
+		$title = $object->ref." - ".$langs->trans('Notes');
+		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+		llxHeader('', $title, $help_url);
 
 		$societe = new Societe($db);
 		if ($societe->fetch($object->socid)) {
@@ -103,37 +106,25 @@ if ($id > 0 || !empty($ref)) {
 			//$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
 			//$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
 			// Thirdparty
-			$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+			$morehtmlref .= $object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (!empty($conf->project->enabled)) {
 				$langs->load("projects");
-				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-				if ($user->rights->supplier_proposal->creer) {
+				$morehtmlref .= '<br>';
+				if ($usercancreate) {
+					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-						$morehtmlref .= ' : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref .= '</form>';
-					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-					}
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
 							$morehtmlref .= ' - '.$proj->title;
 						}
-					} else {
-						$morehtmlref .= '';
 					}
 				}
 			}

@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Jenis garis (0 = produk, 1 = layanan)
 FileWithDataToImport=File dengan data untuk diimpor
 FileToImport=Sumber file untuk diimpor
 FileMustHaveOneOfFollowingFormat=File yang akan diimpor harus memiliki salah satu format berikut
-DownloadEmptyExample=Unduh file template dengan informasi konten bidang
-StarAreMandatory=* adalah bidang wajib
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Pilih format file untuk digunakan sebagai format file impor dengan mengklik ikon %s untuk memilihnya ...
 ChooseFileToImport=Unggah file kemudian klik ikon %s untuk memilih file sebagai file impor sumber ...
 SourceFileFormat=Format file sumber
@@ -135,3 +135,6 @@ NbInsert=Jumlah baris yang dimasukkan: %s
 NbUpdate=Jumlah baris yang diperbarui: %s
 MultipleRecordFoundWithTheseFilters=Beberapa catatan telah ditemukan dengan filter ini: %s
 StocksWithBatch=Stok dan lokasi (gudang) produk dengan nomor batch/serial
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

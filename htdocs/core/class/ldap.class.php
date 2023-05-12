@@ -193,11 +193,19 @@ class Ldap
 	{
 		// phpcs:enable
 		global $conf;
+		global $dolibarr_main_auth_ldap_debug;
 
 		$connected = 0;
 		$this->bind = 0;
 		$this->error = 0;
 		$this->connectedServer = '';
+
+		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
+
+		if ($ldapdebug) {
+			dol_syslog(get_class($this)."::connect_bind");
+			print "DEBUG: connect_bind<br>\n";
+		}
 
 		// Check parameters
 		if (count($this->server) == 0 || empty($this->server[0])) {
@@ -223,18 +231,28 @@ class Ldap
 				}
 
 				if ($this->serverPing($host, $this->serverPort) === true) {
+					if ($ldapdebug) {
+						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host);
+					}
 					$this->connection = ldap_connect($host, $this->serverPort);
 				} else {
 					if (preg_match('/^ldaps/i', $host)) {
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
-						// we test this case and continue in suche a case even if serverPing fails.
+						// we test this case and continue in such a case even if serverPing fails.
+						if ($ldapdebug) {
+							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host);
+						}
 						$this->connection = ldap_connect($host, $this->serverPort);
 					} else {
 						continue;
 					}
 				}
 
-				if (is_resource($this->connection)) {
+				if (is_resource($this->connection) || is_object($this->connection)) {
+					if ($ldapdebug) {
+						dol_syslog(get_class($this)."::connect_bind this->connection is ok", LOG_DEBUG);
+					}
+
 					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
 						// For test/debug
@@ -263,6 +281,7 @@ class Ldap
 						if ($this->result) {
 							$this->bind = $this->result;
 							$connected = 2;
+							$this->connectedServer = $host;
 							break;
 						} else {
 							$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -275,6 +294,7 @@ class Ldap
 							if ($this->result) {
 								$this->bind = $this->result;
 								$connected = 2;
+								$this->connectedServer = $host;
 								break;
 							} else {
 								$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -287,6 +307,7 @@ class Ldap
 							if ($result) {
 								$this->bind = $this->result;
 								$connected = 1;
+								$this->connectedServer = $host;
 								break;
 							} else {
 								$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -297,10 +318,8 @@ class Ldap
 
 				if (!$connected) {
 					$this->unbind();
-				} else {
-					$this->connectedServer = $host;
 				}
-			}
+			}	// End loop on each server
 		}
 
 		if ($connected) {
@@ -320,17 +339,12 @@ class Ldap
 	 * This method seems a duplicate/alias of unbind().
 	 *
 	 * @return	boolean			true or false
-	 * @deprecated ldap_close is an alias of ldap_unbind
+	 * @deprecated ldap_close is an alias of ldap_unbind, so use unbind() instead.
 	 * @see unbind()
 	 */
 	public function close()
 	{
-		$r_type = get_resource_type($this->connection);
-		if ($this->connection && ($r_type === "Unknown" || !@ldap_close($this->connection))) {
-			return false;
-		} else {
-			return true;
-		}
+		return $this->unbind();
 	}
 
 	/**
@@ -382,7 +396,7 @@ class Ldap
 	public function unbind()
 	{
 		$this->result = true;
-		if ($this->connection) {
+		if (is_resource($this->connection) || is_object($this->connection)) {
 			$this->result = @ldap_unbind($this->connection);
 		}
 		if ($this->result) {
@@ -997,12 +1011,12 @@ class Ldap
 	}
 
 	/**
-	 * 	Returns an array containing a details or list of LDAP record(s)
+	 * 	Returns an array containing a details or list of LDAP record(s).
 	 * 	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
 	 *
 	 *	@param	string	$search			 	Value of field to search, '*' for all. Not used if $activefilter is set.
 	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
-	 *	@param	string	$useridentifier 	Name of key field (Ex: uid)
+	 *	@param	string	$useridentifier 	Name of key field (Ex: uid).
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
 	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
@@ -1039,12 +1053,12 @@ class Ldap
 		if (is_array($attributeArray)) {
 			// Return list with required fields
 			$attributeArray = array_values($attributeArray); // This is to force to have index reordered from 0 (not make ldap_search fails)
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
 			//var_dump($attributeArray);
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
 		} else {
 			// Return list with fields selected by default
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter);
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $userDn, $filter);
 		}
 		if (!$this->result) {
@@ -1059,7 +1073,7 @@ class Ldap
 		//print_r($info);
 
 		for ($i = 0; $i < $info["count"]; $i++) {
-			$recordid = $this->convToOutputCharset($info[$i][$useridentifier][0], $this->ldapcharset);
+			$recordid = $this->convToOutputCharset($info[$i][strtolower($useridentifier)][0], $this->ldapcharset);
 			if ($recordid) {
 				//print "Found record with key $useridentifier=".$recordid."<br>\n";
 				$fulllist[$recordid][$useridentifier] = $recordid;
@@ -1220,10 +1234,10 @@ class Ldap
 	/**
 	 * 		Load all attribute of a LDAP user
 	 *
-	 * 		@param	User	$user		User to search for. Not used if a filter is provided.
-	 *      @param  string	$filter		Filter for search. Must start with &.
-	 *                       	       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
-	 *		@return	int					>0 if OK, <0 if KO
+	 * 		@param	User|string	$user		Not used.
+	 *      @param  string		$filter		Filter for search. Must start with &.
+	 *                       		       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
+	 *		@return	int						>0 if OK, <0 if KO
 	 */
 	public function fetch($user, $filter)
 	{

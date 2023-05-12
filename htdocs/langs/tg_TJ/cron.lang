@@ -26,7 +26,7 @@ CronCommand=Фармон
 CronList=Корҳои ба нақша гирифташуда
 CronDelete=Корҳои ба нақша гирифташударо нест кунед
 CronConfirmDelete=Шумо мутмаин ҳастед, ки мехоҳед ин корҳои ба нақша гирифташударо нест кунед?
-CronExecute=Оғози кори ба нақша гирифташуда
+CronExecute=Launch now
 CronConfirmExecute=Шумо мутмаин ҳастед, ки мехоҳед ин корҳои таъиншударо ҳозир иҷро кунед?
 CronInfo=Модули кории ба нақша гирифташуда имкон медиҳад, ки ҷойҳои корӣ ба таври худкор иҷро карда шаванд. Корҳоро инчунин дастӣ оғоз кардан мумкин аст.
 CronTask=Айюб
@@ -58,7 +58,7 @@ CronNote=Шарҳ
 CronFieldMandatory=Майдонҳои %s ҳатмӣ мебошанд
 CronErrEndDateStartDt=Санаи анҷом наметавонад пеш аз санаи оғоз бошад
 StatusAtInstall=Ҳолати насби модул
-CronStatusActiveBtn=Ҷадвал
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=Хомӯш кардан
 CronTaskInactive=Ин кор ғайрифаъол аст (ба нақша гирифта нашудааст)
 CronId=Id
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Ба менюи "<a href="%s"> Home - Восит
 JobDisabled=Кор хомӯш карда шудааст
 MakeLocalDatabaseDumpShort=Захираи пойгоҳи додаҳои маҳаллӣ
 MakeLocalDatabaseDump=Як партовгоҳи пойгоҳи додаҳои маҳаллиро эҷод кунед. Параметрҳо инҳоянд: фишурдасозӣ ('gz' ё 'bz' ё 'ҳеҷ'), навъи нусхабардорӣ ('mysql', 'pgsql', 'auto'), 1, 'auto' ё номи файл барои сохтан, шумораи файлҳои захиравӣ барои нигоҳ доштан
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=Диққат, бо мақсади иҷроиш, кадом санаи навбатии иҷрои корҳои имконпазир бошад, ҷойҳои кории шумо то ҳадди аксар %s ба таъхир гузошта мешаванд.
 DATAPOLICYJob=Тозакунандаи маълумот ва анонимайзер
 JobXMustBeEnabled=Job %s бояд фаъол карда шавад
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Охирин кори ба нақша гирифташуда
 NextScheduledJobExecute=Кори навбатии ба нақша гирифташуда барои иҷро
 NumberScheduledJobError=Шумораи ҷойҳои кории ба нақша гирифташуда
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

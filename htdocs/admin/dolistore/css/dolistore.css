@@ -67,9 +67,6 @@ div.divsearchfield {
 .tree li:last-child:after{
     display: none
 }
-.blockUI {
-    cursor: auto!important;
-}
 .newAppParent{
     position: relative;
     overflow: hidden;

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -45,7 +46,7 @@ $rowid = GETPOST('rowid', 'alpha');
 $code = GETPOST('code', 'alpha');
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -75,6 +76,8 @@ if (empty($sortorder)) {
 }
 
 $error = 0;
+
+$search_country_id = GETPOST('search_country_id', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
@@ -121,7 +124,7 @@ $tabrowid[35] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[35] = !empty($conf->accounting->enabled);
+$tabcond[35] = isModEnabled('accounting');
 
 // List of help for fields
 $tabhelp = array();
@@ -606,12 +609,6 @@ if ($id) {
 					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
 					if (isset($obj->code) && $id != 10) {
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
-							$iserasable = 0;
-							$canbedisabled = 0;
-						} elseif ($obj->code == 'RECEP') {
-							$iserasable = 0;
-							$canbedisabled = 0;
-						} elseif ($obj->code == 'EF0') {
 							$iserasable = 0;
 							$canbedisabled = 0;
 						}

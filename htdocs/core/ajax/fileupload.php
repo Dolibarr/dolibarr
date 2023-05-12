@@ -21,9 +21,6 @@
  *       \brief      File to return Ajax response on file upload
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -35,6 +32,7 @@ if (!defined('NOREQUIREHTML')) {
 }
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';
 
@@ -47,8 +45,19 @@ error_reporting(E_ALL | E_STRICT);
 $fk_element = GETPOST('fk_element', 'int');
 $element = GETPOST('element', 'alpha');
 
-
 $upload_handler = new FileUpload(null, $fk_element, $element);
+
+// Feature not enabled. Warning feature not used and not secured so disabled.
+if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+	return;
+}
+
+
+/*
+ * View
+ */
+
+top_httphead();
 
 header('Pragma: no-cache');
 header('Cache-Control: no-store, no-cache, must-revalidate');

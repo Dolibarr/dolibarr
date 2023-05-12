@@ -24,6 +24,7 @@
  *       \brief      Contacts of tickets
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
@@ -33,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (isModEnabled('project')) {
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticket'));
@@ -84,7 +90,32 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+
+		$error = 0;
+
+		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+		if ($codecontact=='SUPPORTTEC') {
+			$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
+			foreach ($internal_contacts as $key => $contact) {
+				if ($contact['id'] !== $contactid) {
+					//print "user à effacer : ".$useroriginassign;
+					$result = $object->delete_contact($contact['rowid']);
+					if ($result<0) {
+						$error ++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+			}
+			$ret = $object->assignUser($user, $contactid);
+			if ($ret < 0) {
+				$error ++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if (empty($error)) {
+			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+		}
 	}
 
 	if ($result >= 0) {
@@ -112,6 +143,16 @@ if ($action == 'swapstatut' && $user->rights->ticket->write) {
 // Efface un contact
 if ($action == 'deletecontact' && $user->rights->ticket->write) {
 	if ($object->fetch($id, '', $track_id)) {
+		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
+		foreach ($internal_contacts as $key => $contact) {
+			if ($contact['rowid'] == $lineid && $object->fk_user_assign==$contact['id']) {
+				$ret = $object->assignUser($user, null);
+				if ($ret < 0) {
+					$error ++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
@@ -161,57 +202,48 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		if ($object->fk_user_create > 0) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 
-			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
 			$morehtmlref .= $fuser->getNomUrl(-1);
-		}
-		if (!empty($object->origin_email)) {
+		} elseif (!empty($object->email_msgid)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-			$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+		} elseif (!empty($object->origin_email)) {
+			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 		}
 
 		// Thirdparty
-		if (!empty($conf->societe->enabled)) {
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
-			/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-				$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
-			}*/
-			$morehtmlref .= ' : ';
-			if ($action == 'editcustomer') {
-				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
-			} else {
-				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+		if (isModEnabled("societe")) {
+			$morehtmlref .= '<br>';
+			$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
+			if ($action != 'editcustomer' && 0) {
+				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
+			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->ticket->write) {
+			if (0) {
+				$morehtmlref .= '<br>';
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
-					$morehtmlref .= ' : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref .= '</form>';
-				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
+					$morehtmlref .= '<br>';
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
-				} else {
-					$morehtmlref .= '';
+					if ($proj->title) {
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+					}
 				}
 			}
 		}
@@ -220,7 +252,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
 		$linkback = '<a href="'.dol_buildpath('/ticket/list.php', 1).'"><strong>'.$langs->trans("BackToList").'</strong></a> ';
 
-		dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1, '');
+		dol_banner_tab($object, 'ref', $linkback, (!empty($user->socid) ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1, '');
 
 		print dol_get_fiche_end();
 

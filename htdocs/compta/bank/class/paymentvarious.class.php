@@ -127,6 +127,22 @@ class PaymentVarious extends CommonObject
 
 
 	/**
+	 * @var	int		Type of bank account if the payment is on a bank account
+	 */
+	public $fk_type;
+
+	/**
+	 * @var int		1 if the payment is on a bank account line that is conciliated
+	 */
+	public $rappro;
+
+	/**
+	 * @var	string	ID of bank receipt
+	 */
+	public $bank_num_releve;
+
+
+	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -165,7 +181,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 		$this->element = 'payment_various';
@@ -251,7 +267,6 @@ class PaymentVarious extends CommonObject
 	 */
 	public function fetch($id, $user = null)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " v.rowid,";
 		$sql .= " v.tms,";
@@ -262,7 +277,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " v.fk_typepayment,";
 		$sql .= " v.num_payment,";
 		$sql .= " v.label,";
-		$sql .= " v.note,";
+		$sql .= " v.note as note_private,";
 		$sql .= " v.accountancy_code,";
 		$sql .= " v.subledger_account,";
 		$sql .= " v.fk_projet as fk_project,";
@@ -271,7 +286,8 @@ class PaymentVarious extends CommonObject
 		$sql .= " v.fk_user_modif,";
 		$sql .= " b.fk_account,";
 		$sql .= " b.fk_type,";
-		$sql .= " b.rappro";
+		$sql .= " b.rappro,";
+		$sql .= " b.num_releve as bank_num_releve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
 		$sql .= " WHERE v.rowid = ".((int) $id);
@@ -292,7 +308,8 @@ class PaymentVarious extends CommonObject
 				$this->type_payment         = $obj->fk_typepayment;
 				$this->num_payment          = $obj->num_payment;
 				$this->label                = $obj->label;
-				$this->note                 = $obj->note;
+				$this->note                 = $obj->note_private;	// For backward compatibility
+				$this->note_private         = $obj->note_private;
 				$this->subledger_account    = $obj->subledger_account;
 				$this->accountancy_code     = $obj->accountancy_code;
 				$this->fk_project           = $obj->fk_project;
@@ -302,6 +319,7 @@ class PaymentVarious extends CommonObject
 				$this->fk_account           = $obj->fk_account;
 				$this->fk_type              = $obj->fk_type;
 				$this->rappro               = $obj->rappro;
+				$this->bank_num_releve      = $obj->bank_num_releve;
 			}
 			$this->db->free($resql);
 
@@ -423,11 +441,11 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->fk_account) || $this->fk_account <= 0)) {
+		if (isModEnabled("banque") && (empty($this->fk_account) || $this->fk_account <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
@@ -481,7 +499,7 @@ class PaymentVarious extends CommonObject
 			$this->ref = $this->id;
 
 			if ($this->id > 0) {
-				if (!empty($conf->banque->enabled) && !empty($this->amount)) {
+				if (isModEnabled("banque") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -606,45 +624,20 @@ class PaymentVarious extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-
-		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
-		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
-		} elseif ($mode == 2) {
-			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
-			}
-		} elseif ($mode == 3) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
-			}
-		} elseif ($mode == 5) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			/*$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');*/
 		}
+
+		$statusType = 'status'.$status;
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 
@@ -694,13 +687,6 @@ class PaymentVarious extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('myobjectdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -721,7 +707,7 @@ class PaymentVarious extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('variouspayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

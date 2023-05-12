@@ -20,6 +20,7 @@ ModulePartnershipName=Xestión de Asociacións
 PartnershipDescription=Módulo de xestión de Asociacións
 PartnershipDescriptionLong= Módulo de xestión de Asociacións
 Partnership=Asociación
+Partnerships=Asociacións
 AddPartnership=Engade asociado
 CancelPartnershipForExpiredMembers=Asociación: cancela a asociación de membros con subscricións caducadas 
 PartnershipCheckBacklink=Asociación: comprobe a ligazón de retroceso referente 
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Asociación: comprobe a ligazón de retroceso referente
 # Menu
 #
 NewPartnership=Nova Asociación
+NewPartnershipbyWeb=A súa solicitude de asociación engadiuse correctamente. Podemos contactar con vostede en breve...
 ListOfPartnerships=Listaxe de Asociacións
 
 #
@@ -42,6 +44,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Ligazóns de atraso para comprobar
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nº de días antes do estado cancelado dun asociado cando caducou a subscrición
 ReferingWebsiteCheck=Comprobación da referencia do sitio web 
 ReferingWebsiteCheckDesc=Pode habilitar unha función para comprobar que os seus socios engadiron unha ligazón de retroceso aos dominios do seu sitio web no seu propio sitio web. 
+PublicFormRegistrationPartnerDesc=Dolibarr pode fornecer un URL/sitio web público para que os visitantes externos soliciten formar parte do programa de colaboración.
 
 #
 # Object
@@ -59,6 +62,12 @@ BacklinkNotFoundOnPartnerWebsite=Non se atopou a ligazón de atraso no sitio web
 ConfirmClosePartnershipAsk=Está certo de querer cancelar esta asociación? 
 PartnershipType=Tipo de asociación
 PartnershipRefApproved=A asociación %s aprobouse
+KeywordToCheckInWebsite=Se quere comprobar que unha determinada palabra clave está presente no sitio web de cada asociado, defina esta palabra clave aquí
+PartnershipDraft=Non validada
+PartnershipAccepted=Aceptado
+PartnershipRefused=Rexeitado
+PartnershipCanceled=Anulado
+PartnershipManagedFor=Os socios son
 
 #
 # Template Mail
@@ -82,11 +91,6 @@ CountLastUrlCheckError=Número de erros para as últimas URL revisadas
 LastCheckBacklink=Data da última URL revisada
 ReasonDeclineOrCancel=Razón para declinar
 
-#
-# Status
-#
-PartnershipDraft=Non validada
-PartnershipAccepted=Aceptado
-PartnershipRefused=Rexeitado
-PartnershipCanceled=Anulado
-PartnershipManagedFor=Os socios son
+NewPartnershipRequest=Nova solicitude de colaboración
+NewPartnershipRequestDesc=Este formulario permíte solicitar formar parte dun dos nosos programas de colaboración. Se precisa axuda para cubrir este formulario, póñase en contacto por correo electrónico <b> %s </b> .
+

@@ -60,7 +60,7 @@ class Tasks extends DolibarrApi
 	 * Return an array with task informations
 	 *
 	 * @param   int         $id                     ID of task
-	 * @param   int         $includetimespent       0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines (2 is no implemented yet)
+	 * @param   int         $includetimespent       0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return 	array|mixed                         data without useless information
 	 *
 	 * @throws 	RestException
@@ -83,9 +83,8 @@ class Tasks extends DolibarrApi
 		if ($includetimespent == 1) {
 			$timespent = $this->task->getSummaryOfTimeSpent(0);
 		}
-		if ($includetimespent == 1) {
-			// TODO
-			// Add class for timespent records and loop and fill $line->lines with records of timespent
+		if ($includetimespent == 2) {
+			$timespent = $this->task->fetchTimeSpentOnTask();
 		}
 
 		return $this->_cleanObjectDatas($this->task);
@@ -151,11 +150,10 @@ class Tasks extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -334,7 +332,7 @@ class Tasks extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 
 		$updateRes = $this->project->addline(
 						$request_data->desc,
@@ -401,7 +399,7 @@ class Tasks extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 
 		$updateRes = $this->project->updateline(
 						$lineid,
@@ -518,6 +516,7 @@ class Tasks extends DolibarrApi
 	 * @param   string      $note               Note
 	 *
 	 * @url POST    {id}/addtimespent
+	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"
 	 *
 	 * @return  array
 	 */
@@ -564,6 +563,110 @@ class Tasks extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Update time spent for a task of a project.
+	 * You can test this API with the following input message
+	 * { "date": "2016-12-31 23:15:00", "duration": 1800, "user_id": 1, "note": "My time test" }
+	 *
+	 * @param   int         $id                 Task ID
+	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
+	 * @param   int         $duration           Duration in seconds (3600 = 1h)
+	 * @param   int         $user_id            User (Use 0 for connected user)
+	 * @param   string      $note               Note
+	 *
+	 * @url PUT    {id}/timespent/{timespent_id}
+	 *
+	 * @return  array
+	 */
+	public function putTimeSpent($id, $timespent_id, $date, $duration, $user_id = 0, $note = '')
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+			throw new RestException(401);
+		}
+		$this->timespentRecordChecks($id, $timespent_id);
+
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$newdate = dol_stringtotime($date, 1);
+		$this->task->timespent_date = $newdate;
+		$this->task->timespent_datehour = $newdate;
+		$this->task->timespent_withhour = 1;
+		$this->task->timespent_duration = $duration;
+		$this->task->timespent_fk_user  = $user_id ?? DolibarrApiAccess::$user->id;
+		$this->task->timespent_note     = $note;
+
+		$result = $this->task->updateTimeSpent(DolibarrApiAccess::$user, 0);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done.');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when updating time spent: '.$this->task->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Time spent updated'
+			)
+		);
+	}
+
+	/**
+	 * Delete time spent for a task of a project.
+	 *
+	 * @param   int         $id                 Task ID
+	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 *
+	 * @url DELETE    {id}/timespent/{timespent_id}
+	 *
+	 * @return  array
+	 */
+	public function deleteTimeSpent($id, $timespent_id)
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
+			throw new RestException(401);
+		}
+		$this->timespentRecordChecks($id, $timespent_id);
+
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($this->task->delTimeSpent(DolibarrApiAccess::$user, 0) < 0) {
+			throw new RestException(500, 'Error when deleting time spent: '.$this->task->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Time spent deleted'
+			)
+		);
+	}
+
+	/**
+	 * Validate task & timespent IDs for timespent API methods.
+	 * Loads the selected task & timespent records.
+	 *
+	 * @param   int         $id                 Task ID
+	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 *
+	 * @return void
+	 */
+	protected function timespentRecordChecks($id, $timespent_id)
+	{
+		if ($this->task->fetch($id) <= 0) {
+			throw new RestException(404, 'Task not found');
+		}
+		if ($this->task->fetchTimeSpent($timespent_id) <= 0) {
+			throw new RestException(404, 'Timespent not found');
+		} elseif ($this->task->id != $id) {
+			throw new RestException(404, 'Timespent not found in selected task');
+		}
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**

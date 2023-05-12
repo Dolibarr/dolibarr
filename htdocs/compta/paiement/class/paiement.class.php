@@ -8,9 +8,10 @@
  * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2018       Thibault FOUCART		 <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
+ * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,7 @@ class Paiement extends CommonObject
 
 	public $facid;
 	public $datepaye;
+	public $date;		// same than $datepaye
 
 	/**
 	 * @deprecated
@@ -79,8 +81,8 @@ class Paiement extends CommonObject
 	public $pos_change = 0; // Excess received in TakePOS cash payment
 
 	public $author;
-	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
-	public $paiementcode; // Code of payment.
+	public $paiementid; 	// ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	public $paiementcode; 	// Code of mode of payment.
 
 	/**
 	 * @var string Type of payment label
@@ -108,6 +110,16 @@ class Paiement extends CommonObject
 	 * @var string Id of external payment mode
 	 */
 	public $ext_payment_id;
+
+	/**
+	 * @var string Id of prelevement
+	 */
+	public $id_prelevement;
+
+	/**
+	 * @var string num_prelevement
+	 */
+	public $num_prelevement;
 
 	/**
 	 * @var string Name of external payment mode
@@ -142,6 +154,7 @@ class Paiement extends CommonObject
 	 * @var string payment external reference
 	 */
 	public $ref_ext;
+
 
 	/**
 	 *	Constructor
@@ -340,6 +353,7 @@ class Paiement extends CommonObject
 				if (is_numeric($amount) && $amount <> 0) {
 					$amount = price2num($amount);
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)";
+					// TODO Add multicurrency_code and multicurrency_tx
 					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).")";
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
@@ -370,7 +384,19 @@ class Paiement extends CommonObject
 							if (!in_array($invoice->type, $affected_types)) {
 								dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
 							} elseif ($remaintopay) {
-								dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
+								// hook to have an option to automatically close a closable invoice with less payment than the total amount (e.g. agreed cash discount terms)
+								global $hookmanager;
+								$hookmanager->initHooks(array('paymentdao'));
+								$parameters = array('facid' => $facid, 'invoice' => $invoice, 'remaintopay' => $remaintopay);
+								$action = 'CLOSEPAIDINVOICE';
+								$reshook = $hookmanager->executeHooks('createPayment', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+								if ($reshook < 0) {
+									$this->errors[] = $hookmanager->error;
+									$this->error = $hookmanager->error;
+									$error++;
+								} elseif ($reshook == 0) {
+									dol_syslog("Remain to pay for invoice " . $facid . " not null. We do nothing more.");
+								}
 								// } else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
 							} else {
 								// If invoice is a down payment, we also convert down payment to discount
@@ -418,7 +444,8 @@ class Paiement extends CommonObject
 									}
 
 									if ($error) {
-										setEventMessages($discount->error, $discount->errors, 'errors');
+										$this->error = $discount->error;
+										$this->errors = $discount->errors;
 										$error++;
 									}
 								}
@@ -441,7 +468,7 @@ class Paiement extends CommonObject
 
 							$newlang = '';
 							$outputlangs = $langs;
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 								$invoice->fetch_thirdparty();
 								$newlang = $invoice->thirdparty->default_lang;
 							}
@@ -450,8 +477,8 @@ class Paiement extends CommonObject
 								$outputlangs->setDefaultLang($newlang);
 							}
 
-							$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-							$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+							$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+							$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
 							$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
 
 							$ret = $invoice->fetch($facid); // Reload to get new records
@@ -459,7 +486,8 @@ class Paiement extends CommonObject
 							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 							if ($result < 0) {
-								setEventMessages($invoice->error, $invoice->errors, 'errors');
+								$this->error = $invoice->error;
+								$this->errors = $invoice->errors;
 								$error++;
 							}
 						}
@@ -613,23 +641,26 @@ class Paiement extends CommonObject
 		$error = 0;
 		$bank_line_id = 0;
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			if ($accountid <= 0) {
 				$this->error = 'Bad value for parameter accountid='.$accountid;
 				dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
 				return -1;
 			}
 
-			$this->db->begin();
-
 			$this->fk_account = $accountid;
 
+			dol_syslog("addPaymentToBank ".$user->id.", ".$mode.", ".$label.", ".$this->fk_account.", ".$emetteur_nom.", ".$emetteur_banque);
+
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-			dol_syslog("$user->id, $mode, $label, $this->fk_account, $emetteur_nom, $emetteur_banque");
-
 			$acc = new Account($this->db);
 			$result = $acc->fetch($this->fk_account);
+			if ($result < 0) {
+				$error++;
+				return -1;
+			}
+
+			$this->db->begin();
 
 			$totalamount = $this->amount;
 			$totalamount_main_currency = null;
@@ -638,7 +669,7 @@ class Paiement extends CommonObject
 			}
 
 			// if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
-			if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) {
+			if (isModEnabled('multicurrency') && $conf->currency != $acc->currency_code) {
 				$totalamount = $this->multicurrency_amount;		// We will insert into llx_bank.amount in foreign currency
 				$totalamount_main_currency = $this->amount;		// We will also save the amount in main currency into column llx_bank.amount_main_currency
 			}
@@ -1147,7 +1178,7 @@ class Paiement extends CommonObject
 		global $conf;
 
 		$way = 'dolibarr';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			foreach ($this->multicurrency_amounts as $value) {
 				if (!empty($value)) { // one value found then payment is in invoice currency
 					$way = 'customer';
@@ -1196,7 +1227,7 @@ class Paiement extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1215,6 +1246,9 @@ class Paiement extends CommonObject
 			} else {	// Hours was set to real date of payment (special case for POS for example)
 				$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
 			}
+		}
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
 		}
 		if ($mode == 'withlistofinvoices') {
 			$arraybill = $this->getBillsArray();
@@ -1254,7 +1288,15 @@ class Paiement extends CommonObject
 			$result .= ($this->ref ? $this->ref : $this->id);
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

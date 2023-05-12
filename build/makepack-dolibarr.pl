@@ -524,12 +524,13 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ansible`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codesniffer`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/examples/ldap`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/examples/zapier`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdata`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdemo`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/dbmodel`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/iso-normes`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/licence`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/mail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/multitail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpcheckstyle`;
@@ -591,9 +592,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
-		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/theme/common/octicons/LICENSE`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/common/fontawesome-5/svgs`;
 		
 		# Removed other test files
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;
@@ -633,7 +632,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/utils`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/vendor`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/webmozart`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/autoload.php`;
@@ -680,7 +679,7 @@ if ($nboftargetok) {
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
 			}
-			
+
 			print "Remove target $FILENAMETGZ.tgz...\n";
 			unlink("$NEWDESTI/$FILENAMETGZ.tgz");
 
@@ -896,7 +895,7 @@ if ($nboftargetok) {
 
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build`;
-			
+
 			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
 			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			$ret=`$cmd`;
@@ -1051,22 +1050,23 @@ if ($nboftargetok) {
 			print "Go into directory $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
 			chdir("$BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build");
 			#$cmd="dpkg-source -b $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
-			$cmd="dpkg-buildpackage -us -uc";
+			$cmd="dpkg-buildpackage -us -uc --compression=gzip";
 			print "Launch DEB build ($cmd)\n";
 			$ret=`$cmd 2>&1 3>&1`;
 			print $ret."\n";
 
 			chdir("$olddir");
-			
+
 			print "You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
 			print "You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
-			
+
 			# Move to final dir
 			print "Move *_all.deb *.dsc *.orig.tar.gz *.changes to $NEWDESTI\n";
 			$ret=`mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
-			$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;
+			#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option 
+			$ret=`mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.changes "$NEWDESTI/"`;
 			next;
 		}
@@ -1148,7 +1148,8 @@ if ($nboftargetok) {
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_amd64.changes"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc"=>'none',					# none means it won't be published on SF
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'none',		# none means it won't be published on SF
+			#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'none',		# none means it won't be published on SF
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',

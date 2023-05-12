@@ -24,6 +24,7 @@
  *		\brief      Home page for cheque receipts
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -31,15 +32,23 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
+$checkdepositstatic = new RemiseCheque($db);
+$accountstatic = new Account($db);
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'banque', '', '');
 
+$usercancreate = $user->hasRight('banque', 'cheque');
 
-$checkdepositstatic = new RemiseCheque($db);
-$accountstatic = new Account($db);
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -48,11 +57,16 @@ $accountstatic = new Account($db);
 
 llxHeader('', $langs->trans("ChequesArea"));
 
-print load_fiche_titre($langs->trans("ChequesArea"), '', $checkdepositstatic->picto);
+$newcardbutton = '';
+if ($usercancreate) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
+}
+
+print load_fiche_titre($langs->trans("ChequesArea"), $newcardbutton, $checkdepositstatic->picto);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-$sql = "SELECT count(b.rowid)";
+$sql = "SELECT count(b.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE ba.rowid = b.fk_account";
@@ -63,24 +77,26 @@ $sql .= " AND b.amount > 0";
 
 $resql = $db->query($sql);
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
 if ($resql) {
-	if ($row = $db->fetch_row($resql)) {
-		$num = $row[0];
+	$num = '';
+	if ($obj = $db->fetch_object($resql)) {
+		$num = $obj->nb;
 	}
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
 	print '<td class="right">';
-	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
 	print '</td></tr>';
-	print "</table>\n";
 } else {
 	dol_print_error($db);
 }
+print "</table></div>\n";
 
 
 print '</div><div class="fichetwothirdright">';
@@ -111,6 +127,8 @@ if ($resql) {
 	print '<th class="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
+	$num = $db->num_rows($resql);
+
 	while ($objp = $db->fetch_object($resql)) {
 		$checkdepositstatic->id = $objp->rowid;
 		$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
@@ -136,6 +154,10 @@ if ($resql) {
 
 		print '</tr>';
 	}
+	if (empty($num)) {
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	}
+
 	print "</table>";
 	print '</div>';
 

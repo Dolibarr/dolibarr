@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2020 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,78 +140,63 @@ class BlockedLog
 
 		$this->trackedevents = array();
 
-		if ($conf->facture->enabled) {
+		// Customer Invoice/Facture / Payment
+		if (isModEnabled('facture')) {
 			$this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['DOC_DOWNLOAD'] = 'BlockedLogBillDownload';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['DOC_PREVIEW'] = 'BlockedLogBillPreview';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['PAYMENT_CUSTOMER_CREATE'] = 'logPAYMENT_CUSTOMER_CREATE';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['PAYMENT_CUSTOMER_DELETE'] = 'logPAYMENT_CUSTOMER_DELETE';
 		}
 
 		/* Supplier
-		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
-		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
-		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
-		 if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='BlockedLogSupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
-		 if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_PREVIEW']='BlockedLogSupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
-
-		 if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_CREATE']='BlockedLogSupplierBillPaymentCreate';
-		 if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
+		// Supplier Invoice / Payment
+		if (isModEnabled("fournisseur")) {
+			$this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
+			$this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
+			$this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
+			$this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='BlockedLogSupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
+			$this->trackedevents['SUPPLIER_DOC_PREVIEW']='BlockedLogSupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
+			$this->trackedevents['PAYMENT_SUPPLIER_CREATE']='BlockedLogSupplierBillPaymentCreate';
+			$this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
+		}
 		 */
 
-		if ($conf->don->enabled) {
+		// Donation
+		if (isModEnabled('don')) {
 			$this->trackedevents['DON_VALIDATE'] = 'logDON_VALIDATE';
-		}
-		if ($conf->don->enabled) {
 			$this->trackedevents['DON_DELETE'] = 'logDON_DELETE';
-		}
-		//if ($conf->don->enabled) $this->trackedevents['DON_SENTBYMAIL']='logDON_SENTBYMAIL';
-
-		if ($conf->don->enabled) {
+			//$this->trackedevents['DON_SENTBYMAIL']='logDON_SENTBYMAIL';
 			$this->trackedevents['DONATION_PAYMENT_CREATE'] = 'logDONATION_PAYMENT_CREATE';
-		}
-		if ($conf->don->enabled) {
 			$this->trackedevents['DONATION_PAYMENT_DELETE'] = 'logDONATION_PAYMENT_DELETE';
 		}
 
 		/*
-		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
-		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
-		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
+		// Salary
+		if (!empty($conf->salary->enabled)) {
+			$this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
+			$this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
+			$this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
+		}
 		 */
 
-		if ($conf->adherent->enabled) {
+		// Members
+		if (isModEnabled('adherent')) {
 			$this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = 'logMEMBER_SUBSCRIPTION_CREATE';
-		}
-		if ($conf->adherent->enabled) {
 			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
-		}
-		if ($conf->adherent->enabled) {
 			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
 		}
-		if ($conf->banque->enabled) {
+
+		// Bank
+		if (isModEnabled("banque")) {
 			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
-		}
-		if ($conf->banque->enabled) {
 			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
-		}
-		if ($conf->banque->enabled) {
 			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';
 		}
+
+		// Cashdesk
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
 		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
 		if ($moduleposenabled) {
@@ -218,6 +204,7 @@ class BlockedLog
 		}
 
 		// Add more action to track from a conf variable
+		// For example: STOCK_MOVEMENT,...
 		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
 			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
 			foreach ($tmparrayofmoresupportedevents as $val) {
@@ -319,6 +306,15 @@ class BlockedLog
 			} else {
 				$this->error++;
 			}
+		} elseif ($this->element === 'stockmouvement') {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+			$object = new MouvementStock($this->db);
+			if ($object->fetch($this->fk_object) > 0) {
+				return $object->getNomUrl(1);
+			} else {
+				$this->error++;
+			}
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
@@ -383,18 +379,23 @@ class BlockedLog
 		$this->amounts = $amounts;
 		// date
 		if ($object->element == 'payment' || $object->element == 'payment_supplier') {
-			$this->date_object = $object->datepaye;
+			$this->date_object = empty($object->datepaye) ? $object->date : $object->datepaye;
 		} elseif ($object->element == 'payment_salary') {
 			$this->date_object = $object->datev;
 		} elseif ($object->element == 'payment_donation' || $object->element == 'payment_various') {
-			$this->date_object = $object->datepaid ? $object->datepaid : $object->datep;
+			$this->date_object = empty($object->datepaid) ? $object->datep : $object->datepaid;
 		} elseif ($object->element == 'subscription') {
 			$this->date_object = $object->dateh;
 		} elseif ($object->element == 'cashcontrol') {
 			$this->date_object = $object->date_creation;
-		} else {
+		} elseif (property_exists($object, 'date')) {
+			// Generic case
 			$this->date_object = $object->date;
+		} elseif (property_exists($object, 'datem')) {
+			// Generic case (second chance, for example for stock movement)
+			$this->date_object = $object->datem;
 		}
+
 		// ref
 		$this->ref_object = ((!empty($object->newref)) ? $object->newref : $object->ref); // newref is set when validating a draft, ref is set in other cases
 		// type of object
@@ -409,11 +410,18 @@ class BlockedLog
 		$arrayoffieldstoexclude = array(
 			'table_element', 'fields', 'ref_previous', 'ref_next', 'origin', 'origin_id', 'oldcopy', 'picto', 'error', 'errors', 'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
 			'table_element_line', 'ismultientitymanaged', 'isextrafieldmanaged',
+			'array_languages',
+			'childtables',
+			'contact_ids',
+			'context',
+			'labelStatus',
+			'labelStatusShort',
 			'linkedObjectsIds',
 			'linkedObjects',
 			'fk_delivery_address',
-			'context',
-			'projet'          // There is already ->fk_project
+			'projet',          // There is already ->fk_project
+			'restrictiononfksoc',
+			'specimen',
 		);
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol') {
@@ -442,7 +450,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->thirdparty->{$key} = $value;
+					$this->object_data->thirdparty->$key = $value;
 				}
 			}
 		}
@@ -462,7 +470,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->mycompany->{$key} = $value;
+					$this->object_data->mycompany->$key = $value;
 				}
 			}
 		}
@@ -500,12 +508,12 @@ class BlockedLog
 							}
 
 							if (!is_object($valueline) && !is_null($valueline) && $valueline !== '') {
-								$this->object_data->invoiceline[$lineid]->{$keyline} = $valueline;
+								$this->object_data->invoiceline[$lineid]->$keyline = $valueline;
 							}
 						}
 					}
 				} elseif (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
@@ -523,7 +531,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
@@ -549,7 +557,7 @@ class BlockedLog
 
 			$totalamount = 0;
 
-			// Loop on each invoice payment amount
+			// Loop on each invoice payment amount (payment_part)
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
@@ -615,7 +623,7 @@ class BlockedLog
 								continue; // Discard if not into a dedicated list
 							}
 							if (!is_object($value) && !is_null($value) && $value !== '') {
-								$paymentpart->thirdparty->{$key} = $value;
+								$paymentpart->thirdparty->$key = $value;
 							}
 						}
 					}
@@ -639,11 +647,11 @@ class BlockedLog
 							}
 							if (!is_object($value) && !is_null($value) && $value !== '') {
 								if ($this->element == 'payment_donation') {
-									$paymentpart->donation->{$key} = $value;
+									$paymentpart->donation->$key = $value;
 								} elseif ($this->element == 'payment_various') {
-									$paymentpart->various->{$key} = $value;
+									$paymentpart->various->$key = $value;
 								} else {
-									$paymentpart->invoice->{$key} = $value;
+									$paymentpart->invoice->$key = $value;
 								}
 							}
 						}
@@ -678,21 +686,30 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
 			if (!empty($object->newref)) {
 				$this->object_data->ref = $object->newref;
 			}
-		} else // Generic case
-		{
+		} elseif ($this->element == 'stockmouvement') {
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
+				}
+			}
+		} else {
+			// Generic case
+			foreach ($object as $key => $value) {
+				if (in_array($key, $arrayoffieldstoexclude)) {
+					continue; // Discard some properties
+				}
+				if (!is_object($value) && !is_null($value) && $value !== '') {
+					$this->object_data->$key = $value;
 				}
 			}
 

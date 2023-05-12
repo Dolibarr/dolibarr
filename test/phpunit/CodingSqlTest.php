@@ -110,7 +110,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -123,7 +123,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -136,7 +136,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -152,9 +152,49 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
+	}
+
+	/**
+	 * testEscape
+	 *
+	 * @return string
+	 */
+	public function testEscape()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		if ($db->type == 'mysqli') {
+			$a = 'abc"\'def';
+			print $a;
+			$result = $db->escape($a);	// $result must be abc\"\'def with mysql
+			$this->assertEquals('abc\"\\\'def', $result);
+		}
+	}
+
+	/**
+	 * testEscapeForLike
+	 *
+	 * @return string
+	 */
+	public function testEscapeForLike()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$a = 'abc"\'def_ghi%klm\\nop';
+		//print $a;
+		$result = $db->escapeforlike($a);	// $result must be abc"'def\_ghi\%klm\\nop with mysql
+		$this->assertEquals('abc"\'def\_ghi\%klm\\\\nop', $result);
 	}
 
 	/**
@@ -193,10 +233,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 
 				$result=strpos($filecontent, '"');
 				if ($result) {
-					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
+					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"') && ! strpos($filecontent, '("'));
 				}
 				//print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
-				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
+				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) neither (" (used for content with string like isModEnabled("")) into '.$file.'. Bad.');
 
 				$result=strpos($filecontent, 'int(');
 				//print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
@@ -275,6 +315,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 			$result=strpos($filecontent, 'eldy@');
 			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
 			$this->assertTrue($result===false, 'Found a bad key eldy@ into file '.$file);
+
+			$result=strpos($filecontent, 'INSERT INTO `llx_oauth_token`');
+			print __METHOD__." Result for checking we don't have data into llx_oauth_token = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a non expected insert into file '.$file);
 		}
 
 		return;

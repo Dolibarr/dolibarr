@@ -51,7 +51,7 @@ class modAgenda extends DolibarrModules
 		$this->numero = 2400;
 
 		$this->family = "projects";
-		$this->module_position = '15';
+		$this->module_position = '16';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
@@ -73,7 +73,7 @@ class modAgenda extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("companies");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Module parts
 		$this->module_parts = array();
@@ -211,8 +211,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php',
 			'langs'=>'agenda',
 			'position'=>86,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->rights->agenda->myactions->read || $user->rights->resource->read',
+			'enabled'=>'$conf->agenda->enabled || $conf->resource->enabled',
 			'target'=>'',
 			'user'=>2,
 		);

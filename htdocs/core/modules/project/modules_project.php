@@ -128,6 +128,11 @@ abstract class ModeleNumRefProjects
 	public $error = '';
 
 	/**
+	 * @var string $version
+	 */
+	public $version;
+
+	/**
 	 *  Return if a module can be used or not
 	 *
 	 *  @return		boolean     true if module can be used

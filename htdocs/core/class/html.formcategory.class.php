@@ -32,32 +32,97 @@ class FormCategory extends Form
 	/**
 	 * Return a HTML filter box for a list filter view
 	 *
-	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param Array		$preSelected	A list with the elements that should pre-selected
-	 * @return string					A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
+	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param 	array		$preSelected						A list with the elements that should pre-selected
+	 * @param	string		$morecss							More CSS
+	 * @param	int			$searchCategoryProductOperator		0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected)
+	 * @param	int			$multiselect						0 or 1
+	 * @param	int			$nocateg							1=Add an entry '- No Category -'
+	 * @param	string		$showempty							1 or 'string' to add an empty entry
+	 * @return 	string											A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function getFilterBox($type, array $preSelected)
+	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300 widthcentpercentminusx", $searchCategoryProductOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '')
 	{
-		global $langs;
+		global $langs, $db;
 
 		if (empty($preSelected) || !is_array($preSelected)) {
 			$preSelected = array();
 		}
 
-		$htmlName = "search_category_".$type."_list";
-
-		$categoryArray = $this->select_all_categories($type, "", "", 64, 0, 1);
-		$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
-
-		$tmptitle = $langs->transnoentitiesnoconv("Category");
+		if ($showempty && !is_numeric($showempty)) {
+			$tmptitle = $showempty;
+		} else {
+			$tmptitle = $langs->transnoentitiesnoconv("Category");
+		}
 
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
 		$filter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-		//$filter .= $langs->trans('Categories').": ";
-		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300 widthcentpercentminusx", 0, 0, '', '', $tmptitle);
+		if ($multiselect) {
+			$categoryArray = $this->select_all_categories($type, '', '', 64, 0, 2);
+			if ($nocateg) {
+				$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
+			}
+			$htmlName = "search_category_".$type."_list";
+			$htmlName2 = "search_category_".$type."_operator";
+
+			$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, $morecss, 0, 0, '', '', $tmptitle);
+		} else {
+			$htmlName = "search_".$type."_category";
+			$htmlName2 = "";
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+			$formother = new FormOther($db);
+
+			$filter .= $formother->select_categories($type, $preSelected[0], $htmlName, $nocateg, $tmptitle, $morecss);
+		}
+		if ($searchCategoryProductOperator >= 0) {
+			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="'.$htmlName2.'">'.$langs->trans('UseOrOperatorForCategories').'</label>';
+		}
 		$filter .= "</div>";
 
 		return $filter;
+	}
+
+	/**
+	 *    Prints a select form for products categories
+	 *    @param    string	$selected          	Id category pre-selection
+	 *    @param    string	$htmlname          	Name of HTML field
+	 *    @param    int		$showempty         	Add an empty field
+	 *    @return	integer|null
+	 */
+	public function selectProductCategory($selected = 0, $htmlname = 'product_category_id', $showempty = 0)
+	{
+		global $conf;
+
+		$sql = "SELECT cp.fk_categorie as cat_index, cat.label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cp";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid = cp.fk_categorie";
+		$sql .= " GROUP BY cp.fk_categorie, cat.label";
+
+		dol_syslog(get_class($this)."::selectProductCategory", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+			if ($showempty) {
+				print '<option value="0">&nbsp;</option>';
+			}
+
+			$i = 0;
+			$num_rows = $this->db->num_rows($resql);
+			while ($i < $num_rows) {
+				$category = $this->db->fetch_object($resql);
+				if ($selected && $selected == $category->cat_index) {
+					print '<option value="'.$category->cat_index.'" selected>'.$category->label.'</option>';
+				} else {
+					print '<option value="'.$category->cat_index.'">'.$category->label.'</option>';
+				}
+				$i++;
+			}
+			print ('</select>');
+
+			return $num_rows;
+		} else {
+			dol_print_error($this->db);
+		}
 	}
 }

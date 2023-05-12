@@ -43,20 +43,23 @@ create table llx_societe_rib
   proprio        varchar(60),
   owner_address  varchar(255),
   default_rib    smallint NOT NULL DEFAULT 0,
-  
-  -- For BAN direct debit feature  
+  state_id       integer,
+  fk_country     integer,
+  currency_code  varchar(3),
+
+  -- For BAN direct debit feature
   rum            varchar(32),	 				-- RUM value to use for SEPA generation
   date_rum		 date,							-- Date of mandate
   frstrecur      varchar(16) default 'FRST',    -- 'FRST' or 'RECUR'
-  
+
   --For credit card
   last_four varchar(4),										-- last 4
   card_type varchar(255),									-- card type 'VISA', 'MC' , ...
-  cvn varchar(255),										
+  cvn varchar(255),
   exp_date_month INTEGER,
   exp_date_year INTEGER,
   country_code varchar(10),
-  
+
   --For Paypal
   approved INTEGER DEFAULT 0,
   email varchar(255),
@@ -65,7 +68,7 @@ create table llx_societe_rib
   preapproval_key varchar(255),
   starting_date date,
   total_amount_of_all_payments double(24,8),
-  
+
   --For Stripe
   stripe_card_ref varchar(128),								-- 'card_...'
   stripe_account varchar(128),								-- 'pk_live_...'

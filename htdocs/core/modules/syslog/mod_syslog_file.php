@@ -113,11 +113,15 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		}
 
 		if (!empty($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
-			if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1) {	// file depend on session key name (Note that session name is same for all users and is not a per user value)
-				$suffixinfilename .= '_'.session_name();
-			}
-			if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2) {	// file depend on session value sor per user
-				$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
+			if (is_numeric($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
+				if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
+					$suffixinfilename .= '_'.session_name();
+				}
+				if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2) {	// file depend on instance session key name + ip so nearly per user
+					$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
+				}
+			} else {
+				$suffixinfilename .= '_'.$conf->global->SYSLOG_FILE_ONEPERSESSION;
 			}
 		}
 
@@ -173,7 +177,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$this->lastTime = $now;
 			}
 
-			$message = strftime("%Y-%m-%d %H:%M:%S", time()).$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ?str_pad('', $this->ident, ' ') : '').$content['message'];
+			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ?str_pad('', $this->ident, ' ') : '').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			@chmod($logfile, octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));

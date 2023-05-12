@@ -60,6 +60,5 @@ Stats=Estadísticas de ventas
 StatusProsp=Estado del cliente potencial
 DraftPropals=Presupuestos en borrador
 ToOfferALinkForOnlineSignature=Vínculo para firma digital
-ThisScreenAllowsYouToSignDocFrom=Esta pantalla te permitirá aceptar, firmar o rechazar un presupuesto
 SignatureProposalRef=Firma del presupuesto %s
 FeatureOnlineSignDisabled=La funcionalidad para la firma digital está deshabilitada o el documento fue generado antes de habilitar la función

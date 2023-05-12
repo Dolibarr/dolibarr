@@ -2618,6 +2618,7 @@ oop.inherits(Mode, TextMode);
     }; 
 
     this.$id = "ace/mode/jsoniq";
+    this.snippetFileId = "ace/snippets/jsoniq";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

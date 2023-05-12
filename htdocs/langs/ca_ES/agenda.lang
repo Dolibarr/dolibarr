@@ -45,6 +45,7 @@ CONTRACT_DELETEInDolibarr=Contracte %s eliminat
 PropalClosedSignedInDolibarr=Pressupost %s firmat
 PropalClosedRefusedInDolibarr=Pressupost %s rebutjat
 PropalValidatedInDolibarr=Pressupost %s validat
+PropalBackToDraftInDolibarr=La proposta %s torna a l'estat d'esborrany
 PropalClassifiedBilledInDolibarr=Pressupost %s classificat facturat
 InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceValidatedInDolibarrFromPos=Factura %s validada al TPV
@@ -56,6 +57,7 @@ MemberValidatedInDolibarr=Soci %s validat
 MemberModifiedInDolibarr=Soci %s modificat
 MemberResiliatedInDolibarr=Membre %s acabat
 MemberDeletedInDolibarr=Soci %s eliminat
+MemberExcludedInDolibarr=Soci %s exclòs
 MemberSubscriptionAddedInDolibarr=Subscripció %s per a membre %s, afegida
 MemberSubscriptionModifiedInDolibarr=Subscripció %s per a membre %s, modificada
 MemberSubscriptionDeletedInDolibarr=Subscripció %s per a membre %s, eliminada
@@ -66,6 +68,8 @@ ShipmentBackToDraftInDolibarr=Enviament %s retornat a l'estat d'esborrany
 ShipmentDeletedInDolibarr=Expedició %s eliminada
 ShipmentCanceledInDolibarr=Enviament %s cancel·lat
 ReceptionValidatedInDolibarr=S'ha validat la recepció %s
+ReceptionDeletedInDolibarr=S'ha suprimit la recepció %s
+ReceptionClassifyClosedInDolibarr=Recepció %s classificada tancada
 OrderCreatedInDolibarr=Comanda %s creada
 OrderValidatedInDolibarr=Comanda %s validada
 OrderDeliveredInDolibarr=Comanda %s classificada com a enviada
@@ -75,7 +79,7 @@ OrderApprovedInDolibarr=Comanda %s aprovada
 OrderRefusedInDolibarr=Comanda %s rebutjada
 OrderBackToDraftInDolibarr=Comanda %s tornada a estat esborrany
 ProposalSentByEMail=Pressupost %s enviat per e-mail
-ContractSentByEMail=Contracte %s enviat per correu electrònic  
+ContractSentByEMail=Contracte %s enviat per correu electrònic
 OrderSentByEMail=Comanda a proveïdor %s enviada per e-mail
 InvoiceSentByEMail=Factura a client %s enviada per e-mail
 SupplierOrderSentByEMail=Comanda de compra %s enviada per e-mail
@@ -84,6 +88,7 @@ SupplierInvoiceSentByEMail=Factura de proveïdor %s enviada per e-mail
 ShippingSentByEMail=Enviament %s enviat per email
 ShippingValidated= Enviament %s validat
 InterventionSentByEMail=Intervenció %s enviada per e-mail
+ProjectSentByEMail=Projecte %s enviat per correu electrònic
 ProposalDeleted=Pressupost esborrat
 OrderDeleted=Comanda esborrada
 InvoiceDeleted=Factura esborrada
@@ -97,7 +102,7 @@ PRODUCT_DELETEInDolibarr=Producte %s eliminat
 HOLIDAY_CREATEInDolibarr=S'ha creat la sol·licitud de permís %s
 HOLIDAY_MODIFYInDolibarr=S'ha modificat la sol·licitud de permís %s
 HOLIDAY_APPROVEInDolibarr=Sol·licitud de dies lliures %s aprovada
-HOLIDAY_VALIDATEInDolibarr=La sol·licitud d’excedència %s validada
+HOLIDAY_VALIDATEInDolibarr=Sol·licitud de dies lliures %s validada
 HOLIDAY_DELETEInDolibarr=S'ha suprimit la sol·licitud de permís %s
 EXPENSE_REPORT_CREATEInDolibarr=Creat l'informe de despeses %s
 EXPENSE_REPORT_VALIDATEInDolibarr=S'ha validat l'informe de despeses %s
@@ -131,9 +136,9 @@ AgendaUrlOptions1=Podeu també afegir aquests paràmetres al filtre de sortida:
 AgendaUrlOptions3=<b>logina=%s</b> ​​per a restringir insercions a les accions creades per l'usuari <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​per a restringir la producció d'accions que no pertanyen a l'usuari <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per a restringir la sortida d'accions associades al projecta <b>PROJECT_ID</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per excloure esdeveniments automàtics.
-AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> per incloure esdeveniments de vacances.
+AgendaUrlOptionsProject= <b> project=__PROJECT_ID__</b> per a restringir la sortida a accions vinculades al projecte <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent= <b>notactiontype=systemauto</b> per a excloure els esdeveniments automàtics.
+AgendaUrlOptionsIncludeHolidays= <b>includeholidays=1</b> per a incloure esdeveniments de vacances.
 AgendaShowBirthdayEvents=Aniversaris de contactes
 AgendaHideBirthdayEvents=Amaga els aniversaris dels contactes
 Busy=Ocupat
@@ -146,8 +151,8 @@ ExtSites=Calendaris externs
 ExtSitesEnableThisTool=Mostra calendaris externs (definit a la configuració global) a Agenda. No afecta els calendaris externs definits pels usuaris.
 ExtSitesNbOfAgenda=Nombre de calendaris
 AgendaExtNb=Calendari núm. %s
-ExtSiteUrlAgenda=Url d'accés a l'arxiu. ical
-ExtSiteNoLabel=Sense descripció
+ExtSiteUrlAgenda=URL per a accedir al fitxer .ical
+ExtSiteNoLabel=Sense nom
 VisibleTimeRange=Rang de temps visible
 VisibleDaysRange=Rang de dies visible
 AddEvent=Crear esdeveniment
@@ -157,6 +162,7 @@ DateActionBegin=Data d'inici de l'esdeveniment
 ConfirmCloneEvent=Estàs segur que vols clonar l'esdeveniment <b>%s</b>?
 RepeatEvent=Repeteix esdeveniment
 OnceOnly=Una sola vegada
+EveryDay=Cada dia
 EveryWeek=Cada setmana
 EveryMonth=Cada mes
 DayOfMonth=Dia del mes
@@ -171,4 +177,6 @@ ReminderType=Tipus de devolució de trucada
 AddReminder=Crea una notificació de recordatori automàtica per a aquest esdeveniment
 ErrorReminderActionCommCreation=S'ha produït un error en crear la notificació de recordatori per a aquest esdeveniment
 BrowserPush=Notificació emergent del navegador
+Reminders=Recordatoris
 ActiveByDefault=Habilitat per defecte
+Until=fins a

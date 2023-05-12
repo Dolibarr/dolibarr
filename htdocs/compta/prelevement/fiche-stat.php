@@ -23,6 +23,7 @@
  *	\brief      Debit order or credit transfer statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
@@ -91,20 +92,20 @@ if ($id > 0 || $ref) {
 
 		//print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-		if ($object->date_trans <> 0) {
+		if (!empty($object->date_trans)) {
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
+			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if ($object->date_credit <> 0) {
+		if (!empty($object->date_credit)) {
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
 			print '</td></tr>';
@@ -118,7 +119,7 @@ if ($id > 0 || $ref) {
 		print '<table class="border centpercent tableforfield">';
 
 		$acc = new Account($db);
-		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
 
 		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
@@ -134,7 +135,7 @@ if ($id > 0 || $ref) {
 		print '</td>';
 		print '</tr>';
 
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefieldcreate">';
 		$labelfororderfield = 'WithdrawalFile';
 		if ($object->type == 'bank-transfer') {
 			$labelfororderfield = 'CreditTransferFile';
@@ -145,7 +146,9 @@ if ($id > 0 || $ref) {
 		if ($object->type == 'bank-transfer') {
 			$modulepart = 'paymentbybanktransfer';
 		}
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
+		print img_picto('', 'download', 'class="paddingleft"');
+		print '</a>';
 		print '</td></tr></table>';
 
 		print '</div>';
@@ -173,7 +176,8 @@ if ($id > 0 || $ref) {
 		print load_fiche_titre($langs->trans("StatisticsByLineStatus"), '', '');
 
 		print"\n<!-- debut table -->\n";
-		print '<table class="noborder" width="100%" cellpadding="4">';
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
@@ -184,10 +188,13 @@ if ($id > 0 || $ref) {
 
 			print $line->LibStatut($row[1], 1);
 
-			print '</td><td class="right">';
-			print price($row[0]);
+			print '</td>';
 
-			print '</td><td class="right">';
+			print '<td class="right"><span class="amount">';
+			print price($row[0]);
+			print '</span></td>';
+
+			print '<td class="right">';
 			if ($object->amount) {
 				print round($row[0] / $object->amount * 100, 2)." %";
 			}
@@ -200,6 +207,8 @@ if ($id > 0 || $ref) {
 		}
 
 		print "</table>";
+		print "</div>";
+
 		$db->free($resql);
 	} else {
 		print $db->error().' '.$sql;

@@ -7,6 +7,7 @@
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
+ * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +68,15 @@ class PaiementFourn extends Paiement
 	 */
 	public $type_code;
 
+	/**
+	 * @var string Id of prelevement
+	 */
+	public $id_prelevement;
+
+	/**
+	 * @var string num_prelevement
+	 */
+	public $num_prelevement;
 
 
 	/**
@@ -332,7 +342,18 @@ class PaiementFourn extends Paiement
 										}
 									}
 								} else {
-									dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
+									// hook to have an option to automatically close a closable invoice with less payment than the total amount (e.g. agreed cash discount terms)
+									global $hookmanager;
+									$hookmanager->initHooks(array('payment_supplierdao'));
+									$parameters = array('facid' => $facid, 'invoice' => $invoice, 'remaintopay' => $remaintopay);
+									$action = 'CLOSEPAIDSUPPLIERINVOICE';
+									$reshook = $hookmanager->executeHooks('createPayment', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+									if ($reshook < 0) {
+										$this->error = $hookmanager->error;
+										$error++;
+									} elseif ($reshook == 0) {
+										dol_syslog("Remain to pay for invoice " . $facid . " not null. We do nothing more.");
+									}
 								}
 							}
 
@@ -340,7 +361,7 @@ class PaiementFourn extends Paiement
 							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 								$newlang = '';
 								$outputlangs = $langs;
-								if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 									$newlang = $invoice->thirdparty->default_lang;
 								}
 								if (!empty($newlang)) {
@@ -634,7 +655,11 @@ class PaiementFourn extends Paiement
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
-		global $langs;
+		global $langs, $conf, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -650,8 +675,12 @@ class PaiementFourn extends Paiement
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
-		if ($this->datepaye ? $this->datepaye : $this->date) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour', 'tzuser');
+		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+		if ($dateofpayment) {
+			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+		}
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
 		}
 
 		$linkclose = '';
@@ -679,6 +708,15 @@ class PaiementFourn extends Paiement
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -836,7 +874,7 @@ class PaiementFourn extends Paiement
 		global $conf;
 
 		$way = 'dolibarr';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			foreach ($this->multicurrency_amounts as $value) {
 				if (!empty($value)) { // one value found then payment is in invoice currency
 					$way = 'customer';

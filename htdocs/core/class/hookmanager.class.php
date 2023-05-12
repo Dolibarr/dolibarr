@@ -127,12 +127,15 @@ class HookManager
 				}
 			}
 		}
+		// Log the init of hook but only for hooks thare are declared to be managed
 		if (count($arraytolog) > 0) {
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
 		}
 
-		if (!empty($this->hooks[$context])) {
-			ksort($this->hooks[$context], SORT_NATURAL);
+		foreach ($arraycontext as $context) {
+			if (!empty($this->hooks[$context])) {
+				ksort($this->hooks[$context], SORT_NATURAL);
+			}
 		}
 
 		return 1;
@@ -195,6 +198,7 @@ class HookManager
 				'getFormatedSupplierRef',
 				'getIdProfUrl',
 				'getInputIdProf',
+				'menuDropdownQuickaddItems',
 				'menuLeftMenuItems',
 				'moveUploadedFile',
 				'moreHtmlStatus',
@@ -272,7 +276,10 @@ class HookManager
 					$actionclassinstance->error = 0;
 					$actionclassinstance->errors = array();
 
-					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
+					if (getDolGlobalInt('MAIN_DEBUG_SHOW_EACH_QUALIFIED_HOOK_CALL') >= 2) {
+						// This his too much verbose, enabled in develop only
+						dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
+					}
 
 					// Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
 					// Note: The hook can use the $currentcontext in its code to avoid to be ran twice or be ran for one given context only

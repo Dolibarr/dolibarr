@@ -23,6 +23,7 @@
  *      \brief      list of subscription
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -89,7 +90,7 @@ $arrayfields = array(
 	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
 	'd.login'=>array('label'=>"Login", 'checked'=>1),
 	't.libelle'=>array('label'=>"Label", 'checked'=>1),
-	'd.bank'=>array('label'=>"BankAccount", 'checked'=>1, 'enabled'=>(!empty($conf->banque->enabled))),
+	'd.bank'=>array('label'=>"BankAccount", 'checked'=>1, 'enabled'=>(isModEnabled('banque'))),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	 'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
 	'c.dateadh'=>array('label'=>"DateSubscription", 'checked'=>1, 'position'=>100),
@@ -111,7 +112,7 @@ $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -135,7 +136,7 @@ if (empty($reshook)) {
 		$search_note = "";
 		$search_amount = "";
 		$search_account = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
@@ -157,7 +158,7 @@ $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.
 $sql .= " d.gender, d.email, d.morphy,";
 $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql .= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
-$sql .= " c.fk_bank as bank, c.note,";
+$sql .= " c.fk_bank as bank, c.note as note_private,";
 $sql .= " b.fk_account";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " JOIN ".MAIN_DB_PREFIX."subscription as c on d.rowid = c.fk_adherent";
@@ -241,15 +242,15 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('', $langs->trans("ListOfSubscriptions"), $help_url);
-
-$i = 0;
-
-$title = $langs->trans("ListOfSubscriptions");
+$title = $langs->trans("Subscriptions");
 if (!empty($date_select)) {
 	$title .= ' ('.$langs->trans("Year").' '.$date_select.')';
 }
+
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+llxHeader('', $title, $help_url);
+
+$i = 0;
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -384,7 +385,7 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 
 if (!empty($arrayfields['d.bank']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth150');
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth100');
 	print '</td>';
 }
 
@@ -529,14 +530,14 @@ while ($i < min($num, $limit)) {
 
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		print '<td class="tdoverflowmax150">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
+		print '<td class="tdoverflowmax125">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->firstname).'">'.$adherent->firstname.'</td>';
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($adherent->firstname).'">'.dol_escape_htmltag($adherent->firstname).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -544,7 +545,7 @@ while ($i < min($num, $limit)) {
 
 	// Login
 	if (!empty($arrayfields['d.login']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->login).'">'.$adherent->login.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->login).'">'.dol_escape_htmltag($adherent->login).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -552,8 +553,8 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['t.libelle']['checked'])) {
-		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note).'">';
-		print $obj->note;
+		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note_private).'" class="tooltip">';
+		print dol_escape_htmltag(dolGetFirstLineOfText($obj->note_private));
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -562,7 +563,7 @@ while ($i < min($num, $limit)) {
 
 	// Banque
 	if (!empty($arrayfields['d.bank']['checked'])) {
-		print '<td class="tdmaxoverflow150">';
+		print '<td class="tdmaxoverflow100">';
 		if ($obj->fk_account > 0) {
 			$accountstatic->id = $obj->fk_account;
 			$accountstatic->fetch($obj->fk_account);
@@ -598,7 +599,11 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'd.amount';
 		}
-		$totalarray['val']['d.amount'] += $obj->subscription;
+		if (empty($totalarray['val']['d.amount'])) {
+			$totalarray['val']['d.amount'] = $obj->subscription;
+		} else {
+			$totalarray['val']['d.amount'] += $obj->subscription;
+		}
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -628,10 +633,10 @@ while ($i < min($num, $limit)) {
 	print '<td class="center">';
 	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
+		if (in_array($obj->crowid, $arrayofselected)) {
 			$selected = 1;
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '<input id="cb'.$obj->crowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.((int) $obj->crowid).'"'.($selected ? ' checked="checked"' : '').'>';
 	}
 	print '</td>';
 	if (!$i) {

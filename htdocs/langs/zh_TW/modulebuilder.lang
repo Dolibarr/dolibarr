@@ -1,14 +1,19 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Module id
 ModuleBuilderDesc=此工具只能由有經驗的用戶或開發人員使用。它提供了構建或編輯您自己的模組的實用程序。替代 <a href="%s" target="_blank" rel="noopener noreferrer"> 手動開發的文件在此處 </a> 。
-EnterNameOfModuleDesc=輸入要新建的 模組/程式 名稱不留空白。使用大寫字母分隔單詞（例如：example: MyModule, EcommerceForShop, SyncWithMySystem...）
-EnterNameOfObjectDesc=輸入要新建的物件名稱不留空白。使用大寫字母分隔單詞（例如：MyObject, Student, Teacher...）。將生成 CRUD class 檔案，以及 API 檔案，頁面用來 列出/新增/編輯/刪除 對象及SQL的檔案將自動生成。
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=已生成/已編輯 模組的路徑（外部模組的首個目錄定義為%s）: <strong> %s </strong>
 ModuleBuilderDesc3=已找到 生成的/可編輯的模組：<strong> %s </strong>
 ModuleBuilderDesc4=當模組目錄的根目錄中存在檔案<strong> %s </strong>時，模組被偵測為"可編輯”
 NewModule=新模組
 NewObjectInModulebuilder=新項目
+NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=模組金鑰
 ObjectKey=項目金鑰
+DicKey=Dictionary key
 ModuleInitialized=模組初始化
 FilesForObjectInitialized=初始化新項目'%s'的檔案
 FilesForObjectUpdated=項目'%s'的檔案已更新（.sql檔案和.class.php檔案）
@@ -45,14 +50,17 @@ PathToModulePackage=模組/應用程式包的zip路徑
 PathToModuleDocumentation=模組/應用程式檔案的文件路徑(%s)
 SpaceOrSpecialCharAreNotAllowed=不允許使用空格或特殊符號。
 FileNotYetGenerated=尚未產生檔案
+GenerateCode=Generate code
 RegenerateClassAndSql=強制更新.class和.sql檔案
 RegenerateMissingFiles=產生遺失的檔案
 SpecificationFile=文件檔案
 LanguageFile=語言檔案
 ObjectProperties=項目屬性
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=您確定要刪除屬性 <strong> %s </strong> 嗎？這將更改 PHP 類別中的代碼，但也會從物件表格定義中刪除列。
 NotNull=非空白
-NotNullDesc=1 = 將資料庫設定為 NOT NULL。 -1=如果為空（'' 或 0），則允許為空並強制值為 NULL。
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=用於“全部搜尋”
 DatabaseIndex=資料庫索引
 FileAlreadyExists=檔案%s已存在
@@ -78,15 +86,16 @@ IsAMeasure=是一個量測
 DirScanned=資料夾已掃描
 NoTrigger=沒有觸發器
 NoWidget=沒有小工具
-GoToApiExplorer=API 瀏覽器
+ApiExplorer=API 瀏覽器
 ListOfMenusEntries=選單條目清單
 ListOfDictionariesEntries=分類條目清單
 ListOfPermissionsDefined=已定義權限清單
 SeeExamples=在這裡查看範例
-EnabledDesc=啟用此欄位的條件（範例：1 或 $conf->global->MYMODULE_MYOPTION）
-VisibleDesc=欄位是否顯示？ （範例：0=隱藏，1=在清單與建立/更新/查看表單上顯示，2=僅在清單上顯示，3=僅在建立/更新/查看表單上顯示（非清單），4=只在清單與更新/查看表單（非建立）顯示，5=僅在清單結尾視圖表單上顯示（非建立，非更新）。<br> <br> 使用負值表示預設情況下清單中不顯示欄位，但可以選擇查看）。 <br> <br> 可以是表達式，例如：<br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> ($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
-DisplayOnPdf=以PDF顯示
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=可以將可累積欄位的值以總和放入清單中嗎？ （例如：1 或 0）
 SearchAllDesc=欄位是否用於快速搜尋工具進行搜尋？ （範例：1 或 0）
 SpecDefDesc=在此處輸入您想與模組一起提供的所有尚未由其他分頁卡定義的文件。您可以使用 .md 或更好的豐富的 .asciidoc 語法。
@@ -94,7 +103,7 @@ LanguageDefDesc=在此檔案中輸入每個語言檔案的所有密鑰和翻譯�
 MenusDefDesc=在此定義模組提供的選單
 DictionariesDefDesc=在此定義您模組提供的字典
 PermissionsDefDesc=在此定義模組提供的新權限
-MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), menus are also visible into the menu editor available to administrator users on %s.
+MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and the module re-activated), the menus are also visible into the menu editor available to administrator users on %s.
 DictionariesDefDescTooltip=The dictionaries provided by your module/application are defined into the array <strong>$this->dictionaries</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), dictionaries are also visible into the setup area to administrator users on %s.
 PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
 HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module descriptor, the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
@@ -110,8 +119,8 @@ DropTableIfEmpty=（如果為空，則刪除表）
 TableDoesNotExists=表%s不存在
 TableDropped=表%s已刪除
 InitStructureFromExistingTable=建立現有表的結構數組字串
-UseAboutPage=關閉關於頁面
-UseDocFolder=禁用文件資料夾
+UseAboutPage=Do not generate the About page
+UseDocFolder=停用文件資料夾
 UseSpecificReadme=使用特定的ReadMe檔案
 ContentOfREADMECustomized=注意：README.md檔案的內容已替換為ModuleBuilder設定中定義的特定值。
 RealPathOfModule=模組的真實路徑
@@ -127,21 +136,32 @@ UseSpecificEditorURL = 使用特定的編輯器網址
 UseSpecificFamily = 使用特定的家族
 UseSpecificAuthor = 使用特定作者
 UseSpecificVersion = 使用特定的初始版本
-IncludeRefGeneration=項目參考必須自動產生
-IncludeRefGenerationHelp=如果要包含代碼以自動管理參考的產生成，請點選此選框
-IncludeDocGeneration=我想從項目產生一些文件
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=如果選中此選項，將產生一些代碼以在記錄上增加“產生文件”框。
-ShowOnCombobox=在組合框中顯示數值
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=工具提示金鑰
 CSSClass=編輯/建立表單的 CSS
 CSSViewClass=讀取表單的 CSS
 CSSListClass=清單的 CSS
 NotEditable=無法編輯
 ForeignKey=外部金鑰
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=ASCII到HTML轉換器
 AsciiToPdfConverter=ASCII到PDF轉換器
 TableNotEmptyDropCanceled=表不為空。刪除已被取消。
 ModuleBuilderNotAllowed=模組建構器可使用，但不允許您的用戶使用。
 ImportExportProfiles=匯入和匯出設定檔
-ValidateModBuilderDesc=如果需要使用 $this->validateField() 驗證此欄位，則輸入 1；如果需要驗證，則輸入 0
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
+LinkToParentMenu=Parent menu (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
+BadValueForType=Bad value for type %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.

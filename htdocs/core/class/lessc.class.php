@@ -703,8 +703,8 @@ class Lessc
 					// has default value
 					$value = $a[2];
 				} else {
-					$this->throwError("Failed to assign arg ".$a[1]);
 					$value = null; // :(
+					$this->throwError("Failed to assign arg ".$a[1]);	// This end function by throwing an exception
 				}
 
 				$value = $this->reduce($value);
@@ -1118,8 +1118,7 @@ class Lessc
 				if (isset($items[0])) {
 					return $this->lib_e($items[0]);
 				}
-				$this->throwError("unrecognised input");
-				return null;
+				$this->throwError("unrecognised input");	// This end function by throwing an exception
 			case "string":
 				$arg[1] = "";
 				return $arg;

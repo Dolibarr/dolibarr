@@ -60,7 +60,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->accounting->mouvements->lire);
+		$this->hidden = empty($user->rights->accounting->mouvements->lire);
 	}
 
 	/**

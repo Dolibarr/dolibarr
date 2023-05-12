@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2011-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2018      Abbes bahfir         <dolipar@dolipar.org>
 -- Copyright (C) 2020      Udo Tamm             <dev@dolibit.de>
@@ -53,7 +53,6 @@ INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES 
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN',  'ACCOUNTING_HAS_NEW_JOURNAL',       9, 1, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER',  'ExpenseReportsJournal',            5, 1, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal',                 8, 1, 1);
-
 
 
 -- Accounting Charts / Plans (Templates) for Countries
@@ -114,9 +113,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 84, 'EC-SUPERCIAS', 'Plan de cuentas Ecuador', 1);
 
 
--- Description of chart of account LU PCN-LUXEMBURG
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN-LUXEMBURG', 'Plan comptable normalisé Luxembourgeois', 1);
-
+-- Description of chart of account LU PCN2020-LUXEMBURG
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN2020-LUXEMBURG', 'Plan comptable normalisé 2020 Luxembourgeois', 1);
 
 -- Description of chart of account RO RO-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (188, 'RO-BASE', 'Plan de conturi romanesc', 1);
@@ -176,8 +174,14 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account USA US-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 11, 'US-BASE', 'USA basic chart of accounts', 1);
 
+-- Description of chart of account USA US-GAAP-BASIC
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 11, 'US-GAAP-BASIC', 'USA GAAP basic chart of accounts', 1);
+
 -- Description of chart of account Canada CA-ENG-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 14, 'CA-ENG-BASE', 'Canadian basic chart of accounts - English', 1);
 
 -- Description of chart of account Mexico SAT/24-2019
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
+
+-- Description of chart of account Japan JPN-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 123, 'JPN-BASE', '日本 勘定科目表 基本版', 1);

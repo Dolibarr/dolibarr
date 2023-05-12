@@ -221,7 +221,7 @@ foreach ($dups as $string => $pages) {
 		// Loop on each line keword was found into file.
 		$listoffilesforthisentry=array();
 		foreach ($lines as $line => $translatedvalue) {
-			if (! empty($listoffilesforthisentry[$file])) {
+			if (!empty($listoffilesforthisentry[$file])) {
 				$duplicateinsamefile=1;
 			}
 			$listoffilesforthisentry[$file]=1;
@@ -300,7 +300,7 @@ if ($web) {
 
 // STEP 2 - Search key not used
 
-if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true')) {
+if ((!empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true')) {
 	print "***** Strings in en_US that are never used:\n";
 
 	$unused=array();

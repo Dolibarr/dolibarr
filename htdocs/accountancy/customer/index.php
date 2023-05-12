@@ -26,6 +26,7 @@
  * \brief 	Home customer journalization page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -40,13 +41,13 @@ $validatemonth = GETPOST('validatemonth', 'int');
 $validateyear = GETPOST('validateyear', 'int');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->bind->write)) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -77,13 +78,13 @@ $action = GETPOST('action', 'aZ09');
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -92,7 +93,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
-if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
+if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as fd";
@@ -141,8 +142,8 @@ if ($action == 'validatehistory') {
 	}*/
 
 	// Customer Invoice lines (must be same request than into page list.php for manual binding)
-	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
-	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype, f.situation_cycle_ref, f.fk_facture_source,";
+	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.situation_percent, l.tva_tx as tva_tx_line, l.vat_src_code,";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 		$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
@@ -206,37 +207,38 @@ if ($action == 'validatehistory') {
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
 
-			$thirdpartystatic->id = $objp->socid;
-			$thirdpartystatic->name = $objp->name;
-			$thirdpartystatic->client = $objp->client;
-			$thirdpartystatic->fournisseur = $objp->fournisseur;
-			$thirdpartystatic->code_client = $objp->code_client;
-			$thirdpartystatic->code_compta_client = $objp->code_compta_client;
-			$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-			$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-			$thirdpartystatic->email = $objp->email;
-			$thirdpartystatic->country_code = $objp->country_code;
-			$thirdpartystatic->tva_intra = $objp->tva_intra;
-			$thirdpartystatic->code_compta_product = $objp->company_code_sell;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
+			$thirdpartystatic->id = !empty($objp->socid) ? $objp->socid : 0;
+			$thirdpartystatic->name = !empty($objp->name) ? $objp->name : "";
+			$thirdpartystatic->client = !empty($objp->client) ? $objp->client : "";
+			$thirdpartystatic->fournisseur = !empty($objp->fournisseur) ? $objp->fournisseur : "";
+			$thirdpartystatic->code_client = !empty($objp->code_client) ? $objp->code_client : "";
+			$thirdpartystatic->code_compta_client = !empty($objp->code_compta_client) ? $objp->code_compta_client : "";
+			$thirdpartystatic->code_fournisseur = !empty($objp->code_fournisseur) ? $objp->code_fournisseur : "";
+			$thirdpartystatic->code_compta_fournisseur = !empty($objp->code_compta_fournisseur) ? $objp->code_compta_fournisseur : "";
+			$thirdpartystatic->email = !empty($objp->email) ? $objp->email : "";
+			$thirdpartystatic->country_code = !empty($objp->country_code) ? $objp->country_code : "";
+			$thirdpartystatic->tva_intra = !empty($objp->tva_intra) ? $objp->tva_intra : "";
+			$thirdpartystatic->code_compta_product = !empty($objp->company_code_sell) ? $objp->company_code_sell : "";		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 			$product_static->ref = $objp->product_ref;
 			$product_static->id = $objp->product_id;
 			$product_static->type = $objp->type;
 			$product_static->label = $objp->product_label;
-			$product_static->status = $objp->status;
-			$product_static->status_buy = $objp->status_buy;
+			$product_static->status = !empty($objp->status) ? $objp->status : 0;
+			$product_static->status_buy = !empty($objp->status_buy) ? $objp->status_buy : 0;
 			$product_static->accountancy_code_sell = $objp->code_sell;
 			$product_static->accountancy_code_sell_intra = $objp->code_sell_intra;
 			$product_static->accountancy_code_sell_export = $objp->code_sell_export;
-			$product_static->accountancy_code_buy = $objp->code_buy;
-			$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
-			$product_static->accountancy_code_buy_export = $objp->code_buy_export;
+			$product_static->accountancy_code_buy = !empty($objp->code_buy) ? $objp->code_buy : "";
+			$product_static->accountancy_code_buy_intra = !empty($objp->code_buy_intra) ? $objp->code_buy_intra : "";
+			$product_static->accountancy_code_buy_export = !empty($objp->code_buy_export) ? $objp->code_buy_export : "";
 			$product_static->tva_tx = $objp->tva_tx_prod;
 
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			$facture_static->type = $objp->ftype;
-			$facture_static->date = $objp->datef;
+			$facture_static->date = $db->jdate($objp->datef);
+			$facture_static->fk_facture_source = $objp->fk_facture_source;
 
 			$facture_static_det->id = $objp->rowid;
 			$facture_static_det->total_ht = $objp->total_ht;
@@ -319,6 +321,10 @@ print '<span class="opacitymedium">'.$langs->trans("DescVentilCustomer").'</span
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
 print '</span><br>';
 
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+	print "<br>";
+}
 
 $y = $year_current;
 
@@ -393,6 +399,11 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
+		// TODO When INVOICE_USE_SITUATION = 1, values here are wrong. There is no compensation on bad stored amounts
+		//$situation_ratio = 1;
+		//if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		//}
+
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
@@ -510,6 +521,11 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
+		// TODO When INVOICE_USE_SITUATION = 1, values here are wrong. There is no compensation on bad stored amounts
+		//$situation_ratio = 1;
+		//if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		//}
+
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
@@ -621,8 +637,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 	print "</table>\n";
 	print '</div>';
 
-
-	if (!empty($conf->margin->enabled)) {
+	if (isModEnabled('margin')) {
 		print "<br>\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -635,22 +650,41 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 			print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 		}
 		print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
-		$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
-		for ($i = 1; $i <= 12; $i++) {
-			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-			if ($j > 12) {
-				$j -= 12;
-			}
-			$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
-						" (".$db->ifsql("fd.total_ht < 0",
-							" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",
-							"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").")",
-						 0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
-		}
-		$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
-							" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",
-							"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").") as total";
 
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			// With old situation invoice setup
+			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
+			for ($i = 1; $i <= 12; $i++) {
+				$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+				if ($j > 12) {
+					$j -= 12;
+				}
+				$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
+							" (".$db->ifsql("fd.total_ht < 0",
+								" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
+								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").")",
+							 0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			}
+			$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
+				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
+								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").") as total";
+		} else {
+			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
+			for ($i = 1; $i <= 12; $i++) {
+				$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+				if ($j > 12) {
+					$j -= 12;
+				}
+				$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
+					" (".$db->ifsql("fd.total_ht < 0",
+						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
+						"  (fd.total_ht - (fd.buy_price_ht * fd.qty))").")",
+					0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			}
+			$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
+				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
+				"  (fd.total_ht - (fd.buy_price_ht * fd.qty))").") as total";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 		$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 		$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2019		Thibault Foucart		<support@ptibogxiv.net>
+ * Copyright (C) 2019-2022	Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
  *
@@ -29,6 +29,7 @@
  *      \brief      Member's type setup
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -41,6 +42,7 @@ $langs->load("members");
 $rowid  = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $sall = GETPOST("sall", "alpha");
@@ -79,6 +81,7 @@ $duration_unit = GETPOST('duration_unit', 'alpha');
 $vote = GETPOST("vote", "int");
 $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
+$caneditamount = GETPOSTINT("caneditamount");
 
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
@@ -116,15 +119,17 @@ if ($cancel) {
 	}
 }
 
-if ($action == 'add' && $user->rights->adherent->configurer) {
+if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->label = trim($label);
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
-	$object->note = trim($comment);
+	$object->note_public = trim($comment);
+	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (int) $vote;
 
@@ -138,8 +143,10 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	} else {
-		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle = '".$db->escape($object->label)."'";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
 		$result = $db->query($sql);
+		$num = null;
 		if ($result) {
 			$num = $db->num_rows($result);
 		}
@@ -167,15 +174,18 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = clone $object;
+	$object->oldcopy = dol_clone($object);
+
 	$object->label= trim($label);
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
-	$object->note = trim($comment);
+	$object->note_public = trim($comment);
+	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (boolean) trim($vote);
 
@@ -197,7 +207,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	exit;
 }
 
-if ($action == 'confirm_delete' && $user->rights->adherent->configurer) {
+if ($action == 'confirm_delete' && !empty($user->rights->adherent->configurer)) {
 	$object->fetch($rowid);
 	$res = $object->delete();
 
@@ -227,7 +237,7 @@ llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.vote, d.statut as status, d.morphy";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -274,6 +284,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
+		print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		print '<th class="center">'.$langs->trans("Status").'</th>';
 		print '<th>&nbsp;</th>';
@@ -290,6 +301,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->status = $objp->status;
 			$membertype->subscription = $objp->subscription;
 			$membertype->amount = $objp->amount;
+			$membertype->caneditamount = $objp->caneditamount;
 
 			print '<tr class="oddeven">';
 			print '<td class="nowraponall">';
@@ -308,6 +320,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+			print '<td class="center">'.yn($objp->caneditamount).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 			if ($user->rights->adherent->configurer) {
@@ -358,7 +371,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
+	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 	print '</td></tr>';
 
 	// Morphy
@@ -370,12 +383,16 @@ if ($action == 'create') {
 	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
 	print "</td></tr>";
 
-	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
 	print $form->selectyesno("subscription", 1, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>';
-	print '<input name="amount" size="5" value="'.price($amount).'">';
+	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
+	print '</td></tr>';
+
+	print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
+	print $form->selectyesno("caneditamount", GETPOSTISSET('caneditamount') ? GETPOST('caneditamount') : 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -389,12 +406,12 @@ if ($action == 'create') {
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('comment', $object->note, '', 200, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('comment', (GETPOSTISSET('comment') ? GETPOST('comment', 'restricthtml') : $object->note_public), '', 200, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 
 	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('mail_valid', GETPOSTISSET('mail_valid') ? GETPOST('mail_valid') : $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -436,13 +453,13 @@ if ($rowid > 0) {
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="tableforfield border centpercent">';
 
 		// Morphy
 		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
 		print yn($object->subscription);
 		print '</tr>';
 
@@ -450,6 +467,10 @@ if ($rowid > 0) {
 		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
 		print ((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
 		print '</tr>';
+
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
+		print yn($object->caneditamount);
+		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
@@ -485,19 +506,19 @@ if ($rowid > 0) {
 		print '<div class="tabsAction">';
 
 		// Edit
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
-		if ($user->rights->adherent->configurer && !empty($object->status)) {
+		if ($user->hasRight('adherent', 'configurer')&& !empty($object->status)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
 
 		// Delete
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
@@ -622,7 +643,7 @@ if ($rowid > 0) {
 
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
+			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'"></td>';
 
 			print '<br>';
 			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
@@ -636,15 +657,15 @@ if ($rowid > 0) {
 			print '<tr class="liste_titre_filter">';
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'" size="12"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
@@ -666,20 +687,23 @@ if ($rowid > 0) {
 			print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			print "</tr>\n";
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			$adh = new Adherent($db);
+
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$objp = $db->fetch_object($resql);
 
 				$datefin = $db->jdate($objp->datefin);
 
-				$adh = new Adherent($db);
 				$adh->lastname = $objp->lastname;
 				$adh->firstname = $objp->firstname;
 				$adh->datefin = $datefin;
 				$adh->need_subscription = $objp->subscription;
 				$adh->statut = $objp->status;
 
-				// Lastname
 				print '<tr class="oddeven">';
+
+				// Lastname
 				if ($objp->company != '') {
 					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user", 'class="paddingright"').$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->company, 12).'</a></td>'."\n";
 				} else {
@@ -687,7 +711,7 @@ if ($rowid > 0) {
 				}
 
 				// Login
-				print "<td>".$objp->login."</td>\n";
+				print "<td>".dol_escape_htmltag($objp->login)."</td>\n";
 
 				// Type
 				/*print '<td class="nowrap">';
@@ -698,7 +722,7 @@ if ($rowid > 0) {
 				*/
 
 				// Moral/Physique
-				print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+				print "<td>".$adh->getmorphylib($objp->morphy, 1)."</td>\n";
 
 				// EMail
 				print "<td>".dol_print_email($objp->email, 0, 0, 1)."</td>\n";
@@ -718,9 +742,9 @@ if ($rowid > 0) {
 					}
 					print '</td>';
 				} else {
-					print '<td class="nowrap left">';
+					print '<td class="nowrap center">';
 					if (!empty($objp->subscription)) {
-						print $langs->trans("SubscriptionNotReceived");
+						print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
 						if ($objp->status > 0) {
 							print " ".img_warning();
 						}
@@ -732,11 +756,11 @@ if ($rowid > 0) {
 
 				// Actions
 				print '<td class="center">';
-				if ($user->rights->adherent->creer) {
+				if ($user->hasRight('adherent', 'creer')) {
 					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
-				if ($user->rights->adherent->supprimer) {
-					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resign&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+				if ($user->hasRight('adherent', 'supprimer')) {
+					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
 				}
 				print "</td>";
 
@@ -744,13 +768,13 @@ if ($rowid > 0) {
 				$i++;
 			}
 
+			if ($i == 0) {
+				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			}
+
 			print "</table>\n";
 			print '</div>';
 			print '</form>';
-
-			if ($num > $conf->liste_limit) {
-				print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
-			}
 		} else {
 			dol_print_error($db);
 		}
@@ -783,7 +807,7 @@ if ($rowid > 0) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
-		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status);
+		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 		print '</td></tr>';
 
 		// Morphy
@@ -804,6 +828,10 @@ if ($rowid > 0) {
 		print '">';
 		print '</td></tr>';
 
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
+		print $form->selectyesno("caneditamount", $object->caneditamount, 1);
+		print '</td></tr>';
+
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print $form->selectyesno("vote", $object->vote, 1);
 		print '</td></tr>';
@@ -815,7 +843,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

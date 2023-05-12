@@ -37,6 +37,11 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $db;
 
 	/**
+	 * @var string	Condition to be enabled
+	 */
+	public $enabled;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -94,8 +99,8 @@ class MailingTargets // This can't be abstract as it is used for some method
 	/**
 	 * Retourne nombre de destinataires
 	 *
-	 * @param      string	$sql        Sql request to count
-	 * @return     int       			Nb of recipient, or <0 if error
+	 * @param      string		$sql        Sql request to count
+	 * @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql)
 	{

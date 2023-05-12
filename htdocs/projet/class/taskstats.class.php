@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -192,5 +193,36 @@ class TaskStats extends Stats
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';
 		return $res;
+	}
+
+
+	/**
+	 * Return the Task amount by month for a year
+	 *
+	 * @param 	int 	$year 		Year to scan
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return 	array 				Array with amount by month
+	 */
+	public function getAmountByMonth($year, $format = 0)
+	{
+		// Return an empty array at the moment because task has no amount
+		return array();
+	}
+
+	/**
+	 * Return average of entity by month
+	 * @param	int     $year           year number
+	 * @return 	int						value
+	 */
+	protected function getAverageByMonth($year)
+	{
+		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		return $this->_getAverageByMonth($year, $sql);
 	}
 }

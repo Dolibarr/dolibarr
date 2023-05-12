@@ -138,10 +138,10 @@ $entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
-	accessforbidden('Bad link. Bad value for parameter modulepart', 0, 0, 1);
+	httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
 }
 if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') {
-	accessforbidden('Bad link. Missing identification to find file (param file or hashp)', 0, 0, 1);
+	httponly_accessforbidden('Bad link. Missing identification to find file (param file or hashp)', 400);
 }
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
@@ -192,7 +192,7 @@ if (!empty($hashp)) {
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
 			} else {
-				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
+				httponly_accessforbidden('Bad link. File is from another module part.', 403);
 			}
 		} else {
 			$modulepart = $moduleparttocheck;
@@ -200,7 +200,7 @@ if (!empty($hashp)) {
 		}
 	} else {
 		$langs->load("errors");
-		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
+		httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
 	}
 }
 
@@ -214,11 +214,11 @@ if (GETPOST('type', 'alpha')) {
 
 // Security: This wrapper is for images. We do not allow type/html
 if (preg_match('/html/i', $type)) {
-	accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.', 0, 0, 1);
+	httponly_accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.');
 }
 // Security: This wrapper is for images. We do not allow files ending with .noexe
 if (preg_match('/\.noexe$/i', $original_file)) {
-	accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.', 0, 0, 1);
+	httponly_accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.');
 }
 
 // Security: Delete string ../ or ..\ into $original_file
@@ -228,15 +228,19 @@ $original_file = str_replace('..\\', '/', $original_file);
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
+if ($refname == 'thumbs') {
+	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+	$refname = basename(dirname(dirname($original_file))."/");
+}
 
 // Check that file is allowed for view with viewimage.php
 if (!empty($original_file) && !dolIsAllowedForPreview($original_file)) {
-	accessforbidden('This file is not qualified for preview', 0, 0, 1);
+	httponly_accessforbidden('This file is not qualified for preview', 403);
 }
 
 // Security check
 if (empty($modulepart)) {
-	accessforbidden('Bad value for parameter modulepart', 0, 0, 1);
+	httponly_accessforbidden('Bad value for parameter modulepart', 400);
 }
 
 // When logged in a different entity, medias cannot be accessed because $conf->$module->multidir_output

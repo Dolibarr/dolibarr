@@ -24,6 +24,7 @@
  *	\brief      Main page for ECM section area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
+$langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts'));
 
 // Get parameters
 $socid = GETPOST('socid', 'int');
@@ -58,13 +59,13 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "fullname";
+	$sortfield = "name";
 }
 
 $ecmdir = new EcmDirectory($db);
 if ($section > 0) {
 	$result = $ecmdir->fetch($section);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
@@ -82,6 +83,12 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ecm', 0);
 
+$permissiontoread = $user->hasRight('ecm', 'read');
+$permissiontocreate = $user->hasRight('ecm', 'upload');
+$permissiontocreatedir = $user->hasRight('ecm', 'setup');
+$permissiontodelete = $user->hasRight('ecm', 'upload');
+$permissiontodeletedir = $user->hasRight('ecm', 'setup');
+
 
 /*
  *	Actions
@@ -92,7 +99,7 @@ $result = restrictedArea($user, 'ecm', 0);
 //include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
-if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC) && $permissiontocreate) {
 	// Define relativepath and upload_dir
 	$relativepath = '';
 	if ($ecmdir->id) {
@@ -129,7 +136,7 @@ if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) 
 }
 
 // Remove file (code similar but different than actions_linkedfiles.inc.php)
-if ($action == 'confirm_deletefile') {
+if ($action == 'confirm_deletefile' && $permissiontodelete) {
 	if (GETPOST('confirm') == 'yes') {
 		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
 
@@ -151,7 +158,7 @@ if ($action == 'confirm_deletefile') {
 }
 
 // Add directory
-if ($action == 'add' && $user->rights->ecm->setup) {
+if ($action == 'add' && $permissiontocreatedir) {
 	$ecmdir->ref                = 'NOTUSEDYET';
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");
@@ -169,7 +176,7 @@ if ($action == 'add' && $user->rights->ecm->setup) {
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes') {
+if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontodeletedir) {
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 
@@ -179,7 +186,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes') 
 // Refresh directory view
 // This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
 // To refresh content of dir with cache, just open the dir in edit mode.
-if ($action == 'refreshmanual') {
+if ($action == 'refreshmanual' && $permissiontoread) {
 	$ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
@@ -327,6 +334,9 @@ print dol_get_fiche_head($head, 'index', '', -1, '');
 
 // Add filemanager component
 $module = 'ecm';
+if (empty($url)) {
+	$url = DOL_URL_ROOT.'/ecm/index.php'; // Must be an url without param
+}
 include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 // End of page

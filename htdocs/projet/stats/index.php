@@ -22,19 +22,17 @@
  *       \brief      Page for project statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/projectstats.class.php';
 
-// Security check
-if (!$user->rights->projet->lire) {
-	accessforbidden();
-}
-
-
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
+
+$search_opp_status = GETPOST("search_opp_status", 'alpha');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
@@ -43,13 +41,18 @@ if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-$nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = GETPOST('year', 'int') > 0 ? GETPOST('year', 'int') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'projects'));
+
+// Security check
+if (!$user->rights->projet->lire) {
+	accessforbidden();
+}
 
 
 /*
@@ -57,6 +60,7 @@ $langs->loadLangs(array('companies', 'projects'));
  */
 
 $form = new Form($db);
+$formproject = new FormProjets($db);
 
 $includeuserlist = array();
 
@@ -82,66 +86,11 @@ if (!empty($year)) {
 	$stats_project->year = $year;
 }
 
-/*
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
-	// Current stats of project amount per status
-	$data1 = $stats_project->getAllProjectByStatus();
-
-	if (!is_array($data1) && $data1 < 0) {
-		setEventMessages($stats_project->error, null, 'errors');
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+	if ($search_opp_status) {
+		$stats_project->opp_status = $search_opp_status;
 	}
-	if (empty($data1))
-	{
-		$showpointvalue = 0;
-		$nocolor = 1;
-		$data1 = array(array(0=>$langs->trans("None"), 1=>1));
-	}
-
-	$filenamenb = $conf->project->dir_output."/stats/projectbystatus.png";
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=projectstats&amp;file=projectbystatus.png';
-	$px = new DolGraph();
-	$mesg = $px->isGraphKo();
-	if (empty($mesg)) {
-		$i = 0; $tot = count($data1); $legend = array();
-		while ($i <= $tot)
-		{
-			$legend[] = $data1[$i][0];
-			$i++;
-		}
-
-		$px->SetData($data1);
-		unset($data1);
-
-		if ($nocolor)
-			$px->SetDataColor(array(
-					array(
-							220,
-							220,
-							220
-					)
-			));
-
-		$px->SetLegend($legend);
-		$px->setShowLegend(0);
-		$px->setShowPointValue($showpointvalue);
-		$px->setShowPercent(1);
-		$px->SetMaxValue($px->GetCeilMaxValue());
-		$px->SetWidth($WIDTH);
-		$px->SetHeight($HEIGHT);
-		$px->SetShading(3);
-		$px->SetHorizTickIncrement(1);
-		$px->SetCssPrefix("cssboxes");
-		$px->SetType(array('pie'));
-		$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
-		$result = $px->draw($filenamenb, $fileurlnb);
-		if ($result < 0) {
-			setEventMessages($px->error, null, 'errors');
-		}
-	} else {
-		setEventMessages(null, $mesg, 'errors');
-	}
-}*/
+}
 
 
 // Build graphic number of object
@@ -285,12 +234,19 @@ print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
+// Opportunity status
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+	print '<tr><td>'.$langs->trans("OpportunityStatusShort").'</td><td>';
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth300', 1, 1);
+	print '</td></tr>';
+}
+
 // User
 /*print '<tr><td>'.$langs->trans("ProjectCommercial").'</td><td>';
 print $form->select_dolusers($userid, 'userid', 1, array(),0,$includeuserlist);
 print '</td></tr>';*/
 // Year
-print '<tr><td>'.$langs->trans("Year").'</td><td>';
+print '<tr><td>'.$langs->trans("Year").' <span class="opacitymedium">('.$langs->trans("DateCreation").')</span></td><td>';
 if (!in_array($year, $arrayyears)) {
 	$arrayyears[$year] = $year;
 }

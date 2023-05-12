@@ -64,7 +64,7 @@ class box_task extends ModeleBoxes
 		$this->boxlabel = "Tasks";
 		$this->db = $db;
 
-		$this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || !($user->rights->projet->lire));
+		$this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || empty($user->rights->projet->lire));
 	}
 
 	/**

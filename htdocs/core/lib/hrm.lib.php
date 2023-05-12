@@ -52,16 +52,10 @@ function establishment_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment', 'remove');
-
-
-
 	$head[$h][0] = dol_buildpath("/hrm/admin/setup.php", 1);
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
-
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm');
 
 	$head[$h][0] = dol_buildpath("/hrm/admin/about.php", 1);
 	$head[$h][1] = $langs->trans("About");
@@ -69,6 +63,9 @@ function establishment_prepare_head($object)
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm');
+
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment', 'remove');
 
 	return $head;
 }

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2019 Alicealalalamdskfldmjgdfgdfhfghgfh Adminson <testldr9@dolicloud.com>
+ * Copyright (C) 2019       Destailleur Laurent     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -119,10 +119,10 @@ class modMrp extends DolibarrModules
 		$this->hidden = false;
 		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
 		$this->depends = array('modBom');
-		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
+		$this->requiredby = array('modWorkstation'); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(8, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -168,7 +168,7 @@ class modMrp extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -181,29 +181,6 @@ class modMrp extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries = array();
-		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'mylangfile@mrp',
-			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),
-			// Label of tables
-			'tablib'=>array("Table1","Table2","Table3"),
-			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
-			// Sort order
-			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
-			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label","code,label","code,label"),
-			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label","code,label","code,label"),
-			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label","code,label","code,label"),
-			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid","rowid","rowid"),
-			// Condition to show each dictionary
-			'tabcond'=>array($conf->mrp->enabled,$conf->mrp->enabled,$conf->mrp->enabled)
-		);
-		*/
 
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in mrp/core/boxes that contains a class to show a widget.

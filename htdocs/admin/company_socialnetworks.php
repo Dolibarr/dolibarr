@@ -28,6 +28,7 @@
  *	\brief      Setup page to configure company social networks
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -93,6 +94,7 @@ $head = company_admin_prepare_head();
 print dol_get_fiche_head($head, 'socialnetworks', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MoreNetworksAvailableWithModule")."</span><br>\n";
 print "<br>\n";
 
 

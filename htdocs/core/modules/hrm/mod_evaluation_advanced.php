@@ -79,9 +79,9 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskEvaluation" value="'.$conf->global->HRM_EVALUATION_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskEvaluation" value="'.getDolGlobalString('HRM_EVALUATION_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -132,7 +132,7 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->HRM_EVALUATION_ADVANCED_MASK;
+		$mask = getDolGlobalString('HRM_EVALUATION_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

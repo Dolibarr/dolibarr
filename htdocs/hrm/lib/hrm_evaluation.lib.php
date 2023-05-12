@@ -93,3 +93,37 @@ function evaluationPrepareHead($object)
 
 	return $head;
 }
+
+/**
+ * @return string
+ */
+function GetLegendSkills()
+{
+	global $langs;
+	$legendSkills = '<div style="font-style:italic;">
+		' . $langs->trans('legend') . '
+		<table class="border" width="100%">
+			<tr>
+				<td><span style="vertical-align:middle" class="toohappy diffnote little"></span>
+				' . $langs->trans('CompetenceAcquiredByOneOrMore') . '</td>
+			</tr>
+			<tr>
+				<td><span style="vertical-align:middle" class="veryhappy diffnote little"></span>
+					' . $langs->trans('MaxlevelGreaterThan') . '</td>
+			</tr>
+			<tr>
+				<td><span style="vertical-align:middle" class="happy diffnote little"></span>
+					' . $langs->trans('MaxLevelEqualTo') . '</td>
+			</tr>
+			<tr>
+				<td><span style="vertical-align:middle" class="sad diffnote little"></span>
+					' . $langs->trans('MaxLevelLowerThan') . '</td>
+			</tr>
+			<tr>
+				<td><span style="vertical-align:middle" class="toosad diffnote little"></span>
+					' . $langs->trans('SkillNotAcquired') . '</td>
+			</tr>
+		</table>
+</div>';
+	return $legendSkills;
+}

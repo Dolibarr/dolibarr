@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2023	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
@@ -33,6 +33,7 @@ if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -43,12 +44,16 @@ require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
-$mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common');
-if (empty($mode)) {
-	$mode = 'common';
+// if we set another view list mode, we keep it (till we change one more time)
+if (GETPOSTISSET('mode')) {
+	$mode = GETPOST('mode', 'alpha');
+	if ($mode =='common' || $mode =='commonkanban')
+		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
+} else {
+	$mode = (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
 }
+
 $action = GETPOST('action', 'aZ09');
-//var_dump($_POST);exit;
 $value = GETPOST('value', 'alpha');
 $page_y = GETPOST('page_y', 'int');
 $search_keyword = GETPOST('search_keyword', 'alpha');
@@ -200,6 +205,7 @@ if ($action == 'install') {
 
 				dol_syslog("Uncompress of module file is a success.");
 
+				// We check if this is a metapackage
 				$modulenamearrays = array();
 				if (dol_is_file($modulenamedir.'/metapackage.conf')) {
 					// This is a meta package
@@ -209,6 +215,7 @@ if ($action == 'install') {
 				$modulenamearrays[$modulename] = $modulename;
 				//var_dump($modulenamearrays);exit;
 
+				// Lop on each packacge of the metapackage
 				foreach ($modulenamearrays as $modulenameval) {
 					if (strpos($modulenameval, '#') === 0) {
 						continue; // Discard comments
@@ -222,13 +229,17 @@ if ($action == 'install') {
 
 					// Now we install the module
 					if (!$error) {
-						@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the zip file
-						dol_syslog("We copy now directory ".$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval." into target dir ".$dirins.'/'.$modulenameval);
-						$result = dolCopyDir($modulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
+						@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
+						$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
+						if (!dol_is_dir($submodulenamedir)) {
+							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
+						}
+						dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
+						$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
 						if ($result <= 0) {
-							dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$modulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
+							dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
 							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorFailToCopyDir", $modulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
+							setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
 							$error++;
 						}
 					}
@@ -432,7 +443,7 @@ foreach ($modulesdir as $dir) {
 								 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							print "admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					} catch (Exception $e) {
 						 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
@@ -482,9 +493,9 @@ $deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
 	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
-	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
-	$desc = str_replace('{picto2}', img_picto('', 'setup'), $desc);
-	if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
+	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
+	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
+	if (!count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
 		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
 	}
 }
@@ -529,8 +540,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
 	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
 	$moreforfilter .= dolGetButtonTitleSeparator();
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss'=>'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss'=>'reposition'));
 	$moreforfilter .= '</li></ul></div>';
 
 	//$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="paddingright">'.$moreinfo.'</span> '.$moreinfo2.'</div>';
@@ -636,11 +647,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		// We discard showing according to filters
 		if ($search_keyword) {
 			$qualified = 0;
-			if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename)
-				|| preg_match('/'.preg_quote($search_keyword).'/i', $moduletechnicalname)
-				|| preg_match('/'.preg_quote($search_keyword).'/i', $moduledesc)
-				|| preg_match('/'.preg_quote($search_keyword).'/i', $moduledesclong)
-				|| preg_match('/'.preg_quote($search_keyword).'/i', $moduleauthor)
+			if (preg_match('/'.preg_quote($search_keyword, '/').'/i', $modulename)
+				|| preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduletechnicalname)
+				|| ($moduledesc && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesc))
+				|| ($moduledesclong && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesclong))
+				|| ($moduleauthor && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduleauthor))
 				) {
 				$qualified = 1;
 			}
@@ -782,14 +793,14 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
-			} elseif (!empty($objMod->always_enabled) || ((!empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
+			} elseif (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
 					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', false, 0, 0, '', 'opacitymedium valignmiddle');
 					//print $langs->trans("Required");
 				}
-				if (!empty($conf->multicompany->enabled) && $user->entity) {
+				if (isModEnabled('multicompany') && $user->entity) {
 					$disableSetup++;
 				}
 			} else {
@@ -839,10 +850,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 							}
 						}
 					}
-				} elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs)) {
+				} elseif (preg_match('/^([^@]+)@([^@]+)$/i', (string) $objMod->config_page_url, $regs)) {
 					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 				} else {
-					$codetoconfig .= '<a class="valignmiddle" href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.((string) $objMod->config_page_url).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 				}
 			} else {
 				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
@@ -1036,7 +1047,7 @@ if ($mode == 'marketplace') {
 
 		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.urlencode($dolistore->url).'">';
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">';
 		?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
@@ -1070,7 +1081,7 @@ if ($mode == 'marketplace') {
 			<div id="listing-content">
 				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 					<tbody id="listOfModules">
-						<?php echo $dolistore->get_products(!empty($categorie) ? $categorie: ''); ?>
+						<?php echo $dolistore->get_products(); ?>
 					</tbody>
 				</table>
 			</div>
@@ -1096,7 +1107,7 @@ if ($mode == 'deploy') {
 
 	$fullurl = '<a href="'.$urldolibarrmodules.'" target="_blank" rel="noopener noreferrer">'.$urldolibarrmodules.'</a>';
 	$message = '';
-	if (!empty($allowonlineinstall)) {
+	if ($allowonlineinstall) {
 		if (!in_array('/custom', explode(',', $dolibarr_main_url_root_alt))) {
 			$message = info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
 			$allowfromweb = -1;
@@ -1113,7 +1124,17 @@ if ($mode == 'deploy') {
 			}
 		}
 	} else {
-		$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
+		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			// Show clean message
+			if (!is_numeric(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US'))) {
+				$message = info_admin($langs->trans(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')));
+			} else {
+				$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
+			}
+		} else {
+			// Show technical message
+			$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
+		}
 		$allowfromweb = 0;
 	}
 
@@ -1213,7 +1234,7 @@ if ($mode == 'deploy') {
 				});
 				</script>'."\n";
 				// MAX_FILE_SIZE doit précéder le champ input de type file
-				print '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';
+				print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';
 			}
 
 			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
@@ -1275,7 +1296,7 @@ if ($mode == 'develop') {
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
 	print '<td class="maxwidth300">';
-	if (!empty($conf->modulebuilder->enabled)) {
+	if (isModEnabled('modulebuilder')) {
 		print $langs->trans("SeeTopRightMenu");
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("ModuleBuilder")).'</span>';

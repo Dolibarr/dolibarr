@@ -200,8 +200,9 @@ class RemiseCheque extends CommonObject
 				}
 			}
 
+			$lines = array();
+
 			if ($this->id > 0 && $this->errno == 0) {
-				$lines = array();
 				$sql = "SELECT b.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.fk_type = 'CHQ'";
@@ -260,7 +261,7 @@ class RemiseCheque extends CommonObject
 			$this->errno = $this->db->lasterrno();
 		}
 
-		if (!$this->errno && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS)) {
+		if (!$this->errno && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_CHEQUE'))) {
 			$res = $this->validate($user);
 			//if ($res < 0) $error++;
 		}
@@ -730,7 +731,7 @@ class RemiseCheque extends CommonObject
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
 
-		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
+		/* Reconciliation is allowed because when check is returned, a new line is created onto bank transaction log.
 		if ($bankline->rappro)
 		{
 			$this->error='ActionRefusedLineAlreadyConciliated';
@@ -739,7 +740,7 @@ class RemiseCheque extends CommonObject
 
 		$this->db->begin();
 
-		// Not conciliated, we can delete it
+		// Not reconciled, we can delete it
 		//$bankline->delete($user);    // We delete
 
 		$bankaccount = $payment->fk_account;

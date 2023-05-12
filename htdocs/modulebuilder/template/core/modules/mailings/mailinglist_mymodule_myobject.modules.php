@@ -24,7 +24,8 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
 	public $require_admin = 0;
 
-	public $enabled = 0;
+	public $enabled = 'isModEnabled("mymodule")';
+
 	public $require_module = array();
 
 	/**
@@ -45,12 +46,8 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
-		if (is_array($conf->modules)) {
-			$this->enabled = in_array('mymodule', $conf->modules) ? 1 : 0;
-		}
+		$this->enabled = isModEnabled('mymodule');
 	}
 
 
@@ -107,9 +104,9 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		$target = array();
 		$j = 0;
 
-		$sql = " select rowid as id, email, firstname, lastname, plan, partner";
+		$sql = " select rowid as id, label, firstname, lastname";
 		$sql .= " from ".MAIN_DB_PREFIX."myobject";
-		$sql .= " where email IS NOT NULL AND email != ''";
+		$sql .= " where email IS NOT NULL AND email <> ''";
 		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') {
 			$sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
 		}
@@ -132,10 +129,10 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 						'name' => $obj->lastname,
 						'id' => $obj->id,
 						'firstname' => $obj->firstname,
-						'other' => $obj->plan.';'.$obj->partner,
+						'other' => $obj->label,
 						'source_url' => $this->url($obj->id),
 						'source_id' => $obj->id,
-						'source_type' => 'dolicloud'
+						'source_type' => 'myobject@mymodule'
 					);
 					$old = $obj->email;
 					$j++;

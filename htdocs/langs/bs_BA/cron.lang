@@ -26,7 +26,7 @@ CronCommand=Komanda
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
-CronExecute=Launch scheduled job
+CronExecute=Launch now
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Job
@@ -58,7 +58,7 @@ CronNote=Komentar
 CronFieldMandatory=Polja %s su obavezna
 CronErrEndDateStartDt=Datum završetka ne može biti prije datuma početka
 StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Schedule
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=Iskljući
 CronTaskInactive=This job is disabled (not scheduled)
 CronId=ID
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - 
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
 DATAPOLICYJob=Data cleaner and anonymizer
 JobXMustBeEnabled=Job %s must be enabled
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Last executed scheduled job
 NextScheduledJobExecute=Next scheduled job to execute
 NumberScheduledJobError=Number of scheduled jobs in error
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

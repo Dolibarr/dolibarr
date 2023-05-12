@@ -60,7 +60,7 @@ class box_boms extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->bom->read);
+		$this->hidden = empty($user->rights->bom->read);
 	}
 
 	/**
@@ -147,7 +147,7 @@ class box_boms extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 

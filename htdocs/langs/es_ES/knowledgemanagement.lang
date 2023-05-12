@@ -46,7 +46,7 @@ KnowledgeRecords = Artículos
 KnowledgeRecord = Artículo
 KnowledgeRecordExtraFields = Campos adicionales para el artículo
 GroupOfTicket=Grupo de tickets
-YouCanLinkArticleToATicketCategory=Puede vincular un artículo a un grupo de tickets (por lo que el artículo se sugerirá durante la calificación de nuevos tickets)
+YouCanLinkArticleToATicketCategory=Puede vincular el artículo a un grupo de tickets (para que el artículo se resalte en cualquier ticket de este grupo)
 SuggestedForTicketsInGroup=Sugerido para tickets cuando el grupo es
 
 SetObsolete=Marcar como obsoleto

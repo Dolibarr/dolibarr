@@ -23,6 +23,7 @@
  *  \brief      Page for statistics of module trips and expenses
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacementstats.class.php';
@@ -61,7 +62,7 @@ if ($userid > 0) {
 	}
 }
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;

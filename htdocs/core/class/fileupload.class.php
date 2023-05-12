@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2022	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,12 @@ class FileUpload
 		global $db, $conf;
 		global $object;
 		global $hookmanager;
+
+		// Feature not enabled. Warning feature not used and not secured so disabled.
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$hookmanager->initHooks(array('fileupload'));
 
 		$this->fk_element = $fk_element;
@@ -72,7 +78,7 @@ class FileUpload
 		} elseif ($element == 'project_task') {
 			$pathname = 'projet';
 			$filename = 'task';
-			$dir_output = $conf->projet->dir_output;
+			$dir_output = $conf->project->dir_output;
 			$parentForeignKey = 'fk_project';
 			$parentClass = 'Project';
 			$parentElement = 'projet';
@@ -180,6 +186,8 @@ class FileUpload
 				)
 		);
 
+		global $action;
+
 		$hookmanager->executeHooks(
 			'overrideUploadOptions',
 			array(
@@ -187,8 +195,7 @@ class FileUpload
 				'element' => $element
 			),
 			$object,
-			$action,
-			$hookmanager
+			$action
 		);
 
 		if ($options) {
@@ -216,7 +223,7 @@ class FileUpload
 	/**
 	 * Set delete url
 	 *
-	 * @param 	string	$file		Filename
+	 * @param 	object	$file		Filename
 	 * @return	void
 	 */
 	protected function setFileDeleteUrl($file)
@@ -237,6 +244,10 @@ class FileUpload
 	 */
 	protected function getFileObject($file_name)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_path = $this->options['upload_dir'].$file_name;
 		if (is_file($file_path) && $file_name[0] !== '.') {
 			$file = new stdClass();
@@ -277,6 +288,10 @@ class FileUpload
 	{
 		global $maxwidthmini, $maxheightmini;
 
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_path = $this->options['upload_dir'].$file_name;
 		$new_file_path = $options['upload_dir'].$file_name;
 
@@ -301,13 +316,17 @@ class FileUpload
 	 * Enter description here ...
 	 *
 	 * @param 	string	$uploaded_file		Uploade file
-	 * @param 	string	$file				File
+	 * @param 	object	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
 	 * @return  boolean                     True if OK, False if KO
 	 */
 	protected function validate($uploaded_file, $file, $error, $index)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		if ($error) {
 			$file->error = $error;
 			return false;
@@ -398,8 +417,8 @@ class FileUpload
 		// Also remove control characters and spaces (\x00..\x20) around the filename:
 		$file_name = trim(basename(stripslashes($name)), ".\x00..\x20");
 		// Add missing file extension for known image types:
-		if (strpos($file_name, '.') === false &&
-				preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
+		$matches = array();
+		if (strpos($file_name, '.') === false && preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
 			$file_name .= '.'.$matches[1];
 		}
 		if ($this->options['discard_aborted_uploads']) {
@@ -423,6 +442,10 @@ class FileUpload
 	 */
 	protected function handleFileUpload($uploaded_file, $name, $size, $type, $error, $index)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file = new stdClass();
 		$file->name = $this->trimFileName($name, $type, $index);
 		$file->mime = dol_mimetype($file->name, '', 2);
@@ -469,6 +492,10 @@ class FileUpload
 	 */
 	public function get()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
 		if ($file_name) {
@@ -487,6 +514,10 @@ class FileUpload
 	 */
 	public function post()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
 			return $this->delete();
 		}
@@ -538,10 +569,14 @@ class FileUpload
 	/**
 	 * Delete uploaded file
 	 *
-	 * @return	void
+	 * @return	string
 	 */
 	public function delete()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
 		$file_path = $this->options['upload_dir'].$file_name;

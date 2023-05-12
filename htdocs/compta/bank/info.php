@@ -16,22 +16,28 @@
  */
 
 /**
- *     \file       htdocs/compta/bank/info.php
- *     \ingroup    banque
- *     \brief      Onglet info d'une ecriture bancaire
+ *    \file       htdocs/compta/bank/info.php
+ *    \ingroup    compta/bank
+ *    \brief      Info tab of bank statement
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'companies'));
 
+
+// Get Parameters
 $id = GETPOST("rowid", 'int');
 $accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
+
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));

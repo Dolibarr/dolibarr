@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
- * Copyright (C) 2019	  Nicolas ZABOURI       <info@inovea-conseil.com>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2017       Patrick Delcroix        <pmpdelcroix@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
  *		\brief      Page to show a bank statement report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -57,6 +59,11 @@ $ve = GETPOST("ve", 'alpha');
 $brref = GETPOST('brref', 'alpha');
 $oldbankreceipt = GETPOST('oldbankreceipt', 'alpha');
 $newbankreceipt = GETPOST('newbankreceipt', 'alpha');
+$rel = GETPOST("rel", 'alphanohtml');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
 // Security check
 $fieldid = (!empty($ref) ? $ref : $id);
@@ -112,7 +119,7 @@ $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id
 
 // Define number of receipt to show (current, previous or next one ?)
 $found = false;
-if ($_GET["rel"] == 'prev') {
+if ($rel == 'prev') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -130,7 +137,7 @@ if ($_GET["rel"] == 'prev') {
 			$found = true;
 		}
 	}
-} elseif ($_GET["rel"] == 'next') {
+} elseif ($rel == 'next') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -194,11 +201,6 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
@@ -225,6 +227,17 @@ if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
 
+if (empty($numref)) {
+	$title = $object->ref.' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+} else {
+	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+}
+
+
+llxHeader('', $title, $helpurl);
+
 
 if (empty($numref)) {
 	$sortfield = 'numr';
@@ -237,10 +250,10 @@ if (empty($numref)) {
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
-	$nbtotalofrecords = '';
+	$totalnboflines = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$result = $db->query($sql);
-		$nbtotalofrecords = $db->num_rows($result);
+		$totalnboflines = $db->num_rows($result);
 	}
 
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
@@ -276,7 +289,7 @@ if (empty($numref)) {
 
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
-				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
+				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
 			} else {
 				$buttonreconcile = '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
 			}
@@ -287,7 +300,7 @@ if (empty($numref)) {
 				if ($user->rights->banque->consolidate) {
 					$newparam = $param;
 					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
+					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
 				} else {
 					$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
 				}
@@ -399,9 +412,8 @@ if (empty($numref)) {
 
 	$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
 	print load_fiche_titre($title, $morehtmlright, '');
-	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'bank_account', 0, '', '', 0, 1);
 
-	print "<form method=\"post\" action=\"releve.php\">";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 

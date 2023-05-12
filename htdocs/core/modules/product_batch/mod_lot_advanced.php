@@ -65,6 +65,9 @@ class mod_lot_advanced extends ModeleNumRefBatch
 
 		$form = new Form($db);
 
+		// We get cursor rule
+		$mask = getDolGlobalString('LOT_ADVANCED_MASK');
+
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -80,13 +83,13 @@ class mod_lot_advanced extends ModeleNumRefBatch
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskLot" value="'.$conf->global->LOT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskLot" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
 		// Option to enable custom masks per product
 		$texte .= '<td class="right">';
-		if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) {
+		if (!empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS)) {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		} else {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -128,8 +131,8 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc	    Object Societe
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param	Societe		$objsoc	    Object thirdparty
+	 *  @param  Productlot	$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
@@ -139,7 +142,16 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->LOT_ADVANCED_MASK;
+		$mask = getDolGlobalString('LOT_ADVANCED_MASK');
+		$filter = '';
+		if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && !empty($object->fk_product)) {
+			$product = new Product($db);
+			$res = $product->fetch($object->fk_product);
+			if ($res > 0 && !empty($product->batch_mask)) {
+				$mask = $product->batch_mask;
+				$filter = '';
+			}
+		}
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -148,7 +160,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 
 		$date = dol_now();
 
-		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', $filter, null, $date);
 
 		return  $numFinal;
 	}

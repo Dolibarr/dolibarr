@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should
 BookmarksManagement=Bookmarks management
 BookmarksMenuShortCut=Ctrl + shift + m
 NoBookmarks=No bookmarks defined
+NoBookmarkFound=No bookmark found

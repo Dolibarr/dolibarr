@@ -121,7 +121,9 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
-
+	if ($duration_unit == 's') {
+		return $time + ($duration_value);
+	}
 	if ($duration_value == 0) {
 		return $time;
 	}
@@ -167,7 +169,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	} else {
 		$date->add($interval);
 	}
-	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (php returns March 1, 2 or 3 respectively)
+	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
 	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
 		$timeyear = dol_print_date($time, '%Y');
 		$timemonth = dol_print_date($time, '%m');
@@ -207,7 +209,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
  */
 function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
 {
-	$iResult = ($iHours * 3600) + ($iMinutes * 60) + $iSeconds;
+	$iResult = ((int) $iHours * 3600) + ((int) $iMinutes * 60) + (int) $iSeconds;
 	return $iResult;
 }
 
@@ -243,6 +245,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 	if (empty($lengthOfWeek)) {
 		$lengthOfWeek = 7; // 1 week = 7 days
 	}
+	$nbHbyDay = $lengthOfDay / 3600;
 
 	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec') {
 		if ((int) $iSecond === 0) {
@@ -282,7 +285,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			if ($sDay > 1) {
 				$dayTranslate = $langs->trans("Days");
 			}
-			$sTime .= $sDay.' '.strtolower(dol_substr($dayTranslate, 0, 1)).'. ';
+			$sTime .= $sDay.' '.$langs->trans("d").' ';
 		}
 
 		if ($format == 'all') {
@@ -290,11 +293,11 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 				$sTime .= dol_print_date($iSecond, 'hourduration', true);
 			}
 		} elseif ($format == 'allhourminsec') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
 		} elseif ($format == 'allhourmin') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600)/60)));
 		} elseif ($format == 'allhour') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600)));
 		}
 	} elseif ($format == 'hour') {	// only hour part
 		$sTime = dol_print_date($iSecond, '%H', true);
@@ -318,24 +321,53 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 }
 
 
+/**	  	Convert duration to hour
+ *
+ *    	@param      int		$duration_value		Duration value
+ *    	@param      int		$duration_unit		Duration unit
+ *      @return     int $result
+ */
+function convertDurationtoHour($duration_value, $duration_unit)
+{
+	$result = 0;
+
+	if ($duration_unit == 's') $result = $duration_value / 3600;
+	if ($duration_unit == 'i') $result = $duration_value / 60;
+	if ($duration_unit == 'h') $result = $duration_value;
+	if ($duration_unit == 'd') $result = $duration_value * 24;
+	if ($duration_unit == 'w') $result = $duration_value * 24 * 7;
+	if ($duration_unit == 'm') $result = $duration_value * 730.484;
+	if ($duration_unit == 'y') $result = $duration_value * 365 * 24;
+
+	return $result;
+}
+
 /**
  * Generate a SQL string to make a filter into a range (for second of date until last second of date).
  * This method allows to maje SQL request that will deal correctly the timezone of server.
  *
- * @param      string	$datefield			Name of SQL field where apply sql date filter
- * @param      int		$day_date			Day date
- * @param      int		$month_date			Month date
- * @param      int		$year_date			Year date
- * @param	   int      $excludefirstand	Exclude first and
- * @param	   mixed	$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 											Note: In database, dates are always fot the server TZ.
- * @return     string	$sqldate			String with SQL filter
+ * @param      string		$datefield			Name of SQL field where apply sql date filter
+ * @param      int|string	$day_date			Day date (Can be 0 or '' for filter on a month)
+ * @param      int|string	$month_date			Month date (Can be 0 or '' for filter on a year)
+ * @param      int|string	$year_date			Year date
+ * @param	   int      	$excludefirstand	Exclude first and
+ * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
+ * 												Note: In database, dates are always fot the server TZ.
+ * @return     string		$sqldate			String with SQL filter
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {
 	global $db;
-	$sqldate = "";
+	$sqldate = '';
+
+	$day_date = intval($day_date);
+	$month_date = intval($month_date);
+	$year_date = intval($year_date);
+
 	if ($month_date > 0) {
+		if ($month_date > 12) {	// protection for bad value of month
+			return " AND 1 = 2";
+		}
 		if ($year_date > 0 && empty($day_date)) {
 			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm));
 			$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";
@@ -890,6 +922,15 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 					$ferie = true;
 				}
 				// Fronleichnam
+			}
+
+			if (in_array('genevafast', $specialdayrule)) {
+				// Geneva fast in Switzerland (Thursday after the first sunday in September)
+				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));
+				$jour_1sunsept = date("d", $date_1sunsept);
+				$mois_1sunsept = date("m", $date_1sunsept);
+				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) $ferie=true;
+				// Geneva fast in Switzerland
 			}
 		}
 		//print "ferie=".$ferie."\n";

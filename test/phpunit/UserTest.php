@@ -78,11 +78,11 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
-		if (! empty($conf->global->MAIN_MODULE_LDAP)) {
+		if (!empty($conf->global->MAIN_MODULE_LDAP)) {
 			print "\n".__METHOD__." module LDAP must be disabled.\n"; die(1);
 		}
 
@@ -96,7 +96,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -109,7 +109,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -125,7 +125,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -204,7 +204,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$newlocalobject=new User($this->savdb);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
-		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','trackid')), array());    // Actual, Expected
+		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
 
 		return $localobject;
 	}

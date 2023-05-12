@@ -146,24 +146,40 @@ function payment_supplier_prepare_head(Paiement $object)
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
 {
-	global $conf, $langs;
+	global $conf, $langs, $hookmanager, $action;
 
 	$validpaymentmethod = array();
 
-	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
+	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
 		$langs->load("paypal");
 		$validpaymentmethod['paypal'] = 'valid';
 	}
-	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
+	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
 		$langs->load("paybox");
 		$validpaymentmethod['paybox'] = 'valid';
 	}
-	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled)) {
+	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 		$langs->load("stripe");
 		$validpaymentmethod['stripe'] = 'valid';
 	}
-	// TODO Add trigger
 
+	// This hook is used to complete the $validpaymentmethod array so an external payment modules
+	// can add its own key (ie 'payzen' for Payzen, ...)
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+		'validpaymentmethod' => &$validpaymentmethod
+	];
+	$tmpobject = new stdClass();
+	$reshook = $hookmanager->executeHooks('getValidPayment', $parameters, $tmpobject, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif (!empty($hookmanager->resArray['validpaymentmethod'])) {
+		if ($reshook == 0) {
+			$validpaymentmethod = array_merge($validpaymentmethod, $hookmanager->resArray['validpaymentmethod']);
+		} else {
+			$validpaymentmethod = $hookmanager->resArray['validpaymentmethod'];
+		}
+	}
 
 	return $validpaymentmethod;
 }
@@ -171,21 +187,22 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 /**
  * Return string with full online payment Url
  *
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
- * @param	string	$ref		Ref of object
- * @return	string				Url string
+ * @param   string		$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
+ * @param	string		$ref		Ref of object
+ * @param	int|float	$amount		Amount of money to request for
+ * @return	string					Url string
  */
-function showOnlinePaymentUrl($type, $ref)
+function showOnlinePaymentUrl($type, $ref, $amount = 0)
 {
 	global $langs;
 
 	// Load translation files required by the page
 	$langs->loadLangs(array('payment', 'stripe'));
 
-	$servicename = $langs->transnoentitiesnoconv('Online');
+	$servicename = '';	// Link is a generic link for all payments services (paypal, stripe, ...)
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
-	$url = getOnlinePaymentUrl(0, $type, $ref);
+	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercentminusx" value="'.$url.'">';
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
@@ -196,14 +213,15 @@ function showOnlinePaymentUrl($type, $ref)
 /**
  * Return string with HTML link for online payment
  *
- * @param	string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
- * @param	string	$ref		Ref of object
- * @param	string	$label		Text or HTML tag to display, if empty it display the URL
- * @return	string			Url string
+ * @param	string		$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
+ * @param	string		$ref		Ref of object
+ * @param	string		$label		Text or HTML tag to display, if empty it display the URL
+ * @param	int|float	$amount		Amount of money to request for
+ * @return	string					Url string
  */
-function getHtmlOnlinePaymentLink($type, $ref, $label = '')
+function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
 {
-	$url = getOnlinePaymentUrl(0, $type, $ref);
+	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$label = $label ? $label : $url;
 	return '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$label.'</a>';
 }
@@ -212,15 +230,15 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '')
 /**
  * Return string with full Url
  *
- * @param   int		$mode		      0=True url, 1=Url formated with colors
- * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
- * @param	string	$ref		      Ref of object
- * @param	int		$amount		      Amount (required and used for $type='free' only)
- * @param	string	$freetag	      Free tag (required and used for $type='free' only)
- * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
- * @return	string				      Url string
+ * @param   int			$mode		      0=True url, 1=Url formated with colors
+ * @param   string		$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
+ * @param	string		$ref		      Ref of object
+ * @param	int|float	$amount		      Amount of money to request for
+ * @param	string		$freetag	      Free tag (required and used for $type='free' only)
+ * @param   string  	$localorexternal  0=Url for browser, 1=Url for external access
+ * @return	string					      Url string
  */
-function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag', $localorexternal = 1)
+function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'your_tag', $localorexternal = 1)
 {
 	global $conf, $dolibarr_main_url_root;
 
@@ -318,7 +336,9 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		}
 	} elseif ($type == 'member' || $type == 'membersubscription') {
 		$newtype = 'member';
-		$out = $urltouse.'/public/payment/newpayment.php?source=member&ref='.($mode ? '<span style="color: #666666">' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?source=member';
+		$out .= '&amount='.$amount;
+		$out .= '&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'member_ref';
 		}
@@ -389,7 +409,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	}
 
 	// For multicompany
-	if (!empty($out) && !empty($conf->multicompany->enabled)) {
+	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 	}
 
@@ -467,7 +487,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 
 	print '<div class="center paddingleft paddingright">'."\n";
 	if ($addformmessage) {
-		print '<!-- object = '.$object->element.' -->';
+		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
 		print '<br>';
 
 		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
@@ -478,7 +498,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		}
 
 		// Add other message if VAT exists
-		if ($object->total_vat != 0 || $object->total_tva != 0) {
+		if (!empty($object->total_vat) || !empty($object->total_tva)) {
 			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
 			if (!empty($conf->global->$parammessageform)) {
 				print $langs->transnoentities($conf->global->$parammessageform);

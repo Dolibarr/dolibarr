@@ -35,7 +35,7 @@ if (empty($conf) || !is_object($conf)) {
 $object->fields = dol_sort_array($object->fields, 'position');
 
 foreach ($object->fields as $key => $val) {
-	// Discard if extrafield is a hidden field on form
+	// Discard if field is a hidden field on form
 	if (abs($val['visible']) != 1 && abs($val['visible']) != 3) {
 		continue;
 	}

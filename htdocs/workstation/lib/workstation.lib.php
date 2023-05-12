@@ -61,5 +61,7 @@ function workstationAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'workstation');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'workstation', 'remove');
+
 	return $head;
 }

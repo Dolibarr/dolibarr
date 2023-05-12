@@ -117,7 +117,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	$morehtmlref .= $object->title;
 	// Thirdparty
 	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
@@ -137,7 +137,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
@@ -160,7 +160,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 			print '<br>';
 		}
-		if (!empty($conf->eventorganization->enabled)) {
+		if (isModEnabled('eventorganization')) {
 			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -171,14 +171,23 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 		print $langs->trans('SharedProject');
 	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 		print $langs->trans('PrivateProject');
 	}
 	print '</td></tr>';
 
-	// Date start - end
-	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
+		print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	}
+	print '</td></tr>';
+
+	// Date start - end project
+	print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print ($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
@@ -186,13 +195,6 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print ($end ? $end : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
-	}
-	print '</td></tr>';
-
-	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) {
-		print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 	}
 	print '</td></tr>';
 
@@ -214,7 +216,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print '</td></tr>';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
@@ -243,9 +245,9 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
 	}
 }
 
-$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
+$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
 $linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly btnTitleSelected'));
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);

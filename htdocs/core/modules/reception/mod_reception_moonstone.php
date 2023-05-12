@@ -61,7 +61,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreception" value="'.$conf->global->RECEPTION_MOONSTONE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreception" value="'.getDolGlobalString("RECEPTION_MOONSTONE_MASK").'">', $tooltip, 1, 1).'</td>';
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
@@ -106,7 +106,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$mask = $conf->global->RECEPTION_MOONSTONE_MASK;
+		$mask = getDolGlobalString("RECEPTION_MOONSTONE_MASK");
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

@@ -27,12 +27,14 @@
  *	\brief      Page to create a direct debit order or a credit transfer order
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -61,6 +63,7 @@ $offset = $limit * $page;
 $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
 
 // Security check
+$socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -71,7 +74,7 @@ if ($type == 'bank-transfer') {
 }
 
 $error = 0;
-
+$option = "";
 
 /*
  * Actions
@@ -180,8 +183,6 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-llxHeader('', $langs->trans("NewStandingOrder"));
-
 if (prelevement_check_config($type) < 0) {
 	$langs->load("errors");
 	$modulenametoshow = "Withdraw";
@@ -192,20 +193,12 @@ if (prelevement_check_config($type) < 0) {
 }
 
 
-/*$h=0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
-$head[$h][1] = $langs->trans("NewStandingOrder");
-$head[$h][2] = 'payment';
-$hselected = 'payment';
-$h++;
-
-print dol_get_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
-*/
-
 $title = $langs->trans("NewStandingOrder");
 if ($type == 'bank-transfer') {
 	$title = $langs->trans("NewPaymentByBankTransfer");
 }
+
+llxHeader('', $title);
 
 print load_fiche_titre($title);
 
@@ -218,12 +211,12 @@ if ($nb < 0) {
 }
 print '<table class="border centpercent tableforfield">';
 
-$title = $langs->trans("NbOfInvoiceToWithdraw");
+$labeltoshow = $langs->trans("NbOfInvoiceToWithdraw");
 if ($type == 'bank-transfer') {
-	$title = $langs->trans("NbOfInvoiceToPayByBankTransfer");
+	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransfer");
 }
 
-print '<tr><td class="titlefieldcreate">'.$title.'</td>';
+print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
 print '<td>';
 print $nb;
 print '</td></tr>';
@@ -284,8 +277,8 @@ if ($nb) {
 
 			if ($type != 'bank-transfer') {
 				print '<select name="format">';
-				print '<option value="FRST"'.(GETPOST('format', 'aZ09') == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
-				print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
+				print '<option value="FRST"'.($format == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
+				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
 			print '<input type="submit" class="butAction" value="'.$title.'"/>';
@@ -346,7 +339,7 @@ if ($type == 'bank-transfer') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 }
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
-$sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {

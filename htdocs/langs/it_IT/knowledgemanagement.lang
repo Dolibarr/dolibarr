@@ -46,7 +46,7 @@ KnowledgeRecords = Articoli
 KnowledgeRecord = Articolo
 KnowledgeRecordExtraFields = Extracampi per l'art
 GroupOfTicket=Gruppo di biglietti
-YouCanLinkArticleToATicketCategory=Puoi collegare un articolo a un gruppo di biglietti (quindi l'articolo verrà suggerito durante la qualificazione dei nuovi biglietti)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=Consigliato per i biglietti quando il gruppo è
 
 SetObsolete=Imposta come obsoleto

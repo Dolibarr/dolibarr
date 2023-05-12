@@ -60,7 +60,7 @@ class box_birthdays_members extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->adherent->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight("adherent", "lire") && empty($user->socid));
 	}
 
 	/**
@@ -85,12 +85,12 @@ class box_birthdays_members extends ModeleBoxes
 		if ($user->rights->adherent->lire) {
 			$tmparray = dol_getdate(dol_now(), true);
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth, date_format(u.birth, '%d') as daya, u.email, u.statut as status, u.datefin";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
 			$sql .= " AND u.statut = ".Adherent::STATUS_VALIDATED;
 			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-			$sql .= " ORDER BY DAY(u.birth) ASC";
+			$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
@@ -105,8 +105,14 @@ class box_birthdays_members extends ModeleBoxes
 					$memberstatic->firstname = $objp->firstname;
 					$memberstatic->lastname = $objp->lastname;
 					$memberstatic->email = $objp->email;
+					$memberstatic->status = $objp->status;
+					$memberstatic->statut = $memberstatic->status;
+					$memberstatic->datefin = $this->db->jdate($objp->datefin);
+					//$memberstatic->need_subscription = 1;
 					$dateb = $this->db->jdate($objp->birth);
 					$age = date('Y', dol_now()) - date('Y', $dateb);
+
+					$typea = '<i class="fas fa-birthday-cake inline-block"></i>';
 
 					$this->info_box_contents[$line][] = array(
 						'td' => '',
@@ -119,6 +125,12 @@ class box_birthdays_members extends ModeleBoxes
 						'text' => dol_print_date($dateb, "day", 'gmt').' - '.$age.' '.$langs->trans('DurationYears')
 					);
 
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="center nowraponall"',
+						'text' => $typea,
+						'asis' => 1
+					);
+
 					/*$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
 						'text' => $memberstatic->LibStatut($objp->status, 3)
@@ -128,7 +140,7 @@ class box_birthdays_members extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
+					$this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>');
 				}
 
 				$this->db->free($result);
@@ -141,8 +153,8 @@ class box_birthdays_members extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

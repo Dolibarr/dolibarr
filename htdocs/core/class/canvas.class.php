@@ -151,7 +151,7 @@ class Canvas
 	public function assign_values(&$action = 'view', $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		if (method_exists($this->control, 'assign_values')) {
+		if (is_object($this->control) && method_exists($this->control, 'assign_values')) {
 			$this->control->assign_values($action, $id, $ref);
 		}
 	}
@@ -164,6 +164,7 @@ class Canvas
 	 */
 	public function displayCanvasExists($action)
 	{
+		// template_dir should be '/'.$this->dirmodule.'/canvas/'.$this->canvas.'/tpl/', for example '/mymodule/canvas/product/tpl'
 		if (empty($this->template_dir)) {
 			return 0;
 		}

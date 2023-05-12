@@ -1,4 +1,6 @@
 #!/bin/bash
+# Script used by the Dockerfile.
+# See README.md to know how to create a Dolibarr env with docker 
 
 usermod -u ${HOST_USER_ID} www-data
 groupmod -g ${HOST_USER_ID} www-data

@@ -69,6 +69,11 @@ class SMTPs
 	private $_smtpsPW = null;
 
 	/**
+	 * Token in case we use OAUTH2
+	 */
+	private $_smtpsToken = null;
+
+	/**
 	 * Who sent the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -223,10 +228,11 @@ class SMTPs
 
 	// @CHANGE LDR
 	public $log = '';
+	public $lastretval = '';
 	private $_errorsTo = '';
 	private $_deliveryReceipt = 0;
 	private $_trackId = '';
-	private $_moreInHeader = '';
+	private $_moreinheader = '';
 
 	/**
 	 * An array of options for stream_context_create()
@@ -559,19 +565,19 @@ class SMTPs
 				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (! $_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
-					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections or temporary error. Error after 2nd sending EHLO '.$hosth.' : '.$this->lastretval);
 					return $_retVal;
 				}
 			}
 
 			// Default authentication method is LOGIN
-			if (empty($conf->global->MAIL_SMTP_AUTH_TYPE)) {
-				$conf->global->MAIL_SMTP_AUTH_TYPE = 'LOGIN';
+			if (empty($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE)) {
+				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
 			}
 
 			// Send Authentication to Server
 			// Check for errors along the way
-			switch ($conf->global->MAIL_SMTP_AUTH_TYPE) {
+			switch ($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) {
 				case 'NONE':
 					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
 					$_retVal = true;
@@ -580,6 +586,16 @@ class SMTPs
 					$this->socket_send_str('AUTH PLAIN', '334');
 					// The error here just means the ID/password combo doesn't work.
 					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					break;
+				case 'XOAUTH2':
+					// "user=$email\1auth=Bearer $token\1\1"
+					$user = $this->_smtpsID;
+					$token = $this->_smtpsToken;
+					$initRes = "user=".$user."\001auth=Bearer ".$token."\001\001";
+					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.base64_encode($initRes), '235');
+					if (!$_retVal) {
+						$this->_setErr(130, 'Error when asking for AUTH XOAUTH2');
+					}
 					break;
 				case 'LOGIN':	// most common case
 				default:
@@ -590,7 +606,7 @@ class SMTPs
 						// User name will not return any error, server will take anything we give it.
 						$this->socket_send_str(base64_encode($this->_smtpsID), '334');
 						// The error here just means the ID/password combo doesn't work.
-						// There is not a method to determine which is the problem, ID or password
+						// There is no method to determine which is the problem, ID or password
 						$_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235');
 					}
 					break;
@@ -599,7 +615,7 @@ class SMTPs
 				$this->_setErr(130, 'Invalid Authentication Credentials.');
 			}
 		} else {
-			$this->_setErr(126, '"'.$host.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+			$this->_setErr(126, '"'.$host.'" does not support authenticated connections or temporary error. Error after sending EHLO '.$hosth.' : '.$this->lastretval);
 		}
 
 		return $_retVal;
@@ -622,7 +638,7 @@ class SMTPs
 		// Connect to Server
 		if ($this->socket = $this->_server_connect()) {
 			// If a User ID *and* a password is given, assume Authentication is desired
-			if (!empty($this->_smtpsID) && !empty($this->_smtpsPW)) {
+			if (!empty($this->_smtpsID) && (!empty($this->_smtpsPW) || !empty($this->_smtpsToken))) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
 			} else {
@@ -655,10 +671,11 @@ class SMTPs
 					}
 				}
 
+				// Send the HELO message to the SMTP server
 				$_retVal = $this->socket_send_str('HELO '.$hosth, '250');
 			}
 
-			// Well, did we get to the server?
+			// Well, did we get the server answer with correct code ?
 			if ($_retVal) {
 				// From this point onward most server response codes should be 250
 				// Specify who the mail is from....
@@ -701,8 +718,11 @@ class SMTPs
 
 				// Now tell the server we are done and close the socket...
 				fputs($this->socket, 'QUIT');
-				fclose($this->socket);
+			} else {
+				// We got error code into $this->lastretval
 			}
+
+			fclose($this->socket);
 		}
 
 		return $_retVal;
@@ -912,6 +932,27 @@ class SMTPs
 	public function getPW()
 	{
 		return $this->_smtpsPW;
+	}
+
+	/**
+	 * User token for OAUTH2
+	 *
+	 * @param 	string 	$_strToken 	User token
+	 * @return 	void
+	 */
+	public function setToken($_strToken)
+	{
+		$this->_smtpsToken = $_strToken;
+	}
+
+	/**
+	 * Retrieves the User token for OAUTH2
+	 *
+	 * @return 	string 		User token for OAUTH2
+	 */
+	public function getToken()
+	{
+		return $this->_smtpsToken;
 	}
 
 	/**
@@ -1231,7 +1272,7 @@ class SMTPs
 				$_RCPT_list = array();
 				// walk down Recipients array and pull just email addresses
 				foreach ($this->_msgRecipients as $_host => $_list) {
-					if ($this->_msgRecipients[$_host][$_which]) {
+					if (!empty($this->_msgRecipients[$_host][$_which])) {
 						foreach ($this->_msgRecipients[$_host][$_which] as $_addr => $_realName) {
 							if ($_realName) {	// @CHANGE LDR
 								$_realName = '"'.$_realName.'"';
@@ -1541,11 +1582,14 @@ class SMTPs
 					// loop through all attachments
 					foreach ($_content as $_file => $_data) {
 						$content .= "--".$this->_getBoundary('mixed')."\r\n"
-						.  'Content-Disposition: attachment; filename="'.$_data['fileName'].'"'."\r\n"
-						.  'Content-Type: '.$_data['mimeType'].'; name="'.$_data['fileName'].'"'."\r\n"
-						.  'Content-Transfer-Encoding: base64'."\r\n"
-						.  'Content-Description: '.$_data['fileName']."\r\n";
-
+						. 'Content-Disposition: attachment; filename="'.$_data['fileName'].'"'."\r\n"
+						. 'Content-Type: '.$_data['mimeType'].'; name="'.$_data['fileName'].'"'."\r\n"
+						. 'Content-Transfer-Encoding: base64'."\r\n"
+						. 'Content-Description: '.$_data['fileName']."\r\n";
+						if (!empty($_data['cid'])) {
+							$content .= "X-Attachment-Id: ".$_data['cid']."\r\n";
+							$content .= "Content-ID: <".$_data['cid'].">\r\n";
+						}
 						if ($this->getMD5flag()) {
 							$content .= 'Content-MD5: '.$_data['md5']."\r\n";
 						}
@@ -1559,9 +1603,9 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('related')."\r\n"; // always related for an inline image
 
 						$content .= 'Content-Type: '.$_data['mimeType'].'; name="'.$_data['imageName'].'"'."\r\n"
-						.  'Content-Transfer-Encoding: base64'."\r\n"
-						.  'Content-Disposition: inline; filename="'.$_data['imageName'].'"'."\r\n"
-						.  'Content-ID: <'.$_data['cid'].'> '."\r\n";
+						. 'Content-Transfer-Encoding: base64'."\r\n"
+						. 'Content-Disposition: inline; filename="'.$_data['imageName'].'"'."\r\n"
+						. 'Content-ID: <'.$_data['cid'].'> '."\r\n";
 
 						if ($this->getMD5flag()) {
 							$content .= 'Content-MD5: '.$_data['md5']."\r\n";
@@ -1628,9 +1672,10 @@ class SMTPs
 	 * @param string $strContent  File data to attach to message
 	 * @param string $strFileName File Name to give to attachment
 	 * @param string $strMimeType File Mime Type of attachment
+	 * @param string $strCid      File Cid of attachment (if defined, to be shown inline)
 	 * @return void
 	 */
-	public function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown')
+	public function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown', $strCid = '')
 	{
 		if ($strContent) {
 			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n")); // 76 max is defined into http://tools.ietf.org/html/rfc2047
@@ -1638,6 +1683,7 @@ class SMTPs
 			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
 			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;
 			$this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
+			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
 				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, 3);
@@ -1829,7 +1875,9 @@ class SMTPs
 	 * using SMTP Extensions
 	 *
 	 * @param	resource    $socket			Socket handler
-	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
+	 * @param	string		$response		Expected response ('250', ...). Example of response we can get:
+	 * 										"421 4.7.0 Try again later, closing connection. (EHLO) nb21-20020a1709071c9500b0093d0d964affsm869534ejc.73 - gsmtp"
+	 * 										"550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
 	public function server_parse($socket, $response)
@@ -1856,8 +1904,10 @@ class SMTPs
 			$limit++;
 		}
 
+		$this->lastretval = substr($server_response, 0, 3);
+
 		if (!(substr($server_response, 0, 3) == $response)) {
-			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
+			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: ".$server_response);
 			$_retVal = false;
 		}
 
@@ -1869,9 +1919,9 @@ class SMTPs
 	 * Send str
 	 *
 	 * @param	string		$_strSend		String to send
-	 * @param 	string		$_returnCode	Return code
+	 * @param 	string		$_returnCode	Expected return code
 	 * @param 	string		$CRLF			CRLF
-	 * @return 	boolean|null						True or false
+	 * @return 	boolean|null				True or false
 	 */
 	public function socket_send_str($_strSend, $_returnCode = null, $CRLF = "\r\n")
 	{
@@ -1887,6 +1937,8 @@ class SMTPs
 		if ($_returnCode) {
 			return $this->server_parse($this->socket, $_returnCode);
 		}
+
+		return null;
 	}
 
 	// =============================================================
@@ -1908,7 +1960,7 @@ class SMTPs
 	}
 
 	/**
-	 * Returns errors codes and messages for Class
+	 * Returns applicative errors codes and messages for Class (not the SMTP error code)
 	 *
 	 * @return string $_errMsg  Error Message
 	 */

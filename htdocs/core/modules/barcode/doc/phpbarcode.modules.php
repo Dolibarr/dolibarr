@@ -183,16 +183,16 @@ class modPhpbarcode extends ModeleBarCode
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf, $filebarcode;
+		global $conf, $filebarcode, $langs;
 
 		dol_mkdir($conf->barcode->dir_temp);
 		if (!is_writable($conf->barcode->dir_temp)) {
-			$this->error = "Failed to write in temp directory ".$conf->barcode->dir_temp;
-			dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+			$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
+			dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 			return -1;
 		}
 
-		$file = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+		$file = $conf->barcode->dir_temp . '/barcode_' . $code . '_' . $encoding . '.png';
 
 		$filebarcode = $file; // global var to be used in barcode_outimage called by barcode_print in buildBarCode
 

@@ -1,14 +1,19 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= ID module
 ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs ou des développeurs expérimentés. Il fournit des utilitaires pour construire ou éditer votre propre module. La documentation pour le développement manuel alternatif <a href="%s" target="_blank" rel="noopener noreferrer">est ici</a> .
-EnterNameOfModuleDesc=Saisissez le nom du module/application à créer, sans espaces. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
-EnterNameOfObjectDesc=Entrez le nom de l'objet à créer sans espaces. Utilisez les majuscules pour séparer des mots (par exemple: MyObject, Student, Teacher ...). Le fichier de classe CRUD, mais aussi le fichier API, les pages à afficher / ajouter / éditer / supprimer des objets et des fichiers SQL seront générés.
+EnterNameOfModuleDesc=Entrez le nom du module/application à créer sans espaces. Utilisez des majuscules pour séparer les mots (Par exemple: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Renseignez le nom de l'objet à créer, sans utiliser d'espace. Utilisez des majuscules pour séparer les termes (par exemple : MyObject, Student, Teacher...). Le fichier de classe CRUD, les pages pour lister/ajouter/modifier/supprimer l'objet et les fichiers SQL seront générés.
+EnterNameOfDictionaryDesc=Entrez le nom du dictionnaire à créer sans espaces. Utilisez des majuscules pour séparer les mots (Par exemple : MyDico...). Le fichier de classe, mais aussi le fichier SQL seront générés.
 ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés (premier répertoire pour les modules externes défini dans %s):<strong>%s</strong>
 ModuleBuilderDesc3=Modules générés/éditables trouvés : <strong>%s</strong> 
 ModuleBuilderDesc4=Un module est détecté comme 'modifiable' quand le fichier <strong> %s </strong> existe à la racine du répertoire du module
 NewModule=Nouveau module
 NewObjectInModulebuilder=Nouvel objet
+NewDictionary=Nouveau dictionnaire
+ModuleName=Nom du module
 ModuleKey=Clé du module
 ObjectKey=Clé de l'objet
+DicKey=Clé du dictionnaire
 ModuleInitialized=Module initialisé
 FilesForObjectInitialized=Fichiers pour le nouvel objet '%s' initialisés
 FilesForObjectUpdated=Les fichiers pour l'objet '%s' ont été mis à jour ( fichiers .sql et .class.php )
@@ -45,14 +50,17 @@ PathToModulePackage=Chemin du zip du package du module/application
 PathToModuleDocumentation=Chemin d'accès au fichier de documentation du module (%s)
 SpaceOrSpecialCharAreNotAllowed=Les espaces et les caractères spéciaux ne sont pas autorisés.
 FileNotYetGenerated=Fichier non encore généré
+GenerateCode=Générer le code
 RegenerateClassAndSql=Forcer la mise à jour des fichiers .class et .sql
 RegenerateMissingFiles=Générer les fichiers manquant
 SpecificationFile=Fichier de documentation
 LanguageFile=Fichier langue
 ObjectProperties=Propriétés de l'objet
+Property=Propriété
+PropertyDesc=Une propriété est un attribut qui caractérise un objet. Cet attribut a un code, un libellé et un type avec plusieurs options.
 ConfirmDeleteProperty=Voulez-vous vraiment supprimer la propriété <strong> %s </strong> ? Cela modifiera le code de la classe PHP, mais supprimera également la colonne de la définition de la table de l'objet.
 NotNull=Non NULL
-NotNullDesc=1=Définir le champ en base à NOT NULL. -1=Autoriser les valeurs nulles et forcer la valeur à NULL si vide ('' ou 0).
+NotNullDesc=1=Définir la base de données sur NOT NULL, 0=Autoriser les valeurs nulles, -1=Autoriser les valeurs nulles en forçant la valeur à NULL si vide ('' ou 0)
 SearchAll=Utilisé par la "recherche globale"
 DatabaseIndex=Index en base
 FileAlreadyExists=Le fichier %s existe déjà
@@ -78,15 +86,16 @@ IsAMeasure=Est une mesure
 DirScanned=Répertoire scanné
 NoTrigger=Pas de trigger
 NoWidget=Aucun widget
-GoToApiExplorer=Explorateur d'API
+ApiExplorer=Explorateur d'API
 ListOfMenusEntries=Liste des entrées du menu
 ListOfDictionariesEntries=Liste des entrées de dictionnaires
 ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
-EnabledDesc=Condition pour que ce champ soit actif (Exemples: 1 ou $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les listes et formulaire de mise à jour et affichage uniquement (pas en création), 5=Visible sur les listes et formulaire en lecture (pas en création ni modification).<br><br>Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage).<br><br>Il peut s'agir d'une expression, par exemple :<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Afficher ce champ sur les documents PDF compatibles, vous pouvez gérer la position avec le champ "Position.<br>Actuellement, les modèles compatibles PDF connus sont: eratostene (commande), espadon (expédition), sponge (factures), cyan (devis/propositions commerciales), cornas (commande fournisseur)<br><br><strong>Pour le document :</strong><br>0 = non affiché <br>1 = affiché<br>2 = affiché uniquement si non vide<br><br><strong>Pour les lignes de document :</strong><br>0 = non affiché <br>1 =  0 = non affiché 1 = affiché dans une colonne<br>3 = affiché dans la colonne description après la description<br>4 = affiché dans la colonne description après la description uniquement si non vide
-DisplayOnPdf=Afficher sur PDF
+EnabledDesc=Condition pour que ce champs soit actif.<br><br>Exemples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Le champ est-il visible ? (Exemples : 0=Jamais visible, 1=Visible sur la liste et les formulaires de création/mise à jour/affichage, 2=Visible sur la liste uniquement, 3=Visible sur le formulaire de création/mise à jour/affichage uniquement (pas la liste), 4=Visible sur la liste et formulaire de mise à jour/affichage uniquement (pas de création), 5=Visible sur le formulaire d'affichage de fin de liste uniquement (pas de création, pas de mise à jour).
+ItCanBeAnExpression=Cela peut être une expression. Exemple : <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Affichez ce champ sur les documents PDF compatibles, vous pouvez gérer la position avec le champ "Position". <br>  <strong> Pour le document : </strong>  <br> 0 = non affiché  <br> 1 = affiché <br> 2 = affiché uniquement si non vide <br>  <br>  <strong> Pour les lignes de document : </strong>  <br> 0 = non affiché  <br> 1 = affiché dans une colonne <br> 3 = affiché dans la colonne description après la description <br> 4 = affiché dans la colonne description après la description uniquement si non vide
+DisplayOnPdf=Sur les PDF
 IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
 SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à partir de l'outil de recherche rapide ? (Exemples: 1 ou 0)
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
@@ -94,7 +103,7 @@ LanguageDefDesc=Entrez dans ces fichiers, toutes les clés et la traduction pour
 MenusDefDesc=Définissez ici les menus fournis par votre module
 DictionariesDefDesc=Définissez ici les dictionnaires fournis par le module
 PermissionsDefDesc=Définissez ici les nouvelles permissions fournies par votre module
-MenusDefDescTooltip=Les menus fournis par votre module / application sont définis dans le tableau <strong>$this->menus</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et les modules réactivés), les menus sont également visibles dans l'éditeur de menus mis à la disposition des utilisateurs administrateurs sur %s.
+MenusDefDescTooltip=Les menus fournis par votre module/application sont définis dans le tableau <strong> $this->menus </strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br> <br> Remarque : Une fois définis (et le module réactivé), les menus sont également visibles dans l'éditeur de menus accessible aux utilisateurs administrateurs sur %s.
 DictionariesDefDescTooltip=Les dictionnaires fournis par votre module/application sont définis dans le tableau <strong>$this->dictionaries</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et module réactivé), les dictionnaires sont également visibles dans la zone de configuration par les utilisateurs administrateurs sur %s.
 PermissionsDefDescTooltip=Les autorisations fournies par votre module / application sont définies dans le tableau <strong>$this->rights</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définies (et le module réactivé), les autorisations sont visibles dans la configuration par défaut des autorisations %s.
 HooksDefDesc=Définissez dans la propriété <b> module_parts ['hooks'] </b>, dans le descripteur de module, le contexte des hooks à gérer (la liste des contextes peut être trouvée par une recherche sur '<b> initHooks (</b>' dans le code du noyau). <br> Editez le fichier hook pour ajouter le code de vos fonctions hookées (les fonctions hookables peuvent être trouvées par une recherche sur '<b> executeHooks </b>' dans le code core).
@@ -102,7 +111,7 @@ TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez ex
 SeeIDsInUse=Voir les IDs utilisés dans votre installation
 SeeReservedIDsRangeHere=Voir la plage des ID réservés
 ToolkitForDevelopers=Boîte à outils pour développeurs Dolibarr
-TryToUseTheModuleBuilder=Si vous connaissez SQL et PHP, vous pouvez utiliser l'assistant de création de module natif. <br> Activez le module <strong> %s </strong> et utilisez l'assistant en cliquant sur la <span class = "fa fa-bug">. </span> dans le menu en haut à droite. <br> Avertissement: Il s'agit d'une fonctionnalité avancée pour les développeurs. Ne <b> pas </b> expérimenter sur votre site de production!
+TryToUseTheModuleBuilder=Si vous connaissez SQL et PHP, vous pouvez utiliser l'assistant de création de module natif. <br> Activez le module <strong>%s</strong> et utilisez l'assistant en cliquant sur la <span class="fa fa-bug"></span>dans le menu en haut à droite. <br> Avertissement: Il s'agit d'une fonctionnalité avancée pour les développeurs. Ne <b>pas</b> expérimenter sur votre site de production!
 SeeTopRightMenu=Voir <span class="fa fa-bug"></span> à droite de votre barre de menu principal
 AddLanguageFile=Ajouter le fichier de langue
 YouCanUseTranslationKey=Vous pouvez utiliser ici une clé qui est la clé de traduction trouvée dans le fichier de langue (voir l'onglet "Langues")
@@ -110,7 +119,7 @@ DropTableIfEmpty=(Supprimer la table si vide)
 TableDoesNotExists=La table %s n'existe pas
 TableDropped=La table %s a été supprimée
 InitStructureFromExistingTable=Construire la chaîne du tableau de structure d'une table existante
-UseAboutPage=Désactiver la page "à propos de"
+UseAboutPage=Ne pas générer la page À propos
 UseDocFolder=Désactiver le dossier de la documentation
 UseSpecificReadme=Utiliser un fichier ReadMe spécifique
 ContentOfREADMECustomized=Remarque: le contenu du fichier README.md a été remplacé par la valeur spécifique définie dans la configuration de ModuleBuilder.
@@ -127,21 +136,40 @@ UseSpecificEditorURL = Utiliser une URL d'éditeur spécifique
 UseSpecificFamily = Utiliser une famille spécifique
 UseSpecificAuthor = Utiliser un auteur spécifique
 UseSpecificVersion = Utiliser une version initiale spécifique
-IncludeRefGeneration=La référence de l'objet doit être générée automatiquement
-IncludeRefGenerationHelp=Cochez cette option si vous souhaitez inclure du code pour gérer la génération automatique de la référence
-IncludeDocGeneration=Je veux générer des documents à partir de l'objet
+IncludeRefGeneration=La référence de l'objet doit être générée automatiquement par des règles de numérotation personnalisées
+IncludeRefGenerationHelp=Cochez cette case si vous souhaitez inclure du code pour gérer automatiquement la génération de la référence à l'aide de règles de numérotation personnalisées
+IncludeDocGeneration=Je souhaite la fonctionnalité pour générer des documents (PDF, ODT) à partir de modèles pour cet objet
 IncludeDocGenerationHelp=Si vous cochez cette case, du code sera généré pour ajouter une section "Générer un document" sur la fiche de l'objet.
-ShowOnCombobox=Afficher la valeur dans la liste déroulante
+ShowOnCombobox=Afficher la valeur dans les listes déroulantes
 KeyForTooltip=Clé pour l'info-bulle
 CSSClass=CSS pour le formulaire d'édition / création
 CSSViewClass=CSS pour le formulaire de lecture
 CSSListClass=CSS pour la liste
 NotEditable=Non éditable
 ForeignKey=Clé étrangère
-TypeOfFieldsHelp=Type de champs: <br> varchar (99), double (24,8), réel, texte, html, datetime, timestamp, integer, integer:NomClasse:cheminrelatif/vers/classfile.class.php [:1[:filtre]] ('1' signifie nous ajoutons un bouton + après le combo pour créer l'enregistrement, 'filter' peut être 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' par exemple)
+ForeignKeyDesc=Si la valeur de ce champ doit être garantie existe dans une autre table. Saisissez ici une valeur correspondant à la syntaxe : nomtable.champparentàvérifier
+TypeOfFieldsHelp=Exemple : <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> ' 1' signifie que nous ajoutons un bouton + après le combo pour créer l'enregistrement <br> 'filter' est une condition sql, exemple : 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=Il s'agit du type de champ/attribut.
 AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF
 TableNotEmptyDropCanceled=La table n’est pas vide. La suppression a été annulée.
 ModuleBuilderNotAllowed=Le module builder est activé mais son accès n'est pas autorisé pour votre utilisateur
 ImportExportProfiles=Profils d'import et d'export
-ValidateModBuilderDesc=Mettez 1 si ce champ doit être validé avec $this->validateField() ou 0 si la validation est requise
+ValidateModBuilderDesc=Définissez ceci sur 1 si vous souhaitez que la méthode $this->validateField() de l'objet soit appelée pour valider le contenu du champ lors de l'insertion ou de la mise à jour. Définissez 0 si aucune validation n'est requise.
+WarningDatabaseIsNotUpdated=Attention : La base de données n'est pas mise à jour automatiquement, vous devez détruire les tables et désactiver-activer le module pour que les tables soient recréées
+LinkToParentMenu=Menu parent (fk_xxxxmenu)
+ListOfTabsEntries=Liste des entrées d'onglet
+TabsDefDesc=Définissez ici les onglets proposés par votre module
+TabsDefDescTooltip=Les onglets fournis par votre module/application sont définis dans le tableau <strong> $this->tabs </strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré.
+BadValueForType=Mauvaise valeur pour le type %s
+DefinePropertiesFromExistingTable=Définir des propriétés à partir d'une table existante
+DefinePropertiesFromExistingTableDesc=Si une table dans la base de données (pour l'objet à créer) existe déjà, vous pouvez l'utiliser pour définir les propriétés de l'objet.
+DefinePropertiesFromExistingTableDesc2=Laisser vide si la table n'existe pas encore. Le générateur de code utilisera différents types de champs pour créer un exemple de table que vous pourrez modifier ultérieurement.
+GeneratePermissions=Je souhaite ajouter les droits pour cet objet
+GeneratePermissionsHelp=générer les droits par défaut pour cet objet
+PermissionDeletedSuccesfuly=Les permissions ont été retirées avec succès
+PermissionUpdatedSuccesfuly=Les permissions ont été mises à jour avec succès
+PermissionAddedSuccesfuly=Les permissions ont été ajoutées avec succès
+MenuDeletedSuccessfuly=Le menu a été supprimé avec succès
+MenuAddedSuccessfuly=Le menu a été ajouté avec succès
+MenuUpdatedSuccessfuly=Le menu a été mis à jour avec succès

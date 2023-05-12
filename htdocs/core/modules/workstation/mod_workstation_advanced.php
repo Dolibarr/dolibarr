@@ -80,7 +80,7 @@ class mod_workstation_advanced extends ModeleNumRefWorkstation
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskWorkstation" value="'.$conf->global->WORKSTATION_WORKSTATION_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskWorkstation" value="'.getDolGlobalString('WORKSTATION_WORKSTATION_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -133,7 +133,7 @@ class mod_workstation_advanced extends ModeleNumRefWorkstation
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->WORKSTATION_WORKSTATION_ADVANCED_MASK;
+		$mask = getDolGlobalString('WORKSTATION_WORKSTATION_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

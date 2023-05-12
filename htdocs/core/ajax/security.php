@@ -36,11 +36,16 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOREQUIRETRAN')) {
+// We need langs because the getRandomPassword may use user language to define some rules of pass generation
+/*if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
-}
+}*/
 
+// Load Dolibarr environment
 require '../../main.inc.php';
+
+$action = GETPOST('action');
+
 
 /*
  * View
@@ -51,11 +56,11 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-// Registering the location of boxes
-if (isset($_GET['action']) && !empty($_GET['action'])) {
-	if ($_GET['action'] == 'getrandompassword' && ($user->admin || $user->rights->api->apikey->generate)) {
+// Return a new generated password
+if ($action) {
+	if ($action == 'getrandompassword') {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$generic = $_GET['generic'] ? true : false;
+		$generic = GETPOST('generic') ? true : false;
 		echo getRandomPassword($generic);
 	}
 }

@@ -26,9 +26,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))	define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))	define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -42,6 +39,7 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -78,6 +76,7 @@ if ($invoice->socid > 0) {
 }
 $vatRateDefault = get_default_tva($mysoc, $soc);
 
+
 /*
  * View
  */
@@ -85,8 +84,10 @@ $vatRateDefault = get_default_tva($mysoc, $soc);
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs = array();
 
-top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
+top_htmlhead('', '', 0, 0, $arrayofjs, $arrayofcss);
 ?>
+<body>
+
 <script>
 	var vatRate = '<?php echo dol_escape_js($vatRateDefault); ?>';
 
@@ -108,7 +109,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 	 */
 	function Save() {
 		console.log("We click so we call page invoice.php with place=<?php echo $place; ?> tva_tx="+vatRate);
-		parent.$("#poslines").load("invoice.php?action=freezone&place=<?php echo $place; ?>&number="+$('#number').val()+"&tva_tx="+vatRate, {desc:$('#desc').val()});
+		parent.$("#poslines").load("invoice.php?action=freezone&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number="+$('#number').val()+"&tva_tx="+vatRate, {desc:$('#desc').val()});
 		parent.$.colorbox.close();
 	}
 
@@ -116,8 +117,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 		$('#desc').focus()
 	});
 </script>
-</head>
-<body>
+
 <br>
 <center>
 <input type="text" id="desc" name="desc" class="takepospay" style="width:40%;" placeholder="<?php echo $langs->trans('Description'); ?>">

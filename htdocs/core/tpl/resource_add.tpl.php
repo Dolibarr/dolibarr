@@ -13,9 +13,11 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 $form = new Form($db);
 $formresources = new FormResource($db);
 
-$out  = '<div class="tagtable centpercent noborder borderbottom allwidth nohover">';
+$out = '';
 
-$out .= '<form class="tagtr nohover '.($var == true ? 'pair' : 'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+$out .= '<div class="centpercent allwidth nohover">';
+
+$out .= '<form class="nohover '.($var == true ? 'pair' : 'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 $out .= '<input type="hidden" name="token" value="'.newToken().'">';
 $out .= '<input type="hidden" name="action" value="add_element_resource">';
 $out .= '<input type="hidden" name="element" value="'.$element.'">';
@@ -23,19 +25,28 @@ $out .= '<input type="hidden" name="element_id" value="'.$element_id.'">';
 $out .= '<input type="hidden" name="ref" value="'.$element_ref.'">';
 $out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_type) ? 'dolresource' : $resource_type).'">';
 
+$out .= '<div class="noborder borderbottom">';
 
 // Place
-$out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div>';
-$out .= '<div class="tagtd">';
+$out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">'.$langs->trans("SelectResource").'</div>';
+$out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 $events = array();
 $out .= $formresources->select_resource_list('', 'fk_resource', '', 1, 1, 0, $events, '', 2, null);
 $out .= '</div>';
 
-$out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->selectyesno('busy', (GETPOSTISSET('busy') ? GETPOST('busy') : 1), 1).'</div>';
-$out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> '.$form->selectyesno('mandatory', (GETPOSTISSET('mandatory') ? GETPOST('mandatory') : 0), 1).'</div>';
+$out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block marginleftonly"><label for="resbusy">'.$langs->trans('Busy').'</label> ';
+//$out .= $form->selectyesno('busy', (GETPOSTISSET('busy') ? GETPOST('busy') : 1), 1);
+$out .= '<input type="checkbox" id="resbusy" name="busy" value="1"'.(GETPOSTISSET('fk_resource') ? (GETPOST('busy') ? ' checked' : '') : ' checked').'>';
+$out .= '</div>';
+$out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block marginleftonly"><label for="resmandatory">'.$langs->trans('Mandatory').'</label> ';
+//$out .= $form->selectyesno('mandatory', (GETPOSTISSET('mandatory') ? GETPOST('mandatory') : 0), 1);
+$out .= '<input type="checkbox" id="resmandatory" name="mandatory" value="1"'.(GETPOSTISSET('fk_resource') ? (GETPOST('mandatory') ? ' checked' : '') : ' checked').'>';
+$out .= '</div>';
 
-$out .= '<div class="tagtd right">';
+$out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block right">';
 $out .= '<input type="submit" id="add-resource-place" class="button button-add" value="'.$langs->trans("Add").'"/>';
+$out .= '</div>';
+
 $out .= '</div>';
 
 $out .= '</form>';

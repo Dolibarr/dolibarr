@@ -94,8 +94,8 @@ print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'co
 // Init data
 print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
-print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
-print "Option force_utf8mb4_on_tables (EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
+print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+print "Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
 // Rebuild sequence
 print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
@@ -176,7 +176,8 @@ $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
-	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha')
+	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
+	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha')
 	|| GETPOST('rebuild_sequences', 'alpha'));
 
 if ($ok && $oneoptionset) {
@@ -902,9 +903,8 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
 	$sql .= " WHERE p.rowid = ps.fk_product";
-	$sql .= " AND p.tobatch > 0";
 	$sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
-	$sql .= " HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
+	$sql .= " HAVING (SUM(pb.qty) IS NOT NULL AND reel != SUM(pb.qty)) OR (SUM(pb.qty) IS NULL AND p.tobatch > 0)";
 	print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -914,53 +914,73 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (sum product_batch)';
+				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehouse id='.$obj->fk_entrepot.' -> product_stock.id='.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (sum product_batch)';
 
-				// Fix
+				// Fix is required
 				if ($obj->reel != $obj->reelbatch) {
-					if ($methodtofix == 'updatebatch') {
-						// Method 1
-						print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
+					if (empty($obj->tobatch)) {
+						// If product is not a product that support batches, we can clean stock by deleting the product batch lines
+						print ' -> Delete qty '.$obj->reelbatch.' for any lot linked to fk_product_stock='.$obj->psrowid;
+						$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."product_batch";
+						$sql2 .= " WHERE fk_product_stock = ".((int) $obj->psrowid);
+						print '<br>'.$sql2;
+
 						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
-							$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
-							$sql2 .= "VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
 							$resql2 = $db->query($sql2);
 							if (!$resql2) {
-								// TODO If it fails, we must make update
-								//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
-								//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
-								//$sql2.=" WHERE fk_product_stock = ".((int) $obj->psrowid)
-							}
-						}
-					}
-					if ($methodtofix == 'updatestock') {
-						// Method 2
-						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
-						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
-							$error = 0;
-
-							$db->begin();
-
-							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
-							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
-							$resql2 = $db->query($sql2);
-							if ($resql2) {
-								// We update product_stock, so we must fill p.stock into product too.
-								$sql3 = 'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
-								$resql3 = $db->query($sql3);
-								if (!$resql3) {
-									$error++;
-									dol_print_error($db);
-								}
-							} else {
 								$error++;
 								dol_print_error($db);
 							}
+						}
+					} else {
+						if ($methodtofix == 'updatebatch') {
+							// Method 1
+							print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
+							$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
+							$sql2 .= "VALUES(".((int) $obj->psrowid).", '000000', ".((float) ($obj->reel - $obj->reelbatch)).")";
+							print '<br>'.$sql2;
 
-							if (!$error) {
-								$db->commit();
-							} else {
-								$db->rollback();
+							if (GETPOST('clean_product_stock_batch') == 'confirmed') {
+								$resql2 = $db->query($sql2);
+								if (!$resql2) {
+									// TODO If it fails, we must make update
+									//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
+									//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+									//$sql2.=" WHERE fk_product_stock = ".((int) $obj->psrowid)
+								}
+							}
+						}
+						if ($methodtofix == 'updatestock') {
+							// Method 2
+							print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
+							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
+							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
+							print '<br>'.$sql2;
+
+							if (GETPOST('clean_product_stock_batch') == 'confirmed') {
+								$error = 0;
+
+								$db->begin();
+
+								$resql2 = $db->query($sql2);
+								if ($resql2) {
+									// We update product_stock, so we must fill p.stock into product too.
+									$sql3 = 'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
+									$resql3 = $db->query($sql3);
+									if (!$resql3) {
+										$error++;
+										dol_print_error($db);
+									}
+								} else {
+									$error++;
+									dol_print_error($db);
+								}
+
+								if (!$error) {
+									$db->commit();
+								} else {
+									$db->rollback();
+								}
 							}
 						}
 					}
@@ -1218,7 +1238,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 // force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
-	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci and row_format=dynamic (for mysql/mariadb only)</td></tr>';
 
 	if ($db->type == "mysql" || $db->type == "mysqli") {
 		$force_utf8_on_tables = GETPOST('force_utf8_on_tables', 'alpha');
@@ -1240,11 +1260,18 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table;
-			$sql = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
-			print '<!-- '.$sql.' -->';
+			$sql1 = "ALTER TABLE ".$table." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
-				$resql = $db->query($sql);
-				print ' - Done ('.($resql ? 'OK' : 'KO').')';
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
 			} else {
 				print ' - Disabled';
 			}

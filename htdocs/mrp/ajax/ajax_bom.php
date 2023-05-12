@@ -26,9 +26,6 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -42,16 +39,19 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 $idbom = GETPOST('idbom', 'alpha');
-$action = GETPOST('action', 'aZ09');
+//$action = GETPOST('action', 'aZ09');
 
 
 /*
  * View
  */
+
+top_httphead('application/json');
 
 $object = new BOM($db);
 $result = $object->fetch($idbom);

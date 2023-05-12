@@ -13,12 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
-use Luracast\Restler\RestException;
-
-require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 
 /**
  * \file    htdocs/zapier/class/api_zapier.class.php
@@ -26,13 +22,18 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
  * \brief   File for API management of hook.
  */
 
+use Luracast\Restler\RestException;
+
+require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
+
+
 /**
  * API class for zapier hook
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class ZapierApi extends DolibarrApi
+class Zapier extends DolibarrApi
 {
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
@@ -197,11 +198,10 @@ class ZapierApi extends DolibarrApi
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

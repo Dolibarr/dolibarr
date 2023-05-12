@@ -25,6 +25,7 @@
  *      \brief      Page to setup external calendars for agenda module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -66,7 +67,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 	$value = (GETPOST($code) ? GETPOST($code) : 1);
 
 	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 		$errors[] = $db->lasterror();
 	}
@@ -86,7 +87,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 
 	$res = dolibarr_del_const($db, $code, $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 		$errors[] = $db->lasterror();
 	}
@@ -202,7 +203,7 @@ print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span
 print "<br>\n";
 
 
-$selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
+$selectedvalue = getDolGlobalInt('AGENDA_DISABLE_EXT');
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
 print "<table class=\"noborder\" width=\"100%\">";
@@ -278,13 +279,13 @@ while ($i <= $MAXAGENDA) {
 	print '</td>';
 	// Calendar active by default
 	print '<td class="nowrap right">';
-	if ($conf->use_javascript_ajax) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key);
 	} else {
-		if (empty($conf->global->{$default})) {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
-		} else {
+		if (getDolGlobalString($default)) {
 			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+		} else {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 		}
 	}
 	print '</td>';
