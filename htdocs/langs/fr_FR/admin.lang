@@ -2222,3 +2222,4 @@ IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, yo
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Générer les PDF au format PDF/A-1b
 ShowQuickAddLink=Afficher un bouton pour ajouter rapidement un élément, dans le menu en haut à droite
+MrpEnableAutoSetRemainingQuantitiesToBeConsumed=Définit par défaut les quantités restantes à consommer lorsque l'on appuie sur le bouton "Consommer ou produire"
