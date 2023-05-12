@@ -990,7 +990,6 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$langtoload = empty($value['lang']) ? '' : $value['lang'];
 	$urlnew = empty($value['urlnew']) ? '' : $value['urlnew'];
 	$buttonnew = empty($value['buttonnew']) ? '' : $value['buttonnew'];
 	$testnew = empty($value['testnew']) ? '' : $value['testnew'];
@@ -1005,10 +1004,6 @@ foreach ($listofreferent as $key => $value) {
 	if ($qualified) {
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
-
-		if ($langtoload) {
-			$langs->load($langtoload);
-		}
 
 		$element = new $classname($db);
 
