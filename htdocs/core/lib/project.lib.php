@@ -913,27 +913,27 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		if ($showproject) {
 			print '<td></td><td></td>';
 		}
-		if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
+        if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
 			print '<td></td>';
 		}
         if (count($arrayfields) > 0 && ! empty($arrayfields['t.description']['checked'])) {
             print '<td></td>';
         }
-		if (count($arrayfields) > 0 && !empty($arrayfields['t.dateo']['checked'])) {
+        if (count($arrayfields) > 0 && !empty($arrayfields['t.dateo']['checked'])) {
+	        print '<td></td>';
+		}
+        if (count($arrayfields) > 0 && !empty($arrayfields['t.datee']['checked'])) {
 			print '<td></td>';
 		}
-		if (count($arrayfields) > 0 && !empty($arrayfields['t.datee']['checked'])) {
-			print '<td></td>';
-		}
-		if (count($arrayfields) > 0 && !empty($arrayfields['t.planned_workload']['checked'])) {
+        if (count($arrayfields) > 0 && !empty($arrayfields['t.planned_workload']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
 			print '</td>';
 		}
-		if (count($arrayfields) > 0 && !empty($arrayfields['t.duration_effective']['checked'])) {
-			print '<td class="nowrap liste_total right">';
-			if ($projectidfortotallink > 0) {
-				print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$projectidfortotallink.($showproject ? '' : '&withproject=1').'">';
+        if (count($arrayfields) > 0 && !empty($arrayfields['t.duration_effective']['checked'])) {
+            print '<td class="nowrap liste_total right">';
+            if ($projectidfortotallink > 0) {
+                print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$projectidfortotallink.($showproject ? '' : '&withproject=1').'">';
 			}
 			print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
 			if ($projectidfortotallink > 0) {
