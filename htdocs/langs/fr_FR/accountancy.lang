@@ -109,8 +109,8 @@ MenuTaxAccounts=Comptes charges soc./fisc.
 MenuExpenseReportAccounts=Comptes notes de frais
 MenuLoanAccounts=Comptes emprunts
 MenuProductsAccounts=Comptes produits
-MenuClosureAccounts=Comptes de fermeture
-MenuAccountancyClosure=Cloture
+MenuClosureAccounts=Comptes de clôture
+MenuAccountancyClosure=Clôture
 MenuAccountancyValidationMovements=Valider les mouvements
 ProductsBinding=Comptes produits
 TransferInAccounting=Transfert en comptabilité
@@ -173,9 +173,9 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Journal des notes de frais
 ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
 ACCOUNTING_HAS_NEW_JOURNAL=Journal des A-nouveaux
 
-ACCOUNTING_RESULT_PROFIT=Compte de résultat (Profit)
+ACCOUNTING_RESULT_PROFIT=Compte de résultat (bénéfice)
 ACCOUNTING_RESULT_LOSS=Compte de résultat (perte)
-ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal de fermeture
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal de clôture
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de transfert transitoire bancaire
 TransitionalAccount=Compte transitoire de virement bancaire
