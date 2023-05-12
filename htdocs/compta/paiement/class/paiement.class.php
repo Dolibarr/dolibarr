@@ -276,12 +276,22 @@ class Paiement extends CommonObject
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
-				$currencyofpayment = $this->multicurrency_code[$key];
+				if (array_key_exists($key, $this->multicurrency_code)) {
+					$currencyofpayment = $this->multicurrency_code[$key];
+				} else {
+					// Handle the case where the key does not exist in the array
+					// ...
+				}
 			}
-			if ($currencyofpayment != $this->multicurrency_code[$key]) {
-				// If we have invoices with different currencies in the payment, we stop here
-				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
-				return -1;
+			if (array_key_exists($key, $this->multicurrency_code)) {
+				if ($currencyofpayment != $this->multicurrency_code[$key]) {
+					// If we have invoices with different currencies in the payment, we stop here
+					$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
+					return -1;
+				}
+			} else {
+				// Handle the case where the key does not exist in the array
+				// ...
 			}
 
 			$totalamount_converted += $value_converted;
