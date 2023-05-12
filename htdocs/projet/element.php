@@ -728,6 +728,9 @@ print '<td class="left" width="200">';
 $tooltiponprofit = $langs->trans("ProfitIsCalculatedWith")."<br>\n";
 $tooltiponprofitplus = $tooltiponprofitminus = '';
 foreach ($listofreferent as $key => $value) {
+	if (!empty($value['lang'])) {
+		$langs->load($value['lang']);
+	}
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
 	$margin = empty($value['margin']) ? 0 : $value['margin'];
