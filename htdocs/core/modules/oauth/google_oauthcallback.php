@@ -25,7 +25,12 @@
  *      \brief      Page to get oauth callback
  */
 
-if (!defined('NOLOGIN')) {
+// Force keyforprovider
+if (preg_match('/^forlogin-/', $_GET['state'])) {
+	$_GET['keyforprovider'] = 'Login';
+}
+
+if (!defined('NOLOGIN') && $_GET['keyforprovider'] == 'Login') {
 	define("NOLOGIN", 1); // This means this output page does not require to be logged.
 }
 
@@ -145,6 +150,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 
 	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
+		//var_dump($_SESSION['oauthstateanticsrf']);exit;
 		print 'Value for state = '.dol_escape_htmltag($state).' differs from value in $_SESSION["oauthstateanticsrf"]. Code is refused.';
 		unset($_SESSION['oauthstateanticsrf']);
 	} else {
@@ -152,9 +158,16 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 		try {
 			//var_dump($state);
 			//var_dump($apiService);      // OAuth\OAuth2\Service\Google
+			//dol_syslog("_GET=".var_export($_GET, true));
+			//dol_syslog("_POST=".var_export($_POST, true));
+
+			$errorincheck = 0;
+
+			$db->begin();
 
 			// This request the token
 			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
+			// TODO Store the token with fk_user = $user->id ?
 			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
@@ -165,29 +178,67 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 			if (!empty($jwt[1])) {
 				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
-				// TODO
-				// We should make the 5 steps of validation of id_token
-				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
-				// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
-				// Verify that the value of the aud claim in the ID token is equal to your app's client ID.
-				// Verify that the expiry time (exp claim) of the ID token has not passed.
-				// If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
-
+				//dol_syslog("userinfo=".var_export($userinfo, true));
 				/*
-				$useremailuniq = $userinfo['sub'];
-				$useremail = $userinfo['email'];
-				$useremailverified = $userinfo['email_verified'];
-				$username = $userinfo['name'];
-				$userfamilyname = $userinfo['family_name'];
-				$usergivenname = $userinfo['given_name'];
-				$hd = $userinfo['hd'];
-				*/
+				 $useremailuniq = $userinfo['sub'];
+				 $useremail = $userinfo['email'];
+				 $useremailverified = $userinfo['email_verified'];
+				 $username = $userinfo['name'];
+				 $userfamilyname = $userinfo['family_name'];
+				 $usergivenname = $userinfo['given_name'];
+				 $hd = $userinfo['hd'];
+				 */
+
+				// We should make the 5 steps of validation of id_token
+
+				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
+				// TODO
+
+				// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
+				if ($userinfo['iss'] != 'accounts.google.com' && $userinfo['iss'] != 'https://accounts.google.com') {
+					setEventMessages($langs->trans('Bad value for returned userinfo[iss]'), null, 'errors');
+					$errorincheck++;
+				}
+
+				// Verify that the value of the aud claim in the ID token is equal to your app's client ID.
+				$keyforparamid = 'OAUTH_GOOGLE-'.$keyforprovider.'_ID';
+				if ($userinfo['aud'] != getDolGlobalString($keyforparamid)) {
+					setEventMessages($langs->trans('Bad value for returned userinfo[aud]'), null, 'errors');
+					$errorincheck++;
+				}
+
+				// Verify that the expiry time (exp claim) of the ID token has not passed.
+				if ($userinfo['exp'] <= dol_now()) {
+					setEventMessages($langs->trans('Bad value for returned userinfo[exp]. Token expired.'), null, 'errors');
+					$errorincheck++;
+				}
+
+				// If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
+				// TODO
 			}
 
-			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
+			if (!$errorincheck) {
+				// Delete the token with fk_soc IS NULL
+				//$storage->clearToken('Google');
+
+				// TODO Insert a token for user
+				//$storage->storeAccessToken
+
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+
+			//setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
 
 			$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
 			unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+
+			if (empty($backtourl)) {
+				$backtourl = DOL_URL_ROOT;
+			}
+
+			dol_syslog("Redirect now on backtourl=".$backtourl);
 
 			header('Location: '.$backtourl);
 			exit();

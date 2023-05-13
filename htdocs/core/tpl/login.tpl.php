@@ -356,7 +356,7 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 
 	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
 	$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
-	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?keyforprovider=Login&shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
+	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
 
 	$url = $urltorenew;
 
