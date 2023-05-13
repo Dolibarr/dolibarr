@@ -25,8 +25,6 @@
 
 
 
-
-
 //include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
 
 

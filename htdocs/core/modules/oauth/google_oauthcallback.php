@@ -25,6 +25,10 @@
  *      \brief      Page to get oauth callback
  */
 
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
@@ -85,7 +89,7 @@ $statewithanticsrfonly = '';
 $requestedpermissionsarray = array();
 if ($state) {
 	// 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
-	$statewithscopeonly = preg_replace('/\-.*$/', '', $state);
+	$statewithscopeonly = preg_replace('/\-.*$/', '', preg_replace('/^forlogin-/', '', $state));
 	$requestedpermissionsarray = explode(',', $statewithscopeonly); // Example: 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print'.
 	$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
 }
@@ -115,10 +119,10 @@ $apiService->setAccessType('offline');
 $langs->load("oauth");
 
 if (!getDolGlobalString($keyforparamid)) {
-	accessforbidden('Setup of service is not complete. Customer ID is missing');
+	accessforbidden('Setup of service '.$keyforparamid.' is not complete. Customer ID is missing');
 }
 if (!getDolGlobalString($keyforparamsecret)) {
-	accessforbidden('Setup of service is not complete. Secret key is missing');
+	accessforbidden('Setup of service '.$keyforparamid.' is not complete. Secret key is missing');
 }
 
 
