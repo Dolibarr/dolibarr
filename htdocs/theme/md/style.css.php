@@ -3581,7 +3581,7 @@ div.tabBar {
 	padding-left: 24px;
 	padding-right: 24px;
 	padding-bottom: 23px;
-	margin: 0px 0px 18px 0px;
+	margin: 0px 0px 20px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border-right: 1px solid #CCC;
@@ -4989,7 +4989,7 @@ span.buttonpaymentsmall {
 	min-width: 320px; font-size: 16px;
 }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; margin-bottom: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
