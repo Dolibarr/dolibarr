@@ -2271,7 +2271,7 @@ class Ticket extends CommonObject
 	 * Used for files linked into messages.
 	 * Files may be renamed during copy to avoid overwriting existing files.
 	 *
-	 * @param	string		$forcetrackid	Force trackid
+	 * @param	string		$forcetrackid	Force trackid used for $keytoavoidconflict into get_attached_files()
 	 * @return	array|int					Array with final path/name/mime of files.
 	 */
 	public function copyFilesForTicket($forcetrackid = null)
@@ -2292,7 +2292,7 @@ class Ticket extends CommonObject
 		$formmail->trackid = (is_null($forcetrackid) ? 'tic'.$this->id : '');
 		$attachedfiles = $formmail->get_attached_files();
 
-		$filepath = $attachedfiles['paths'];
+		$filepath = $attachedfiles['paths'];	// path is for example user->dir_temp.'/'.$user->id.'/'...
 		$filename = $attachedfiles['names'];
 		$mimetype = $attachedfiles['mimes'];
 
@@ -2319,17 +2319,19 @@ class Ticket extends CommonObject
 				// Move has failed
 				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);
 				return -1;
+			} else {
+				// If file is an image, we create thumbs
+				if (image_format_supported($destfile) == 1) {
+					// Create small thumbs for image (Ratio is near 16/9)
+					// Used on logon for example
+					$imgThumbSmall = vignette($destfile, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+					// Create mini thumbs for image (Ratio is near 16/9)
+					// Used on menu or for setup page for example
+					$imgThumbMini = vignette($destfile, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+				}
 			}
 
-			if (image_format_supported($destfile) == 1) {
-				// Create small thumbs for image (Ratio is near 16/9)
-				// Used on logon for example
-				$imgThumbSmall = vignette($destfile, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-				// Create mini thumbs for image (Ratio is near 16/9)
-				// Used on menu or for setup page for example
-				$imgThumbMini = vignette($destfile, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
-			}
-
+			// Clear variables into session
 			$formmail->remove_attached_files($i);
 
 			// Fill array with new names
