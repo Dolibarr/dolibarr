@@ -61,7 +61,7 @@ class Cregion
 	 * @var string Region chef lieu
 	 */
 	public $cheflieu;
-	
+
 	public $active;
 
 	/**
