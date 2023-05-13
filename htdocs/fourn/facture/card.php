@@ -278,7 +278,7 @@ if (empty($reshook)) {
 					$action = 'delete';
 				} else {
 					$result = $object->setDraft($user, $idwarehouse);
-					if($result < 0) {
+					if ($result < 0) {
 						$error++;
 					}
 				}
