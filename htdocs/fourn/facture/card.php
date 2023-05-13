@@ -277,7 +277,10 @@ if (empty($reshook)) {
 					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 					$action = 'delete';
 				} else {
-					$object->setDraft($user, $idwarehouse, 1);
+					$result = $object->setDraft($user, $idwarehouse);
+					if($result < 0) {
+						$error++;
+					}
 				}
 			}
 

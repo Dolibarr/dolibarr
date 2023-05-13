@@ -1848,6 +1848,11 @@ class FactureFournisseur extends CommonInvoice
 							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("InvoiceValidatedInDolibarr", $num));
 						}
 						if ($result < 0) {
+							if (count($mouvP->errors)) {
+								setEventMessages(null, $mouvP->errors, 'errors');
+							} else {
+								setEventMessages($mouvP->error, $mouvP->errors, 'errors');
+							}
 							$error++;
 						}
 					}
