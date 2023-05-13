@@ -231,6 +231,22 @@ class SMTPs
 	// @CHANGE LDR
 	public $log = '';
 	public $lastretval = '';
+
+	/**
+	 * @var resource
+	 */
+	public $socket;
+
+	/**
+	 * @var int
+	 */
+	public $errno;
+
+	/**
+	 * @var string
+	 */
+	public $errstr;
+
 	private $_errorsTo = '';
 	private $_deliveryReceipt = 0;
 	private $_trackId = '';
