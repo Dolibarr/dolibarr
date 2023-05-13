@@ -196,6 +196,7 @@ TicketChangeType=Change type
 TicketChangeCategory=Change analytic code
 TicketChangeSeverity=Change severity
 TicketAddMessage=Add or send a message
+TicketAddPrivateMessage=Add a private message
 MessageSuccessfullyAdded=Ticket added
 TicketMessageSuccessfullyAdded=Message successfully added
 TicketMessagesList=Message list

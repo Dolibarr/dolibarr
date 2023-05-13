@@ -199,6 +199,7 @@ TicketChangeType=Changer le type
 TicketChangeCategory=Changer le code analytique
 TicketChangeSeverity=Changer la sévérité
 TicketAddMessage=Ajouter ou envoyer un message
+TicketAddPrivateMessage=Ajouter message privé
 MessageSuccessfullyAdded=Ticket créé
 TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
