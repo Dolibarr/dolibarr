@@ -260,7 +260,6 @@ if (empty($reshook)) {
 		$isErasable = $object->is_erasable();
 
 		if (($usercandelete && $isErasable > 0) || ($usercancreate && $isErasable == 1)) {
-
 			$idwarehouse = GETPOST('idwarehouse');
 
 			$qualified_for_stock_change = 0;
@@ -282,7 +281,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if(!$error) {
+			if (!$error) {
 				$result = $object->delete($user);
 				if ($result > 0) {
 					header('Location: list.php?restore_lastsearch_values=1');
