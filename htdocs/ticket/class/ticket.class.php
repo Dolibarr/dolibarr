@@ -1242,13 +1242,14 @@ class Ticket extends CommonObject
 	/**
 	 *      Load into a cache array, the list of ticket categories (setup done into dictionary)
 	 *
-	 *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
+	 *      @param	int		$publicgroup	0=No public group, 1=Public group only, -1=All
+	 *      @return int             		Number of lines loaded, 0 if already loaded, <0 if KO
 	 */
-	public function loadCacheCategoriesTickets()
+	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
 		global $conf, $langs;
 
-		if (!empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
+		if ($publicgroup == -1 && !empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
 			// Cache already loaded
 			return 0;
 		}
@@ -1256,8 +1257,13 @@ class Ticket extends CommonObject
 		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE active > 0 AND entity = ".((int) $conf->entity);
+		if ($publicgroup > -1) {
+			$sql .= " AND public = ".((int) $publicgroup);
+		}
 		$sql .= " ORDER BY pos";
+
 		dol_syslog(get_class($this)."::load_cache_categories_tickets", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
