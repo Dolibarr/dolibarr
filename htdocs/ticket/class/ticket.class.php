@@ -2265,8 +2265,8 @@ class Ticket extends CommonObject
 	 * Used for files linked into messages.
 	 * Files may be renamed during copy to avoid overwriting existing files.
 	 *
-	 * @param	string	$forcetrackid	Force trackid
-	 * @return	array					Array with final path/name/mime of files.
+	 * @param	string		$forcetrackid	Force trackid
+	 * @return	array|int					Array with final path/name/mime of files.
 	 */
 	public function copyFilesForTicket($forcetrackid = null)
 	{
@@ -2309,6 +2309,11 @@ class Ticket extends CommonObject
 			}
 
 			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1);
+			if (!$res) {
+				// Move has failed
+				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);
+				return -1;
+			}
 
 			if (image_format_supported($destfile) == 1) {
 				// Create small thumbs for image (Ratio is near 16/9)
@@ -2379,11 +2384,11 @@ class Ticket extends CommonObject
 	 * Add new message on a ticket (private/public area).
 	 * Can also send it be email if GETPOST('send_email', 'int') is set. For such email, header and footer is added.
 	 *
-	 * @param   User    $user       User for action
-	 * @param   string  $action     Action string
-	 * @param   int     $private    1=Message is private. TODO Implement this. What does this means ?
-	 * @param   int     $public_area    				1=Is the public area
-	 * @return  int
+	 * @param   User    $user       	User for action
+	 * @param   string  $action     	Action string
+	 * @param   int     $private    	1=Message is private. TODO Implement this. What does this means ?
+	 * @param   int     $public_area    1=Is the public area
+	 * @return  int						<0 if KO, >= 0 if OK
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
@@ -2420,6 +2425,10 @@ class Ticket extends CommonObject
 
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();
+			if (is_numeric($resarray) && $resarray == -1) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				return -1;
+			}
 
 			$listofpaths = $resarray['listofpaths'];
 			$listofnames = $resarray['listofnames'];
