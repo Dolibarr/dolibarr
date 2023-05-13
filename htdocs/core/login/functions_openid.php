@@ -80,7 +80,8 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$now = dol_now();
+					// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
+					/* $now = dol_now();
 					if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
 						// Load translation files required by the page
 						$langs->loadLangs(array('main', 'errors'));
@@ -92,8 +93,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 						$langs->loadLangs(array('main', 'errors'));
 						$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 						return '--bad-login-validity--';
-					}
-
+					} */
 					$login = $obj->login;
 				}
 			}
