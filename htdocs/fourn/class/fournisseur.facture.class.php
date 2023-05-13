@@ -1927,9 +1927,10 @@ class FactureFournisseur extends CommonInvoice
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	public function setDraft($user, $idwarehouse = -1)
+	public function setDraft($user, $idwarehouse = -1, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;

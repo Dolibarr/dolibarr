@@ -260,12 +260,36 @@ if (empty($reshook)) {
 		$isErasable = $object->is_erasable();
 
 		if (($usercandelete && $isErasable > 0) || ($usercancreate && $isErasable == 1)) {
-			$result = $object->delete($user);
-			if ($result > 0) {
-				header('Location: list.php?restore_lastsearch_values=1');
-				exit;
+
+			$idwarehouse = GETPOST('idwarehouse');
+
+			$qualified_for_stock_change = 0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$qualified_for_stock_change = $object->hasProductsOrServices(1);
+			}
+
+			// Check parameters
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+				$langs->load("stocks");
+				if (!$idwarehouse || $idwarehouse == -1) {
+					$error++;
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+					$action = 'delete';
+				} else {
+					$object->setDraft($user, $idwarehouse, 1);
+				}
+			}
+
+			if(!$error) {
+				$result = $object->delete($user);
+				if ($result > 0) {
+					header('Location: list.php?restore_lastsearch_values=1');
+					exit;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
