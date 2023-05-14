@@ -45,11 +45,12 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\OAuth2\Service\Google;
 
 // Define $urlwithroot
+global $dolibarr_main_url_root;
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-
+$langs->load("oauth");
 
 $action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
@@ -124,8 +125,6 @@ $apiService = $serviceFactory->createService('Google', $credentials, $storage, $
 $apiService->setAccessType('offline');
 
 
-$langs->load("oauth");
-
 if (!getDolGlobalString($keyforparamid)) {
 	accessforbidden('Setup of service '.$keyforparamid.' is not complete. Customer ID is missing');
 }
@@ -138,7 +137,6 @@ if (!getDolGlobalString($keyforparamsecret)) {
  * Actions
  */
 
-
 if ($action == 'delete') {
 	$storage->clearToken('Google');
 
@@ -148,13 +146,67 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (GETPOST('code')) {     // We are coming from oauth provider page.
+if (!GETPOST('code')) {
+	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect
+	// to the OAuth provider login page.
+	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
+	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
+	$_SESSION['oauthstateanticsrf'] = $state;
+
+	if ($forlogin) {
+		$apiService->setApprouvalPrompt('force');
+	}
+
+	// This may create record into oauth_state before the header redirect.
+	// Creation of record with state in this tables depend on the Provider used (see its constructor).
+	if ($state) {
+		$url = $apiService->getAuthorizationUri(array('state' => $state));
+	} else {
+		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
+	}
+	// The redirect_uri is included into this $url
+
+	// Add more param
+	$url .= '&nonce='.bin2hex(random_bytes(64/8));
+
+	if ($forlogin) {
+		// TODO Add param hd. What is it for ?
+		//$url .= 'hd=xxx';
+
+		if (GETPOST('username')) {
+			$url .= '&login_hint='.urlencode(GETPOST('username'));
+		}
+
+		// Check that the redirect_uri that wil be used is same than url of current domain
+
+		// Define $urlwithroot
+		global $dolibarr_main_url_root;
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+		//$urlwithroot = DOL_MAIN_URL_ROOT;				// This is to use same domain name than current
+
+		include DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		$currentrooturl = getRootURLFromURL(DOL_MAIN_URL_ROOT);
+		$externalrooturl = getRootURLFromURL($urlwithroot);
+
+		if ($currentrooturl != $externalrooturl) {
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup", $currentrooturl, $externalrooturl), null, 'errors');
+			$url = DOL_URL_ROOT;
+		}
+	}
+
+	// we go on oauth provider authorization page
+	header('Location: '.$url);
+	exit();
+} else {
+	// We are coming from the return of an OAuth2 provider page.
 	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
 
 	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
 		//var_dump($_SESSION['oauthstateanticsrf']);exit;
-		print 'Value for state = '.dol_escape_htmltag($state).' differs from value in $_SESSION["oauthstateanticsrf"]. Code is refused.';
+		print 'Value for state='.dol_escape_htmltag($state).' differs from value in $_SESSION["oauthstateanticsrf"]. Code is refused.';
 		unset($_SESSION['oauthstateanticsrf']);
 	} else {
 		// This was a callback request from service, get the token
@@ -228,11 +280,14 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 				if ($forlogin) {
 					dol_syslog("we received the login/email to log to, it is ".$useremail);
 
+					$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
+					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
+
 					// Delete the token
 					$storage->clearToken('Google');
 
 					$tmpuser = new User($db);
-					$res = $tmpuser->fetch(0, '', '', 0, -1, $useremail);
+					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail);
 
 					if ($res > 0) {
 						$username = $tmpuser->login;
@@ -240,14 +295,18 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 						$_SESSION['googleoauth_receivedlogin'] = dol_hash($conf->file->instance_unique_id.$username, '0');
 						dol_syslog('$_SESSION[\'googleoauth_receivedlogin\']='.$_SESSION['googleoauth_receivedlogin']);
 					} else {
-						$_SESSION["dol_loginmesg"] = "Failed to login using Google. User with this Email not found.";
+						$errormessage = "Failed to login using Google. User with the Email '".$useremail."' was not found";
+						if ($entitytosearchuser > 0) {
+							$errormessage .= ' ('.$langs->trans("Entity").' '.$entitytosearchuser.')';
+						}
+						$_SESSION["dol_loginmesg"] = $errormessage;
 						$errorincheck++;
 					}
 				}
 			} else {
 				// If call back to url for a OAUTH2 login
 				if ($forlogin) {
-					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retreives a token with non valid data.";
+					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retreives a token with non valid data";
 					$errorincheck++;
 				}
 			}
@@ -264,9 +323,13 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 			if (empty($backtourl)) {
 				$backtourl = DOL_URL_ROOT;
 			}
+
 			// If call back to url for a OAUTH2 login
 			if ($forlogin) {
-				$backtourl .= '?actionlogin=login&aftergoogleoauthreturn=1&username='.urlencode($username).'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&username='.urlencode($username).'&token='.newToken();
+				if (!empty($tmparray['entity'])) {
+					$backtourl .= '&entity='.$tmparray['entity'];
+				}
 			}
 
 			dol_syslog("Redirect now on backtourl=".$backtourl);
@@ -277,42 +340,6 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 			print $e->getMessage();
 		}
 	}
-} else {
-	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect
-	// to the OAuth provider login page.
-	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
-	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
-	$_SESSION['oauthstateanticsrf'] = $state;
-
-	if ($forlogin) {
-		$apiService->setApprouvalPrompt('force');
-	}
-
-	// This may create record into oauth_state before the header redirect.
-	// Creation of record with state in this tables depend on the Provider used (see its constructor).
-	if ($state) {
-		$url = $apiService->getAuthorizationUri(array('state' => $state));
-	} else {
-		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
-	}
-
-	// Add more param
-	$url .= '&nonce='.bin2hex(random_bytes(64/8));
-
-	if ($forlogin) {
-		// TODO Add param hd
-		//$url .= 'hd=xxx';
-		if (GETPOST('login_hint')) {
-			$url .= '&login_hint='.urlencode(GETPOST('login_hint'));
-		}
-	}
-
-
-	//var_dump($url);exit;
-
-	// we go on oauth provider authorization page
-	header('Location: '.$url);
-	exit();
 }
 
 
@@ -320,6 +347,6 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
  * View
  */
 
-// No view at all, just actions, so we never reach this line.
+// No view at all, just actions, so we reach this line only on error.
 
 $db->close();

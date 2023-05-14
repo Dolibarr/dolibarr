@@ -351,7 +351,7 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 4px; margin-bottom: 10px">';
 
-	global $dolibarr_main_url_root;
+	/*global $dolibarr_main_url_root;
 
 	// Define $urlwithroot
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -365,9 +365,12 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
 	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
 
-	$url = $urltorenew;
+	//$url = $urltorenew;
+	 */
 
-	print img_picto('', 'google', 'class="pictofixedwidth"').'<a class="alogin" href="'.$url.'">'.$langs->trans("LoginWith", "Google").'</a>';
+	echo '<input type="hidden" name="beforeoauthloginredirect" id="beforeoauthloginredirect" value="">';
+	print img_picto('', 'google', 'class="pictofixedwidth"');
+	print '<a class="alogin" href="#" onclick="jQuery(\'#beforeoauthloginredirect\').val(1); $(this).closest(\'form\').submit();">'.$langs->trans("LoginWith", "Google").'</a>';
 
 	echo '</div>';
 }

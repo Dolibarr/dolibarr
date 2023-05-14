@@ -47,7 +47,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 
 	// Get identity from user and redirect browser to Google OAuth Server
 	if (GETPOST('actionlogin') == 'login') {
-		if (!GETPOST('aftergoogleoauthreturn')) {
+		if (GETPOST('beforeoauthloginredirect')) {
 			// We post the form on the login page by clicking on the link to login using Google.
 			dol_syslog("We post the form on the login page by clicking on the link to login using Google");
 
@@ -70,27 +70,27 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 			);
 
 			// Make the redirect to the google_authcallback.php page to start the redirect to Google OAUTH.
-			/*
-				global $dolibarr_main_url_root;
 
-				// Define $urlwithroot
-				$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-				$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+			// Define $urlwithroot
+			//global $dolibarr_main_url_root;
+			//$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+			//$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+			$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-				//$shortscope = 'userinfo_email,userinfo_profile';
-				$shortscope = 'openid,email,profile';	// For openid connect
+			//$shortscope = 'userinfo_email,userinfo_profile';
+			$shortscope = 'openid,email,profile';	// For openid connect
 
-				$oauthstateanticsrf = bin2hex(random_bytes(128/8));
-				$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
-				// TODO Can add param hd and login_hit
-				$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
+			$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+			$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
 
-				// we go on oauth provider authorization page
-				header('Location: '.$url);
-				exit();
-			*/
-		} else {
+			$url = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode('forlogin-'.$shortscope.'-'.$oauthstateanticsrf).'&username='.urlencode($usertotest);
+
+			// we go on oauth provider authorization page
+			header('Location: '.$url);
+			exit();
+		}
+
+		if (GETPOST('afteroauthloginreturn')) {
 			// We reach this code after a call of a redirect to the targeted page from the callback url page of Google OAUTH2
 			dol_syslog("We reach the code after a call of a redirect to the targeted page from the callback url page of Google OAUTH2");
 
