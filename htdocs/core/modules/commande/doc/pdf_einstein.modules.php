@@ -63,7 +63,7 @@ class pdf_einstein extends ModelePDFCommandes
 	public $description;
 
 	/**
-	 * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+	 * @var string 	Save the name of generated file as the main doc when generating a doc with this template
 	 */
 	public $update_main_doc_field;
 
@@ -179,8 +179,8 @@ class pdf_einstein extends ModelePDFCommandes
 			$this->posxqty = 135;
 			$this->posxunit = 151;
 		} else {
-			$this->posxtva = 110;
-			$this->posxup = 126;
+			$this->posxtva = 106;
+			$this->posxup = 122;
 			$this->posxqty = 145;
 			$this->posxunit = 162;
 		}
