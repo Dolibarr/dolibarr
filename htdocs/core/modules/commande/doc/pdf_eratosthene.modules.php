@@ -959,6 +959,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 		$posxval = 52;
 
+		$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
+
 		// Show payments conditions
 		if ($object->cond_reglement_code || $object->cond_reglement) {
 			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
