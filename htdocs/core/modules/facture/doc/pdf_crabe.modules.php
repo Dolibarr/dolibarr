@@ -1794,7 +1794,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->postotalht - 1, $tab_top + 1);
-			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("TotalHT"), '', 'C');
+			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("TotalHTShort"), '', 'C');
 		}
 	}
 
