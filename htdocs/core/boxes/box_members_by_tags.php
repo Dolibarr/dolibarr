@@ -149,18 +149,18 @@ class box_members_by_tags extends ModeleBoxes
 				);
 				$line++;
 				foreach ($sumMembers as $key => $data) {
-					$adhtype = new AdherentType($this->db);
-					$adhtype->id = $key;
+					$adhtag = new Categorie($db);
+					$adhtag->id = $key;
 
 					if ($key=='total') {
 						break;
 					}
-					$adhtype->label = $data['label'];
-					$AdherentType[$key] = $adhtype;
+					$adhtag->label = $data['label'];
+					$AdherentTag[$key] = $adhtag;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $adhtype->getNomUrl(1, dol_size(32)),
+						'text' => $adhtag->getNomUrl(0, '', dol_size(32), '&backtolist='.urlencode($_SERVER["PHP_SELF"])),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
@@ -195,7 +195,7 @@ class box_members_by_tags extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($data['total_adhtype']) && $data['total_adhtype'] > 0 ? $data['total_adhtype'] : ''),
+						'text' => (isset($data['total_adhtag']) && $data['total_adhtag'] > 0 ? $data['total_adhtag'] : ''),
 						'asis' => 1,
 					);
 					$line++;
