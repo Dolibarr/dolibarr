@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 $langs->loadLangs(array("admin", "products"));
 
 // Security check
-if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled))) {
+if (!$user->admin || (!isModEnabled("product") && !isModEnabled("service"))) {
 	accessforbidden();
 }
 
@@ -106,8 +106,8 @@ if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0) {
 }
 if ($action == 'other') {
 	$princingrules = GETPOST('princingrule', 'alpha');
-	foreach ($select_pricing_rules as $rule => $label) { // Loop on each possible mode
-		if ($rule == $princingrules) { // We are on selected rule, we enable it
+	foreach ($select_pricing_rules as $tmprule => $tmplabel) { // Loop on each possible mode
+		if ($tmprule == $princingrules) { // We are on selected rule, we enable it
 			if ($princingrules == 'PRODUCT_PRICE_UNIQ') { // For this case, we disable entries manually
 				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
@@ -119,10 +119,9 @@ if ($action == 'other') {
 					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
 				}
 			}
-		} else // We clear this mode
-		{
-			if (strpos($rule, '&') === false) {
-				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
+		} else { // We clear this mode
+			if (strpos($tmprule, '&') === false) {
+				$res = dolibarr_set_const($db, $tmprule, 0, 'chaine', 0, '', $conf->entity);
 			}
 		}
 	}
@@ -272,10 +271,10 @@ $formbarcode = new FormBarCode($db);
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
-if (empty($conf->product->enabled)) {
+if (!isModEnabled("product")) {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
-} elseif (empty($conf->service->enabled)) {
+} elseif (!isModEnabled("service")) {
 	$title = $langs->trans('ProductSetup');
 	$tab = $langs->trans('Products');
 }
@@ -602,7 +601,7 @@ print '</td>';
 print '</tr>';
 
 // Use conditionnement in buying
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 	print '<td align="right">';

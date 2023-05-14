@@ -150,7 +150,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new AdherentType($this->savdb);
+		$localobject=new AdherentType($db);
 		$localobject->statut=1;
 		$localobject->label='Adherent type test';
 		$localobject->subscription=1;
@@ -181,7 +181,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
+		$localobject=new Adherent($db);
 		$localobject->initAsSpecimen();
 		$localobject->typeid=$fk_adherent_type;
 		$result=$localobject->create($user);
@@ -211,7 +211,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
+		$localobject=new Adherent($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -235,7 +235,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$newobject = new Adherent($this->savdb);
+		$newobject = new Adherent($db);
 		$result = $newobject->fetch_login($localobject->login);
 
 		$this->assertEquals($newobject, $localobject);
@@ -291,7 +291,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
-		$newobject=new Adherent($this->savdb);
+		$newobject=new Adherent($db);
 		$result=$newobject->fetch($localobject->id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -579,7 +579,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobjectat=new AdherentType($this->savdb);
+		$localobjectat=new AdherentType($db);
 		$result=$localobjectat->fetch($localobject->typeid);
 		$result=$localobjectat->delete();
 		print __METHOD__." result=".$result."\n";

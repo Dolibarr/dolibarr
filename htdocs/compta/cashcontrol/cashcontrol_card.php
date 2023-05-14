@@ -295,7 +295,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		}
 	}
 
-	if ($terminalid != '') {
+	if (isset($terminalid) && $terminalid != '') {
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach ($arrayofpaymentmode as $key => $val) {
 			if ($key != 'cash') {
@@ -305,7 +305,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 			// Get the bank account dedicated to this point of sale module/terminal
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
-			$bankid = $conf->global->$vartouse;
+			$bankid = getDolGlobalInt($vartouse);
 
 			if ($bankid > 0) {
 				$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
@@ -671,7 +671,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print "</table>\n";
 
 		print '</div></div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 

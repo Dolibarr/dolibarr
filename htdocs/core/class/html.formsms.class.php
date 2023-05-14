@@ -127,7 +127,7 @@ class FormSms
 		print "\n<!-- Begin form SMS -->\n";
 
 		print '
-<script type="text/javascript">
+<script nonce="'.getNonce().'" type="text/javascript">
 function limitChars(textarea, limit, infodiv)
 {
     var text = textarea.value;
@@ -250,7 +250,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withtoreadonly) {
 				print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			} else {
-				print "<input size=\"16\" id=\"sendto\" name=\"sendto\" value=\"".dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (isset($_REQUEST["sendto"]) ?GETPOST("sendto") : $this->withto) : "+")."\">";
+				print '<input size="16" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
 				if (!empty($this->withtosocid) && $this->withtosocid > 0) {
 					$liste = array();
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value) {

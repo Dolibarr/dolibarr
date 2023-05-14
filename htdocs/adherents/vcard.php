@@ -122,18 +122,23 @@ if ($company->id) {
 	} elseif (empty(trim($object->email))) {
 		// when adherent e-mail is empty, use only company e-mail
 		$v->setEmail($company->email);
-	} elseif (strtolower(end(explode("@", $object->email))) == strtolower(end(explode("@", $company->email)))) {
-		// when e-mail domain of adherent and company are the same, use adherent e-mail at first (and company e-mail at second)
-		$v->setEmail($object->email);
-
-		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($company->email, 'INTERNET');
 	} else {
-		// when e-mail of adherent and company complete different use company e-mail at first (and adherent e-mail at second)
-		$v->setEmail($company->email);
+		$tmpobject = explode("@", trim($object->email));
+		$tmpcompany = explode("@", trim($company->email));
 
-		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($object->email, 'INTERNET');
+		if (strtolower(end($tmpobject)) == strtolower(end($tmpcompany))) {
+			// when e-mail domain of adherent and company are the same, use adherent e-mail at first (and company e-mail at second)
+			$v->setEmail($object->email);
+
+			// support by Microsoft Outlook (2019 and possible earlier)
+			$v->setEmail($company->email, 'INTERNET');
+		} else {
+			// when e-mail of adherent and company complete different use company e-mail at first (and adherent e-mail at second)
+			$v->setEmail($company->email);
+
+			// support by Microsoft Outlook (2019 and possible earlier)
+			$v->setEmail($object->email, 'INTERNET');
+		}
 	}
 
 	// Si adherent lie a un tiers non de type "particulier"

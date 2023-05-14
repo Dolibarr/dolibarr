@@ -64,10 +64,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
 if ($action == 'updateMask') {
-	$maskconststocktransfer = GETPOST('maskconststocktransfer', 'alpha');
+	$maskconststocktransfer = GETPOST('maskconststocktransfer', 'aZ09');
 	$maskstocktransfer = GETPOST('maskStockTransfer', 'alpha');
 
-	if ($maskconststocktransfer) {
+	if ($maskconststocktransfer && preg_match('/_MASK$/', $maskconststocktransfer)) {
 		$res = dolibarr_set_const($db, $maskconststocktransfer, $maskstocktransfer, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) $error++;
 	}
@@ -356,8 +356,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			dol_print_error($db);
 		}
 
-		print "<table class=\"noborder\" width=\"100%\">\n";
-		print "<tr class=\"liste_titre\">\n";
+		print '<table class="noborder centpercent">'."\n";
+		print '<tr class="liste_titre">'."\n";
 		print '<td>'.$langs->trans("Name").'</td>';
 		print '<td>'.$langs->trans("Description").'</td>';
 		print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -396,7 +396,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
 
 									if ($modulequalified) {
-										print '<tr class="oddeven"><td width="100">';
+										print '<tr class="oddeven"><td>';
 										print (empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) print $module->info($langs);

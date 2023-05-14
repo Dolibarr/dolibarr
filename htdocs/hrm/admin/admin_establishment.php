@@ -98,7 +98,7 @@ $sql .= " WHERE e.entity IN (".getEntity('establishment').')';
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 
@@ -145,13 +145,12 @@ if ($result) {
 			$establishmentstatic->label = $obj->label;
 			$establishmentstatic->status = $obj->status;
 
-
 			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
-			print '<td>'.$obj->label.'</td>';
-			print '<td class="left">'.$obj->address.'</td>';
-			print '<td class="left">'.$obj->zip.'</td>';
-			print '<td class="left">'.$obj->town.'</td>';
+			print '<td>'.dol_escape_htmltag($obj->label).'</td>';
+			print '<td>'.dol_escape_htmltag($obj->address).'</td>';
+			print '<td>'.dol_escape_htmltag($obj->zip).'</td>';
+			print '<td>'.dol_escape_htmltag($obj->town).'</td>';
 			print '<td class="right">';
 			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
@@ -160,7 +159,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	print '</table>';

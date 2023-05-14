@@ -429,9 +429,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -478,7 +476,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		CompanyBankAccount	$object			Object to show
 	 *   @param		int					$posy			Y
 	 *   @param		Translate			$outputlangs	Langs object
-	 *   @return	void
+	 *   @return	float
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -506,7 +504,6 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	}
 
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -526,7 +523,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$tab_hl = 4;
 
 		$posx = $this->marge_gauche;
-		$pdf->SetXY($posx, $tab_top + 0);
+		$pdf->SetXY($posx, $tab_top);
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 
@@ -540,7 +537,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$index = 0;
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($posx, $tab_top + 0);
+		$pdf->SetXY($posx, $tab_top);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', 1);
 
 		$pdf->SetXY($posx, $tab_top + $tab_hl);

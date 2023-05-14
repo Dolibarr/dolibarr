@@ -84,6 +84,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
  * View
  */
 
+$form = new Form($db);
+
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 

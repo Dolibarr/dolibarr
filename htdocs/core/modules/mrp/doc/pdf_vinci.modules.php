@@ -684,9 +684,7 @@ class pdf_vinci extends ModelePDFMo
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -715,6 +713,7 @@ class pdf_vinci extends ModelePDFMo
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -816,11 +815,11 @@ class pdf_vinci extends ModelePDFMo
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1067,7 +1066,7 @@ class pdf_vinci extends ModelePDFMo
 	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1367,7 +1366,7 @@ class pdf_vinci extends ModelePDFMo
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -1405,14 +1404,13 @@ class pdf_vinci extends ModelePDFMo
 		$rank = 0;
 		$this->cols['code'] = array(
 			'rank' => $rank,
-			'status' => false,
+			'status' => true,
 			'width' => 35, // in mm
 			'title' => array(
 				'textkey' => 'Ref'
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['code']['status'] = true;
 
 		$rank = 1; // do not use negative rank
 		$this->cols['desc'] = array(
@@ -1455,14 +1453,13 @@ class pdf_vinci extends ModelePDFMo
 		$rank = $rank + 10;
 		$this->cols['dim'] = array(
 			'rank' => $rank,
-			'status' => false,
+			'status' => true,
 			'width' => 25, // in mm
 			'title' => array(
 				'textkey' => 'Size'
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['dim']['status'] = true;
 
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(
@@ -1474,7 +1471,6 @@ class pdf_vinci extends ModelePDFMo
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['qty']['status'] = true;
 
 		$rank = $rank + 10;
 		$this->cols['qtytot'] = array(
@@ -1486,7 +1482,6 @@ class pdf_vinci extends ModelePDFMo
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['qtytot']['status'] = true;
 
 		// Add extrafields cols
 		if (!empty($object->lines)) {

@@ -51,7 +51,6 @@ abstract class ModelePDFMember extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-
 		$type = 'member';
 		$list = array();
 

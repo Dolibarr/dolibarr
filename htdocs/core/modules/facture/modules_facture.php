@@ -42,6 +42,15 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	public $posxpicture;
+	public $posxtva;
+	public $posxup;
+	public $posxqty;
+	public $posxunit;
+	public $posxdesc;
+	public $posxdiscount;
+	public $postotalht;
+
 	public $tva;
 	public $tva_array;
 	public $localtax1;
@@ -61,8 +70,6 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'invoice';
 		$list = array();
 

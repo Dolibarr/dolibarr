@@ -51,8 +51,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->asset->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->asset->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('asset', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();

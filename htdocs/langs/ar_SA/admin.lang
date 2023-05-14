@@ -51,8 +51,6 @@ ClientSortingCharset=ترتيب العميل
 WarningModuleNotActive=يجب أن يكون النموذج <b>%s</b> مفعل
 WarningOnlyPermissionOfActivatedModules=فقط التصاريح المتعلقة بالنماذج المنشطة تظهر هنا. يمكنك تفعيل نماذج أخرى في الصفحة الرئيسية-> لإعداد ت-> صفحة النماذج
 DolibarrSetup=تركيب أو تحديث دوليبار
-InternalUser=مستخدم داخلي
-ExternalUser=مستخدم خارجي
 InternalUsers=مستخدمين داخليين
 ExternalUsers=مستخدمين خارجيين
 UserInterface=الواجهة العامة
@@ -147,6 +145,7 @@ Box=بريمج
 Boxes=بريمجات
 MaxNbOfLinesForBoxes=الحد الأعلى لعدد أسطر البريمجات
 AllWidgetsWereEnabled=جميع البريمجات المتاحة ممكنة
+WidgetAvailable=Widget available
 PositionByDefault=الطلبية الإفتراضية
 Position=الوضع
 MenusDesc=يقوم مديرو القائمة بتعيين محتوى شريطي القائمة (الأفقي والعمودي).
@@ -294,6 +293,7 @@ MAIN_MAIL_SMTP_SERVER=مضيف SMTP / SMTPS (القيمة الافتراضية �
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=منفذ SMTP / SMTPS (غير معرّف في PHP على أنظمة شبيهة بنظام Unix)
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=مضيف SMTP / SMTPS (غير معرّف في PHP على أنظمة شبيهة بنظام Unix)
 MAIN_MAIL_EMAIL_FROM=عنوان بريد المرسل لرسائل البريد الإلكترونية التلقائية (القيمة الاولية في ملف اعدادات لغة بي اتش بي  <b>%s</b> )
+EMailHelpMsgSPFDKIM=لكي لا يتم وضع البريد من المرسل من نظام دوليبار ضمن البريد الضار ,تأكد ان الخادم مخول بأرسال البريد من هذا العنوان من خلال عدادات SPF & DKIM .
 MAIN_MAIL_ERRORS_TO=عنوان رسائل البريد الإلكترونية المرجعي لأخطاء الارسال (الحقل "الاخطاء إلى" ) في البريد المرسل
 MAIN_MAIL_AUTOCOPY_TO= نسخ (نسخة كربونية) كل رسائل البريد الإلكترونية المرسلة الى 
 MAIN_DISABLE_ALL_MAILS=تعطيل جميع عمليات إرسال البريد الإلكتروني (لأغراض الاختبار أو العروض التوضيحية)
@@ -323,7 +323,7 @@ ModuleSetup=إعداد وحدة
 ModulesSetup=الوحدات النمطية / إعداد التطبيق
 ModuleFamilyBase=نظام
 ModuleFamilyCrm=إدارة علاقات العملاء (CRM)
-ModuleFamilySrm=إدارة علاقات البائعين (VRM)
+ModuleFamilySrm=ادارة الموردين(VRM)
 ModuleFamilyProducts=إدارة المنتج (PM)
 ModuleFamilyHr=إدارة الموارد البشرية (HR)
 ModuleFamilyProjects=مشاريع / العمل التعاوني
@@ -375,7 +375,7 @@ DoTestSendHTML=اختبار ارسال هتمل
 ErrorCantUseRazIfNoYearInMask=خطأ، لا يمكن استخدام الخيار @ لإعادة تعيين عداد سنويا إذا تسلسل {} أو {yyyy إنهاء س س س س} ليس في قناع.
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=خطأ ، لا يمكن للمستخدم الخيار في حال تسلسل @ (ذ ذ م م)) ((سنة أو ملم)) (لا تخفي.
 UMask=معلمة جديدة UMask صورة يونيكس / لينكس / بي إس دي نظام الملفات.
-UMaskExplanation=تسمح لك هذه المعلمة لتحديد الاذونات التي حددها تقصير من الملفات التي أنشأتها Dolibarr على الخادم (خلال تحميلها على سبيل المثال). <br> يجب أن يكون ثمانية القيمة (على سبيل المثال ، 0666 وسائل القراءة والكتابة للجميع). <br> م شمال شرق paramètre سرت sous الامم المتحدة لتقييم الأداء ويندوز serveur.
+UMaskExplanation=This parameter allow you to define permissions set by default on files created by Dolibarr on server (during upload for example).<br>It must be the octal value (for example, 0666 means read and write for everyone.). Recommended value is 0600 or 0660<br>This parameter is useless on a Windows server.
 SeeWikiForAllTeam=قم بإلقاء نظرة على صفحة Wiki للحصول على قائمة بالمساهمين ومنظمتهم
 UseACacheDelay= التخزين المؤقت للتأخير في الرد على الصادرات ثانية (0 فارغة أو لا مخبأ)
 DisableLinkToHelpCenter=إخفاء الارتباط "<b> بحاجة إلى مساعدة أو دعم </b>" في صفحة تسجيل الدخول
@@ -439,8 +439,10 @@ Unique=Unique
 Boolean=منطقي (مربع اختيار واحد)
 ExtrafieldPhone = هاتف
 ExtrafieldPrice = الأسعار
+ExtrafieldPriceWithCurrency=السعر بالعملة
 ExtrafieldMail = Email
 ExtrafieldUrl = عنوان Url
+ExtrafieldIP = الملكية الفكرية
 ExtrafieldSelect = Select list
 ExtrafieldSelectList = Select from table
 ExtrafieldSeparator=فاصل (ليس حقلاً)
@@ -450,7 +452,7 @@ ExtrafieldCheckBox=مربعات الاختيار
 ExtrafieldCheckBoxFromList=مربعات الاختيار من الجدول
 ExtrafieldLink=رابط إلى كائن
 ComputedFormula=المجال المحسوب
-ComputedFormulaDesc=يمكنك هنا إدخال صيغة باستخدام خصائص أخرى للكائن أو أي ترميز PHP للحصول على قيمة محسوبة ديناميكية. يمكنك استخدام أي صيغ متوافقة مع PHP بما في ذلك "؟" عامل الشرط ، والعنصر العام التالي: <strong> $ db ، $ conf ، $ langs ، $ mysoc ، $ user ، $ object </strong>. <br> <strong> تحذير </strong>: قد تتوفر بعض خصائص $ object فقط. إذا كنت بحاجة إلى خصائص غير محملة ، فما عليك سوى إحضار الكائن إلى الصيغة الخاصة بك كما في المثال الثاني. <br> يعني استخدام حقل محسوب أنه لا يمكنك إدخال أي قيمة لنفسك من الواجهة. أيضًا ، إذا كان هناك خطأ في بناء الجملة ، فقد لا ترجع الصيغة شيئًا. <br> <br> مثال على الصيغة: <br> $ object-> id < 10 ? round($object-> id / 2، 2): ($ object-> id + 2 * $ user-> id) * (int) substr ($ mysoc- 2> zip، 1 ) <br> <br> مثال لإعادة تحميل الكائن <br> (($ reloadedobj = new Societe ($ db)) && ($ reloadedobj-> fetchNoCompute ($ obj-> id؟ $ obj-> id؟ > rowid: $ object-> id))> 0))؟ $ reloadedobj-> array_options ['options_extrafieldkey'] * $ reloadedobj-> capital / 5: '-1' <br> <br> مثال آخر للصيغة لفرض تحميل الكائن وكائنه الأصلي: <br> (($ reloadedobj = $ dbj = )) && ($ reloadedobj-> fetchNoCompute ($ object-> id)> 0) && ($ secondloadedobj = مشروع جديد ($ db)) && ($ secondloadedobj-> fetchNoCompute ($ reloadedobj-> fk_project)> 0))؟ $ secondloadedobj-> ref: "المشروع الرئيسي غير موجود"
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=تخزين المجال المحسوب
 ComputedpersistentDesc=سيتم تخزين الحقول الإضافية المحسوبة في قاعدة البيانات ، ومع ذلك ، سيتم إعادة حساب القيمة فقط عند تغيير كائن هذا الحقل. إذا كان الحقل المحسوب يعتمد على كائنات أخرى أو بيانات عالمية ، فقد تكون هذه القيمة خاطئة !!
 ExtrafieldParamHelpPassword=يعني ترك هذا الحقل فارغًا أنه سيتم تخزين هذه القيمة بدون تشفير (يجب إخفاء الحقل فقط بنجمة على الشاشة). <br> اضبط "تلقائي" لاستخدام قاعدة التشفير الافتراضية لحفظ كلمة المرور في قاعدة البيانات (عندئذٍ ستكون القيمة المقروءة هي التجزئة فقط ، ولا توجد طريقة لاسترداد القيمة الأصلية)
@@ -490,7 +492,7 @@ DisplayCompanyManagers=عرض أسماء المديرين
 DisplayCompanyInfoAndManagers=عرض عنوان الشركة وأسماء المديرين
 EnableAndSetupModuleCron=إذا كنت تريد إنشاء هذه الفاتورة المتكررة تلقائيًا ، فيجب تمكين الوحدة النمطية * %s * وإعدادها بشكل صحيح. بخلاف ذلك ، يجب أن يتم إنشاء الفواتير يدويًا من هذا النموذج باستخدام الزر * إنشاء *. لاحظ أنه حتى إذا قمت بتمكين الإنشاء التلقائي ، فلا يزال بإمكانك تشغيل الإنشاء اليدوي بأمان. لا يمكن إنشاء نسخ مكررة لنفس الفترة.
 ModuleCompanyCodeCustomerAquarium=%s متبوعًا بكود العميل لكود محاسبة العميل
-ModuleCompanyCodeSupplierAquarium=%s متبوعًا بكود البائع لكود محاسبة البائع
+ModuleCompanyCodeSupplierAquarium=%sرقم المورد يتبعة رقم حسابه في الحسابات
 ModuleCompanyCodePanicum=قم بإرجاع رمز محاسبة فارغ.
 ModuleCompanyCodeDigitaria=إرجاع رمز محاسبة مركب وفقًا لاسم الطرف الثالث. يتكون الرمز من بادئة يمكن تحديدها في الموضع الأول متبوعًا بعدد الأحرف المحددة في رمز الجهة الخارجية.
 ModuleCompanyCodeCustomerDigitaria=%s متبوعًا باسم العميل المقطوع بعدد الأحرف: %s لكود محاسبة العميل.
@@ -501,7 +503,8 @@ WarningPHPMail=تحذير: يستخدم الإعداد لإرسال رسائل �
 WarningPHPMailA=- يزيد استخدام خادم مزود خدمة البريد الإلكتروني من مصداقية بريدك الإلكتروني ، لذا فهو يزيد من إمكانية التسليم دون أن يتم وضع علامة عليه كرسائل اقتحامية
 WarningPHPMailB=- لا يسمح لك بعض مزودي خدمة البريد الإلكتروني (مثل Yahoo) بإرسال بريد إلكتروني من خادم آخر غير الخادم الخاص بهم. يستخدم الإعداد الحالي الخاص بك خادم التطبيق لإرسال بريد إلكتروني وليس خادم مزود البريد الإلكتروني الخاص بك ، لذلك سيطلب بعض المستلمين (المتوافق مع بروتوكول DMARC المقيد) ، مزود البريد الإلكتروني الخاص بك ما إذا كان بإمكانهم قبول بريدك الإلكتروني وبعض موفري البريد الإلكتروني (مثل Yahoo) قد تستجيب بـ "لا" لأن الخادم ليس خادمهم ، لذلك قد لا يتم قبول عدد قليل من رسائل البريد الإلكتروني المرسلة للتسليم (كن حذرًا أيضًا من حصة الإرسال لمزود البريد الإلكتروني الخاص بك).
 WarningPHPMailC=- يعد استخدام خادم SMTP الخاص بموفر خدمة البريد الإلكتروني الخاص بك لإرسال رسائل البريد الإلكتروني أمرًا مثيرًا للاهتمام أيضًا ، لذا سيتم أيضًا حفظ جميع رسائل البريد الإلكتروني المرسلة من التطبيق في دليل "البريد المرسل" الخاص بصندوق البريد الخاص بك.
-WarningPHPMailD=كذلك ، يوصى بتغيير طريقة إرسال رسائل البريد الإلكتروني إلى القيمة "SMTP". إذا كنت تريد حقًا الاحتفاظ بالطريقة الافتراضية "PHP" لإرسال رسائل البريد الإلكتروني ، فما عليك سوى تجاهل هذا التحذير أو إزالته عن طريق ضبط MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP ثابتًا على 1 في Home - Setup - Other.
+WarningPHPMailD=It is therefore recommended to change the sending method of e-mails to the value "SMTP".
+WarningPHPMailDbis=If you really want to keep the default "PHP" method to send emails, just ignore this warning, or remove it by %sclicking here%s.
 WarningPHPMail2=إذا كان موفر البريد الإلكتروني SMTP بحاجة إلى تقييد عميل البريد الإلكتروني لبعض عناوين IP (نادر جدًا) ، فهذا هو عنوان IP الخاص بوكيل مستخدم البريد (MUA) لتطبيق ERP CRM الخاص بك: <strong> %s </strong>.
 WarningPHPMailSPF=إذا كان اسم المجال في عنوان البريد الإلكتروني الخاص بالمرسل محميًا بسجل SPF (اسأل مسجل اسم المجال الخاص بك) ، يجب عليك إضافة عناوين IP التالية في سجل SPF الخاص بـ DNS لمجالك: <strong> %s </strong>.
 ActualMailSPFRecordFound=تم العثور على سجل SPF الفعلي (للبريد الإلكتروني %s): %s
@@ -514,7 +517,7 @@ PageUrlForDefaultValuesCreate= <br> مثال: <br> لكي يقوم النموذ�
 PageUrlForDefaultValuesList= <br> مثال: <br> بالنسبة للصفحة التي تسرد جهات خارجية ، فهي <strong> %s </strong>. <br> بالنسبة لعنوان URL للوحدات الخارجية المثبتة في الدليل المخصص ، لا تقم بتضمين "custom /" لذا استخدم مسارًا مثل <strong> mymodule / mypagelist.php </strong> وليس custom / mymodule / mypagelist.php. <br> إذا كنت تريد القيمة الافتراضية فقط إذا كان عنوان url يحتوي على بعض المعلمات ، فيمكنك استخدام <strong> %s </strong>
 AlsoDefaultValuesAreEffectiveForActionCreate=لاحظ أيضًا أن الكتابة فوق القيم الافتراضية لإنشاء النموذج تعمل فقط للصفحات التي تم تصميمها بشكل صحيح (لذلك مع إجراء المعلمة = إنشاء أو تقديم ...)
 EnableDefaultValues=تفعيل تخصيص القيم الافتراضية
-EnableOverwriteTranslation=تفعيل استخدام الترجمة المكتوبة
+EnableOverwriteTranslation=Allow customization of translations
 GoIntoTranslationMenuToChangeThis=تم العثور على ترجمة للمفتاح بهذا الرمز. لتغيير هذه القيمة ، يجب عليك تحريرها من Home-Setup-translation.
 WarningSettingSortOrder=تحذير ، قد يؤدي تعيين ترتيب فرز افتراضي إلى حدوث خطأ تقني عند الانتقال إلى صفحة القائمة إذا كان الحقل حقلاً غير معروف. إذا واجهت مثل هذا الخطأ ، فارجع إلى هذه الصفحة لإزالة ترتيب الفرز الافتراضي واستعادة السلوك الافتراضي.
 Field=حقل
@@ -643,11 +646,13 @@ Module2300Name=المهام المجدولة
 Module2300Desc=إدارة الوظائف المجدولة (الاسم المستعار كرون أو جدول كرونو)
 Module2400Name=الأحداث / الأجندة
 Module2400Desc=تتبع الأحداث. سجل الأحداث التلقائية لأغراض التتبع أو سجل الأحداث أو الاجتماعات اليدوية. هذه هي الوحدة الرئيسية للإدارة الجيدة لعلاقات العملاء أو البائعين.
+Module2430Name=Booking Calendar System
+Module2430Desc=Provide an online calendar to allow anyone to book rendez-vous, according to predefined ranges or availabilities.
 Module2500Name=DMS / ECM
 Module2500Desc=نظام إدارة الوثائق / إدارة المحتوى الإلكتروني. التنظيم التلقائي للمستندات التي تم إنشاؤها أو تخزينها. شاركهم عند الحاجة.
-Module2600Name=خدمات API / ويب (خادم SOAP)
+Module2600Name=API / Web services (SOAP server)
 Module2600Desc=تمكين الخدمات API Dolibarr الخادم SOAP توفير
-Module2610Name=خدمات API / ويب (خادم REST)
+Module2610Name=API / Web services (REST server)
 Module2610Desc=تمكين الخادم تقديم الخدمات API Dolibarr REST
 Module2660Name=WebServices الدعوة (العميل SOAP)
 Module2660Desc=تمكين عميل خدمات الويب Dolibarr (يمكن استخدامه لإرسال البيانات / الطلبات إلى خوادم خارجية. يتم دعم أوامر الشراء فقط حاليًا.)
@@ -658,6 +663,8 @@ Module2900Name=GeoIPMaxmind
 Module2900Desc=GeoIP التحويلات Maxmind القدرات
 Module3200Name=المحفوظات غير القابلة للتغيير
 Module3200Desc=تمكين سجل غير قابل للتغيير لأحداث العمل. يتم أرشفة الأحداث في الوقت الحقيقي. السجل هو جدول للقراءة فقط للأحداث المتسلسلة التي يمكن تصديرها. قد تكون هذه الوحدة إلزامية لبعض البلدان.
+Module3300Name=Module Builder
+Module3300Desc=A RAD (Rapid Application Development - low-code and no-code) tool to help developers or advanced users to build their own module/application.
 Module3400Name=الشبكات الاجتماعية
 Module3400Desc=قم بتمكين حقول الشبكات الاجتماعية في عناوين وعناوين الأطراف الثالثة (سكايب ، تويتر ، فيسبوك ، ...).
 Module4000Name=HRM
@@ -698,7 +705,10 @@ Module62000Name=شروط التجارة الدولية
 Module62000Desc=إضافة ميزات لإدارة Incoterms
 Module63000Name=مصادر
 Module63000Desc=إدارة الموارد (طابعات ، سيارات ، غرف ، ...) لتخصيصها للمناسبات
-Permission11=قراءة الفواتير
+Module66000Name=Enable OAuth2 authentication
+Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
+Module94160Name=Receptions
+Permission11=Read customer invoices (and payments)
 Permission12=إنشاء / تعديل فواتير العملاء
 Permission13=إبطال فواتير العميل
 Permission14=التحقق من صحة الفواتير
@@ -842,9 +852,9 @@ Permission286=تصدير اتصالات
 Permission291=قراءة التعريفات
 Permission292=مجموعة أذونات على التعريفات
 Permission293=تعديل تعريفات العميل
-Permission300=قراءة الباركود
-Permission301=إنشاء / تعديل الباركود
-Permission302=حذف الباركود
+Permission301=Generate PDF sheets of barcodes
+Permission304=Create/modify barcodes
+Permission305=Delete barcodes
 Permission311=قراءة الخدمات
 Permission312=تعيين خدمة / الاشتراك في التعاقد
 Permission331=قراءة العناوين
@@ -940,9 +950,9 @@ Permission1190=الموافقة على (الموافقة الثانية) أوا�
 Permission1191=أوامر تصدير الموردين وخصائصها
 Permission1201=ونتيجة للحصول على التصدير
 Permission1202=إنشاء / تعديل للتصدير
-Permission1231=اقرأ فواتير البائع
-Permission1232=إنشاء / تعديل فواتير البائعين
-Permission1233=التحقق من صحة فواتير البائع
+Permission1231=Read vendor invoices (and payments)
+Permission1232=Create/modify vendor invoices
+Permission1233=Validate vendor invoices
 Permission1234=احذف فواتير البائع
 Permission1235=إرسال فواتير البائع عبر البريد الإلكتروني
 Permission1236=تصدير فواتير البائع والسمات والمدفوعات
@@ -971,13 +981,14 @@ Permission3301=إنشاء وحدات جديدة
 Permission4001=اقرأ المهارة / الوظيفة / المنصب
 Permission4002=إنشاء / تعديل المهارة / الوظيفة / المنصب
 Permission4003=حذف المهارة / الوظيفة / المنصب
-Permission4020=اقرأ التقييمات
-Permission4021=إنشاء / تعديل التقييم الخاص بك
-Permission4022=التحقق من صحة التقييم
-Permission4023=حذف التقييم
-Permission4030=انظر قائمة المقارنة
+Permission4021=Read evaluations (yours and your subordinates)
+Permission4022=Create/modify evaluations
+Permission4023=Validate evaluation
+Permission4025=Delete evaluation
+Permission4028=See comparison menu
 Permission4031=اقرأ المعلومات الشخصية
 Permission4032=اكتب معلومات شخصية
+Permission4033=Read all evaluations (even those of user not subordinates)
 Permission10001=اقرأ محتوى الموقع
 Permission10002=إنشاء / تعديل محتوى موقع الويب (محتوى html و javascript)
 Permission10003=إنشاء / تعديل محتوى الموقع (كود php الديناميكي). خطير ، يجب أن يكون محجوزًا للمطورين المقيدين.
@@ -1081,6 +1092,10 @@ DictionaryAssetDisposalType=نوع التصرف في الأصول
 TypeOfUnit=نوع الوحدة
 SetupSaved=تم حفظ الإعدادات
 SetupNotSaved=الإعدادات لم تحفظ
+OAuthServiceConfirmDeleteTitle=Delete OAuth entry
+OAuthServiceConfirmDeleteMessage=Are you sure you want to delete this OAuth entry ? All existing tokens for it will also be deleted.
+ErrorInEntryDeletion=خطاء اثناء الحذف
+EntryDeleted=العنصر محذوف
 BackToModuleList=العودة إلى قائمة الوحدات
 BackToDictionaryList=رجوع إلى قائمة القواميس
 TypeOfRevenueStamp=نوع الطابع الضريبي
@@ -1222,7 +1237,7 @@ SetupDescription4= <a href="%s"> %s -> %s </a> <br> <br> هذا البرنامج
 SetupDescription5=قائمة الإعدادات الأخرى تقوم بإدارة المعطيات الاختيارية.
 SetupDescriptionLink= <a href="%s"> %s - %s </a>
 SetupDescription3b=المعلمات الأساسية المستخدمة لتخصيص السلوك الافتراضي لتطبيقك (مثل الميزات المتعلقة بالبلد).
-SetupDescription4b=هذا البرنامج عبارة عن مجموعة من العديد من الوحدات / التطبيقات. يجب تمكين الوحدات النمطية المتعلقة باحتياجاتك وتكوينها. ستظهر إدخالات القائمة مع تنشيط هذه الوحدات.
+SetupDescription4b=This software is a suite of many modules/applications. The modules related to your needs must be activated. Menu entries will appears with the activation of these modules.
 AuditedSecurityEvents=الأحداث الأمنية التي يتم تدقيقها
 NoSecurityEventsAreAduited=لم يتم تدقيق أي أحداث أمنية. يمكنك تمكينهم من القائمة %s
 Audit=أحداث أمنية
@@ -1244,6 +1259,7 @@ AreaForAdminOnly=يمكن تعيين معطيات الإعدادات بواسط�
 SystemInfoDesc=معلومات النظام هي معلومات فنية متنوعة تحصل عليها في وضع القراءة فقط وتكون مرئية للمسؤولين فقط.
 SystemAreaForAdminOnly=هذه المنطقة متاحة للمستخدمين المسؤولين فقط. لا يمكن لأذونات مستخدم دوليبار تغيير هذا التقييد.
 CompanyFundationDesc=قم بتحرير معلومات شركتك | مؤسستك. ثم انقر فوق الزر "%s" في أسفل الصفحة عند الانتهاء.
+MoreNetworksAvailableWithModule=More social networks may be available by enabling the module "Social networks".
 AccountantDesc=إذا كان لديك محاسب / محاسب خارجي ، يمكنك هنا تعديل المعلومات الخاصة به.
 AccountantFileNumber=كود المحاسب
 DisplayDesc=يمكن هنا تعديل المعلمات التي تؤثر على شكل التطبيق وطريقة عرضه.
@@ -1261,6 +1277,7 @@ TriggerActiveAsModuleActive=المشغلات في هذا الملف نشطة ح�
 GeneratedPasswordDesc=اختر الطريقة التي سيتم استخدامها لكلمات المرور التي يتم إنشاؤها تلقائيًا.
 DictionaryDesc=أدخل جميع البيانات المرجعية. يمكنك إضافة القيم الخاصة بك إلى الافتراضي.
 ConstDesc=تتيح لك هذه الصفحة تحرير (تجاوز) المعلمات غير المتوفرة في الصفحات الأخرى. هذه معلمات محجوزة في الغالب للمطورين / استكشاف الأخطاء وإصلاحها المتقدمة فقط.
+MiscellaneousOptions=Miscellaneous options
 MiscellaneousDesc=يتم تعريف جميع المعلمات الأخرى المتعلقة بالأمان هنا.
 LimitsSetup=حدود / الدقيقة الإعداد
 LimitsDesc=يمكنك تحديد الحدود والدقة والتحسينات التي تستخدمها Dolibarr هنا
@@ -1294,6 +1311,8 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=يجب تشغيل هذا الأ
 YourPHPDoesNotHaveSSLSupport=وظائف خدمة تصميم المواقع لا تتوفر في بي الخاص بك
 DownloadMoreSkins=مزيد من جلود بتحميل
 SimpleNumRefModelDesc=لعرض الرقم المرجعي بالتنسيق %syymm-nnnn حيث yy السنة و mm الشهر و nnnn هو رقم متسلسل يتزايد تلقائيًا بدون إعادة تعيين
+SimpleRefNumRefModelDesc=Returns the reference number in the format n where n is a sequential auto-incrementing number with no reset
+AdvancedNumRefModelDesc=Returns the reference number in the format %syymm-nnnn where yy is the year, mm is the month and nnnn is a sequential auto-incrementing number with no reset
 SimpleNumRefNoDateModelDesc=إرجاع الرقم المرجعي بالتنسيق %s-nnnn حيث nnnn عبارة عن رقم تزايد تلقائي متسلسل بدون إعادة تعيين
 ShowProfIdInAddress=إظهار الهوية المهنية مع العناوين
 ShowVATIntaInAddress=إخفاء رقم ضريبة القيمة المضافة داخل المجتمع
@@ -1380,7 +1399,7 @@ GetBarCode=الحصول على الباركود
 NumberingModules=نماذج الترقيم
 DocumentModules=نماذج الوثائق
 ##### Module password generation
-PasswordGenerationStandard=قم بإرجاع كلمة المرور التي تم إنشاؤها وفقًا لخوارزمية Dolibarr الداخلية: %s أحرف تحتوي على أرقام وأحرف مشتركة بأحرف صغيرة.
+PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: %s characters containing shared numbers and characters.
 PasswordGenerationNone=لا تقترح كلمة مرور تم إنشاؤها. يجب كتابة كلمة المرور يدويًا.
 PasswordGenerationPerso=ترجع كلمة المرور الخاصة بك وفقا لتكوين المعرفة شخصيا.
 SetupPerso=وفقا لتكوين الخاصة بك
@@ -1434,6 +1453,10 @@ SuppliersPayment=مدفوعات الموردين
 SupplierPaymentSetup=إعداد مدفوعات البائعين
 InvoiceCheckPosteriorDate=تحقق من تاريخ التجهيز قبل المصادقة
 InvoiceCheckPosteriorDateHelp=يُمنع التحقق من صحة الفاتورة إذا كان تاريخها سابقًا لتاريخ آخر فاتورة من نفس النوع.
+InvoiceOptionCategoryOfOperations=Display the mention "category of operations" on the invoice.
+InvoiceOptionCategoryOfOperationsHelp=Depending on the situation, the mention will appear in the form:<br>- Category of operations: Delivery of goods<br>- Category of operations: Provision of services<br>- Category of operations: Mixed - Delivery of goods & provision of services
+InvoiceOptionCategoryOfOperationsYes1=Yes, below the address block
+InvoiceOptionCategoryOfOperationsYes2=Yes, in the lower left-hand corner
 ##### Proposals #####
 PropalSetup=وحدة إعداد مقترحات تجارية
 ProposalsNumberingModules=اقتراح نماذج تجارية الترقيم
@@ -1476,11 +1499,12 @@ WatermarkOnDraftContractCards=العلامة المائية على مسودات 
 ##### Members #####
 MembersSetup=أعضاء وحدة الإعداد
 MemberMainOptions=الخيارات الرئيسية
+MemberCodeChecker=Options for automatic generation of member codes
 AdherentLoginRequired= إدارة تسجيل الدخول لكل عضو
 AdherentMailRequired=البريد الإلكتروني مطلوب لإنشاء عضو جديد
 MemberSendInformationByMailByDefault=مربع لإرسال الرسائل للأعضاء تأكيدا على افتراضي
 MemberCreateAnExternalUserForSubscriptionValidated=قم بإنشاء تسجيل دخول مستخدم خارجي لكل اشتراك عضو جديد تم التحقق من صحته
-VisitorCanChooseItsPaymentMode=يمكن للزائر الاختيار من بين طرق الدفع المتاحة
+VisitorCanChooseItsPaymentMode=Visitor can choose from any available payment modes
 MEMBER_REMINDER_EMAIL=قم بتمكين التذكير التلقائي <b> عبر البريد الإلكتروني </b> بالاشتراكات منتهية الصلاحية. ملاحظة: يجب تمكين الوحدة النمطية <strong> %s </strong> وإعدادها بشكل صحيح لإرسال التذكيرات.
 MembersDocModules=قوالب المستندات للوثائق التي تم إنشاؤها من سجل الأعضاء
 ##### LDAP setup #####
@@ -1742,8 +1766,8 @@ ActivateFCKeditor=تفعيل محرر متقدم ل:
 FCKeditorForNotePublic=إنشاء / إصدار WYSIWIG لعناصر الحقل "الملاحظات العامة"
 FCKeditorForNotePrivate=إنشاء / إصدار WYSIWIG للحقل "ملاحظات خاصة" للعناصر
 FCKeditorForCompany=إنشاء / إصدار WYSIWIG للوصف الميداني للعناصر (باستثناء المنتجات / الخدمات)
-FCKeditorForProduct=إنشاء / إصدار WYSIWIG للوصف الميداني للمنتجات / الخدمات
-FCKeditorForProductDetails=إنشاء \\ تعديل  تفاصيل المنتجات على طريقة الطباعة "ما تراه ستحصل عليه" لجميع المستندات (المقترحات،الاوامر،الفواتير،...) <span class="warning"> تحذير: إستخدام هذه الخاصية غير منصوح به بشدة بسبب مشاكل المحارف الخاصة وتنسيق الصفحات وذلك عند توليد ملفات بصيغة المستندات المتنقلة .</span>
+FCKeditorForProductDetails=WYSIWIG creation/edition of products description or lines for objects (lines of proposals, orders, invoices, etc...).
+FCKeditorForProductDetails2=Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.
 FCKeditorForMailing= WYSIWIG إنشاء / الطبعة بالبريد
 FCKeditorForUserSignature=إنشاء WYSIWIG / طبعة التوقيع المستعمل
 FCKeditorForMail=إنشاء / إصدار WYSIWIG لجميع البريد (باستثناء الأدوات-> البريد الإلكتروني)
@@ -1766,7 +1790,7 @@ DetailMenuHandler=قائمة المعالج حيث تظهر قائمة جديد�
 DetailMenuModule=اسم وحدة قائمة في حال الدخول من وحدة
 DetailType=نوع القائمة (أعلى أو إلى اليسار)
 DetailTitre=قائمة علامة أو بطاقة رمز للترجمة
-DetailUrl=عنوان القائمة حيث يرسل لك (عنوان الارتباط المطلق أو خارجية مع وصلة http://)
+DetailUrl=URL where menu send you (Relative URL link or external link with https://)
 DetailEnabled=شرط أن لا تظهر أو الدخول
 DetailRight=حالة رمادية غير مصرح بها للعرض القوائم
 DetailLangs=لانغ لتسمية اسم ملف الترجمة مدونة
@@ -1810,6 +1834,9 @@ AGENDA_USE_EVENT_TYPE=استخدام أنواع الأحداث (المُدارة
 AGENDA_USE_EVENT_TYPE_DEFAULT=قم بتعيين هذه القيمة الافتراضية تلقائيًا لنوع الحدث في نموذج إنشاء الحدث
 AGENDA_DEFAULT_FILTER_TYPE=عيِّن هذا النوع من الأحداث تلقائيًا في فلتر البحث لطريقة عرض الأجندة
 AGENDA_DEFAULT_FILTER_STATUS=عيّن هذه الحالة تلقائيًا للأحداث في فلتر البحث لعرض جدول الأعمال
+AGENDA_EVENT_PAST_COLOR=Past event color
+AGENDA_EVENT_CURRENT_COLOR=Current event color
+AGENDA_EVENT_FUTURE_COLOR=Future event color
 AGENDA_DEFAULT_VIEW=أي طريقة عرض تريد فتحها بشكل افتراضي عند تحديد جدول أعمال القائمة
 AGENDA_REMINDER_BROWSER=قم بتمكين تذكير الحدث <b> على متصفح المستخدم </b> (عند الوصول إلى تاريخ التذكير ، تظهر نافذة منبثقة بواسطة المتصفح. يمكن لكل مستخدم تعطيل هذه الإشعارات من إعداد إعلام المتصفح الخاص به).
 AGENDA_REMINDER_BROWSER_SOUND=تمكين الإعلام الصوتي
@@ -1837,7 +1864,7 @@ StockDecreaseForPointOfSaleDisabledbyBatch=انخفاض المخزون في نق
 CashDeskYouDidNotDisableStockDecease=لم تقم بتعطيل خفض المخزون عند إجراء عملية بيع من نقطة البيع. ومن ثم مطلوب مستودع.
 CashDeskForceDecreaseStockLabel=تم فرض انخفاض مخزون المنتجات الدفعية.
 CashDeskForceDecreaseStockDesc=التقليل أولاً من خلال أقدم تواريخ الأكل والبيع.
-CashDeskReaderKeyCodeForEnter=رمز المفتاح لـ "Enter" المحدد في قارئ الرمز الشريطي (مثال: 13)
+CashDeskReaderKeyCodeForEnter=Key ASCII code for "Enter" defined in barcode reader (Example: 13)
 ##### Bookmark #####
 BookmarkSetup=إعداد وحدة المرجعية
 BookmarkDesc=تسمح لك هذه الوحدة بإدارة الإشارات المرجعية. يمكنك أيضًا إضافة اختصارات إلى أي صفحات Dolibarr أو مواقع ويب خارجية في القائمة اليسرى.
@@ -1875,7 +1902,7 @@ SuppliersInvoiceNumberingModel=نماذج ترقيم فواتير البائعي
 IfSetToYesDontForgetPermission=في حالة التعيين على قيمة غير فارغة ، لا تنس منح الأذونات للمجموعات أو المستخدمين المسموح لهم بالموافقة الثانية
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=GeoIP Maxmind الإعداد وحدة
-PathToGeoIPMaxmindCountryDataFile=مسار الملف الذي يحتوي على Maxmind ip لترجمة الدولة. <br> أمثلة: <br> /usr/local/share/GeoIP/GeoIP.dat <br> /usr/share/GeoIP/GeoIP.dat a0342fccfda19bzeo /usr/Ghare/Lite2IP/
+PathToGeoIPMaxmindCountryDataFile=Path to file containing Maxmind ip to country translation
 NoteOnPathLocation=لاحظ أن الملكية الفكرية الخاصة بك على البيانات القطرية الملف يجب أن تكون داخل الدليل الخاص بي يمكن قراءة (راجع الإعداد open_basedir بى وأذونات نظام الملفات).
 YouCanDownloadFreeDatFileTo=يمكنك تحميل <b>نسخة تجريبية مجانية</b> من GeoIP ملف Maxmind البلاد في ٪ s.
 YouCanDownloadAdvancedDatFileTo=كما يمكنك تحميل <b>نسخة كاملة</b> أكثر من ذلك <b>، مع التحديثات ،</b> من GeoIP ملف Maxmind البلاد في ٪ s.
@@ -1907,7 +1934,7 @@ NoAmbiCaracAutoGeneration=لا تستخدم الأحرف الغامضة ("1"، "
 SalariesSetup=الإعداد للرواتب وحدة
 SortOrder=ترتيب
 Format=شكل
-TypePaymentDesc=0: نوع الدفع للعميل ، 1: نوع الدفع للبائع ، 2: نوع الدفع للعملاء والموردين
+TypePaymentDesc=0: طريقةالدفع العميل ، 1: نوع الدفع للبائع ، 2: طريقة الدفع العملاء و سداد الموردين
 IncludePath=يشمل المسار (المحدد في متغير%s)
 ExpenseReportsSetup=إعداد تقارير المصروفات وحدة
 TemplatePDFExpenseReports=قوالب المستند لتوليد حساب ثيقة تقرير
@@ -1926,6 +1953,7 @@ BackupDumpWizard=معالج لإنشاء ملف تفريغ قاعدة البيا
 BackupZipWizard=معالج لبناء أرشيف دليل المستندات
 SomethingMakeInstallFromWebNotPossible=تركيب وحدة خارجية غير ممكن من واجهة ويب للسبب التالي:
 SomethingMakeInstallFromWebNotPossible2=لهذا السبب ، فإن عملية الترقية الموضحة هنا هي عملية يدوية لا يجوز إلا لمستخدم ذي امتيازات القيام بها.
+InstallModuleFromWebHasBeenDisabledContactUs=Install or development of external modules or dynamic websites, from the application, is currently locked for security purpose. Please contact us if you need to enable this feature.
 InstallModuleFromWebHasBeenDisabledByFile=تثبيت وحدة خارجية من التطبيق قد تم تعطيلها من قبل المسؤول. يجب أن يطلب منه إزالة <strong>الملف٪ s</strong> للسماح هذه الميزة.
 ConfFileMustContainCustom=يحتاج تثبيت أو بناء وحدة خارجية من التطبيق إلى حفظ ملفات الوحدة النمطية في الدليل <strong> %s </strong>. لكي تتم معالجة هذا الدليل بواسطة Dolibarr ، يجب عليك إعداد <strong> conf / conf.php </strong> لإضافة سطري التوجيه: <br> <strong> $ dolibarr_main_url_root_alt = '/root_alt؛ </strong> <br> <strong> $ dolibarr_main_document_root_alt = '%s / مخصص' ؛ </strong>
 HighlightLinesOnMouseHover=تسليط الضوء على خطوط الجدول عندما يمر تحرك الماوس فوق
@@ -2053,6 +2081,8 @@ RemoveSpecialChars=إزالة الأحرف الخاصة
 COMPANY_AQUARIUM_CLEAN_REGEX=مرشح Regex لتنظيف القيمة (COMPANY_AQUARIUM_CLEAN_REGEX)
 COMPANY_DIGITARIA_CLEAN_REGEX=مرشح Regex لتنظيف القيمة (COMPANY_DIGITARIA_CLEAN_REGEX)
 COMPANY_DIGITARIA_UNIQUE_CODE=مكرر غير مسموح به
+RemoveSpecialWords=Clean certain words when generating sub-accounts for customers or suppliers
+RemoveSpecialWordsHelp=Specify the words to be cleaned before calculating the customer or supplier account. Use a ";" between each word
 GDPRContact=مسؤول حماية البيانات (DPO أو خصوصية البيانات أو جهة اتصال GDPR)
 GDPRContactDesc=إذا قمت بتخزين البيانات الشخصية في نظام المعلومات الخاص بك ، فيمكنك تسمية جهة الاتصال المسؤولة عن اللائحة العامة لحماية البيانات هنا
 HelpOnTooltip=نص المساعدة للظهور في تلميح الأداة
@@ -2080,6 +2110,7 @@ MailboxTargetDirectory=دليل الهدف صندوق البريد
 EmailcollectorOperations=العمليات التي يقوم بها المجمع
 EmailcollectorOperationsDesc=يتم تنفيذ العمليات من أعلى إلى أسفل الترتيب
 MaxEmailCollectPerCollect=أقصى عدد من رسائل البريد الإلكتروني التي تم جمعها لكل مجموعة
+TestCollectNow=Test collect
 CollectNow=اجمع الآن
 ConfirmCloneEmailCollector=هل تريد بالتأكيد استنساخ مُجمع البريد الإلكتروني %s؟
 DateLastCollectResult=تاريخ آخر جمع حاول
@@ -2109,6 +2140,7 @@ CodeLastResult=Latest result code
 NbOfEmailsInInbox=عدد رسائل البريد الإلكتروني في دليل المصدر
 LoadThirdPartyFromName=تحميل بحث الطرف الثالث على %s (تحميل فقط)
 LoadThirdPartyFromNameOrCreate=قم بتحميل بحث الطرف الثالث على %s (أنشئ إذا لم يتم العثور عليه)
+LoadContactFromEmailOrCreate=Load contact searching on %s (create if not found)
 AttachJoinedDocumentsToObject=احفظ الملفات المرفقة في مستندات الكائن إذا تم العثور على مرجع لكائن في موضوع البريد الإلكتروني.
 WithDolTrackingID=رسالة من محادثة بدأت بأول بريد إلكتروني مرسل من Dolibarr
 WithoutDolTrackingID=رسالة من محادثة بدأها أول بريد إلكتروني لم يتم إرساله من Dolibarr
@@ -2183,6 +2215,7 @@ ShowProjectLabel=تسمية المشروع
 PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=تضمين الاسم المستعار في اسم الطرف الثالث
 THIRDPARTY_ALIAS=اسم الطرف الثالث - الاسم المستعار الطرف الثالث
 ALIAS_THIRDPARTY=الاسم المستعار للطرف الثالث - اسم الطرف الثالث
+PDFIn2Languages=عرض الملصق في البي دي اف بلغتين 
 PDF_USE_ALSO_LANGUAGE_CODE=اذا كنت ترغب في تكرار بعض النصوص بلغتين مختلفتين  في ملفاتك المولدة بصيغة المستندات المتنقلة . يجب عليك ان ان تحدد اللغة الثانية هنا حتى يتسنى للملفات المولدة ان تحتوي على لغتين في نفس الصفحة . اللغة المختارة اثناء توليد المستند واللغة المختارة هنا (فقط بعض قوالب صيغة المستندات المتنقلة تدعم هذه الميزة) . ابق الخيار فارغاً للتوليد بلغة واحدة 
 PDF_USE_A=إنشاء مستندات PDF بتنسيق PDF / A بدلاً من تنسيق PDF الافتراضي
 FafaIconSocialNetworksDesc=أدخل هنا رمز رمز FontAwesome. إذا كنت لا تعرف ما هو FontAwesome ، فيمكنك استخدام القيمة العامة fa-address-book.
@@ -2211,12 +2244,12 @@ MailToPartnership=شراكة
 AGENDA_EVENT_DEFAULT_STATUS=حالة الحدث الافتراضية عند إنشاء حدث من النموذج
 YouShouldDisablePHPFunctions=يجب عليك تعطيل وظائف PHP
 IfCLINotRequiredYouShouldDisablePHPFunctions=باستثناء إذا كنت بحاجة إلى تشغيل أوامر النظام في رمز مخصص ، يجب عليك تعطيل وظائف PHP
-PHPFunctionsRequiredForCLI=لغرض الصدفة (مثل النسخ الاحتياطي للوظيفة المجدولة أو تشغيل برنامج منشط) ، يجب أن تحتفظ بوظائف PHP
+PHPFunctionsRequiredForCLI=For shell purpose (like scheduled job backup or running an antivirus program), you must keep PHP functions
 NoWritableFilesFoundIntoRootDir=لم يتم العثور على ملفات أو أدلة قابلة للكتابة للبرامج الشائعة في الدليل الجذر الخاص بك (جيد)
 RecommendedValueIs=موصى به: %s
 Recommended=موصى بها
 NotRecommended=لا ينصح
-ARestrictedPath=بعض المسار المقيد
+ARestrictedPath=Some restricted path for data files
 CheckForModuleUpdate=تحقق من وجود تحديثات الوحدات الخارجية
 CheckForModuleUpdateHelp=سيتصل هذا الإجراء بمحرري الوحدات الخارجية للتحقق من توفر إصدار جديد.
 ModuleUpdateAvailable=تحديث متاح
@@ -2264,10 +2297,10 @@ LateWarningAfter=تحذير "متأخر" بعد
 TemplateforBusinessCards=قالب لبطاقة عمل بحجم مختلف
 InventorySetup= إعداد الجرد
 ExportUseLowMemoryMode=استخدم وضع ذاكرة منخفضة
-ExportUseLowMemoryModeHelp=استخدم وضع الذاكرة المنخفضة لتنفيذ تنفيذ التفريغ (يتم الضغط من خلال أنبوب بدلاً من ذاكرة PHP). لا تسمح هذه الطريقة بالتحقق من اكتمال الملف ولا يمكن الإبلاغ عن رسالة الخطأ إذا فشلت.
+ExportUseLowMemoryModeHelp=Use the low memory mode to generate the dump file (compression is done through a pipe instead of into the PHP memory). This method does not allow to check that the file is complete and error message can't be reported if it fails. Use it if you experience not enough memory errors.
 
 ModuleWebhookName = الويب هوك
-ModuleWebhookDesc = واجهة للقبض على مشغلات dolibarr وإرسالها إلى عنوان URL
+ModuleWebhookDesc = Interface to catch dolibarr triggers and send data of the event to an URL
 WebhookSetup = إعداد Webhook
 Settings = الإعدادات
 WebhookSetupPage = صفحة إعداد Webhook
@@ -2288,6 +2321,8 @@ IconOnly=رمز فقط - نص على تلميح الأداة فقط
 INVOICE_ADD_ZATCA_QR_CODE=إظهار رمز الاستجابة السريعة ZATCA على الفواتير
 INVOICE_ADD_ZATCA_QR_CODEMore=تحتاج بعض الدول العربية إلى رمز الاستجابة السريعة هذا على فواتيرها
 INVOICE_ADD_SWISS_QR_CODE=أظهر رمز QR-Bill السويسري على الفواتير
+INVOICE_SHOW_SHIPPING_ADDRESS=عرض عنوان الشحن
+INVOICE_SHOW_SHIPPING_ADDRESSMore=Compulsory mention for France
 UrlSocialNetworksDesc=رابط URL للشبكة الاجتماعية. استخدم {socialid} للجزء المتغير الذي يحتوي على معرف الشبكة الاجتماعية.
 IfThisCategoryIsChildOfAnother=إذا كانت هذه الفئة تابعة لفئة أخرى
 DarkThemeMode=وضع المظهر الداكن
@@ -2307,3 +2342,37 @@ UsePassword=استخدم كلمة مرور
 UseOauth=استخدم رمز OAUTH
 Images=الصور
 MaxNumberOfImagesInGetPost=Max number of images allowed in a HTML field submitted in a form
+MaxNumberOfPostOnPublicPagesByIP=Max number of posts on public pages with the same IP address in a month
+CIDLookupURL=تجلب الوحدة عنوان URL يمكن استخدامه بواسطة أداة خارجية للحصول على اسم طرف ثالث أو جهة اتصال من رقم هاتفه. URL المطلوب استخدامه هو:
+ScriptIsEmpty=لم يتم كتابة كود برمجي
+ShowHideTheNRequests=Show/hide the %s SQL request(s)
+DefinedAPathForAntivirusCommandIntoSetup=Define a path for an antivirus program into <b>%s</b>
+TriggerCodes=أحداث قابله للاثارة 
+TriggerCodeInfo=Enter here the trigger code(s) that must generate a post of a web request (only external URL are allowed). You can enter several trigger codes separated by a comma.
+EditableWhenDraftOnly=If unchecked, the value can only be modified when object has a draft status
+CssOnEdit=Css on edit pages
+CssOnView=Css on view pages
+CssOnList=Css on list pages
+HelpCssOnEditDesc=The Css used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
+HelpCssOnViewDesc=The Css used when viewing the field.
+HelpCssOnListDesc=The Css used when field is inside a list table.<br>Example: "tdoverflowmax200"
+RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents for receptions
+MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions
+WarningDisabled=التحذيرات معطلة
+LimitsAndMitigation=Access limits and mitigation
+DesktopsOnly=الاجهزة المكتبية فقط
+DesktopsAndSmartphones=للموبايل و الاجهزة المكتبية 
+AllowOnlineSign=Allow online signing
+AllowExternalDownload=Allow external download (without login, using a shared link)
+DeadlineDayVATSubmission=Deadline day for vat submission on the next month
+MaxNumberOfAttachementOnForms=Max number of joinded files in a form
+IfDefinedUseAValueBeetween=If defined, use a value between %s and %s
+Reload=Reload
+ConfirmReload=Confirm module reload
+WarningModuleHasChangedLastVersionCheckParameter=Warning: the module %s has set a parameter to check its version at each page access. This is a bad and not allowed practice that may make the page to administer modules instable. Please contact author of module to fix this.
+WarningModuleHasChangedSecurityCsrfParameter=Warning: the module %s has disabled the CSRF security of your instance. This action is suspect and your installation may no more be secured. Please contact the author of the module for explanation.
+EMailsInGoingDesc=Incoming emails are managed by the module %s. You must enable and configure it if you need to support ingoing emails.
+MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IMAP. This also allows the use of an OAuth2 connection for IMAP (module OAuth must also be activated).
+MAIN_CHECKBOX_LEFT_COLUMN=Show the column for field and line selection on the left (on the right by default)
+
+CSSPage=CSS Style

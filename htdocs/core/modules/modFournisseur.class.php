@@ -41,7 +41,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 		$this->numero = 40;
@@ -308,6 +308,8 @@ class modFournisseur extends DolibarrModules
 		// Exports
 		//--------
 		$r = 0;
+
+		$langs->loadLangs(array("suppliers", "multicurrency"));
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -587,6 +589,9 @@ class modFournisseur extends DolibarrModules
 		}
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture_fourn');
+		if (empty($conf->multicurrency->enabled)) {
+			$this->import_fieldshidden_array[$r]['f.multicurrency_code'] = 'const-'.$conf->currency;
+		}
 		$this->import_regex_array[$r] = array('f.ref' => '(SI\d{4}-\d{4}|PROV.{1,32}$)', 'f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
 		$import_sample = array(
 			'f.ref' => '(PROV001)',

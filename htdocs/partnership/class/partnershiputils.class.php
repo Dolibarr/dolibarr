@@ -395,7 +395,7 @@ class PartnershipUtils
 	/**
 	 * Action to check if Dolibarr backlink not found on partner website
 	 *
-	 * @param  $website      Website	Partner's website
+	 * @param  	string	$website      	Partner's website URL
 	 * @return  int                 	0 if KO, 1 if OK
 	 */
 	private function checkDolibarrBacklink($website = null)

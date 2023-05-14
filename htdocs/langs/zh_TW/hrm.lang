@@ -12,7 +12,7 @@ OpenEtablishment=開啟營業所
 CloseEtablishment=關閉營業所
 # Dictionary
 DictionaryPublicHolidays=休假 - 公共假期
-DictionaryDepartment=HRM - Organizational Unit
+DictionaryDepartment=人力資源管理 - 部門清單
 DictionaryFunction=人力資源管理-職位
 # Module
 Employees=員工
@@ -26,8 +26,8 @@ HRM_DEFAULT_SKILL_DESCRIPTION=建立技能時的預設等級描述
 deplacement=轉移
 DateEval=評估日期
 JobCard=工作卡
-JobPosition=工作
-JobsPosition=工作
+JobPosition=職位簡介
+JobsPosition=職位簡介
 NewSkill=新技能
 SkillType=技能類型
 Skilldets=此技能的等級清單
@@ -88,4 +88,5 @@ DeleteSkill = 技能已刪除
 SkillsExtraFields=補充屬性（能力）
 JobsExtraFields=補充屬性 (職位)
 EvaluationsExtraFields=補充屬性（評估）
-NeedBusinessTravels=Need business travels
+NeedBusinessTravels=需要出差
+NoDescription=沒有說明

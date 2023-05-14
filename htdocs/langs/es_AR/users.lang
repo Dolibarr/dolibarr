@@ -42,7 +42,6 @@ LinkToCompanyContact=Enlazar a un tercero / contacto
 LinkedToDolibarrMember=Enlazar al miembro
 CreateDolibarrLogin=Crear un usuario
 CreateDolibarrThirdParty=Crea un tercero
-LoginAccountDisableInDolibarr=Cuenta deshabilitada en Dolibarr.
 UsePersonalValue=Usar valor personal
 ExportDataset_user_1=Usuarios y sus propiedades
 DomainUser=Usuario de dominio %s

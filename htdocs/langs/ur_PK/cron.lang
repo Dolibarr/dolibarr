@@ -26,7 +26,7 @@ CronCommand=کمانڈ
 CronList=طے شدہ ملازمتیں۔
 CronDelete=طے شدہ ملازمتوں کو حذف کریں۔
 CronConfirmDelete=کیا آپ واقعی ان شیڈول کردہ جابز کو حذف کرنا چاہتے ہیں؟
-CronExecute=طے شدہ کام شروع کریں۔
+CronExecute=Launch now
 CronConfirmExecute=کیا آپ واقعی ان طے شدہ ملازمتوں کو ابھی انجام دینا چاہتے ہیں؟
 CronInfo=شیڈول کردہ جاب ماڈیول ملازمتوں کو خود بخود انجام دینے کے لیے شیڈول کرنے کی اجازت دیتا ہے۔ ملازمتیں دستی طور پر بھی شروع کی جا سکتی ہیں۔
 CronTask=جاب
@@ -58,7 +58,7 @@ CronNote=تبصرہ
 CronFieldMandatory=فیلڈز %s لازمی ہے۔
 CronErrEndDateStartDt=اختتامی تاریخ تاریخ آغاز سے پہلے کی نہیں ہو سکتی
 StatusAtInstall=ماڈیول کی تنصیب کی حالت
-CronStatusActiveBtn=شیڈول
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=غیر فعال کریں۔
 CronTaskInactive=یہ کام غیر فعال ہے (شیڈول نہیں ہے)
 CronId=آئی ڈی
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=مینو میں جائیں " <a href="%s"> ہو�
 JobDisabled=ملازمت غیر فعال
 MakeLocalDatabaseDumpShort=مقامی ڈیٹا بیس کا بیک اپ
 MakeLocalDatabaseDump=ایک مقامی ڈیٹا بیس ڈمپ بنائیں۔ پیرامیٹرز ہیں: کمپریشن ('gz' یا 'bz' یا 'none')، بیک اپ کی قسم ('mysql'، 'pgsql'، 'auto')، 1، 'auto' یا فائل کا نام، رکھنے کے لیے بیک اپ فائلوں کی تعداد
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=توجہ، کارکردگی کے مقصد کے لیے، فعال ملازمتوں کے نفاذ کی اگلی تاریخ جو بھی ہو، آپ کی ملازمتوں کو چلانے سے پہلے زیادہ سے زیادہ %s گھنٹے تک تاخیر ہو سکتی ہے۔
 DATAPOLICYJob=ڈیٹا کلینر اور گمنام
 JobXMustBeEnabled=جاب %s کا فعال ہونا ضروری ہے۔
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=آخری بار طے شدہ کام
 NextScheduledJobExecute=اگلا طے شدہ کام انجام دینے کے لیے
 NumberScheduledJobError=غلطی سے طے شدہ کاموں کی تعداد
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

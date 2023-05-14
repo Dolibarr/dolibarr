@@ -115,7 +115,7 @@ if ($action == "save" && empty($cancel)) {
 
 // $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 
 llxHeader('', $langs->trans("AgendaSetup"), $help_url);
 
@@ -161,7 +161,7 @@ if (!empty($triggers)) {
 			$module = 'fournisseur';
 		}
 		if ($module == 'shipping') {
-			$module = 'expedition_bon';
+			$module = 'expedition';
 		}
 		if ($module == 'member') {
 			$module = 'adherent';
@@ -194,6 +194,10 @@ if (!empty($triggers)) {
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
 				continue;
 			}
+			if ($trigger['code'] == 'ACTION_CREATE') {
+				// This is the trigger to add an event, enabling it will create infinite loop
+				continue;
+			}
 
 			if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code'])) {
 				print '<!-- '.$trigger['position'].' -->';
@@ -202,7 +206,7 @@ if (!empty($triggers)) {
 				print '<td>'.$trigger['label'].'</td>';
 				print '<td class="right" width="40">';
 				$key = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-				$value = $conf->global->$key;
+				$value = getDolGlobalInt($key);
 				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action == 'selectall' || $value) && $action != "selectnone") ? ' checked' : '').'>';
 				print '</td></tr>'."\n";
 			}

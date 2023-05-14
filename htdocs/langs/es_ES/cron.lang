@@ -26,7 +26,7 @@ CronCommand=Comando
 CronList=Tareas programadas
 CronDelete=Borrar tareas programadas
 CronConfirmDelete=¿Está seguro de querer eliminar esta tarea programada?
-CronExecute=Ejecutar tarea programada
+CronExecute=Lanzar ahora
 CronConfirmExecute=¿Está seguro de querer ejecutar esta tarea programada ahora?
 CronInfo=Tareas programadas le permite ejecutar tareas que han sido programadas. Las tareas también pueden iniciarse manualmente.
 CronTask=Tarea
@@ -58,7 +58,7 @@ CronNote=Comentario
 CronFieldMandatory=campos %s son obligatorios
 CronErrEndDateStartDt=La fecha de finalizacion no puede ser anterior a la fecha de inicio
 StatusAtInstall=Estado en la instalación del módulo
-CronStatusActiveBtn=Calendario
+CronStatusActiveBtn=Habilitar programación
 CronStatusInactiveBtn=Inactivo
 CronTaskInactive=Este trabajo está desactivado (no programado)
 CronId=Id
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Vaya al menú "<a href="%s">Inicio - Herramienta
 JobDisabled=Tarea desactivada
 MakeLocalDatabaseDumpShort=Copia local de la base de datos
 MakeLocalDatabaseDump=Crear una copia local de la base de datos. Los parámetros son: compresión ('gz' o 'bz' o 'ninguno'), tipo de copia de seguridad ('mysql' o 'pgsql'), 1, 'auto' o nombre de archivo para construir, nº de archivos de copia de seguridad a mantener
+MakeSendLocalDatabaseDumpShort=Enviar copia de seguridad de la base de datos local
+MakeSendLocalDatabaseDump=Enviar copia de seguridad de la base de datos local por e-mail. Los parámetros son: para, de, asunto, mensaje, nombre de archivo (Nombre del archivo enviado), filtro ('sql' solo para copia de seguridad de la base de datos)
+BackupIsTooLargeSend=Lo sentimos, el último archivo de copia de seguridad es demasiado grande para enviarlo por correo electrónico
+CleanUnfinishedCronjobShort=Limpiar cronjob sin terminar
+CleanUnfinishedCronjob=Limpie el cronjob atascado en el procesamiento cuando el proceso ya no se está ejecutando
 WarningCronDelayed=Atención: para mejorar el rendimiento, cualquiera que sea la próxima fecha de ejecución de las tareas activas, sus tareas pueden retrasarse un máximo de %s horas antes de ejecutarse
 DATAPOLICYJob=Limpiador de datos y anonimizador
 JobXMustBeEnabled=La tarea %s debe estar habilitada
+EmailIfError=Correo electrónico para advertencia de error
+ErrorInBatch=Error al ejecutar el trabajo %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Última tarea programada ejecutada
 NextScheduledJobExecute=Siguiente tarea programada para ejecutar
 NumberScheduledJobError=Número de tareas programadas con error
+NumberScheduledJobNeverFinished=Número de trabajos programados que nunca terminaron

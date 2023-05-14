@@ -56,11 +56,11 @@ class box_actions extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
-		$this->enabled = $conf->agenda->enabled;
+		$this->enabled = isModEnabled('agenda');
 
 		$this->hidden = !($user->hasRight('agenda', 'myactions', 'read'));
 	}
@@ -145,7 +145,7 @@ class box_actions extends ModeleBoxes
 					}
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label = empty($objp->label) ? $objp->type_label : $objp->label;
+					//$label = empty($objp->label) ? $objp->type_label : $objp->label;
 
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="tdoverflowmax200"',
@@ -256,7 +256,7 @@ class box_actions extends ModeleBoxes
 			}
 			$out .= '</div>';
 			if ($actioncejour) {
-				$out .= '<script>';
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: true });';
 				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1) {    // autoclose after this delay
 					$out .= 'setTimeout(function(){';
@@ -265,7 +265,7 @@ class box_actions extends ModeleBoxes
 				}
 				$out .= '</script>';
 			} else {
-				$out .= '<script>';
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
 				$out .= '</script>';
 			}
