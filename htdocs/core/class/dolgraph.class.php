@@ -41,7 +41,7 @@ class DolGraph
 {
 	public $type = array(); // Array with type of each series. Example: array('bars', 'horizontalbars', 'lines', 'pies', 'piesemicircle', 'polar'...)
 	public $mode = 'side'; // Mode bars graph: side, depth
-	private $_library = 'chart'; // Graphic library to use (jflot, chart, artichow)
+	private $_library; // Graphic library to use (jflot, chart, artichow)
 
 	//! Array of data
 	public $data; // Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
@@ -107,10 +107,17 @@ class DolGraph
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor;
 
+		// Some default values for the case it is not defined into the theme later.
 		$this->bordercolor = array(235, 235, 224);
 		$this->datacolor = array(array(120, 130, 150), array(160, 160, 180), array(190, 190, 220));
 		$this->bgcolor = array(235, 235, 224);
 
+		// For small screen, we prefer a default with of 300
+		if (!empty($conf->dol_optimize_smallscreen)) {
+			$this->width = 300;
+		}
+
+		// Load color of the theme
 		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
 		if (is_readable($color_file)) {
 			include $color_file;
@@ -219,8 +226,8 @@ class DolGraph
 	/**
 	 * Set y label
 	 *
-	 * @param 	string	$label		Y label
-	 * @return	boolean|null				True
+	 * @param 	string			$label		Y label
+	 * @return	void
 	 */
 	public function SetYLabel($label)
 	{
@@ -233,7 +240,7 @@ class DolGraph
 	 * Set width
 	 *
 	 * @param 	int|string		$w			Width (Example: 320 or '100%')
-	 * @return	boolean|null				True
+	 * @return	void
 	 */
 	public function SetWidth($w)
 	{
@@ -513,7 +520,7 @@ class DolGraph
 	/**
 	 * Show pointvalue or not
 	 *
-	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value
+	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value, 2=Show values for each serie on same point
 	 * @return	void
 	 */
 	public function setShowPointValue($showpointvalue)
@@ -715,7 +722,7 @@ class DolGraph
 	 *
 	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
-	 * @return	integer|null
+	 * @return	mixed|boolean
 	 */
 	public function draw($file, $fileurl = '')
 	{
@@ -734,14 +741,15 @@ class DolGraph
 			dol_syslog(get_class($this) . "::draw " . $this->error, LOG_WARNING);
 		}
 		$call = "draw_" . $this->_library;
-		call_user_func_array(array($this, $call), array($file, $fileurl));
+
+		return call_user_func_array(array($this, $call), array($file, $fileurl));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Build a graph using JFlot library. Input when calling this method should be:
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
-	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
+	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n series to show for each x
 	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// Syntax deprecated
 	 *  $this->legend= array("Val1",...,"Valn");													// list of n series name
 	 *  $this->type  = array('bars',...'lines','linesnopoint'); or array('pie') or array('polar')
@@ -828,7 +836,7 @@ class DolGraph
 		}
 		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="width:' . $this->width . 'px;height:' . $this->height . 'px;" class="dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"></div>' . "\n";
 
-		$this->stringtoshow .= '<script id="' . $tag . '">' . "\n";
+		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$this->stringtoshow .= '$(function () {' . "\n";
 		$i = $firstlot;
 		if ($nblot < 0) {
@@ -1028,7 +1036,7 @@ class DolGraph
 	/**
 	 * Build a graph using Chart library. Input when calling this method should be:
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
-	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
+	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n series to show for each x
 	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// Syntax deprecated
 	 *  $this->legend= array("Val1",...,"Valn");													// list of n series name
 	 *  $this->type  = array('bars',...'lines', 'linesnopoint'); or array('pie') or array('polar') or array('piesemicircle');
@@ -1054,6 +1062,7 @@ class DolGraph
 		}
 
 		$showlegend = $this->showlegend;
+		$bordercolor = "";
 
 		$legends = array();
 		$nblot = 0;
@@ -1140,9 +1149,9 @@ class DolGraph
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px') . '; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
+		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: ' . (strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
 
-		$this->stringtoshow .= '<script id="' . $tag . '">' . "\n";
+		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$i = $firstlot;
 		if ($nblot < 0) {
 			$this->stringtoshow .= '<!-- No series of data -->';
@@ -1158,40 +1167,36 @@ class DolGraph
 		// Special case for Graph of type 'pie', 'piesemicircle', or 'polar'
 		if (isset($this->type[$firstlot]) && (in_array($this->type[$firstlot], array('pie', 'polar', 'piesemicircle')))) {
 			$type = $this->type[$firstlot]; // pie or polar
-			$this->stringtoshow .= 'var options = {' . "\n";
+			//$this->stringtoshow .= 'var options = {' . "\n";
+			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
+
+
 			$legendMaxLines = 0; // Does not work
+
+			/* For Chartjs v2.9 */
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, ';
 			} else {
-				$this->stringtoshow .= 'legend: { position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
+				$this->stringtoshow .= 'legend: { labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
 				if (!empty($legendMaxLines)) {
-					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines . '';
+					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines;
 				}
-				/* This has no effect on chartjs version with dol v14
-				$this->stringtoshow .= ', labels: {
-					color: \'rgb(255, 0, 0)\',
-					// This more specific font property overrides the global property
-					font: {
-						size: 24
-					}
-				}';
-				*/
 				$this->stringtoshow .= ' }, ' . "\n";
 			}
 
-			/* This has no effect on chartjs version with dol v14
-			$this->stringtoshow .= 'plugins: {
-				legend: {
-					display: true,
-					labels: {
-						color: \'rgb(255, 0, 0)\',
-						// This more specific font property overrides the global property
-						font: {
-							size: 24
-						}
-					}
+			/* For Chartjs v3.5 */
+			$this->stringtoshow .= 'plugins: { ';
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, ';
+			} else {
+				$this->stringtoshow .= 'legend: { labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
+				if (!empty($legendMaxLines)) {
+					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines;
 				}
-			},'."\n"; */
+				$this->stringtoshow .= ' }, ' . "\n";
+			}
+			$this->stringtoshow .= ' }, ' . "\n";
+
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
 				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
@@ -1212,7 +1217,7 @@ class DolGraph
 					$tmp = str_replace('#', '', $this->datacolor[$i]);
 					if (strpos($tmp, '-') !== false) {
 						$foundnegativecolor++;
-						$color = '#FFFFFF'; // If $val is '-123'
+						$color = 'rgba(0,0,0,.0)'; // If $val is '-123'
 					} else {
 						$color = "#" . $tmp; // If $val is '123' or '#123'
 					}
@@ -1288,23 +1293,46 @@ class DolGraph
 			$this->stringtoshow .= '});' . "\n";
 		} else {
 			// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
-			$type = 'bar';
+			$type = 'bar'; $xaxis = '';
 
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {
 				$type = 'bar';
 			}
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') {
-				$type = 'horizontalBar';
+				$type = 'bar'; $xaxis = "indexAxis: 'y', ";
 			}
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) {
 				$type = 'line';
 			}
 
+			// Set options
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
-			if (empty($showlegend)) {
-				$this->stringtoshow .= 'legend: { display: false }, ';
+			$this->stringtoshow .= $xaxis;
+			if ($this->showpointvalue == 2) {
+				$this->stringtoshow .= 'interaction: { intersect: true, mode: \'index\'}, ';
 			}
-			$this->stringtoshow .= 'scales: { xAxes: [{ ';
+
+			/* For Chartjs v2.9 */
+			/*
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, '."\n";
+			} else {
+				$this->stringtoshow .= 'legend: { maxWidth: '.round($this->width / 2).', labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\' }, '."\n";
+			}
+			*/
+
+			/* For Chartjs v3.5 */
+			$this->stringtoshow .= 'plugins: { '."\n";
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, '."\n";
+			} else {
+				$this->stringtoshow .= 'legend: { maxWidth: '.round(intVal($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
+			}
+			$this->stringtoshow .= "}, \n";
+
+			/* For Chartjs v2.9 */
+			/*
+			 $this->stringtoshow .= 'scales: { xAxis: [{ ';
 			if ($this->hideXValues) {
 				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
 			}
@@ -1314,11 +1342,12 @@ class DolGraph
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }]';
-			$this->stringtoshow .= ', yAxes: [{ ticks: { beginAtZero: true }';
+			$this->stringtoshow .= ', yAxis: [{ ticks: { beginAtZero: true }';
 			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }] }';
+			*/
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
@@ -1382,7 +1411,7 @@ class DolGraph
 
 					$textoflegend = $arrayofgroupslegend[$i]['legendwithgroup'];
 				} else {
-					$textoflegend = $this->Legend[$i];
+					$textoflegend = !empty($this->Legend[$i]) ? $this->Legend[$i] : '';
 				}
 
 				if ($usecolorvariantforgroupby) {
@@ -1394,7 +1423,7 @@ class DolGraph
 
 					//var_dump($iinstack);
 					if ($iinstack) {
-						// Change color with offset of $$iinstack
+						// Change color with offset of $iinstack
 						//var_dump($newcolor);
 						if ($iinstack % 2) {	// We increase agressiveness of reference color for color 2, 4, 6, ...
 							$ratio = min(95, 10 + 10 * $iinstack); // step of 20
@@ -1412,19 +1441,27 @@ class DolGraph
 					$color = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ', 0.9)';
 					$bordercolor = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ')';
 				} else { // We do not use a 'group by'
-					if (is_array($this->datacolor[$i])) {
+					if (!empty($this->datacolor[$i]) && is_array($this->datacolor[$i])) {
 						$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)';
 					} else {
 						$color = $this->datacolor[$i];
 					}
-					if (is_array($this->bordercolor[$i])) {
-						$color = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
+					if (!empty($this->bordercolor[$i]) && is_array($this->bordercolor[$i])) {
+						$bordercolor = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
 					} else {
 						if ($type != 'horizontalBar') {
 							$bordercolor = $color;
 						} else {
 							$bordercolor = $this->bordercolor[$i];
 						}
+					}
+
+					// For negative colors, we invert border and background
+					$tmp = str_replace('#', '', $color);
+					if (strpos($tmp, '-') !== false) {
+						$foundnegativecolor++;
+						$bordercolor = str_replace('-', '', $color);
+						$color = '#FFFFFF'; // If $val is '-123'
 					}
 				}
 				if ($i > 0) {
@@ -1517,11 +1554,11 @@ class DolGraph
 			if (empty($conf->dol_optimize_smallscreen)) {
 				return ($defaultsize ? $defaultsize : '500');
 			} else {
-				return (empty($_SESSION['dol_screen_width']) ? '280' : ($_SESSION['dol_screen_width'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? '280' : ($_SESSION['dol_screenwidth'] - 40));
 			}
 		}
 		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '200') : '160');
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
 		}
 		return 0;
 	}

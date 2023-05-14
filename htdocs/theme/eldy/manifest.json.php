@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,9 +33,6 @@ if (!defined('NOREQUIRESOC')) {
 }
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
 }
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
@@ -64,7 +61,7 @@ top_httphead('text/json');
 if (empty($dolibarr_nocache)) {
 	header('Cache-Control: max-age=10800, public, must-revalidate');
 	// For a text/json, we must set an Expires to avoid to have it forced to an expired value by the web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + 10800) . ' GMT');
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + 10800).' GMT');
 } else {
 	header('Cache-Control: no-cache');
 }
@@ -79,8 +76,8 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 }
 
 
-$manifest->theme_color = !empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR)?$conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR:'#F05F40';
-$manifest->background_color = !empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR)?$conf->global->MAIN_MANIFEST_APPLI_BG_COLOR:"#ffffff";
+$manifest->theme_color = !empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR) ? $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR : '#F05F40';
+$manifest->background_color = !empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR) ? $conf->global->MAIN_MANIFEST_APPLI_BG_COLOR : "#ffffff";
 $manifest->display = "standalone";
 $manifest->splash_pages = null;
 $manifest->icons = array();
@@ -97,11 +94,11 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 	$manifest->icons[] = $icon;
 } elseif (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)) {
 	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)) {
-		$iconRelativePath 	= 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
-		$iconPath 	= $conf->mycompany->dir_output.'/'.$iconRelativePath;
+		$iconRelativePath = 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
+		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
-			if ($imgSize) {
+			if (!empty($imgSize)) {
 				$icon = new stdClass();
 				$icon->src = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode($iconRelativePath);
 				$icon->sizes = $imgSize[0]."x".$imgSize[1];
@@ -112,8 +109,8 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 	}
 
 	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL)) {
-		$iconRelativePath 	= 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL;
-		$iconPath 	= $conf->mycompany->dir_output.'/'.$iconRelativePath;
+		$iconRelativePath = 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL;
+		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
 			if ($imgSize) {
@@ -127,8 +124,8 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 	}
 
 	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)) {
-		$iconRelativePath 	= 'logos/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED;
-		$iconPath 	= $conf->mycompany->dir_output.'/'.$iconRelativePath;
+		$iconRelativePath = 'logos/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED;
+		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
 			if ($imgSize) {

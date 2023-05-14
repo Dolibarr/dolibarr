@@ -24,14 +24,14 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
-				$align = $extrafields->getAlignFlag($key);
+				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 				$typeofextrafield = $extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
 
-				print '<td class="liste_titre'.($align ? ' '.$align : '').'">';
+				print '<td class="liste_titre'.($cssclass ? ' '.$cssclass : '').'">';
 				$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
-				if (in_array($typeofextrafield, array('varchar', 'int', 'double')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) {
+				if (in_array($typeofextrafield, array('varchar', 'mail', 'ip', 'url', 'int', 'double')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) {
 					$searchclass = '';
-					if (in_array($typeofextrafield, array('varchar'))) {
+					if (in_array($typeofextrafield, array('varchar', 'mail', 'ip', 'url'))) {
 						$searchclass = 'searchstring';
 					}
 					if (in_array($typeofextrafield, array('int', 'double'))) {
@@ -47,7 +47,7 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 					if (in_array($typeofextrafield, array('link', 'sellist', 'text', 'html'))) {
 						$morecss = 'maxwidth200';
 					}
-					echo $extrafields->showInputField($key, (empty($search_array_options[$search_options_pattern.$tmpkey]) ? '' : $search_array_options[$search_options_pattern.$tmpkey]), '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
+					echo $extrafields->showInputField($key, (!isset($search_array_options[$search_options_pattern.$tmpkey]) ? '' : $search_array_options[$search_options_pattern.$tmpkey]), '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
 				}
 				print '</td>';
 			}

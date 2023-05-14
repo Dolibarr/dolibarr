@@ -50,6 +50,11 @@ class Menubase
 	public $id;
 
 	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	/**
 	 * @var string Menu handler
 	 */
 	public $menu_handler;
@@ -152,6 +157,10 @@ class Menubase
 	 */
 	public $tms;
 
+	/**
+	 * @var Menu menu
+	 */
+	public $newmenu;
 
 	/**
 	 *  Constructor
@@ -181,21 +190,22 @@ class Menubase
 		if (!isset($this->enabled)) {
 			$this->enabled = '1';
 		}
-		$this->menu_handler = trim($this->menu_handler);
-		$this->module = trim($this->module);
-		$this->type = trim($this->type);
-		$this->mainmenu = trim($this->mainmenu);
-		$this->leftmenu = trim($this->leftmenu);
+		$this->entity = (isset($this->entity) && (int) $this->entity >= 0 ? (int) $this->entity : $conf->entity);
+		$this->menu_handler = trim((string) $this->menu_handler);
+		$this->module = trim((string) $this->module);
+		$this->type = trim((string) $this->type);
+		$this->mainmenu = trim((string) $this->mainmenu);
+		$this->leftmenu = trim((string) $this->leftmenu);
 		$this->fk_menu = (int) $this->fk_menu; // If -1, fk_mainmenu and fk_leftmenu must be defined
-		$this->fk_mainmenu = trim($this->fk_mainmenu);
-		$this->fk_leftmenu = trim($this->fk_leftmenu);
+		$this->fk_mainmenu = trim((string) $this->fk_mainmenu);
+		$this->fk_leftmenu = trim((string) $this->fk_leftmenu);
 		$this->position = (int) $this->position;
-		$this->url = trim($this->url);
-		$this->target = trim($this->target);
-		$this->title = trim($this->title);
-		$this->langs = trim($this->langs);
-		$this->perms = trim($this->perms);
-		$this->enabled = trim($this->enabled);
+		$this->url = trim((string) $this->url);
+		$this->target = trim((string) $this->target);
+		$this->title = trim((string) $this->title);
+		$this->langs = trim((string) $this->langs);
+		$this->perms = trim((string) $this->perms);
+		$this->enabled = trim((string) $this->enabled);
 		$this->user = (int) $this->user;
 		if (empty($this->position)) {
 			$this->position = 0;
@@ -213,7 +223,7 @@ class Menubase
 		// may use an already used value because its internal cursor does not increase when we do
 		// an insert with a forced id.
 		if (in_array($this->db->type, array('pgsql'))) {
-			$sql = "SELECT MAX(rowid) as maxrowid FROM ".MAIN_DB_PREFIX."menu";
+			$sql = "SELECT MAX(rowid) as maxrowid FROM ".$this->db->prefix()."menu";
 			$resqlrowid = $this->db->query($sql);
 			if ($resqlrowid) {
 				$obj = $this->db->fetch_object($resqlrowid);
@@ -224,7 +234,7 @@ class Menubase
 					$maxrowid = 1;
 				}
 
-				$sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
+				$sql = "SELECT setval('".$this->db->prefix()."menu_rowid_seq', ".($maxrowid).")";
 				//print $sql; exit;
 				$resqlrowidset = $this->db->query($sql);
 				if (!$resqlrowidset) {
@@ -237,12 +247,12 @@ class Menubase
 
 		// Check that entry does not exists yet on key menu_handler-fk_menu-position-url-entity, to avoid errors with postgresql
 		$sql = "SELECT count(*)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."menu";
+		$sql .= " FROM ".$this->db->prefix()."menu";
 		$sql .= " WHERE menu_handler = '".$this->db->escape($this->menu_handler)."'";
 		$sql .= " AND fk_menu = ".((int) $this->fk_menu);
 		$sql .= " AND position = ".((int) $this->position);
 		$sql .= " AND url = '".$this->db->escape($this->url)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (0, ".$conf->entity.")";
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -250,7 +260,7 @@ class Menubase
 
 			if ($row[0] == 0) {   // If not found
 				// Insert request
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
+				$sql = "INSERT INTO ".$this->db->prefix()."menu(";
 				$sql .= "menu_handler,";
 				$sql .= "entity,";
 				$sql .= "module,";
@@ -271,7 +281,7 @@ class Menubase
 				$sql .= "usertype";
 				$sql .= ") VALUES (";
 				$sql .= " '".$this->db->escape($this->menu_handler)."',";
-				$sql .= " '".$this->db->escape($conf->entity)."',";
+				$sql .= " '".$this->db->escape($this->entity)."',";
 				$sql .= " '".$this->db->escape($this->module)."',";
 				$sql .= " '".$this->db->escape($this->type)."',";
 				$sql .= " ".($this->mainmenu ? "'".$this->db->escape($this->mainmenu)."'" : "''").","; // Can't be null
@@ -293,7 +303,7 @@ class Menubase
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
-					$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
+					$this->id = $this->db->last_insert_id($this->db->prefix()."menu");
 					dol_syslog(get_class($this)."::create record added has rowid=".((int) $this->id), LOG_DEBUG);
 
 					return $this->id;
@@ -303,7 +313,7 @@ class Menubase
 				}
 			} else {
 				dol_syslog(get_class($this)."::create menu entry already exists", LOG_WARNING);
-				$this->error = 'Error Menu entry already exists';
+				$this->error = 'Error Menu entry ('.$this->menu_handler.','.$this->position.','.$this->url.') already exists';
 				return 0;
 			}
 		} else {
@@ -346,7 +356,7 @@ class Menubase
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
+		$sql = "UPDATE ".$this->db->prefix()."menu SET";
 		$sql .= " menu_handler='".$this->db->escape($this->menu_handler)."',";
 		$sql .= " module='".$this->db->escape($this->module)."',";
 		$sql .= " type='".$this->db->escape($this->type)."',";
@@ -409,7 +419,7 @@ class Menubase
 		$sql .= " t.enabled,";
 		$sql .= " t.usertype as user,";
 		$sql .= " t.tms";
-		$sql .= " FROM ".MAIN_DB_PREFIX."menu as t";
+		$sql .= " FROM ".$this->db->prefix()."menu as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -460,7 +470,7 @@ class Menubase
 	{
 		//global $conf, $langs;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
+		$sql = "DELETE FROM ".$this->db->prefix()."menu";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -635,7 +645,7 @@ class Menubase
 		$leftmenu = $myleftmenu; // To export to dol_eval function
 
 		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
-		$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
+		$sql .= " FROM ".$this->db->prefix()."menu as m";
 		$sql .= " WHERE m.entity IN (0,".$conf->entity.")";
 		$sql .= " AND m.menu_handler IN ('".$this->db->escape($menu_handler)."','all')";
 		if ($type_user == 0) {
@@ -647,7 +657,7 @@ class Menubase
 		$sql .= " ORDER BY m.position, m.rowid";
 		//print $sql;
 
-		//dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
+		//dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu), LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numa = $this->db->num_rows($resql);

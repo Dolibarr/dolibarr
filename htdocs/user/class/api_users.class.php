@@ -82,9 +82,9 @@ class Users extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user AS t LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_user as c";
+			$sql .= ", ".$this->db->prefix()."categorie_user as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if ($user_ids) {
@@ -99,11 +99,11 @@ class Users extends DolibarrApi
 
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -151,7 +151,7 @@ class Users extends DolibarrApi
 	 */
 	public function get($id, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && $id != 0 && DolibarrApiAccess::$user->id != $id) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -184,12 +184,17 @@ class Users extends DolibarrApi
 	 *
 	 * @url GET login/{login}
 	 *
-	 * @throws RestException 401 Insufficient rights
-	 * @throws RestException 404 User or group not found
+	 * @throws RestException 400    Bad request
+	 * @throws RestException 401 	Insufficient rights
+	 * @throws RestException 404 	User or group not found
 	 */
 	public function getByLogin($login, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (empty($login)) {
+			throw new RestException(400, 'Bad parameters');
+		}
+
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->login != $login) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -218,12 +223,17 @@ class Users extends DolibarrApi
 	 *
 	 * @url GET email/{email}
 	 *
+	 * @throws RestException 400     Bad request
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
 	public function getByEmail($email, $includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (empty($email)) {
+			throw new RestException(400, 'Bad parameters');
+		}
+
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->email != $email) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -256,7 +266,7 @@ class Users extends DolibarrApi
 	 */
 	public function getInfo($includepermissions = 0)
 	{
-		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+		if (empty(DolibarrApiAccess::$user->rights->user->self->creer) && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(401, 'Not allowed');
 		}
 
@@ -455,7 +465,7 @@ class Users extends DolibarrApi
 	 *
 	 * @throws RestException 401 Not allowed
 	 * @throws RestException 404 User not found
-	 * @throws RestException 500 Error
+	 * @throws RestException 500 System error
 	 *
 	 * @url	GET {id}/setGroup/{group}
 	 */
@@ -476,7 +486,7 @@ class Users extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
+		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
 			$entity = (!empty($entity) ? $entity : $conf->entity);
 		} else {
 			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
@@ -525,18 +535,18 @@ class Users extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup AS t LEFT JOIN ".MAIN_DB_PREFIX."usergroup_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if ($group_ids) {
 			$sql .= " AND t.rowid IN (".$this->db->sanitize($group_ids).")";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -581,7 +591,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param 	int 	$group ID of group
 	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
-	 * @return  array               Array of User objects
+	 * @return  object               object of User objects
 	 *
 	 * @throws RestException 401 Not allowed
 	 * @throws RestException 404 User not found
@@ -688,10 +698,6 @@ class Users extends DolibarrApi
 
 		unset($object->lines);
 		unset($object->model_pdf);
-		unset($object->skype);
-		unset($object->twitter);
-		unset($object->facebook);
-		unset($object->linkedin);
 
 		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
 
@@ -741,7 +747,7 @@ class Users extends DolibarrApi
 			unset($cleanObject->clicktodial_loaded);
 
 			unset($cleanObject->datec);
-			unset($cleanObject->datem);
+			unset($cleanObject->tms);
 			unset($cleanObject->members);
 			unset($cleanObject->note);
 			unset($cleanObject->note_private);

@@ -122,7 +122,7 @@ class CompanyPaymentMode extends CommonObject
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
-	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
+		//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
 
 	/**
@@ -146,6 +146,18 @@ class CompanyPaymentMode extends CommonObject
 	public $number;
 	public $cle_rib;
 	public $bic;
+
+	/**
+	 * @var string iban
+	 * @deprecated
+	 * @see iban_prefix
+	 */
+	public $iban;
+
+	/**
+	 * iban_prefix
+	 * @var string
+	 */
 	public $iban_prefix;
 	public $domiciliation;
 	public $proprio;
@@ -195,32 +207,6 @@ class CompanyPaymentMode extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var string    Name of subtable line
-	 */
-	//public $table_element_line = 'companypaymentmodedet';
-	/**
-	 * @var string    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_companypaymentmode';
-	/**
-	 * @var string    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'CompanyPaymentModeline';
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-	/**
-	 * @var CompanyPaymentModeLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -235,7 +221,7 @@ class CompanyPaymentMode extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 	}
@@ -281,8 +267,7 @@ class CompanyPaymentMode extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
-		// ...
+		// $object->title = $langs->trans("CopyOf")." ".$object->title;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -325,7 +310,11 @@ class CompanyPaymentMode extends CommonObject
 		}
 
 		$result = $this->fetchCommon($id, $ref, $morewhere);
-		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+
+		// For backward compatibility
+		$this->iban = $this->iban_prefix;
+
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -394,7 +383,7 @@ class CompanyPaymentMode extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/monmodule/companypaymentmode_card.php', 1).'?id='.$this->id;
+		$url = '';
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -519,10 +508,10 @@ class CompanyPaymentMode extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status5';
@@ -550,27 +539,11 @@ class CompanyPaymentMode extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);

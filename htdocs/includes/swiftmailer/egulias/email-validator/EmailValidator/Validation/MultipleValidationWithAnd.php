@@ -30,12 +30,12 @@ class MultipleValidationWithAnd implements EmailValidation
     private $warnings = [];
 
     /**
-     * @var MultipleErrors
+     * @var MultipleErrors|null
      */
     private $error;
 
     /**
-     * @var bool
+     * @var int
      */
     private $mode;
 
@@ -62,7 +62,8 @@ class MultipleValidationWithAnd implements EmailValidation
         $errors = [];
         foreach ($this->validations as $validation) {
             $emailLexer->reset();
-            $result = $result && $validation->isValid($email, $emailLexer);
+            $validationResult = $validation->isValid($email, $emailLexer);
+            $result = $result && $validationResult;
             $this->warnings = array_merge($this->warnings, $validation->getWarnings());
             $errors = $this->addNewError($validation->getError(), $errors);
 
@@ -78,6 +79,12 @@ class MultipleValidationWithAnd implements EmailValidation
         return $result;
     }
 
+    /**
+     * @param \Egulias\EmailValidator\Exception\InvalidEmail|null $possibleError
+     * @param \Egulias\EmailValidator\Exception\InvalidEmail[] $errors
+     *
+     * @return \Egulias\EmailValidator\Exception\InvalidEmail[]
+     */
     private function addNewError($possibleError, array $errors)
     {
         if (null !== $possibleError) {
@@ -87,13 +94,20 @@ class MultipleValidationWithAnd implements EmailValidation
         return $errors;
     }
 
+    /**
+     * @param bool $result
+     *
+     * @return bool
+     */
     private function shouldStop($result)
     {
         return !$result && $this->mode === self::STOP_ON_ERROR;
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the validation errors.
+     *
+     * @return MultipleErrors|null
      */
     public function getError()
     {

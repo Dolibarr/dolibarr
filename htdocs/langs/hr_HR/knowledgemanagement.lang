@@ -39,12 +39,16 @@ KnowledgeManagementAboutPage = Knowledge Management about page
 
 KnowledgeManagementArea = Knowledge Management
 MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+ListKnowledgeRecord = Popis članaka
+NewKnowledgeRecord = Novi članak
+ValidateReply = Potvrdite rješenje
+KnowledgeRecords = Članci
 KnowledgeRecord = Stavka
 KnowledgeRecordExtraFields = Extrafields for Article
 GroupOfTicket=Group of tickets
 YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
 SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Postavi kao zastarjelo
+ConfirmCloseKM=Potvrđujete li zatvaranje ovog članka kao zastarjelog?
+ConfirmReopenKM=Želite li vratiti ovaj članak na status "Provjeren"?

@@ -21,6 +21,7 @@
  *	\brief      Setup page to configure accounting module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -54,6 +55,7 @@ $error = 0;
 
 $title = $langs->trans("ConfigAccountingExpert");
 $help_url = '';
+
 llxHeader('', $title, $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

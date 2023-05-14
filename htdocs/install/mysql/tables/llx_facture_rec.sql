@@ -35,7 +35,7 @@ create table llx_facture_rec
   remise_percent     real     DEFAULT 0,
   remise_absolue     real     DEFAULT 0,
   
-  vat_src_code		 varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
+  vat_src_code		 varchar(10)  DEFAULT '',			-- TODO Remove this. Field is inside the table of lines
   total_tva          double(24,8)     DEFAULT 0,
   localtax1			 double(24,8)     DEFAULT 0,           -- amount localtax1
   localtax2          double(24,8)     DEFAULT 0,           -- amount localtax2
@@ -57,7 +57,7 @@ create table llx_facture_rec
   modelpdf           varchar(255),
 
   fk_multicurrency          integer,
-  multicurrency_code        varchar(255),
+  multicurrency_code        varchar(3),
   multicurrency_tx          double(24,8) DEFAULT 1,
   multicurrency_total_ht    double(24,8) DEFAULT 0,
   multicurrency_total_tva   double(24,8) DEFAULT 0,

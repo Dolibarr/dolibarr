@@ -72,7 +72,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemanagement->read)
+if (!empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemanagement->read)
 {
 	$langs->load("orders");
 
@@ -145,7 +145,7 @@ if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemana
 END MODULEBUILDER DRAFT MYOBJECT */
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $NBMAX = (empty($conf->global->MAIN_SIZE_SHORTLIST_LIMIT) ? 25 : $conf->global->MAIN_SIZE_SHORTLIST_LIMIT);
@@ -153,7 +153,7 @@ $max = $NBMAX;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemanagement->read) {
+if (!empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemanagement->read) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_myobject as s";
 	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -202,7 +202,7 @@ if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemana
 }
 */
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

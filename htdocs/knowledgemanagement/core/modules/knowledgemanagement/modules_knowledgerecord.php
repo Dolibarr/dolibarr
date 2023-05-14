@@ -23,7 +23,7 @@
  */
 
 /**
- *  \file			htdocs/core/modules/knowledgemanagement/modules_knowledgerecord.php
+ *  \file			htdocs/knowledgemanagement/core/modules/knowledgemanagement/modules_knowledgerecord.php
  *  \ingroup		knowledgemanagement
  *  \brief			File that contains parent class for knowledgerecords document models and parent class for knowledgerecords numbering models
  */
@@ -86,7 +86,7 @@ abstract class ModeleNumRefKnowledgeRecord
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Descriptive text
 	 */
 	public function info()
 	{

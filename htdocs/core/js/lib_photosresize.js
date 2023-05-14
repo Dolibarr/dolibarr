@@ -32,12 +32,40 @@ function updateCoords(c)
 {
 	//alert(parseInt(jQuery("#ratioforcrop").val()));
 	ratio=1;
-	if (parseInt(jQuery("#ratioforcrop").val()) > 0) ratio = parseInt(jQuery("#ratioforcrop").val());
+	imagewidth=0;
+	imageheight=0;
+	
+	console.log(c);
+
+	if (parseInt(jQuery("#ratioforcrop").val()) > 1) {
+		ratio = parseInt(jQuery("#ratioforcrop").val());
+		if (parseInt(jQuery("#imagewidth").val()) > 0) imagewidth = parseInt(jQuery("#imagewidth").val());
+		if (parseInt(jQuery("#imageheight").val()) > 0) imageheight = parseInt(jQuery("#imageheight").val());
+	}
+	
+	x = Math.floor(c.x * ratio);
+	y = Math.floor(c.y * ratio);
+	x2 = Math.ceil(c.x2 * ratio);
+	y2 = Math.ceil(c.y2 * ratio);
+	console.log("x="+x+" y="+y+" x2="+x2+" y2="+y2+" imageheight="+imageheight+" ratio="+ratio);
+	if (imagewidth > 0 && x > imagewidth) {
+		x = imagewidth;
+	}
+	if (imageheight > 0 && y > imageheight) {
+		y = imageheight;
+	}
+	if (imagewidth > 0 && x2 > imagewidth) {
+		x2 = imagewidth;
+	}
+	if (imageheight > 0 && y2 > imageheight) {
+		y2 = imageheight;
+	}
+	
 	//console.log(ratio);
-	jQuery('#x').val(Math.ceil(c.x * ratio));
-	jQuery('#y').val(Math.ceil(c.y * ratio));
-	jQuery('#x2').val(Math.ceil(c.x2 * ratio));
-	jQuery('#y2').val(Math.ceil(c.y2 * ratio));
-	jQuery('#w').val(Math.ceil(c.w * ratio));
-	jQuery('#h').val(Math.ceil(c.h * ratio));
+	jQuery('#x').val(x);
+	jQuery('#y').val(y);
+	jQuery('#x2').val(x2);
+	jQuery('#y2').val(y2);
+	jQuery('#w').val(x2-x);
+	jQuery('#h').val(y2-y);
 };

@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=மன்றம்/விக்கி ஆதரவு
+EMailSupport=மின்னஞ்சல் ஆதரவு
+RemoteControlSupport=ஆன்லைன் நிகழ்நேர / தொலைநிலை ஆதரவு
+OtherSupport=மற்ற ஆதரவு
+ToSeeListOfAvailableRessources=தொடர்பு கொள்ள/கிடைக்கும் ஆதாரங்களைப் பார்க்க:
+HelpCenter=உதவி மையம்
+DolibarrHelpCenter=Dolibarr உதவி மற்றும் ஆதரவு மையம்
+ToGoBackToDolibarr=இல்லையெனில், Dolibarr </a> ஐப் பயன்படுத்த, <a href="%s"> இங்கே கிளிக் செய்யவும்.
+TypeOfSupport=ஆதரவு வகை
+TypeSupportCommunauty=சமூகம் (இலவசம்)
+TypeSupportCommercial=வணிகம்
+TypeOfHelp=வகை
+NeedHelpCenter=உதவி அல்லது ஆதரவு தேவையா?
+Efficiency=திறன்
+TypeHelpOnly=உதவி மட்டும்
+TypeHelpDev=உதவி+மேம்பாடு
+TypeHelpDevForm=உதவி+மேம்பாடு+பயிற்சி
+BackToHelpCenter=இல்லையெனில், <a href="%s"> மீண்டும் உதவி மைய முகப்புப் பக்கத்திற்குச் செல்லவும் </a> .
+LinkToGoldMember=உங்கள் மொழிக்காக (%s) Dolibarr ஆல் தேர்ந்தெடுக்கப்பட்ட பயிற்சியாளர்களில் ஒருவரை அவர்களின் விட்ஜெட்டைக் கிளிக் செய்வதன் மூலம் அழைக்கலாம் (நிலை மற்றும் அதிகபட்ச விலை தானாகவே புதுப்பிக்கப்படும்):
+PossibleLanguages=ஆதரிக்கப்படும் மொழிகள்
+SubscribeToFoundation=Dolibarr திட்டத்திற்கு உதவுங்கள், அறக்கட்டளைக்கு குழுசேரவும்
+SeeOfficalSupport=உங்கள் மொழியில் அதிகாரப்பூர்வ Dolibarr ஆதரவிற்கு: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> a09a4b739f17

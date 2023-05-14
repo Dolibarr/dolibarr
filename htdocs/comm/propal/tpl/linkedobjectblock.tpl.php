@@ -30,7 +30,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE comm/propal/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 
@@ -52,23 +52,23 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	}
 	print '<tr class="'.$trclass.'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
-	print '<td class="linkedcol-element" >'.$langs->trans("Proposal");
+	print '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Proposal");
 	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
 		$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
 		print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 	}
 	print '</td>';
-	print '<td class="linkedcol-name nowraponall" >'.$objectlink->getNomUrl(1).'</td>';
+	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
 	print '<td class="linkedcol-ref" >'.$objectlink->ref_client.'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right">';
-	if ($user->rights->propale->lire) {
+	if ($user->rights->propal->lire) {
 		$total = $total + $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}
 	print '</td>';
 	print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
-	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	print "</tr>\n";
 }
 if (count($linkedObjectBlock) > 1) {

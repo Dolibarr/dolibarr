@@ -1,1 +1,1 @@
-Directory where widgets files are stored.
+# Directory where widgets files are stored

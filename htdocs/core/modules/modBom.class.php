@@ -105,11 +105,12 @@ class modBom extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array('modProduct'); // List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
-		$this->requiredby = array('modMrp'); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
-		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
+		$this->depends = array('modProduct');
+		$this->requiredby = array('modMrp');
+		$this->conflictwith = array();
 		$this->langfiles = array("mrp");
-		//$this->phpmin = array(5, 6));					// Minimum version of PHP required by module
+		//$this->phpmin = array(7, 0));					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(9, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -156,7 +157,7 @@ class modBom extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -170,20 +171,6 @@ class modBom extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries = array();
-		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'mylangfile@bom',
-			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-			'tabcond'=>array($conf->bom->enabled,$conf->bom->enabled,$conf->bom->enabled)												// Condition to show each dictionary
-		);
-		*/
 
 
 		// Boxes/Widgets
@@ -327,11 +314,11 @@ class modBom extends DolibarrModules
 		$this->import_label[$r] = 'BillOfMaterials';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = array();
-		$this->import_tables_array[$r] = ['b' => MAIN_DB_PREFIX.'bom_bom', 'extra' => MAIN_DB_PREFIX.'bom_bom_extrafields'];
-		$this->import_tables_creator_array[$r] = ['b' => 'fk_user_creat']; // Fields to store import user id
-		$this->import_fields_array[$r] = [
-			'b.ref'               => 'Document Ref*',
-			'b.label'             => 'BomLabel*',
+		$this->import_tables_array[$r] = array('b' => MAIN_DB_PREFIX.'bom_bom', 'extra' => MAIN_DB_PREFIX.'bom_bom_extrafields');
+		$this->import_tables_creator_array[$r] = array('b' => 'fk_user_creat'); // Fields to store import user id
+		$this->import_fields_array[$r] = array(
+			'b.ref'               => 'Ref*',
+			'b.label'             => 'Label*',
 			'b.fk_product'        => 'ProductRef*',
 			'b.description'       => 'Description',
 			'b.note_public'       => 'Note',
@@ -346,9 +333,9 @@ class modBom extends DolibarrModules
 			'b.fk_user_valid'     => 'ValidatedById',
 			'b.model_pdf'         => 'Model',
 			'b.status'         	  => 'Status*',
-			'b.bomtype'       	  => 'BomType*'
-
-		];
+			'b.bomtype'       	  => 'Type*'
+		);
+		$import_sample = array();
 
 		// Add extra fields
 		$import_extrafield_sample = array();
@@ -365,61 +352,62 @@ class modBom extends DolibarrModules
 		}
 		// End add extra fields
 
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bom'];
-		$this->import_regex_array[$r] = [
-			'b.ref' => '(CPV\d{4}-\d{4}|BOM\d{4}-\d{4}|PROV.{1,32}$)'
-		];
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bom');
+		$this->import_regex_array[$r] = array(
+			'b.ref' => ''
+		);
 
-		$this->import_updatekeys_array[$r] = ['b.ref' => 'Ref'];
-		$this->import_convertvalue_array[$r] = [
-			'b.fk_product' => [
+		$this->import_updatekeys_array[$r] = array('b.ref' => 'Ref');
+		$this->import_convertvalue_array[$r] = array(
+			'b.fk_product' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/product/class/product.class.php',
 				'class'   => 'Product',
 				'method'  => 'fetch',
 				'element' => 'Product'
-			],
-			'b.fk_warehouse' => [
+			),
+			'b.fk_warehouse' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/product/stock/class/entrepot.class.php',
 				'class'   => 'Entrepot',
 				'method'  => 'fetch',
 				'element' => 'Warehouse'
-			],
-			'b.fk_user_valid' => [
+			),
+			'b.fk_user_valid' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/user/class/user.class.php',
 				'class'   => 'User',
 				'method'  => 'fetch',
 				'element' => 'user'
-			],
-			'b.fk_user_modif' => [
+			),
+			'b.fk_user_modif' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/user/class/user.class.php',
 				'class'   => 'User',
 				'method'  => 'fetch',
 				'element' => 'user'
-			],
-		];
+			),
+		);
 
 		//Import BOM Lines
 		$r++;
 		$this->import_code[$r] = 'bom_lines_'.$r;
-		$this->import_label[$r] = 'BillOfMaterialsLine';
+		$this->import_label[$r] = 'BillOfMaterialsLines';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = array();
-		$this->import_tables_array[$r] = ['bd' => MAIN_DB_PREFIX.'bom_bomline', 'extra' => MAIN_DB_PREFIX.'bom_bomline_extrafields'];
-		$this->import_fields_array[$r] = [
-			'bd.fk_bom'         => 'Document Ref*',
+		$this->import_tables_array[$r] = array('bd' => MAIN_DB_PREFIX.'bom_bomline', 'extra' => MAIN_DB_PREFIX.'bom_bomline_extrafields');
+		$this->import_fields_array[$r] = array(
+			'bd.fk_bom'         => 'BOM*',
 			'bd.fk_product'     => 'ProductRef',
 			'bd.fk_bom_child'   => 'BOMChild',
 			'bd.description'    => 'Description',
 			'bd.qty'            => 'LineQty',
-			'bd.qty_frozen'      => 'LineIsFrozen',
+			'bd.qty_frozen'     => 'LineIsFrozen',
 			'bd.disable_stock_change' => 'Disable Stock Change',
 			'bd.efficiency'     => 'Efficiency',
 			'bd.position'       => 'LinePosition'
-		];
+		);
 
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bomline' AND entity IN (0, ".$conf->entity.")";
@@ -433,25 +421,25 @@ class modBom extends DolibarrModules
 		}
 		// End add extra fields
 
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bomline'];
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bomline');
 		$this->import_regex_array[$r] = array();
-		$this->import_updatekeys_array[$r] = ['bd.fk_bom' => 'BOM Id'];
-		$this->import_convertvalue_array[$r] = [
-			'bd.fk_bom' => [
+		$this->import_updatekeys_array[$r] = array('bd.fk_bom' => 'BOM Id', 'bd.fk_product' => 'ProductRef');
+		$this->import_convertvalue_array[$r] = array(
+			'bd.fk_bom' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/bom/class/bom.class.php',
 				'class'   => 'BOM',
 				'method'  => 'fetch',
 				'element' => 'bom'
-			],
-			'bd.fk_product' => [
+			),
+			'bd.fk_product' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/product/class/product.class.php',
 				'class'   => 'Product',
 				'method'  => 'fetch',
 				'element' => 'Product'
-			],
-		];
+			),
+		);
 	}
 
 	/**
@@ -465,11 +453,6 @@ class modBom extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
-
-		$result = $this->_load_tables('/bom/sql/');
-		if ($result < 0) {
-			return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
-		}
 
 		// Create extrafields
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -503,8 +486,8 @@ class modBom extends DolibarrModules
 		}
 
 		$sql = array(
-			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'bom' AND entity = ".$conf->entity,
-			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'bom', ".$conf->entity.")"
+			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'bom' AND entity = ".((int) $conf->entity),
+			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'bom', ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

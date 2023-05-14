@@ -42,7 +42,7 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -110,7 +110,7 @@ if (!empty($id)) {
 	$sql .= " WHERE er.fk_statut > 0 AND erd.rowid = ".((int) $id);
 	$sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 
-	dol_syslog("/accounting/expensereport/card.php sql=".$sql, LOG_DEBUG);
+	dol_syslog("/accounting/expensereport/card.php", LOG_DEBUG);
 	$result = $db->query($sql);
 
 	if ($result) {

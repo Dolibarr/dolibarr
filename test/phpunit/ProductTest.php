@@ -78,11 +78,11 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->produit->enabled)) {
+		if (!isModEnabled('product')) {
 			print __METHOD__." Module Product must be enabled.\n"; die(1);
 		}
 
@@ -96,7 +96,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -109,7 +109,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	*/
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -125,7 +125,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -143,7 +143,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -170,7 +170,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -199,7 +199,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$localobject->note_private = 'New private note after update';
 		$result=$localobject->update($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error '.$localobject->error);
 
 		return $localobject;
 	}
@@ -243,7 +243,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$result=$localobject->fetch($id);
 
 		$result=$localobject->delete($user);

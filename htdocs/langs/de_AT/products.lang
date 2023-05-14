@@ -30,6 +30,4 @@ ListProductByPopularity=Liste der Produkte/Services nach Beliebtheit
 ListServiceByPopularity=Liste der Services nach Beliebtheit
 Finished=Eigenerzeugung
 NewRefForClone=Artikel Nr. des neuen Produkts/Services
-IncludingProductWithTag=Including products/services with the tag
-UseProductFournDesc=Add a feature to define the product description defined by the vendors (for each vendor reference) in addition to the description for customers
 PMPValue=Warenwert

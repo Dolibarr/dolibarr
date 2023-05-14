@@ -218,7 +218,7 @@ if ($date == 'all') {
 }
 
 // Replace database handler
-if (! empty($argv[4])) {
+if (!empty($argv[4])) {
 	$db->close();
 	unset($db);
 	$db=getDoliDBInstance($argv[4], $argv[5], $argv[6], $argv[7], $argv[8], $argv[9]);

@@ -20,11 +20,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require_once '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -103,7 +121,7 @@ $thirdparty_fields = array(
 		'address' => array('name'=>'address', 'type'=>'xsd:string'),
 		'zip' => array('name'=>'zip', 'type'=>'xsd:string'),
 		'town' => array('name'=>'town', 'type'=>'xsd:string'),
-		'province_id' => array('name'=>'province_id', 'type'=>'xsd:string'),
+		'region_code' => array('name'=>'region_code', 'type'=>'xsd:string'),
 		'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
 		'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
 		'country' => array('name'=>'country', 'type'=>'xsd:string'),
@@ -343,7 +361,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 						'address' => $thirdparty->address,
 						'zip' => $thirdparty->zip,
 						'town' => $thirdparty->town,
-						'province_id' => $thirdparty->state_id,
+						'region_code' => $thirdparty->region_code,
 						'country_id' => $thirdparty->country_id,
 						'country_code' => $thirdparty->country_code,
 						'country' => $thirdparty->country,
@@ -462,7 +480,7 @@ function createThirdParty($authentication, $thirdparty)
 		if ($thirdparty['country_code']) {
 			$newobject->country_id = getCountry($thirdparty['country_code'], 3);
 		}
-		$newobject->province_id = $thirdparty['province_id'];
+		$newobject->region_code = empty($thirdparty['region_code']) ? '' : $thirdparty['region_code'];
 		//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 		$newobject->phone = $thirdparty['phone'];
@@ -597,7 +615,7 @@ function updateThirdParty($authentication, $thirdparty)
 			if ($thirdparty['country_code']) {
 				$object->country_id = getCountry($thirdparty['country_code'], 3);
 			}
-			$object->province_id = $thirdparty['province_id'];
+			$object->region_code = $thirdparty['region_code'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 			$object->phone = $thirdparty['phone'];
@@ -736,7 +754,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 						if (isset($obj->{$key})) {
-							$extrafieldsOptions['options_'.$key] = $obj->{$key};
+							$extrafieldsOptions['options_'.$key] = $obj->$key;
 						}
 					}
 				}

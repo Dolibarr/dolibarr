@@ -25,6 +25,7 @@ create table llx_fichinter
   fk_contrat		integer DEFAULT 0,          -- contrat auquel est rattache la fiche
   ref				varchar(30) NOT NULL,       -- number
   ref_ext			varchar(255),
+  ref_client		varchar(255),				-- customer intervention number
   entity			integer DEFAULT 1 NOT NULL, -- multi company id
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec				datetime,                   -- date de creation 

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox moduļa iestatīšana
-PayBoxDesc=Šis modulis piedāvā lapas, lai ļautu maksājumus par <a href="http://www.paybox.com" target="_blank">Paybox</a> ar klientiem. To var izmantot par brīvu maksājumu vai maksājumu par konkrētu Dolibarr objektu (rēķins, rīkojums, ...)
+PayBoxDesc=Šis modulis piedāvā lapas, kas ļauj klientiem veikt maksājumus <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>. To var izmantot bezmaksas maksājumam vai maksājumam par konkrētu Dolibarr objektu (rēķins, pasūtījums, ...)
 FollowingUrlAreAvailableToMakePayments=Pēc URL ir pieejami, lai piedāvātu lapu, lai klients varētu veikt maksājumu par Dolibarr objektiem
 PaymentForm=Maksājuma formu
 WelcomeOnPaymentPage=Laipni lūdzam mūsu tiešsaistes maksājumu pakalpojumu
@@ -20,7 +20,6 @@ AccountParameter=Konta parametri
 UsageParameter=Izmantošanas parametri
 InformationToFindParameters=Palīdzēt atrast savu %s konta informāciju
 PAYBOX_CGI_URL_V2=URL Paybox CGI modulis par samaksu
-VendorName=Pārdevēja nosaukums
 CSSUrlForPaymentForm=CSS stila lapas url maksājuma formu
 NewPayboxPaymentReceived=Jauns Paybox maksājums saņemts
 NewPayboxPaymentFailed=Jauns Paybox maksājums mēģināju, bet neizdevās

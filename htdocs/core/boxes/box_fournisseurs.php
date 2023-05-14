@@ -60,7 +60,7 @@ class box_fournisseurs extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
 	}
 
 	/**
@@ -71,7 +71,7 @@ class box_fournisseurs extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $conf, $user, $langs, $hookmanager;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -81,23 +81,29 @@ class box_fournisseurs extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
-		if ($user->rights->societe->lire) {
+		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.fournisseur = 1";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			if ($user->socid) {
-				$sql .= " AND s.rowid = ".((int) $user->socid);
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdpartystatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid > 0) {
+					$sql .= " AND s.rowid = ".((int) $user->socid);
+				}
 			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY s.tms DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -128,7 +134,7 @@ class box_fournisseurs extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 

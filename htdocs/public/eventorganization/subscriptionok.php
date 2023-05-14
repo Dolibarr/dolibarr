@@ -48,16 +48,17 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
-global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $mysoc;
+global $dolibarr_main_url_root, $mysoc;
 
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
@@ -77,7 +78,7 @@ if ($securekeyreceived != $securekeytocompare) {
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 
@@ -97,7 +98,7 @@ dol_syslog("Callback url when a payment was done. query_string=".(dol_escape_htm
 
 $tracepost = "";
 foreach ($_POST as $k => $v) {
-	$tracepost .= "{$k} - {$v}\n";
+	$tracepost .= "$k - $v\n";
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
@@ -166,7 +167,7 @@ print $langs->trans("SubscriptionOk");
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 
 // Clean session variables to avoid duplicate actions if post is resent

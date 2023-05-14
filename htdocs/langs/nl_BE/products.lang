@@ -14,4 +14,3 @@ SupplierRef=Leverancier ref
 ListOfStockMovements=Voorradenlijst
 ProductSellByQuarterHT=Bruto omzetcijfer per trimester
 ServiceSellByQuarterHT=Bruto omzetcijfer per trimester
-UseProductFournDesc=Add a feature to define the product description defined by the vendors (for each vendor reference) in addition to the description for customers

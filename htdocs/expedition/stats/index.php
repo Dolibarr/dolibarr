@@ -23,6 +23,7 @@
  *     \brief      Page with shipment statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
@@ -64,7 +65,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("StatisticsOfSendings"), '', 'dolly');
 
-
+$dir = (!empty($conf->expedition->multidir_temp[$conf->entity]) ? $conf->expedition->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
 
 $stats = new ExpeditionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
@@ -75,7 +76,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->socid) {
+if (empty($user->rights->societe->client->voir) || $user->socid) {
 	$filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
 	$filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
@@ -83,6 +84,7 @@ if (!$user->rights->societe->client->voir || $user->socid) {
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
+$fileurlnb = '';
 if (!$mesg) {
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
@@ -110,7 +112,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->socid)
+if (empty($user->rights->societe->client->voir) || $user->socid)
 {
 	$filenameamount = $dir.'/shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -148,7 +150,7 @@ if (! $mesg)
 /*
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->socid)
+if (empty($user->rights->societe->client->voir) || $user->socid)
 {
 	$filename_avg = $dir.'/shipmentsaverage-'.$user->id.'-'.$year.'.png';
 }
@@ -238,7 +240,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
-print $form->selectarray('year', $arrayyears, $year, 0);
+print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -291,7 +293,7 @@ print '</table>';
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Show graphs
@@ -308,8 +310,8 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div></div>';
-print '<div style="clear:both"></div>';
+print '</div></div>';
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 

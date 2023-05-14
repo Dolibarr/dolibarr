@@ -110,7 +110,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -123,7 +123,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -136,7 +136,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -152,7 +152,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -188,6 +188,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 			//var_dump($contentforlessc); exit;
 		} catch (exception $e) {
 			//echo "failed to compile lessc";
+			$result = 'Error';
 			dol_syslog("Failed to compile the CSS with lessc: ".$e->getMessage(), LOG_WARNING);
 		}
 
@@ -200,7 +201,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 }
 ";
 
-		print __METHOD__." SeparatorDecimal=".$result."\n";
+		print __METHOD__." Result=".$result."\n";
 		$this->assertEquals(trim($result), trim($cssexpected));
 
 		return;

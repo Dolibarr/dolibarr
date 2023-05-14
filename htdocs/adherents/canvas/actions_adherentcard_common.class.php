@@ -61,20 +61,15 @@ abstract class ActionsAdherentCardCommon
 	 */
 	public function getObject($id)
 	{
-		//$ret = $this->getInstanceDao();
+		$object = new Adherent($this->db);
 
-		/*if (is_object($this->object) && method_exists($this->object,'fetch'))
-		{
-			if (! empty($id)) $this->object->fetch($id);
-		}
-		else
-		{*/
-			$object = new Adherent($this->db);
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
-			$this->object = $object;
-		//}
+
+		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -83,7 +78,7 @@ abstract class ActionsAdherentCardCommon
 	 *
 	 *  @param	string		$action    Type of action
 	 *  @param	int			$id			Id
-	 *  @return	string					HTML output
+	 *  @return	void
 	 */
 	public function assign_values(&$action, $id)
 	{
@@ -104,7 +99,7 @@ abstract class ActionsAdherentCardCommon
 
 		if ($action == 'create' || $action == 'edit') {
 			if ($conf->use_javascript_ajax) {
-				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript">
 				jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";
@@ -179,7 +174,7 @@ abstract class ActionsAdherentCardCommon
 
 		if ($action == 'view' || $action == 'edit' || $action == 'delete') {
 			// Emailing
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}

@@ -37,11 +37,27 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $db;
 
 	/**
+	 * @var string	Condition to be enabled
+	 */
+	public $enabled;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
 	public $tooltip = '';
+
+	/**
+	 * @var string The SQL string used to find the recipients
+	 */
+	public $sql;
+
+	public $desc;
+
+	public $name;
+
+	public $evenunsubscribe = 0;		// Set this to 1 if you want to flag you also want to include email in target that has opt-out.
 
 
 	/**
@@ -94,15 +110,18 @@ class MailingTargets // This can't be abstract as it is used for some method
 	/**
 	 * Retourne nombre de destinataires
 	 *
-	 * @param      string	$sql        Sql request to count
-	 * @return     int       			Nb of recipient, or <0 if error
+	 * @param      string		$sql        Sql request to count
+	 * @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql)
 	{
 		$result = $this->db->query($sql);
 		if ($result) {
-			$obj = $this->db->fetch_object($result);
-			return $obj->nb;
+			$total = 0;
+			while ($obj = $this->db->fetch_object($result)) {
+				$total += $obj->nb;
+			}
+			return $total;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -139,7 +158,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 			$nb = $obj->nb;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
-			$sql .= " SET nbemail = ".$nb." WHERE rowid = ".((int) $mailing_id);
+			$sql .= " SET nbemail = ".((int) $nb)." WHERE rowid = ".((int) $mailing_id);
 			if (!$this->db->query($sql)) {
 				dol_syslog($this->db->error());
 				$this->error = $this->db->error();
@@ -152,16 +171,15 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Add a list of targets int the database
+	 * Add a list of targets into the database
 	 *
 	 * @param	int		$mailing_id    Id of emailing
 	 * @param   array	$cibles        Array with targets
-	 * @return  int      			   < 0 si erreur, nb ajout si ok
+	 * @return  int      			   < 0 if error, nb added if OK
 	 */
 	public function addTargetsToDatabase($mailing_id, $cibles)
 	{
 		global $conf;
-		global $dolibarr_main_instance_unique_id;
 
 		$this->db->begin();
 
@@ -176,15 +194,15 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= " lastname, firstname, email, other, source_url, source_id,";
 				$sql .= " tag,";
 				$sql .= " source_type)";
-				$sql .= " VALUES (".$mailing_id.",";
-				$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$this->db->escape($targetarray['fk_contact'])."'").",";
+				$sql .= " VALUES (".((int) $mailing_id).",";
+				$sql .= (empty($targetarray['fk_contact']) ? '0' : (int) $targetarray['fk_contact']).",";
 				$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['email'])."',";
 				$sql .= "'".$this->db->escape($targetarray['other'])."',";
 				$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
 				$sql .= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
-				$sql .= "'".$this->db->escape(dol_hash($dolibarr_main_instance_unique_id.';'.$targetarray['email'].';'.$targetarray['lastname'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY, 'md5'))."',";
+				$sql .= "'".$this->db->escape(dol_hash($conf->file->instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".((int) $mailing_id).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'))."',";
 				$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -208,7 +226,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		//Update the status to show thirdparty mail that don't want to be contacted anymore'
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing=".((int) $mailing_id)." AND email in (SELECT email FROM ".MAIN_DB_PREFIX."societe where fk_stcomm=-1)";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email in (SELECT email FROM ".MAIN_DB_PREFIX."societe where fk_stcomm=-1)";
 		$sql .= " AND source_type='thirdparty'";
 		dol_syslog(__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
 		$result=$this->db->query($sql);
@@ -216,22 +234,26 @@ class MailingTargets // This can't be abstract as it is used for some method
 		//Update the status to show contact mail that don't want to be contacted anymore'
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing=".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".MAIN_DB_PREFIX."socpeople AS sc ";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".MAIN_DB_PREFIX."socpeople AS sc ";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
 		dol_syslog(__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
 		$result=$this->db->query($sql);
 		*/
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing=".((int) $mailing_id)." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
+		if (empty($this->evenunsubscribe)) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles as mc";
+			$sql .= " SET mc.statut = 3";
+			$sql .= " WHERE mc.fk_mailing = ".((int) $mailing_id);
+			$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
 
-		dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if (!$result) {
-			dol_print_error($this->db);
+			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if (!$result) {
+				dol_print_error($this->db);
+			}
 		}
 
+		// Update nb of recipient into emailing record
 		$this->update_nb($mailing_id);
 
 		$this->db->commit();

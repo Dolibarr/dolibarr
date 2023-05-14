@@ -29,6 +29,8 @@
  *       \brief      Card of a contact
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -49,12 +51,14 @@ $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg = ''; $error = 0; $errors = array();
 
+// Get parameters
 $action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm	= GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $id = GETPOST('id', 'int');
 $socid		= GETPOST('socid', 'int');
 
+// Initialize objects
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
@@ -77,8 +81,9 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 // Security check
@@ -88,8 +93,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -212,16 +217,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref = '<div class="refidno">';
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= '</a>';
+
+		$morehtmlref .= '<div class="refidno">';
 		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
 			// Thirdparty
-			$morehtmlref .= $langs->trans('ThirdParty').' : ';
 			if ($objsoc->id > 0) {
 				$morehtmlref .= $objsoc->getNomUrl(1);
 			} else {
-				$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+				$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 			}
 		}
 		$morehtmlref .= '</div>';
@@ -247,23 +255,23 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$objthirdparty = $object->thirdparty;
 
 		$out = '';
-		$permok = $user->rights->agenda->myactions->create;
-		if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
-			if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-				$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
-			}
-			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;percentage=-1&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
-			$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
-		}
-
 		$newcardbutton = '';
-		if (!empty($conf->agenda->enabled)) {
-			if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
+		if (isModEnabled('agenda')) {
+			$permok = $user->rights->agenda->myactions->create;
+			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
+				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
+					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
+				}
+				$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
+				$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
+			}
+
+			if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
 				$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 			}
 		}
 
-		if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 			print '<br>';
 
 			$param = '&id='.$id;
@@ -280,6 +288,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// List of all actions
 			$filters = array();
 			$filters['search_agenda_label'] = $search_agenda_label;
+			$filters['search_rowid'] = $search_rowid;
 
 			show_actions_done($conf, $langs, $db, $objthirdparty, $object, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 		}

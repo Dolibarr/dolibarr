@@ -1,4 +1,3 @@
 # Dolibarr language file - Source file is en_US - errors
-ErrorRecordHasAtLeastOneChildOfType=Object %s has at least one child of type %s
 ErrorFieldAccountNotDefinedForLine=Valor para la cuenta contable no definido para la línea (%s)
 ErrorTooManyErrorsProcessStopped=Demasiados errores. Se detuvo el proceso.

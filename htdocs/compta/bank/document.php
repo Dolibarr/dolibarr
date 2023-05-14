@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -7,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -39,6 +38,9 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankaccountdocuments', 'globalcard'));
+
 // Security check
 if ($user->socid) {
 	$action = '';
@@ -50,8 +52,8 @@ if ($user->socid) {
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -74,6 +76,8 @@ if ($id > 0 || !empty($ref)) {
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -91,8 +95,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
-
+$title = $object->ref.' - '.$langs->trans("Documents");
 $help_url = "EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses";
 
 llxHeader("", $title, $help_url);

@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/bank.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -80,7 +81,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -93,7 +94,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -106,7 +107,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,7 +123,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -140,7 +141,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($this->savdb);
+		$localobject=new Account($db);
 		$localobject->initAsSpecimen();
 		$localobject->date_solde=dol_now();
 		$result=$localobject->create($user);
@@ -168,7 +169,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($this->savdb);
+		$localobject=new Account($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -205,6 +206,19 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		//print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
 		$this->assertEquals(1, $result);
 
+		// Test checkIbanForAccount for FR account
+		$result = checkIbanForAccount($localobject);
+		print __METHOD__." checkIbanForAccount(".$localobject->iban.") = ".$result."\n";
+		$this->assertTrue($result);
+
+		// Test checkIbanForAccount for CI account
+		$localobject2=new Account($db);
+		$localobject2->country = 'CI';
+		$localobject2->iban = 'CI77A12312341234123412341234';
+		$result = checkIbanForAccount($localobject2);
+		print __METHOD__." checkIbanForAccount(".$localobject2->iban.") = ".$result."\n";
+		$this->assertTrue($result);
+
 		return $localobject->id;
 	}
 
@@ -225,7 +239,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($this->savdb);
+		$localobject=new Account($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

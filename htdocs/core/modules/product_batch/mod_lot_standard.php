@@ -111,11 +111,11 @@ class mod_lot_standard extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Product		$objprod    Object product
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param	Societe		$objsoc	    Object thirdparty
+	 *  @param  Productlot	$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	public function getNextValue($objprod, $object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $db, $conf;
 

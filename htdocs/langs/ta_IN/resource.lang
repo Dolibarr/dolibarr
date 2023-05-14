@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=வளங்கள்
+MenuResourceAdd=புதிய வளம்
+DeleteResource=ஆதாரத்தை நீக்கு
+ConfirmDeleteResourceElement=இந்த உறுப்புக்கான ஆதாரத்தை நீக்குவதை உறுதிப்படுத்தவும்
+NoResourceInDatabase=தரவுத்தளத்தில் ஆதாரம் இல்லை.
+NoResourceLinked=எந்த ஆதாரமும் இணைக்கப்படவில்லை
+ActionsOnResource=இந்த வளத்தைப் பற்றிய நிகழ்வுகள்
+ResourcePageIndex=வளங்களின் பட்டியல்
+ResourceSingular=வளம்
+ResourceCard=ஆதார அட்டை
+AddResource=ஒரு வளத்தை உருவாக்கவும்
+ResourceFormLabel_ref=வளத்தின் பெயர்
+ResourceType=வள வகை
+ResourceFormLabel_description=வள விளக்கம்
+
+ResourcesLinkedToElement=உறுப்புடன் இணைக்கப்பட்ட வளங்கள்
+
+ShowResource=ஆதாரத்தைக் காட்டு
+
+ResourceElementPage=உறுப்பு வளங்கள்
+ResourceCreatedWithSuccess=வளம் வெற்றிகரமாக உருவாக்கப்பட்டது
+RessourceLineSuccessfullyDeleted=ஆதார வரி வெற்றிகரமாக நீக்கப்பட்டது
+RessourceLineSuccessfullyUpdated=ஆதார வரி வெற்றிகரமாக புதுப்பிக்கப்பட்டது
+ResourceLinkedWithSuccess=வெற்றியுடன் தொடர்புடைய வளம்
+
+ConfirmDeleteResource=இந்த ஆதாரத்தை நீக்குவதை உறுதிப்படுத்தவும்
+RessourceSuccessfullyDeleted=ஆதாரம் வெற்றிகரமாக நீக்கப்பட்டது
+DictionaryResourceType=வளங்களின் வகை
+
+SelectResource=வளத்தைத் தேர்ந்தெடுக்கவும்
+
+IdResource=ஐடி ஆதாரம்
+AssetNumber=வரிசை எண்
+ResourceTypeCode=ஆதார வகை குறியீடு
+ImportDataset_resource_1=வளங்கள்
+
+ErrorResourcesAlreadyInUse=சில ஆதாரங்கள் பயன்பாட்டில் உள்ளன
+ErrorResourceUseInEvent=%s %s நிகழ்வில் பயன்படுத்தப்பட்டது

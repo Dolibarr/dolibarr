@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2021 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  *      \brief      Page fiche LDAP utilisateur
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
@@ -31,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
 
 // Security check
@@ -62,7 +64,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($_GET["action"] == 'dolibarr2ldap') {
+	if ($action == 'dolibarr2ldap') {
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 
@@ -88,16 +90,19 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader();
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('LDAP');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-print dol_get_fiche_head($head, 'ldap', $title, 0, 'user');
+print dol_get_fiche_head($head, 'ldap', $title, -1, 'user');
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if (!empty($user->rights->user->user->lire) || !empty($user->admin)) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
@@ -106,7 +111,7 @@ dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $use
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Login
 print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
@@ -129,17 +134,17 @@ if ($conf->global->LDAP_SERVER_TYPE == "activedirectory") {
 }
 
 // LDAP DN
-print '<tr><td>LDAP '.$langs->trans("LDAPUserDn").'</td><td class="valeur">'.$conf->global->LDAP_USER_DN."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPUserDn").'</td><td class="valeur">'.getDolGlobalString('LDAP_USER_DN')."</td></tr>\n";
 
 // LDAP Cle
-print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_USERS."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.getDolGlobalString('LDAP_KEY_USERS')."</td></tr>\n";
 
 // LDAP Server
-print '<tr><td>LDAP '.$langs->trans("Type").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_TYPE."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("Version").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PROTOCOLVERSION."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("Type").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_TYPE')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("Version").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_HOST')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_HOST_SLAVE')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_PORT')."</td></tr>\n";
 
 print '</table>';
 
@@ -152,13 +157,13 @@ print dol_get_fiche_end();
  */
 print '<div class="tabsAction">';
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
+if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
+if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	print "<br>\n";
 }
 
@@ -189,16 +194,15 @@ if ($result > 0) {
 	// Affichage arbre
 	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
 		if (!is_array($records)) {
-			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			print '<tr class="oddeven"><td colspan="2"><span class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</span></td></tr>';
 		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.dol_escape_htmltag($dn).' - search='.dol_escape_htmltag($search).')</td></tr>';
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }

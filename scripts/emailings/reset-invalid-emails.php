@@ -57,6 +57,12 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
+if (!isModEnabled('mailing')) {
+	print 'Module Emailing not enabled';
+	exit(-1);
+}
+
+
 /*
  * Main
  */
@@ -68,6 +74,11 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if (!in_array($type, array('all', 'thirdparties', 'contacts', 'users', 'members'))) {
 	print "Bad value for parameter type.\n";
+	exit(-1);
+}
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
 	exit(-1);
 }
 

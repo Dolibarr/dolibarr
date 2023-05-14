@@ -106,8 +106,8 @@ if (empty($reshook)) {
 					$invoicedet_id = $tmp_array[1];
 					if (!empty($invoicedet_id)) {
 						$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet';
-						$sql .= ' SET buy_price_ht=\''.price2num($value).'\'';
-						$sql .= ' WHERE rowid='.$invoicedet_id;
+						$sql .= " SET buy_price_ht = ".((float) price2num($value));
+						$sql .= ' WHERE rowid = '.((int) $invoicedet_id);
 						$result = $db->query($sql);
 						if (!$result) {
 							setEventMessages($db->lasterror, null, 'errors');
@@ -176,7 +176,8 @@ if ($optioncss != '') {
 }
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
@@ -229,7 +230,7 @@ $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);

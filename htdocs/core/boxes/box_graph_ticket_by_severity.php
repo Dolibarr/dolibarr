@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /**
- *     \file        core/boxes/box_ticket_by_severity.php
+ *     \file        htdocs/core/boxes/box_graph_ticket_by_severity.php
  *     \ingroup     ticket
  *     \brief       This box shows open tickets by severity
  */
@@ -99,7 +99,7 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 		$listofopplabel = array();
 		$listofoppcode = array();
 		$colorseriesstat = array();
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT cts.rowid, cts.label, cts.code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
 			$sql .= " WHERE cts.active = 1";
@@ -191,19 +191,19 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 				}
 				$stringtoprint .= '</div>';
 				$this->info_box_contents[][]=array(
-					'td' => 'center',
+					'td' => 'class="center"',
 					'text' => $stringtoprint
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("BoxNoTicketSeverity")
+					'td' => '',
+					'text' => '<span class="opacitymedium">'.$langs->trans("BoxNoTicketSeverity").'</span>'
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'td' => '',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>',
 			);
 		}
 	}
