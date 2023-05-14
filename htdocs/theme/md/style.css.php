@@ -2361,7 +2361,6 @@ div.backgroundsemitransparent {
 }
 
 
-
 #id-right {
 	padding-<?php print $left; ?>: 0 ! important;
 }
@@ -3121,6 +3120,13 @@ table.login_table_securitycode tr td {
 #img_logo, .img_logo {
 	max-width: 170px;
 	max-height: 90px;
+}
+.loginbuttonexternal {
+	width: 300px;
+	margin: auto;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 5px;
 }
 
 
