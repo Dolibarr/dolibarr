@@ -207,15 +207,18 @@ if ($disablenofollow) {
 </div>
 
 <!-- Password -->
+<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php
-} ?>
+	<?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php
+	} ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key"></span>
 <input type="password" id="password" maxlength="128" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE) ? 'off' : 'on'; ?>" />
 </div></div>
+<?php } ?>
+
 
 <?php
 if (!empty($captcha)) {
@@ -270,11 +273,15 @@ if (!empty($morelogincontent)) {
 
 <div id="login_line2" style="clear: both">
 
+
 <!-- Button Connection -->
+<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <br>
 <div id="login-submit-wrapper">
 <input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 </div>
+<?php } ?>
+
 
 <?php
 if ($forgetpasslink || $helpcenterlink) {
@@ -294,7 +301,7 @@ if ($forgetpasslink || $helpcenterlink) {
 
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 5px;">';
-	if ($forgetpasslink) {
+	if ($forgetpasslink && (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth')) {
 		$url = DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (!empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) {
 			$url = $conf->global->MAIN_PASSWORD_FORGOTLINK;
@@ -341,15 +348,15 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication)) {
 	$langs->load("users");
 
+	echo '<br>';
+	echo '<div class="center" style="margin-top: 4px; margin-bottom: 10px">';
+
 	global $dolibarr_main_url_root;
 
 	// Define $urlwithroot
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-	echo '<br>';
-	echo '<div class="center" style="margin-top: 4px;">';
 
 	//$shortscope = 'userinfo_email,userinfo_profile';
 	$shortscope = 'openid,email,profile';	// For openid connect

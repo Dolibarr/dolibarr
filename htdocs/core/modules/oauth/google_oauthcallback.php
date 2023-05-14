@@ -16,7 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// This page should make the process to login and get token as described here:
+// This page is used as callback for token generation of an OAUTH request.
+// This page can also be used to make the process to login and get token as described here:
 // https://developers.google.com/identity/protocols/oauth2/openid-connect#server-flow
 
 /**
@@ -26,11 +27,13 @@
  */
 
 // Force keyforprovider
+$forlogin = 0;
 if (preg_match('/^forlogin-/', $_GET['state'])) {
+	$forlogin = 1;
 	$_GET['keyforprovider'] = 'Login';
 }
 
-if (!defined('NOLOGIN') && $_GET['keyforprovider'] == 'Login') {
+if (!defined('NOLOGIN') && $forlogin) {
 	define("NOLOGIN", 1); // This means this output page does not require to be logged.
 }
 
@@ -159,37 +162,41 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 			//var_dump($state);
 			//var_dump($apiService);      // OAuth\OAuth2\Service\Google
 			//dol_syslog("_GET=".var_export($_GET, true));
-			//dol_syslog("_POST=".var_export($_POST, true));
 
 			$errorincheck = 0;
 
 			$db->begin();
 
-			// This request the token
+			// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
 			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
-			// TODO Store the token with fk_user = $user->id ?
 			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
 			$extraparams = $token->getExtraParams();
 			$jwt = explode('.', $extraparams['id_token']);
 
+			$useremail = '';
+
 			// Extract the middle part, base64 decode, then json_decode it
 			if (!empty($jwt[1])) {
 				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
-				//dol_syslog("userinfo=".var_export($userinfo, true));
+				dol_syslog("userinfo=".var_export($userinfo, true));
+
+				$useremail = $userinfo['email'];
 				/*
-				 $useremailuniq = $userinfo['sub'];
-				 $useremail = $userinfo['email'];
 				 $useremailverified = $userinfo['email_verified'];
+				 $useremailuniq = $userinfo['sub'];
 				 $username = $userinfo['name'];
 				 $userfamilyname = $userinfo['family_name'];
 				 $usergivenname = $userinfo['given_name'];
 				 $hd = $userinfo['hd'];
 				 */
 
-				// We should make the 5 steps of validation of id_token
+				// We should make the steps of validation of id_token
+
+				// Verify that the state is the one expected
+				// TODO
 
 				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
 				// TODO
@@ -201,7 +208,6 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 				}
 
 				// Verify that the value of the aud claim in the ID token is equal to your app's client ID.
-				$keyforparamid = 'OAUTH_GOOGLE-'.$keyforprovider.'_ID';
 				if ($userinfo['aud'] != getDolGlobalString($keyforparamid)) {
 					setEventMessages($langs->trans('Bad value for returned userinfo[aud]'), null, 'errors');
 					$errorincheck++;
@@ -218,24 +224,49 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 			}
 
 			if (!$errorincheck) {
-				// Delete the token with fk_soc IS NULL
-				//$storage->clearToken('Google');
+				// If call back to url for a OAUTH2 login
+				if ($forlogin) {
+					dol_syslog("we received the login/email to log to, it is ".$useremail);
 
-				// TODO Insert a token for user
-				//$storage->storeAccessToken
+					// Delete the token
+					$storage->clearToken('Google');
 
+					$tmpuser = new User($db);
+					$res = $tmpuser->fetch(0, '', '', 0, -1, $useremail);
+
+					if ($res > 0) {
+						$username = $tmpuser->login;
+
+						$_SESSION['googleoauth_receivedlogin'] = dol_hash($conf->file->instance_unique_id.$username, '0');
+						dol_syslog('$_SESSION[\'googleoauth_receivedlogin\']='.$_SESSION['googleoauth_receivedlogin']);
+					} else {
+						$_SESSION["dol_loginmesg"] = "Failed to login using Google. User with this Email not found.";
+						$errorincheck++;
+					}
+				}
+			} else {
+				// If call back to url for a OAUTH2 login
+				if ($forlogin) {
+					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retreives a token with non valid data.";
+					$errorincheck++;
+				}
+			}
+
+			if (!$errorincheck) {
 				$db->commit();
 			} else {
 				$db->rollback();
 			}
-
-			//setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
 
 			$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
 			unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
 			if (empty($backtourl)) {
 				$backtourl = DOL_URL_ROOT;
+			}
+			// If call back to url for a OAUTH2 login
+			if ($forlogin) {
+				$backtourl .= '?actionlogin=login&aftergoogleoauthreturn=1&username='.urlencode($username).'&token='.newToken();
 			}
 
 			dol_syslog("Redirect now on backtourl=".$backtourl);
@@ -253,7 +284,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
 
-	if (!preg_match('/^forlogin/', $state)) {
+	if ($forlogin) {
 		$apiService->setApprouvalPrompt('force');
 	}
 
@@ -267,10 +298,15 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 
 	// Add more param
 	$url .= '&nonce='.bin2hex(random_bytes(64/8));
-	// TODO Add param hd and/or login_hint
-	if (!preg_match('/^forlogin/', $state)) {
+
+	if ($forlogin) {
+		// TODO Add param hd
 		//$url .= 'hd=xxx';
+		if (GETPOST('login_hint')) {
+			$url .= '&login_hint='.urlencode(GETPOST('login_hint'));
+		}
 	}
+
 
 	//var_dump($url);exit;
 
