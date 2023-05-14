@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2023 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2021-2022 Waël Almoman         <info@almoman.com>
+ * Copyright (C) 2021-2023 Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,13 +119,13 @@ class box_members_by_tags extends ModeleBoxes
 					'text' => $labelstatus,
 				);
 				// Up to date
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() + 86400, 1);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, $now + 86400, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus,
 				);
 				// Expired
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() - 86400, 1);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, $now - 86400, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
@@ -143,7 +143,6 @@ class box_members_by_tags extends ModeleBoxes
 					'text' => $labelstatus
 				);
 				// Total row
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_RESILIATED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($langs->trans("Total")).'"',
 					'text' => $langs->trans("Total")
@@ -171,17 +170,17 @@ class box_members_by_tags extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($data['members_pending']) && $data['members_pending'] > 0 ? $data['members_pending'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
+						'text' => (isset($data['members_pending']) && $data['members_pending'] > 0 ? $data['members_pending'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($data['members_uptodate']) && $data['members_uptodate'] > 0 ? $data['members_uptodate'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 0, 0, 3),
+						'text' => (isset($data['members_uptodate']) && $data['members_uptodate'] > 0 ? $data['members_uptodate'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 0, $now + 86400, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($data['members_expired']) && $data['members_expired'] > 0 ? $data['members_expired'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 1, 3),
+						'text' => (isset($data['members_expired']) && $data['members_expired'] > 0 ? $data['members_expired'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now - 86400, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
