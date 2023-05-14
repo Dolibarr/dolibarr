@@ -284,6 +284,10 @@ if (!empty($morelogincontent)) {
 
 
 <?php
+if (isset($conf->file->main_authentication) && $conf->file->main_authentication == 'googleoauth') {
+	$forgetpasslink = '';
+}
+
 if ($forgetpasslink || $helpcenterlink) {
 	$moreparam = '';
 	if ($dol_hide_topmenu) {
@@ -301,7 +305,7 @@ if ($forgetpasslink || $helpcenterlink) {
 
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 5px;">';
-	if ($forgetpasslink && (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth')) {
+	if ($forgetpasslink) {
 		$url = DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (!empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) {
 			$url = $conf->global->MAIN_PASSWORD_FORGOTLINK;
