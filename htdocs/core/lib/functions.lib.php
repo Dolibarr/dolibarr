@@ -2562,7 +2562,15 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	// Clean parameters
 	$to_gmt = false;
-	$offsettz = $offsetdst = 0;
+	if (!is_numeric($time)) {
+		$time = 0;
+	}
+	if (!is_numeric($offsettz)) {
+		$offsettz = 0;
+	}
+	if (!is_numeric($offsetdst)) {
+		$offsetdst = 0;
+	}
 	if ($tzoutput) {
 		$to_gmt = true; // For backward compatibility
 		if (is_string($tzoutput)) {
