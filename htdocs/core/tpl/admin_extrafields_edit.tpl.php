@@ -143,7 +143,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="rowid" value="<?php echo (empty($rowid) ? '' : $rowid) ?>">
-<input type="hidden" name="enabled" value="<?php echo htmlspecialchars($extrafields->attributes[$elementtype]['enabled'][$attrname]); ?>">
+<input type="hidden" name="enabled" value="<?php echo dol_escape_htmltag($extrafields->attributes[$elementtype]['enabled'][$attrname]); ?>">
 
 <?php print dol_get_fiche_head(); ?>
 
