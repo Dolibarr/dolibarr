@@ -6133,7 +6133,7 @@ abstract class CommonObject
 			foreach ($this->array_options as $key => $value) {
 				if (in_array(substr($key, 8), array_keys($target_extrafields))) {	// We remove the 'options_' from $key for test
 					$new_array_options[$key] = $value;
-				} elseif (in_array($key, array_keys($target_extrafields))) {		// We test on $key that does not contains the 'options_' prefix
+				} elseif (in_array($key, array_keys($target_extrafields))) {		// We test on $key that does not contain the 'options_' prefix
 					$new_array_options['options_'.$key] = $value;
 				}
 			}
@@ -7412,8 +7412,6 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		$objectid = $this->id;	// Not used ???
-
 		$label = empty($val['label']) ? '' : $val['label'];
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
@@ -7445,7 +7443,11 @@ abstract class CommonObject
 		}
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
-			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
+			$stringforoptions = $reg[1].':'.$reg[2];
+			if ($reg[1] == 'User') {
+				$stringforoptions .= ':-1';
+			}
+			$param['options'] = array($stringforoptions => $stringforoptions);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
 			$type = 'sellist';
@@ -7744,7 +7746,7 @@ abstract class CommonObject
 
 			// only if something to display (perf)
 			if ($value) {
-				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+				$param_list = array_keys($param['options']); // Example: $param_list='ObjectName:classPath:-1::customer'
 
 				$InfoFieldList = explode(":", $param_list[0]);
 				$classname = $InfoFieldList[0];
@@ -8592,9 +8594,10 @@ abstract class CommonObject
 	 *  @param      int|string  $overwritetitle Do not add title tag on image
 	 *  @param		int			$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
 	 *  @param		string		$cache			A string if we want to use a cached version of image
+	 *  @param		string		$addphotorefcss	Add CSS to img of photos
 	 *  @return     string						Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0, $cache = '')
+	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0, $cache = '', $addphotorefcss = 'photoref')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -8706,28 +8709,26 @@ abstract class CommonObject
 							}
 						}
 
-						$addphotorefcss = 1;
-
 						if ($usesharelink) {
 							if ($val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								} else {
 									$return .= '<!-- Show original file -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								}
 							} else {
 								$return .= '<!-- Show nophoto file (because file is not shared) -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
 							}
 						} else {
 							if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 							}
 						}
 

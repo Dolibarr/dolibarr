@@ -952,7 +952,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				}
 			}
 			break;
-		case 'aZ09arobase':		// great to sanitize objecttype parameter
+		case 'aZ09arobase':		// great to sanitize $objecttype parameter
 			if (!is_array($out)) {
 				$out = trim($out);
 				if (preg_match('/[^a-z0-9_\-\.@]+/i', $out)) {
@@ -960,16 +960,13 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				}
 			}
 			break;
-		case 'aZ09comma':		// great to sanitize sortfield or sortorder params that can be t.abc,t.def_gh
+		case 'aZ09comma':		// great to sanitize $sortfield or $sortorder params that can be 't.abc,t.def_gh'
 			if (!is_array($out)) {
 				$out = trim($out);
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) {
 					$out = '';
 				}
 			}
-			break;
-		case 'nohtml':		// No html
-			$out = dol_string_nohtmltag($out, 0);
 			break;
 		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
@@ -1001,6 +998,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#92', '&#0000092', '&#x2F', '../', '..\\'), '', $out);
 				} while ($oldstringtoclean != $out);
 			}
+			break;
+		case 'nohtml':		// No html
+			$out = dol_string_nohtmltag($out, 0);
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlnolink':
@@ -7391,6 +7391,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
  *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
+ *  @see dolGetFirstLineOfText()
  */
 function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UTF-8', $removelasteolbr = 1)
 {
@@ -7869,7 +7870,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DATE_DELIVERY_MM__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%M") : '');
 			$substitutionarray['__DATE_DELIVERY_SS__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%S") : '');
 
-			// For backward compatibility
+			// For backward compatibility (deprecated)
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
@@ -7962,6 +7963,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = $object->getFullName($outputlangs);
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = isset($object->firstname) ? $object->firstname : '';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
+			}
+			if (is_object($object) && $object->element == 'conferenceorboothattendee') {
+				$substitutionarray['__ATTENDEE_FULLNAME__'] = $object->getFullName($outputlangs);
+				$substitutionarray['__ATTENDEE_FIRSTNAME__'] = isset($object->firstname) ? $object->firstname : '';
+				$substitutionarray['__ATTENDEE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
 			if (is_object($object->project)) {

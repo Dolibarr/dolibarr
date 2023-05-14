@@ -1153,44 +1153,44 @@ if (!empty($arrayfields['p.budget_amount']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_usage_opportunity', $search_usage_opportunity, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_usage_opportunity', $search_usage_opportunity, 1, false, 1, 1);
 	print '';
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_task']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_usage_task', $search_usage_task, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_usage_task', $search_usage_task, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_bill_time']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_usage_bill_time', $search_usage_bill_time, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_usage_bill_time', $search_usage_bill_time, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_usage_event_organization', $search_usage_event_organization, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_usage_event_organization', $search_usage_event_organization, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.accept_conference_suggestions']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_accept_conference_suggestions', $search_accept_conference_suggestions, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_accept_conference_suggestions', $search_accept_conference_suggestions, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.accept_booth_suggestions']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_accept_booth_suggestions', $search_accept_booth_suggestions, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_accept_booth_suggestions', $search_accept_booth_suggestions, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.price_registration']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
-	print '<input type="text" class="flat" name="search_price_registration" size="4" value="'.$search_price_registration.'">';
+	print '<input type="text" class="flat" name="search_price_registration" size="4" value="'.dol_escape_htmltag($search_price_registration).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.price_booth']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
-	print '<input type="text" class="flat" name="search_price_booth" size="4" value="'.$search_price_booth.'">';
+	print '<input type="text" class="flat" name="search_price_booth" size="4" value="'.dol_escape_htmltag($search_price_booth).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['u.login']['checked'])) {
@@ -1313,27 +1313,27 @@ if (!empty($arrayfields['p.budget_amount']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
-	print_liste_field_titre($arrayfields['p.usage_opportunity']['label'], $_SERVER["PHP_SELF"], 'p.usage_opportunity', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.usage_opportunity']['label'], $_SERVER["PHP_SELF"], 'p.usage_opportunity', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.usage_task']['checked'])) {
-	print_liste_field_titre($arrayfields['p.usage_task']['label'], $_SERVER["PHP_SELF"], 'p.usage_task', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.usage_task']['label'], $_SERVER["PHP_SELF"], 'p.usage_task', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.usage_bill_time']['checked'])) {
-	print_liste_field_titre($arrayfields['p.usage_bill_time']['label'], $_SERVER["PHP_SELF"], 'p.usage_bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.usage_bill_time']['label'], $_SERVER["PHP_SELF"], 'p.usage_bill_time', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
-	print_liste_field_titre($arrayfields['p.usage_organize_event']['label'], $_SERVER["PHP_SELF"], 'p.usage_organize_event', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.usage_organize_event']['label'], $_SERVER["PHP_SELF"], 'p.usage_organize_event', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.accept_conference_suggestions']['checked'])) {
-	print_liste_field_titre($arrayfields['p.accept_conference_suggestions']['label'], $_SERVER["PHP_SELF"], 'p.accept_conference_suggestions', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.accept_conference_suggestions']['label'], $_SERVER["PHP_SELF"], 'p.accept_conference_suggestions', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.accept_booth_suggestions']['checked'])) {
-	print_liste_field_titre($arrayfields['p.accept_booth_suggestions']['label'], $_SERVER["PHP_SELF"], 'p.accept_booth_suggestions', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.accept_booth_suggestions']['label'], $_SERVER["PHP_SELF"], 'p.accept_booth_suggestions', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.price_registration']['checked'])) {
@@ -1720,7 +1720,7 @@ while ($i < $imaxinloop) {
 		}
 		// Usage opportunity
 		if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->usage_opportunity) {
 				print yn($obj->usage_opportunity);
 			}
@@ -1731,7 +1731,7 @@ while ($i < $imaxinloop) {
 		}
 		// Usage task
 		if (!empty($arrayfields['p.usage_task']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->usage_task) {
 				print yn($obj->usage_task);
 			}
@@ -1742,7 +1742,7 @@ while ($i < $imaxinloop) {
 		}
 		// Bill time
 		if (!empty($arrayfields['p.usage_bill_time']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->usage_bill_time) {
 				print yn($obj->usage_bill_time);
 			}
@@ -1753,7 +1753,7 @@ while ($i < $imaxinloop) {
 		}
 		// Event Organization
 		if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->usage_organize_event) {
 				print yn($obj->usage_organize_event);
 			}
@@ -1764,7 +1764,7 @@ while ($i < $imaxinloop) {
 		}
 		// Allow unknown people to suggest conferences
 		if (!empty($arrayfields['p.accept_conference_suggestions']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->accept_conference_suggestions) {
 				print yn($obj->accept_conference_suggestions);
 			}
@@ -1775,7 +1775,7 @@ while ($i < $imaxinloop) {
 		}
 		// Allow unknown people to suggest booth
 		if (!empty($arrayfields['p.accept_booth_suggestions']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->accept_booth_suggestions) {
 				print yn($obj->accept_booth_suggestions);
 			}

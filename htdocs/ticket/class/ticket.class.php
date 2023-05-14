@@ -505,7 +505,7 @@ class Ticket extends CommonObject
 			$sql .= " ".($this->fk_soc > 0 ? $this->db->escape($this->fk_soc) : "null").",";
 			$sql .= " ".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "null").",";
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
-			$sql .= " ".($this->fk_user_create > 0 ? $this->fk_user_create : ($user->id > 0 ? $user->id : 'NULL')).",";
+			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? $user->id : 'NULL') : ($this->fk_user_create > 0 ? $this->fk_user_create : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
 			$sql .= " ".(empty($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
@@ -3030,7 +3030,7 @@ class Ticket extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (!empty($arraydata['user_assignment'])) {
 			$return .= '<br><span class="info-box-label" title="'.dol_escape_htmltag($langs->trans("AssignedTo")).'">'.$arraydata['user_assignment'].'</span>';

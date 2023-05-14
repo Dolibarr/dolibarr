@@ -772,11 +772,12 @@ if (!defined('NOLOGIN')) {
 			}
 		}
 
-		$allowedmethodtopostusername = 2;
+		$allowedmethodtopostusername = 3;
 		if (defined('MAIN_AUTHENTICATION_POST_METHOD')) {
-			$allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');
+			$allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');	// Note a value of 2 is not compatible with some authentication methods that put username as GET parameter
 		}
-		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
+		// TODO Remove use of $_COOKIE['login_dolibarr'] ? Replace $usertotest = with $usertotest = GETPOST("username", "alpha", $allowedmethodtopostusername);
+		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_@\-\.]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
 		$passwordtotest = GETPOST('password', 'none', $allowedmethodtopostusername);
 		$entitytotest = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
@@ -788,7 +789,13 @@ if (!defined('NOLOGIN')) {
 		if ($dolibarr_main_authentication == 'forceuser' && !empty($dolibarr_auto_user)) {
 			$goontestloop = true;
 		}
-		if (GETPOST("username", "alpha", $allowedmethodtopostusername) || !empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode', 'alpha', 1)) {
+		if (GETPOST("username", "alpha", $allowedmethodtopostusername)) {
+			$goontestloop = true;
+		}
+		if (!empty($_COOKIE['login_dolibarr'])) {	// TODO Remove this ?
+			$goontestloop = true;
+		}
+		if (GETPOST('openid_mode', 'alpha', 1) || GETPOST('googleoauth_mode', 'alpha', 1)) {
 			$goontestloop = true;
 		}
 
@@ -805,7 +812,7 @@ if (!defined('NOLOGIN')) {
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
-		// Note authmode is an array for example: array('0'=>'dolibarr', '1'=>'google');
+		// Note authmode is an array for example: array('0'=>'dolibarr', '1'=>'googleoauth');
 		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr')) {
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login === '--bad-login-validity--') {
