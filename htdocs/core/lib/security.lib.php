@@ -811,7 +811,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$feature = 'projet_task';
 		}
 
-		if ($feature == 'payment_sc'){
+		if ($feature == 'payment_sc') {
 			$feature = "chargesociales";
 		}
 		$checkonentitydone = 0;
