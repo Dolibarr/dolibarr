@@ -595,12 +595,12 @@ if ($action == 'create') {
 			print '<br>';
 
 
-            $totalarray = array();
-            $totalarray['val'] = array ();
-            $totalarray['pos'] = array ();
-            $totalarray['type'] = array ();
-            $totalarray['nbfield'] = 0;
-            
+			$totalarray = array();
+			$totalarray['val'] = array ();
+			$totalarray['pos'] = array ();
+			$totalarray['type'] = array ();
+			$totalarray['nbfield'] = 0;
+
 			// TODO Create $arrayfields with all fields to show
 
 			print '<table class="noborder centpercent">';
@@ -612,40 +612,40 @@ if ($action == 'create') {
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-            $totalarray['nbfield'] += 3;
-            $totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
-            $totalarray['type'][$totalarray['nbfield']] = 'stock';
+			$totalarray['nbfield'] += 3;
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
+			$totalarray['type'][$totalarray['nbfield']] = 'stock';
 
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
-                $totalarray['nbfield']++;
-                $totalarray['pos'][$totalarray['nbfield']] = 'units';
-                $totalarray['type'][$totalarray['nbfield']] = 'string';
-            }
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'units';
+				$totalarray['type'][$totalarray['nbfield']] = 'string';
+			}
 
 			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-            $totalarray['nbfield']++;
+			$totalarray['nbfield']++;
 
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-            $totalarray['nbfield']++;
-            $totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
+			$totalarray['nbfield']++;
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
 
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-                $totalarray['nbfield']++;
+				$totalarray['nbfield']++;
 			}
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-                $totalarray['nbfield']++;
-                $totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
-            }
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
+			}
 			if ($user->rights->stock->mouvement->creer) {
 				print_liste_field_titre('');
-                $totalarray['nbfield']++;
+				$totalarray['nbfield']++;
 			}
 			if ($user->rights->stock->creer) {
 				print_liste_field_titre('');
-                $totalarray['nbfield']++;
+				$totalarray['nbfield']++;
 			}
 			// Hook fields
 			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray' => &$totalarray);
@@ -832,21 +832,20 @@ if ($action == 'create') {
 				}
 				$db->free($resql);
 
-                $totalarray['val']['totalunit'] = $totalunit;
-                $totalarray['val']['totalvalue'] = price2num($totalvalue, 'MT');
-                $totalarray['val']['totalvaluesell'] = price2num($totalvaluesell, 'MT');
-                $totalarray['val']['units'] = $langs->trans($productstatic->getLabelOfUnit());
+				$totalarray['val']['totalunit'] = $totalunit;
+				$totalarray['val']['totalvalue'] = price2num($totalvalue, 'MT');
+				$totalarray['val']['totalvaluesell'] = price2num($totalvaluesell, 'MT');
+				$totalarray['val']['units'] = $langs->trans($productstatic->getLabelOfUnit());
 
 				$parameters = array('totalarray' => &$totalarray);
 				// Note that $action and $object may have been modified by hook
 				$reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object);
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors);
-                }
+				}
 
-                // Show total line
-                include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
-
+				// Show total line
+				include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 			} else {
 				dol_print_error($db);
 			}
