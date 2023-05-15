@@ -172,6 +172,7 @@ NEW: use more recent model by default
 NEW: VAT can be modified during add of line
 NEW: write all fields and their properties in asciidoc format
 NEW: Can add an array of several links in date selector
+NEW: Add option PDF_SHOW_PHONE_AFTER_USER_CONTACT to show phone after specific assigned contact on PDF
 NEW: Widgets: Implement MAIN_ACTIVATE_FILECACHE on birthday widget
 NEW: Widgets: Add widget "The next upcoming events"
 NEW: Widgets: Add widget of open opportunities
