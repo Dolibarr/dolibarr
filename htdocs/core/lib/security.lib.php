@@ -431,6 +431,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($featureforlistofmodule == 'produit') {
 			$featureforlistofmodule = 'product';
 		}
+		if ($featureforlistofmodule == 'supplier_proposal') {
+			$featureforlistofmodule = 'supplierproposal';
+		}
 		if (!empty($user->socid) && !empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
 			$readok = 0;
 			$nbko++;
