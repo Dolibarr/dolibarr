@@ -1280,7 +1280,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."%'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
