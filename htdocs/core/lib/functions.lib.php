@@ -4499,9 +4499,10 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
  *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+ *  @param	string		$moreatt		More attributes
  *	@return string      				Return an img tag
  */
-function img_action($titlealt, $numaction, $picto = '')
+function img_action($titlealt, $numaction, $picto = '', $moreatt = '')
 {
 	global $langs;
 
@@ -4530,7 +4531,7 @@ function img_action($titlealt, $numaction, $picto = '')
 		$numaction = 0;
 	}
 
-	return img_picto($titlealt, !empty($picto) ? $picto : 'stcomm'.$numaction.'.png');
+	return img_picto($titlealt, (empty($picto) ? 'stcomm'.$numaction.'.png' : $picto), $moreatt);
 }
 
 /**

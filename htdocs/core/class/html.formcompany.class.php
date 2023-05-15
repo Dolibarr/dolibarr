@@ -1123,43 +1123,48 @@ class FormCompany extends Form
 	/**
 	 *  Output html select to select prospect status
 	 *
-	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param	object	$prospectstatic list of status prospect
-	 *  @param  int		$statusprospect	status of prospect
-	 *  @param  int		$idprospect     id of prospect
-	 *  @param  string  $mode      		select if we want activate de html part or js
+	 *  @param  string			$htmlname		Name of HTML select
+	 *  @param	Societe|null	$prospectstatic Prospect object
+	 *  @param  int				$statusprospect	status of prospect
+	 *  @param  int				$idprospect     id of prospect
+	 *  @param  string  		$mode      		select if we want activate de html part or js
 	 *  @return	void
 	 */
-	public function selectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")
+	public function selectProspectStatus($htmlname, Societe $prospectstatic, $statusprospect, $idprospect, $mode = "html")
 	{
+		global $langs;
 
 		if ($mode === "html") {
-			print '<select class="flat selectprospectstatus" id="'. $idprospect .'" name="' . $htmlname .'">';
-
+			//print $prospectstatic->LibProspCommStatut($statusprospect, 2, $prospectstatic->cacheprospectstatus[$statusprospect]['label'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto']);
+			print img_action('', $prospectstatic->cacheprospectstatus[$statusprospect]['code'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto'], 'class="inline-block valignmiddle paddingright"');
+			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'">';
 			foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
-				$titlealt = 'default';
+				$titlealt = (empty($val['label']) ? 'default' : $val['label']);
+				$label = $val['label'];
 				if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
 					$titlealt = $val['label'];
-				}
-				if ($statusprospect != $val['id']) {
-					print '<option value="'. $val['id'] .'" title="' . $titlealt . '">' . $val['label'] . '</option>';
+					$label = (($langs->trans("StatusProspect".$val['code']) != "StatusProspect".$val['code']) ? $langs->trans("StatusProspect".$val['code']) : $label);
 				} else {
-					print '<option value="' . $val['id'] . '" title="' . $titlealt . '" selected>' . $val['label'] . '</option>';
+					$label = (($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id']) ? $langs->trans("StatusProspect".$val['id']) : $label);
 				}
+				print '<option value="'.$val['id'].'" data-html="'.dol_escape_htmltag(img_action('', $val['code'], $val['picto']).' '.$label).'" title="'.dol_escape_htmltag($label).'"'.($statusprospect == $val['id'] ? ' selected' : '').'>';
+				print dol_escape_htmltag($label);
+				print '</option>';
 			}
 			print '</select>';
-			print ajax_combobox($htmlname);
+			print ajax_combobox($htmlname.$idprospect);
 		} elseif ($mode === "js") {
 			print '<script>
 				jQuery(document).ready(function() {
 					$(".selectprospectstatus").on("change", function() {
+						console.log("We change a value into a field selectprospectstatus");
 						var statusid = $(this).val();
-						var prospectid = $(this).attr("id");
-					$.ajax({
-						type: "POST",
-						url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
-						data: {id: statusid, prospectid: prospectid, token: "'. newToken() .'", action: "updatestatusprospect"},
-						success: function(response) {
+						var prospectid = $(this).attr("data-socid");
+						$.ajax({
+							type: "POST",
+							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
+							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\'},
+							success: function(response) {
 						}
 					});
 				});

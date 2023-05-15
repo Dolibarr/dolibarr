@@ -1831,7 +1831,7 @@ while ($i < $imaxinloop) {
 			$prospectid = $obj->rowid;
 			$statusprospect = $obj->stcomm_id;
 
-			$formcompany->selectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid);
+			$formcompany->selectProspectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid);
 
 			print '</td>';
 			if (!$i) {
@@ -1912,7 +1912,7 @@ while ($i < $imaxinloop) {
 }
 
 // Line that calls the select_status function by passing it js as the 5th parameter in order to activate the js script
-$formcompany->selectStatus('status_prospect', null, null, null, "js");
+$formcompany->selectProspectStatus('status_prospect', $prospectstatic, null, null, "js");
 
 // If no record found
 if ($num == 0) {
