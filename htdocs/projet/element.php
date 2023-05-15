@@ -424,7 +424,7 @@ $listofreferent = array(
 	'testnew'=>$user->hasRight('facture', 'creer'),
 	'test'=>!empty($conf->facture->enabled) && $user->hasRight('facture', 'lire')),
 'proposal_supplier'=>array(
-	'name'=>"SuppliersProposals",
+	'name'=>"SupplierProposals",
 	'title'=>"ListSupplierProposalsAssociatedProject",
 	'class'=>'SupplierProposal',
 	'table'=>'supplier_proposal',
@@ -728,6 +728,9 @@ print '<td class="left" width="200">';
 $tooltiponprofit = $langs->trans("ProfitIsCalculatedWith")."<br>\n";
 $tooltiponprofitplus = $tooltiponprofitminus = '';
 foreach ($listofreferent as $key => $value) {
+	if (!empty($value['lang'])) {
+		$langs->load($value['lang']);
+	}
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
 	$margin = empty($value['margin']) ? 0 : $value['margin'];
@@ -987,7 +990,6 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$langtoload = empty($value['lang']) ? '' : $value['lang'];
 	$urlnew = empty($value['urlnew']) ? '' : $value['urlnew'];
 	$buttonnew = empty($value['buttonnew']) ? '' : $value['buttonnew'];
 	$testnew = empty($value['testnew']) ? '' : $value['testnew'];
@@ -1002,10 +1004,6 @@ foreach ($listofreferent as $key => $value) {
 	if ($qualified) {
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
-
-		if ($langtoload) {
-			$langs->load($langtoload);
-		}
 
 		$element = new $classname($db);
 

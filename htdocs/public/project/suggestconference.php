@@ -246,6 +246,8 @@ if (empty($reshook) && $action == 'add') {
 			$errors = array_merge($errors, $thirdparty->errors);
 		} elseif ($resultfetchthirdparty == 0) {	// No thirdparty found + a payment is expected
 			// Creation of a new thirdparty
+			$genericcompanyname = 'Unknown company';
+
 			if (!empty($societe)) {
 				$thirdparty->name     = $societe;
 			} else {
@@ -441,7 +443,7 @@ if (empty($reshook) && $action == 'add') {
 					}
 
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $project);
 
 					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
@@ -449,10 +451,11 @@ if (empty($reshook) && $action == 'add') {
 					$sendto = $thirdparty->email;
 					$from = $conf->global->MAILING_EMAIL_FROM;
 					$urlback = $_SERVER["REQUEST_URI"];
+					$trackid = 'proj'.$project->id;
 
 					$ishtml = dol_textishtml($texttosend); // May contain urls
 
-					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid);
 
 					$result = $mailfile->sendfile();
 					if ($result) {
