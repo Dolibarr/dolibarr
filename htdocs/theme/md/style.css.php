@@ -2361,7 +2361,6 @@ div.backgroundsemitransparent {
 }
 
 
-
 #id-right {
 	padding-<?php print $left; ?>: 0 ! important;
 }
@@ -3122,6 +3121,13 @@ table.login_table_securitycode tr td {
 	max-width: 170px;
 	max-height: 90px;
 }
+.loginbuttonexternal {
+	width: 300px;
+	margin: auto;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 5px;
+}
 
 
 .atoplogin.dropdown .dropdown-menu {
@@ -3419,7 +3425,7 @@ div.blockvmenupair, div.blockvmenuimpair
 	background: var(--colorbackvmenu1);
 
 	padding-bottom: 10px;
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e8e8e8;
 }
 div.blockvmenubookmarks
 {
@@ -3581,7 +3587,7 @@ div.tabBar {
 	padding-left: 24px;
 	padding-right: 24px;
 	padding-bottom: 23px;
-	margin: 0px 0px 18px 0px;
+	margin: 0px 0px 20px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border-right: 1px solid #CCC;
@@ -4554,7 +4560,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .tagtr:nth-child(even):not(:last-of-type) .oddeven.tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e8e8e8;
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
@@ -4572,7 +4578,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e8e8e8;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -4989,7 +4995,7 @@ span.buttonpaymentsmall {
 	min-width: 320px; font-size: 16px;
 }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; margin-bottom: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }

@@ -167,7 +167,7 @@ class box_project_opportunities extends ModeleBoxes
 					$i++;
 				}
 				if ($max < $num) {
-					$this->info_box_contents[$i][] = array('td' => 'colspan="5"', 'text' => '...');
+					$this->info_box_contents[$i][] = array('td' => 'colspan="6"', 'text' => '...');
 					$i++;
 				}
 			}
@@ -183,6 +183,10 @@ class box_project_opportunities extends ModeleBoxes
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="right liste_total" ',
 			'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
+		);
+		$this->info_box_contents[$i][] = array(
+			'td' => 'class="liste_total"',
+			'text' => "&nbsp;",
 		);
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="liste_total"',

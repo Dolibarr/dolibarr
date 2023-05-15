@@ -9,13 +9,14 @@ For uses:
 ---------
 
 NEW: PHP 8.2 compatibility (test not yet completed).
-NEW: #22740 Add OpenID Connect impl
 NEW: #23436 Group social networks fields
 NEW: Accountancy - Add specific page to export accounting data rather than the journals page
 NEW: Accountancy - Add sub-account balance FPC22
 NEW: Accountancy - Manage customer retained warranty FPC21+
 NEW: Accountancy - Manage intra-community VAT on supplier invoices - FPC22
 NEW: Can upload a file with drag and drop on purchase invoice, vats, salaries and social contributions 
+NEW: authentication mode: #22740 Add OpenID Connect impl
+NEW: authentication mode: Add experimental support for Google OAuth2 connexion
 NEW: adapt category and product pictures sizes on TakePOS
 NEW: Supplier Invoices: add ability of ODT support to supplier invoices
 NEW: Add a public virtual card page for each user

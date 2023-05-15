@@ -2093,11 +2093,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 							print '<input type="hidden" name="page_y" value="" />';
 						}
 
+						print '<!-- List of groups of the user -->'."\n";
 						print '<table class="noborder centpercent">'."\n";
 						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
 						print '<th class="liste_titre right">';
 						if ($caneditgroup) {
-							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
+							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity, false, 'maxwidth150');
 							print ' &nbsp; ';
 							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 							print '<input type="submit" class="button buttongen button-add reposition" value="'.$langs->trans("Add").'" />';
@@ -2108,7 +2109,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						if (!empty($groupslist)) {
 							foreach ($groupslist as $group) {
 								print '<tr class="oddeven">';
-								print '<td>';
+								print '<td class="tdoverflowmax150">';
 								if ($caneditgroup) {
 									print $group->getNomUrl(1);
 								} else {
