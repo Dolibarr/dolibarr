@@ -163,6 +163,7 @@ class Odf
 	{
 		$value = dol_html_entity_decode($value, ENT_COMPAT);
 		$value = $encode ? htmlspecialchars($value) : $value;
+		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
  		$convertedValue = $value;
 
 		// Check if the value includes html tags
