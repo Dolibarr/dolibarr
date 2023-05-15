@@ -675,6 +675,30 @@ class RecruitmentCandidature extends CommonObject
 	}
 
 	/**
+	 *	Return full name ('name+' '+lastname)
+	 *
+	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
+	 *	@param	int			$option			0=No option
+	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 * 	@param	int			$maxlen			Maximum length
+	 * 	@return	string						String with full name
+	 */
+	public function getFullName($langs, $option = 0, $nameorder = -1, $maxlen = 0)
+	{
+		$lastname = $this->lastname;
+		$firstname = $this->firstname;
+		if (empty($lastname)) {
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+		}
+
+		$ret = '';
+
+		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+
+		return dol_trunc($ret, $maxlen);
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
