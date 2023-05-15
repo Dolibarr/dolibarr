@@ -772,7 +772,7 @@ if (isModEnabled('stock')) {
 	$formproduct = new FormProduct($db);
 }
 
-if (GETPOSTINT('id') > 0) {
+if ($id > 0) {
 	$res = $object->fetch($id, '', '', 1);
 	if ($res < 0) {
 		dol_print_error($db, $object->error);
@@ -784,12 +784,15 @@ if (GETPOSTINT('id') > 0) {
 		print($langs->trans('ErrorRecordNotFound'));
 		exit;
 	}
+}
 
+if ($action == 'create' || $action == 'adduserldap') {
+	$title = $langs->trans("NewUser");
+} else {
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('Card');
-} else {
-	$title = $langs->trans("NewUser");
 }
+
 $help_url = '';
 
 llxHeader('', $title, $help_url);
