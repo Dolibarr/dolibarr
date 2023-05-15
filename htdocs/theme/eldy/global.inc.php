@@ -1602,7 +1602,7 @@ maxscreenheightless200 {
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -4663,13 +4663,16 @@ span.dashboardlineko {
 	display: inline-block;
 	vertical-align: middle;
 }
-.boxtable {
+.divboxtable {
 	margin-bottom: 25px !important;
+}
+.boxtable {
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
 	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
+
 table.noborder.boxtable tr td {
 	height: unset;
 }

@@ -695,7 +695,7 @@ if ($object->id > 0) {
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
-	$boxstat .= '<div class="box box-halfright">';
+	$boxstat .= '<div class="box divboxtable box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop boxtablenomarginbottom centpercent">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 

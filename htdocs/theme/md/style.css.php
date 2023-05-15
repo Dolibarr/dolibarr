@@ -4706,8 +4706,10 @@ span.dashboardlineko {
 	color: #FFFFFF ! important;
 	border-radius: .25em;
 }
-.boxtable {
+.divboxtable {
 	margin-bottom: 20px !important;
+}
+.boxtable {
 	border-bottom-width: 1px;
 }
 .boxtablenotop {

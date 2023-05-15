@@ -5111,7 +5111,7 @@ if ($action == 'create') {
 				}
 				print '</td>';
 				$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
-				print '<td>'.$label.' '.$objp->num_payment.'</td>';
+				print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($label.' '.$objp->num_payment).'">'.dol_escape_htmltag($label.' '.$objp->num_payment).'</td>';
 				if (isModEnabled("banque")) {
 					$bankaccountstatic->id = $objp->baid;
 					$bankaccountstatic->ref = $objp->baref;
