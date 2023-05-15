@@ -161,12 +161,13 @@ class Odf
 	 */
 	public function convertVarToOdf($value, $encode = true, $charset = 'ISO-8859')
 	{
+		$value = dol_html_entity_decode($value, ENT_COMPAT);
 		$value = $encode ? htmlspecialchars($value) : $value;
-		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
-		$convertedValue = $value;
+ 		$convertedValue = $value;
 
 		// Check if the value includes html tags
-		if ($this->_hasHtmlTag($value) === true) {
+		if ($this->_hasHtmlTag(htmlspecialchars_decode($value)) === true) {
+			$value = htmlspecialchars_decode($value);
 			// Default styles for strong/b, i/em, u, s, sub & sup
 			$automaticStyles = array(
 				'<style:style style:name="boldText" style:family="text"><style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold" /></style:style>',
