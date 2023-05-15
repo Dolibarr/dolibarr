@@ -138,7 +138,7 @@ class FactureFournisseurTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new FactureFournisseur($this->savdb);
+		$localobject=new FactureFournisseur($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -164,7 +164,7 @@ class FactureFournisseurTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new FactureFournisseur($this->savdb);
+		$localobject=new FactureFournisseur($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
@@ -267,7 +267,7 @@ class FactureFournisseurTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new FactureFournisseur($this->savdb);
+		$localobject=new FactureFournisseur($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

@@ -881,7 +881,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// Opp amount
 						print '<td class="right">';
 						if ($obj->opp_status_code) {
-							print price($obj->opp_amount, 1, '', 1, -1, -1, '');
+							print '<span class="amount">'.price($obj->opp_amount, 1, '', 1, -1, -1, '').'</span>';
 						}
 						print '</td>';
 						// Opp status
@@ -1038,9 +1038,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			if (!empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
 				$arrayfields["ef.".$key] = array(
 					'label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key],
-					'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key] < 0) ? 0 : 1),
+					'checked'=>((dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1, 1, '1') < 0) ? 0 : 1),
 					'position'=>1000 + $extrafields->attributes[$contactstatic->table_element]['pos'][$key],
-					'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key]) != 3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+					'enabled' => (abs((int) dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1)) != 3 && dol_eval($extrafields->attributes[$contactstatic->table_element]['perms'][$key], 1, 1, '1'))
+				);
 			}
 		}
 	}
@@ -2366,9 +2367,9 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
 	}
 
-	print '<!-- htmlPrintOnlinePaymentFooter -->'."\n";
+	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
-	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
+	print '<footer class="center paddingleft paddingright opacitymedium centpercent">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';

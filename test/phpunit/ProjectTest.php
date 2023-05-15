@@ -139,7 +139,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Project($this->savdb);
+		$localobject=new Project($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -165,7 +165,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Project($this->savdb);
+		$localobject=new Project($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -238,7 +238,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Project($this->savdb);
+		$localobject=new Project($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

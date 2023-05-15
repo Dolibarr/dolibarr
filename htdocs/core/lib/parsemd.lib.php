@@ -31,6 +31,14 @@
  */
 function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 {
+	// Replace a HTML string with a Markdown syntax
+	$content = preg_replace('/<a href="([^"]+)">([^<]+)<\/a>/', '[\2](\1)', $content);
+	//$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1){:target="\2"}', $content);
+	$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
+
+	// Replace HTML coments
+	$content = preg_replace('/<!--.*-->/ms', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
+
 	if (is_array($replaceimagepath)) {
 		foreach ($replaceimagepath as $key => $val) {
 			$keytoreplace = ']('.$key;

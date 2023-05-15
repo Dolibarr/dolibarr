@@ -99,8 +99,10 @@ class SMTPs
 
 	/**
 	 * Message Content
+	 *
+	 * @var	array	$_msgContent	Array of messages
 	 */
-	private $_msgContent = null;
+	private $_msgContent = array();
 
 	/**
 	 * Custom X-Headers
@@ -456,6 +458,7 @@ class SMTPs
 		// phpcs:enable
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		// Send the RFC2554 specified EHLO.
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
@@ -1841,7 +1844,7 @@ class SMTPs
 	/**
 	 * Retrieves the Message X-Header Content
 	 *
-	 * @return string[] $_msgContent Message X-Header Content
+	 * @return array	$_msgContent 	Message X-Header Content
 	 */
 	public function getXheader()
 	{

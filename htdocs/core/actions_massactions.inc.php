@@ -88,9 +88,10 @@ if (!$error && $massaction == 'confirm_presend') {
 	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
 
 	if (!$error) {
-		$thirdparty = new Societe($db);
-
 		$objecttmp = new $objectclass($db);
+
+		// Define object $thirdparty (Societe or User, Adherent, ConferenceOrBoothAttendee...)
+		$thirdparty = new Societe($db);
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
 		} elseif ($objecttmp->element == 'contact') {
@@ -99,6 +100,8 @@ if (!$error && $massaction == 'confirm_presend') {
 			$thirdparty = new Adherent($db);
 		} elseif ($objecttmp->element == 'holiday') {
 			$thirdparty = new User($db);
+		} elseif ($objecttmp->element == 'conferenceorboothattendee') {
+			$thirdparty = new ConferenceOrBoothAttendee($db);
 		}
 
 		foreach ($toselect as $toselectid) {
@@ -106,21 +109,22 @@ if (!$error && $massaction == 'confirm_presend') {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$listofobjectid[$toselectid] = $toselectid;
-
-				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
+				$tmpobjectid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
-					$thirdpartyid = $objecttmp->id;
+					$tmpobjectid = $objecttmp->id;
 				} elseif ($objecttmp->element == 'contact') {
-					$thirdpartyid = $objecttmp->id;
+					$tmpobjectid = $objecttmp->id;
 				} elseif ($objecttmp->element == 'expensereport') {
-					$thirdpartyid = $objecttmp->fk_user_author;
+					$tmpobjectid = $objecttmp->fk_user_author;
 				} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
-					$thirdpartyid = $objecttmp->fk_member;
+					$tmpobjectid = $objecttmp->fk_member;
 				} elseif ($objecttmp->element == 'holiday') {
-					$thirdpartyid = $objecttmp->fk_user;
+					$tmpobjectid = $objecttmp->fk_user;
+				} elseif ($objecttmp->element == 'conferenceorboothattendee') {
+					$tmpobjectid = $objecttmp->id;
 				}
-				if (empty($thirdpartyid)) {
-					$thirdpartyid = 0;
+				if (empty($tmpobjectid)) {
+					$tmpobjectid = 0;
 				}
 
 				if ($objectclass == 'Facture') {
@@ -141,8 +145,8 @@ if (!$error && $massaction == 'confirm_presend') {
 					}
 				}
 
-				$listofobjectthirdparties[$thirdpartyid] = $thirdpartyid;
-				$listofobjectref[$thirdpartyid][$toselectid] = $objecttmp;
+				$listofobjectthirdparties[$tmpobjectid] = $tmpobjectid;
+				$listofobjectref[$tmpobjectid][$toselectid] = $objecttmp;
 			}
 		}
 	}
@@ -174,7 +178,7 @@ if (!$error && $massaction == 'confirm_presend') {
 		$massaction = 'presend';
 	}
 
-	// Loop on each recipient/thirdparty
+	// Loop on each recipient (may be a thirdparty but also a user, a conferenceorboothattendee, ...)
 	if (!$error) {
 		foreach ($listofobjectthirdparties as $thirdpartyid) {
 			$result = $thirdparty->fetch($thirdpartyid);
@@ -186,7 +190,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			$sendto = '';
 			$sendtocc = '';
 			$sendtobcc = '';
-			$sendtoid = array();
+			//$sendtoid = array();
 
 			// Define $sendto
 			$tmparray = array();
@@ -201,7 +205,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 					} elseif ($val && method_exists($thirdparty, 'contact_get_property')) {		// Id of contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
-						$sendtoid[] = $val;
+						//$sendtoid[] = $val;
 					}
 				}
 			}
@@ -305,6 +309,8 @@ if (!$error && $massaction == 'confirm_presend') {
 						if (count($emails_to_sends) > 0) {
 							$sendto = implode(',', $emails_to_sends);
 						}
+					} elseif ($objectobj->element == 'conferenceorboothattendee') {
+						$sendto = $objectobj->email;
 					} else {
 						$objectobj->fetch_thirdparty();
 						$sendto = $objectobj->thirdparty->email;
@@ -752,7 +758,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
 	}
 	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\']+\.pdf$'; // To include PDF generated from ODX files
+		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
 	}
 	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
 

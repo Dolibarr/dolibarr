@@ -41,6 +41,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
@@ -51,6 +52,7 @@ class Societe extends CommonObject
 {
 	use CommonIncoterm;
 	use CommonSocialNetworks;
+	use CommonPeople;
 
 	/**
 	 * @var string ID of module.
@@ -2038,10 +2040,10 @@ class Societe extends CommonObject
 	/**
 	 *    Delete a third party from database and all its dependencies (contacts, rib...)
 	 *
-	 *    @param	int		$id             Id of third party to delete
-	 *    @param    User    $fuser          User who ask to delete thirdparty
-	 *    @param    int		$call_trigger   0=No, 1=yes
-	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
+	 *    @param	int			$id             Id of third party to delete
+	 *    @param    User|null   $fuser          User who ask to delete thirdparty
+	 *    @param    int			$call_trigger   0=No, 1=yes
+	 *    @return	int							<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function delete($id, User $fuser = null, $call_trigger = 1)
 	{
@@ -5254,7 +5256,7 @@ class Societe extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'code_client')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->code_client.'</span>';

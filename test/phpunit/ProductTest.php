@@ -143,7 +143,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -170,7 +170,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -243,7 +243,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$result=$localobject->fetch($id);
 
 		$result=$localobject->delete($user);

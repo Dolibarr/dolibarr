@@ -129,7 +129,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 	}
 
-	print '<div class="center">';
+	print '<header class="center">';
 
 	// Output html code for logo
 	if ($urllogo) {
@@ -149,7 +149,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	print '</div>';
+	print '</header>';
 
 	print '<div class="divmainbodylarge">';
 }

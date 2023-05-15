@@ -143,7 +143,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -169,7 +169,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -296,7 +296,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

@@ -542,7 +542,7 @@ class Dolresource extends CommonObject
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		$this->num_all = 0;
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $this->db->query($sql);
 			$this->num_all = $this->db->num_rows($result);
 		}

@@ -108,11 +108,11 @@ function dolGetRandomBytes($length)
 
 /**
  *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
- *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
+ *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
  *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string
@@ -120,7 +120,7 @@ function dolGetRandomBytes($length)
  */
 function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
 {
-	global $dolibarr_main_instance_unique_id;
+	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
 
 	if ($chain === '' || is_null($chain)) {
@@ -134,7 +134,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 	}
 
 	if (empty($key)) {
-		$key = $dolibarr_main_instance_unique_id;
+		$key = $conf->file->instance_unique_id;
 	}
 	if (empty($ciphering)) {
 		$ciphering = 'AES-256-CTR';
@@ -165,23 +165,23 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 
 /**
  *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
- *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
+ *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @see dolEncrypt(), dol_hash()
  */
 function dolDecrypt($chain, $key = '')
 {
-	global $dolibarr_main_instance_unique_id;
+	global $conf;
 
 	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
 	if (empty($key)) {
-		$key = $dolibarr_main_instance_unique_id;
+		$key = $conf->file->instance_unique_id;
 	}
 
 	$reg = array();
@@ -336,7 +336,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *	@param  string				$features	    Features to check (it must be module name or $object->element. Can be a 'or' check with 'levela|levelb'.
  *												Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *												This is used to check permission $user->rights->features->...
- *	@param  int|string|object	$object      	Object or Object ID or list of Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+ *	@param  int|string|Object	$object      	Object or Object ID or list of Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  *	@param  string				$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
  *	@param  string				$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
  *												This is used to check permission $user->rights->features->feature2...
@@ -363,9 +363,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	}
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
-	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
-	//print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	//print ", perm: ".$features."->".$feature2."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
+	/*print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
+	print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
+	print ", perm: user->right->".$features.($feature2 ? "->".$feature2 : "")."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
+	*/
 
 	$parentfortableentity = '';
 
@@ -401,11 +402,14 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'productbatch') {
 		$features = 'produit';
 	}
-	if ($features == 'fournisseur') {	// When vendor invoice and pruchase order are into module 'fournisseur'
+	if ($features == 'tax') {
+		$feature2 = 'charges';
+	}
+	if ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		$features = 'fournisseur';
-		if ($object->element == 'invoice_supplier') {
+		if (is_object($object) && $object->element == 'invoice_supplier') {
 			$feature2 = 'facture';
-		} elseif ($object->element == 'order_supplier') {
+		} elseif (is_object($object) && $object->element == 'order_supplier') {
 			$feature2 = 'commande';
 		}
 	}
@@ -508,6 +512,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			foreach ($feature2 as $subfeature) {
 				if ($subfeature == 'user' && $user->id == $objectid) {
 					continue; // A user can always read its own card
+				}
+				if ($subfeature == 'fiscalyear' && $user->hasRight('accounting', 'fiscalyear', 'write')) {
+					// only one right for fiscalyear
+					$tmpreadok = 1;
+					continue;
 				}
 				if (!empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) {
 					$tmpreadok = 0;
@@ -831,13 +840,17 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'task') {
 			$feature = 'projet_task';
 		}
+		if ($feature == 'eventorganization') {
+			$feature = 'agenda';
+			$dbtablename = 'actioncomm';
+		}
 
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
 		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
-		$checkother = array('contact', 'agenda', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
+		$checkother = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
 		$checktask = array('projet_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
@@ -958,7 +971,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
-
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checktask) && $objectid > 0) {
@@ -984,6 +996,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
+		//var_dump($checkonentitydone);
+
 		if (!$checkonentitydone && !in_array($feature, $nocheck) && $objectid > 0) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
@@ -995,7 +1009,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
 			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)) {
-				// If internal user: Check permission for internal users that are restricted on their objects
+				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
 						dol_print_error('', 'Param dbt_keyfield is required but not defined');
@@ -1017,7 +1031,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR sc.fk_user IS NULL)";
 				}
 			} elseif (isModEnabled('multicompany')) {
-				// If multicompany and internal users with all permissions, check user is in correct entity
+				// If multicompany, and user is an internal user with all permissions, check that object is in correct entity
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";

@@ -138,7 +138,7 @@ class FormTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Form($this->savdb);
+		$localobject=new Form($db);
 		$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1);
 
 		$this->assertEquals(count($result), 5);

@@ -144,7 +144,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new KnowledgeRecord($this->savdb);
+		$localobject = new KnowledgeRecord($db);
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user);
 
@@ -171,7 +171,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new KnowledgeRecord($this->savdb);
+		$localobject=new KnowledgeRecord($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -221,7 +221,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new KnowledgeRecord($this->savdb);
+		$localobject = new KnowledgeRecord($db);
 		print __METHOD__." id=".$id."\n";
 		$result = $localobject->fetch($id);
 		print __METHOD__." result=".$result."\n";
