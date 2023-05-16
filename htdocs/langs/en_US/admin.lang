@@ -2323,8 +2323,8 @@ DefaultOpportunityStatus=Default opportunity status (first status when lead is c
 
 IconAndText=Icon and text
 TextOnly=Text only
-IconOnlyAllTextsOnHover=Icon only - All texts appears under icon on mouse hover menu bar
-IconOnlyTextOnHover=Icon only - Text of icon appears under icon on mouse hover the icon
+IconOnlyAllTextsOnHover=Icon only - All texts appears under icon on mouse over menu bar
+IconOnlyTextOnHover=Icon only - Text of icon appears under icon on mouse over the icon
 IconOnly=Icon only - Text on tooltip only
 INVOICE_ADD_ZATCA_QR_CODE=Show the ZATCA QR code on invoices
 INVOICE_ADD_ZATCA_QR_CODEMore=Some Arabic countries need this QR Code on their invoices

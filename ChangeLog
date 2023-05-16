@@ -177,6 +177,7 @@ NEW: Add option PDF_SHOW_EMAIL_AFTER_USER_CONTACT to show email after specific a
 NEW: Widgets: Implement MAIN_ACTIVATE_FILECACHE on birthday widget
 NEW: Widgets: Add widget "The next upcoming events"
 NEW: Widgets: Add widget of open opportunities
+NEW: Use an ajax component to swith prospection status on thidparty list
 
 For developers or integrators:
 ------------------------------

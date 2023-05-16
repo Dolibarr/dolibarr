@@ -500,7 +500,7 @@ if ($action == "view_ticketlist") {
 				$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
-				// Status
+				// Status ticket
 				if (!empty($arrayfields['t.fk_statut']['checked'])) {
 					print '<td class="liste_titre">';
 					$selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');

@@ -411,3 +411,5 @@ CREATE TABLE llx_c_invoice_subtype (
 
 ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
 
+ALTER TABLE llx_c_propalst ADD COLUMN sortorder smallint DEFAULT 0;
+ALTER TABLE llx_c_stcomm ADD COLUMN sortorder smallint DEFAULT 0;

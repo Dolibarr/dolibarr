@@ -4706,8 +4706,10 @@ span.dashboardlineko {
 	color: #FFFFFF ! important;
 	border-radius: .25em;
 }
-.boxtable {
+.divboxtable {
 	margin-bottom: 20px !important;
+}
+.boxtable {
 	border-bottom-width: 1px;
 }
 .boxtablenotop {
@@ -5061,7 +5063,7 @@ div#card-errors {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* Formulaire confirmation (When Ajax JQuery is used) and Dialog popups           */
 /* ============================================================================== */
 
 .ui-dialog-titlebar {
@@ -5070,7 +5072,7 @@ div#card-errors {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
 
 div#dialogforpopup {
@@ -6636,6 +6638,7 @@ div.multi-select-menu[role="menu"] {
 }
 label.multi-select-menuitem {
 	line-height: 24px;
+	text-align: start;
 }
 
 
