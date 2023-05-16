@@ -332,7 +332,8 @@ class FormTicket
 		if ($public) {
 			$filter = 'public=1';
 		}
-		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
+		$selected = (GETPOST('category_code') ? GETPOST('category_code') : $this->category_code);
+		$this->selectGroupTickets($selected, 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity => Priority
@@ -798,8 +799,10 @@ class FormTicket
 		}
 		$outputlangs->load("ticket");
 
+		$publicgroups = ($filtertype == 'public=1' || $filtertype == '(public:=:1)');
+
 		$ticketstat = new Ticket($this->db);
-		$ticketstat->loadCacheCategoriesTickets();
+		$ticketstat->loadCacheCategoriesTickets($publicgroups ? 1 : -1);	// get list of active ticket groups
 
 		if ($use_multilevel <= 0) {
 			print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
@@ -810,7 +813,7 @@ class FormTicket
 			if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
 				foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
 					// Exclude some record
-					if ($filtertype == 'public=1') {
+					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
 							continue;
 						}
