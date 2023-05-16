@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -512,7 +512,7 @@ class CMailFile
 
 			// Give the message a subject
 			try {
-				$result = $this->message->setSubject($this->subject);
+				$this->message->setSubject($this->subject);
 			} catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
 			}
@@ -552,6 +552,14 @@ class CMailFile
 			if (!empty($this->reply_to)) {
 				try {
 					$this->message->SetReplyTo($this->getArrayAddress($this->reply_to));
+				} catch (Exception $e) {
+					$this->errors[] = $e->getMessage();
+				}
+			}
+
+			if (!empty($this->errors_to)) {
+				try {
+					$headers->addTextHeader('Errors-To', $this->getArrayAddress($this->errors_to));
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 				}
