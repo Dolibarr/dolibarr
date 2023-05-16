@@ -178,16 +178,18 @@ NEW: Widgets: Implement MAIN_ACTIVATE_FILECACHE on birthday widget
 NEW: Widgets: Add widget "The next upcoming events"
 NEW: Widgets: Add widget of open opportunities
 NEW: Use an ajax component to swith prospection status on thidparty list
+NEW: Comment on survey is possible only after vote.
 
 For developers or integrators:
 ------------------------------
 
-NEW: triggers on mailing
+NEW: add triggers on mailing
 NEW: add function for listiong objects from directory
 NEW: add helplist property to describe fields of objects
 NEW: add hook in loadLotStock() in html.formproduct.class.php file, add hook 'llxFooter', Add hook online sign
-NEW: Update lib parsedownto 1.7.4, phpspreadsheet lib to v1.12, ESCPOS v3.0
+NEW: Update lib parsedownto 1.7.4, phpspreadsheet lib to v1.12, ESCPOS v3.0, jquery, Stripe.
 NEW: Support contact in post() document API
+NEW: More APIs (update currency rate, upload of supplier documents, ...)
 NEW: ModuleBuilder: updating in modulbuilder on tab Menu when adding object
 NEW: ModuleBuilder: add/edit permissions
 NEW: ModuleBuilder: better generated documentation

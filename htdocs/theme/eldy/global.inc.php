@@ -838,6 +838,9 @@ textarea.centpercent {
 .wordbreak {
 	word-break: break-all;
 }
+td.wordbreak img {
+	max-width: 100%;
+}
 .bold {
 	font-weight: bold !important;
 }
