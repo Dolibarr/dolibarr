@@ -146,9 +146,10 @@ class box_members_last_subscriptions extends ModeleBoxes
 						'asis' => 1,
 					);
 
+					$daterange = get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end));
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end)),
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($daterange).'"',
+						'text' => $daterange,
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -157,7 +158,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone"',
+						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($obj->datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour', 'tzuserrel'),
 					);
 
