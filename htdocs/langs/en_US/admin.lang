@@ -2086,6 +2086,7 @@ EnterCalculationRuleIfPreviousFieldIsYes=Enter calculation rule if previous fiel
 SeveralLangugeVariatFound=Several language variants found
 RemoveSpecialChars=Remove special characters
 COMPANY_AQUARIUM_CLEAN_REGEX=Regex filter to clean value (COMPANY_AQUARIUM_CLEAN_REGEX)
+COMPANY_AQUARIUM_NO_PREFIX=Do not use prefix, only copy customer or supplier code
 COMPANY_DIGITARIA_CLEAN_REGEX=Regex filter to clean value (COMPANY_DIGITARIA_CLEAN_REGEX)
 COMPANY_DIGITARIA_UNIQUE_CODE=Duplicate not allowed
 RemoveSpecialWords=Clean certain words when generating sub-accounts for customers or suppliers
