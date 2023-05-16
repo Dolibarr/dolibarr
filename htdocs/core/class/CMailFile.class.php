@@ -559,7 +559,7 @@ class CMailFile
 
 			if (!empty($this->errors_to)) {
 				try {
-					$this->message->setReturnPath($this->getArrayAddress($this->errors_to));
+					$headers->addTextHeader('Errors-To', $this->getArrayAddress($this->errors_to));
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 				}
