@@ -161,7 +161,7 @@ print dol_get_fiche_end();
 // Actions buttons
 
 $out = '';
-$permok = $user->rights->agenda->myactions->create;
+$permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
 	$out .= '&projectid='.$object->id;
 }

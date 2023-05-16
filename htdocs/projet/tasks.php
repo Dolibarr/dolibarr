@@ -240,8 +240,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Task';
 	$objectlabel = 'Tasks';
-	$permissiontoread = $user->rights->projet->lire;
-	$permissiontodelete = $user->rights->projet->supprimer;
+	$permissiontoread = $user->hasRight('projet', 'lire');
+	$permissiontodelete = $user->hasRight('projet', 'supprimer');
 	$uploaddir = $conf->project->dir_output.'/tasks';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -555,7 +555,7 @@ if ($id > 0 || !empty($ref)) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	$arrayofmassactions = array();
-	if ($user->rights->projet->creer) {
+	if ($user->hasRight('projet', 'creer')) {
 		$arrayofmassactions['preclonetasks'] = img_picto('', 'rightarrow', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
@@ -853,7 +853,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Link to create task
 	$linktocreatetaskParam = array();
 	$linktocreatetaskUserRight = false;
-	if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
+	if ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'creer')) {
 		if ($object->public || $userWrite > 0) {
 			$linktocreatetaskUserRight = true;
 		} else {
