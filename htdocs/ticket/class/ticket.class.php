@@ -2271,14 +2271,9 @@ class Ticket extends CommonObject
 	 * Used for files linked into messages.
 	 * Files may be renamed during copy to avoid overwriting existing files.
 	 *
-<<<<<<< HEAD
-	 * @param	string	$forcetrackid	Force trackid
-	 * @param   int     $public_area    1=Is the public area
-	 * @return	array					Array with final path/name/mime of files.
-=======
 	 * @param	string		$forcetrackid	Force trackid used for $keytoavoidconflict into get_attached_files()
+	 * @param   int			$public_area    1=Is the public area
 	 * @return	array|int					Array with final path/name/mime of files.
->>>>>>> branch '17.0' of git@github.com:Dolibarr/dolibarr.git
 	 */
 	public function copyFilesForTicket($forcetrackid = null, $public_area = 0)
 	{
