@@ -1408,7 +1408,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike)."'";
+			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
