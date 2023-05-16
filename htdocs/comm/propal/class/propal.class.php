@@ -1264,10 +1264,10 @@ class Propal extends CommonObject
 							dol_print_error($this->db);
 							break;
 						}
-						
-                        // Set the id on created row
-                        $line->id = $result;
-						
+
+						// Set the id on created row
+						$line->id = $result;
+
 						// Defined the new fk_parent_line
 						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
@@ -1401,9 +1401,8 @@ class Propal extends CommonObject
 				}
 
 				foreach ($object->lines as $line) {
-                    
-                    $line->id = 0;
-                    
+					$line->id = 0;
+
 					if ($line->fk_product > 0) {
 						$prod = new Product($this->db);
 						$res = $prod->fetch($line->fk_product);
