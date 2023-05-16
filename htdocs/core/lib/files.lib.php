@@ -3353,6 +3353,17 @@ function dol_readcachefile($directory, $filename)
 	return $object;
 }
 
+/**
+ * Return the relative dirname (relative to DOL_DATA_ROOT) of a full path string.
+ *
+ * @param 	string $pathfile		Full path of a file
+ * @return 	string					Path of file relative to DOL_DATA_ROOT
+ */
+function dirbasename($pathfile)
+{
+	return preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'\//', '', $pathfile);
+}
+
 
 /**
  * Function to get list of updated or modified files.

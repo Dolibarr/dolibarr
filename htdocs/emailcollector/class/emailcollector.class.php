@@ -1434,6 +1434,7 @@ class EmailCollector extends CommonObject
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
+						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
 						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}

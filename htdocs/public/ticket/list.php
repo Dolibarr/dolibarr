@@ -234,6 +234,8 @@ if ($action == "view_ticketlist") {
 			$param .= '&entity='.((int) $entity);
 		}
 
+		$param .= '&token='.newToken();
+
 		// Definition of fields for list
 		$arrayfields = array(
 			't.datec' => array('label' => $langs->trans("Date"), 'checked' => 1),
@@ -419,6 +421,7 @@ if ($action == "view_ticketlist") {
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
