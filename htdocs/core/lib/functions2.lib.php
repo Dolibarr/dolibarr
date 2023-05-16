@@ -1280,7 +1280,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."%'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
@@ -1346,7 +1346,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$ref = '';
 		$sql = "SELECT ".$field." as ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
