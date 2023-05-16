@@ -167,7 +167,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedCustomers"),
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedMembers").'</span>',
 					);
 				}
 

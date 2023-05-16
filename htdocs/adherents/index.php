@@ -27,7 +27,6 @@
  *       \brief      Home page of membership module
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -92,11 +91,11 @@ print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist
 $boxgraph = '';
 if ($conf->use_javascript_ajax) {
 	$year = date('Y');
-	$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
+	$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
 	$boxgraph .='<div class="div-table-responsive-no-min">';
 	$boxgraph .='<table class="noborder nohover centpercent">';
-	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' ('.$year-$numberyears.' - '.$year.')</th></tr>';
+	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").($numberyears ? ' ('.$year-$numberyears.' - '.$year.')' : '').'</th></tr>';
 	$boxgraph .='<tr><td class="center" colspan="2">';
 
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';

@@ -79,7 +79,7 @@ class box_members_by_type extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->loadLangs(array("boxes", "members"));
 
 		$this->max = $max;
@@ -89,9 +89,9 @@ class box_members_by_type extends ModeleBoxes
 		$staticmember = new Adherent($this->db);
 
 		$year = date('Y');
-		$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
+		$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").' ('.$year-$numberyears.' - '.$year.')');
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.$year-$numberyears.' - '.$year.')' : ''));
 
 		if ($user->rights->adherent->lire) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
