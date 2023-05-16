@@ -1354,6 +1354,7 @@ class Task extends CommonObjectLine
 		$sql .= " s.nom as thirdparty_name,";
 		$sql .= " s.email as thirdparty_email,";
 		$sql .= " ptt.rowid,";
+		$sql .= " ptt.ref_ext,";
 		$sql .= " ptt.fk_element as fk_task,";
 		$sql .= " ptt.element_date as task_date,";
 		$sql .= " ptt.element_datehour as task_datehour,";
@@ -1404,6 +1405,7 @@ class Task extends CommonObjectLine
 				$newobj->task_label = $obj->task_label;
 
 				$newobj->timespent_line_id = $obj->rowid;
+				$newobj->timespent_line_ref_ext = $obj->ref_ext;
 				$newobj->timespent_line_date = $this->db->jdate($obj->task_date);
 				$newobj->timespent_line_datehour	= $this->db->jdate($obj->task_datehour);
 				$newobj->timespent_line_withhour = $obj->task_date_withhour;
