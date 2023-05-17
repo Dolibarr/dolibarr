@@ -350,6 +350,7 @@ WarningThemeForcedTo=Attention, le choix du thème a été forcé à <b> %s </b>
 WarningPagesWillBeDeleted=Attention, cela supprimera également toutes les pages/conteneurs existants du site. Vous devriez exporter votre site Web avant, afin d'avoir une sauvegarde pour le réimporter plus tard.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validation automatique est désactivée lorsque l'option de diminution du stock est définie sur "Validation de la facture".
 WarningModuleNeedRefrech = Le module <b>%s</b> a été désactivé. N'oubliez pas de le réactiver
+WarningPermissionAlreadyExist=Permissions déja éxistante pour cet objet
 
 # Validate
 RequireValidValue = Valeur non valide
