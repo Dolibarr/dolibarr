@@ -363,6 +363,7 @@ if ($action == 'presend') {
 	}
 
 	$formmail->withto = $liste;
+	$formmail->withtoselected = $withtoselected;
 	$formmail->withtofree = (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1');
 	$formmail->withtocc = $liste;
 	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');

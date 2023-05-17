@@ -2249,7 +2249,9 @@ if ($action == 'create') {
 		$defaulttopic = 'SendContractRef';
 		$diroutput = $conf->contrat->multidir_output[$object->entity];
 		$trackid = 'con'.$object->id;
-
+		if (getDolGlobalInt('MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER')) {
+			$withtoselected = $object->getIdContact('external', 'CUSTOMER');
+		}
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }

@@ -2946,7 +2946,9 @@ if ($action == 'create') {
 		$diroutput = $conf->fournisseur->commande->dir_output;
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
 		$trackid = 'sord'.$object->id;
-
+		if (getDolGlobalInt('MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER')) {
+			$withtoselected = $object->getIdContact('external', 'CUSTOMER');
+		}
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }

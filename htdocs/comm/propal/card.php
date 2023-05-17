@@ -3067,7 +3067,9 @@ if ($action == 'create') {
 	$defaulttopic = 'SendPropalRef';
 	$diroutput = $conf->propal->multidir_output[$object->entity];
 	$trackid = 'pro'.$object->id;
-
+	if (getDolGlobalInt('MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER')) {
+		$withtoselected = $object->getIdContact('external', 'CUSTOMER');
+	}
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
