@@ -276,8 +276,8 @@ class Paiement extends CommonObject
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
-        	$currencyofpayment = array_key_exists($key, $this->multicurrency_code) ? $this->multicurrency_code[$key] : null;
-    		}
+				$currencyofpayment = array_key_exists($key, $this->multicurrency_code) ? $this->multicurrency_code[$key] : null;
+			}
 			if (array_key_exists($key, $this->multicurrency_code) && $currencyofpayment != $this->multicurrency_code[$key]) {
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
