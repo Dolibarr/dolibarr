@@ -982,7 +982,7 @@ class Expedition extends CommonObject
 					$linebatch->qty = $value['q'];
 					$tab[] = $linebatch;
 
-					if (!empty(getDolUserString("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", '0'))) {
+					if (getDolGlobalString("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", '0')) {
 						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 						$prod_batch = new Productbatch($this->db);
 						$prod_batch->fetch($value['id_batch']);
