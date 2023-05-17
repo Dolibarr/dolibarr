@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $hookmanager->initHooks(array('takeposinvoice'));
 
@@ -1143,13 +1144,26 @@ $( document ).ready(function() {
 	$s = $langs->trans("Customer");
 	if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
 		$s = $soc->name;
+		if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) {
+			$contactids = $invoice->getIdContact('external', 'BILLING');
+			$contactid = $contactids[0];
+			if ($contactid > 0) {
+				$contact = new Contact($db);
+				$contact->fetch($contactid);
+				$s .= " - " . $contact->getFullName($langs);
+			}
+		}
 	}
 	?>
 
 	$("#customerandsales").html('');
 	$("#shoppingcart").html('');
 
-	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php if ( ! getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) { ?>
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php } else { ?>
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php } ?>
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
