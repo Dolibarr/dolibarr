@@ -563,12 +563,13 @@ if (empty($reshook)) {
 			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);    // Note that $action and $line may have been modified by some hooks
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+			if (empty($reshook)) {
+				if (!empty($hookmanager->resArray)) {
+					$line = $hookmanager->resArray;
+				}
 
-			if (!empty($hookmanager->resArray)) {
-				$line = $hookmanager->resArray;
+				$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
 			}
-
-			$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
 
 			if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 				$CUSTOMER_DISPLAY_line1 = $prod->label;
