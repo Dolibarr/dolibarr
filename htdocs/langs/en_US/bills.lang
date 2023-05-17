@@ -623,6 +623,7 @@ SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
 SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
+SearchValidatedInvoicesWithDate=Search unpaid invoices with a validation date = %s
 NoPaymentAvailable=No payment available for %s
 PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to paid
 SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for validated and unpaid invoices
