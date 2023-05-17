@@ -144,7 +144,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
 $sql = "SELECT c.id, c.libelle as type_label,";
-$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
+$sql .= " cs.rowid csid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
 $sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
 $sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.login, u.admin, u.statut,";
@@ -268,7 +268,7 @@ $totalpaid = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
-	$payment_sc_static->id = $obj->pid;
+	$payment_sc_static->id = $obj->csid;
 	$payment_sc_static->ref = $obj->pid;
 	$payment_sc_static->datep = $db->jdate($obj->datep);
 
