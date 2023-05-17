@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlgic.fr>
+ * Copyright (C) 2021-2023	Frédéric France			<frederic.france@netlgic.fr>
  * Copyright (C) 2021-2023  Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,7 +95,7 @@ if ($conf->use_javascript_ajax) {
 
 	$boxgraph .='<div class="div-table-responsive-no-min">';
 	$boxgraph .='<table class="noborder nohover centpercent">';
-	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").($numberyears ? ' ('.$year-$numberyears.' - '.$year.')' : '').'</th></tr>';
+	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").($numberyears ? ' ('.($year-$numberyears).' - '.$year.')' : '').'</th></tr>';
 	$boxgraph .='<tr><td class="center" colspan="2">';
 
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
