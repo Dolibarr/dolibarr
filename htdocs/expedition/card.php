@@ -347,7 +347,6 @@ if (empty($reshook)) {
 
 		//var_dump($batch_line[2]);
 		if (($totalqty > 0 || !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) && !$error) {		// There is at least one thing to ship and no error
-			//var_dump($_POST);exit;
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 				if (!isset($batch_line[$i])) {

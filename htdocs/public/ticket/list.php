@@ -195,7 +195,6 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
 if ($action == "view_ticketlist") {
-	print '<div class="div-table-responsive">';
 	print '<div class="ticketpublicarealist">';
 
 	print '<br>';
@@ -235,6 +234,8 @@ if ($action == "view_ticketlist") {
 		if (!empty($entity) && isModEnabled('multicompany')) {
 			$param .= '&entity='.((int) $entity);
 		}
+
+		$param .= '&token='.newToken();
 
 		// Definition of fields for list
 		$arrayfields = array(
@@ -417,6 +418,7 @@ if ($action == "view_ticketlist") {
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -725,7 +727,6 @@ if ($action == "view_ticketlist") {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
 
-	print '</div>';
 	print '</div>';
 } else {
 	print '<div class="ticketpublicarea">';

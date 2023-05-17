@@ -62,7 +62,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	position: relative;
 }
 
-.timeline > li.timeline-code-ticket_msg_private  > .timeline-item {
+.timeline > li.timeline-code-ticket_msg_private  > .timeline-item,
+.timeline > li.timeline-code-ticket_msg_private_sentbymail > .timeline-item {
 		background: #fffbe5;
 		border-color: #d0cfc0;
 }

@@ -900,6 +900,11 @@ class Cronjob extends CommonObject
 		// Clear fields
 		$object->status = self::STATUS_DISABLED;
 		$object->label = $langs->trans("CopyOf").' '.$langs->trans($object->label);
+		$object->datelastrun = null;
+		$object->lastresult = '';
+		$object->datelastresult = null;
+		$object->lastoutput = '';
+		$object->nbrun = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -908,6 +913,7 @@ class Cronjob extends CommonObject
 		// Other options
 		if ($result < 0) {
 			$this->error = $object->error;
+			$this->errors = $object->errors;
 			$error++;
 		}
 
