@@ -564,7 +564,7 @@ if (empty($reshook)) {
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
-			if (!empty($reshook)) {
+			if (!empty($hookmanager->resArray)) {
 				$line = $hookmanager->resArray;
 			}
 
