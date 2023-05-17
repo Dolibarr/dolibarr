@@ -87,7 +87,8 @@ class RepositoryTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return SecurityTest
+	 * @param 	string	$name		Name
+	 * @return RepositoryTest
 	 */
 	public function __construct($name = '')
 	{

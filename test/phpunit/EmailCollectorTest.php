@@ -58,6 +58,7 @@ class EmailCollectorTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return ExpenseReportTest
 	 */
 	public function __construct($name = '')

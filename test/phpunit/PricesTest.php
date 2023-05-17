@@ -62,7 +62,8 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CoreTest
+	 * @param 	string	$name		Name
+	 * @return PriceTest
 	 */
 	public function __construct($name = '')
 	{

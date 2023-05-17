@@ -60,7 +60,8 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return DateLibTest
+	 * @param 	string	$name		Name
+	 * @return WebservicesOrdersTest
 	 */
 	public function __construct($name = '')
 	{

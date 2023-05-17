@@ -88,6 +88,7 @@ class ScriptsTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return ScriptsTest
 	 */
 	public function __construct($name = '')

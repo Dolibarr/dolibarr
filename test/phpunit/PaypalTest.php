@@ -57,7 +57,8 @@ class PaypalTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return ProductTest
+	 * @param 	string	$name		Name
+	 * @return PaypalTest
 	 */
 	public function __construct($name = '')
 	{

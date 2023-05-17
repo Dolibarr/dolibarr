@@ -57,7 +57,8 @@ class ODFTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return BOMTest
+	 * @param 	string	$name		Name
+	 * @return ODFTest
 	 */
 	public function __construct($name = '')
 	{

@@ -59,6 +59,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return KnowledgeRecordTest
 	 */
 	public function __construct($name = '')

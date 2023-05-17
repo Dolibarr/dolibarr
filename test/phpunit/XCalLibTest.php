@@ -56,7 +56,8 @@ class XCalLibTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return FilesLibTest
+	 * @param 	string	$name		Name
+	 * @return XCalLibTest
 	 */
 	public function __construct($name = '')
 	{

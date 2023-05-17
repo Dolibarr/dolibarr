@@ -56,6 +56,7 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return EntrepotTest
 	 */
 	public function __construct($name = '')

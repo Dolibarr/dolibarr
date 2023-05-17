@@ -58,7 +58,8 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return ContactTest
+	 * @param 	string	$name		Name
+	 * @return PgsqlTest
 	 */
 	public function __construct($name = '')
 	{

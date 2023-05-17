@@ -57,7 +57,8 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return ContratTest
+	 * @param 	string	$name		Name
+	 * @return TicketTest
 	 */
 	public function __construct($name = '')
 	{

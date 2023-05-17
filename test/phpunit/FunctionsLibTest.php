@@ -87,6 +87,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return CoreTest
 	 */
 	public function __construct($name = '')

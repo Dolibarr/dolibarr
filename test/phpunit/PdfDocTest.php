@@ -59,6 +59,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return PdfDocTest
 	 */
 	public function __construct($name = '')

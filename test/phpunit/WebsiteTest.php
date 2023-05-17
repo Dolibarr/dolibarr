@@ -89,7 +89,8 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return SecurityTest
+	 * @param 	string	$name		Name
+	 * @return WebsiteTest
 	 */
 	public function __construct($name = '')
 	{

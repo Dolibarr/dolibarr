@@ -56,6 +56,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return ContratTest
 	 */
 	public function __construct($name = '')
