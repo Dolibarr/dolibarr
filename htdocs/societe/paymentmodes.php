@@ -1763,6 +1763,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		dol_print_error($db);
 	}
 
+	//Hook to display your print listing (list of CB card from Stancer Plugin for example)
+	$parameters = array('arrayfields'=>array(), 'param'=>'', 'sortfield'=>'', 'sortorder'=>'', 'linetype'=>'');
+	$reshook = $hookmanager->executeHooks('printNewTable', $parameters, $object);
+	print $hookmanager->resPrint;
 
 	if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC)) {
 		print '<br>';

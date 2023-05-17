@@ -200,7 +200,8 @@ TicketAssigned=Ticket is now assigned
 TicketChangeType=Change type
 TicketChangeCategory=Change analytic code
 TicketChangeSeverity=Change severity
-TicketAddMessage=Add private message
+TicketAddMessage=Add or send a message
+TicketAddPrivateMessage=Add a private message
 MessageSuccessfullyAdded=Ticket added
 TicketMessageSuccessfullyAdded=Message successfully added
 TicketMessagesList=Message list
@@ -274,6 +275,7 @@ TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening w
 TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
+TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
 
 #
 # Logs
