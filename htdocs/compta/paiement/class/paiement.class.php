@@ -263,7 +263,7 @@ class Paiement extends CommonObject
 
 		$currencyofpayment = '';
 
-		foreach ($amounts as $key => $value) {    // How payment is dispatch
+		foreach ($amounts as $key => $value) { // How payment is dispatch
 			if (empty($value)) {
 				continue;
 			}
@@ -276,14 +276,8 @@ class Paiement extends CommonObject
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
-				if (array_key_exists($key, $this->multicurrency_code)) {
-					$currencyofpayment = $this->multicurrency_code[$key];
-				} else {
-					// Handle the case where the key does not exist in the array
-					$this->error = 'KeyDoesNotExistInArray';
-					return -1;
-				}
-			}
+        	$currencyofpayment = array_key_exists($key, $this->multicurrency_code) ? $this->multicurrency_code[$key] : null;
+    		}
 			if (array_key_exists($key, $this->multicurrency_code) && $currencyofpayment != $this->multicurrency_code[$key]) {
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
