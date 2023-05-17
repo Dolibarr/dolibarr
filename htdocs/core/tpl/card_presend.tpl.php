@@ -24,7 +24,7 @@
  *
  * $trackid must be defined
  * $modelmail
- * $defaulttopic
+ * $defaulttopicFromEmail
  * $diroutput
  * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  */
@@ -382,6 +382,12 @@ if ($action == 'presend') {
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$formmail->param['fileinit'] = array($file);
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('FromEmail', $parameters, $formmail);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 
 	// Show form
 	print $formmail->get_form();
