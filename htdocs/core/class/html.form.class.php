@@ -7728,7 +7728,7 @@ class Form
 		$out = '';
 		$outarray = array();
 
-		$selectFields = " p.rowid, p.ref, p.firstname, p.lastname";
+		$selectFields = " p.rowid, p.ref, p.firstname, p.lastname, p.fk_adherent_type";
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
