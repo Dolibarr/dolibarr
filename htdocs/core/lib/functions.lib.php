@@ -1623,6 +1623,7 @@ function dol_strtolower($string, $encoding = "UTF-8")
  * @param 	string		$string		        String to encode
  * @param   string      $encoding           Character set encoding
  * @return 	string							String converted
+ * @see dol_ucfirst(), dol_ucwords()
  */
 function dol_strtoupper($string, $encoding = "UTF-8")
 {
@@ -1639,6 +1640,7 @@ function dol_strtoupper($string, $encoding = "UTF-8")
  * @param   string      $string         String to encode
  * @param   string      $encoding       Character set encodign
  * @return  string                      String converted
+ * @see dol_strtoupper(), dol_ucwords()
  */
 function dol_ucfirst($string, $encoding = "UTF-8")
 {
@@ -1650,11 +1652,12 @@ function dol_ucfirst($string, $encoding = "UTF-8")
 }
 
 /**
- * Convert first character of all the words of a string to upper. Never use ucfirst because it does not works with UTF8 strings.
+ * Convert first character of all the words of a string to upper.
  *
  * @param   string      $string         String to encode
  * @param   string      $encoding       Character set encodign
  * @return  string                      String converted
+ * @see dol_strtoupper(), dol_ucfirst()
  */
 function dol_ucwords($string, $encoding = "UTF-8")
 {
