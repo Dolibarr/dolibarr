@@ -416,3 +416,5 @@ ALTER TABLE llx_c_stcomm ADD COLUMN sortorder smallint DEFAULT 0;
 
 ALTER TABLE llx_element_time ADD COLUMN ref_ext varchar(32);
 
+ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);
+
