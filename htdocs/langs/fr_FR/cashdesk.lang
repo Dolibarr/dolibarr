@@ -145,3 +145,7 @@ ShowProductReference=Afficher la référence des produits
 UsePriceHT=Utiliser le prix HT et non le prix TTC
 TerminalName=Terminal %s
 TerminalNameDesc=Nom du terminal
+PaymentNotComplete=Règlement incomplet
+PaymentList=Paiements
+AlreadyPayed=Déjà payé
+CurrentlyReceived=Règlement en cours

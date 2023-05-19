@@ -532,7 +532,30 @@ function Reduction() {
 function CloseBill() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
-	$.colorbox({href:"pay.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+	<?php
+	if ($conf->global->TAKEPOS_USE_NEW_PAYMENT_SCREEN) {
+		$payurl = "pay2.php";
+	} else {
+		$payurl = "pay.php";
+	}
+	?>
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to enter payment on invoiceid="+invoiceid);
+	<?php  if ($conf->global->TAKEPOS_USE_NEW_PAYMENT_SCREEN) { ?>
+		var originalClose = $.colorbox.close;
+		$.colorbox.close = function() {
+			if ( ! $.colorbox.paymentok) {
+				var response;
+				response = confirm("<?php echo $langs->trans('ConfirmClosePayment'); ?>");
+				if(!response){
+				  return; // Do nothing.
+				}
+			}
+			originalClose();
+			$.colorbox.close = originalClose;
+		};
+	<?php } ?>
+	$.colorbox({href:"<?php echo $payurl; ?>?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:"" });
 }
 
 function Split() {

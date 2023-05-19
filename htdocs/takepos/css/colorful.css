@@ -15,6 +15,10 @@ button.calcbutton2.poscolordelete {
 	color: #FFFFFF !important;
 }
 
+button.calcbutton2.poscolorvalid {
+    background-color: green !important;
+}
+
 button.actionbutton {
     background: #FFB100 !important;
 }
