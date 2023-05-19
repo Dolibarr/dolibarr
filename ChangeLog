@@ -179,6 +179,7 @@ NEW: Widgets: Add widget "The next upcoming events"
 NEW: Widgets: Add widget of open opportunities
 NEW: Use an ajax component to swith prospection status on thidparty list
 NEW: Comment on survey is possible only after vote.
+NEW: Add option MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER utomatic selection of external assigned contact of an object as recipients of new emails
 
 For developers or integrators:
 ------------------------------
