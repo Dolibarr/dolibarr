@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2023  Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,6 +151,8 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 			jQuery('#reduction_type_percent').html(htmlReductionPercent);
 			jQuery('#reduction_type_amount').html(htmlReductionAmount);
 		}
+
+		$("#reduction_total").focus();
 	}
 
 	/**
@@ -172,6 +175,8 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 	{
 		console.log('ValidateReduction');
 
+		reductionTotal = $("#reduction_total").val();
+
 		if (reductionTotal.length <= 0) {
 			console.error('Error no reduction');
 			return;
@@ -180,7 +185,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 		var reductionNumber = parseFloat(reductionTotal);
 		if (isNaN(reductionNumber)) {
 			console.error('Error not a valid number :', reductionNumber);
-			return;
+			return false;
 		}
 
 		if (reductionType === 'percent') {
@@ -197,14 +202,33 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 			});
 		} else {
 			console.error('Error bad reduction type :', reductionType);
+			return false
 		}
+
+		return true;
+	}
+
+	$(document).ready(function() {
+		// focus on manual input
+		$("#reduction_total").focus();
+	});
+
+	// manual input validation
+	function formvalid(type) {
+		reductionType = type;
+		if (reductionType != "") {
+			return ValidateReduction();
+		}
+		return false;
 	}
 </script>
 
 <div style="position:absolute; top:2%; left:5%; width:91%;">
 <center>
 <?php
-	print '<input type="text" class="takepospay" id="reduction_total" name="reduction_total" style="width: 50%;" placeholder="'.$langs->trans('Reduction').'">';
+	print '<input type="text" class="takepospay" id="reduction_total" name="reduction_total" size="10" placeholder="'.$langs->trans('Reduction').'">';
+	print '<input type="button" class="butAction" value="'.$langs->trans('AmountTTC').'" onclick="return formvalid(\'amount\');">';
+	print '<input type="button" class="butAction" value="'.$langs->trans('Percentage').'" onclick="return formvalid(\'percent\');">';
 ?>
 </center>
 </div>
