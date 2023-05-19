@@ -204,6 +204,9 @@ class modTakePos extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'editorderedlines';
 
+		// add permissions on terminals (from 50191 to 50199)
+		require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
+		addTerminalPermissions($this);
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
