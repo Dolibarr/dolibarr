@@ -2,10 +2,10 @@
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
+ * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseize.fr>
+ * Copyright (C) 2022       Progiseize              <a.bisotti@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,14 @@
  */
 
 /**
- * \file		htdocs/accountancy/bookkeeping/list.php
+ * \file		htdocs/accountancy/bookkeeping/export.php
  * \ingroup		Accountancy (Double entries)
- * \brief 		List operation of book keeping
+ * \brief 		Export operation of book keeping
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
@@ -95,6 +96,14 @@ $search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_star
 $search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
+//var_dump($search_date_start);exit;
+if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
+	$action = 'delbookkeepingyear';
+}
+if (GETPOST("button_export_file_x") || GETPOST("button_export_file.x") || GETPOST("button_export_file")) {
+	$action = 'export_file';
+}
+
 $search_account_category = GETPOST('search_account_category', 'int');
 
 $search_accountancy_code = GETPOST("search_accountancy_code", 'alpha');
@@ -145,12 +154,12 @@ if ($sortfield == "") {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new BookKeeping($db);
-$hookmanager->initHooks(array('bookkeepinglist'));
+$hookmanager->initHooks(array('bookkeepingexport'));
 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->rights->accounting->mouvements->export) {
+if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->rights->accounting->mouvements->export) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$query .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
@@ -187,13 +196,13 @@ $arrayfields = array(
 	't.numero_compte'=>array('label'=>$langs->trans("AccountAccountingShort"), 'checked'=>1),
 	't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
 	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
-	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
+	't.debit'=>array('label'=>$langs->trans("AccountingDebit"), 'checked'=>1),
+	't.credit'=>array('label'=>$langs->trans("AccountingCredit"), 'checked'=>1),
 	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
-	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>0),
-	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>0, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>1, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
@@ -201,15 +210,22 @@ if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 	unset($arrayfields['t.lettering_code']);
 }
 
+$accountancyexport = new AccountancyExport($db);
+$listofformat = $accountancyexport->getType();
+$formatexportset = getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV');
+if (empty($listofformat[$formatexportset])) {
+	$formatexportset = 1;
+}
+
 $error = 0;
 
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->rights->accounting->mouvements->lire) {
 	accessforbidden();
 }
 
@@ -223,7 +239,7 @@ $param = '';
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'preunletteringauto' && $massaction != 'preunletteringmanual' && $massaction != 'predeletebookkeepingwriting') {
+if (!GETPOST('confirmmassaction', 'alpha')) {
 	$massaction = '';
 }
 
@@ -441,6 +457,23 @@ if (empty($reshook)) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
 
+	if ($action == 'setreexport') {
+		$setreexport = GETPOST('value', 'int');
+		if (!dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) {
+			$error++;
+		}
+
+		if (!$error) {
+			if (empty($conf->global->ACCOUNTING_REEXPORT)) {
+				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'warnings');
+			}
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
+
 	// Mass actions
 	$objectclass = 'Bookkeeping';
 	$objectlabel = 'Bookkeeping';
@@ -449,125 +482,6 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-
-	if (!$error && $action == 'deletebookkeepingwritingauto' && $confirm == "yes" && $user->rights->accounting->mouvements->supprimer) {
-		$db->begin();
-
-		if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
-			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
-			if ($nb_lettering < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
-			}
-		}
-
-		$nbok = 0;
-		if (!$error) {
-			foreach ($toselect as $toselectid) {
-				$result = $object->fetch($toselectid);
-				if ($result > 0 && (!isset($object->date_validation) || $object->date_validation === '')) {
-					$result = $object->deleteMvtNum($object->piece_num);
-					if ($result > 0) {
-						$nbok++;
-					} else {
-						setEventMessages($object->error, $object->errors, 'errors');
-						$error++;
-						break;
-					}
-				} elseif ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-					break;
-				}
-			}
-		}
-
-		if (!$error) {
-			$db->commit();
-
-			// Message for elements well deleted
-			if ($nbok > 1) {
-				setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-			} elseif ($nbok > 0) {
-				setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
-			} else {
-				setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
-			}
-
-			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
-			exit;
-		} else {
-			$db->rollback();
-		}
-	}
-
-	// others mass actions
-	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting->mouvements->creer) {
-		if ($massaction == 'letteringauto') {
-			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
-			if ($nb_lettering < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
-				$nb_lettering = max(0, abs($nb_lettering) - 2);
-			} elseif ($nb_lettering == 0) {
-				$nb_lettering = 0;
-				setEventMessages($langs->trans('AccountancyNoLetteringModified'), array(), 'mesgs');
-			}
-			if ($nb_lettering == 1) {
-				setEventMessages($langs->trans('AccountancyOneLetteringModifiedSuccessfully'), array(), 'mesgs');
-			} elseif ($nb_lettering > 1) {
-				setEventMessages($langs->trans('AccountancyLetteringModifiedSuccessfully', $nb_lettering), array(), 'mesgs');
-			}
-
-			if (!$error) {
-				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
-			}
-		} elseif ($massaction == 'letteringmanual') {
-			$lettering = new Lettering($db);
-			$result = $lettering->updateLettering($toselect);
-			if ($result < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-			} else {
-				setEventMessages($langs->trans('AccountancyOneLetteringModifiedSuccessfully'), array(), 'mesgs');
-				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
-			}
-		} elseif ($action == 'unletteringauto' && $confirm == "yes") {
-			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
-			if ($nb_lettering < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
-				$nb_lettering = max(0, abs($nb_lettering) - 2);
-			} elseif ($nb_lettering == 0) {
-				$nb_lettering = 0;
-				setEventMessages($langs->trans('AccountancyNoUnletteringModified'), array(), 'mesgs');
-			}
-			if ($nb_lettering == 1) {
-				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
-			} elseif ($nb_lettering > 1) {
-				setEventMessages($langs->trans('AccountancyUnletteringModifiedSuccessfully', $nb_lettering), array(), 'mesgs');
-			}
-
-			if (!$error) {
-				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
-			}
-		} elseif ($action == 'unletteringmanual' && $confirm == "yes") {
-			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->deleteLettering($toselect);
-			if ($result < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-			} else {
-				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
-				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
-			}
-		}
-	}
 }
 
 // Build and execute select (used by page and export action)
@@ -648,11 +562,102 @@ if (count($filter) > 0) {
 	}
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('accountancy').')';
-
+if (empty($conf->global->ACCOUNTING_REEXPORT)) {	// Reexport not enabled (default mode)
+	$sql .= " AND t.date_export IS NULL";
+}
 if (count($sqlwhere) > 0) {
 	$sql .= ' AND '.implode(' AND ', $sqlwhere);
 }
 //print $sql;
+
+
+// Export into a file with format defined into setup (FEC, CSV, ...)
+// Must be after definition of $sql
+if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). fetchAll() currently consumes too much memory on large export.
+	// Replace this with the query($sql) and loop on each line to export them.
+	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
+
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	} else {
+		// Export files then exit
+		$accountancyexport = new AccountancyExport($db);
+
+		$formatexport = GETPOST('formatexport', 'int');
+		$notexportlettering = GETPOST('notexportlettering', 'alpha');
+
+		if (!empty($notexportlettering)) {
+			if (is_array($object->lines)) {
+				foreach ($object->lines as $k => $movement) {
+					unset($object->lines[$k]->lettering_code);
+					unset($object->lines[$k]->date_lettering);
+				}
+			}
+		}
+
+		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
+		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
+		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
+
+		// Output data on screen or download
+		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
+
+		$error = 0;
+		if ($result < 0) {
+			$error++;
+		} else {
+			if (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
+				if (is_array($object->lines)) {
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+
+					// Specify as export : update field date_export or date_validated
+					$db->begin();
+
+					// TODO Merge update for each line into one global using rowid IN (list of movement ids)
+					foreach ($object->lines as $movement) {
+						$now = dol_now();
+
+						$setfields = '';
+						if (!empty($notifiedexportdate) && empty($movement->date_export)) {
+							$setfields .= ($setfields ? "," : "")." date_export = '".$db->idate($now)."'";
+						}
+						if (!empty($notifiedvalidationdate) && empty($movement->date_validation)) {
+							$setfields .= ($setfields ? "," : "")." date_validated = '".$db->idate($now)."'";
+						}
+
+						if ($setfields) {
+							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
+							$sql .= " SET ".$setfields;
+							$sql .= " WHERE rowid = ".((int) $movement->id);
+
+							$result = $db->query($sql);
+							if (!$result) {
+								$error++;
+								break;
+							}
+						}
+					}
+
+					if (!$error) {
+						$db->commit();
+					} else {
+						$error++;
+						$accountancyexport->errors[] = $langs->trans('NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated');
+						$db->rollback();
+					}
+				}
+			}
+		}
+
+		if ($error) {
+			setEventMessages('', $accountancyexport->errors, 'errors');
+			header('Location: '.$_SERVER['PHP_SELF']);
+		}
+		exit(); // download or show errors
+	}
+}
+
 
 /*
  * View
@@ -661,7 +666,7 @@ if (count($sqlwhere) > 0) {
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
-$title_page = $langs->trans("Operations").' - '.$langs->trans("Journals");
+$title_page = $langs->trans("Operations").' - '.$langs->trans("ExportAccountancy");
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -707,6 +712,70 @@ llxHeader('', $title_page);
 
 $formconfirm = '';
 
+if ($action == 'export_file') {
+	$form_question = array();
+
+	$form_question['formatexport'] = array(
+		'name' => 'formatexport',
+		'type' => 'select',
+		'label' => $langs->trans('Modelcsv'),		// TODO  Use Selectmodelcsv and show a select combo
+		'values' => $listofformat,
+		'default' => $formatexportset,
+		'morecss' => 'minwidth200 maxwidth200'
+	);
+
+	$form_question['separator0'] = array('name'=>'separator0', 'type'=>'separator');
+
+	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
+		// If 1, we check by default.
+		$checked = !empty($conf->global->ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING) ? 'true' : 'false';
+		$form_question['notexportlettering'] = array(
+			'name' => 'notexportlettering',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotExportLettering'),
+			'value' => $checked,
+		);
+
+		$form_question['separator1'] = array('name'=>'separator1', 'type'=>'separator');
+	}
+
+	// If 1 or not set, we check by default.
+	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE));
+	$form_question['notifiedexportdate'] = array(
+		'name' => 'notifiedexportdate',
+		'type' => 'checkbox',
+		'label' => $langs->trans('NotifiedExportDate'),
+		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
+	);
+
+	$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
+
+	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
+		// If 0 or not set, we NOT check by default.
+		$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE));
+		$form_question['notifiedvalidationdate'] = array(
+			'name' => 'notifiedvalidationdate',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
+			'value' => $checked,
+		);
+
+		$form_question['separator3'] = array('name'=>'separator3', 'type'=>'separator');
+	}
+
+	// add documents in an archive for accountancy export (Quadratus)
+	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS) {
+		$form_question['notifiedexportfull'] = array(
+			'name' => 'notifiedexportfull',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotifiedExportFull'),
+			'value' => 'false',
+		);
+	}
+
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 420, 600);
+}
+
 // Print form confirm
 print $formconfirm;
 
@@ -715,23 +784,11 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.((int) $limit);
+	$param .= '&limit='.urlencode($limit);
 }
 
 // List of mass actions available
 $arrayofmassactions = array();
-if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting->mouvements->creer) {
-	$arrayofmassactions['letteringauto'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringAuto');
-	$arrayofmassactions['preunletteringauto'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringAuto');
-	$arrayofmassactions['letteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringManual');
-	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
-}
-if ($user->rights->accounting->mouvements->supprimer) {
-	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
-}
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting'))) {
-	$arrayofmassactions = array();
-}
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -758,27 +815,28 @@ if ($reshook < 0) {
 }
 
 $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
-
 if (empty($reshook)) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?type=sub'.$param, '', 1, array('morecss' => 'marginleftonly'));
-
-	$url = './card.php?action=create';
-	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
+	// Button re-export
+	if (empty($conf->global->ACCOUNTING_REEXPORT)) {
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("ClickToShowAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
+		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToShowAlreadyExportedLines").'</span>';
+		$newcardbutton .= '</a>';
+	} else {
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("DocsAlreadyExportedAreIncluded"), 'switch_on', 'class="warning size15x valignmiddle"');
+		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("DocsAlreadyExportedAreIncluded").'</span>';
+		$newcardbutton .= '</a>';
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->rights->accounting->mouvements->creer);
+
+	if ($user->rights->accounting->mouvements->export) {
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), $user->rights->accounting->mouvements->export);
+	}
 }
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-if ($massaction == 'preunletteringauto') {
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnletteringAuto"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unletteringauto", null, '', 0, 200, 500, 1);
-} elseif ($massaction == 'preunletteringmanual') {
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnletteringManual"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unletteringmanual", null, '', 0, 200, 500, 1);
-} elseif ($massaction == 'predeletebookkeepingwriting') {
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeleteBookkeepingWriting"), $langs->trans("ConfirmMassDeleteBookkeepingWritingQuestion", count($toselect)), "deletebookkeepingwriting", null, '', 0, 200, 500, 1);
+// Not display message when all the list of docs are included
+if (empty($conf->global->ACCOUNTING_REEXPORT)) {
+	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0, 'hideonsmartphone info');
 }
 
 //$topicmail = "Information";
@@ -901,7 +959,7 @@ if (!empty($arrayfields['t.credit']['checked'])) {
 if (!empty($arrayfields['t.lettering_code']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.dol_escape_htmltag($search_lettering_code).'"/>';
-	print '<br><span class="nowrap"><input type="checkbox" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
+	print '<br><span class="nowrap"><input type="checkbox" id="search_not_reconciled" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'><label for="search_not_reconciled">'.$langs->trans("NotReconciled").'</label></span>';
 	print '</td>';
 }
 
