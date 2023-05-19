@@ -929,6 +929,28 @@ function WeighingScale(){
 }
 
 $( document ).ready(function() {
+	<?php
+	// get user authorized terminals
+	$nb_auth_terms = 0;
+	$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+	for ($i = 1; $i <= $numterminals; $i++) {
+		if ($user->rights->takepos->{'access_takepos_' . $i}) {
+			$curterm = $i;
+			$nb_auth_terms++;
+		}
+	}
+	// TERMINAL SELECTION IF NOT SET
+	if ($_SESSION["takeposterminal"] == "") {
+		if (empty($nb_auth_terms)) {
+			accessforbidden();
+		} else if ($nb_auth_terms > 1) {
+			print "ModalBox('ModalTerminal');";
+		} else {
+			$terminal_name = (! empty($conf->global->{"TAKEPOS_TERMINAL_NAME_".$curterm}) ? $conf->global->{"TAKEPOS_TERMINAL_NAME_".$curterm} : $langs->transnoentities("TerminalName", $curterm));
+		}
+	}
+	?>
+
 	PrintCategories(0);
 	LoadProducts(0);
 	Refresh();
@@ -1027,7 +1049,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<div id="topnav" class="topnav">
 			<div id="topnav-left" class="topnav-left">
 				<div class="inline-block valignmiddle">
-				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal')">
+				<a class="topnav-terminalhour" <?php echo $nb_auth_terms > 1 ? "onclick=\"ModalBox('ModalTerminal');\"" : ""; ?>>
 				<span class="fa fa-cash-register"></span>
 				<span class="hideonsmartphone">
 				<?php echo getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$_SESSION["takeposterminal"], $langs->trans("TerminalName", $_SESSION["takeposterminal"])); ?>
@@ -1093,11 +1115,16 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<h3><?php print $langs->trans("TerminalSelect"); ?></h3>
 	</div>
 	<div class="modal-body">
-		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print getDolGlobalString("TAKEPOS_TERMINAL_NAME_1", $langs->trans("TerminalName", 1)); ?></button>
 		<?php
-		$nbloop = getDolGlobalInt('TAKEPOS_NUM_TERMINALS');
-		for ($i = 2; $i <= $nbloop; $i++) {
-			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i, $langs->trans("TerminalName", $i)).'</button>';
+		for ($i = 1; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++) {
+			if ($user->rights->takepos->{'access_takepos_' . $i}) {
+				$terminal_name = (! empty($conf->global->{"TAKEPOS_TERMINAL_NAME_".$i}) ? $conf->global->{"TAKEPOS_TERMINAL_NAME_".$i} : $langs->trans("TerminalName", $i));
+				if ($conf->global->{'TAKEPOS_LOCK_TERMINAL_' . $i} &&  ! empty($conf->global->{'TAKEPOS_TERMINAL_LOCKED_' . $i}) && $conf->global->{'TAKEPOS_TERMINAL_LOCKED_' . $i} != $user->login) {
+					print '<button type="button" class="block">' . $langs->trans("TerminalLocked", $terminal_name, $conf->global->{'TAKEPOS_TERMINAL_LOCKED_' . $i})  . '</button>';
+				} else {
+					print '<button type="button" class="block" onclick="closeTerminal(true);location.href=\'index.php?setterminal='.$i.'\'">'. $terminal_name .'</button>';
+				}
+			}
 		}
 		?>
 	</div>
