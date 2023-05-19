@@ -622,7 +622,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->mymodule->dir_output;
 	$trackid = 'myobject'.$object->id;
-
+	if (getDolGlobalInt('MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER')) {
+		$withtoselected = $object->getIdContact('external', 'CUSTOMER');
+	}
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
