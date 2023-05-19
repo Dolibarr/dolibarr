@@ -1347,6 +1347,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 print $hookmanager->resPrint;
 
 if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
+	if ($conf->global->TAKEPOS_SHOW_SUBPRICE) {
+		print '<td class="linecolqty right">'.$langs->trans('PriceUHT').'</td>';
+	}
 	print '<td class="linecolqty right">'.$langs->trans('ReductionShort').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
@@ -1602,6 +1605,9 @@ if ($placeid > 0) {
 				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				$htmlforlines .= $hookmanager->resPrint;
 
+				if ($conf->global->TAKEPOS_SHOW_SUBPRICE) {
+					$htmlforlines .= '<td class="right">'.price($line->subprice).'</td>';
+				}
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
 				if (isModEnabled('stock') && !empty($user->rights->stock->mouvement->lire)) {
