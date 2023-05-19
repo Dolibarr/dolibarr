@@ -1119,11 +1119,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		for ($i = 1; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++) {
 			if ($user->rights->takepos->{'access_takepos_' . $i}) {
 				$terminal_name = (! empty($conf->global->{"TAKEPOS_TERMINAL_NAME_".$i}) ? $conf->global->{"TAKEPOS_TERMINAL_NAME_".$i} : $langs->trans("TerminalName", $i));
-				if ($conf->global->{'TAKEPOS_LOCK_TERMINAL_' . $i} &&  ! empty($conf->global->{'TAKEPOS_TERMINAL_LOCKED_' . $i}) && $conf->global->{'TAKEPOS_TERMINAL_LOCKED_' . $i} != $user->login) {
-					print '<button type="button" class="block">' . $langs->trans("TerminalLocked", $terminal_name, $conf->global->{'TAKEPOS_TERMINAL_LOCKED_' . $i})  . '</button>';
-				} else {
-					print '<button type="button" class="block" onclick="closeTerminal(true);location.href=\'index.php?setterminal='.$i.'\'">'. $terminal_name .'</button>';
-				}
+				print '<button type="button" class="block" onclick="closeTerminal(true);location.href=\'index.php?setterminal='.$i.'\'">'. $terminal_name .'</button>';
 			}
 		}
 		?>
