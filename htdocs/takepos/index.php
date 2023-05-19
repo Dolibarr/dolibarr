@@ -943,7 +943,7 @@ $( document ).ready(function() {
 	if ($_SESSION["takeposterminal"] == "") {
 		if (empty($nb_auth_terms)) {
 			accessforbidden();
-		} else if ($nb_auth_terms > 1) {
+		} elseif ($nb_auth_terms > 1) {
 			print "ModalBox('ModalTerminal');";
 		} else {
 			$terminal_name = (! empty($conf->global->{"TAKEPOS_TERMINAL_NAME_".$curterm}) ? $conf->global->{"TAKEPOS_TERMINAL_NAME_".$curterm} : $langs->transnoentities("TerminalName", $curterm));
