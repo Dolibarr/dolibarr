@@ -1144,6 +1144,9 @@ $( document ).ready(function() {
 	if ($invoice->id > 0 && ($invoice->socid != getDolGlobalString($constforcompanyid))) {
 		$s = $soc->name;
 	}
+	else {
+		print '$("#idcustomer").val("");';
+	}
 	?>
 
 	$("#customerandsales").html('');
