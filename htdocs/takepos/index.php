@@ -542,7 +542,7 @@ function CloseBill() {
 			<?php } ?>
 			return;
 		}
-	<?php }
+	<?php }	?>
 	$.colorbox({href:"pay.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
