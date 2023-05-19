@@ -4041,7 +4041,9 @@ if ($action == 'create') {
 		$diroutput = $conf->fournisseur->facture->dir_output;
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
 		$trackid = 'sinv'.$object->id;
-
+		if (getDolGlobalInt('MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER')) {
+			$withtoselected = $object->getIdContact('external', 'BILLING');
+		}
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
