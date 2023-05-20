@@ -1684,7 +1684,7 @@ if ($placeid > 0) {
 
 print '</table>';
 
-if (($action == "valid" || $action == "history") && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
+if (($action == "valid" || $action == "history") && $invoice->type != Facture::TYPE_CREDIT_NOTE && empty($conf->global->TAKEPOS_NO_CREDITNOTE)) {
 	print '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
 }
 
