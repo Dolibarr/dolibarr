@@ -2306,6 +2306,11 @@ class ExtraFields
 						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
+				} elseif (in_array($key_type, array('html'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						continue; // Value was not provided, we should not set it.
+					}
+					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
