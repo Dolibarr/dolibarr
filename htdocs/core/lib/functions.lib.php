@@ -14,7 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2023  Frédéric France             <frederic.france@netlogic.fr>
- * Copyright (C) 2019-2022  Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
@@ -7721,7 +7721,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 				'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
 				'__USER_JOB__' => (string) $user->job,
-				'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
+				'__USER_REMOTE_IP__' => (string) getUserRemoteIP(),
+				'__USER_VCARD_URL__' => (string) $user->getOnlineVirtualCardUrl('', 'external')
 				));
 		}
 	}
