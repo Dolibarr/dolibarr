@@ -88,6 +88,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'produit|service', 0, 'product&product');
 
+$hookmanager->initHooks(array('reassortlotlist'));
+
 
 /*
  * Actions
