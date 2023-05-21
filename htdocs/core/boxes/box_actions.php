@@ -56,7 +56,7 @@ class box_actions extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
@@ -145,7 +145,7 @@ class box_actions extends ModeleBoxes
 					}
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label = empty($objp->label) ? $objp->type_label : $objp->label;
+					//$label = empty($objp->label) ? $objp->type_label : $objp->label;
 
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="tdoverflowmax200"',

@@ -211,7 +211,7 @@ class RssParser
 		}
 
 		$this->_urlRSS = $urlRSS;
-		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contains special chars)
+		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contain special chars)
 		$newmask = '0644';
 
 		//dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);

@@ -5698,7 +5698,11 @@ class Facture extends CommonInvoice
 		$resql = $this->db->query($sql);
 
 		$stmpidate = dol_print_date($tmpidate, 'day', 'gmt');
-		$this->output .= $langs->transnoentitiesnoconv("SearchUnpaidInvoicesWithDueDate", $stmpidate);
+		if ($datetouse == 'invoicedate') {
+			$this->output .= $langs->transnoentitiesnoconv("SearchValidatedInvoicesWithDate", $stmpidate);
+		} else {
+			$this->output .= $langs->transnoentitiesnoconv("SearchUnpaidInvoicesWithDueDate", $stmpidate);
+		}
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$this->output .= ' ('.$langs->transnoentitiesnoconv("PaymentMode").' '.$paymentmode.')';
 		}
@@ -5972,7 +5976,7 @@ class Facture extends CommonInvoice
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'socid')) {
 			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';

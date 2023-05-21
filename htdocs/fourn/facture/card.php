@@ -75,6 +75,7 @@ $confirm	= GETPOST("confirm");
 $ref = GETPOST('ref', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = '';
 
 $lineid		= GETPOST('lineid', 'int');
 $projectid = GETPOST('projectid', 'int');
@@ -3154,7 +3155,6 @@ if ($action == 'create') {
 
 		$thirdparty = $societe;
 		$discount_type = 1;
-		$backtopage = urlencode($_SERVER["PHP_SELF"].'?facid='.$object->id);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 		print '</td></tr>';

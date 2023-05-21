@@ -2510,8 +2510,8 @@ class Adherent extends CommonObject
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
-				$labelStatus = $langs->trans("MemberStatusActive");
-				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
+				$labelStatus = $langs->trans("WaitingSubscription");
+				$labelStatusShort = $langs->trans("WaitingSubscriptionShort");
 			} elseif ($date_end_subscription < dol_now()) {	// expired
 				$statusType = 'status8';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
@@ -3318,7 +3318,7 @@ class Adherent extends CommonObject
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'type')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->type.'</span>';

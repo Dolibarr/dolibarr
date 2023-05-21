@@ -208,15 +208,31 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	<?php } ?>
 }
 
-.info-box-sm .info-box-icon {
-	height: 96px;
+.info-box-module .info-box-icon {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.info-box-sm .info-box-icon, .info-box-sm .info-box-img {
+	height: 96px !important;		/* must match height of info-box-sm .info-box-content */
 	width: 80px;
 	font-size: 25px;
 	line-height: 92px;
 }
-.info-box-module .info-box-icon {
-	padding-top: 4px;
-	padding-bottom: 4px;
+.info-box-order {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 2px;
+	display: block;
+	overflow: hidden;
+	float: left;
+	height: 115px;
+	width: 88px;
+	text-align: center;
+	font-size: 2.3em;
+	line-height: 115px;
+	margin-right: 10px;
+	background: var(--colorbacktitle1) !important;
 }
 .opened-dash-board-wrap .info-box .info-box-icon {
 	font-size: 2em;
@@ -285,6 +301,32 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	right: 0;
 	bottom: 0;
 }
+
+/* customize section img box on list of products */
+.info-box-img {
+	height: 105px !important;
+	width: 88px;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 2px;
+	display: block;
+	overflow: hidden;
+	float: left;
+	text-align: center;
+	font-size: 2.8em;
+	line-height: 90px;
+	margin-right: 5px;
+	background: var(--colorbacktitle1) !important;
+}
+.info-box-img > img {
+	width: 90%;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
 
 <?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
@@ -535,7 +577,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .info-box-module .info-box-content {
 	height: 6.3em;
 }
-
+.fright {
+	float:right;
+}
 
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
