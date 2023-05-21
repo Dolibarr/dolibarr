@@ -112,8 +112,9 @@ if ($resql) {
 		}
 
 		$accountname = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
-		if (!empty($conf->global->$accountname) && $conf->global->$accountname > 0) {
-			$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
+		$accountid = getDolGlobalInt($accountname);
+		if (!empty($accountid) && $accountid > 0) {
+			$arrayOfValidBankAccount[$accountid] = $accountid;
 			$arrayOfValidPaymentModes[] = $obj;
 		}
 	}
@@ -121,7 +122,7 @@ if ($resql) {
 ?>
 <link rel="stylesheet" href="css/pos.css.php">
 <?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
+if (getDolGlobalInt("TAKEPOS_COLOR_THEME") == 1) {
 	print '<link rel="stylesheet" href="css/colorful.css">';
 }
 ?>
@@ -136,7 +137,7 @@ if ($invoice->id > 0) {
 }
 $alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
 
-if ($conf->global->TAKEPOS_NUMPAD == 0) {
+if (getDolGlobalInt("TAKEPOS_NUMPAD") == 0) {
 	print "var received='';";
 } else {
 	print "var received=0;";
@@ -149,7 +150,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 	function addreceived(price)
 	{
 		<?php
-		if (empty($conf->global->TAKEPOS_NUMPAD)) {
+		if (empty(getDolGlobalInt("TAKEPOS_NUMPAD"))) {
 			print 'received+=String(price);'."\n";
 		} else {
 			print 'received+=parseFloat(price);'."\n";
@@ -250,7 +251,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		}
 
 		// Starting sumup app
-		window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo $conf->global->TAKEPOS_SUMUP_AFFILIATE ?>&app-id=<?php echo $conf->global->TAKEPOS_SUMUP_APPID ?>&total=' + amountpayed + '&currency=EUR&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
+		window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo getDolGlobalString("TAKEPOS_SUMUP_AFFILIATE") ?>&app-id=<?php echo getDolGlobalInt("TAKEPOS_SUMUP_APPID") ?>&total=' + amountpayed + '&currency=EUR&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
 
 		var loop = window.setInterval(function () {
 			$.ajax({
@@ -294,7 +295,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Change"); ?>: <span class="change2 colorwhite"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change2" class="change2" value="0"></span>
 	</div>
 	<?php
-	if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+	if (!empty(getDolGlobalInt("TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT"))) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 		print '<div class="paymentbordline paddingtop paddingbottom center">';
 		$filter = '';
@@ -329,7 +330,7 @@ $action_buttons = array(
 		"class" => "calcbutton2 poscolorvalid"
 	),
 );
-$numpad = $conf->global->TAKEPOS_NUMPAD;
+$numpad = getDolGlobalInt("TAKEPOS_NUMPAD");
 
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').');">'.($numpad == 0 ? '8' : '20').'</button>';
@@ -357,7 +358,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'.\'' : '0.05').');">'.($numpad == 0 ? '.' : '0.05').'</button>';
 
 
-if ($conf->global->TAKEPOS_DELAYED_PAYMENT) {
+if (getDolGlobalInt("TAKEPOS_DELAYED_PAYMENT")) {
 	print '<button type="button" class="calcbutton2" onclick="addPayment(\'delayed\');">'.$langs->trans("Reported").'</button>';
 }
 
@@ -368,16 +369,17 @@ if (count($arrayOfValidPaymentModes) > 0) {
 	while ($i < count($arrayOfValidPaymentModes)) {
 		$paycode = $arrayOfValidPaymentModes[$i]->code;
 		$payIcon = '';
+		$usepaymenticon = getDolGlobalInt("TAKEPOS_NUMPAD_USE_PAYMENT_ICON");
 		if ($paycode == 'LIQ') {
-			if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+			if (!empty($usepaymenticon)) {
 				$payIcon = 'coins';
 			}
 		} elseif ($paycode == 'CB') {
-			if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+			if (!empty($usepaymenticon)) {
 				$payIcon = 'credit-card';
 			}
 		} elseif ($paycode == 'CHQ') {
-			if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+			if (!empty($usepaymenticon)) {
 				$payIcon = 'money-check';
 			}
 		}
@@ -387,8 +389,8 @@ if (count($arrayOfValidPaymentModes) > 0) {
 	}
 }
 $keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
-if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
-	if (!empty($conf->global->$keyforsumupbank)) {
+if (getDolGlobalInt("TAKEPOS_ENABLE_SUMUP")) {
+	if (!empty(getDolGlobalString($keyforsumupbank))) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {
 		$langs->loadLangs(array("errors", "admin"));

@@ -541,7 +541,7 @@ function CloseBill() {
 	?>
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
-	<?php  if ($conf->global->TAKEPOS_USE_NEW_PAYMENT_SCREEN) { ?>
+	<?php  if (getDolGlobalString("TAKEPOS_USE_NEW_PAYMENT_SCREEN")) { ?>
 		var originalClose = $.colorbox.close;
 		$.colorbox.close = function() {
 			if ( ! $.colorbox.paymentok) {
