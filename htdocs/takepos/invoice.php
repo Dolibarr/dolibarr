@@ -1347,7 +1347,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 print $hookmanager->resPrint;
 
 if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
-	if ($conf->global->TAKEPOS_SHOW_SUBPRICE) {
+	if (getDolGlobalString("TAKEPOS_SHOW_SUBPRICE")) {
 		print '<td class="linecolqty right">'.$langs->trans('PriceUHT').'</td>';
 	}
 	print '<td class="linecolqty right">'.$langs->trans('ReductionShort').'</td>';
