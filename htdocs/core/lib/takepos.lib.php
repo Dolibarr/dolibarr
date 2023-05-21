@@ -93,7 +93,7 @@ function addTerminalPermissions($module)
 	for ($i = 1; $i <= $numterminals; $i++) {
 		$r++;
 		$module->rights[$r][0] = $lastperm + $i;
-		$module->rights[$r][1] = 'Allow access to ' . (! empty(getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i)) ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) : $langs->trans("TerminalName", $i));;
+		$module->rights[$r][1] = 'Allow access to ' . (getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) : $langs->trans("TerminalName", $i));
 		$module->rights[$r][2] = 'a';
 		$module->rights[$r][3] = 0;
 		$module->rights[$r][4] = 'access_takepos_' . $i;
