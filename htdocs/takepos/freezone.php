@@ -134,7 +134,7 @@ if ($action == "addnote") {
 <input type="submit" class="button takepospay clearboth" value="OK" onclick="Save(); return false;">
 </form>
 <?php
-if ($action == 'freezone' && empty($conf->global->TAKEPOS_USE_DEFAULT_VATRATE_FOR_FREEZONE)) {
+if ($action == 'freezone' && empty(getDolGlobalString("TAKEPOS_USE_DEFAULT_VATRATE_FOR_FREEZONE"))) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$form = new Form($db);
