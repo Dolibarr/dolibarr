@@ -1143,7 +1143,7 @@ $( document ).ready(function() {
 	$s = $langs->trans("Customer");
 	if ($invoice->id > 0 && ($invoice->socid != getDolGlobalString($constforcompanyid))) {
 		$s = $soc->name;
-	} else {
+	} elseif (getDolGlobalString("TAKEPOS_FORCE_CUSTOMER_SELECT")) {
 		print '$("#idcustomer").val("");';
 	}
 	?>
