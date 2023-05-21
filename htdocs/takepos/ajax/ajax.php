@@ -242,7 +242,7 @@ if ($action == 'getProducts') {
 
 	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc' ;
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		if (!empty(getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']))) {
+		if (getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 			$sql .= ', ps.reel';
 		} else {
 			$sql .= ', SUM(ps.reel) as reel';
@@ -260,7 +260,7 @@ if ($action == 'getProducts') {
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
-		if (!empty(getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']))) {
+		if (getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 			$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
 		}
 		$sql .= ')';
@@ -278,7 +278,7 @@ if ($action == 'getProducts') {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND p.tosell = 1';
-	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && !empty(getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']))) {
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 		$sql .= ' AND ps.reel > 0';
 	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
