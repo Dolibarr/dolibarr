@@ -160,7 +160,7 @@ class box_members_by_tags extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $adhtag->getNomUrl(0, '', dol_size(32), '&backtolist='.urlencode($_SERVER["PHP_SELF"])),
+						'text' => '<a href="'.$DOL_MAIN_URL_ROOT.'/adherents/list.php?search_categ='.$adhtag->id.'&sortfield=d.datefin,t.subscription&sortorder=desc,desc&backtopage='.urlencode($_SERVER['PHP_SELF']).'">'.dol_trunc(($adhtag->ref ? $adhtag->ref : $adhtag->label), dol_size(32)).'</a>',
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
