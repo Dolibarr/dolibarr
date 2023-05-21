@@ -3434,7 +3434,7 @@ function dragAndDropFileUpload($htmlname)
 			$("#'.$htmlname.'").addClass("cssDragDropArea");
 			$(".cssDragDropArea").on("dragenter", function(ev) {
 				// Entering drop area. Highlight area
-				console.log("We add class highlightDragDropArea")
+				console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
 				enterTargetDragDrop = ev.target;
 				$(this).addClass("highlightDragDropArea");
 				$("#'.$htmlname.'Message").removeClass("hidden");
@@ -3444,7 +3444,7 @@ function dragAndDropFileUpload($htmlname)
 			$(".cssDragDropArea").on("dragleave", function(ev) {
 				// Going out of drop area. Remove Highlight
 				if (enterTargetDragDrop == ev.target){
-					console.log("We remove class highlightDragDropArea")
+					console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
 					$("#'.$htmlname.'Message").addClass("hidden");
 					$(this).removeClass("highlightDragDropArea");
 				}
