@@ -1656,7 +1656,7 @@ if ($placeid > 0) {
 				}
 
 				$htmlforlines .= '</td>';
-				if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
+				if (getDolGlobalInt('TAKEPOS_SHOW_HT')) {
 					$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 					$htmlforlines .= price($line->total_ht, 1, '', 1, -1, -1, $conf->currency);
 					if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
