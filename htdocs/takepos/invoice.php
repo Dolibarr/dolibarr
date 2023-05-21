@@ -1144,7 +1144,7 @@ $( document ).ready(function() {
 	$s = $langs->trans("Customer");
 	if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
 		$s = $soc->name;
-		if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) {
+		if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
 			$contactids = $invoice->getIdContact('external', 'BILLING');
 			$contactid = $contactids[0];
 			if ($contactid > 0) {
@@ -1159,7 +1159,7 @@ $( document ).ready(function() {
 	$("#customerandsales").html('');
 	$("#shoppingcart").html('');
 
-	<?php if ( ! getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) { ?>
+	<?php if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT') == 0) { ?>
 		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 	<?php } else { ?>
 		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
