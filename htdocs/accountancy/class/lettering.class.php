@@ -745,6 +745,9 @@ class Lettering extends BookKeeping
 
 		if (empty($document_ids)) {
 			return array();
+		} else {
+			//remove empty and null parts of document_ids
+			$document_ids = array_filter($document_ids);
 		}
 		if (!is_array(self::$doc_type_infos[$doc_type])) {
 			$langs->load('errors');
