@@ -135,7 +135,7 @@ if ($result < 0) {
 	exit(-1);
 } else {
 	if (empty($user->id)) {
-		echo "User login: ".$userlogin." does not exists";
+		echo "User login: ".$userlogin." does not exists\n";
 		dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
 		exit(-1);
 	}
@@ -169,7 +169,7 @@ $object = new Cronjob($db);
 $filter = array();
 if (!empty($id)) {
 	if (!is_numeric($id)) {
-		echo "Error: Bad value for parameter job id";
+		echo "Error: Bad value for parameter job id\n";
 		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
 		exit();
 	}
