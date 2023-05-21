@@ -320,3 +320,4 @@ StockTransferRightDelete=Delete stocks transfers
 BatchNotFound=Lot / serial not found for this product
 StockMovementWillBeRecorded=Stock movement will be recorded
 StockMovementNotYetRecorded=Stock movement will not be affected by this step
+WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse

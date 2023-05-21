@@ -125,7 +125,7 @@ if ($action == 'add') {
 				} else {
 					if (!$amountto[$n]) {
 						$errori[$n]++;
-						setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountTo")).' #'.$n, null, 'errors');
+						setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountToOthercurrency")).' #'.$n, null, 'errors');
 					}
 				}
 				if ($amountto[$n] < 0) {
@@ -218,14 +218,22 @@ print '		<script type="text/javascript">
 				});
 
 				function init_page(i) {
-					// TODO Scan all line i and set atleast2differentcurrency if there is 2 different values among all lines
-        			var account1 = $("#select"+i+"_account_from").val();
-        			var account2 = $("#select"+i+"_account_to").val();
-					var currencycode1 = $("#select"+i+"_account_from option:selected").attr("data-currency-code");
-					var currencycode2 = $("#select"+i+"_account_to option:selected").attr("data-currency-code");
-					console.log("Set fields according to currencycode found currencycode1="+currencycode1+" currencycode2="+currencycode2);
+					var atleast2differentcurrency = false;
 
-					var atleast2differentcurrency = (currencycode2!==currencycode1 && currencycode1 !== undefined && currencycode2 !== undefined && currencycode2!=="" && currencycode1!=="");
+					$(".selectbankaccount").each(function( index ) {
+						// Scan all line i and set atleast2differentcurrency if there is 2 different values among all lines
+	        			var account1 = $("#select"+index+"_account_from").val();
+	        			var account2 = $("#select"+index+"_account_to").val();
+						var currencycode1 = $("#select"+index+"_account_from option:selected").attr("data-currency-code");
+						var currencycode2 = $("#select"+index+"_account_to option:selected").attr("data-currency-code");
+						console.log("Set atleast2differentcurrency according to currencycode found for index="+index+" currencycode1="+currencycode1+" currencycode2="+currencycode2);
+
+						atleast2differentcurrency = (currencycode2!==currencycode1 && currencycode1 !== undefined && currencycode2 !== undefined && currencycode2!=="" && currencycode1!=="");
+						if (atleast2differentcurrency) {
+							return false;
+						}
+					});
+
 
 					if (atleast2differentcurrency) {
 						console.log("We show multicurrency field");

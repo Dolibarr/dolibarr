@@ -8938,6 +8938,22 @@ function utf8_check($str)
 }
 
 /**
+ *      Check if a string is in UTF8
+ *
+ *      @param	string	$str        String to check
+ * 		@return	boolean				True if string is valid UTF8 string, false if corrupted
+ */
+function utf8_valid($str)
+{
+	/* 2 other methods to test if string is utf8
+	 $validUTF8 = mb_check_encoding($messagetext, 'UTF-8');
+	 $validUTF8b = ! (false === mb_detect_encoding($messagetext, 'UTF-8', true));
+	 */
+	return preg_match('//u', $str) ? true : false;
+}
+
+
+/**
  *      Check if a string is in ASCII
  *
  *      @param	string	$str        String to check
