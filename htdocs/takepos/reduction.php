@@ -226,7 +226,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 <div style="position:absolute; top:2%; left:5%; width:91%;">
 <center>
 <?php
-	print '<input type="text" class="takepospay" id="reduction_total" name="reduction_total" size="10" placeholder="'.$langs->trans('Reduction').'">';
+	print '<input type="text" class="takepospay width100" id="reduction_total" name="reduction_total" placeholder="'.$langs->trans('Reduction').'" autofocus>';
 	print '<input type="button" class="butAction" value="'.$langs->trans('AmountTTC').'" onclick="return formvalid(\'amount\');">';
 	print '<input type="button" class="butAction" value="'.$langs->trans('Percentage').'" onclick="return formvalid(\'percent\');">';
 ?>
