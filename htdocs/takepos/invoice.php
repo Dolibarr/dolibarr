@@ -1160,9 +1160,9 @@ $( document ).ready(function() {
 	$("#shoppingcart").html('');
 
 	<?php if ( ! getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) { ?>
-		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 	<?php } else { ?>
-		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 	<?php } ?>
 
 	<?php
