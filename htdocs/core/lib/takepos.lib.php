@@ -89,11 +89,11 @@ function addTerminalPermissions($module)
 
 	$r = array_key_last($module->rights);
 	$lastperm = 50190; // terminal permissions from 50191 to 50199
-	$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+	$numterminals = max(1, getDolGlobalInt("TAKEPOS_NUM_TERMINALS"));
 	for ($i = 1; $i <= $numterminals; $i++) {
 		$r++;
 		$module->rights[$r][0] = $lastperm + $i;
-		$module->rights[$r][1] = 'Allow access to ' . (! empty($conf->global->{"TAKEPOS_TERMINAL_NAME_".$i}) ? $conf->global->{"TAKEPOS_TERMINAL_NAME_".$i} : $langs->trans("TerminalName", $i));;
+		$module->rights[$r][1] = 'Allow access to ' . (! empty(getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i)) ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) : $langs->trans("TerminalName", $i));;
 		$module->rights[$r][2] = 'a';
 		$module->rights[$r][3] = 0;
 		$module->rights[$r][4] = 'access_takepos_' . $i;
