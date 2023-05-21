@@ -54,9 +54,12 @@ if (empty($argv[1])) {
 parse_str($argv[1]);
 
 $i=0;
+$result = array();
 while ($i < $argc) {
-    if (! empty($argv[$i])) parse_str($argv[$i]);
-    if (preg_match('/includeconstant=/', $argv[$i])) {
+	if (!empty($argv[$i])) {
+		parse_str($argv[$i], $result);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
+	}
+	if (preg_match('/includeconstant=/', $argv[$i])) {
     	$tmp=explode(':', $includeconstant, 3);			// $includeconstant has been set with previous parse_str()
         if (count($tmp) != 3) {
         	print "Error: Bad parameter includeconstant=".$includeconstant."\n";
