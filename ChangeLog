@@ -179,6 +179,7 @@ NEW: Widgets: Add widget "The next upcoming events"
 NEW: Widgets: Add widget of open opportunities
 NEW: Use an ajax component to swith prospection status on thidparty list
 NEW: Comment on survey is possible only after vote.
+NEW: Add partial payment reason "withholding tax"
 
 For developers or integrators:
 ------------------------------
