@@ -150,7 +150,7 @@ if (getDolGlobalInt("TAKEPOS_NUMPAD") == 0) {
 	function addreceived(price)
 	{
 		<?php
-		if (empty(getDolGlobalInt("TAKEPOS_NUMPAD"))) {
+		if (getDolGlobalInt("TAKEPOS_NUMPAD") == 0) {
 			print 'received+=String(price);'."\n";
 		} else {
 			print 'received+=parseFloat(price);'."\n";
@@ -295,7 +295,7 @@ if (getDolGlobalInt("TAKEPOS_NUMPAD") == 0) {
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Change"); ?>: <span class="change2 colorwhite"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change2" class="change2" value="0"></span>
 	</div>
 	<?php
-	if (!empty(getDolGlobalInt("TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT"))) {
+	if (getDolGlobalInt("TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT")) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 		print '<div class="paymentbordline paddingtop paddingbottom center">';
 		$filter = '';
@@ -390,7 +390,7 @@ if (count($arrayOfValidPaymentModes) > 0) {
 }
 $keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
 if (getDolGlobalInt("TAKEPOS_ENABLE_SUMUP")) {
-	if (!empty(getDolGlobalString($keyforsumupbank))) {
+	if (getDolGlobalString($keyforsumupbank) != "") {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {
 		$langs->loadLangs(array("errors", "admin"));
