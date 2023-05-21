@@ -228,10 +228,10 @@ print '		<script type="text/javascript">
 					var atleast2differentcurrency = (currencycode2!==currencycode1 && currencycode1 !== undefined && currencycode2 !== undefined && currencycode2!=="" && currencycode1!=="");
 
 					if (atleast2differentcurrency) {
-						console.log("We show multucurrency field");
+						console.log("We show multicurrency field");
         				$(".multicurrency").show();
         			} else {
-						console.log("We hide multucurrency field");
+						console.log("We hide multicurrency field");
 						$(".multicurrency").hide();
 					}
 

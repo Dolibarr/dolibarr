@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2023 Frederic France      <frederic.france@netlogic.fr>
  * Copyright (C) 2021-2023 Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,10 +88,11 @@ class box_members_by_type extends ModeleBoxes
 		require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent_type.class.php';
 		$staticmember = new Adherent($this->db);
 
+		$now = dol_now();
 		$year = date('Y');
 		$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.$year-$numberyears.' - '.$year.')' : ''));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year-$numberyears).' - '.$year.')' : ''));
 
 		if ($user->rights->adherent->lire) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
@@ -117,13 +118,13 @@ class box_members_by_type extends ModeleBoxes
 					'text' => $labelstatus,
 				);
 				// Up to date
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() + 86400, 1);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, $now + 86400, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus,
 				);
 				// Expired
-				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() - 86400, 1);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, $now - 86400, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
