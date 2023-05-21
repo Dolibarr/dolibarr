@@ -260,7 +260,7 @@ if ($action == 'getProducts') {
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
-		if ( ! empty($conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']})) {
+		if (!empty(getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']))) {
 			$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
 		}
 		$sql .= ')';
