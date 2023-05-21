@@ -532,7 +532,7 @@ function Reduction() {
 function CloseBill() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
-	<?php if (getDolGlobalString("TAKEPOS_NO_GENERIC_THIRDPARTY")) { ?>
+	<?php if (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) { ?>
 		if ($("#idcustomer").val() == "") {
 			alert("<?php echo $langs->trans('TakePosCustomerMandatory'); ?>");
 			<?php if ($conf->global->TAKEPOS_CHOOSE_CONTACT) { ?>
