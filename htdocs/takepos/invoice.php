@@ -1605,7 +1605,7 @@ if ($placeid > 0) {
 				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				$htmlforlines .= $hookmanager->resPrint;
 
-				if ($conf->global->TAKEPOS_SHOW_SUBPRICE) {
+				if (getDolGlobalString("TAKEPOS_SHOW_SUBPRICE")) {
 					$htmlforlines .= '<td class="right">'.price($line->subprice).'</td>';
 				}
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
