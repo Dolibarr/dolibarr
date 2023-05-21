@@ -451,7 +451,7 @@ $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $obje
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -905,10 +905,9 @@ while ($i < min($num, $limit)) {
 			print '<tr><td colspan="12">';
 			print '<div class="box-flex-container kanban">';
 		}
-		$object->socid = $companystatic->getNomUrl(1);
 		$object->date_delivery = $obj->delivery_date;
 		$object->town = $obj->town;
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('thirdparty' => $companystatic->getNomUrl(1), 'selected' => in_array($obj->id, $arrayofselected)));
 		if ($i == min($num, $limit) - 1) {
 			print '</div>';
 			print '</td></tr>';

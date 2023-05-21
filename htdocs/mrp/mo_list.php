@@ -321,7 +321,7 @@ $sql=preg_replace('/,\s*$/','', $sql);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -613,13 +613,12 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		$object->id = $obj->type_id;
-		$bom->id = $obj->fk_bom;
+
+		// TODO Use a cache on BOM
 		$objectBom = $bom->fetch($obj->fk_bom);
-		//var_dump($bom);exit;
-		$object->fk_bom = $bom->getNomUrl();
 
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('bom'=>$objectBom->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

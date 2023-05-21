@@ -191,7 +191,7 @@ if ($id > 0 || $ref) {
 	$out = '';
 	$morehtmlcenter = '';
 	if (isModEnabled('agenda')) {
-		$permok = $user->rights->agenda->myactions->create;
+		$permok = $user->hasRight('agenda', 'myactions', 'create');
 		if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
 			if (get_class($objproduct) == 'Product') {
 				$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;

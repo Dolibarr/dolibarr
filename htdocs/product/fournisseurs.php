@@ -537,8 +537,8 @@ if ($id > 0 || $ref) {
 								rate_options = $.parseHTML(data.value)
 								rate_options.forEach(opt => {
 									if (opt.selected) {
-										replaceVATWithSupplierValue(opt.value)
-										return
+										replaceVATWithSupplierValue(opt.value);
+										return;
 									}
 								})
 							}

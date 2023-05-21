@@ -762,8 +762,12 @@ class EmailCollector extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+
+			return 1;
 		} else {
 			dol_print_error($this->db);
+
+			return -1;
 		}
 	}
 
@@ -996,8 +1000,10 @@ class EmailCollector extends CommonObject
 					} else {
 						// Nothing can be done for this param
 						$errorforthisaction++;
-						$this->error = 'The extract rule to use has on an unknown source (must be HEADER, SUBJECT or BODY)';
+						$this->error = 'The extract rule to use to overwrite properties has on an unknown source (must be HEADER, SUBJECT or BODY)';
 						$this->errors[] = $this->error;
+
+						$operationslog .= '<br>'.$this->error;
 					}
 				} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $regforregex)) {
 					$valuecurrent = '';
@@ -1430,6 +1436,7 @@ class EmailCollector extends CommonObject
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
+						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
 						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
@@ -1749,7 +1756,15 @@ class EmailCollector extends CommonObject
 				//$htmlmsg,$plainmsg,$charset,$attachments
 				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
 				// Removed emojis
-				$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
+
+				if (utf8_valid($messagetext)) {
+					//$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
+					$messagetext = $this->removeEmoji($messagetext);
+				} else {
+					$operationslog .= '<br>Discarded - Email body is not valid utf8';
+					dol_syslog(" Discarded - Email body is not valid utf8");
+					continue; // Exclude email
+				}
 
 				if ($searchfilterexcludebody) {
 					if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
@@ -2248,7 +2263,7 @@ class EmailCollector extends CommonObject
 
 													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 												} else {
-													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> We discard this, not used to search existing thirdparty';
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> We discard this, not a field used to search an existing thirdparty';
 												}
 											} else {
 												// Regex not found
@@ -2263,8 +2278,10 @@ class EmailCollector extends CommonObject
 										} else {
 											// Nothing can be done for this param
 											$errorforactions++;
-											$this->error = 'The extract rule to use to load thirdparty has an unknown source (must be HEADER, SUBJECT or BODY)';
+											$this->error = 'The extract rule to use to load thirdparty for email '.$msgid.' has an unknown source (must be HEADER, SUBJECT or BODY)';
 											$this->errors[] = $this->error;
+
+											$operationslog .= '<br>'.$this->error;
 										}
 									} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg)) {
 										//if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
@@ -2273,19 +2290,19 @@ class EmailCollector extends CommonObject
 										if ($propertytooverwrite == 'id') {
 											$idtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'email') {
 											$emailtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'name') {
 											$nametouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 										} elseif ($propertytooverwrite == 'name_alias') {
 											$namealiastouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 										}
 									} else {
 										$errorforactions++;
@@ -3274,7 +3291,7 @@ class EmailCollector extends CommonObject
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    UID email
 	 * @param 	string $destdir	    Target dir for attachments
-	 * @return 	array				Array with number and object
+	 * @return 	void
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
 	{
@@ -3493,5 +3510,25 @@ class EmailCollector extends CommonObject
 		}
 
 		return $subject;
+	}
+
+	/**
+	 * Remove EMoji from email content
+	 *
+	 * @param string	$text		String to sanitize
+	 * @return string				Sanitized string
+	 */
+	protected function removeEmoji($text)
+	{
+		// Supprimer les caractères emoji en utilisant une expression régulière
+		$text = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $text);
+		$text = preg_replace('/[\x{1F300}-\x{1F5FF}]/u', '', $text);
+		$text = preg_replace('/[\x{1F680}-\x{1F6FF}]/u', '', $text);
+		$text = preg_replace('/[\x{2600}-\x{26FF}]/u', '', $text);
+		$text = preg_replace('/[\x{2700}-\x{27BF}]/u', '', $text);
+		$text = preg_replace('/[\x{1F900}-\x{1F9FF}]/u', '', $text);
+		$text = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $text);
+
+		return $text;
 	}
 }

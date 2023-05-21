@@ -285,7 +285,7 @@ SetRevenuStamp=Set revenue stamp
 Billed=Billed
 RecurringInvoices=Recurring invoices
 RecurringInvoice=Recurring invoice
-RecurringInvoiceSource=Recurring invoice ar source
+RecurringInvoiceSource=Source recurring invoice
 RepeatableInvoice=Template invoice
 RepeatableInvoices=Template invoices
 RecurringInvoicesJob=Generation of recurring invoices (sales invoices)
@@ -623,9 +623,10 @@ SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
 SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
+SearchValidatedInvoicesWithDate=Search unpaid invoices with a validation date = %s
 NoPaymentAvailable=No payment available for %s
 PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to paid
-SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for unpaid invoices
+SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for validated and unpaid invoices
 MakePaymentAndClassifyPayed=Record payment
 BulkPaymentNotPossibleForInvoice=Bulk payment is not possible for invoice %s (bad type or status)
 MentionVATDebitOptionIsOn=Option to pay tax based on debits

@@ -483,15 +483,27 @@ function deletePerms($file)
 }
 
 /**
+ *  Compare two value
+ * @param int|string  $a value 1
+ * @param int|string  $b value 2
+ * @return int      less 0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
+*/
+function compareFirstValue($a, $b)
+{
+	return strcmp($a[0], $b[0]);
+}
+/**
  * Rewriting all permissions after any actions
  * @param string      $file            filename or path
  * @param array       $permissions     permissions existing in file
- * @param int|null         $key             key for permission needed
+ * @param int|null    $key             key for permission needed
  * @param array|null  $right           $right to update or add
- * @param int         $action          0 for delete, 1 for add, 2 for update
+ * @param string|null $objectname      name of object
+ * @param string|null $module          name of module
+ * @param int         $action          0 for delete, 1 for add, 2 for update, -1 when delete object completly, -2 for generate rights after add
  * @return int                         1 if OK,-1 if KO
  */
-function reWriteAllPermissions($file, $permissions, $key, $right, $action)
+function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
 {
 	$error = 0;
 	$rights = array();
@@ -503,6 +515,42 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 	} elseif ($action == 2 && !empty($right)) {
 		// update right from permissions array
 		array_splice($permissions, array_search($permissions[$key], $permissions), 1, $right);
+	} elseif ($action == -1 && !empty($objectname)) {
+		// when delete object
+		$key = null;
+		$right = null;
+		foreach ($permissions as $perms) {
+			if ($perms[4] === strtolower($objectname)) {
+				array_splice($permissions, array_search($perms, $permissions), 1);
+			}
+		}
+	} elseif ($action == -2 && !empty($objectname) && !empty($module)) {
+		$key= null;
+		$right = null;
+		$objectOfRights = array();
+		//check if object already declared in rights file
+		foreach ($permissions as $right) {
+			$objectOfRights[]= $right[4];
+		}
+		if (in_array(strtolower($objectname), $objectOfRights)) {
+			$error++;
+		} else {
+			$permsToadd = array();
+			$perms = array(
+				'read' => 'Read objects of '.ucfirst($module),
+				'write' => 'Create/Update objects of '.ucfirst($module),
+				'delete' => 'Delete objects of '.ucfirst($module)
+			);
+			$i = 0;
+			foreach ($perms as $index => $value) {
+				$permsToadd[$i][0] = '';
+				$permsToadd[$i][1] = $value;
+				$permsToadd[$i][4] = strtolower($objectname);
+				$permsToadd[$i][5] = $index;
+				array_push($permissions, $permsToadd[$i]);
+				$i++;
+			}
+		}
 	} else {
 		$error++;
 	}
@@ -515,11 +563,46 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
 			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
 		}
+			// for group permissions by object
+			$perms_grouped = array();
+		foreach ($permissions as $perms) {
+			$object = $perms[4];
+			if (!isset($perms_grouped[$object])) {
+				$perms_grouped[$object] = [];
+			}
+			$perms_grouped[$object][] = $perms;
+		}
+		//$perms_grouped = array_values($perms_grouped);
+		$permissions = $perms_grouped;
+
+
+		// parcourir les objets
+		$o=0;
+		foreach ($permissions as &$object) {
+			// récupérer la permission de l'objet
+			$p = 1;
+			foreach ($object as &$obj) {
+				if (str_contains($obj[5], 'read')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 0 + 1)";
+				} elseif (str_contains($obj[5], 'write')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 1 + 1)";
+				} elseif (str_contains($obj[5], 'delete')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 2 + 1)";
+				} else {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + ".$p." + 1)";
+					$p++;
+				}
+			}
+			usort($object, 'compareFirstValue');
+			$o++;
+		}
 
 		//convert to string
 		foreach ($permissions as $perms) {
-			$rights[] = implode(";\n\t\t", $perms);
-			$rights[] = "\$r++;\n\t\t";
+			foreach ($perms as $per) {
+				$rights[] = implode(";\n\t\t", $per);
+				$rights[] = "\$r++;\n\t\t";
+			}
 		}
 		$rights_str = implode("", $rights);
 		// delete all permission from file
@@ -527,6 +610,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 		// rewrite all permission again
 		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n\t\t".$rights_str));
 		return 1;
+	} else {
+		return -1;
 	}
 }
 
@@ -613,12 +698,30 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// end table
 	$table .= "|===";
+	$table .= "__ end table for object $objectname";
 	//write in file
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
 	return 1;
+}
+
+/**
+ * Delete property from documentation if we delete object
+ * @param  string  $file         file or path
+ * @param  string  $objectname   name of object wants to deleted
+ * @return void
+ */
+function deletePropsFromDoc($file, $objectname)
+{
+
+	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
+	$end = "__ end table for object ".ucfirst($objectname);
+	$str = file_get_contents($file);
+	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
+	$new_contents = preg_replace($search, '', $str);
+	file_put_contents($file, $new_contents);
 }
 
 /**

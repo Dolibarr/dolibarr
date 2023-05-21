@@ -413,14 +413,17 @@ ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity,
 
 -- Upgrade default PDF models to the 'new' ones (eproved since 4 dolibarr versions from now)
 UPDATE llx_const SET value="eratosthene" WHERE name="COMMANDE_ADDON_PDF" and value="einstein";
-DELETE FROM llx_document_model WHERE name="einstein" AND type="order";
 UPDATE llx_const SET value="sponge" WHERE name="FACTURE_ADDON_PDF" and value="crabe";
-DELETE FROM llx_document_model WHERE name="crabe" AND type="invoice";
 UPDATE llx_const SET value="espadon" WHERE name="EXPEDITION_ADDON_PDF" and value="merou";
-DELETE FROM llx_document_model WHERE name="merou" AND type="shipping";
 UPDATE llx_const SET value="cyan" WHERE name="PROPALE_ADDON_PDF" and value="azur";
-DELETE FROM llx_document_model WHERE name="azur" AND type="propal";
 UPDATE llx_const SET value="storm" WHERE name IN ("DELIVERY_ADDON_PDF","LIVRAISON_ADDON_PDF") and value="typhon";
-DELETE FROM llx_document_model WHERE name="typhon" AND type="delivery";
 UPDATE llx_const SET value="cornas" WHERE name="COMMANDE_SUPPLIER_ADDON_PDF" and value="muscadet";
-DELETE FROM llx_document_model WHERE name="muscadet" AND type="order_supplier";
+
+
+ALTER TABLE llx_c_propalst ADD COLUMN sortorder smallint DEFAULT 0;
+ALTER TABLE llx_c_stcomm ADD COLUMN sortorder smallint DEFAULT 0;
+
+ALTER TABLE llx_element_time ADD COLUMN ref_ext varchar(32);
+
+ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);
+

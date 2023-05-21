@@ -254,7 +254,7 @@ llxHeader('', $title_page);
 if ($action != 'export_csv') {
 	// List
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		if ($type == 'sub') {
 			$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
 		} else {
@@ -304,7 +304,7 @@ if ($action != 'export_csv') {
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			jQuery("#exportcsvbutton").click(function() {
+			jQuery("#exportcsvbutton").click(function(event) {
 				event.preventDefault();
 				console.log("Set action to export_csv");
 				jQuery("#action").val("export_csv");

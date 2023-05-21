@@ -506,4 +506,5 @@ TwoRecordsOfCompanyName=more than one record exists for this company, please con
 CompanySection=Company section
 ShowSocialNetworks=Show social networks
 HideSocialNetworks=Hide social networks
-
+ExternalSystemID=External system ID
+IDOfPaymentInAnExternalSystem=ID of the payment mode into an external system (like Stripe, Paypal, ...)

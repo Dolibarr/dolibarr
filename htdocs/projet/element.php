@@ -425,7 +425,7 @@ $listofreferent = array(
 	'testnew'=>$user->hasRight('facture', 'creer'),
 	'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
 'proposal_supplier'=>array(
-	'name'=>"SuppliersProposals",
+	'name'=>"SupplierProposals",
 	'title'=>"ListSupplierProposalsAssociatedProject",
 	'class'=>'SupplierProposal',
 	'table'=>'supplier_proposal',
@@ -492,7 +492,7 @@ $listofreferent = array(
 	'lang'=>'sendings',
 	'buttonnew'=>'CreateShipment',
 	'testnew'=>0,
-	'test'=>$conf->expedition->enabled && $user->rights->expedition->lire),
+	'test'=>$conf->expedition->enabled && $user->hasRight('expedition', 'lire')),
 'mrp'=>array(
 	'name'=>"MO",
 	'title'=>"ListMOAssociatedProject",
@@ -504,6 +504,7 @@ $listofreferent = array(
 	'buttonnew'=>'CreateMO',
 	'testnew'=>$user->hasRight('mrp', 'write'),
 	'project_field'=>'fk_project',
+	'nototal'=>1,
 	'test'=>!empty($conf->mrp->enabled) && $user->hasRight('mrp', 'read')),
 'trip'=>array(
 	'name'=>"TripsAndExpenses",
@@ -728,6 +729,9 @@ print '<td class="left" width="200">';
 $tooltiponprofit = $langs->trans("ProfitIsCalculatedWith")."<br>\n";
 $tooltiponprofitplus = $tooltiponprofitminus = '';
 foreach ($listofreferent as $key => $value) {
+	if (!empty($value['lang'])) {
+		$langs->load($value['lang']);
+	}
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
 	$margin = empty($value['margin']) ? 0 : $value['margin'];
@@ -987,11 +991,11 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$langtoload = empty($value['lang']) ? '' : $value['lang'];
 	$urlnew = empty($value['urlnew']) ? '' : $value['urlnew'];
 	$buttonnew = empty($value['buttonnew']) ? '' : $value['buttonnew'];
 	$testnew = empty($value['testnew']) ? '' : $value['testnew'];
 	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
+	$nototal = empty($value['nototal']) ? 0 : 1;
 
 	$exclude_select_element = array('payment_various');
 	if (!empty($value['exclude_select_element'])) {
@@ -1001,10 +1005,6 @@ foreach ($listofreferent as $key => $value) {
 	if ($qualified) {
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
-
-		if ($langtoload) {
-			$langs->load($langtoload);
-		}
 
 		$element = new $classname($db);
 
@@ -1518,47 +1518,49 @@ foreach ($listofreferent as $key => $value) {
 			}
 
 			// Total
-			$colspan = 4;
-			if (in_array($tablename, array('projet_task'))) {
-				$colspan = 2;
-			}
+			if (empty($nototal)) {
+				$colspan = 4;
+				if (in_array($tablename, array('projet_task'))) {
+					$colspan = 2;
+				}
 
-			print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
-			if (in_array($tablename, array('projet_task'))) {
-				print '<td class="center">';
-				print convertSecondToTime($total_time, 'allhourmin');
-				print '</td>';
-				print '<td>';
-				print '</td>';
-			}
-			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
-			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
-						// If fichinter add the total_duration
-			if ($tablename == 'fichinter') {
-				print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
-			}
-			print '<td class="right">';
-			if (empty($value['disableamount'])) {
-				if ($key == 'loan') {
-					print $langs->trans("Total").' '.$langs->trans("LoanCapital").' : '.price($total_ttc);
-				} elseif ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) {
-					print ''.$langs->trans("TotalHT").' : '.price($total_ht);
+				print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
+				if (in_array($tablename, array('projet_task'))) {
+					print '<td class="center">';
+					print convertSecondToTime($total_time, 'allhourmin');
+					print '</td>';
+					print '<td>';
+					print '</td>';
 				}
-			}
-			print '</td>';
-			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
-			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100"></td>';
-			print '<td class="right">';
-			if (empty($value['disableamount'])) {
-				if ($key == 'loan') {
-					print $langs->trans("Total").' '.$langs->trans("RemainderToPay").' : '.price($total_ttc);
-				} elseif ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) {
-					print $langs->trans("TotalTTC").' : '.price($total_ttc);
+				//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
+				//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
+							// If fichinter add the total_duration
+				if ($tablename == 'fichinter') {
+					print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 				}
+				print '<td class="right">';
+				if (empty($value['disableamount'])) {
+					if ($key == 'loan') {
+						print $langs->trans("Total").' '.$langs->trans("LoanCapital").' : '.price($total_ttc);
+					} elseif ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) {
+						print ''.$langs->trans("TotalHT").' : '.price($total_ht);
+					}
+				}
+				print '</td>';
+				//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
+				//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100"></td>';
+				print '<td class="right">';
+				if (empty($value['disableamount'])) {
+					if ($key == 'loan') {
+						print $langs->trans("Total").' '.$langs->trans("RemainderToPay").' : '.price($total_ttc);
+					} elseif ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) {
+						print $langs->trans("TotalTTC").' : '.price($total_ttc);
+					}
+				}
+				print '</td>';
+				print '<td>&nbsp;</td>';
+				print '</tr>';
 			}
-			print '</td>';
-			print '<td>&nbsp;</td>';
-			print '</tr>';
 		} else {
 			if (!is_array($elementarray)) {	// error
 				print '<tr><td>'.$elementarray.'</td></tr>';

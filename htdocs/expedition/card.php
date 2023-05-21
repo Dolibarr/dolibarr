@@ -358,7 +358,6 @@ if (empty($reshook)) {
 
 		//var_dump($batch_line[2]);
 		if (($totalqty > 0 || !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) && !$error) {		// There is at least one thing to ship and no error
-			//var_dump($_POST);exit;
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 
@@ -2311,6 +2310,9 @@ if ($action == 'create') {
 							//print ' '.$form->textwithpicto('', $htmltext, 1);
 
 							$qtyalreadysent += $shipmentline_var['qty_shipped'];
+						}
+						if ($j) {
+							$htmltooltip = $langs->trans("QtyInOtherShipments").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
 						}
 					}
 				}

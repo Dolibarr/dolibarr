@@ -134,7 +134,7 @@ if ($id > 0 || !empty($ref)) {
 
 // Security check
 $isdraft = (isset($object->statut) && ($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande', 'fk_soc', 'rowid', $isdraft);
+$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande', 'fk_soc', 'rowid', $isdraft);
 
 // Common permissions
 $usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
@@ -916,8 +916,18 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$db->commit();
+			// reopen order if necessary
+			if ($object->status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
+				if ($object->setStatus($user, CommandeFournisseur::STATUS_RECEIVED_PARTIALLY) < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+					$action = '';
+				}
+			}
+		}
 
+		if (!$error) {
+			$db->commit();
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {

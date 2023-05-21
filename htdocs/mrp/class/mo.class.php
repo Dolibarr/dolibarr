@@ -736,6 +736,7 @@ class Mo extends CommonObject
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
+								if (!empty($line->fk_default_workstation)) $moline->fk_default_workstation = $line->fk_default_workstation;
 
 								$resultline = $moline->create($user, false); // Never use triggers here
 								if ($resultline <= 0) {
@@ -1383,8 +1384,9 @@ class Mo extends CommonObject
 
 	/**
 	 * 	Create an array of lines
-	 * 	@param string $rolefilter string lines role filter
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 *
+	 * 	@param string 		$rolefilter 	string lines role filter
+	 * 	@return array|int					array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray($rolefilter = '')
 	{
@@ -1699,7 +1701,7 @@ class Mo extends CommonObject
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_bom')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->fk_bom.'</span>';
