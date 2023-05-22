@@ -17,7 +17,7 @@
 // or see https://www.gnu.org/
 
 /**
- * \file       htdocs/fourn/js/lib_dispatch.js.php
+ * \file       htdocs/expedition/js/lib_dispatch.js.php
  * \brief      File that include javascript functions used for dispatching qty/stock/lot
  */
 
@@ -98,7 +98,7 @@ function addDispatchLine(index, type, mode) {
 	}
 	console.log("qtyDispatched=" + qtyDispatched + " qtyOrdered=" + qtyOrdered+ " qty=" + qty);
 
-	if (qtyOrdered - qtyDispatched < 1) {
+	if (qty <= 1) {
 		window.alert("Remain quantity to dispatch is too low to be split");
 	} else {
 		oldlineqty = qtyDispatched;
@@ -180,7 +180,7 @@ function addDispatchLine(index, type, mode) {
 		$("#lot_number_" + (nbrTrs) + "_" + index).val("")
 		$("#idline_" + (nbrTrs) + "_" + index).val("-1")
 		$("#qty_" + (nbrTrs) + "_" + index).data('expected', "0");
-		$("input[type='hidden']#lot_number_" + (nbrTrs) + "_" + index).remove();
+		//$("input[type='hidden']#lot_number_" + (nbrTrs) + "_" + index).remove();
 		$("#lot_number_" + (nbrTrs) + "_" + index).removeAttr("disabled");
 	}
 }

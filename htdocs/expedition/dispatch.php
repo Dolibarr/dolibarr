@@ -25,9 +25,9 @@
  */
 
 /**
- * \file htdocs/fourn/expedition/dispatch.php
+ * \file htdocs/expedition/dispatch.php
  * \ingroup expedition
- * \brief Page to dispatch expediting
+ * \brief Page to dispatch shipments
  */
 
 // Load Dolibarr environment
@@ -96,7 +96,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // $id is id of a purchase order.
-$result = restrictedArea($user, 'expedition', $object->id, '');
+$result = restrictedArea($user, 'expedition', $object, '');
 
 if (!isModEnabled('stock')) {
 	accessforbidden();
@@ -150,7 +150,7 @@ if ($action == 'updatelines' && $usercancreate) {
 			$lot = '';
 			$dDLUO = '';
 			$dDLC = '';
-			if ($modebatch == "batch") { //TODO: Make imposible to input non existing batchcode
+			if ($modebatch == "batch") { //TODO: Make impossible to input non existing batchcode
 				$lot = GETPOST('lot_number_'.$reg[1].'_'.$reg[2]);
 				$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
 				$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
@@ -313,7 +313,7 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $warehouse_static = new Entrepot($db);
 
-$title = $langs->trans('Shipment');
+$title = $object->ref." - ".$langs->trans('ShipmentDistribution');
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 $morejs = array('/expedition/js/lib_dispatch.js.php');
 
@@ -440,7 +440,6 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
-
 	if ($action != 'editdate_livraison') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 	}
@@ -460,8 +459,9 @@ if ($id > 0 || !empty($ref)) {
 	print '</tr></table>';
 
 	print '<br><center>';
-	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'eraser', 'class="pictofixedwidth"').$langs->trans("ResetQtyToDispatch").'</a></td>';
-	print '<a href="#" id="autoreset" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'eraser', 'class="pictofixedwidth"').$langs->trans("Reset").'</a></td>';
+	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'autofill', 'class="pictofixedwidth"').$langs->trans("RestoreWithCurrentQtySaved").'</a></td>';
+	// Link to clear qty
+	print '<a href="#" id="autoreset" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'eraser', 'class="pictofixedwidth"').$langs->trans("ClearQtys").'</a></td>';
 	print '<center>';
 
 	print '<br>';
@@ -477,16 +477,14 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 
-
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="updatelines">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
-		// Set $products_dispatched with qty dispatched for each product id
+		// Get list of lines from the shipments $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT ed.fk_origin_line as rowid, sum(ed.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
@@ -501,14 +499,14 @@ if ($id > 0 || !empty($ref)) {
 			if ($num) {
 				while ($i < $num) {
 					$objd = $db->fetch_object($resql);
-					$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
+					$products_dispatched[$objd->rowid] = price2num($objd->qty, 'MS');
 					$i++;
 				}
 			}
 			$db->free($resql);
 		}
 		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
-		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref_ext AS sref, l.qty as qty,";
+		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
 		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse";
 		// Enable hooks to alter the SQL query (SELECT)
 		$parameters = array();
@@ -529,7 +527,6 @@ if ($id > 0 || !empty($ref)) {
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$sql .= " AND l.product_type = 0";
 		}
-
 		// Enable hooks to alter the SQL query (WHERE)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks(
@@ -640,7 +637,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<!-- Line to dispatch '.$suffix.' -->'."\n";
 						// hidden fields for js function
 						print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
-						print '<input id="qty_dispatched'.$suffix.'" type="hidden" data-dispatched="'.(float) $alreadydispatched.'" value="'.(float) $alreadydispatched.'">';
+						print '<input id="qty_dispatched'.$suffix.'" type="hidden" data-dispatched="'.((float) $alreadydispatched).'" value="'.(float) $alreadydispatched.'">';
 						print '<tr class="oddeven">';
 
 						if (empty($conf->cache['product'][$objp->fk_product])) {
@@ -673,7 +670,7 @@ if ($id > 0 || !empty($ref)) {
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number">';
-								print $langs->trans("ProductDoesNotUseBatchSerial");
+								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</span>';
 								print '</td>';
 								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="dispatch_dlc"></td>';
@@ -687,6 +684,7 @@ if ($id > 0 || !empty($ref)) {
 							print $linktoprod;
 							print "</td>";
 						}
+						
 						// Define unit price for PMP calculation
 						$up_ht_disc = $objp->subprice;
 						if (!empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) {
@@ -724,6 +722,7 @@ if ($id > 0 || !empty($ref)) {
 							while ($j < $numd) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
+								
 								if (isModEnabled('productbatch') && !empty($objd->batch)) {
 									$type = 'batch';
 
@@ -754,12 +753,15 @@ if ($id > 0 || !empty($ref)) {
 									print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 									print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
 									print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
+									
+									print '<!-- This is a U.P. (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
 									print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
+									
 									print '</td>';
 
 									print '<td>';
 									print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
-									print '<input  type="hidden" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+									//print '<input type="hidden" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
 									print '</td>';
 									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 										print '<td class="nowraponall">';
@@ -807,6 +809,7 @@ if ($id > 0 || !empty($ref)) {
 									print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 									print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
 									print '<input name="product'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
+									print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
 									print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 									print '</td>';
 								}
@@ -863,6 +866,7 @@ if ($id > 0 || !empty($ref)) {
 							}
 							$suffix = "_".$j."_".$i;
 						}
+						
 						if ($j == 0) {
 							if (isModEnabled('productbatch') && !empty($objp->tobatch)) {
 								$type = 'batch';
@@ -894,10 +898,13 @@ if ($id > 0 || !empty($ref)) {
 								print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="-1">';
 								print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+
+								print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+								print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 								print '</td>';
 
 								print '<td>';
-								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="">';
+								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'">';
 								print '</td>';
 								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="nowraponall">';
@@ -945,12 +952,15 @@ if ($id > 0 || !empty($ref)) {
 								print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="-1">';
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+
+								print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+								print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 								print '</td>';
 							}
 							// Qty to dispatch
 							print '<td class="right">';
 							print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
+							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'" data-expected="'.$remaintodispatch.'">';
 							print '</td>';
 							print '<td>';
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
@@ -962,6 +972,7 @@ if ($id > 0 || !empty($ref)) {
 							}
 
 							print '</td>';
+							
 							// Warehouse
 							print '<td class="right">';
 							if (count($listwarehouses) > 1) {
@@ -1065,6 +1076,7 @@ if ($id > 0 || !empty($ref)) {
 				var fk_default_warehouse = $("option:selected", this).val();
 				$("select[name^=entrepot_]").val(fk_default_warehouse).change();
 			});
+
 			$("#autoreset").click(function() {
 				$(".autoresettr").each(function(){
 					id = $(this).attr("name");
@@ -1087,6 +1099,7 @@ if ($id > 0 || !empty($ref)) {
 				});
 				return false;
 			});
+
 			$("#resetalltoexpected").click(function(){
 				$(".qtydispatchinput").each(function(){
 					console.log("We reset to expected "+$(this).attr("id")+" qty to dispatch");
@@ -1094,6 +1107,7 @@ if ($id > 0 || !empty($ref)) {
 				});
 				return false;
 			});
+
 			$(".resetline").click(function(){
 				id = $(this).attr("id");
 				id = id.split("reset_");
