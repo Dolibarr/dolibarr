@@ -16,7 +16,7 @@ if (isset($totalarray['pos'])) {
 			switch ($totalarray['type'][$i]) {
 				case 'duration';
 					print '<td class="right">';
-					print (!empty($totalarray['val'][$totalarray['pos'][$i]])?convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin'):0);
+					print (!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 					print '</td>';
 					break;
 				case 'string';
@@ -31,7 +31,7 @@ if (isset($totalarray['pos'])) {
 					break;
 				default;
 					print '<td class="right">';
-					print price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0);
+					print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]]:0);
 					print '</td>';
 					break;
 			}

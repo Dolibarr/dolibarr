@@ -411,10 +411,20 @@ CREATE TABLE llx_c_invoice_subtype (
 
 ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
 
+ALTER TABLE llx_projet ADD COLUMN fk_project integer DEFAULT NULL;
+
+-- Upgrade default PDF models to the 'new' ones (eproved since 4 dolibarr versions from now)
+--UPDATE llx_const SET value="eratosthene" WHERE name="COMMANDE_ADDON_PDF" and value="einstein";
+--UPDATE llx_const SET value="sponge" WHERE name="FACTURE_ADDON_PDF" and value="crabe";
+--UPDATE llx_const SET value="espadon" WHERE name="EXPEDITION_ADDON_PDF" and value="merou";
+--UPDATE llx_const SET value="cyan" WHERE name="PROPALE_ADDON_PDF" and value="azur";
+--UPDATE llx_const SET value="storm" WHERE name IN ("DELIVERY_ADDON_PDF","LIVRAISON_ADDON_PDF") and value="typhon";
+--UPDATE llx_const SET value="cornas" WHERE name="COMMANDE_SUPPLIER_ADDON_PDF" and value="muscadet";
+
+
 ALTER TABLE llx_c_propalst ADD COLUMN sortorder smallint DEFAULT 0;
 ALTER TABLE llx_c_stcomm ADD COLUMN sortorder smallint DEFAULT 0;
 
 ALTER TABLE llx_element_time ADD COLUMN ref_ext varchar(32);
 
 ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);
-
