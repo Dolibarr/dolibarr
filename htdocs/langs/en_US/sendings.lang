@@ -75,8 +75,7 @@ SumOfProductWeights=Sum of product weights
 DetailWarehouseNumber= Warehouse details
 DetailWarehouseFormat= W:%s (Qty: %d)
 
-# Other
-DispatchCard = Dispatch card
+ShipmentDistribution=Shipment distribution
 
 ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
 ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

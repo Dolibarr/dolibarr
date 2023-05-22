@@ -48,7 +48,7 @@ function reception_prepare_head(Reception $object)
 
 	if ($object->statut ==  Reception::STATUS_DRAFT) {
 		$head[$h][0] = DOL_URL_ROOT."/reception/dispatch.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("DispatchCard");
+		$head[$h][1] = $langs->trans("ReceptionDistribution");
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}

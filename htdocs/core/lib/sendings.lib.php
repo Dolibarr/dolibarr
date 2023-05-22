@@ -49,7 +49,7 @@ function shipping_prepare_head($object)
 
 	if ($object->statut ==  Expedition::STATUS_DRAFT) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/dispatch.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("DispatchCard");
+		$head[$h][1] = $langs->trans("ShipmentDistribution");
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}
