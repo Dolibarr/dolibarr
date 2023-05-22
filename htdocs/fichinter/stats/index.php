@@ -220,7 +220,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-$filter = 's.client IN (1,2,3)';
+$filter = '(s.client:IN:1,2,3)';
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
@@ -319,7 +319,7 @@ print '</td></tr></table>';
 
 
 print '</div></div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 

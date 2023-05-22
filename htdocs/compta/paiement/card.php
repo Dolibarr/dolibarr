@@ -36,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
+if (isModEnabled('margin')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
@@ -58,7 +61,7 @@ $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$result = restrictedArea($user, $object->element, $object->id, 'paiement');
+$result = restrictedArea($user, $object->element, $object->id, 'paiement');	// This also test permission on read invoice
 
 // Security check
 if ($user->socid) {
@@ -244,7 +247,7 @@ $thirdpartystatic = new Societe($db);
 
 $result = $object->fetch($id, $ref);
 if ($result <= 0) {
-	dol_print_error($db, 'Payement '.$id.' not found in database');
+	dol_print_error($db, 'Payment '.$id.' not found in database');
 	exit;
 }
 
@@ -432,6 +435,10 @@ if ($resql) {
 	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
+	//Add Margin
+	if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+		print '<td class="right">'.$langs->trans('Margin').'</td>';
+	}
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
@@ -446,6 +453,14 @@ if ($resql) {
 
 			$invoice = new Facture($db);
 			$invoice->fetch($objp->facid);
+
+			// Add Margin
+			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+				$formmargin = new FormMargin($db);
+				$marginInfo = array();
+				$invoice->fetch_lines();
+				$marginInfo = $formmargin->getMarginInfosArray($invoice);
+			}
 
 			$paiement = $invoice->getSommePaiement();
 			$creditnotes = $invoice->getSumCreditNotesUsed();
@@ -472,6 +487,12 @@ if ($resql) {
 				print $mc->label;
 				print '</td>';
 			}
+
+			// Add margin
+			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
+			}
+
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($objp->total_ttc).'</span></td>';
 

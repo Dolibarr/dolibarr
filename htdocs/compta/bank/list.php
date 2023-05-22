@@ -258,7 +258,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -313,7 +313,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
@@ -574,6 +574,7 @@ $total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
+$imaxinloop = ($limit ? min($num, $limit) : $num);
 
 foreach ($accounts as $key => $type) {
 	if ($i >= $limit) {
@@ -596,11 +597,11 @@ foreach ($accounts as $key => $type) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $objecttmp->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		print $objecttmp->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
@@ -787,7 +788,7 @@ foreach ($accounts as $key => $type) {
 		if (!empty($arrayfields['balance']['checked'])) {
 			print '<td class="nowraponall right">';
 			print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">';
-			print '<span class="amount">'.price($solde, 0, $langs, 1, -1, -1, $objecttmp->currency_code).'</span>';
+			print '<span class="amount">'.price(price2num($solde, 'MT'), 0, $langs, 1, -1, -1, $objecttmp->currency_code).'</span>';
 			print '</a>';
 			print '</td>';
 			if (!$i) {

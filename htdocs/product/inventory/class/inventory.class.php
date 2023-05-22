@@ -98,19 +98,19 @@ class Inventory extends CommonObject
 	 */
 	public $fields = array(
 		'rowid'              => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
-		'ref'                => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object', 'css'=>'maxwidth200'),
+		'ref'                => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object', 'css'=>'maxwidth150'),
 		'entity'             => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'title'              => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax200'),
-		'fk_warehouse'       => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
-		'fk_product'         => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'get_name_url_params' => '0::0:-1:0::1', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
+		'title'              => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax150'),
+		'fk_warehouse'       => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax150'),
+		'fk_product'         => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'get_name_url_params' => '0::0:-1:0::1', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax150'),
 		'categories_product' => array('type'=>'chkbxlst:categorie:label:rowid::type=0:0:', 'label'=>'OrProductsWithCategories', 'visible'=>3, 'enabled'=>1, 'position'=>33, 'help'=>'', 'picto'=>'category', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx'),
 		'date_inventory'     => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>'$conf->global->STOCK_INVENTORY_ADD_A_VALUE_DATE', 'position'=>35, 'csslist'=>'nowraponall'),	// This date is not used so disabled by default.
 		'date_creation'      => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500, 'csslist'=>'nowraponall'),
 		'tms'                => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501, 'csslist'=>'nowraponall'),
 		'date_validation'    => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>502, 'csslist'=>'nowraponall'),
-		'fk_user_creat'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax200'),
-		'fk_user_modif'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511, 'csslist'=>'tdoverflowmax200'),
-		'fk_user_valid'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>512, 'csslist'=>'tdoverflowmax200'),
+		'fk_user_creat'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax150'),
+		'fk_user_modif'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511, 'csslist'=>'tdoverflowmax150'),
+		'fk_user_valid'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>512, 'csslist'=>'tdoverflowmax150'),
 		'import_key'         => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		'status'             => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed', 9=>'Canceled'))
 	);
@@ -607,9 +607,9 @@ class Inventory extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -646,6 +646,44 @@ class Inventory extends CommonObject
 		}
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);
+	}
+
+	/**
+	 *	Return a thumb for kanban views
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $conf, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'label')) {
+			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br>';
+			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
 	}
 
 	/**

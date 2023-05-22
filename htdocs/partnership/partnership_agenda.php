@@ -51,6 +51,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -242,7 +243,7 @@ if ($object->id > 0) {
 			$param .= '&contextpage='.urlencode($contextpage);
 		}
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$param .= '&limit='.urlencode($limit);
+			$param .= '&limit='.((int) $limit);
 		}
 
 

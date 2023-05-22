@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,11 @@
 abstract class CommonDocGenerator
 {
 	/**
+	 * @var string Model name
+	 */
+	public $name = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -65,6 +70,21 @@ abstract class CommonDocGenerator
 	 */
 	public $scandir;
 
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
+	 * @var array
+	 */
+	public $format;
+
+	/**
+	 * @var string pdf, odt, etc
+	 */
+	public $type;
+
 	public $page_hauteur;
 	public $page_largeur;
 	public $marge_gauche;
@@ -77,6 +97,7 @@ abstract class CommonDocGenerator
 	public $option_multilang;
 	public $option_freetext;
 	public $option_draft_watermark;
+	public $watermark;
 
 	public $option_modereg;
 	public $option_condreg;
@@ -84,6 +105,11 @@ abstract class CommonDocGenerator
 	public $option_credit_note;
 
 	public $emetteur;
+
+	/**
+	 * @var array	Array of columns
+	 */
+	public $cols;
 
 
 	/**
@@ -130,7 +156,11 @@ abstract class CommonDocGenerator
 			'myuser_email'=>$user->email,
 			'myuser_logo'=>$logotouse,
 			'myuser_job'=>$user->job,
-			'myuser_web'=>''	// url not exist in $user object
+			'myuser_web'=>'',	// url not exist in $user object
+			'myuser_birth'=>dol_print_date($user->birth, 'day', 'gmt'),
+			'myuser_dateemployment'=>dol_print_date($user->dateemployment, 'day', 'tzuser'),
+			'myuser_dateemploymentend'=>dol_print_date($user->dateemploymentend, 'day', 'tzuser'),
+			'myuser_gender'=>$user->gender,
 		);
 		// Retrieve extrafields
 		if (is_array($user->array_options) && count($user->array_options)) {
@@ -538,6 +568,12 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_project_description'] = $object->project->description;
 			$resarray[$array_key.'_project_date_start'] = dol_print_date($object->project->date_start, 'day');
 			$resarray[$array_key.'_project_date_end'] = dol_print_date($object->project->date_end, 'day');
+		} else { // empty replacement
+			$resarray[$array_key.'_project_ref'] ='';
+			$resarray[$array_key.'_project_title'] = '';
+			$resarray[$array_key.'_project_description'] = '';
+			$resarray[$array_key.'_project_date_start'] = '';
+			$resarray[$array_key.'_project_date_end'] = '';
 		}
 
 		// Add vat by rates
@@ -700,6 +736,14 @@ abstract class CommonDocGenerator
 			$result = $tmpproduct->fetch($line->fk_product);
 			foreach ($tmpproduct->array_options as $key => $label) {
 				$resarray["line_product_".$key] = $label;
+			}
+		} else {
+			// Set unused placeholders as blank
+			$extrafields->fetch_name_optionals_label("product");
+			$extralabels = $extrafields->attributes["product"]['label'];
+
+			foreach ($extralabels as $key => $label) {
+				$resarray['line_product_options_'.$key] = '';
 			}
 		}
 
@@ -1104,7 +1148,7 @@ abstract class CommonDocGenerator
 	public function getColumnContentXStart($colKey)
 	{
 		$colDef = $this->cols[$colKey];
-		return  (isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0) + $colDef['content']['padding'][3];
+		return (isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0) + $colDef['content']['padding'][3];
 	}
 
 	/**
@@ -1198,8 +1242,8 @@ abstract class CommonDocGenerator
 			// save curent cell padding
 			$curentCellPaddinds = $pdf->getCellPaddings();
 			// set cell padding with column content definition
-			$pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
-			$pdf->writeHTMLCell($colDef['width'], 2, $colDef['xStartPos'], $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+			$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
+			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
 
 			// restore cell padding
 			$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
@@ -1496,8 +1540,8 @@ abstract class CommonDocGenerator
 	/**
 	 *  get column status from column key
 	 *
-	 *  @param	string			$colKey    		the column key
-	 *  @return	float      width in mm
+	 *  @param	string		$colKey    		the column key
+	 *  @return	boolean						true if column on
 	 */
 	public function getColumnStatus($colKey)
 	{
@@ -1544,7 +1588,7 @@ abstract class CommonDocGenerator
 				$colDef['title']['label'] = !empty($colDef['title']['label']) ? $colDef['title']['label'] : $outputlangs->transnoentities($colDef['title']['textkey']);
 
 				// Add column separator
-				if (!empty($colDef['border-left'])) {
+				if (!empty($colDef['border-left']) && isset($colDef['xStartPos'])) {
 					$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 				}
 
@@ -1561,17 +1605,21 @@ abstract class CommonDocGenerator
 						// set cell padding with column title definition
 						$pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
 					}
-
+					if (isset($colDef['title']['align'])) {
+						$align = $colDef['title']['align'];
+					} else {
+						$align = '';
+					}
 					$pdf->SetXY($colDef['xStartPos'], $tab_top);
 					$textWidth = $colDef['width'];
-					$pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
+					$pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $align);
 
 					// Add variant of translation if $outputlangsbis is an object
 					if (is_object($outputlangsbis) && trim($colDef['title']['label'])) {
 						$pdf->setCellPaddings($colDef['title']['padding'][3], 0, $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
 						$pdf->SetXY($colDef['xStartPos'], $pdf->GetY());
 						$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
-						$pdf->MultiCell($textWidth, 2, $textbis, '', $colDef['title']['align']);
+						$pdf->MultiCell($textWidth, 2, $textbis, '', $align);
 					}
 
 					$this->tabTitleHeight = max($pdf->GetY() - $tab_top, $this->tabTitleHeight);

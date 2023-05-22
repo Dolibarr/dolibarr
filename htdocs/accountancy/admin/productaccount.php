@@ -194,7 +194,7 @@ if ($action == 'update') {
 				}
 				if ($result <= 0) {
 					// setEventMessages(null, $accounting->errors, 'errors');
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				} else {
 					$sql = '';
@@ -203,7 +203,7 @@ if ($action == 'update') {
 						$sql_exists .= " WHERE fk_product = " . ((int) $productid) . " AND entity = " . ((int) $conf->entity);
 						$resql_exists = $db->query($sql_exists);
 						if (!$resql_exists) {
-							$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$resql_exists.'</pre></span></div>';
+							$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$resql_exists.'</pre></span></div>';
 							$ko++;
 						} else {
 							$nb_exists = $db->num_rows($resql_exists);
@@ -394,7 +394,7 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -416,7 +416,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($searchCategoryProductOperator == 1) {
 		$param .= "&search_category_product_operator=".urlencode($searchCategoryProductOperator);

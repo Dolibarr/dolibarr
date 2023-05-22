@@ -42,6 +42,11 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+// Security check
+if (!getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY')) {
+	// If MAIN_USE_ZIPTOWN_DICTIONNARY is set, we make a search into a public page. If not we search into societe so we must check we have read permission.
+	$result = restrictedArea($user, 'societe', 0, '&societe', '', 'fk_soc', 'rowid', 0);
+}
 
 
 /*
@@ -53,11 +58,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 //header('Pragma: public');
 
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
-top_httphead();
+top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog('ziptown call with MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY) ? '' : $conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY));
+dol_syslog('ziptown call with MAIN_USE_ZIPTOWN_DICTIONNARY='.getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY'));
 //var_dump($_GET);
 
 // Generation of list of zip-town
@@ -69,7 +74,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	$zipcode = GETPOST('zipcode');
 	$town = GETPOST('town');
 
-	if (!empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)) {   // Use zip-town table
+	if (getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY')) {   // Use zip-town table
 		$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_pays as fk_country";
 		$sql .= ", c.rowid as fk_country, c.code as country_code, c.label as country";
 		$sql .= ", d.rowid as fk_county, d.code_departement as county_code, d.nom as county";
@@ -80,15 +85,14 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 		$sql .= " WHERE z.fk_pays = c.rowid";
 		$sql .= " AND z.active = 1 AND c.active = 1";
 		if ($zipcode) {
-			$sql .= " AND z.zip LIKE '".$db->escape($zipcode)."%'";
+			$sql .= " AND z.zip LIKE '".$db->escape($db->escapeforlike($zipcode))."%'";
 		}
 		if ($town) {
-			$sql .= " AND z.town LIKE '%".$db->escape($town)."%'";
+			$sql .= " AND z.town LIKE '%".$db->escape($db->escapeforlike($town))."%'";
 		}
 		$sql .= " ORDER BY z.zip, z.town";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
-	} else // Use table of third parties
-	{
+	} else { // Use table of third parties
 		$sql = "SELECT DISTINCT s.zip, s.town, s.fk_departement as fk_county, s.fk_pays as fk_country";
 		$sql .= ", c.code as country_code, c.label as country";
 		$sql .= ", d.code_departement as county_code , d.nom as county";
@@ -97,10 +101,10 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
 		$sql .= " WHERE";
 		if ($zipcode) {
-			$sql .= " s.zip LIKE '".$db->escape($zipcode)."%'";
+			$sql .= " s.zip LIKE '".$db->escape($db->escapeforlike($zipcode))."%'";
 		}
 		if ($town) {
-			$sql .= " s.town LIKE '%".$db->escape($town)."%'";
+			$sql .= " s.town LIKE '%".$db->escape($db->escapeforlike($town))."%'";
 		}
 		$sql .= " ORDER BY s.fk_pays, s.zip, s.town";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria

@@ -24,7 +24,7 @@
 
 /**
  * 	\file       htdocs/fichinter/class/fichinter.class.php
- * 	\ingroup    ficheinter
+ * 	\ingroup    fichinter
  * 	\brief      Fichier de la classe des gestion des fiches interventions
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -39,7 +39,7 @@ class Fichinter extends CommonObject
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>15),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'isModEnabled("project")', 'visible'=>-1, 'position'=>20),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Fk projet', 'enabled'=>'isModEnabled("project")', 'visible'=>-1, 'position'=>20),
 		'fk_contrat' =>array('type'=>'integer', 'label'=>'Fk contrat', 'enabled'=>'$conf->contrat->enabled', 'visible'=>-1, 'position'=>25),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>30),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
@@ -57,9 +57,9 @@ class Fichinter extends CommonObject
 		'datee' =>array('type'=>'date', 'label'=>'Datee', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'datet' =>array('type'=>'date', 'label'=>'Datet', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'duree' =>array('type'=>'double', 'label'=>'Duree', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>105, 'showoncombobox'=>2),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>115),
+		'description' =>array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>105, 'showoncombobox'=>2),
+		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>115),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>120),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>130),
@@ -159,7 +159,7 @@ class Fichinter extends CommonObject
 	public $extraparams = array();
 
 	/**
-	 * @var array lines
+	 * @var FichinterLigne[] lines
 	 */
 	public $lines = array();
 
@@ -771,6 +771,29 @@ class Fichinter extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('fichinter');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
@@ -784,12 +807,19 @@ class Fichinter extends CommonObject
 		global $conf, $langs, $hookmanager;
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
 
@@ -810,15 +840,8 @@ class Fichinter extends CommonObject
 				$label = $langs->trans("ShowIntervention");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
-
-			/*
-			$hookmanager->initHooks(array('fichinterdao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			*/
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -827,7 +850,7 @@ class Fichinter extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1227,8 +1250,7 @@ class Fichinter extends CommonObject
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
-					$this->errors += $hookmanager->errors;
-					$this->error = $hookmanager->error;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1467,22 +1489,26 @@ class Fichinter extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		if (property_exists($this, 'socid')) {
-			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (!empty($arraydata['thirdparty'])) {
+			$tmpthirdparty = $arraydata['thirdparty'];
+			$return .= '<br><span class="info-box-label">'.$tmpthirdparty->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'duration')) {
 			$return .= '<br><span class="info-box-label ">'.$langs->trans("Duration").' : '.convertSecondToTime($this->duration, 'allhourmin').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -1564,16 +1590,17 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
+		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
+
 		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
 
-		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$objp = $this->db->fetch_object($result);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$objp = $this->db->fetch_object($resql);
 			$this->rowid          	= $objp->rowid;
-			$this->id = $objp->rowid;
+			$this->id               = $objp->rowid;
 			$this->fk_fichinter   	= $objp->fk_fichinter;
 			$this->date = $this->db->jdate($objp->date);
 			$this->datei = $this->db->jdate($objp->date);	// For backward compatibility
@@ -1581,7 +1608,10 @@ class FichinterLigne extends CommonObjectLine
 			$this->duration       	= $objp->duree;
 			$this->rang           	= $objp->rang;
 
-			$this->db->free($result);
+			$this->db->free($resql);
+
+			$this->fetch_optionals();
+
 			return 1;
 		} else {
 			$this->error = $this->db->error().' sql='.$sql;
@@ -1598,8 +1628,6 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public function insert($user, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		dol_syslog("FichinterLigne::insert rang=".$this->rang);
@@ -1689,8 +1717,6 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		if (empty($this->date) && !empty($this->datei)) {	// For backward compatibility
@@ -1772,8 +1798,8 @@ class FichinterLigne extends CommonObjectLine
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql .= " SET duree = ".((int) $total_duration);
-			$sql .= " , dateo = ".(!empty($obj->dateo) ? "'".$this->db->idate($obj->dateo)."'" : "null");
-			$sql .= " , datee = ".(!empty($obj->datee) ? "'".$this->db->idate($obj->datee)."'" : "null");
+			$sql .= " , dateo = ".(!empty($obj->dateo) ? "'".$this->db->escape($obj->dateo)."'" : "null");
+			$sql .= " , datee = ".(!empty($obj->datee) ? "'".$this->db->escape($obj->datee)."'" : "null");
 			$sql .= " WHERE rowid = ".((int) $this->fk_fichinter);
 
 			dol_syslog("FichinterLigne::update_total", LOG_DEBUG);

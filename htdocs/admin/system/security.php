@@ -173,7 +173,7 @@ print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test = !function_exists('xdebug_is_enabled') && !extension_loaded('xdebug');
 if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
@@ -241,13 +241,40 @@ print '<br>';
 print '<br>';
 
 $installlock = DOL_DATA_ROOT.'/install.lock';
+$upgradeunlock = DOL_DATA_ROOT.'/upgrade.unlock';
+$installmoduleslock = DOL_DATA_ROOT.'/installmodules.lock';
+
+// Is install (upgrade) locked
 print '<strong>'.$langs->trans("DolibarrSetup").'</strong>: ';
 if (file_exists($installlock)) {
-	print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installlock);
+	if (file_exists($upgradeunlock)) {
+		print img_picto('', 'tick').' '.$langs->trans("InstallLockedBy", $installlock);
+	} else {
+		print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installlock);
+	}
 } else {
 	print img_warning().' '.$langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT);
 }
 print '<br>';
+
+// Is upgrade unlocked
+if (file_exists($installlock)) {	// If install not locked, no need to show this.
+	if (file_exists($upgradeunlock)) {
+		print '<strong>'.$langs->trans("DolibarrUpgrade").'</strong>: ';
+		print img_warning().' '.$langs->trans("UpgradeHasBeenUnlocked", $upgradeunlock);
+		print '<br>';
+	}
+}
+
+// Is addon install locked ?
+print '<strong>'.$langs->trans("DolibarrAddonInstall").'</strong>: ';
+if (file_exists($installmoduleslock)) {
+	print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installmoduleslock);
+} else {
+	print $langs->trans("InstallOfAddonIsNotBlocked", DOL_DATA_ROOT);
+}
+print '<br>';
+
 
 
 // File conf.php
@@ -286,7 +313,7 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore').')</span>';
+print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, clamdscan').')</span>';
 print '<br>';
 
 if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
@@ -453,29 +480,56 @@ print load_fiche_titre($langs->trans("Modules"), '', 'folder');
 
 // Module log
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
-$test = empty($conf->syslog->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+$test = isModEnabled('syslog');
+if (!$test) {
+	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
-	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
+	if (getDolGlobalInt('SYSLOG_LEVEL') > LOG_NOTICE) {
 		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedWithTooHighLogLevel", $langs->transnoentities("Syslog"));
 	} else {
-		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
+		print img_picto('', 'tick').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), getDolGlobalInt('SYSLOG_LEVEL'));
 	}
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
+print '<br>';
+
 // Module debugbar
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+$test = isModEnabled('debugbar');
+if (!$test) {
+	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
 	print img_picto('', 'error').' '.$langs->trans("ModuleActivatedDoNotUseInProduction", $langs->transnoentities("DebugBar"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
+
+print '<br>';
+
+// Modules for Payments
+$test = isModEnabled('stripe');
+if ($test) {
+	print '<strong>'.$langs->trans("Stripe").'</strong>: ';
+	if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+		print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Stripe"));
+	} else {
+		print img_picto('', 'tick').' '.$langs->trans("OptionXIsCorrectlyEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Stripe"));
+	}
+	print '<br>';
+} else {
+	$test = isModEnabled('paypal');
+	if ($test) {
+		print '<strong>'.$langs->trans("Paypal").'</strong>: ';
+		if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+			print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Paypal"));
+		} else {
+			print img_picto('', 'tick').' '.$langs->trans("OptionXIsCorrectlyEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Paypal"));
+		}
+		print '<br>';
+	}
+}
 
 
 // APIs
@@ -553,16 +607,19 @@ if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 	print $conf->global->MAIN_EXEC_USE_POPEN;
 }
 if ($execmethod == 1) {
-	print '<span class="opacitymedium">, "exec" PHP method will be used for shell commands';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; "exec" PHP method will be used for shell commands';
 	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
 	print '</span>';
 }
 if ($execmethod == 2) {
-	print '<span class="opacitymedium">, "popen" PHP method will be used for shell commands';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; "popen" PHP method will be used for shell commands';
 	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
 	print '</span>';
 }
 print '<br>';
+print '<br>';
+
+print '<strong>MAIN_SECURITY_MAXFILESIZE_DOWNLOADED</strong> = '.getDolGlobalString('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 100000000)</span>')."<br>";
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
@@ -571,17 +628,32 @@ print '<br>';
 print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
 print '<br>';
 
+print '<strong>MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+
 print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.getDolGlobalString('MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self'; img-src *;\")</span><br>";
+print '<strong>MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED</strong> = '.getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+print '<strong>MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
+print '<br>';
+
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
 print '<br>';
 
 print '<strong>MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"same-origin\" so browser doesn't send any referrer when going into another web site domain)</span><br>";
 print '<br>';
 
+print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com *.googleapis.com; script-src *.transifex.com *.google-analytics.com *.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
+print '<br>';
+
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self'; style-src https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src *;\")</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com *.googleapis.com; script-src *.transifex.com *.google-analytics.com *.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\")</span><br>";

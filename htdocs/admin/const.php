@@ -32,10 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $rowid = GETPOST('rowid', 'int');
 $entity = GETPOST('entity', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -44,7 +40,6 @@ $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alpha');
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -63,12 +58,30 @@ if (empty($sortorder)) {
 	$sortorder = 'ASC';
 }
 
+if ($action == 'add' && GETPOST('update')) {	// Click on button update must be used in priority before param $action
+	$action = 'update';
+}
+if ($action == 'add' && GETPOST('delete')) {	// Click on button update must be used in priority before param $action
+	$action = 'delete';
+}
+/*if ($action == 'update' && GETPOST('add')) {	// 'add' button is always clicked as it is the first in form.
+	$action = 'add';
+}*/
+if ($action == 'delete' && GETPOST('add')) {	// Click on button add must be used in priority before param $action
+	$action = 'add';
+}
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
 
-if ($action == 'add' || (GETPOST('add') && $action != 'update')) {
+// Add a new record
+if ($action == 'add') {
 	$error = 0;
 
 	if (empty($constname)) {
@@ -157,13 +170,12 @@ jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
 	jQuery(".checkboxfordelete").click(function() {
 		jQuery("#delconst").show();
-		jQuery("#action").val('delete');
 	});
 	jQuery(".inputforupdate").keyup(function() {	// keypress does not support back
 		var field_id = jQuery(this).attr("id");
 		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();
-		jQuery("#action").val('update');
+		jQuery("#action").val('update');			// so default action if we type enter will be update, but correct action is also detected correctly without that when clicking on "Update" button.
 		jQuery("#check_" + row_num[1]).prop("checked",true);
 	});
 });
@@ -180,7 +192,7 @@ $param = '';
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" id="action" name="action" value="">';
+print '<input type="hidden" id="action" name="action" value="add">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
@@ -222,7 +234,7 @@ if (isModEnabled('multicompany') && !$user->entity) {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
 }
-print '<input type="submit" class="button button-add small" name="add" value="'.$langs->trans("Add").'">';
+print '<input type="submit" class="button button-add small" id="add" name="add" value="'.$langs->trans("Add").'">';
 print "</td>\n";
 print '</tr>';
 

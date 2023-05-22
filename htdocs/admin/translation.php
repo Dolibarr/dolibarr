@@ -226,7 +226,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if (isset($optioncss) && $optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -463,7 +463,11 @@ if ($mode == 'searchkey') {
 	} else {
 		// Now search into translation array
 		foreach ($newlang->tab_translate as $key => $val) {
-			if ($transkey && !preg_match('/'.preg_quote($transkey, '/').'/i', $key)) {
+			$newtranskey = preg_replace('/\$$/', '', preg_replace('/^\^/', '', $transkey));
+			$newtranskeystart = preg_match('/^\^/', $transkey);
+			$newtranskeyend = preg_match('/\$$/', $transkey);
+			$regexstring = ($newtranskeystart ? '^' : '').preg_quote($newtranskey, '/').($newtranskeyend ? '$' : '');
+			if ($transkey && !preg_match('/'.$regexstring.'/i', $key)) {
 				continue;
 			}
 			if ($transvalue && !preg_match('/'.preg_quote($transvalue, '/').'/i', $val)) {

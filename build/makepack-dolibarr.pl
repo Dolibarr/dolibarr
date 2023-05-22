@@ -524,12 +524,13 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ansible`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codesniffer`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/examples/ldap`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/examples/zapier`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdata`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdemo`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/dbmodel`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/iso-normes`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/licence`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/mail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/multitail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpcheckstyle`;
@@ -894,7 +895,7 @@ if ($nboftargetok) {
 
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build`;
-			
+
 			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
 			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			$ret=`$cmd`;
@@ -1049,16 +1050,16 @@ if ($nboftargetok) {
 			print "Go into directory $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
 			chdir("$BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build");
 			#$cmd="dpkg-source -b $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
-			$cmd="dpkg-buildpackage -us -uc";
+			$cmd="dpkg-buildpackage -us -uc --compression=gzip";
 			print "Launch DEB build ($cmd)\n";
 			$ret=`$cmd 2>&1 3>&1`;
 			print $ret."\n";
 
 			chdir("$olddir");
-			
+
 			print "You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
 			print "You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
-			
+
 			# Move to final dir
 			print "Move *_all.deb *.dsc *.orig.tar.gz *.changes to $NEWDESTI\n";
 			$ret=`mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;

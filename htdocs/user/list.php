@@ -136,6 +136,7 @@ $arrayfields = array(
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
 	'u.ref_employee'=>array('label'=>"RefEmployee", 'checked'=>-1, 'position'=>60, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
 	'u.national_registration_number'=>array('label'=>"NationalRegistrationNumber", 'checked'=>-1, 'position'=>61, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.job'=>array('label'=>"PostOrFunction", 'checked'=>-1, 'position'=>50),
 	'u.salary'=>array('label'=>"Salary", 'checked'=>-1, 'position'=>80, 'enabled'=>(isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure'=>1),
 	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
 	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
@@ -150,7 +151,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Init search fields
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
@@ -164,6 +165,7 @@ $search_email = GETPOST('search_email', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
 $search_statut = GETPOST('search_statut', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
+$search_job = GETPOST('search_job', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
 $search_categ = GETPOST("search_categ", 'int');
@@ -255,6 +257,7 @@ if (empty($reshook)) {
 		$search_email = "";
 		$search_statut = "";
 		$search_thirdparty = "";
+		$search_job = "";
 		$search_warehouse = "";
 		$search_supervisor = "";
 		$search_api_key = "";
@@ -362,7 +365,8 @@ $morehtmlright = "";
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
-$sql .= " u.ref_employee, u.national_registration_number, u.salary, u.datelastlogin, u.datepreviouslogin,";
+$sql .= " u.fk_user,";
+$sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " u.tms as date_update, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
@@ -376,7 +380,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -438,11 +442,14 @@ if ($search_email != '') {
 if ($search_api_key != '') {
 	$sql .= natural_search("u.api_key", $search_api_key);
 }
+if ($search_job != '') {
+	$sql .= natural_search(array('u.job'), $search_job);
+}
 if ($search_statut != '' && $search_statut >= 0) {
 	$sql .= " AND u.statut IN (".$db->sanitize($search_statut).")";
 }
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 // Search for tag/category ($searchCategoryUserList is an array of ID)
 $searchCategoryUserList = array($search_categ);
@@ -488,7 +495,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -544,10 +551,10 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&amp;contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&amp;limit='.urlencode($limit);
+	$param .= '&amp;limit='.((int) $limit);
 }
-if ($sall != '') {
-	$param .= '&amp;search_all='.urlencode($sall);
+if ($search_all != '') {
+	$param .= '&amp;search_all='.urlencode($search_all);
 }
 if ($search_user != '') {
 	$param .= "&amp;search_user=".urlencode($search_user);
@@ -723,10 +730,10 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 
 // Fields title search
 // --------------------------------------------------------------------
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -784,6 +791,9 @@ if (!empty($arrayfields['u.ref_employee']['checked'])) {
 if (!empty($arrayfields['u.national_registration_number']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['u.job']['checked'])) {
+	print '<td class="liste_titre"><input type="text" name="search_job" class="maxwidth75" value="'.$search_job.'"></td>';
+}
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
@@ -811,8 +821,8 @@ if (!empty($arrayfields['u.tms']['checked'])) {
 }
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
-	print '<td class="liste_titre center">';
-	print $form->selectarray('search_statut', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'search_status minwidth75imp maxwidth125 onrightofpage');
+	print '<td class="liste_titre center parentonrightofpage">';
+	print $form->selectarray('search_statut', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
@@ -835,7 +845,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.login']['checked'])) {
-	print_liste_field_titre("Login", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.lastname']['checked'])) {
@@ -883,7 +893,11 @@ if (!empty($arrayfields['u.fk_soc']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.entity']['checked'])) {
-	print_liste_field_titre("Entity", $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.entity']['label'], $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.job']['checked'])) {
+	print_liste_field_titre($arrayfields['u.job']['label'], $_SERVER['PHP_SELF'], "u.job", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.ref_employee']['checked'])) {
@@ -971,6 +985,7 @@ while ($i < $imaxinloop) {
 	$object->status = $obj->status;
 	$object->office_phone = $obj->office_phone;
 	$object->user_mobile = $obj->user_mobile;
+	$object->job = $obj->job;
 	$object->email = $obj->email;
 	$object->gender = $obj->gender;
 	$object->socid = $obj->fk_soc;
@@ -995,11 +1010,11 @@ while ($i < $imaxinloop) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -1138,10 +1153,13 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['u.api_key']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->api_key).'">';
-			if ($obj->api_key) {
+			$api_key = dolDecrypt($obj->api_key);
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($api_key).'">';
+			if ($api_key) {
 				if ($canreadsecretapi) {
-					print dol_escape_htmltag($obj->api_key);
+					print '<span class="opacitymedium">';
+					print showValueWithClipboardCPButton($object->api_key, 1, dol_trunc($api_key, 3));		// TODO Add an option to also reveal the hash, not only copy paste
+					print '</span>';
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 				}
@@ -1171,13 +1189,14 @@ while ($i < $imaxinloop) {
 		// Multicompany enabled
 		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
-				print '<td>';
 				if (!$obj->entity) {
-					print $langs->trans("AllEntities");
+					$labeltouse = $langs->trans("AllEntities");
 				} else {
 					$mc->getInfo($obj->entity);
-					print $mc->label;
+					$labeltouse = $mc->label;
 				}
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltouse).'">';
+				print $labeltouse;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1203,6 +1222,16 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Job position
+		if (!empty($arrayfields['u.job']['checked'])) {
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->job).'">';
+			print dol_escape_htmltag($obj->job);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Salary
 		if (!empty($arrayfields['u.salary']['checked'])) {
 			print '<td class="nowraponall right amount">';
@@ -1252,7 +1281,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['u.datec']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -1261,7 +1290,7 @@ while ($i < $imaxinloop) {
 		}
 		// Date modification
 		if (!empty($arrayfields['u.tms']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {

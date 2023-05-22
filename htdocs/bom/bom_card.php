@@ -84,13 +84,13 @@ if ($object->id > 0) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+$result = restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 // Permissions
-$permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->bom->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('bom', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('bom', 'write'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('bom', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('bom', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->bom->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
@@ -170,6 +170,13 @@ if (empty($reshook)) {
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+
+		if (!empty($idprod) && $conf->workstation->enabled) {
+			$product = new Product($db);
+			$res = $product->fetch($idprod);
+			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
+		}
+
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
@@ -206,7 +213,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options);
+			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -566,7 +573,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (!empty($object->table_element_line)) {
 		// Products
-		$res = $object->fetchLinesbytypeproduct(0);
+		$res = $object->fetchLinesbytypeproduct(0);		// Load all lines products into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
@@ -615,7 +622,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Services
 		$filtertype = 1;
-		$res = $object->fetchLinesbytypeproduct(1);
+		$res = $object->fetchLinesbytypeproduct(1);		// Load all lines services into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');
@@ -768,8 +775,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$relativepath = $objref.'/'.$objref.'.pdf';
 		$filedir = $conf->bom->dir_output.'/'.$objref;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = $user->rights->bom->read; // If you can read, you can build the PDF to read content
-		$delallowed = $user->rights->bom->write; // If you can create/edit, you can remove a file on card
+		$genallowed = $user->hasRight('bom', 'read'); // If you can read, you can build the PDF to read content
+		$delallowed = $user->hasRight('bom', 'write'); // If you can create/edit, you can remove a file on card
 		print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 
 		// Show links to link elements

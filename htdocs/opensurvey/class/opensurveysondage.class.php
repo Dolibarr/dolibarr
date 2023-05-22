@@ -115,6 +115,11 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $allow_spy;
 
+	/**
+	 * @var array fields
+	 */
+	public $fields = array();
+
 
 	/**
 	 * Draft status (not used)
@@ -421,6 +426,27 @@ class Opensurveysondage extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('opensurvey');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowSurvey").'</u>';
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.$this->title;
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -440,11 +466,19 @@ class Opensurveysondage extends CommonObject
 		}
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowSurvey").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
-		$label .= '<b>'.$langs->trans('Title').':</b> '.$this->title.'<br>';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
 		$url = DOL_URL_ROOT.'/opensurvey/card.php?id='.$this->id;
 
@@ -463,8 +497,8 @@ class Opensurveysondage extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -475,7 +509,7 @@ class Opensurveysondage extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -632,8 +666,8 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *	Return status label of Order
 	 *
-	 *	@param      int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *	@return     string              Libelle
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *	@return string              	Label if status
 	 */
 	public function getLibStatut($mode)
 	{
@@ -644,9 +678,9 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Return label of status
 	 *
-	 *  @param		int		$status      	  Id statut
-	 *  @param      int		$mode        	  0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return     string					  Label of status
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string					Label of status
 	 */
 	public function LibStatut($status, $mode)
 	{

@@ -249,7 +249,7 @@ input {
 	padding: 4px;
 	padding-left: 5px;
 }
-.tableforfield input {
+.tableforfield input, .refidno input {
 	padding: 2px;
 }
 select {
@@ -304,9 +304,8 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.buttonwebsite):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
+input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
-/* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
@@ -412,8 +411,8 @@ input.buttonpaymentstripe {
 	background-position: 8px 11px;
 }
 .logopublicpayment #dolpaymentlogo {
-	max-height: 100px;
-	max-width: 320px;
+	max-height: 80px;
+	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 
@@ -566,10 +565,13 @@ input:-moz-placeholder { color: #ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset {
-	border: 1px solid #AAAAAA !important;
+	border: 1px solid #aaa !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
 	min-inline-size: auto;
+}
+#div_container_exportoptions fieldset, #div_container_sub_exportoptions fieldset {
+	border: 1px solid #ccc !important;
 }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
@@ -625,7 +627,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	text-transform: uppercase;
 	color: #444;
 }
-.valuefield .button, .valuefieldcreate .button, .refidno .button {
+.valuefield .button, .valuefieldcreate .button, .refidno .button:not(.smallpaddingimp) {
 	margin-top: 0 !important;
 	margin-bottom: 0 !important;
 	font-size: 0.85em !important;
@@ -728,6 +730,9 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+.centpercentimp {
+	width: 100% !important;
 }
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
@@ -832,6 +837,9 @@ textarea.centpercent {
 }
 .wordbreak {
 	word-break: break-all;
+}
+td.wordbreak img {
+	max-width: 100%;
 }
 .bold {
 	font-weight: bold !important;
@@ -1315,7 +1323,7 @@ select.flat.selectlimit {
 }
 /* using a tdoverflowxxx make the min-width not working */
 .tdnooverflowimp {
-   text-overflow: none;
+   text-overflow: unset;
 }
 .tdoverflow {
 	max-width: 0;
@@ -1576,11 +1584,11 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
-.maxscreenheightless200 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
+maxscreenheightless200 {
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, (int) $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
 }
 .maxscreenheightless300 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, (int) $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
 }
 
 
@@ -1597,7 +1605,7 @@ table[summary="list_of_modules"] .fa-cog {
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -1741,6 +1749,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
+
+	.margintoponsmartphone { margin-top: 6px; }
 
 	span.pictotitle {
 		margin-<?php echo $left; ?>: 0 !important;
@@ -2087,7 +2097,7 @@ div.blockvmenupair, div.blockvmenuimpair {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 	padding-left: 0 !important;
 }
 div.blockvmenuend, div.blockvmenubookmarks {
@@ -2157,7 +2167,7 @@ div.vmenu, td.vmenu {
 		border-top: none !important;
 		border-left: none !important;
 		border-right: none !important;
-		border-bottom: 1px solid #e0e0e0;
+		border-bottom: 1px solid #eaeaea;
 		padding-left: 0 !important;
 	}
 	div.vmenu, td.vmenu {
@@ -2914,7 +2924,6 @@ if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	print '	background-color: #FFFFFF;';
 }
 ?>
-
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 
@@ -2955,9 +2964,12 @@ if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 .login_table .tdinputlogin input#securitycode {
 	font-size: 1em;
 }
+/* For the static info message */
 .login_main_home {
 	word-break: break-word;
+	width: fit-content;
 }
+/* For the result or error message */
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -3101,6 +3113,15 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
+.loginbuttonexternal {
+	width: 300px;
+	margin: auto;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	width: <?php echo $disableimages ? '26' : '30'; ?>px;
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
@@ -3439,7 +3460,7 @@ div.tabBar {
 	padding-top: 16px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
-	margin: 0px 0px 16px 0px;
+	margin: 0px 0px 30px 0px;
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
@@ -3984,6 +4005,10 @@ div.refidno  {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 	line-height: 1.4em;
 }
+div.refaddress div.address {
+	line-height: 1.2em;
+	font-size: 0.95em;
+}
 div.refidno form {
 	display: inline-block;
 }
@@ -4247,16 +4272,20 @@ div.liste_titre_bydiv {
 	border-top-style: solid;
 	<?php if ($userborderontable) { ?>
 	border-left: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
-	/* border-right: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1); */
+	border-right: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	<?php } ?>
 
 	border-collapse: collapse;
-	display: table;
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
-	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
-	width: calc(100%);
+	/*width: calc(100% - 1px);	1px less because display is table and with 100%, it generated a right border 1px left compared to the div-table-responsive under */
+	width: unset;
 }
+div.liste_titre_bydiv_inlineblock {
+	display: inline-block;
+	width: 100%;
+}
+
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
 	height: 26px !important;
@@ -4419,7 +4448,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-of-type) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 }
 
 .noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
@@ -4434,7 +4463,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -4551,13 +4580,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
-		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(161, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(161, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 		/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
 	}
 	.dashboardlineindicator {
@@ -4637,13 +4666,16 @@ span.dashboardlineko {
 	display: inline-block;
 	vertical-align: middle;
 }
-.boxtable {
+.divboxtable {
 	margin-bottom: 25px !important;
+}
+.boxtable {
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
 	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
+
 table.noborder.boxtable tr td {
 	height: unset;
 }
@@ -4908,7 +4940,7 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.table-fiche-title .col-title div.titre{
+table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 table.table-fiche-title {
@@ -5010,7 +5042,7 @@ div#card-errors {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* Formulaire confirmation (When Ajax JQuery is used) and Dialog popups           */
 /* ============================================================================== */
 
 .ui-dialog-titlebar {
@@ -5018,7 +5050,7 @@ div#card-errors {
 .ui-dialog-content {
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
 
 
@@ -5240,7 +5272,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {
@@ -5290,6 +5322,7 @@ span[phptag] {
 .websitebar .button.bordertransp {
 	color: unset;
 	text-decoration: unset !important;
+	margin: 0px 4px 0px 4px  !important
 }
 
 .websitebar {
@@ -5337,7 +5370,7 @@ span[phptag] {
 .websiteinputurl {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: 28px;
+	line-height: 26px;
 }
 .websiteiframenoborder {
 	border: 0px;
@@ -5891,7 +5924,7 @@ pre#editfilecontentaceeditorid {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth']) ?max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
 div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
@@ -6530,7 +6563,7 @@ span#select2-boxbookmark-container {
 	font-weight: normal;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr li {
-  float: left;
+  float: <?php echo $left; ?>;
   list-style: none;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr {
@@ -6551,14 +6584,23 @@ ul.select2-results__options li {
   direction: rtl;
 }
 
+select.multiselectononeline {
+	padding: 0;
+	vertical-align: middle;
+	min-height: unset;
+	height: 28px !important;
+	opacity: 0;
+	/* width: 1px !important; */
+}
+
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
 		min-width: 220px !important;
 	}
-	.select2-container.select2-container--open .select2-dropdown--below,
-	.select2-container.select2-container--open .select2-dropdown--above {
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 220px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -6669,7 +6711,7 @@ div.multi-select-menu[role="menu"] {
   height: 0;
   border-style: solid;
   border-width: 0.5em 0.23em 0em 0.23em;
-  border-color: #444 transparent transparent transparent;
+  border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
 }
 
@@ -6677,7 +6719,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-container--open .multi-select-button:after {
   border-width: 0 0.4em 0.4em 0.4em;
-  border-color: transparent transparent #999 transparent;
+  border-color: transparent transparent #888 transparent;
 }
 
 .multi-select-menuitem {
@@ -6687,6 +6729,7 @@ div.multi-select-menu[role="menu"] {
 }
 label.multi-select-menuitem {
 	line-height: 24px;
+	text-align: start;
 }
 
 
@@ -6808,12 +6851,17 @@ dd.dropdowndd ul li {
 /* ============================================================================== */
 
 .searchpage .tagtr .tagtd {
-	padding-bottom: 3px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 .searchpage .tagtr .tagtd .button {
 	background: unset;
 	border: unset;
 }
+.searchpage .searchform input {
+	font-size: 1.15em;
+}
+
 
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
@@ -7093,8 +7141,17 @@ div.tabsElem a.tab {
 .public_border {
 	border: 1px solid #888;
 }
+.publicnewmemberform div.tabBarWithBottom {
+	border: 1px solid #e8e8e8;
+	padding: 30px;
+	border-radius: 8px;
+	background-color: #f8f8f8;
+	/*box-shadow: 2px 2px 10px #ddd;*/
+}
 
-
+.publicnewmemberform #tablesubscribe {
+	color: #666;
+}
 
 /* ============================================================================== */
 /* Ticket module                                                                  */
@@ -7530,6 +7587,56 @@ div.clipboardCPValue.hidewithsize {
 }
 
 
+/* ============================================================================== */
+/* Virtual business card                                                          */
+/* ============================================================================== */
+
+.virtualcard-div {
+	overflow: hidden;
+	vertical-align: top;
+	/* background: #aaa; */
+}
+
+#virtualcard-iframe {
+	border: 40px solid #aaa;
+	vertical-align: top;
+	width: 10%;
+	min-width: 100px;
+	border-radius: 10px;
+	aspect-ratio: 0.6;
+}
+.nopointervent {
+	pointer-events: none;
+}
+.scalepreview {
+	/* transform: scale(0.5); */
+	zoom: 0.20;
+	/* filter: blur(4px); */
+}
+
+/* ============================================================================== */
+/* For drag and drop file feature                                                 */
+/* ============================================================================== */
+
+.cssDragDropArea{
+	position: relative;
+}
+.highlightDragDropArea{
+	border: 2px #000 dashed !important;
+	background-color: #eee !important;
+}
+.highlightDragDropArea * :not(.dragDropAreaMessage *){
+	opacity:0.8;
+	filter: blur(1px) grayscale(90%);
+}
+.dragDropAreaMessage {
+	position: absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%, -50%);
+	text-align:center;
+	font-size: 2em;
+}
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -7639,7 +7746,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	.dropdown dd ul {
-		max-width: 350px;
+		max-width: 370px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */

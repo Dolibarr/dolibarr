@@ -119,7 +119,7 @@ class Evaluation extends CommonObject
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>0, 'visible'=>5, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '6' => 'Closed'),),
 		'date_eval' => array('type'=>'date', 'label'=>'DateEval', 'enabled'=>'1', 'position'=>502, 'notnull'=>1, 'visible'=>1,),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'User', 'enabled'=>'1', 'position'=>504, 'notnull'=>1, 'visible'=>1,),
-		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobPosition', 'enabled'=>'1', 'position'=>505, 'notnull'=>1, 'visible'=>1,),
+		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>505, 'notnull'=>1, 'visible'=>1,),
 	);
 	public $rowid;
 	public $ref;
@@ -1066,13 +1066,16 @@ class Evaluation extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $selected, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_user') && !(empty($this->fk_user))) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Employee").'</span> : ';
@@ -1084,7 +1087,7 @@ class Evaluation extends CommonObject
 		}
 
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</span>';
 		$return .= '</div>';

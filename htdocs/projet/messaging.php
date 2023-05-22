@@ -61,6 +61,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $hookmanager->initHooks(array('projectcardinfo'));
@@ -160,7 +161,7 @@ print dol_get_fiche_end();
 // Actions buttons
 
 $out = '';
-$permok = $user->rights->agenda->myactions->create;
+$permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
 	$out .= '&projectid='.$object->id;
 }
@@ -208,11 +209,13 @@ if (!empty($object->id)) {
 		$param .= '&limit='.$limit;
 	}
 
-	print_barre_liste($langs->trans("ActionsOnProject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+	print_barre_liste($langs->trans("ActionsOnProject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
+	$filters['search_rowid'] = $search_rowid;
+
 	show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 

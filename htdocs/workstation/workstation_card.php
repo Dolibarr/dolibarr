@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.ph
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('workstation', 'other'));
+$langs->loadLangs(array('mrp', 'other'));
 
 // Get parameters
 $id          = GETPOST('id', 'int');
@@ -148,8 +148,6 @@ if (empty($reshook)) {
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -190,6 +188,9 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
+	// Set default value of the property ref
+	$object->fields['ref']['default'] = $object->getNextNumRef();
+
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Workstation")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

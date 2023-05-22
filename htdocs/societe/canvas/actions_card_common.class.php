@@ -70,6 +70,8 @@ abstract class ActionsCardCommon
 			$object->fetch($id, $ref);
 		}
 		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -186,7 +188,7 @@ abstract class ActionsCardCommon
 			$s = $modCodeClient->getToolTip($langs, $this->object, 0);
 			$this->tpl['help_customercode'] = $form->textwithpicto('', $s, 1);
 
-			if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+			if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				$this->tpl['supplier_enabled'] = 1;
 
 				// Load object modCodeFournisseur

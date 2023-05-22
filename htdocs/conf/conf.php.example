@@ -215,6 +215,8 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 // $dolibarr_main_authentication='ldap,dolibarr';  // You can set several mode using a comma as a separator.
 // $dolibarr_main_authentication='forceuser';      // This need to add also $dolibarr_auto_user='loginforuser';
 // $dolibarr_main_authentication='twofactor';      // To use Google Authenticator. This need the non official external module "Two Factor" available on www.dolistore.com
+// $dolibarr_main_authentication='openid_connect'; // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
+// $dolibarr_main_authentication='googleoauth';    // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
 //
 $dolibarr_main_authentication='dolibarr';
 
@@ -302,7 +304,7 @@ $dolibarr_main_restrict_ip='';
 // This might be required if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
 // In most cases, you should always keep this to 0.
 // Default value: 0
-// Possible values: 0 or 1
+// Possible values: 0 or 1 (no strict CSRF test, only test on referer) or 2 (no CSRF test at all)
 // Examples:
 // $dolibarr_nocsrfcheck='0';
 //

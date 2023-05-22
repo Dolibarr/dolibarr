@@ -126,7 +126,7 @@ $TCats = $form->select_all_categories('product', array(), '', 64, 0, 1);
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
+print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
 print '</tr>';
 
@@ -185,10 +185,12 @@ if ($id > 0) {
 	$sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut as statut,";
 }
 $sql .= " SUM(d.total_ht) as selling_price,";
-// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
 $sql .= " SUM(d.qty) as product_qty,";
-$sql .= " SUM(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1 * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
-$sql .= " SUM(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
+// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
+$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
+$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= ", ".MAIN_DB_PREFIX."facturedet as d";

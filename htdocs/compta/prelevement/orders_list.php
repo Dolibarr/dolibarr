@@ -118,7 +118,7 @@ if ($search_amount) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -159,7 +159,7 @@ if ($result) {
 		$param .= '&amp;type=bank-transfer';
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	$param .= "&statut=".urlencode($statut);
 
@@ -236,11 +236,10 @@ if ($result) {
 			if ($mode == 'kanban') {
 				if ($i == 0) {
 					print '<tr><td colspan="12">';
-					print '<div class="box-flex-container">';
+					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-
-				print $directdebitorder->getKanbanView('');
+				print $directdebitorder->getKanbanView('', array('selected' => in_array($obj->id, $arrayofselected)));
 				if ($i == (min($num, $limit) - 1)) {
 					print '</div>';
 					print '</td></tr>';

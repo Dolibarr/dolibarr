@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Тамос бо мавқеъ
 MailingModuleDescEmailsFromFile=Почтаи электронӣ аз файл
 MailingModuleDescEmailsFromUser=Вуруди почтаи электронӣ аз ҷониби корбар
 MailingModuleDescDolibarrUsers=Истифодабарандагон бо почтаи электронӣ
-MailingModuleDescThirdPartiesByCategories=Шахсони сеюм (аз рӯи категорияҳо)
+MailingModuleDescThirdPartiesByCategories=Third parties
 SendingFromWebInterfaceIsNotAllowed=Фиристодан аз интерфейси веб манъ аст.
 EmailCollectorFilterDesc=Ҳама филтрҳо бояд мувофиқат кунанд, то почтаи электронӣ ҷамъоварӣ карда шавад
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=Сабт аз ҷониби коллектори п
 DefaultBlacklistMailingStatus=Default value for field '%s' when creating a new contact
 DefaultStatusEmptyMandatory=Холӣ, аммо ҳатмӣ
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
+NoMoreRecipientToSendTo=No more recipient to send the email to

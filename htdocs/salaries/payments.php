@@ -286,7 +286,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -326,7 +326,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_type_id) {
 	$param .= '&search_type_id='.urlencode($search_type_id);
@@ -534,7 +534,7 @@ $i = 0;
 $total = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < ($limit ? min($num, $limit) : $num)) {
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break;
@@ -543,8 +543,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
-
-
 
 	$userstatic->id = $obj->uid;
 	$userstatic->lastname = $obj->lastname;
@@ -570,18 +568,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$paymentsalstatic->fk_bank = $accountlinestatic->getNomUrl(1);
 	$paymentsalstatic->fk_user_author = $userstatic->getNomUrl(1);
 
-
-
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-
-
-		print $paymentsalstatic->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		print $paymentsalstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

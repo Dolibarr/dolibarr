@@ -75,7 +75,7 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -96,15 +96,15 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
-	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as fd";
+	$sql1 = "UPDATE ".$db->prefix()."facturedet as fd";
 	$sql1 .= " SET fk_code_ventilation = 0";
 	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN';
 	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
-	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity).')';
-	$sql1 .= ' AND fd.fk_facture IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture WHERE entity = '.((int) $conf->entity).')';
-	$sql1 .= ' AND fk_code_ventilation <> 0';
+	$sql1 .= '	FROM '.$db->prefix().'accounting_account as accnt';
+	$sql1 .= '	INNER JOIN '.$db->prefix().'accounting_system as syst';
+	$sql1 .= "	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'))." AND accnt.entity = ".((int) $conf->entity).")";
+	$sql1 .= " AND fd.fk_facture IN (SELECT rowid FROM ".$db->prefix()."facture WHERE entity = ".((int) $conf->entity).")";
+	$sql1 .= " AND fk_code_ventilation <> 0";
 
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	$resql1 = $db->query($sql1);
@@ -128,8 +128,8 @@ if ($action == 'validatehistory') {
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
 	// Customer Invoice lines (must be same request than into page list.php for manual binding)
-	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype, f.fk_facture_source,";
-	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype, f.situation_cycle_ref, f.fk_facture_source,";
+	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.situation_percent, l.tva_tx as tva_tx_line, l.vat_src_code,";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 		$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
@@ -144,23 +144,23 @@ if ($action == 'validatehistory') {
 	} else {
 		$sql .= " s.accountancy_code_sell as company_code_sell";	// accounting code for product but stored on thirdparty
 	}
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+	$sql .= " FROM ".$db->prefix()."facture as f";
+	$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = f.fk_soc";
 	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+		$sql .= " LEFT JOIN " . $db->prefix() . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 	}
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";	// the main table
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
+	$sql .= " LEFT JOIN ".$db->prefix()."c_country as co ON co.rowid = s.fk_pays ";
+	$sql .= " INNER JOIN ".$db->prefix()."facturedet as l ON f.rowid = l.fk_facture";	// the main table
+	$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = l.fk_product";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+		$sql .= " LEFT JOIN " . $db->prefix() . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	}
 	$alias_societe_perentity = empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED) ? "s" : "spe";
 	$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
@@ -312,6 +312,10 @@ print '<span class="opacitymedium">'.$langs->trans("DescVentilCustomer").'</span
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
 print '</span><br>';
 
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+	print "<br>";
+}
 
 $y = $year_current;
 
@@ -386,6 +390,11 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
+		// TODO When INVOICE_USE_SITUATION = 1, values here are wrong. There is no compensation on bad stored amounts
+		//$situation_ratio = 1;
+		//if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		//}
+
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
@@ -519,6 +528,11 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
+		// TODO When INVOICE_USE_SITUATION = 1, values here are wrong. There is no compensation on bad stored amounts
+		//$situation_ratio = 1;
+		//if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		//}
+
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
@@ -630,7 +644,6 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	print "</table>\n";
 	print '</div>';
 
-
 	if (isModEnabled('margin')) {
 		print "<br>\n";
 		print '<div class="div-table-responsive-no-min">';
@@ -644,22 +657,41 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 			print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 		}
 		print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
-		$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
-		for ($i = 1; $i <= 12; $i++) {
-			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-			if ($j > 12) {
-				$j -= 12;
-			}
-			$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
-						" (".$db->ifsql("fd.total_ht < 0",
-							" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",
-							"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").")",
-						 0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
-		}
-		$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
-							" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",
-							"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").") as total";
 
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			// With old situation invoice setup
+			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
+			for ($i = 1; $i <= 12; $i++) {
+				$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+				if ($j > 12) {
+					$j -= 12;
+				}
+				$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
+							" (".$db->ifsql("fd.total_ht < 0",
+								" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
+								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").")",
+							 0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			}
+			$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
+				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
+								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").") as total";
+		} else {
+			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
+			for ($i = 1; $i <= 12; $i++) {
+				$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+				if ($j > 12) {
+					$j -= 12;
+				}
+				$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
+					" (".$db->ifsql("fd.total_ht < 0",
+						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
+						"  (fd.total_ht - (fd.buy_price_ht * fd.qty))").")",
+					0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			}
+			$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
+				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
+				"  (fd.total_ht - (fd.buy_price_ht * fd.qty))").") as total";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 		$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 		$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";

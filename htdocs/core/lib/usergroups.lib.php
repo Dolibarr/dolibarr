@@ -366,7 +366,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<tr>';
 		print '<td>'.$langs->trans("DefaultSkin").'</td>';
 		print '<td>'.$conf->global->MAIN_THEME.'</td>';
-		print '<td class="nowrap left"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit ? '' : ' disabled').' type="checkbox" '.($selected_theme ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
+		print '<td class="nowrap left"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit ? '' : ' disabled').' type="checkbox" '.($selected_theme ? " checked" : "").'> <label for="check_MAIN_THEME">'.$langs->trans("UsePersonalValue").'</label></td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 	} else {
@@ -409,10 +409,10 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 					if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
 							&& substr($subdir, 0, 3) <> 'CVS' && !preg_match('/common|phones/i', $subdir)) {
 						// Disable not stable themes (dir ends with _exp or _dev)
-						if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) {
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
 							continue;
 						}
-						if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) {
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdir)) {
 							continue;
 						}
 

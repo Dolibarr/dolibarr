@@ -688,7 +688,7 @@ ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
 DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year');
 
-ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
+ALTER TABLE llx_takepos_floor_tables ADD UNIQUE INDEX uk_takepos_floor_tables (entity,label);
 
 ALTER TABLE llx_partnership 		ADD COLUMN url_to_check varchar(255);
 ALTER TABLE llx_c_partnership_type 	ADD COLUMN keyword	varchar(128);
@@ -740,6 +740,9 @@ ALTER TABLE llx_loan_schedule ADD UNIQUE INDEX uk_loan_schedule_ref (fk_loan, da
 
 -- We need when upgrade 15 to 16 with Dolibarr v17+ for upgrade2 function migrate_user_photospath2()
 ALTER TABLE llx_user CHANGE COLUMN note note_private text;
+
+ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey, entity);
 
 
 -- Bank Thirdparty

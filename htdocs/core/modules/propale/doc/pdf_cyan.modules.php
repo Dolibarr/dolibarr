@@ -777,7 +777,8 @@ class pdf_cyan extends ModelePDFPropales
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					if ($object->remise_percent) {
+					// TODO remise_percent is an obsolete field for object parent
+					/*if ($object->remise_percent) {
 						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 					}
 					if ($object->remise_percent) {
@@ -785,7 +786,7 @@ class pdf_cyan extends ModelePDFPropales
 					}
 					if ($object->remise_percent) {
 						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}
+					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -990,9 +991,7 @@ class pdf_cyan extends ModelePDFPropales
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -1036,9 +1035,11 @@ class pdf_cyan extends ModelePDFPropales
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
+		$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
+
 		// If France, show VAT mention if not applicable
 		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 
@@ -1055,23 +1056,23 @@ class pdf_cyan extends ModelePDFPropales
 		// Show shipping date
 		if (!empty($object->delivery_date)) {
 			$outputlangs->load("sendings");
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("DateDeliveryPlanned").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$dlp = dol_print_date($object->delivery_date, $displaydate, false, $outputlangs, true);
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
 			$posy = $pdf->GetY() + 1;
 		} elseif ($object->availability_code || $object->availability) {    // Show availability conditions
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("AvailabilityPeriod").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$lib_availability = $outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset($object->availability);
 			$lib_availability = str_replace('\n', "\n", $lib_availability);
@@ -1091,12 +1092,12 @@ class pdf_cyan extends ModelePDFPropales
 			$shipping_method_code = dol_getIdFromCode($this->db, $shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 			$shipping_method_label = dol_getIdFromCode($this->db, $shipping_method_id, 'c_shipment_mode', 'rowid', 'libelle');
 
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("SendingMethod").':';
 			$pdf->MultiCell(43, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement = ($outputlangs->transnoentities("SendingMethod".strtoupper($shipping_method_code)) != "SendingMethod".strtoupper($shipping_method_code)) ? $outputlangs->trans("SendingMethod".strtoupper($shipping_method_code)) : $shipping_method_label;
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
@@ -1107,12 +1108,12 @@ class pdf_cyan extends ModelePDFPropales
 
 		// Show payments conditions
 		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM) && $object->cond_reglement_code) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
 			$pdf->MultiCell(43, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
@@ -1129,11 +1130,11 @@ class pdf_cyan extends ModelePDFPropales
 			if ($object->mode_reglement_code
 			&& $object->mode_reglement_code != 'CHQ'
 			&& $object->mode_reglement_code != 'VIR') {
-				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$titre = $outputlangs->transnoentities("PaymentMode").':';
 				$pdf->MultiCell(80, 5, $titre, 0, 'L');
-				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 				$pdf->SetXY($posxval, $posy);
 				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 				$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
@@ -1144,12 +1145,10 @@ class pdf_cyan extends ModelePDFPropales
 			// Show payment mode CHQ
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ') {
 				// Si mode reglement non force ou si force a CHQ
-				if (!empty($conf->global->FACTURE_CHQ_NUMBER)) {
-					$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
-
+				if (getDolGlobalInt('FACTURE_CHQ_NUMBER')) {
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0) {
 						$account = new Account($this->db);
-						$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+						$account->fetch(getDolGlobalInt('FACTURE_CHQ_NUMBER'));
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
@@ -1163,7 +1162,7 @@ class pdf_cyan extends ModelePDFPropales
 							$posy = $pdf->GetY() + 2;
 						}
 					}
-					if ($conf->global->FACTURE_CHQ_NUMBER == -1) {
+					if (getDolGlobalInt('FACTURE_CHQ_NUMBER') == -1) {
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', 0);
@@ -1547,7 +1546,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	void
+	 *  @return	float|int
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -1711,12 +1710,18 @@ class pdf_cyan extends ModelePDFPropales
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
-			// Add internal contact of proposal if defined
+			// Add internal contact of object if defined
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
@@ -1876,7 +1881,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc
 	 *      @param	int				$hideref		Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -2034,7 +2039,7 @@ class pdf_cyan extends ModelePDFPropales
 			'width' => 26, // in mm
 			'status' => empty($conf->global->PDF_PROPAL_HIDE_PRICE_EXCL_TAX) ? true : false,
 			'title' => array(
-				'textkey' => 'TotalHT'
+				'textkey' => 'TotalHTShort'
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2045,7 +2050,7 @@ class pdf_cyan extends ModelePDFPropales
 			'width' => 26, // in mm
 			'status' => empty($conf->global->PDF_PROPAL_SHOW_PRICE_INCL_TAX) ? false : true,
 			'title' => array(
-				'textkey' => 'TotalTTC'
+				'textkey' => 'TotalTTCShort'
 			),
 			'border-left' => true, // add left line separator
 		);

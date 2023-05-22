@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2020-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,19 +93,19 @@ $object = null;
 $ObjectClassName = '';
 // Objects available by default
 $arrayoftype = array(
-	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
-	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societ'), 'ClassPath' => "/contact/class/contact.class.php"),
-	'proposal' => array('label' => 'Proposals', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
-	'order' => array('label' => 'Orders', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('commande'), 'ClassPath' => "/commande/class/commande.class.php"),
-	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
-	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
-	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
-	'contractdet' => array('label' => 'ContractLines', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
-	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
-	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
-	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
-	'member' => array('label' => 'Adherent', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
-	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
+	'thirdparty' => array('langs'=>'companies', 'label' => 'ThirdParties', 'picto'=>'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
+	'contact' => array('label' => 'Contacts', 'picto'=>'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societ'), 'ClassPath' => "/contact/class/contact.class.php"),
+	'proposal' => array('label' => 'Proposals', 'picto'=>'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
+	'order' => array('label' => 'Orders', 'picto'=>'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('commande'), 'ClassPath' => "/commande/class/commande.class.php"),
+	'invoice' => array('langs'=>'facture', 'label' => 'Invoices', 'picto'=>'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
+	'invoice_template'=>array('label' => 'PredefinedInvoices', 'picto'=>'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
+	'contract' => array('label' => 'Contracts', 'picto'=>'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
+	'contractdet' => array('label' => 'ContractLines', 'picto'=>'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
+	'bom' => array('label' => 'BOM', 'picto'=>'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
+	'mo' => array('label' => 'MO', 'picto'=>'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
+	'ticket' => array('label' => 'Ticket', 'picto'=>'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
+	'member' => array('label' => 'Adherent', 'picto'=>'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
+	'cotisation' => array('label' => 'Subscriptions', 'picto'=>'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
 );
 
 // Complete $arrayoftype by external modules
@@ -295,12 +295,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		$sqlfilters = GETPOST('search_component_params_hidden', 'alphanohtml');
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (dolCheckFilters($sqlfilters, $errormessage)) {
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " WHERE (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
-			} else {
-				print $errormessage;
-			}
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 		}*/
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
@@ -420,7 +415,7 @@ $viewmode = '';
 $viewmode .= '<div class="divadvancedsearchfield">';
 $arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 $viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, 'minwidth100', 1);
+$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
 $viewmode .= '</div>';
 
 $num = 0;
@@ -432,18 +427,21 @@ $limit = 0;
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 
+foreach ($newarrayoftype as $tmpkey => $tmpval) {
+	$newarrayoftype[$tmpkey]['label'] = img_picto('', $tmpval['picto'], 'class="pictofixedwidth"').$langs->trans($tmpval['label']);
+}
 
-print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock centpercent">';
 
 // Select object
 print '<div class="divadvancedsearchfield center floatnone">';
 print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
+print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1, '', 0, 1);
 if (empty($conf->use_javascript_ajax)) {
 	print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 } else {
 	print '<!-- js code to reload page with good object type -->
-	<script type="text/javascript">
+	<script nonce="'.getNonce().'" type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
         		console.log("Reload for "+jQuery("#objecttype").val());
@@ -681,11 +679,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	$sqlfilters = $search_component_params_hidden;
 	if ($sqlfilters) {
 		$errormessage = '';
-		if (dolCheckFilters($sqlfilters, $errormessage)) {
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
-		} else {
-			print $errormessage;
+		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+		if ($errormessage) {
+			print dol_escape_htmltag($errormessage);
 		}
 	}
 	$sql .= " GROUP BY ";
@@ -867,7 +863,7 @@ if ($sql) {
 				$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
 			}
 
-			$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->trans("Empty") : $langs->trans("NotDefined")));
+			$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 			$xarrayforallseries = array('label' => $labeltouse);
 			foreach ($search_measures as $key => $val) {
 				$fieldfory = 'y_'.$key;
@@ -892,7 +888,7 @@ if ($mode == 'grid') {
 
 if ($mode == 'graph') {
 	$WIDTH = '80%';
-	$HEIGHT = 200;
+	$HEIGHT = (empty($_SESSION['dol_screenheight']) ? 400 : $_SESSION['dol_screenheight'] - 500);
 
 	// Show graph
 	$px1 = new DolGraph();

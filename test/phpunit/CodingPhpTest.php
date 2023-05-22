@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +88,12 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SecurityTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -543,6 +545,16 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			}
 			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
+
+			// Test we don't have "if ($resql >"
+			$ok=true;
+			$matches=array();
+			preg_match_all('/if \(\$resql >/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found a if $resql with a > operator (when $resql is a boolean or resource) in file '.$file['relativename'].'. Please remove the > ... part.');
 
 			// Test we don't have empty($user->hasRight
 			$ok=true;

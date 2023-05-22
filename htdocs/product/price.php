@@ -69,8 +69,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+$object = new Product($db);
 if ($id > 0 || !empty($ref)) {
-	$object = new Product($db);
 	$object->fetch($id, $ref);
 }
 
@@ -1312,7 +1312,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 print "</table>\n";
 
 print '</div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 
 print dol_get_fiche_end();
@@ -1333,12 +1333,12 @@ if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $a
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	if (empty($reshook)) {
 		if ($object->isVariant()) {
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
+			if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NoEditVariants")) . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
 			}
 		} else {
 			if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-				if ($user->rights->produit->creer || $user->rights->service->creer) {
+				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
 				} else {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">' . $langs->trans("UpdateDefaultPrice") . '</span></div>';
@@ -1346,7 +1346,7 @@ if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $a
 			}
 
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-				if ($user->rights->produit->creer || $user->rights->service->creer) {
+				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
 				} else {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">' . $langs->trans("AddCustomerPrice") . '</span></div>';
@@ -1354,13 +1354,13 @@ if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $a
 			}
 
 			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-				if ($user->rights->produit->creer || $user->rights->service->creer) {
+				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
 				} else {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">' . $langs->trans("UpdateVAT") . '</span></div>';
 				}
 
-				if ($user->rights->produit->creer || $user->rights->service->creer) {
+				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
 				} else {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">' . $langs->trans("UpdateLevelPrices") . '</span></div>';
@@ -1378,7 +1378,7 @@ if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $a
  * Edit price area
  */
 
-if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'edit_vat' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 	print load_fiche_titre($langs->trans("UpdateVAT"), '');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
@@ -1944,7 +1944,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 		print '<td>';
-		print img_picto('', 'company').$form->select_company('', 'socid', 's.client IN (1,2,3)', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+		$filter = '(s.client:IN:1,2,3)';
+		print img_picto('', 'company').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 		print '</td>';
 		print '</tr>';
 
@@ -2099,7 +2100,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
 
@@ -2226,7 +2227,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 		}
 
@@ -2338,7 +2339,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td class="right">'.price($object->price_min_ttc).'</td>';
 		print '<td class="right">';
 		print '</td>';
-		if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
+		if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
 			print '<td class="nowraponall">';
 			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_default_price&token='.newToken().'&id='.$object->id.'">';
 			print img_info($langs->trans('PriceByCustomerLog'));

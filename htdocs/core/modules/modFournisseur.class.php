@@ -41,7 +41,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 		$this->numero = 40;
@@ -83,7 +83,7 @@ class modFournisseur extends DolibarrModules
 
 		$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "muscadet";
+		$this->const[$r][2] = "cornas";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -308,6 +308,8 @@ class modFournisseur extends DolibarrModules
 		// Exports
 		//--------
 		$r = 0;
+
+		$langs->loadLangs(array("suppliers", "multicurrency"));
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;

@@ -51,7 +51,7 @@ class modAgenda extends DolibarrModules
 		$this->numero = 2400;
 
 		$this->family = "projects";
-		$this->module_position = '15';
+		$this->module_position = '16';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
@@ -107,13 +107,16 @@ class modAgenda extends DolibarrModules
 
 		// Boxes
 		//------
-		$this->boxes = array(0=>array('file'=>'box_actions.php', 'enabledbydefaulton'=>'Home'));
+		$this->boxes = array(
+			0=>array('file'=>'box_actions.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_actions_future.php', 'enabledbydefaulton'=>'Home')
+		);
 
 		// Cronjobs
 		//------------
 		$datestart = dol_now();
 		$this->cronjobs = array(
-			0=>array('label'=>'SendEmailsReminders', 'jobtype'=>'method', 'class'=>'comm/action/class/actioncomm.class.php', 'objectname'=>'ActionComm', 'method'=>'sendEmailsReminder', 'parameters'=>'', 'comment'=>'SendEMailsReminder', 'frequency'=>5, 'unitfrequency'=>60, 'priority'=>10, 'status'=>1, 'test'=>'$conf->agenda->enabled', 'datestart'=>$datestart),
+			0=>array('label'=>'SendEmailsReminders', 'jobtype'=>'method', 'class'=>'comm/action/class/actioncomm.class.php', 'objectname'=>'ActionComm', 'method'=>'sendEmailsReminder', 'parameters'=>'', 'comment'=>'SendEMailsReminder', 'frequency'=>5, 'unitfrequency'=>60, 'priority'=>10, 'status'=>1, 'test'=>'isModEnabled("agenda")', 'datestart'=>$datestart),
 		);
 
 		// Permissions
@@ -212,7 +215,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>86,
 			'perms'=>'$user->rights->agenda->myactions->read || $user->rights->resource->read',
-			'enabled'=>'$conf->agenda->enabled || $conf->resource->enabled',
+			'enabled'=>'isModEnabled("agenda") || isModEnabled("resource")',
 			'target'=>'',
 			'user'=>2,
 		);
@@ -228,7 +231,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>100,
 			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2,
 		);
@@ -242,7 +245,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'commercial',
 			'position'=>101,
 			'perms'=>'($user->hasRight("agenda", "myactions", "create")||$user->hasRight("agenda", "allactions", "create"))',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -257,7 +260,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>140,
 			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -271,7 +274,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>141,
 			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -285,7 +288,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>142,
 			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -329,7 +332,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>110,
 			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -343,7 +346,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>111,
 			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -357,7 +360,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>112,
 			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -400,7 +403,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>160,
 			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);

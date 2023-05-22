@@ -213,6 +213,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $action;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
@@ -220,12 +221,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 		}
 
 		// Add odtgeneration hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('odtgeneration'));
-		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -482,9 +478,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$odfHandler = null; // Destroy object
 

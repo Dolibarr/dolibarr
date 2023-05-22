@@ -565,6 +565,7 @@ function hideMessage(fieldId,message) {
  * @param   int     userid      User id
  * @param	int		value       Value to set
  * @param   string  token       Token
+ * @retun   boolean
  */
 function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
 	var saved_url = url; /* avoid undefined url */
@@ -654,20 +655,23 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			return false;
 		}
 	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+
+	return true;
 }
 
 /*
  * Used by button to set on/off
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
- * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
- * @param	int		entity		Entity
- * @param	int		strict		Strict
- * @param   int     forcereload Force reload
- * @param   int     userid      User id
- * @param   string  token       Token
+ * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
+ * @param	{string}	code		Code
+ * @param	{string}	intput		Array of complementary actions to do if success
+ * @param	{int}		entity		Entity
+ * @param	{int}		strict		Strict
+ * @param   {int}     forcereload Force reload
+ * @param   {int}     userid      User id
+ * @param   {string}  token       Token
+ * @return  boolean
  */
 function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
 	var saved_url = url; /* avoid undefined url */
@@ -747,6 +751,8 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 			return false;
 		}
 	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+
+	return true;
 }
 
 /*
@@ -764,6 +770,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	int		strict		Strict
  * @param   int     userid      User id
  * @param   string  token       Token
+ * @return  boolean
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict, userid, token) {
 	var boxConfirm = box;
@@ -809,6 +816,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 	if (boxConfirm.info) {
 		$("#noButton_" + code).button().hide();
 	}
+
+	return true;
 }
 
 
@@ -931,8 +940,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 /**
  * Function to output a dialog box for copy/paste
  *
- * @param	string	text	Text to put into copy/paste area
- * @param	string	text2	Text to put under the copy/paste area
+ * @param	text	Text to put into copy/paste area
+ * @param	text2	Text to put under the copy/paste area
  */
 function copyToClipboard(text,text2)
 {
@@ -942,6 +951,7 @@ function copyToClipboard(text,text2)
 	$("#dialogforpopup").html(newElem);
 	$("#dialogforpopup").dialog();
 	$("#coordsforpopup").select();
+
 	return false;
 }
 
@@ -949,9 +959,9 @@ function copyToClipboard(text,text2)
 /**
  * Show a popup HTML page. Use the "window.open" function.
  *
- * @param	string	url		Url
- * @param	string	title  	Title of popup
- * @return	boolean			False
+ * @param	url			Url
+ * @param	title  		Title of popup
+ * @return	boolean		False
  * @see document_preview
  */
 function newpopup(url, title) {
@@ -965,6 +975,7 @@ function newpopup(url, title) {
 	var top = (screen.height - h)/2;
 	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
 	fen=window.open(tmp,title,wfeatures);
+
 	return false;
 }
 
@@ -972,9 +983,9 @@ function newpopup(url, title) {
  * Function show document preview. It uses the "dialog" function.
  * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
- * @param 	string file 		Url
- * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
- * @param 	string title		Title of popup
+ * @param 	file 		Url
+ * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
+ * @param 	title		Title of popup
  * @return	void
  * @see newpopup
  */
@@ -1064,9 +1075,9 @@ function document_preview(file, type, title)
 /*
  * Provide a function to get an URL GET parameter in javascript
  *
- * @param 	string	name				Name of parameter
- * @param	mixed	valueifnotfound		Value if not found
- * @return	string						Value
+ * @param 	name				Name of parameter
+ * @param	valueifnotfound		Value if not found
+ * @return	string				Value
  */
 function getParameterByName(name, valueifnotfound)
 {
@@ -1147,9 +1158,9 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  *
  */
 function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
+	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 	var main_decimal_separator = <?php echo json_encode($dec) ?>;
 	var main_thousand_separator = <?php echo json_encode($thousand) ?>;
 	var locale_code = force_locale || <?php echo json_encode($langs->defaultlang) ?>;
@@ -1216,7 +1227,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
  * Function similar to PHP price2num()
  *
  * @param  {number|string} amount    The amount to convert/clean
- * @return {string}                  The amount in universal numeric format (Example: '99.99999')
+ * @return {number}                  The amount in universal numeric format (Example: '99.99999')
  * @todo Implement rounding parameter
  */
 function price2numjs(amount) {
@@ -1225,9 +1236,9 @@ function price2numjs(amount) {
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
 
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
+	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 
 	var amount = amount.toString();
 
@@ -1235,20 +1246,27 @@ function price2numjs(amount) {
 	var rounding = main_rounding_unit;
 	var pos = amount.indexOf(dec);
 	var decpart = '';
-	if (pos >= 0) decpart = amount.substr(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	if (pos >= 0) {
+		decpart = amount.substring(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	}
 	var nbdec = decpart.length;
-	if (nbdec > rounding) rounding = nbdec;
+	if (nbdec > rounding) {
+		rounding = nbdec;
+	}
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
 	amount = amount.replace(' ', '');             // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
+
 	//console.log("amount before="+amount+" rouding="+rounding)
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
+
 	console.log("price2numjs text="+amount+" return="+res);
+
 	return res;
 }
 
@@ -1258,8 +1276,7 @@ if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUER
 	?>
 // Defined properties for JNotify
 $(document).ready(function() {
-	if (typeof $.jnotify == 'function')
-	{
+	if (typeof $.jnotify == 'function') {
 		$.jnotify.setup({
 			delay: 3000									// the default time to show each notification (in milliseconds)
 			, sticky: false								// determines if the message should be considered "sticky" (user must manually close notification)
@@ -1268,20 +1285,20 @@ $(document).ready(function() {
 			, fadeSpeed: 1000							// the speed to fade messages out (in milliseconds)
 			, slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
 			, classContainer: "jnotify-container"
-				, classNotification: "jnotify-notification"
-					, classBackground: "jnotify-background"
-						, classClose: "jnotify-close"
-							, classMessage: "jnotify-message"
-								, init: null                                // callback that occurs when the main jnotify container is created
-								, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
-								, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
+			, classNotification: "jnotify-notification"
+			, classBackground: "jnotify-background"
+			, classClose: "jnotify-close"
+			, classMessage: "jnotify-message"
+			, init: null                                // callback that occurs when the main jnotify container is created
+			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
+			, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
 		});
 	}
 });
 <?php } ?>
 
-// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
-$(document).ready(function() {
+jQuery(document).ready(function() {
+	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
@@ -1289,6 +1306,9 @@ $(document).ready(function() {
 		jQuery(".id-container").css('width', '100%');
 
 	}
+
+	// Code to set tooltip on search field
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not("maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
 });
 
 
@@ -1299,14 +1319,15 @@ $(document).ready(function() {
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-$(document).on('select2:open', () => {
+
+$(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
-	let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
-	$(this).one('mouseup keyup',()=>{
-		setTimeout(()=>{
-			allFound[allFound.length - 1].focus();
-		},0);
-	});
+	const target = $(e.target);
+	if (target && target.length) {
+		const id = target[0].id || target[0].name;
+		document.querySelector('input[aria-controls*='+id+']').focus();
+	}
 });
+
 
 // End of lib_head.js.php

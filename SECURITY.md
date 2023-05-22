@@ -6,8 +6,8 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 | Version    | Supported              |
 | ---------- | ---------------------- |
-| <= 16.0.2  | :x:                    |
-| >= 16.0.3  | :white_check_mark:     |
+| <= 17.0.0  | :x:                    |
+| >= 17.0.1  | :white_check_mark:     |
 | >= develop | :white_check_mark:     |
 
 ## Reporting a Vulnerability
@@ -67,7 +67,7 @@ Scope is the web application (back office) and the APIs.
 
 * Remote code execution (RCE)
 * Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
-* Code injections (HTML, JS, SQL, PHP, ...)
+* Code injections (JS, SQL, PHP). HTML are covered only for fields that are not description, notes or comments fields (where rich content is allowed on purpose).
 * Cross-Site Scripting (XSS), except from setup page of module "External web site" (allowing any content here, editable by admin user only, is accepted on purpose) and except into module "Web site" when permission to edit website content is allowed (injecting any data in this case is allowed too).
 * Cross-Site Requests Forgery (CSRF) with real security impact (when using GET URLs, CSRF are qualified only for creating, updating or deleting data from pages restricted to admin users)
 * Open redirect

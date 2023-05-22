@@ -89,16 +89,16 @@ function get_avatar_from_service(service, userid, size) {
 		if (isNumberOrNot(size)) {
 			if (size >= 200) {
 				sizeparam = 'large'
-			};
+			}
 			if (size >= 100 && size < 200) {
 				sizeparam = 'normal'
-			};
+			}
 			if (size >= 50 && size < 100) {
 				sizeparam = 'small'
-			};
+			}
 			if (size < 50) {
 				sizeparam = 'square'
-			};
+			}
 		} else {
 			sizeparam = size;
 		}
@@ -118,13 +118,13 @@ function get_avatar_from_service(service, userid, size) {
 		if (isNumberOrNot(size)) {
 			if (size >= 73) {
 				sizeparam = 'bigger'
-			};
+			}
 			if (size >= 48 && size < 73) {
 				sizeparam = 'normal'
-			};
+			}
 			if (size < 48) {
 				sizeparam = 'mini'
-			};
+			}
 		} else {
 			sizeparam = size;
 		}
@@ -139,31 +139,31 @@ function get_avatar_from_service(service, userid, size) {
 		var sizeparam = '';
 		if (size >= 512) {
 			sizeparam = 512
-		};
+		}
 		if (size >= 128 && size < 512) {
 			sizeparam = 128
-		};
+		}
 		if (size >= 96 && size < 128) {
 			sizeparam = 96
-		};
+		}
 		if (size >= 64 && size < 96) {
 			sizeparam = 64
-		};
+		}
 		if (size >= 48 && size < 64) {
 			sizeparam = 48
-		};
+		}
 		if (size >= 40 && size < 48) {
 			sizeparam = 40
-		};
+		}
 		if (size >= 30 && size < 40) {
 			sizeparam = 30
-		};
+		}
 		if (size >= 24 && size < 30) {
 			sizeparam = 24
-		};
+		}
 		if (size < 24) {
 			sizeparam = 16
-		};
+		}
 
 		url = "http://api.tumblr.com/v2/blog/" + userid + "/avatar/" + sizeparam;
 		break;

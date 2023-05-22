@@ -55,12 +55,18 @@ class Bookmark extends CommonObject
 	public $db;
 
 	/**
+	 * Last error code on a local method
+	 * @var int		Error number
+	 */
+	public $errno;
+
+	/**
 	 * @var int ID
 	 */
 	public $id;
 
 	/**
-	 * @var int User ID
+	 * @var int User ID. If > 0, bookmark of one user. If == 0, bookmark public (for everybody)
 	 */
 	public $fk_user;
 
@@ -233,15 +239,14 @@ class Bookmark extends CommonObject
 	/**
 	 *      Removes the bookmark
 	 *
-	 *      @param      int		$id     Id removed bookmark
-	 *      @return     int         	<0 si ko, >0 si ok
+	 *      @param      User	$user     	User deleting
+	 *      @return     int         		<0 if KO, >0 if OK
 	 */
-	public function remove($id)
+	public function delete($user)
 	{
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
-		$sql .= " WHERE rowid = ".((int) $id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog("Bookmark::remove", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -269,10 +274,10 @@ class Bookmark extends CommonObject
 	}
 
 	/**
-	 *	Return label of contact status
+	 *  Return the label of the status
 	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * 	@return 	string					Label of contact status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode)
 	{

@@ -38,7 +38,7 @@ function printDropdownBookmarksList()
 
 	$authorized_var=array('limit','optioncss','contextpage');
 	$url = $_SERVER["PHP_SELF"];
-	$url_param=array();
+	$url_param = array();
 	if (!empty($_SERVER["QUERY_STRING"])) {
 		if (is_array($_GET)) {
 			foreach ($_GET as $key => $val) {
@@ -79,7 +79,7 @@ function printDropdownBookmarksList()
 
 	$url .= ($tmpurl ? '?'.$tmpurl : '');
 	if (!empty($url_param)) {
-		$url .= '&'.implode('&', $url_param);
+		$url .= (strpos($url, '?') > 0 ? '&' : '?').implode('&', $url_param);
 	}
 
 	$searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
@@ -102,6 +102,7 @@ function printDropdownBookmarksList()
 	$listbtn .= img_picto('', 'edit', 'class="paddingright opacitymedium"').$langs->trans('EditBookmarks').'</a>';
 
 	$bookmarkList = '';
+	$bookmarkNb = 0;
 	// Menu with list of bookmarks
 	$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
 	$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";
@@ -116,6 +117,7 @@ function printDropdownBookmarksList()
 				$bookmarkList .= dol_escape_htmltag($obj->title);
 				$bookmarkList .= '</a>';
 				$i++;
+				$bookmarkNb++;
 			}
 			$bookmarkList .= '</div>';
 
@@ -141,6 +143,7 @@ function printDropdownBookmarksList()
 				$searchForm .= dol_escape_htmltag($obj->title);
 				$searchForm .= '</option>';
 				$i++;
+				$bookmarkNb++;
 			}
 			$searchForm .= '</select>';
 		}
@@ -196,17 +199,16 @@ function printDropdownBookmarksList()
 			<!-- Menu bookmark tools-->
 			<div class="bookmark-footer">
 					'.$newbtn.$listbtn.'
-				<div style="clear:both;"></div>
+				<div class="clearboth"></div>
 			</div>
 		';
 
 		$html .= '
-			<!-- Menu Body -->
-			<div class="bookmark-body dropdown-body">
-			'.$bookmarkList.'
-			<span id="top-bookmark-search-nothing-found" class="hidden-search-result opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
-			</div>
-			';
+				<!-- Menu Body bookmarks -->
+				<div class="bookmark-body dropdown-body">'.$bookmarkList.'
+				<span id="top-bookmark-search-nothing-found" class="'.($bookmarkNb ? 'hidden-search-result ' : '').'opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
+				</div>
+				';
 
 		$html .= '<!-- script to open/close the popup -->
 				<script>

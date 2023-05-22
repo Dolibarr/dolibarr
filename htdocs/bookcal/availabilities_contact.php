@@ -24,7 +24,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
@@ -54,8 +53,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->bookcal->availabilities->read;
-	$permission = $user->rights->bookcal->availabilities->write;
+	$permissiontoread = $user->hasRight('bookcal', 'availabilities', 'read');
+	$permission = $user->hasRight('bookcal', 'availabilities', 'write');
 } else {
 	$permissiontoread = 1;
 	$permission = 1;
@@ -66,7 +65,7 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->bookcal->enabled)) accessforbidden();
+if (!isModEnabled('bookcal')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 

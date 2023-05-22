@@ -10,7 +10,8 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -844,10 +845,12 @@ class Categorie extends CommonObject
 	 * @param	int			$offset		Offset
 	 * @param	string		$sortfield	Sort fields
 	 * @param	string		$sortorder	Sort order ('ASC' or 'DESC');
+	 * @param   array       $filter     Filter array. Example array('field'=>'valueforlike', 'customsql'=>...)
+	 * @param   string      $filtermode Filter mode (AND or OR)
 	 * @return  array|int              	-1 if KO, array of instance of object if OK
 	 * @see containsObject()
 	 */
-	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC')
+	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC', $filter = array(), $filtermode = 'AND')
 	{
 		global $user;
 
@@ -861,15 +864,34 @@ class Categorie extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
 		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
 		$sql .= " AND c.fk_categorie = ".((int) $this->id);
-		$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+		// Compatibility with actioncomm table which has id instead of rowid
+		if ($this->MAP_OBJ_TABLE[$type] == "actioncomm" || $type == "actioncomm") {
+			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
+		} else {
+			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+		}
 		// Protection for external users
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
 			$sql .= " AND o.rowid = ".((int) $user->socid);
 		}
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key == 'o.rowid') {
+					$sqlwhere[] = $key." = ".((int) $value);
+				} elseif ($key == 'customsql') {
+					$sqlwhere[] = $value;
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		}
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit > 0 || $offset > 0) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
-		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -961,7 +983,7 @@ class Categorie extends CommonObject
 
 		$offset = 0;
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);
 			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -1443,7 +1465,7 @@ class Categorie extends CommonObject
 		$ways = array();
 
 		$parents = $this->get_meres();
-		if (!empty($parents)) {
+		if (is_array($parents)) {
 			foreach ($parents as $parent) {
 				$allways = $parent->get_all_ways();
 				foreach ($allways as $way) {
@@ -1598,6 +1620,25 @@ class Categorie extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('categories');
+
+		$datas = [];
+
+		$datas['label'] = $langs->trans("ShowCategory").': '.($this->ref ? $this->ref : $this->label);
+
+		return $datas;
+	}
+
+	/**
 	 *	Return name and link of category (with picto)
 	 *  Use ->id, ->ref, ->label, ->color
 	 *
@@ -1612,7 +1653,20 @@ class Categorie extends CommonObject
 		global $langs, $hookmanager;
 
 		$result = '';
-		$label = $langs->trans("ShowCategory").': '.($this->ref ? $this->ref : $this->label);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
 		// Check contrast with background and correct text color
 		$forced_color = 'categtextwhite';
@@ -1621,15 +1675,17 @@ class Categorie extends CommonObject
 				$forced_color = 'categtextblack';
 			}
 		}
-
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : '')).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
+		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
+		$link .= '"'.$dataparams;
+		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$link .= ' class="'.$classfortooltip.' '.$forced_color.'">';
 		$linkend = '</a>';
 
 		$picto = 'category';
 
 
 		if ($withpicto) {
-			$result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+			$result .= ($link.img_object($label, $picto, $dataparams.' class="'.$classfortooltip.'"').$linkend);
 		}
 		if ($withpicto && $withpicto != 2) {
 			$result .= ' ';

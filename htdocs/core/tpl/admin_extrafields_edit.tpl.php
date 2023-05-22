@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="rowid" value="<?php echo (empty($rowid) ? '' : $rowid) ?>">
-<input type="hidden" name="enabled" value="<?php echo $extrafields->attributes[$elementtype]['enabled'][$attrname]; ?>">
+<input type="hidden" name="enabled" value="<?php echo dol_escape_htmltag($extrafields->attributes[$elementtype]['enabled'][$attrname]); ?>">
 
 <?php print dol_get_fiche_head(); ?>
 
@@ -289,7 +289,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable ? ' checked' : ''); ?>></td></tr>
 
 <!-- Visibility -->
-<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
+<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list != '' ? $list : '1'); ?>"></td></tr>
 
 <!-- Visibility for PDF-->

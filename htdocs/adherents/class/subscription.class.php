@@ -109,7 +109,7 @@ class Subscription extends CommonObject
 		'datef' =>array('type'=>'datetime', 'label'=>'DateEndSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
 		'subscription' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'isameasure'=>1),
 		'fk_bank' =>array('type'=>'integer', 'label'=>'BankId', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'note' =>array('type'=>'text', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'note' =>array('type'=>'html', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
 		'fk_type' =>array('type'=>'integer', 'label'=>'MemberType', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>60),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
@@ -452,10 +452,10 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du statut d'une adhesion
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string				Label
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -464,16 +464,19 @@ class Subscription extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int			$status      			Id status
-	 *  @return string      						Label
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
-	public function LibStatut($status)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
 		global $langs;
-		$langs->load("members");
+
+		//$langs->load("members");
+
 		return '';
 	}
 
@@ -515,6 +518,8 @@ class Subscription extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -522,7 +527,8 @@ class Subscription extends CommonObject
 		$return .= '</span>';
 
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(property_exists($this, 'fk_adherent')? $this->fk_adherent: $this->ref ).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(property_exists($this, 'fk_adherent')? $this->fk_adherent: $this->ref ).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
 			$return .= '<br><span class="info-box-status opacitymedium">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
 		}
