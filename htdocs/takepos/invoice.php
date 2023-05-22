@@ -285,6 +285,8 @@ if (empty($reshook)) {
 					$payment->create($user);
 					$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 					$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
+				} elseif (getDolGlobalInt("TAKEPOS_DELAYED_TERMS")) {
+					$invoice->setPaymentTerms(getDolGlobalInt("TAKEPOS_DELAYED_TERMS"));
 				}
 			}
 
