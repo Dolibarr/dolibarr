@@ -1842,7 +1842,7 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	protected function drawSignatureArea(&$pdf, $object, $posy, $outputlangs)
 	{
-		global $conf, $pagenb;
+		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$tab_top = $posy + 4;
 		$tab_hl = 4;
@@ -1856,8 +1856,8 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetXY($posx, $tab_top);
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
+
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
-		pdf_setPosSign($pdf->PageNo(), $posx, $tab_top + $tab_hl, $tab_hl * 3, $largcol);
 		$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
 		if (!empty($conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING)) {
 			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl, $largcol, $tab_hl * 3);
