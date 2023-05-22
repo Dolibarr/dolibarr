@@ -873,7 +873,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			}
-			var_dump($sql);
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checksoc) && $objectid > 0) {	// We check feature = checksoc. For $objectid = 0, no check
