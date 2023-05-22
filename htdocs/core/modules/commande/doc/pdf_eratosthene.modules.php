@@ -888,7 +888,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				}
 
 				// Add terms to sale
-				if (!empty($mysoc->termstosale) && getDolGlobalInt('MAIN_PDF_HIDE_TERMSTOSALE_ORDER')) {
+				if (!empty($mysoc->termstosale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSTOSALE_ORDER')) {
 					$termstosale = $conf->mycompany->dir_output.'/'.$mysoc->termstosale;
 					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 						$termstosale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termstosale;

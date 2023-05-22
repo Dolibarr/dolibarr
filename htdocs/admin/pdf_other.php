@@ -62,14 +62,14 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH')) {
 		dolibarr_set_const($db, "MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", GETPOST("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", 'int'), 'chaine', 0, '', $conf->entity);
 	}
-	if (GETPOSTISSET('MAIN_PDF_HIDE_TERMSTOSALE_PROPAL')) {
-		dolibarr_set_const($db, "MAIN_PDF_HIDE_TERMSTOSALE_PROPAL", GETPOST("MAIN_PDF_HIDE_TERMSTOSALE_PROPAL", 'int'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSTOSALE_PROPAL')) {
+		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSTOSALE_PROPAL", GETPOST("MAIN_PDF_ADD_TERMSTOSALE_PROPAL", 'int'), 'chaine', 0, '', $conf->entity);
 	}
-	if (GETPOSTISSET('MAIN_PDF_HIDE_TERMSTOSALE_ORDER')) {
-		dolibarr_set_const($db, "MAIN_PDF_HIDE_TERMSTOSALE_ORDER", GETPOST("MAIN_PDF_HIDE_TERMSTOSALE_ORDER", 'int'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSTOSALE_ORDER')) {
+		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSTOSALE_ORDER", GETPOST("MAIN_PDF_ADD_TERMSTOSALE_ORDER", 'int'), 'chaine', 0, '', $conf->entity);
 	}
-	if (GETPOSTISSET('MAIN_PDF_HIDE_TERMSTOSALE_INVOICE')) {
-		dolibarr_set_const($db, "MAIN_PDF_HIDE_TERMSTOSALE_INVOICE", GETPOST("MAIN_PDF_HIDE_TERMSTOSALE_INVOICE", 'int'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSTOSALE_INVOICE')) {
+		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSTOSALE_INVOICE", GETPOST("MAIN_PDF_ADD_TERMSTOSALE_INVOICE", 'int'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_ADD_ZATCA_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_ZATCA_QR_CODE", GETPOST("INVOICE_ADD_ZATCA_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
@@ -139,13 +139,13 @@ if (isModEnabled('propal')) {
 	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_HIDE_TERMSTOSALE_PROPAL"), '');
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSTOSALE_PROPAL"), '');
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_HIDE_TERMSTOSALE_PROPAL');
+		print ajax_constantonoff('MAIN_PDF_ADD_TERMSTOSALE_PROPAL');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_HIDE_TERMSTOSALE_PROPAL", $arrval, $conf->global->MAIN_PDF_HIDE_TERMSTOSALE_PROPAL);
+		print $form->selectarray("MAIN_PDF_ADD_TERMSTOSALE_PROPAL", $arrval, $conf->global->MAIN_PDF_ADD_TERMSTOSALE_PROPAL);
 	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>';
@@ -163,20 +163,20 @@ if (isModEnabled('propal')) {
 	print '</div>';
 }
 
-if (isModEnabled('facture')) {
-	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
+if (isModEnabled('commande')) {
+	print load_fiche_titre($langs->trans("Orders"), '', 'bill');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_HIDE_TERMSTOSALE_ORDER"), '');
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSTOSALE_ORDER"), '');
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_HIDE_TERMSTOSALE_ORDER');
+		print ajax_constantonoff('MAIN_PDF_ADD_TERMSTOSALE_ORDER');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_HIDE_TERMSTOSALE_ORDER", $arrval, $conf->global->MAIN_PDF_HIDE_TERMSTOSALE_ORDER);
+		print $form->selectarray("MAIN_PDF_ADD_TERMSTOSALE_ORDER", $arrval, $conf->global->MAIN_PDF_ADD_TERMSTOSALE_ORDER);
 	}
 	print '</td></tr>';
 	print '</table>';
@@ -191,13 +191,13 @@ if (isModEnabled('facture')) {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_HIDE_TERMSTOSALE_INVOICE"), '');
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSTOSALE_INVOICE"), '');
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_HIDE_TERMSTOSALE_INVOICE');
+		print ajax_constantonoff('MAIN_PDF_ADD_TERMSTOSALE_INVOICE');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_HIDE_TERMSTOSALE_INVOICE", $arrval, $conf->global->MAIN_PDF_HIDE_TERMSTOSALE_INVOICE);
+		print $form->selectarray("MAIN_PDF_ADD_TERMSTOSALE_INVOICE", $arrval, $conf->global->MAIN_PDF_ADD_TERMSTOSALE_INVOICE);
 	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>';

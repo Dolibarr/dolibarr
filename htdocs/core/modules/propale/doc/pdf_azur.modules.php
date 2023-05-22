@@ -798,7 +798,7 @@ class pdf_azur extends ModelePDFPropales
 				}
 
 				// Add terms to sale
-				if (!empty($mysoc->termstosale) && getDolGlobalInt('MAIN_PDF_HIDE_TERMSTOSALE_PROPAL')) {
+				if (!empty($mysoc->termstosale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSTOSALE_PROPAL')) {
 					$termstosale = $conf->mycompany->dir_output.'/'.$mysoc->termstosale;
 					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 						$termstosale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termstosale;

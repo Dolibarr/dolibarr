@@ -896,7 +896,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Add terms to sale
-				if (!empty($mysoc->termstosale) && getDolGlobalInt('MAIN_PDF_HIDE_TERMSTOSALE_INVOICE')) {
+				if (!empty($mysoc->termstosale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSTOSALE_INVOICE')) {
 					$termstosale = $conf->mycompany->dir_output.'/'.$mysoc->termstosale;
 					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 						$termstosale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termstosale;
