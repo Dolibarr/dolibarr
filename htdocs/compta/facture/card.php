@@ -4248,6 +4248,8 @@ if ($action == 'create') {
 		$i++;
 		$close[$i]['code'] = 'bankcharge';
 		$i++;
+		$close[$i]['code'] = 'withholdingtax';
+		$i++;
 		$close[$i]['code'] = 'other';
 		$i++;
 		// Help
@@ -4257,6 +4259,8 @@ if ($action == 'create') {
 		$close[$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
 		$i++;
 		$close[$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBankChargeDesc");
+		$i++;
+		$close[$i]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc");
 		$i++;
 		$close[$i]['label'] = $langs->trans("Other");
 		$i++;
@@ -4268,6 +4272,8 @@ if ($action == 'create') {
 		$i++;
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBankCharge", $resteapayer, $langs->trans("Currency".$conf->currency)), $close[$i]['label'], 1);
 		$i++;
+		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonWithholdingTax"), $close[$i]['label'], 1);
+		$i++;
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("Other"), $close[$i]['label'], 1);
 		$i++;
 		// arrayreasons[code]=reason
@@ -4278,7 +4284,7 @@ if ($action == 'create') {
 		// Cree un tableau formulaire
 		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"), array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 340, 600);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 380, 600);
 	}
 
 	// Confirmation du classement abandonne
