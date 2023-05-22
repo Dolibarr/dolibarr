@@ -24,7 +24,7 @@
  *
  * $trackid must be defined
  * $modelmail
- * $defaulttopicFromEmail
+ * $defaulttopic
  * $diroutput
  * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  */
