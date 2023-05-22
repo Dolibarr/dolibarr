@@ -473,40 +473,6 @@ class modWebhook extends DolibarrModules
 
 		$sql = array();
 
-		// Document templates
-		$moduledir = dol_sanitizeFileName('webhook');
-		$myTmpObjects = array();
-		$myTmpObjects['Webhook_target'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
-
-		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Webhook_target') {
-				continue;
-			}
-			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_webhook_targets.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
-				$dest = $dirodt.'/template_webhook_targets.odt';
-
-				if (file_exists($src) && !file_exists($dest)) {
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
-					if ($result < 0) {
-						$langs->load("errors");
-						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
-						return 0;
-					}
-				}
-
-				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
-				));
-			}
-		}
-
 		return $this->_init($sql, $options);
 	}
 
