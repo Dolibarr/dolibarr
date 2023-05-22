@@ -1045,6 +1045,27 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->AliasNbPages();
 				}
 
+				// Add terms to sale
+				if (!empty($mysoc->termstosale) && getDolGlobalInt('MAIN_PDF_HIDE_TERMSTOSALE_INVOICE')) {
+					$termstosale = $conf->mycompany->dir_output.'/'.$mysoc->termstosale;
+					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+						$termstosale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termstosale;
+					}
+					if (file_exists($termstosale) && is_readable($termstosale)) {
+						$pagecount = $pdf->setSourceFile($termstosale);
+						for ($i = 1; $i <= $pagecount; $i++) {
+							$tplIdx = $pdf->importPage($i);
+							if ($tplIdx!==false) {
+								$s = $pdf->getTemplatesize($tplIdx);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tplIdx);
+							} else {
+								setEventMessages(null, array($termstosale.' cannot be added, probably protected PDF'), 'warnings');
+							}
+						}
+					}
+				}
+
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
