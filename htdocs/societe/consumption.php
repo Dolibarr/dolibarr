@@ -148,6 +148,7 @@ if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 }
 
 //if (isModEnabled('agenda') && $user->rights->agenda->myactions->read) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
+$elementTypeArray = array();
 
 if ($object->client) {
 	print '<tr><td class="titlefield">';

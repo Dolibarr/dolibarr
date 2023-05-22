@@ -140,9 +140,9 @@ $arrayfields['nb_products'] = array(
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->variants->read;
-$permissiontoadd = $user->rights->variants->write;
-$permissiontodelete = $user->rights->variants->delete;
+$permissiontoread = $user->hasRight('variants', 'read');
+$permissiontoadd = $user->hasRight('variants', 'write');
+$permissiontodelete = $user->hasRight('variants', 'delete');
 
 // Security check
 if (!isModEnabled('variants')) {

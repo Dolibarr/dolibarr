@@ -9,6 +9,7 @@
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,6 +224,7 @@ if (empty($reshook)) {
 		}
 
 		$multicurrency_code = array();
+		$multicurrency_tx = array();
 
 		// Clean parameters amount if payment is for a credit note
 		foreach ($amounts as $key => $value) {	// How payment is dispatched
@@ -233,6 +235,7 @@ if (empty($reshook)) {
 				$amounts[$key] = - abs($newvalue);
 			}
 			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
+			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
@@ -243,6 +246,7 @@ if (empty($reshook)) {
 				$multicurrency_amounts[$key] = - abs($newvalue);
 			}
 			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
+			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
 		if (isModEnabled("banque")) {
@@ -259,6 +263,7 @@ if (empty($reshook)) {
 		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
+		$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
 		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 		$paiement->note_private = GETPOST('comment', 'alpha');
@@ -470,6 +475,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
 		print '<input type="hidden" name="type" id="invoice_type" value="'.$facture->type.'">';
 		print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->thirdparty->name).'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		print dol_get_fiche_head();
 
@@ -863,7 +869,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$langs->load("withdrawals");
 				if (!empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
 			}*/
-			print '<br><input type="submit" class="button" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
+			print '<br><input type="submit" class="button reposition" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
 			print '</div>';
 		}
 
