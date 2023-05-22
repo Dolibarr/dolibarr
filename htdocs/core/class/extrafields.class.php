@@ -2000,6 +2000,9 @@ class ExtraFields
 						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
+						if (!empty($this->attributes[$object->table_element]['langfile'][$key])) {
+							$langs->load($this->attributes[$object->table_element]['langfile'][$key]);
+						}
 						$nofillrequired++;
 						$error_field_required[] = $langs->transnoentitiesnoconv($value);
 					}
