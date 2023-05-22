@@ -1429,6 +1429,7 @@ if ($action == 'create') {
 							}
 							$tmpwarehouseObject = new Entrepot($db);
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {    // $stock_warehouse is product_stock
+								$var = $subj % 2;
 								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
 									// if a warehouse was selected by user, picking is limited to this warehouse and his children
 									continue;
@@ -1458,6 +1459,8 @@ if ($action == 'create') {
 										$tooltip = '';
 										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
 											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)].'" ';
+										} else {
+											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
 										}
 
 										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
@@ -1538,6 +1541,7 @@ if ($action == 'create') {
 							}
 
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+								$var = $subj % 2;
 								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
 									// if a warehouse was selected by user, picking is limited to this warehouse and his children
 									continue;
@@ -1572,6 +1576,8 @@ if ($action == 'create') {
 										if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
 											$tooltipClass = ' classfortooltip';
 											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+										} else {
+											$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = 0 ;
 										}
 										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
