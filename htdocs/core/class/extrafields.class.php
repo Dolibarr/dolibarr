@@ -1991,6 +1991,8 @@ class ExtraFields
 					continue;
 				}
 
+				$langs->load($this->attributes[$object->table_element]['langfile'][$key]);
+
 				if ($this->attributes[$object->table_element]['required'][$key]) {	// Value is required
 					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
 					// technically non-empty value may be treated as empty functionally).
