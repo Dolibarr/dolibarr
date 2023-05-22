@@ -577,6 +577,7 @@ while ($i < min($num, $limit)) {
 	$chargesociale_static->label = $obj->label;
 	$chargesociale_static->type_label = $obj->type_label;
 
+
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;
 		$projectstatic->ref = $obj->project_ref;

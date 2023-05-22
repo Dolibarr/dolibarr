@@ -65,6 +65,7 @@ ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transk
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32); 
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
+ALTER TABLE llx_paiementcharge ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
 
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
 
