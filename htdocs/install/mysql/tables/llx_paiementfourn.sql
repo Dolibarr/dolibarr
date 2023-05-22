@@ -20,8 +20,8 @@
 create table llx_paiementfourn
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  entity				integer DEFAULT 1,
   ref					varchar(30),
+  entity				integer DEFAULT 1,
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec					datetime,          -- date de creation de l'enregistrement
   datep					datetime,          -- date de paiement
