@@ -7728,7 +7728,7 @@ class Form
 		$out = '';
 		$outarray = array();
 
-		$selectFields = " p.rowid, p.ref, p.firstname, p.lastname";
+		$selectFields = " p.rowid, p.ref, p.firstname, p.lastname, p.fk_adherent_type";
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
@@ -7770,7 +7770,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, !empty($conf->global->PROJECT_USE_SEARCH_TO_SELECT) ? $conf->global->PROJECT_USE_SEARCH_TO_SELECT : '');
 			}
 
 			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
@@ -7928,7 +7928,7 @@ class Form
 
 		dol_syslog(get_class($this) . "::selectForForms filter=" . $filter, LOG_DEBUG);
 		$out = '';
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->$confkeyforautocompletemode) && !$forcecombo) {
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString($confkeyforautocompletemode) && !$forcecombo) {
 			// No immediate load of all database
 			$placeholder = '';
 			if ($preselectedvalue && empty($selected_input_value)) {
@@ -8763,7 +8763,7 @@ class Form
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
-                    <li><input class="inputsearch_dropdownselectedfields width90p minwidth200" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
+                    <li><input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
                     '.$listoffieldsforselection.'
                     </ul>
                 </div>

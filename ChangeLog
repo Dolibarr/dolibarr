@@ -9,15 +9,16 @@ For uses:
 ---------
 
 NEW: PHP 8.2 compatibility (test not yet completed).
-NEW: #22740 Add OpenID Connect impl
 NEW: #23436 Group social networks fields
 NEW: Accountancy - Add specific page to export accounting data rather than the journals page
 NEW: Accountancy - Add sub-account balance FPC22
 NEW: Accountancy - Manage customer retained warranty FPC21+
 NEW: Accountancy - Manage intra-community VAT on supplier invoices - FPC22
 NEW: Can upload a file with drag and drop on purchase invoice, vats, salaries and social contributions 
-NEW: adapt category and product pictures sizes on takepos
-NEW: Add ability of ODT support to supplier invoices
+NEW: authentication mode: #22740 Add OpenID Connect impl
+NEW: authentication mode: Add experimental support for Google OAuth2 connexion
+NEW: adapt category and product pictures sizes on TakePOS
+NEW: Supplier Invoices: add ability of ODT support to supplier invoices
 NEW: Add a public virtual card page for each user
 NEW: Add a status on supplier price ref (WIP to close a supplier ref)
 NEW: Add a trigger when create a shipping line batch and fix propagate missing errors
@@ -31,7 +32,7 @@ NEW: Add Customer Order delivered (ORDER_NEW) in module Notification
 NEW: add customize CSS in admin/ihm settings
 NEW: Add date due and labels into customer comm card
 NEW: Add dropdown button actions (example on Create button on project)
-NEW: added an option to display the progress of tickets on the public interface
+NEW: Tickets: added an option to display the progress of tickets on the public interface
 NEW: Add field reply-to in email collector as possible filter
 NEW: Add filter on nb of generation done in list of recurring invoices
 NEW: Add filters and sort on product unit column
@@ -41,7 +42,7 @@ NEW: add link to thirdparty tickets history
 NEW: add margin in paiement/card.php
 NEW: Add mass action delete on VAT
 NEW: Add more zip, town, country for owner of a bank account
-NEW: add numbering modules for members
+NEW: Members: add numbering modules for members
 NEW: add option keepspace into dol_string_nospecialchar()
 NEW: Add origin info when create a product batch when created from a movement stock
 NEW: Add possibility to choose format #21426
@@ -61,15 +62,15 @@ NEW: Can add any contact on events if global MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT 
 NEW: Can add the add now link on date into addfieldvalue()
 NEW: Can bin accounting line for a given month
 NEW: Can edit account on miscellaneous payment (if not transfered)
-NEW: Can edit inline the vat number from supplier tab
+NEW: Can edit inline the VAT number from supplier tab
 NEW: Can fill date of salary payment with date of start of salary
 NEW: Can filter on a custom group of accounts. Perf or ledger list.
 NEW: Can go back to draft on shipment when stock change not on validate
 NEW: Can modify bank account of sepa payment (if file not sent yet)
-NEW: Can modify margin rates in offers like VAT rates.
-NEW: Can modify the date of payment of a salary (if not reconciled)
-NEW: Can now edit service name for oauth token
-NEW: Can receive more than qty ordered on reception
+NEW: Proposals: Can modify margin rates in offers like VAT rates.
+NEW: Salary: Can modify the date of payment of a salary (if not reconciled)
+NEW: OAuth: Can now edit service name for oauth token
+NEW: Reception: Can receive more than qty ordered on reception
 NEW: Can select several warehouses into the view stock at date in past
 NEW: Can select the export format during export of journals
 NEW: Can set a checkbox in formconfirm by clicking on the label
@@ -78,8 +79,8 @@ NEW: Can set flag default value on email templates
 NEW: Can set the page "List of opportunities" as landing page
 NEW: Can show the sql request used on emailing selection
 NEW: can stay on edit field when errors occurs
-NEW: Can test a geoip conversion from the geoip setup page
-NEW: Captcha for public member's subscription form
+NEW: GeoIP: Can test a geoip conversion from the geoip setup page
+NEW: Members: Captcha for public member's subscription form
 NEW: category of operation for crabe PDF model
 NEW: color for start date and owner
 NEW: comment in api_mymodule for seperate methods
@@ -92,24 +93,24 @@ NEW: Disable bad reputation product price
 NEW: dolExplodeIntoArray can accept regex
 NEW: dol_sort_array can sort on alphabetical order even if val is num
 NEW: don't have closed contact proposed as receiver for the mails
-NEW: Dynamic choice of warehouse and batch in MO production.
+NEW: MO: Dynamic choice of warehouse and batch in MO production.
 NEW: element time integration code + sql
 NEW: events list with color
 NEW: expend/collapse list of social networks
-NEW: filter for Signed+Billed in proposals
+NEW: Proposals: filter for Signed+Billed in proposals
 NEW: Filter on amount and qty on list of service's contracts
-NEW: filter on entity in import
+NEW: Import: filter on entity in import
 NEW: formconfirm can support field with format datetime
 NEW: getCommonSubstitutionArray to have more substitute keys
 NEW: helper functions for dates + small demo case
 NEW: hook printFieldListFrom in contact list
 NEW: inc.php: handle parameters from argv
-NEW: Increment website counter on each page access in website module
+NEW: Website Module: Increment website counter on each page access in website module
 NEW: Invalidate all sessions of a user when password is modified.
-NEW: Invoice - Show Category of operations
+NEW: Invoice - show category of operations
 NEW: iSuiteExpert export model
 NEW: Keep a link between user created from recruitment and application
-NEW: limit load products in takepos
+NEW: limit load products in TakePOS
 NEW: List product in orders
 NEW: Make it possible to select hours and minutes in form_confirm
 NEW: map table to element for get entity in import
@@ -134,7 +135,7 @@ NEW: Possibility to link to German pages in help
 NEW: presend mass action in contact list
 NEW: product images on popup are cached
 NEW: Provide the oldcopy value when calling setValueFrom() function with a trigger key
-NEW: Quadratus export with attachments in accountancy export
+NEW: Accountancy: Quadratus export with attachments in accountancy export
 NEW: referential objects of batch
 NEW: remove default percentage for event creation url
 NEW: remove keys whose table element is the same as element in map list
@@ -145,8 +146,8 @@ NEW: Send an email when ticket assigned
 NEW: Send a notification email when ticket assigned
 NEW: sepaStripe now creates the payment mode with type pm_ using new API
 NEW: set payment default values when supplier order created from reception
-NEW: set ticket status to answered if the client has answered from the public interface
-NEW: set today start time at begining
+NEW: Tickets: set ticket status to answered if the client has answered from the public interface
+NEW: set today start time at beginning
 NEW: Setup emailcollector easier. Can also use ! for negative search.
 NEW: Show counter of access of website in website list
 NEW: Show main currency in company info user tooltip
@@ -171,23 +172,29 @@ NEW: use more recent model by default
 NEW: VAT can be modified during add of line
 NEW: write all fields and their properties in asciidoc format
 NEW: Can add an array of several links in date selector
-NEW: Implement MAIN_ACTIVATE_FILECACHE on bithday widget
-NEW: Add widget "The next upcoming events"
-NEW: Add widget of open opportunities
+NEW: Add option PDF_SHOW_PHONE_AFTER_USER_CONTACT to show phone after specific assigned contact on PDF
+NEW: Add option PDF_SHOW_EMAIL_AFTER_USER_CONTACT to show email after specific assigned contact on PDF
+NEW: Widgets: Implement MAIN_ACTIVATE_FILECACHE on birthday widget
+NEW: Widgets: Add widget "The next upcoming events"
+NEW: Widgets: Add widget of open opportunities
+NEW: Use an ajax component to swith prospection status on thidparty list
+NEW: Comment on survey is possible only after vote.
+NEW: Add partial payment reason "withholding tax"
 
 For developers or integrators:
 ------------------------------
 
-NEW: triggers on mailing
+NEW: add triggers on mailing
 NEW: add function for listiong objects from directory
-NEW: Add helplist property to describe fields of obects
-NEW: Add hook in loadLotStock() in html.formproduct.class.php file, add hook 'llxFooter', Add hook online sign
-NEW: Update lib parsedownto 1.7.4, phpspreadsheet lib to v1.12, ESCPOS v3.0
+NEW: add helplist property to describe fields of objects
+NEW: add hook in loadLotStock() in html.formproduct.class.php file, add hook 'llxFooter', Add hook online sign
+NEW: Update lib parsedownto 1.7.4, phpspreadsheet lib to v1.12, ESCPOS v3.0, jquery, Stripe.
 NEW: Support contact in post() document API
-NEW: updating in modulbuilder on tab Menu when adding object
-NEW: Add/Edit permissions in ModuleBuilder
-NEW: Better generated documentation for modulebuilder
-NEW: Add sent info in the parameters provided to the hook sendMailAfter
+NEW: More APIs (update currency rate, upload of supplier documents, ...)
+NEW: ModuleBuilder: updating in modulbuilder on tab Menu when adding object
+NEW: ModuleBuilder: add/edit permissions
+NEW: ModuleBuilder: better generated documentation
+NEW: add sent info in the parameters provided to the hook sendMailAfter
 NEW: add setAsSelectUser into factory for generic setup page
 
 

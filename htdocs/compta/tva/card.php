@@ -80,9 +80,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-if ($id > 0 || $ref) {
-	$object->fetch($id, $ref);
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 $permissiontoread = $user->rights->tax->charges->lire;
 $permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -93,7 +91,7 @@ $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->enti
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) {
+if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', $object->id, 'tva', 'charges');
