@@ -186,7 +186,11 @@ if ($disablenofollow) {
 <div id="login_line1">
 
 <div id="login_left">
-<img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
+<?php if (preg_match('/\.svg$/', $urllogo)) { ?>
+	<object data="<?php echo $urllogo; ?>" type="image/svg+xml" id="img_logo"></object>
+<?php } else { ?>
+	<img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
+<?php } ?>
 </div>
 
 <br>
