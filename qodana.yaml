@@ -115,4 +115,5 @@ exclude:
   - name: UnnecessaryLabelJS
   - name: JSCheckFunctionSignatures
   - name: PhpReturnDocTypeMismatchInspection  
-    
+  - name: PhpSwitchWithCommonPartsInspection
+   
