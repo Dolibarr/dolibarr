@@ -1622,7 +1622,7 @@ class pdf_sponge extends ModelePDFFactures
 		// Total remise
 		$total_line_remise = 0;
 		foreach ($object->lines as $i => $line) {
-			$total_line_remise += (float) pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2); // TODO: add this method to core/lib/pdf.lib
+			$total_line_remise += pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2); // TODO: add this method to core/lib/pdf.lib
 			// Gestion remise sous forme de ligne négative
 			if ($line->total_ht < 0) {
 				$total_line_remise += -$line->total_ht;
@@ -2288,7 +2288,17 @@ class pdf_sponge extends ModelePDFFactures
 
 		if ($showaddress) {
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
+			$carac_emetteur = '';
+			// Add internal contact of object if defined
+			$arrayidcontact = $object->getIdContact('internal', 'BILLING');
+			if (count($arrayidcontact) > 0) {
+				$object->fetch_user($arrayidcontact[0]);
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= "\n";
+			}
+
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
@@ -2577,7 +2587,7 @@ class pdf_sponge extends ModelePDFFactures
 			'width' => 19, // in mm
 			'status' => false,
 			'title' => array(
-				'textkey' => 'Progress'
+				'textkey' => 'ProgressShort'
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2620,7 +2630,7 @@ class pdf_sponge extends ModelePDFFactures
 			'width' => 26, // in mm
 			'status' => empty($conf->global->PDF_PROPAL_HIDE_PRICE_EXCL_TAX) ? true : false,
 			'title' => array(
-				'textkey' => 'TotalHT'
+				'textkey' => 'TotalHTShort'
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2631,7 +2641,7 @@ class pdf_sponge extends ModelePDFFactures
 			'width' => 26, // in mm
 			'status' => empty($conf->global->PDF_PROPAL_SHOW_PRICE_INCL_TAX) ? false : true,
 			'title' => array(
-				'textkey' => 'TotalTTC'
+				'textkey' => 'TotalTTCShort'
 			),
 			'border-left' => true, // add left line separator
 		);

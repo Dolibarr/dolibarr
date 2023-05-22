@@ -129,7 +129,7 @@ if (!empty($canvas)) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productreassortlotlist'));
+$hookmanager->initHooks(array('reassortlotlist'));
 
 // Security check
 if ($user->socid) {

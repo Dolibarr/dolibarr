@@ -996,8 +996,8 @@ if ($contextpage != 'poslist') {
 	$newcardbutton   = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
-} elseif ($user->rights->societe->creer) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
+} elseif ($user->hasRight('societe', 'creer')) {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
 	$label = 'MenuNewCustomer';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
@@ -1826,20 +1826,14 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 			// Prospect status
-			print '<td class="center nowrap"><div class="nowraponall">';
-			print '<div class="inline-block">';
-			print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
-			print '</div> - <div class="inline-block">';
-			foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
-				$titlealt = 'default';
-				if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
-					$titlealt = $val['label'];
-				}
-				if ($obj->stcomm_id != $val['id']) {
-					print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
-				}
-			}
-			print '</div></div></td>';
+			print '<td class="center nowrap">';
+
+			$prospectid = $obj->rowid;
+			$statusprospect = $obj->stcomm_id;
+
+			$formcompany->selectProspectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid);
+
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1916,6 +1910,9 @@ while ($i < $imaxinloop) {
 	}
 	$i++;
 }
+
+// Line that calls the select_status function by passing it js as the 5th parameter in order to activate the js script
+$formcompany->selectProspectStatus('status_prospect', $prospectstatic, null, null, "js");
 
 // If no record found
 if ($num == 0) {
