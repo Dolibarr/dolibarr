@@ -318,7 +318,7 @@ if ($action == "importSignature") {
 						$wforimg = $s['w']/2 - $xforimgstart;
 
 						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
-						//$pdf->Close();require_once
+						//$pdf->Close();
 						$pdf->Output($newpdffilename, "F");
 
 						// Index the new file and update the last_main_doc property of object.
