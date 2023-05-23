@@ -1116,7 +1116,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	</div>
 	<div class="modal-body">
 		<?php
-		for ($i = 1; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++) {
+		for ($i = 1; $i <= getDolGlobalInt('TAKEPOS_NUM_TERMINALS'); $i++) {
 			if ($user->rights->takepos->{'access_takepos_' . $i}) {
 				$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) : $langs->trans("TerminalName", $i);
 				print '<button type="button" class="block" onclick="closeTerminal(true);location.href=\'index.php?setterminal='.$i.'\'">'. $terminal_name .'</button>';
