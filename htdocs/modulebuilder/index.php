@@ -1283,41 +1283,11 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				}
 			}
 			$rights = $moduleobj->rights;
-			$obj = array();
-			$existRight = 0;
-			foreach ($rights as $right) {
-				$obj[]= $right[4];
-			}
+			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 
-			if (in_array(strtolower($firstobjectname), $obj)) {
-				$rightToadd = preg_replace('/myobject/', $objectname, $rightToadd);
-			}
-			if (in_array(strtolower($objectname), $obj)) {
-				$existRight++;
-				setEventMessages($langs->trans("PermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'errors');
-			}
-			if ($objectname != $firstobjectname) {
-				$rightToadd = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
-		\$this->rights[\$r][1] = 'Read objects of ".$module."';
-		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'read';
-		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
-		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."';
-		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'write';
-		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
-		\$this->rights[\$r][1] = 'Delete objects of ".$module."';
-		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'delete';
-		\$r++;
-		";
-				$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
-				if (!$existRight) {
-					dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectname).'*/'.$rightToadd."/*END ".strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
-				}
+			$generatePerms = reWriteAllPermissions($moduledescriptorfile, $rights, null, null, $objectname, $module, -2);
+			if ($generatePerms < 0) {
+				setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
 			}
 		}
 
@@ -1541,6 +1511,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
+		}
+		// check if documentation was generate and add table of properties object
+		$file = $destdir.'/class/'.strtolower($objectname).'.class.php';
+		$destfile = $destdir.'/doc/Documentation.asciidoc';
+
+		if (file_exists($destfile)) {
+			writePropsInAsciiDoc($file, $objectname, $destfile);
 		}
 	}
 	if (!$error) {
@@ -1870,6 +1847,12 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 			'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 		);
 
+		// delete property if documentation was generated
+		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
+		if (file_exists($file_doc)) {
+			deletePropsFromDoc($file_doc, $objectname);
+		}
+
 		//menu for the object selected
 		// load class and check if menu exist for this object
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -1910,26 +1893,12 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		$check = dolReplaceInFile($moduledescriptorfile, array('/*LEFTMENU '.strtoupper($objectname).'*/'."\n" => '',"\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n" => ''));
 
 		// regenerate permissions and delete them
-		$rights = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
-		\$this->rights[\$r][1] = 'Read objects of ".$module."';
-		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'read';
-		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
-		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."';
-		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'write';
-		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
-		\$this->rights[\$r][1] = 'Delete objects of ".$module."';
-		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'delete';
-		\$r++;
-		";
-
-		$deleteright = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => '', $rights => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => "\n\t\t"));
-
+		$permissions = $moduleobj->rights;
+		reWriteAllPermissions($moduledescriptorfile, $permissions, null, null, $objectname, '', -1);
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();
+		}
 		$resultko = 0;
 		foreach ($filetodelete as $tmpfiletodelete) {
 			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
@@ -2124,7 +2093,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		//rewriting all permissions after add a right
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, 1);
+		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
 		setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 
 		if (isModEnabled(strtolower($module))) {
@@ -2237,7 +2206,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		// rewriting all permissions after update permission needed
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, 2);
+		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, '', '', 2);
 
 		setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
 
@@ -2273,7 +2242,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 
 		// rewriting all permissions
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, '', 0);
+		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, null, '', '', 0);
 
 		// check if module is enabled
 		if (isModEnabled(strtolower($module))) {
@@ -4779,7 +4748,7 @@ if ($module == 'initmodule') {
 
 				//form for add new right
 				print '<tr class="small">';
-				print '<td><input type="text" readonly  name="id" class="width75" value="'.dol_escape_htmltag($moduleobj->numero.sprintf('%02d', $i + count($perms))).'"></td>';
+				print '<td><input type="text" readonly  name="id" class="width75" value="0"></td>';
 				print '<td>';
 				print '<select name="label" >';
 				print '<option value=""></option>';

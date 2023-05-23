@@ -709,7 +709,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['s.nom']['checked'])) {
-				print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

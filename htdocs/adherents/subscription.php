@@ -584,6 +584,19 @@ if ($rowid > 0) {
 	// Birth Date
 	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
+	// Default language
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+		//$s=picto_from_langcode($object->default_lang);
+		//print ($s?$s.' ':'');
+		$langs->load("languages");
+		$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+		print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
+		print $labellang;
+		print '</td></tr>';
+	}
+
 	// Public
 	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
@@ -755,7 +768,7 @@ if ($rowid > 0) {
 				print '</td>';
 				print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
 				print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
-				print '<td class="right">'.price($objp->subscription).'</td>';
+				print '<td class="right amount">'.price($objp->subscription).'</td>';
 				if (isModEnabled('banque')) {
 					print '<td class="right">';
 					if ($objp->bid) {

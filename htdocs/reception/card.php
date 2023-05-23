@@ -735,7 +735,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('Reception'), 'Reception');
+$title = $object->ref.' - '.$langs->trans('Reception');
+
+llxHeader('', $title, 'Reception');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1922,6 +1924,9 @@ if ($action == 'create') {
 								$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);
 
 								$qtyalreadyreceived += $receptionline_var['qty'];
+							}
+							if ($j) {
+								$htmltooltip = $langs->trans("QtyInOtherReceptions").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
 							}
 						}
 					}

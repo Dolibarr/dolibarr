@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return FilesLibTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -418,7 +420,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
 		dol_mkdir($conf->admin->dir_temp);
 		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1;
-		$conf->syslog->enabled=1;
 		$conf->modules['syslog'] = 'syslog';
 		$_REQUEST['logtohtml']=1;
 		$conf->logbuffer=array();
@@ -450,7 +451,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
 		dol_mkdir($conf->admin->dir_temp);
 		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1;
-		$conf->syslog->enabled=1;
 		$conf->modules['syslog'] = 'syslog';
 		$_REQUEST['logtohtml']=1;
 		$conf->logbuffer=array();
@@ -489,18 +489,16 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-
-		if (empty($user->rights->facture)) {
-			$user->rights->facture = new stdClass();
-		}
-
 		//$dummyuser=new User($db);
 		//$result=restrictedArea($dummyuser,'societe');
 
 		// We save user properties
-		$savpermlire = $user->rights->facture->lire;
-		$savpermcreer = $user->rights->facture->creer;
+		$savpermlire = $user->hasRight('facture', 'lire');
+		$savpermcreer = $user->hasRight('facture', 'creer');
 
+		if (empty($user->rights->facture)) {
+			$user->rights->facture = new stdClass();
+		}
 
 		// Check access to SPECIMEN
 		$user->rights->facture->lire = 0;

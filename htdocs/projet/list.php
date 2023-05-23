@@ -317,14 +317,14 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Project';
 	$objectlabel = 'Project';
-	$permissiontoread = $user->rights->projet->lire;
-	$permissiontodelete = $user->rights->projet->supprimer;
-	$permissiontoadd = $user->rights->projet->creer;
+	$permissiontoread = $user->hasRight('projet', 'lire');
+	$permissiontodelete = $user->hasRight('projet', 'supprimer');
+	$permissiontoadd = $user->hasRight('projet', 'creer');
 	$uploaddir = $conf->project->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
-	if (!$error && $massaction == 'close' && $user->rights->projet->creer) {
+	if (!$error && $massaction == 'close' && $user->hasRight('projet', 'creer')) {
 		$db->begin();
 
 		$objecttmp = new $objectclass($db);
@@ -903,14 +903,14 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->projet->creer) {
+if ($user->hasRight('projet', 'creer')) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
 	$arrayofmassactions['preaffectuser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AffectUser");
 }
-if ($user->rights->projet->supprimer) {
+if ($user->hasRight('projet', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (isModEnabled('category') && $user->rights->projet->creer) {
+if (isModEnabled('category') && $user->hasRight('projet', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preaffectuser'))) {
@@ -930,7 +930,7 @@ if ($search_usage_event_organization == 1) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->rights->projet->creer);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
@@ -950,7 +950,7 @@ $texthelp = '';
 if ($search_project_user == $user->id) {
 	$texthelp .= $langs->trans("MyProjectsDesc");
 } else {
-	if ($user->rights->projet->all->lire && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$texthelp .= $langs->trans("ProjectsDesc");
 	} else {
 		$texthelp .= $langs->trans("ProjectsPublicDesc");
@@ -1001,7 +1001,7 @@ if ($user->rights->user->user->lire) {
 }
 
 // Filter on categories
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth300imp widthcentpercentminusx');
 }
@@ -1153,44 +1153,44 @@ if (!empty($arrayfields['p.budget_amount']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_usage_opportunity', $search_usage_opportunity, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_usage_opportunity', $search_usage_opportunity, 1, false, 1, 1);
 	print '';
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_task']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_usage_task', $search_usage_task, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_usage_task', $search_usage_task, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_bill_time']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_usage_bill_time', $search_usage_bill_time, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_usage_bill_time', $search_usage_bill_time, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_usage_event_organization', $search_usage_event_organization, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_usage_event_organization', $search_usage_event_organization, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.accept_conference_suggestions']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_accept_conference_suggestions', $search_accept_conference_suggestions, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_accept_conference_suggestions', $search_accept_conference_suggestions, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.accept_booth_suggestions']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
-	print $form->selectyesno('search_accept_booth_suggestions', $search_accept_booth_suggestions, 1, false, 1);
+	print '<td class="liste_titre nowrap">';
+	print $form->selectyesno('search_accept_booth_suggestions', $search_accept_booth_suggestions, 1, false, 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.price_registration']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
-	print '<input type="text" class="flat" name="search_price_registration" size="4" value="'.$search_price_registration.'">';
+	print '<input type="text" class="flat" name="search_price_registration" size="4" value="'.dol_escape_htmltag($search_price_registration).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.price_booth']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
-	print '<input type="text" class="flat" name="search_price_booth" size="4" value="'.$search_price_booth.'">';
+	print '<input type="text" class="flat" name="search_price_booth" size="4" value="'.dol_escape_htmltag($search_price_booth).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['u.login']['checked'])) {
@@ -1313,27 +1313,27 @@ if (!empty($arrayfields['p.budget_amount']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
-	print_liste_field_titre($arrayfields['p.usage_opportunity']['label'], $_SERVER["PHP_SELF"], 'p.usage_opportunity', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.usage_opportunity']['label'], $_SERVER["PHP_SELF"], 'p.usage_opportunity', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.usage_task']['checked'])) {
-	print_liste_field_titre($arrayfields['p.usage_task']['label'], $_SERVER["PHP_SELF"], 'p.usage_task', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.usage_task']['label'], $_SERVER["PHP_SELF"], 'p.usage_task', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.usage_bill_time']['checked'])) {
-	print_liste_field_titre($arrayfields['p.usage_bill_time']['label'], $_SERVER["PHP_SELF"], 'p.usage_bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.usage_bill_time']['label'], $_SERVER["PHP_SELF"], 'p.usage_bill_time', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
-	print_liste_field_titre($arrayfields['p.usage_organize_event']['label'], $_SERVER["PHP_SELF"], 'p.usage_organize_event', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.usage_organize_event']['label'], $_SERVER["PHP_SELF"], 'p.usage_organize_event', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.accept_conference_suggestions']['checked'])) {
-	print_liste_field_titre($arrayfields['p.accept_conference_suggestions']['label'], $_SERVER["PHP_SELF"], 'p.accept_conference_suggestions', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.accept_conference_suggestions']['label'], $_SERVER["PHP_SELF"], 'p.accept_conference_suggestions', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.accept_booth_suggestions']['checked'])) {
-	print_liste_field_titre($arrayfields['p.accept_booth_suggestions']['label'], $_SERVER["PHP_SELF"], 'p.accept_booth_suggestions', "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.accept_booth_suggestions']['label'], $_SERVER["PHP_SELF"], 'p.accept_booth_suggestions', "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.price_registration']['checked'])) {
@@ -1720,7 +1720,7 @@ while ($i < $imaxinloop) {
 		}
 		// Usage opportunity
 		if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->usage_opportunity) {
 				print yn($obj->usage_opportunity);
 			}
@@ -1731,7 +1731,7 @@ while ($i < $imaxinloop) {
 		}
 		// Usage task
 		if (!empty($arrayfields['p.usage_task']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->usage_task) {
 				print yn($obj->usage_task);
 			}
@@ -1742,7 +1742,7 @@ while ($i < $imaxinloop) {
 		}
 		// Bill time
 		if (!empty($arrayfields['p.usage_bill_time']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->usage_bill_time) {
 				print yn($obj->usage_bill_time);
 			}
@@ -1753,7 +1753,7 @@ while ($i < $imaxinloop) {
 		}
 		// Event Organization
 		if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->usage_organize_event) {
 				print yn($obj->usage_organize_event);
 			}
@@ -1764,7 +1764,7 @@ while ($i < $imaxinloop) {
 		}
 		// Allow unknown people to suggest conferences
 		if (!empty($arrayfields['p.accept_conference_suggestions']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->accept_conference_suggestions) {
 				print yn($obj->accept_conference_suggestions);
 			}
@@ -1775,7 +1775,7 @@ while ($i < $imaxinloop) {
 		}
 		// Allow unknown people to suggest booth
 		if (!empty($arrayfields['p.accept_booth_suggestions']['checked'])) {
-			print '<td class="right">';
+			print '<td class="">';
 			if ($obj->accept_booth_suggestions) {
 				print yn($obj->accept_booth_suggestions);
 			}

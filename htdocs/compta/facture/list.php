@@ -1195,6 +1195,7 @@ if ($resql) {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	// Show the new button only when this page is not opend from the Extended POS
+	$newcardbutton = '';
 	if ($contextpage != 'poslist') {
 		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
 		if (!empty($socid)) {
@@ -2448,15 +2449,15 @@ if ($resql) {
 					print '<td class="right nowrap">'.price($marginInfo['pa_total'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
+						$totalarray['pos'][$totalarray['nbfield']] = 'total_pa';
 					}
+					$totalarray['val']['total_pa'] += $marginInfo['pa_total'];
 				}
 				// Total margin
 				if (!empty($arrayfields['total_margin']['checked'])) {
 					print '<td class="right nowrap">'.price($marginInfo['total_margin'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
-					}
-					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
 					}
 					$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
@@ -2473,8 +2474,6 @@ if ($resql) {
 					print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
-					}
-					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
 					}
 					if ($i >= $imaxinloop - 1) {
@@ -2588,7 +2587,8 @@ if ($resql) {
 		}
 
 		// Use correct digits number for totals
-		$totalarray['val']['total_margin'] = price2num($totalarray['val']['total_margin'], 'MT');
+		$totalarray['val']['total_pa'] = (isset($totalarray['val']['total_pa']) ? price2num($totalarray['val']['total_pa'], 'MT') : null);
+		$totalarray['val']['total_margin'] = (isset($totalarray['val']['total_margin']) ? price2num($totalarray['val']['total_margin'], 'MT') : null);
 
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

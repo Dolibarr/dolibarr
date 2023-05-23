@@ -842,7 +842,7 @@ class Form
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
-		$ret .= '<input type="submit" disabled name="confirmmassaction"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display: none"') . ' class="button smallpaddingimp' . (empty($conf->use_javascript_ajax) ? '' : ' hideobject') . ' ' . $name . ' ' . $name . 'confirmed" value="' . dol_escape_htmltag($langs->trans("Confirm")) . '">';
+		$ret .= '<input type="submit" disabled name="confirmmassaction"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display: none"') . ' class="reposition button smallpaddingimp' . (empty($conf->use_javascript_ajax) ? '' : ' hideobject') . ' ' . $name . ' ' . $name . 'confirmed" value="' . dol_escape_htmltag($langs->trans("Confirm")) . '">';
 		$ret .= '</div>';
 
 		if (!empty($conf->use_javascript_ajax)) {
@@ -5208,7 +5208,7 @@ class Form
 							$more .= $input['label'] . '</div><div class="tagtd left">';
 						}
 						if ($input['type'] == 'select') {
-							$more .= $this->selectarray($input['name'], $input['values'], !empty($input['default']) ? $input['default'] : '-1', $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
+							$more .= $this->selectarray($input['name'], $input['values'], isset($input['default']) ? $input['default'] : '-1', $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						} else {
 							$more .= $this->multiselectarray($input['name'], $input['values'], is_array($input['default']) ? $input['default'] : [$input['default']], $key_in_label, $value_as_key, $morecss, $translate, $maxlen, $moreattr);
 						}
@@ -6626,24 +6626,24 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 * @param integer|string $set_time Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
-	 * @param string $prefix Prefix for fields name
-	 * @param int $h 1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
-	 * @param int $m 1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
-	 * @param int $empty 0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
-	 * @param string $form_name Not used
-	 * @param int $d 1=Show days, month, years
-	 * @param int $addnowlink Add a link "Now", 1 with server time, 2 with local computer time
-	 * @param int $disabled Disable input fields
-	 * @param int $fullday When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
-	 * @param string $addplusone Add a link "+1 hour". Value must be name of another selectDate field.
-	 * @param datetime|string $adddateof Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
-	 * @param string $openinghours Specify hour start and hour end for the select ex 8,20
-	 * @param int $stepminutes Specify step for minutes between 1 and 30
-	 * @param string $labeladddateof Label to use for the $adddateof parameter.
-	 * @param string $placeholder Placeholder
-	 * @param mixed $gm 'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
-	 * @return string                        Html for selectDate
+	 * @param integer|string 		$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 * @param string 				$prefix 		Prefix for fields name
+	 * @param int 					$h 				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
+	 * @param int 					$m 				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
+	 * @param int 					$empty 			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
+	 * @param string 				$form_name 		Not used
+	 * @param int 					$d 				1=Show days, month, years
+	 * @param int 					$addnowlink 	Add a link "Now", 1 with server time, 2 with local computer time
+	 * @param int 					$disabled 		Disable input fields
+	 * @param int 					$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
+	 * @param string 				$addplusone 	Add a link "+1 hour". Value must be name of another selectDate field.
+	 * @param datetime|string|array	$adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof'=>..., 'labeladddateof'=>...))
+	 * @param string 				$openinghours 	Specify hour start and hour end for the select ex 8,20
+	 * @param int 					$stepminutes 	Specify step for minutes between 1 and 30
+	 * @param string 				$labeladddateof Label to use for the $adddateof parameter. Deprecated. Used only when $adddateof is not an array.
+	 * @param string 				$placeholder 	Placeholder
+	 * @param mixed 				$gm 			'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
+	 * @return string               	         	Html for selectDate
 	 * @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
 	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto')
@@ -7059,17 +7059,26 @@ class Form
 		}
 
 		// Add a link to set data
-		if ($conf->use_javascript_ajax && $adddateof) {
-			$tmparray = dol_getdate($adddateof);
-			if (empty($labeladddateof)) {
-				$labeladddateof = $langs->trans("DateInvoice");
+		if ($conf->use_javascript_ajax && !empty($adddateof)) {
+			if (!is_array($adddateof)) {
+				$arrayofdateof = array(array('adddateof'=>$adddateof, 'labeladddateof'=>$labeladddateof));
+			} else {
+				$arrayofdateof = $adddateof;
 			}
-			$reset_scripts = 'console.log(\'Click on now link\'); ';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($adddateof, 'dayinputnoreduce').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.$tmparray['mday'].'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.$tmparray['mon'].'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.$tmparray['year'].'\');';
-			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="'.$reset_scripts.'">'.$labeladddateof.'</a>';
+			foreach ($arrayofdateof as $valuedateof) {
+				$tmpadddateof = $valuedateof['adddateof'];
+				$tmplabeladddateof = $valuedateof['labeladddateof'];
+				$tmparray = dol_getdate($tmpadddateof);
+				if (empty($tmplabeladddateof)) {
+					$tmplabeladddateof = $langs->trans("DateInvoice");
+				}
+				$reset_scripts = 'console.log(\'Click on now link\'); ';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($tmpadddateof, 'dayinputnoreduce').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.$tmparray['mday'].'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.$tmparray['mon'].'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.$tmparray['year'].'\');';
+				$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="'.$reset_scripts.'">'.$tmplabeladddateof.'</button>';
+			}
 		}
 
 		return $retstring;
@@ -7719,7 +7728,7 @@ class Form
 		$out = '';
 		$outarray = array();
 
-		$selectFields = " p.rowid, p.ref, p.firstname, p.lastname";
+		$selectFields = " p.rowid, p.ref, p.firstname, p.lastname, p.fk_adherent_type";
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
@@ -7761,7 +7770,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $events, !empty($conf->global->PROJECT_USE_SEARCH_TO_SELECT) ? $conf->global->PROJECT_USE_SEARCH_TO_SELECT : '');
 			}
 
 			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
@@ -7919,7 +7928,7 @@ class Form
 
 		dol_syslog(get_class($this) . "::selectForForms filter=" . $filter, LOG_DEBUG);
 		$out = '';
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->$confkeyforautocompletemode) && !$forcecombo) {
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString($confkeyforautocompletemode) && !$forcecombo) {
 			// No immediate load of all database
 			$placeholder = '';
 			if ($preselectedvalue && empty($selected_input_value)) {
@@ -8423,10 +8432,11 @@ class Form
 	 * @param int 		$callurlonselect 		If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 * @param string 	$placeholder 			String to use as placeholder
 	 * @param integer 	$acceptdelayedhtml 		1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 * @param string	$textfortitle			Text to show on title.
 	 * @return	string      					HTML select string
 	 * @see selectArrayAjax(), ajax_combobox() in ajax.lib.php
 	 */
-	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
+	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0, $textfortitle = '')
 	{
 		global $conf, $langs;
 		global $delayedhtmlcontent;    // Will be used later outside of this function
@@ -8436,7 +8446,7 @@ class Form
 			return '';
 		}
 
-		$out = '<select type="text" id="'.$htmlname.'" class="'.$htmlname.($morecss ? ' ' . $morecss : '').'"'.($moreparam ? ' '.$moreparam : '').' name="'.$htmlname.'"><option></option></select>';
+		$out = '<select type="text"'.($textfortitle? ' title="'.dol_escape_htmltag($textfortitle).'"' : '').' id="'.$htmlname.'" class="'.$htmlname.($morecss ? ' ' . $morecss : '').'"'.($moreparam ? ' '.$moreparam : '').' name="'.$htmlname.'"><option></option></select>';
 
 		$formattedarrayresult = array();
 
@@ -8751,9 +8761,10 @@ class Form
             <input type="hidden" class="' . $htmlname . '" name="' . $htmlname . '" value="' . $listcheckedstring . '">
             </dt>
             <dd class="dropdowndd">
-                <div class="multiselectcheckbox' . $htmlname . '">
-                    <ul class="' . $htmlname . ($pos == '1' ? 'left' : '') . '">
-                    ' . $listoffieldsforselection . '
+                <div class="multiselectcheckbox'.$htmlname.'">
+                    <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
+                    <li><input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
+                    '.$listoffieldsforselection.'
                     </ul>
                 </div>
             </dd>
@@ -8776,6 +8787,12 @@ class Form
                   // Now, we submit page
                   //$(this).parents(\'form:first\').submit();
               });
+              $("input.inputsearch_dropdownselectedfields").on("keyup", function() {
+			    var value = $(this).val().toLowerCase();
+			    $(\'.multiselectcheckbox'.$htmlname.' li > label\').filter(function() {
+			      $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+			    });
+			  });
 
 
            });
@@ -9119,17 +9136,19 @@ class Form
 				print '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
 
 				if (!empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
-					print '<br><form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
+					print '<br>'."\n";
+					print '<!-- form to add a link from anywhere -->'."\n";
+					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
 					print '<input type="hidden" name="id" value="' . $object->id . '">';
 					print '<input type="hidden" name="action" value="addlinkbyref">';
 					print '<input type="hidden" name="token" value="' . newToken() . '">';
 					print '<input type="hidden" name="addlink" value="' . $key . '">';
 					print '<table class="noborder">';
 					print '<tr>';
-					print '<td>' . $langs->trans("Ref") . '</td>';
-					print '<td><input type="text" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
-					print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
-					print '<input type="submit" class="button smallpaddingimp" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
+					//print '<td>' . $langs->trans("Ref") . '</td>';
+					print '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
+					print '<input type="submit" class="button small valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
+					print '<input type="submit" class="button small" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
 					print '</tr>';
 					print '</table>';
 					print '</form>';
@@ -9143,6 +9162,7 @@ class Form
 					$i = 0;
 
 					print '<br>';
+					print '<!-- form to add a link from object to same thirdparty -->'."\n";
 					print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
 					print '<input type="hidden" name="action" value="addlink">';
 					print '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -9178,11 +9198,13 @@ class Form
 					}
 					print '</table>';
 					print '<div class="center">';
-					print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly" value="' . $langs->trans('ToLink') . '">';
+					if ($num) {
+						print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly small" value="' . $langs->trans('ToLink') . '">';
+					}
 					if (empty($conf->use_javascript_ajax)) {
-						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 					} else {
-						print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly small" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 					}
 					print '</form>';
 					$this->db->free($resqllist);
