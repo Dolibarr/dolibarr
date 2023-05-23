@@ -823,9 +823,9 @@ class ExtraFields
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load array this->attributes
+	 * 	Load the array of extrafields defintion $this->attributes
 	 *
-	 * 	@param	string		$elementtype		Type of element ('' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
+	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
@@ -848,6 +848,9 @@ class ExtraFields
 			$elementtype = 'commande_fournisseur';
 		}
 
+		// Test cache $this->attributes[$elementtype]['loaded'] to see if we must do something
+		// TODO
+
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
@@ -855,7 +858,7 @@ class ExtraFields
 		$sql .= " css, cssview, csslist";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
-		if ($elementtype) {
+		if ($elementtype && $elementtype != 'all') {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
 		}
 		$sql .= " ORDER BY pos";
@@ -906,7 +909,7 @@ class ExtraFields
 				}
 			}
 			if ($elementtype) {
-				$this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
+				$this->attributes[$elementtype]['loaded'] = 1; // Note: If nothing is found, we also set the key 'loaded' to 1.
 				$this->attributes[$elementtype]['count'] = $count;
 			}
 		} else {

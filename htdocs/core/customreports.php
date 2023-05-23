@@ -152,7 +152,7 @@ if ($user->socid > 0) {	// Protection if external user
 }
 
 // Fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label('all');	// We load all extrafields definitions for all objects
 //$extrafields->fetch_name_optionals_label($object->table_element_line);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
@@ -452,12 +452,12 @@ if (empty($conf->use_javascript_ajax)) {
 }
 print '</div><div class="clearboth"></div>';
 
-// Add Filter (you can use param &show_search_component_params_hidden=1 for debug)
+// Filter (you can use param &show_search_component_params_hidden=1 for debug)
 print '<div class="divadvancedsearchfield quatrevingtpercent">';
 print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
 print '</div>';
 
-// Add measures into array
+// YAxis (add measures into array)
 $count = 0;
 //var_dump($arrayofmesures);
 print '<div class="divadvancedsearchfield clearboth">';
@@ -952,7 +952,6 @@ $db->close();
 
 
 
-
 /**
  * Fill arrayofmesures for an object
  *
@@ -1039,7 +1038,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	foreach ($object->fields as $key => $val) {
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
-			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
+			if ($tmptype[0] == 'integer' && !empty($tmptype[1]) && !empty($tmptype[2])) {
 				$newobject = $tmptype[1];
 				dol_include_once($tmptype[2]);
 				if (class_exists($newobject)) {
@@ -1073,11 +1072,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 {
 	global $langs, $extrafields, $db;
 
-	if ($level > 10) {	// Protection against infinite loop
-		return $arrayofxaxis;
-	}
-
-	if ($level >= 2) {
+	if ($level >= 2) {	// Limit scan on 2 levels max
 		return $arrayofxaxis;
 	}
 
@@ -1087,6 +1082,10 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 	$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
 	$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
 	$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+
+	/*if ($level > 0) {
+		var_dump($object->element.' '.$object->isextrafieldmanaged);
+	}*/
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
@@ -1148,11 +1147,30 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
 				continue;
 			}
-			$arrayofxaxis[$tablealias.'e.'.$key] = array(
-				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]),
-				'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000),
-				'table' => $object->table_element
-			);
+			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('timestamp', 'date', 'datetime'))) {
+				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intVal($extrafields->attributes[$object->table_element]['pos'][$key]));
+				$arrayofxaxis[$tablealias.'.e'.$key.'-year'] = array(
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',
+					'position' => ($position + ($count * 100000)).'.1',
+					'table' => $object->table_element
+				);
+				$arrayofxaxis[$tablealias.'.e'.$key.'-month'] = array(
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
+					'position' => ($position + ($count * 100000)).'.2',
+					'table' => $object->table_element
+				);
+				$arrayofxaxis[$tablealias.'.e'.$key.'-day'] = array(
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',
+					'position' => ($position + ($count * 100000)).'.3',
+					'table' => $object->table_element
+				);
+			} else {
+				$arrayofxaxis[$tablealias.'e.'.$key] = array(
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val),
+					'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000),
+					'table' => $object->table_element
+				);
+			}
 		}
 	}
 
