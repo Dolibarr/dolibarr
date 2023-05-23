@@ -60,6 +60,10 @@ $hookmanager->initHooks(array('takeposproductsearch')); // new context for produ
 /*
  * View
  */
+if ($action == 'closeTerminal') {
+	unset($_SESSION["takeposterminal"]);
+	exit;
+}
 
 if ($action == 'getProducts') {
 	$tosell = GETPOSTISSET('tosell') ? GETPOST('tosell', 'int') : '';

@@ -197,6 +197,10 @@ if(localStorage.hasKeyboard) {
 }
 */
 
+function closeTerminal(modal) {
+	$.post("<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=closeTerminal", function(data) { if (modal) ModalBox('ModalTerminal'); });
+}
+
 function ClearSearch() {
 	console.log("ClearSearch");
 	$("#search").val('');
@@ -1490,6 +1494,13 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+// close terminal
+$(window).on("beforeunload", function() {
+	closeTerminal(false);
+	return "ok";
+});
+</script>
 </body>
 <?php
 
