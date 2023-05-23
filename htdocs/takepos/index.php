@@ -1075,6 +1075,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<div id="topnav" class="topnav">
 			<div id="topnav-left" class="topnav-left">
 				<div class="inline-block valignmiddle">
+				<a href="#" onclick="closeTerminal(true);" title="<?php echo $langs->trans("CloseTerminal"); ?>" style="font-weight: bolder; font-size: 1.5em; margin: auto 0;">X</a>
 				<a class="topnav-terminalhour" <?php echo $nb_auth_terms > 1 ? "onclick=\"ModalBox('ModalTerminal');\"" : ""; ?>>
 				<span class="fa fa-cash-register"></span>
 				<span class="hideonsmartphone">
