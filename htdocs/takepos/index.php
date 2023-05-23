@@ -76,13 +76,6 @@ if (empty($_SESSION["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = $curterm;
 	}
 }
-if (empty($_SESSION["takeposterminal"])) {
-	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
-		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
-	} elseif (!empty($_COOKIE["takeposterminal"])) {
-		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
-	}
-}
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
@@ -957,8 +950,6 @@ function WeighingScale(){
 $( document ).ready(function() {
 	<?php
 	// get user authorized terminals
-	$nb_auth_terms = 0;
-	$numterminals = max(1, getDolGlobalInt("TAKEPOS_NUM_TERMINALS"));
 	for ($i = 1; $i <= $numterminals; $i++) {
 		if ($user->rights->takepos->{'access_takepos_' . $i}) {
 			$curterm = $i;
@@ -980,7 +971,7 @@ $( document ).ready(function() {
 	if (empty($_SESSION["takeposterminal"])) {
 		if (empty($nb_auth_terms)) {
 			accessforbidden();
-		} else if ($nb_auth_terms > 1) {
+		} elseif ($nb_auth_terms > 1) {
 			print "ModalBox('ModalTerminal');";
 		}
 	}
@@ -1151,7 +1142,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	</div>
 	<div class="modal-body">
 		<?php
-		for ($i = 1; $i <= getDolGlobalInt('TAKEPOS_NUM_TERMINALS'); $i++) {
+		for ($i = 1; $i <= $numterminals; $i++) {
 			if ($user->rights->takepos->{'access_takepos_' . $i}) {
 				$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) : $langs->trans("TerminalName", $i);
 				print '<button type="button" class="block" onclick="closeTerminal(true);location.href=\'index.php?setterminal='.$i.'\'">'. $terminal_name .'</button>';
