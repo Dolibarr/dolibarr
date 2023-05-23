@@ -671,6 +671,33 @@ class Project extends CommonObject
 		}
 	}
 
+	/**
+	 * Fetch object and substitute key
+	 *
+	 * @param	int			$id		Project id
+	 * @param 	string		$key	Key to substitute
+	 * @return 	int|string
+	 */
+	public function fetchAndSetSubstitution($id, $key)
+	{
+		$substitution = '';
+
+		if ($id > 0) {
+			$res = $this->fetch($id);
+			if ($res > 0) {
+				if ($key == '__PROJECT_ID__') {
+					$substitution = $this->id;
+				} elseif ($key == '__PROJECT_REF__') {
+					$substitution = $this->ref;
+				} elseif ($key == '__PROJECT_NAME__') {
+					$substitution = $this->title;
+				}
+			}
+		}
+
+		return $substitution;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return list of elements for type, linked to a project

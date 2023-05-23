@@ -6991,8 +6991,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 		} else {
 			// can substitute variables for project
-			if (!empty($conf->projet->enabled) && method_exists($object, 'fetch_project') && is_null($object->project)) {
-				$object->fetch_project();
+			$project_id = 0;
+			if (!empty($conf->projet->enabled)) {
+				if ($object->fk_project > 0) {
+					$project_id = $object->fk_project;
+				} elseif ($object->fk_projet > 0) {
+					$project_id = $object->fk_project;
+				}
+			}
+			if ($project_id > 0) {
+				$substitutionarray['__PROJECT_ID__@lazyload']  = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:'.$project_id;
+				$substitutionarray['__PROJECT_REF__@lazyload']  = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:'.$project_id;
+				$substitutionarray['__PROJECT_NAME__@lazyload']  = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:'.$project_id;
 			}
 
 			$substitutionarray['__ID__'] = $object->id;
@@ -7361,7 +7371,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  */
 function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
 {
-	global $conf, $langs;
+	global $conf, $db, $langs;
 
 	if (!is_array($substitutionarray)) {
 		return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
@@ -7447,6 +7457,33 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 
 		if ($key == '__USER_SIGNATURE__' && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) {
 			$value = ''; // Protection
+		}
+
+		// lazy load
+		$lazy_load_arr = array();
+		if (preg_match('/(__[A-Z\_]+__)@lazyload$/', $key, $lazy_load_arr)) {
+			if (isset($lazy_load_arr[1]) && !empty($lazy_load_arr[1])) {
+				$param_arr = explode(':', $value);
+				// path:class:method:id
+				if (count($param_arr) == 4) {
+					$path = $param_arr[0];
+					$class = $param_arr[1];
+					$method = $param_arr[2];
+					$id = (int) $param_arr[3];
+
+					// fetch object
+					if (dol_is_file(DOL_DOCUMENT_ROOT.$path)) {
+						require_once DOL_DOCUMENT_ROOT.$path;
+						if (class_exists($class)) {
+							$tmpobj = new $class($db);
+							if (method_exists($class, $method)) {
+								$value = $tmpobj->$method($id, $lazy_load_arr[1]);
+								$key = $lazy_load_arr[1];
+							}
+						}
+					}
+				}
+			}
 		}
 
 		if (empty($converttextinhtmlifnecessary)) {
