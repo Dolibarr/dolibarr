@@ -1517,6 +1517,19 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		</div>
 	</div>
 </div>
+<?php
+if (getDolGlobalInt("TAKEPOS_CLOSE_TERMINAL_ON_WINDOW_CLOSE")) {
+	?>
+	<script type="text/javascript">
+	// close terminal
+	$(window).on("beforeunload", function() {
+		closeTerminal(false);
+		return "ok";
+	});
+	</script>
+	<?php
+}
+?>
 </body>
 <?php
 
