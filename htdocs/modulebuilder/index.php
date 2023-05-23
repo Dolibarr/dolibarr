@@ -1850,7 +1850,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		// delete property if documentation was generated
 		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
 		if (file_exists($file_doc)) {
-			deletePropsFromDoc($file_doc, $objectname);
+			deletePropsAndPermsFromDoc($file_doc, $objectname);
 		}
 
 		//menu for the object selected

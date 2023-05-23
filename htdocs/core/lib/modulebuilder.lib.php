@@ -624,9 +624,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
  */
 function writePropsInAsciiDoc($file, $objectname, $destfile)
 {
-
 	// stock all properties in array
-	$attributesUnique = array ('label', 'type', 'arrayofkeyval', 'notnull', 'default', 'index', 'foreignkey', 'position', 'enabled', 'visible', 'noteditable', 'alwayseditable', 'searchall', 'isameasure', 'css','cssview','csslist', 'help', 'showoncombobox', 'validate','comment','picto' );
+	$attributesUnique = array('label', 'type', 'arrayofkeyval', 'notnull', 'default', 'index', 'foreignkey', 'position', 'enabled', 'visible', 'noteditable', 'alwayseditable', 'searchall', 'isameasure', 'css', 'cssview', 'csslist', 'help', 'showoncombobox', 'validate', 'comment', 'picto');
 
 	$start = "public \$fields=array(";
 	$end = ");";
@@ -648,7 +647,8 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// write the begin of table with specifics options
 	$table = "== DATA SPECIFICATIONS\n";
-	$table .= "== Table of fields and their properties for object *$objectname* : \n";
+	$table .= '== Table of fields and their properties for object *'.$objectname.'* : '."\n";
+	$table .= "__ begin table $objectname\n";
 	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
 	$table .= "|===\n";
 	$table .= "|code";
@@ -663,8 +663,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$string = trim($string, "'");
 		$string = rtrim($string, ",");
 
-		$array = [];
-		eval("\$array = [$string];");
+		$array = eval("return [$string];");
 
 		// check if is array after cleaning string
 		if (!is_array($array)) {
@@ -697,8 +696,8 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= implode("|", array_values($valuesRestructured))."\n";
 	}
 	// end table
-	$table .= "|===";
-	$table .= "__ end table for object $objectname";
+	$table .= "|===\n";
+	$table .= "__ end table for object $objectname\n";
 	//write in file
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
 	if ($writeInFile<0) {
@@ -708,12 +707,12 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 }
 
 /**
- * Delete property from documentation if we delete object
+ * Delete property and permissions from documentation if we delete object
  * @param  string  $file         file or path
  * @param  string  $objectname   name of object wants to deleted
  * @return void
  */
-function deletePropsFromDoc($file, $objectname)
+function deletePropsAndPermsFromDoc($file, $objectname)
 {
 
 	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
@@ -721,6 +720,12 @@ function deletePropsFromDoc($file, $objectname)
 	$str = file_get_contents($file);
 	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
 	$new_contents = preg_replace($search, '', $str);
+	file_put_contents($file, $new_contents);
+
+	//permsIfExist
+	$perms = "|*".strtolower($objectname)."*|";
+	$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
+	$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
 	file_put_contents($file, $new_contents);
 }
 
