@@ -216,7 +216,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if($timespent_durationmin > 0 || $timespent_durationhour > 0) $qty = $timespent_durationhour*3600 + $timespent_durationmin*60;
+			if ($timespent_durationmin > 0 || $timespent_durationhour > 0) $qty = $timespent_durationhour*3600 + $timespent_durationmin*60;
 
 			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
 
@@ -268,7 +268,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if($timespent_durationmin > 0 || $timespent_durationhour > 0) $qty = $timespent_durationhour*3600 + $timespent_durationmin*60;
+			if ($timespent_durationmin > 0 || $timespent_durationhour > 0) $qty = $timespent_durationhour*3600 + $timespent_durationmin*60;
 
 			$bomline = new BOMLine($db);
 			$bomline->fetch($lineid);
