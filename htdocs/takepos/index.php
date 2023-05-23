@@ -54,6 +54,28 @@ $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
+// get user authorized terminals
+$nb_auth_terms = 0;
+$numterminals = max(1, getDolGlobalInt("TAKEPOS_NUM_TERMINALS"));
+for ($i = 1; $i <= $numterminals; $i++) {
+	if ($user->rights->takepos->{'access_takepos_' . $i}) {
+		$curterm = $i;
+		$nb_auth_terms++;
+	}
+}
+// TERMINAL SELECTION IF NOT SET
+if (empty($_SESSION["takeposterminal"])) {
+	if (empty($nb_auth_terms)) {
+		accessforbidden();
+	} elseif ($nb_auth_terms > 1) {
+		if (!empty($_COOKIE["takeposterminal"]) && $user->rights->takepos->{'access_takepos_' . $_COOKIE["takeposterminal"]}) {
+			$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
+		}
+	} else {
+		$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) : $langs->transnoentities("TerminalName", $curterm);
+		$_SESSION["takeposterminal"] = $curterm;
+	}
+}
 if (empty($_SESSION["takeposterminal"])) {
 	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
@@ -951,6 +973,15 @@ $( document ).ready(function() {
 			print "ModalBox('ModalTerminal');";
 		} else {
 			$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) : $langs->transnoentities("TerminalName", $curterm);
+			$_SESSION["takeposterminal"] = $curterm;
+		}
+	}
+
+	if (empty($_SESSION["takeposterminal"])) {
+		if (empty($nb_auth_terms)) {
+			accessforbidden();
+		} else if ($nb_auth_terms > 1) {
+			print "ModalBox('ModalTerminal');";
 		}
 	}
 	?>
@@ -1053,7 +1084,6 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<div id="topnav" class="topnav">
 			<div id="topnav-left" class="topnav-left">
 				<div class="inline-block valignmiddle">
-				<a href="#" onclick="closeTerminal(true);" title="<?php echo $langs->trans("CloseTerminal"); ?>" style="font-weight: bolder; font-size: 1.5em; margin: auto 0;">X</a>
 				<a class="topnav-terminalhour" <?php echo $nb_auth_terms > 1 ? "onclick=\"ModalBox('ModalTerminal');\"" : ""; ?>>
 				<span class="fa fa-cash-register"></span>
 				<span class="hideonsmartphone">
@@ -1495,13 +1525,6 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
-// close terminal
-$(window).on("beforeunload", function() {
-	closeTerminal(false);
-	return "ok";
-});
-</script>
 </body>
 <?php
 
