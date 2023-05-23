@@ -949,13 +949,6 @@ function WeighingScale(){
 
 $( document ).ready(function() {
 	<?php
-	// get user authorized terminals
-	for ($i = 1; $i <= $numterminals; $i++) {
-		if ($user->rights->takepos->{'access_takepos_' . $i}) {
-			$curterm = $i;
-			$nb_auth_terms++;
-		}
-	}
 	// TERMINAL SELECTION IF NOT SET
 	if ($_SESSION["takeposterminal"] == "") {
 		if (empty($nb_auth_terms)) {
