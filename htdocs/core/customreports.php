@@ -1072,7 +1072,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 {
 	global $langs, $extrafields, $db;
 
-	if ($level >= 2) {	// Limit scan on 2 levels max
+	if ($level >= 3) {	// Limit scan on 2 levels max
 		return $arrayofxaxis;
 	}
 
