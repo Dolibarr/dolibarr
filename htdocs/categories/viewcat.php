@@ -925,8 +925,8 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 				print '<input type="hidden" name="action" value="addintocategory">';
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-					print $langs->trans("AddAccountIntoCategory").' &nbsp;';
-				$form->select_comptes('', 'elemid');
+				print $langs->trans("AddObjectIntoCategory").' &nbsp;';
+				print $form->select_comptes('', 'elemid', 0, '', 0, '', 0, '', 1);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';

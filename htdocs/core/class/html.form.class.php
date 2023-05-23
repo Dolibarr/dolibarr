@@ -4791,16 +4791,16 @@ class Form
 	/**
 	 *  Return a HTML select list of bank accounts
 	 *
-	 * @param string $selected Id account pre-selected
-	 * @param string $htmlname Name of select zone
-	 * @param int $status Status of searched accounts (0=open, 1=closed, 2=both)
-	 * @param string $filtre To filter list. This parameter must not come from input of users
-	 * @param int $useempty 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 * @param string $moreattrib To add more attribute on select
-	 * @param int $showcurrency Show currency in label
-	 * @param string $morecss More CSS
-	 * @param int $nooutput 1=Return string, do not send to output
-	 * @return    int                            <0 if error, Num of bank account found if OK (0, 1, 2, ...)
+	 * @param string 	$selected 		Id account pre-selected
+	 * @param string 	$htmlname 		Name of select zone
+	 * @param int 		$status 		Status of searched accounts (0=open, 1=closed, 2=both)
+	 * @param string 	$filtre 		To filter list. This parameter must not come from input of users
+	 * @param int 		$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @param string 	$moreattrib 	To add more attribute on select
+	 * @param int 		$showcurrency 	Show currency in label
+	 * @param string 	$morecss 		More CSS
+	 * @param int 		$nooutput 		1=Return string, do not send to output
+	 * @return int                   	<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
 	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
