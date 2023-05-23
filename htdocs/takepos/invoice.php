@@ -1046,7 +1046,7 @@ if ($action == "order" && !empty($order_receipt_printer3)) {
 // Set focus to search field
 if ($action == "search" || $action == "valid") {
 	?>
-	parent.ClearSearch(false);
+	parent.ClearSearch(true);
 	<?php
 }
 
