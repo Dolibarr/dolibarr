@@ -634,6 +634,8 @@ if ($action == 'create') {
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
+			$totalarray['type'][$totalarray['nbfield']] = '';
+
 
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -643,6 +645,8 @@ if ($action == 'create') {
 				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
+				$totalarray['type'][$totalarray['nbfield']] = '';
+
 			}
 			if ($user->rights->stock->mouvement->creer) {
 				print_liste_field_titre('');
