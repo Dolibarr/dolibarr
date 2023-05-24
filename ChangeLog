@@ -10,6 +10,7 @@ For uses:
 
 NEW: PHP 8.2 compatibility (test not yet completed).
 NEW: Module Workstations Management upgraded to stable status
+NEW: Module Webhook upgraded to stable status
 NEW: #23436 Group social networks fields
 NEW: Accountancy - Add specific page to export accounting data rather than the journals page
 NEW: Accountancy - Add sub-account balance FPC22
