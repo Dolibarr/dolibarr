@@ -9452,6 +9452,18 @@ abstract class CommonObject
 				$this->{$key} = $value;
 			}
 		}
+
+		foreach ($this->fields as $key => $value) {
+			// If fields are already set, do nothing
+			if (array_key_exists($key, $fields)) {
+				continue;
+			}
+
+			if (!empty($value['default'])) {
+				$this->{$key} = $value['default'];
+			}
+		}
+
 		return 1;
 	}
 
