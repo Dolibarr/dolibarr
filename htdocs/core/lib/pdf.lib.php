@@ -2608,8 +2608,10 @@ function pdf_setPosSign($p, $x, $y, $height, $width)
 
 	$db->begin();
 
+	$possign = $p.":".$x.":".$y.":".$height.":".$width;
+
 	$sql = "UPDATE ".MAIN_DB_PREFIX.$object->element;
-	$sql .= " SET model_pdf_pos_sign = '".$p.":".$x.":".$y.":".$height.":".$width."'";
+	$sql .= " SET model_pdf_pos_sign = '".$possign."'";
 	$sql .= " WHERE rowid = ".((int) $object->id);
 
 	dol_syslog(__METHOD__, LOG_DEBUG);
