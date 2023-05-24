@@ -109,7 +109,7 @@ function ticket_prepare_head($object)
 	$upload_dir = $conf->ticket->dir_output."/".$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir, 'files'));
 	$sql = 'SELECT id FROM '.MAIN_DB_PREFIX.'actioncomm';
-	$sql .= " WHERE fk_element = '".$object->id."' AND elementtype = 'ticket'";
+	$sql .= " WHERE fk_element = ".(int)$object->id." AND elementtype = 'ticket'";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$numrows = $db->num_rows($resql);
