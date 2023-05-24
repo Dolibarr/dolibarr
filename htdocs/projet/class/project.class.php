@@ -674,24 +674,29 @@ class Project extends CommonObject
 	/**
 	 * Fetch object and substitute key
 	 *
-	 * @param	int			$id		Project id
-	 * @param 	string		$key	Key to substitute
-	 * @return 	int|string
+	 * @param	int			$id					Project id
+	 * @param 	string		$key				Key to substitute
+	 * @param 	Project		$loaded_project		[=NULL] Project loaded or null to reload
+	 * @return 	string		Substitute key
 	 */
-	public function fetchAndSetSubstitution($id, $key)
+	public function fetchAndSetSubstitution($id, $key, $loaded_project = null)
 	{
 		$substitution = '';
 
-		if ($id > 0) {
+		if (!is_object($loaded_project)) {
 			$res = $this->fetch($id);
 			if ($res > 0) {
-				if ($key == '__PROJECT_ID__') {
-					$substitution = $this->id;
-				} elseif ($key == '__PROJECT_REF__') {
-					$substitution = $this->ref;
-				} elseif ($key == '__PROJECT_NAME__') {
-					$substitution = $this->title;
-				}
+				$loaded_project = $this;
+			}
+		}
+
+		if (is_object($loaded_project)) {
+			if ($key == '__PROJECT_ID__') {
+				$substitution = ($loaded_project->id > 0 ? $loaded_project->id : '');
+			} elseif ($key == '__PROJECT_REF__') {
+				$substitution = $loaded_project->ref;
+			} elseif ($key == '__PROJECT_NAME__') {
+				$substitution = $loaded_project->title;
 			}
 		}
 

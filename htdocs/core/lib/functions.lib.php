@@ -6990,21 +6990,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}
 		} else {
-			// can substitute variables for project
-			$project_id = 0;
-			if (!empty($conf->projet->enabled)) {
-				if ($object->fk_project > 0) {
-					$project_id = $object->fk_project;
-				} elseif ($object->fk_projet > 0) {
-					$project_id = $object->fk_project;
-				}
-			}
-			if ($project_id > 0) {
-				$substitutionarray['__PROJECT_ID__@lazyload']  = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:'.$project_id;
-				$substitutionarray['__PROJECT_REF__@lazyload']  = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:'.$project_id;
-				$substitutionarray['__PROJECT_NAME__@lazyload']  = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:'.$project_id;
-			}
-
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
@@ -7124,11 +7109,24 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__PROJECT_ID__'] = (is_object($object->project) ? $object->project->id : '');
 				$substitutionarray['__PROJECT_REF__'] = (is_object($object->project) ? $object->project->ref : '');
 				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->project) ? $object->project->title : '');
-			}
-			if (is_object($object->projet)) {	// Deprecated, for backward compatibility
+			} elseif (is_object($object->projet)) {	// Deprecated, for backward compatibility
 				$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet) ? $object->projet->id : '');
 				$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet) ? $object->projet->ref : '');
 				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
+			} else {
+				// can substitute variables for project : uses lazy load in "make_substitutions" method
+				$project_id = 0;
+				if ($object->fk_project > 0) {
+					$project_id = $object->fk_project;
+				} elseif ($object->fk_projet > 0) {
+					$project_id = $object->fk_project;
+				}
+				if ($project_id > 0) {
+					// path:class:method:id
+					$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+					$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+					$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+				}
 			}
 			if (is_object($object) && $object->element == 'project') {
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
@@ -7450,6 +7448,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 	}
 
 	// Make substitition for array $substitutionarray
+	$memory_object_list = array();
 	foreach ($substitutionarray as $key => $value) {
 		if (!isset($value)) {
 			continue; // If value is null, it same than not having substitution key at all into array, we do not replace.
@@ -7471,14 +7470,30 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 					$method = $param_arr[2];
 					$id = (int) $param_arr[3];
 
-					// fetch object
-					if (dol_is_file(DOL_DOCUMENT_ROOT.$path)) {
-						require_once DOL_DOCUMENT_ROOT.$path;
-						if (class_exists($class)) {
-							$tmpobj = new $class($db);
-							if (method_exists($class, $method)) {
-								$value = $tmpobj->$method($id, $lazy_load_arr[1]);
-								$key = $lazy_load_arr[1];
+					// load object in memory
+					if (!isset($memory_object_list[$class])) {
+						if (dol_is_file(DOL_DOCUMENT_ROOT . $path)) {
+							require_once DOL_DOCUMENT_ROOT . $path;
+							if (class_exists($class)) {
+								$memory_object_list[$class] = array(
+									'tmp_object' => new $class($db),
+									'list' => array(),
+								);
+							}
+						}
+					}
+
+					// fetch object and set substitution
+					if (isset($memory_object_list[$class]) && isset($memory_object_list[$class]['tmp_object']) && isset($memory_object_list[$class]['list']) && is_object($memory_object_list[$class]['tmp_object'])) {
+						if (method_exists($class, $method)) {
+							$key = $lazy_load_arr[1];
+							$tmp_object = $memory_object_list[$class]['tmp_object'];
+							if (!isset($memory_object_list[$class]['list'][$id])) {
+								$value = $tmp_object->$method($id, $key);
+								$memory_object_list[$class]['list'][$id] = $tmp_object;
+							} else {
+								$loaded_object = $memory_object_list[$class]['list'][$id];
+								$value = $tmp_object->$method($id, $key, $loaded_object);
 							}
 						}
 					}
