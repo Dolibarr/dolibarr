@@ -215,6 +215,8 @@ class EmailCollector extends CommonObject
 	public $password;
 	public $acces_type;
 	public $oauth_service;
+	public $imap_encryption;
+	public $norsh;
 	public $source_directory;
 	public $target_directory;
 	public $maxemailpercollect;
