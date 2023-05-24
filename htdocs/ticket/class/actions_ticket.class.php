@@ -331,7 +331,7 @@ class ActionsTicket
 					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id';
 					$sql .= ', ecm.filepath, ecm.filename, ecm.share';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
-					$sql .= ' WHERE ecm.filepath = \'agenda/'.$arraymsgs['id'].'\'';
+					$sql .= " WHERE ecm.filepath = 'agenda/".$arraymsgs['id']."'";
 					$sql .= ' ORDER BY ecm.position ASC';
 
 					$resql = $this->db->query($sql);
