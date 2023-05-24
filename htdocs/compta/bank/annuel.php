@@ -198,7 +198,6 @@ for ($mois = 1; $mois < 13; $mois++) {
 	$totsorties[$annee] = 0;
 	$totentrees[$annee] = 0;
 	for ($annee = $year_start; $annee <= $year_end; $annee++) {
-		
 		$case = sprintf("%04s-%02s", $annee, $mois);
 
 		print '<td class="right" width="10%">&nbsp;';
