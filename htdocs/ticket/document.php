@@ -206,7 +206,7 @@ if ($object->id) {
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	// same as above for every messages
 	$sql = 'SELECT id FROM '.MAIN_DB_PREFIX.'actioncomm';
-	$sql .= " WHERE fk_element = ".(int)$object->id." AND elementtype = 'ticket'";
+	$sql .= " WHERE fk_element = ".(int) $object->id." AND elementtype = 'ticket'";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$file_msg_array = array();
