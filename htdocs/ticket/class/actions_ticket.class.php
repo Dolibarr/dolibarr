@@ -374,8 +374,8 @@ class ActionsTicket
 						}
 						$footer .= '</div>';
 						if ($isshared == 1) {
-							print '<br />';
-							print '<br />';
+							print '<br>';
+							print '<br>';
 							print $footer;
 						}
 					}
