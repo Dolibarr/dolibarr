@@ -1734,7 +1734,7 @@ class Ticket extends CommonObject
 			$this->error = $actioncomm->error;
 			$this->errors = $actioncomm->errors;
 		}
-		
+
 		if ($actionid > 0) {
 			if (is_array($attachedfiles) && array_key_exists('paths', $attachedfiles) && count($attachedfiles['paths']) > 0) {
 				foreach ($attachedfiles['paths'] as $key => $filespath) {

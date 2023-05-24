@@ -112,7 +112,7 @@ function ticket_prepare_head($object)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$numrows = $db->num_rows($resql);
-		for ($i=0; $i < $numrows; $i++) { 
+		for ($i=0; $i < $numrows; $i++) {
 			$upload_msg_dir = $conf->agenda->dir_output.'/'.$db->fetch_row($resql)[0];
 			$nbFiles += count(dol_dir_list($upload_msg_dir, "files"));
 		}
