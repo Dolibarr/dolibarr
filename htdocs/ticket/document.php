@@ -204,6 +204,24 @@ if ($object->id) {
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		// same as above for every messages
+		$sql = 'SELECT id FROM '.MAIN_DB_PREFIX."actioncomm WHERE fk_element = $object->id AND elementtype = 'ticket'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$file_msg_array = array();
+			$numrows = $db->num_rows($resql);
+			for ($i=0; $i < $numrows; $i++) { 
+				$upload_msg_dir = $conf->agenda->dir_output.'/'.$db->fetch_row($resql)[0];
+				$file_msg = dol_dir_list($upload_msg_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+				if (count($file_msg)) {
+					$file_msg_array = array_merge($file_msg, $file_msg_array);
+				}
+			}
+			if (count($file_msg_array)) {
+				$filearray = array_merge($filearray, $file_msg_array);
+			}
+		}
+
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

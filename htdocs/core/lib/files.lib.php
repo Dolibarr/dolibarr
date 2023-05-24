@@ -378,18 +378,30 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 				$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
-				$ecmfile->filepath = $rel_dir;
-				$ecmfile->filename = $filename;
-				$ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname'])); // $destfile is a full path to file
-				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
-				$ecmfile->gen_or_uploaded = 'unknown';
-				$ecmfile->description = ''; // indexed content
-				$ecmfile->keywords = ''; // keyword content
-				$result = $ecmfile->create($user);
-				if ($result < 0) {
-					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+				// verify if it's existing already
+				if ($ecmfile->fetch(0, '', "$rel_dir/$filename") > 0) {
+					$filearray[$key]['position_name'] = ($ecmfile->position ? ((int) $ecmfile->position) : '0').'_'.$ecmfile->filename;
+					$filearray[$key]['position'] = (int) $ecmfile->position;
+					$filearray[$key]['cover'] = $ecmfile->cover;
+					$filearray[$key]['keywords'] = $ecmfile->keywords;
+					$filearray[$key]['acl'] = $ecmfile->acl;
+					$filearray[$key]['rowid'] = $ecmfile->id;
+					$filearray[$key]['label'] = $ecmfile->label;
+					$filearray[$key]['share'] = $ecmfile->share;
 				} else {
-					$filearray[$key]['rowid'] = $result;
+					$ecmfile->filepath = $rel_dir;
+					$ecmfile->filename = $filename;
+					$ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname'])); // $destfile is a full path to file
+					$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
+					$ecmfile->gen_or_uploaded = 'unknown';
+					$ecmfile->description = ''; // indexed content
+					$ecmfile->keywords = ''; // keyword content
+					$result = $ecmfile->create($user);
+					if ($result < 0) {
+						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+					} else {
+						$filearray[$key]['rowid'] = $result;
+					}
 				}
 			} else {
 				$filearray[$key]['rowid'] = 0; // Should not happened
