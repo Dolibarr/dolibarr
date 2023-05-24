@@ -289,7 +289,7 @@ if ($action == 'getProducts') {
 		$sql .= $hookmanager->resPrint;
 	}
 
-	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1 && empty(getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']))) {
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && empty(getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']))) {
 		$sql .= ' GROUP BY p.rowid HAVING SUM(ps.reel) > 0';
 	}
 
