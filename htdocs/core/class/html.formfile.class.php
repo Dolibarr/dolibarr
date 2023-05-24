@@ -1298,7 +1298,15 @@ class FormFile
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
-					$filepath = $relativepath.$file['name'];
+					//$filepath = $file['level1name'].'/'.$file['name'];
+
+					$filepath = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $file['fullname']);
+					$filepath = preg_replace('/[\\/]$/', '', $filepath);
+					$filepath = preg_replace('/^[\\/]/', '', $filepath);
+					$modulepart = preg_replace('/\/(.+)/', '', $filepath);
+					$filepath = preg_replace('/^([^\/]+)/', '', $filepath);
+					$filepath = preg_replace('/^[\\/]/', '', $filepath);
+					$relativepath = preg_replace('/\/(.+)/', '', $filepath) . '/';
 
 					$editline = 0;
 					$nboflines++;
@@ -1377,11 +1385,14 @@ class FormFile
 							if (!dol_is_file($file['path'].'/'.$smallfile)) {
 								$smallfile = getImageFileNameForSize($file['name'], '_small', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 							}
+							if (!dol_is_file($file['path'].'/'.$smallfile)) {
+								$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this it is slow on image dir.
+							}
 							//print $file['path'].'/'.$smallfile.'<br>';
 
-							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
+							$urlforhref = getAdvancedPreviewUrl($modulepart, preg_replace('/\.(.+)/', '', $filepath).'.'.strtolower($fileinfo['extension']), 1, 'entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
 							if (empty($urlforhref)) {
-								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($filepath.'.'.strtolower($fileinfo['extension']));
 								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
