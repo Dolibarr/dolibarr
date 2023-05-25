@@ -10431,11 +10431,11 @@ class Form
 	/**
 	 * Output the component to make advanced search criteries
 	 *
-	 * @param array $arrayofcriterias Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
-	 * @param array $search_component_params Array of selected search criterias
-	 * @param array $arrayofinputfieldsalreadyoutput Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
-	 * @param string $search_component_params_hidden String with $search_component_params criterias
-	 * @return    string                                              HTML component for advanced search
+	 * @param array 	$arrayofcriterias 					Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
+	 * @param array 	$search_component_params 			Array of selected search criterias
+	 * @param array 	$arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
+	 * @param string 	$search_component_params_hidden 	String with $search_component_params criterias
+	 * @return    string                                    HTML component for advanced search
 	 */
 	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '')
 	{
@@ -10456,13 +10456,10 @@ class Form
 		$ret .= '<div name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
 
 		if ($search_component_params_hidden) {
-			if (!preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
-				$search_component_params_hidden .= '(' . $search_component_params_hidden . ')';
-			}
 			$errormessage = '';
 			$searchtags = forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
 			if ($errormessage) {
-				print 'ERROR in parsing search string: ' . dol_escape_htmltag($errormessage);
+				$this->error = 'ERROR in parsing search string: '.$errormessage;
 			}
 			//var_dump($searchtags);
 			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> ' . dol_escape_htmltag($searchtags) . '</span>';

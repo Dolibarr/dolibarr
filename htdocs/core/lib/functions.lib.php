@@ -11849,16 +11849,25 @@ function jsonOrUnserialize($stringtodecode)
  * @param 	string		$filter		String with universal search string. Must be  (aaa:bbb:...) with
  * 									aaa is a field name (with alias or not) and
  * 									bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
- * @param	string		$error		Error message
+ * @param	string		$errorstr	Error message string
  * @param	int			$noand		0=Default, 1=Do not add the AND before the condition string.
+ * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
  */
-function forgeSQLFromUniversalSearchCriteria($filter, &$error = '', $noand = 0)
+function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $noerror = 0)
 {
+	if (!preg_match('/^\(.*\)$/', $filter)) {    // If $search_component_params_hidden does not start and end with ()
+		$filter = '(' . $filter . ')';
+	}
+
 	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
 
-	if (!dolCheckFilters($filter, $error)) {
-		return '1 = 2';		// Bad balance of parenthesis, we force a SQL not found
+	if (!dolCheckFilters($filter, $errorstr)) {
+		if ($noerror) {
+			return '1 = 2';
+		} else {
+			return 'Filter syntax error - '.$errorstr;		// Bad balance of parenthesis, we return an error message or force a SQL not found
+		}
 	}
 
 	// Test the filter syntax
@@ -11866,8 +11875,12 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '', $noand = 0)
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$error = 'Bad syntax of the search string, filter criteria is invalidated';
-		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
+		$errorstr = 'Bad syntax of the search string';
+		if ($noerror) {
+			return '1 = 2';
+		} else {
+			return 'Filter syntax error - '.$errorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
+		}
 	}
 
 	return ($noand ? "" : " AND ")."(".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
