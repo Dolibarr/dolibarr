@@ -865,7 +865,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 	}
 
-	
+
 
 	print '</table>';
 	print '</div>';
@@ -873,7 +873,6 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	// Add hook in fields
 	$parameters = array('colspan' => ' colspan="2"');
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-
 }
 
 // Edit
