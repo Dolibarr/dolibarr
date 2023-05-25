@@ -3069,7 +3069,7 @@ if ($action == 'create') {
 				$selectwarehouse .= '</span>';
 
 				$selectyesno = array(0 => $langs->trans('No'), 1 => $langs->trans('Yes'));
-				
+
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					$("#revertstock").change(function() {
