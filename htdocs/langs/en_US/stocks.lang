@@ -119,6 +119,7 @@ PersonalStock=Personal stock %s
 ThisWarehouseIsPersonalStock=This warehouse represents personal stock of %s %s
 SelectWarehouseForStockDecrease=Choose warehouse to use for stock decrease
 SelectWarehouseForStockIncrease=Choose warehouse to use for stock increase
+RevertProductsToStock=Revert products to stock ?
 NoStockAction=No stock action
 DesiredStock=Desired Stock
 DesiredStockDesc=This stock amount will be the value used to fill the stock by replenishment feature.

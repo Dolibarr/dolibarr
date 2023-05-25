@@ -261,28 +261,35 @@ if (empty($reshook)) {
 		$isErasable = $object->is_erasable();
 
 		if (($usercandelete && $isErasable > 0) || ($usercancreate && $isErasable == 1)) {
-			$idwarehouse = GETPOST('idwarehouse');
 
-			$qualified_for_stock_change = 0;
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-				$qualified_for_stock_change = $object->hasProductsOrServices(2);
-			} else {
-				$qualified_for_stock_change = $object->hasProductsOrServices(1);
-			}
+			$revertstock = GETPOST('revertstock');
+			
+			if ($revertstock) {
 
-			// Check parameters
-			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
-				$langs->load("stocks");
-				if (!$idwarehouse || $idwarehouse == -1) {
-					$error++;
-					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
-					$action = 'delete';
+				$idwarehouse = GETPOST('idwarehouse');
+
+				$qualified_for_stock_change = 0;
+				if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					$qualified_for_stock_change = $object->hasProductsOrServices(2);
 				} else {
-					$result = $object->setDraft($user, $idwarehouse);
-					if ($result < 0) {
+					$qualified_for_stock_change = $object->hasProductsOrServices(1);
+				}
+
+				// Check parameters
+				if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+					$langs->load("stocks");
+					if (!$idwarehouse || $idwarehouse == -1) {
 						$error++;
+						setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+						$action = 'delete';
+					} else {
+						$result = $object->setDraft($user, $idwarehouse);
+						if ($result < 0) {
+							$error++;
+						}
 					}
 				}
+
 			}
 
 			if (!$error) {
@@ -3038,7 +3045,52 @@ if ($action == 'create') {
 
 		// Confirmation de la suppression de la facture fournisseur
 		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
+
+			$formquestion = array();
+
+			$qualified_for_stock_change = 0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$qualified_for_stock_change = $object->hasProductsOrServices(2);
+			} else {
+				$qualified_for_stock_change = $object->hasProductsOrServices(1);
+			}
+
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+				$langs->load("stocks");
+				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+				$formproduct = new FormProduct($db);
+				$warehouse = new Entrepot($db);
+				$warehouse_array = $warehouse->list_array();
+
+				$selectwarehouse = '<span class="questionrevertstock hidden">';
+				if (count($warehouse_array) == 1) {
+					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
+					$selectwarehouse .= '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
+				} else {
+					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
+					$selectwarehouse .= $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+				}
+				$selectwarehouse .= '</span>';
+
+				print '<script type="text/javascript">
+				$(document).ready(function() {
+					$("#revertstock").change(function() {
+						if(this.checked) {
+							$(".questionrevertstock").removeClass("hidden");
+						} else {
+							$(".questionrevertstock").addClass("hidden");
+						}
+					});
+				});
+				</script>';
+
+				$formquestion = array(
+					array('type' => 'checkbox', 'name' => 'revertstock', 'label' => $langs->trans('RevertProductsToStock'), 'value' => 'false'),
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $selectwarehouse, 'tdclass' => 'questionrevertstock hidden')
+				);
+			}
+
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', $formquestion, 1, 1);
 		}
 		if ($action == 'deletepayment') {
 			$payment_id = GETPOST('paiement_id');
