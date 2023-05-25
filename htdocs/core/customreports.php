@@ -300,9 +300,9 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX.$tabletouse." as ".$tablealiastouse;
 		}
 
-		// Add the where here
-		/*
-		$sqlfilters = GETPOST('search_component_params_hidden', 'alphanohtml');
+		// Add a where here keeping only the citeria on $tabletouse
+		// TODO
+		/*$sqlfilters = ... GETPOST('search_component_params_hidden', 'alphanohtml');
 		if ($sqlfilters) {
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
@@ -730,7 +730,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	// Add the where here
 	$sqlfilters = $search_component_params_hidden;
 	if ($sqlfilters) {
-		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage, 0, 0, 1);
 	}
 	$sql .= " GROUP BY ";
 	foreach ($search_xaxis as $key => $val) {
