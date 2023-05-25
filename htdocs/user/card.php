@@ -781,7 +781,6 @@ if ($object->id > 0) {
 } else {
 	$title = $langs->trans("NewUser");
 }
-
 $help_url = '';
 
 llxHeader('', $title, $help_url);
