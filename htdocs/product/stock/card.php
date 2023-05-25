@@ -6,7 +6,7 @@
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,8 @@ $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
@@ -413,7 +415,10 @@ if ($action == 'create') {
 
 			// Confirm delete warehouse
 			if ($action == 'delete') {
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", '', 0, 2);
+				$formquestion = array(
+					array('type' => 'other', 'name' => 'info', 'label' => img_warning('').$langs->trans("WarningThisWIllAlsoDeleteStock"), 'morecss'=>'warning')
+				);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", $formquestion, 0, 2);
 			}
 
 			// Call Hook formConfirm
@@ -595,35 +600,63 @@ if ($action == 'create') {
 			print '<br>';
 
 
+			$totalarray = array();
+			$totalarray['val'] = array ();
+			$totalarray['pos'] = array ();
+			$totalarray['type'] = array ();
+			$totalarray['nbfield'] = 0;
+
 			// TODO Create $arrayfields with all fields to show
 
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
-			$parameters = array();
+			$parameters = array('totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
+
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield'] += 3;
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
+			$totalarray['type'][$totalarray['nbfield']] = 'stock';
+
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'units';
+				$totalarray['type'][$totalarray['nbfield']] = 'string';
 			}
+
 			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
+
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
+			$totalarray['type'][$totalarray['nbfield']] = '';
+
+
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
 			}
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
+				$totalarray['type'][$totalarray['nbfield']] = '';
 			}
 			if ($user->rights->stock->mouvement->creer) {
 				print_liste_field_titre('');
+				$totalarray['nbfield']++;
 			}
 			if ($user->rights->stock->creer) {
 				print_liste_field_titre('');
+				$totalarray['nbfield']++;
 			}
 			// Hook fields
-			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			print "</tr>\n";
@@ -708,7 +741,7 @@ if ($action == 'create') {
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
 
-					$parameters = array('obj'=>$objp);
+					$parameters = array('obj'=>$objp, 'totalarray' => &$totalarray);
 					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
@@ -807,34 +840,20 @@ if ($action == 'create') {
 				}
 				$db->free($resql);
 
-				// Total
-				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="liste_total right">';
-				$valtoshow = price2num($totalunit, 'MS');
-				if (empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) {
-					print empty($valtoshow) ? '0' : $valtoshow;
-				}
-				print '</td>';
-				print '<td class="liste_total">';
-				if (empty($conf->global->PRODUCT_USE_UNITS) && $sameunits) {
-					print $langs->trans($productstatic->getLabelOfUnit());
-				}
-				print '</td>';
-				print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-					print '<td class="liste_total">&nbsp;</td>';
-					print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
+				$totalarray['val']['totalunit'] = $totalunit;
+				$totalarray['val']['totalvalue'] = price2num($totalvalue, 'MT');
+				$totalarray['val']['totalvaluesell'] = price2num($totalvaluesell, 'MT');
+				$totalarray['val']['units'] = $langs->trans($productstatic->getLabelOfUnit());
+
+				$parameters = array('totalarray' => &$totalarray);
+				// Note that $action and $object may have been modified by hook
+				$reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object);
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors);
 				}
 
-				if ($user->rights->stock->mouvement->creer) {
-					print '<td class="liste_total">&nbsp;</td>';
-				}
-
-				if ($user->rights->stock->creer) {
-					print '<td class="liste_total">&nbsp;</td>';
-				}
-
-				print '</tr>';
+				// Show total line
+				include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 			} else {
 				dol_print_error($db);
 			}

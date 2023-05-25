@@ -1080,6 +1080,9 @@ textarea.centpercent {
 .wordbreak {
 	word-break: break-all;
 }
+td.wordbreak img {
+	max-width: 100%;
+}
 .bold {
 	font-weight: bold !important;
 }
@@ -2445,6 +2448,23 @@ div.fichehalfright {
 	<?php if ($conf->browser->layout == 'phone') {
 		print "margin-top: 10px;\n";
 	} ?>
+}
+
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 1499px)
+{
+	div.fichehalfleft-lg {
+		float: none;
+		width: auto;
+	}
+	div.fichehalfright-lg {
+		float: none;
+		width: auto;
+	}
+
+	.fichehalfright-lg .fichehalfright {
+		padding-left:0;
+	}
 }
 
 /*div.firstcolumn div.box {
@@ -4706,8 +4726,10 @@ span.dashboardlineko {
 	color: #FFFFFF ! important;
 	border-radius: .25em;
 }
-.boxtable {
+.divboxtable {
 	margin-bottom: 20px !important;
+}
+.boxtable {
 	border-bottom-width: 1px;
 }
 .boxtablenotop {
@@ -5061,7 +5083,7 @@ div#card-errors {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* Formulaire confirmation (When Ajax JQuery is used) and Dialog popups           */
 /* ============================================================================== */
 
 .ui-dialog-titlebar {
@@ -5070,7 +5092,7 @@ div#card-errors {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
 
 div#dialogforpopup {
@@ -6618,7 +6640,7 @@ div.multi-select-menu[role="menu"] {
   height: 0;
   border-style: solid;
   border-width: 0.5em 0.23em 0em 0.23em;
-  border-color: #444 transparent transparent transparent;
+  border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
 }
 
@@ -6626,7 +6648,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-container--open .multi-select-button:after {
   border-width: 0 0.4em 0.4em 0.4em;
-  border-color: transparent transparent #999 transparent;
+  border-color: transparent transparent #888 transparent;
 }
 
 .multi-select-menuitem {
@@ -6636,6 +6658,7 @@ div.multi-select-menu[role="menu"] {
 }
 label.multi-select-menuitem {
 	line-height: 24px;
+	text-align: start;
 }
 
 
