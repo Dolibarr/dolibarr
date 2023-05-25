@@ -1049,7 +1049,7 @@ class Translate
 
 			if (isset($this->cache_currencies[$currency_code]) && !empty($this->cache_currencies[$currency_code]['unicode']) && is_array($this->cache_currencies[$currency_code]['unicode'])) {
 				foreach ($this->cache_currencies[$currency_code]['unicode'] as $unicode) {
-					$currency_sign .= mb_convert_encoding("&#{$unicode};", "UTF-8", 'HTML-ENTITIES');
+					$currency_sign .= mb_convert_encoding("&#".$unicode.";", "UTF-8", 'HTML-ENTITIES');
 				}
 			}
 		}

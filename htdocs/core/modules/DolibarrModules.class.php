@@ -683,11 +683,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
-				// Replace a HTML string with a Markdown syntax
-				$content = preg_replace('/<a href="([^"]+)">([^<]+)<\/a>/', '[\2](\1)', $content);
-				//$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1){:target="\2"}', $content);
-				$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
-
 				$content = dolMd2Html(
 					$content,
 					'parsedown',
@@ -788,6 +783,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+
 				$content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1)));
 			} else {
 				$content = nl2br($content);
@@ -1751,7 +1747,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$val = '';
 			}
 
-			$sql = "SELECT count(*)";
+			$sql = "SELECT count(*) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."const";
 			$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
 			$sql .= " AND entity = ".((int) $entity);
@@ -1775,7 +1771,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$err++;
 					}
 				} else {
-					dol_syslog(get_class($this)."::insert_const constant '".$name."' already exists", LOG_WARNING);
+					dol_syslog(get_class($this)."::insert_const constant '".$name."' already exists", LOG_DEBUG);
 				}
 			} else {
 				$err++;

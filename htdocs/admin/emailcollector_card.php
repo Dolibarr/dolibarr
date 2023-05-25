@@ -149,7 +149,7 @@ if (GETPOST('addfilter', 'alpha')) {
 	if ($result > 0) {
 		$object->fetchFilters();
 	} else {
-		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+		setEventMessages($emailcollectorfilter->error, $emailcollectorfilter->errors, 'errors');
 	}
 }
 
@@ -161,7 +161,7 @@ if ($action == 'deletefilter') {
 		if ($result > 0) {
 			$object->fetchFilters();
 		} else {
-			setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+			setEventMessages($emailcollectorfilter->error, $emailcollectorfilter->errors, 'errors');
 		}
 	}
 }
@@ -192,7 +192,7 @@ if (GETPOST('addoperation', 'alpha')) {
 			$object->fetchActions();
 		} else {
 			$error++;
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -216,7 +216,7 @@ if ($action == 'updateoperation') {
 			$object->fetchActions();
 		} else {
 			$error++;
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -228,7 +228,7 @@ if ($action == 'deleteoperation') {
 		if ($result > 0) {
 			$object->fetchActions();
 		} else {
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -242,7 +242,7 @@ if ($action == 'collecttest') {
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
 		$debuginfo = $object->debuginfo;
-		setEventMessages($object->error, null, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = '';
@@ -257,7 +257,7 @@ if ($action == 'confirm_collect') {
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
 		$debuginfo = $object->debuginfo;
-		setEventMessages($object->error, null, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = '';

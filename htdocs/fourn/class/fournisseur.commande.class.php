@@ -1591,6 +1591,7 @@ class CommandeFournisseur extends CommonOrder
 						$result = $this->call_trigger('ORDER_SUPPLIER_CREATE', $user);
 						if ($result < 0) {
 							$this->db->rollback();
+
 							return -1;
 						}
 						// End call triggers
@@ -1601,12 +1602,18 @@ class CommandeFournisseur extends CommonOrder
 				} else {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
+
 					return -2;
 				}
+			} else {
+				$this->error = 'Failed to get ID of inserted line';
+
+				return -1;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
+
 			return -1;
 		}
 	}
@@ -2110,9 +2117,10 @@ class CommandeFournisseur extends CommonOrder
 	 * @param	string		$batch					Lot number
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
 	 * @param	int			$notrigger          	1 = notrigger
+	 * @param	int			$fk_reception          	Id of reception to link
 	 * @return 	int						<0 if KO, >0 if OK
 	 */
-	public function dispatchProduct($user, $product, $qty, $entrepot, $price = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $fk_commandefourndet = 0, $notrigger = 0)
+	public function dispatchProduct($user, $product, $qty, $entrepot, $price = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $fk_commandefourndet = 0, $notrigger = 0, $fk_reception = 0)
 	{
 		global $conf, $langs;
 
@@ -2142,9 +2150,9 @@ class CommandeFournisseur extends CommonOrder
 			$this->db->begin();
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
-			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch) VALUES";
+			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
 			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
-			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null");
+			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ".($fk_reception > 0 ? "'".$this->db->escape($fk_reception)."'" : "null");
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::dispatchProduct", LOG_DEBUG);
@@ -3651,10 +3659,9 @@ class CommandeFournisseur extends CommonOrder
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'socid') || property_exists($this, 'total_tva')) {
 			$return .='<br><span class="info-box-label amount">'.$this->socid.'</span>';

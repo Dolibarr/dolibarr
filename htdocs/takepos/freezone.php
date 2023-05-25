@@ -84,7 +84,7 @@ $vatRateDefault = get_default_tva($mysoc, $soc);
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs = array();
 
-top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
+top_htmlhead('', '', 0, 0, $arrayofjs, $arrayofcss);
 ?>
 <body>
 
@@ -120,6 +120,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 <br>
 <center>
+<form>
 <input type="text" id="desc" name="desc" class="takepospay" style="width:40%;" placeholder="<?php echo $langs->trans('Description'); ?>">
 <?php
 if ($action == "freezone") {
@@ -130,9 +131,10 @@ if ($action == "addnote") {
 }
 ?>
 <input type="hidden" name="place" class="takepospay" value="<?php echo $place; ?>">
-<input type="button" class="button takepospay clearboth" value="OK" onclick="Save();">
+<input type="submit" class="button takepospay clearboth" value="OK" onclick="Save(); return false;">
+</form>
 <?php
-if ($action == 'freezone') {
+if ($action == 'freezone' && !getDolGlobalString("TAKEPOS_USE_DEFAULT_VATRATE_FOR_FREEZONE")) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$form = new Form($db);

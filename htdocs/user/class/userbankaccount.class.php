@@ -85,9 +85,9 @@ class UserBankAccount extends Account
 	/**
 	 * Create bank information record
 	 *
-	 * @param	User	$user		User
-	 * @param	int		$notrigger	1=Disable triggers
-	 * @return	int					<0 if KO, >= 0 if OK
+	 * @param	User|null	$user		User
+	 * @param	int			$notrigger	1=Disable triggers
+	 * @return	int						<0 if KO, >= 0 if OK
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -111,9 +111,9 @@ class UserBankAccount extends Account
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	User	$user		Object user
-	 *	@param	int		$notrigger	1=Disable triggers
-	 *	@return	int					<=0 if KO, >0 if OK
+	 *	@param	User|null	$user		Object user
+	 *	@param	int			$notrigger	1=Disable triggers
+	 *	@return	int						<=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -227,8 +227,8 @@ class UserBankAccount extends Account
 	/**
 	 *  Delete user bank account from database
 	 *
-	 *	@param	User	$user	User deleting
-	 *  @return int             <0 if KO, >0 if OK
+	 *  @param	User|null	$user	User deleting
+	 *  @return int             	<0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{

@@ -614,6 +614,7 @@ if (isModEnabled('projet')) {
 	print '<br>';
 }
 
+$i = 0;
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
 		continue; // list not qualified
@@ -623,9 +624,10 @@ foreach ($listofchoices as $choice => $val) {
 		$disabled = ' disabled';
 	}
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
-	print '<div class="paddingleft inline-block marginrightonly paddingright"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'><label for="'.$choice.'"> ';
+	print '<div class="'.($i > 0 ? 'paddingleft marginleftonly' : '').' inline-block marginrightonly paddingright"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'><label for="'.$choice.'"> ';
 	print img_picto($langs->trans($val['label']), $val['picto'], 'class=""').' '.$langs->trans($val['label']);
 	print '</label></div>';
+	$i++;
 }
 
 print '<input type="submit" class="button small" name="search" value="'.$langs->trans("Search").'">';

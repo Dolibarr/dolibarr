@@ -222,7 +222,7 @@ $log_holiday = $object->fetchLog($sqlorder, $sqlwhere); // Load $object->logs
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//TODO: $result = $db->query($sql);
 	//TODO: $nbtotalofrecords = $db->num_rows($result);
 	$nbtotalofrecords = is_array($object->logs) ? count($object->logs) : 0;

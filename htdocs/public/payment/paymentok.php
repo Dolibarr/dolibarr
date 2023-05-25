@@ -122,7 +122,7 @@ if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg)) {
 }
 if (empty($paymentmethod)) {
 	dol_syslog("***** paymentok.php was called with a non valid parameter FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_payment');
-	dol_print_error(null, 'The callback url does not contains a parameter fulltag that should help us to find the payment method used');
+	dol_print_error(null, 'The callback url does not contain a parameter fulltag that should help us to find the payment method used');
 	exit;
 }
 
@@ -177,14 +177,14 @@ dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_
 $tracepost = "";
 foreach ($_POST as $k => $v) {
 	if (is_scalar($k) && is_scalar($v)) {
-		$tracepost .= "{$k} - {$v}\n";
+		$tracepost .= "$k - $v\n";
 	}
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 $tracesession = "";
 foreach ($_SESSION as $k => $v) {
 	if (is_scalar($k) && is_scalar($v)) {
-		$tracesession .= "{$k} - {$v}\n";
+		$tracesession .= "$k - $v\n";
 	}
 }
 dol_syslog("SESSION=".$tracesession, LOG_DEBUG, 0, '_payment');

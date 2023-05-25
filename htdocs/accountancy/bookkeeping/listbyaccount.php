@@ -559,7 +559,7 @@ llxHeader('', $title_page);
 
 // List
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	// TODO Perf Replace this by a count
 	if ($type == 'sub') {
 		$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter, 'AND', 1, 1);
