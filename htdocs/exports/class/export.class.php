@@ -35,7 +35,18 @@ class Export
 	 */
 	public $db;
 
+	/**
+	 * @var string Last error message
+	 */
 	public $error;
+	/**
+	 * @var string Last error code
+	 */
+	public $errno;
+	/**
+	 * @var string Error messages
+	 */
+	public $errors;
 
 	public $array_export_code = array(); // Tableau de "idmodule_numexportprofile"
 	public $array_export_code_for_sort = array(); // Tableau de "idmodule_numexportprofile"

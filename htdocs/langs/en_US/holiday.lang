@@ -100,7 +100,6 @@ SendRequestCollectiveCP=Send collective leave request
 AutoValidationOnCreate=Automatic validation
 FirstDayOfHoliday=Beginning day of leave request
 LastDayOfHoliday=Ending day of leave request
-BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Monthly update
 ManualUpdate=Manual update
 HolidaysCancelation=Leave request cancelation

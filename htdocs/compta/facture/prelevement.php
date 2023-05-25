@@ -747,10 +747,10 @@ if ($object->id > 0) {
 	print "\n".'<div class="tabsAction">'."\n";
 
 	$buttonlabel = $langs->trans("MakeWithdrawRequest");
-	$user_perms = $user->rights->prelevement->bons->creer;
+	$user_perms = $user->hasRight('prelevement', 'bons', 'creer');
 	if ($type == 'bank-transfer') {
 		$buttonlabel = $langs->trans("MakeBankTransferOrder");
-		$user_perms = $user->rights->paymentbybanktransfer->create;
+		$user_perms = $user->hasRight('paymentbybanktransfer', 'create');
 	}
 
 	// Add a transfer request

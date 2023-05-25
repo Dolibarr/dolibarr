@@ -627,6 +627,25 @@ if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'
 }
 print '<br>';
 
+// Options
+print '<br>';
+print '<strong>'.$langs->trans("Options").'</strong>:<br>';
+if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
+	print 'MAIN_ACTIVATE_FILECACHE = '.getDolGlobalInt('MAIN_ACTIVATE_FILECACHE').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_ACTIVATE_FILECACHE = '.getDolGlobalInt('MAIN_ACTIVATE_FILECACHE', 0);
+	//.' '.img_picto('', 'warning.png');
+}
+print '<br>';
+
+if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP', 0);
+	//.' '.img_picto('', 'warning.png');
+}
+print '<br>';
+
 // End of page
 llxFooter();
 $db->close();

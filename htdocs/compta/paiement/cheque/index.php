@@ -123,7 +123,7 @@ $max = 10;
 
 foreach ($arrayofpaymentmodetomanage as $val) {
 	$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
-	$sql .= " bc.statut, bc.nbcheque, bc.type,";
+	$sql .= " bc.statut as status, bc.nbcheque, bc.type,";
 	$sql .= " ba.ref as bref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
 	$sql .= " aj.code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
@@ -160,7 +160,8 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 
 			$checkdepositstatic->id = $objp->rowid;
 			$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
-			$checkdepositstatic->statut = $objp->statut;
+			$checkdepositstatic->statut = $objp->status;
+			$checkdepositstatic->status = $objp->status;
 
 			$accountstatic->id = $objp->bid;
 			$accountstatic->ref = $objp->bref;
@@ -178,13 +179,14 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 			print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
 			print '<td class="right">'.$objp->nbcheque.'</td>';
 			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
-			print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
+			print '<td class="right">'.$checkdepositstatic->LibStatut($objp->status, 3).'</td>';
 
 			print '</tr>';
 		}
 		if ($i == 0) {
 			print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
+
 		print "</table>";
 		print '</div>';
 
