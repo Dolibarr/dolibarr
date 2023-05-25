@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2007-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -297,7 +298,7 @@ if (!empty($searchCategoryKnowledgemanagementList)) {
 		if (intval($searchCategoryKnowledgemanagement) == -2) {
 			$searchCategoryKnowledgemanagementSqlList[] = "NOT EXISTS (SELECT ck.fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement as ck WHERE t.rowid = ck.fk_knowledgemanagement)";
 		} elseif (intval($searchCategoryKnowledgemanagement) > 0) {
-			if ($searchCategoryKnowledgemanagementOperator == 0) {
+			if (empty($searchCategoryKnowledgemanagementOperator)) {
 				$searchCategoryKnowledgemanagementSqlList[] = " EXISTS (SELECT ck.fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement as ck WHERE t.rowid = ck.fk_knowledgemanagement AND ck.fk_categorie = ".((int) $searchCategoryKnowledgemanagement).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryKnowledgemanagement);
@@ -347,7 +348,7 @@ $sql=preg_replace('/,\s*$/','', $sql);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -406,7 +407,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
@@ -666,7 +667,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

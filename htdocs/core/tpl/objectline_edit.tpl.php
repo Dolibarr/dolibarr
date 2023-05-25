@@ -453,11 +453,12 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		}
 
 		var price = 0;
-		remisejs=price2numjs(remise.val());
+		remisejs = price2numjs(remise.val());
 
-		if (remisejs != 100)	// If a discount not 100 or no discount
-		{
-			if (remisejs == '') remisejs=0;
+		if (remisejs != 100) {	// If a discount not 100 or no discount
+			if (remisejs == '') {
+				remisejs = 0;
+			}
 
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());

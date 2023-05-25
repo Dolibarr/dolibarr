@@ -41,6 +41,23 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	public $posxpicture;
+	public $posxtva;
+	public $posxup;
+	public $posxqty;
+	public $posxunit;
+	public $posxdesc;
+	public $posxdiscount;
+	public $postotalht;
+
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
+	public $atleastonediscount = 0;
+	public $atleastoneratenotnull = 0;
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

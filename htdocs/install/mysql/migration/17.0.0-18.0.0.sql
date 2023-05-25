@@ -386,3 +386,45 @@ ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_
 
 ALTER TABLE llx_bordereau_cheque ADD COLUMN label varchar(255) AFTER ref;
 
+ALTER TABLE llx_societe ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER tva_assuj;
+ALTER TABLE llx_facture_fourn ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER close_note;
+
+ALTER TABLE llx_c_email_templates add COLUMN defaultfortype smallint DEFAULT 0;
+
+ALTER TABLE llx_mailing ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
+ALTER TABLE llx_mailing ADD COLUMN evenunsubscribe smallint DEFAULT 0;
+ALTER TABLE llx_mailing ADD COLUMN name_from varchar(128) AFTER email_from;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_mrp_production ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+
+ALTER TABLE llx_facture ADD COLUMN subtype smallint DEFAULT NULL;
+
+CREATE TABLE llx_c_invoice_subtype (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  entity integer DEFAULT 1,
+  fk_country integer NOT NULL,
+  code varchar(3) NOT NULL,
+  label varchar(100),
+  active tinyint DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
+
+ALTER TABLE llx_projet ADD COLUMN fk_project integer DEFAULT NULL;
+
+-- Upgrade default PDF models to the 'new' ones (eproved since 4 dolibarr versions from now)
+--UPDATE llx_const SET value="eratosthene" WHERE name="COMMANDE_ADDON_PDF" and value="einstein";
+--UPDATE llx_const SET value="sponge" WHERE name="FACTURE_ADDON_PDF" and value="crabe";
+--UPDATE llx_const SET value="espadon" WHERE name="EXPEDITION_ADDON_PDF" and value="merou";
+--UPDATE llx_const SET value="cyan" WHERE name="PROPALE_ADDON_PDF" and value="azur";
+--UPDATE llx_const SET value="storm" WHERE name IN ("DELIVERY_ADDON_PDF","LIVRAISON_ADDON_PDF") and value="typhon";
+--UPDATE llx_const SET value="cornas" WHERE name="COMMANDE_SUPPLIER_ADDON_PDF" and value="muscadet";
+
+
+ALTER TABLE llx_c_propalst ADD COLUMN sortorder smallint DEFAULT 0;
+ALTER TABLE llx_c_stcomm ADD COLUMN sortorder smallint DEFAULT 0;
+
+ALTER TABLE llx_element_time ADD COLUMN ref_ext varchar(32);
+
+ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);

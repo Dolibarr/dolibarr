@@ -78,7 +78,7 @@ $arrayfields = array(
 	'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
 );
 
-if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 	unset($arrayfields['reconcilable']);
 }
 
@@ -130,15 +130,15 @@ llxHeader('', $title, $help_url);
 
 
 // Customer
-$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity";
+$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity, sa.client as nature";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
-	if ($conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
-		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	if (getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')) {
+		$lengthpaddingaccount = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	}
 	$search_subaccount_tmp = $search_subaccount;
 	$weremovedsomezero = 0;
@@ -178,14 +178,14 @@ if (!empty($search_type) && $search_type >= 0) {
 
 // Supplier
 $sql .= " UNION ";
-$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
+$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity, '0' as nature FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta_fournisseur <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
-	if ($conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
-		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	if (getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')) {
+		$lengthpaddingaccount = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	}
 	$search_subaccount_tmp = $search_subaccount;
 	$weremovedsomezero = 0;
@@ -225,14 +225,14 @@ if (!empty($search_type) && $search_type >= 0) {
 
 // User - Employee
 $sql .= " UNION ";
-$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
+$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity, '0' as nature FROM ".MAIN_DB_PREFIX."user u";
 $sql .= " WHERE u.entity IN (".getEntity('user').")";
 $sql .= " AND u.accountancy_code <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
-	if ($conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
-		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	if (getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')) {
+		$lengthpaddingaccount = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	}
 	$search_subaccount_tmp = $search_subaccount;
 	$weremovedsomezero = 0;
@@ -274,7 +274,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -296,7 +296,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($search_subaccount) {
 		$param .= '&search_subaccount='.urlencode($search_subaccount);
@@ -393,7 +393,7 @@ if ($resql) {
 		// Subaccount label
 		if (!empty($arrayfields['label']['checked'])) {
 			print "<td>";
-			print $obj->label;
+			print $obj->nature == 2 ? '<span style = "color: red;"><b>'.$obj->label.' ('.$langs->trans("Prospect").')</b></span>' : $obj->label;
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -370,7 +370,7 @@ class FormAccounting extends Form
 			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
 			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-			$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
+			$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 			if ($active === '1') {
 				$sql .= " AND aa.active = 1";
 			} elseif ($active === '0') {
@@ -390,7 +390,7 @@ class FormAccounting extends Form
 
 			$num_rows = $this->db->num_rows($resql);
 
-			if ($num_rows == 0 && (empty($conf->global->CHARTOFACCOUNTS) || $conf->global->CHARTOFACCOUNTS < 0)) {
+			if ($num_rows == 0 && (empty(getDolGlobalInt('CHARTOFACCOUNTS')) || getDolGlobalInt('CHARTOFACCOUNTS') < 0)) {
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {
@@ -454,6 +454,7 @@ class FormAccounting extends Form
 	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
 	{
 		// phpcs:enable
+		global $conf;
 
 		$aux_account = array();
 

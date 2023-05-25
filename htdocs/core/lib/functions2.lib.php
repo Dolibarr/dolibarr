@@ -113,8 +113,8 @@ function dolGetModulesDirs($subdir = '')
 /**
  *  Try to guess default paper format according to language into $langs
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
- *	@return		string							Default paper format code
+ *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@return		string								Default paper format code
  */
 function dol_getDefaultFormat(Translate $outputlangs = null)
 {
@@ -1280,7 +1280,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
@@ -1346,7 +1346,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$ref = '';
 		$sql = "SELECT ".$field." as ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -1408,7 +1408,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike)."'";
+			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
@@ -2668,6 +2668,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
+	} elseif ($moduleobject == 'accounting') {
+		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}

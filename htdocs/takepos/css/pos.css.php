@@ -960,7 +960,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	div.wrapper2{
-		height:10%;
+		height: 40px;
 	}
 }
 

@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\MessagesCollector;
+use DebugBar\DataCollector\MessagesCollector;
 
 /**
  * DolMessagesCollector class

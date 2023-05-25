@@ -43,6 +43,9 @@ if (isModEnabled('adherent')) {
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+}
 
 // Load translation files required by page
 $langs->loadLangs(array(
@@ -270,6 +273,15 @@ if ($object->id > 0) {
 		print '</td></tr>';
 	}
 
+	// VAT reverse-charge by default on supplier invoice or not
+	print '<tr>';
+	print '<td class="titlefield">';
+	print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+	print '</td><td>';
+	print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').' disabled>';
+	print '</td>';
+	print '</tr>';
+
 	// TVA Intra
 	print '<tr><td class="nowrap">';
 	//print $langs->trans('VATIntra').'</td><td>';
@@ -372,7 +384,7 @@ if ($object->id > 0) {
 	print '</td>';
 	print '</tr>';
 
-	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
+	if (isModEnabled("supplier_order") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("OrderMinAmount", 'supplier_order_min_amount', $object->supplier_order_min_amount, $object, $user->rights->societe->creer);
@@ -425,6 +437,7 @@ if ($object->id > 0) {
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
+	print '<br>';
 
 	// Lien recap
 	$boxstat .= '<div class="box box-halfright">';
@@ -452,7 +465,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+	if (isModEnabled("supplier_order")) {
 		// Box proposals
 		$tmp = $object->getOutstandingOrders('supplier');
 		$outstandingOpened = $tmp['opened'];
@@ -473,7 +486,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
+	if (isModEnabled("supplier_invoice")) {
 		$warn = '';
 		$tmp = $object->getOutstandingBills('supplier');
 		$outstandingOpened = $tmp['opened'];
@@ -544,16 +557,6 @@ if ($object->id > 0) {
 
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-	// Lien recap
-	/*
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
-	print '</tr>';
-	print '</table>';
-	print '<br>';
-	*/
 
 	/*
 	 * List of products

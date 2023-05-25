@@ -205,7 +205,7 @@ class Delivery extends CommonObject
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if (!isModEnabled('expedition_bon')) {
+				if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
 					$commande->fetch_lines();
@@ -233,8 +233,7 @@ class Delivery extends CommonObject
 						$error++;
 					}
 
-					if (!isModEnabled('expedition_bon')) {
-						// TODO standardize status uniformiser les statuts
+					if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						$ret = $this->setStatut(2, $this->origin_id, $this->origin);
 						if (!$ret) {
 							$error++;
@@ -899,10 +898,10 @@ class Delivery extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du statut d'une expedition
+	 *  Return the label of the status
 	 *
-	 *  @param	int			$mode		Mode
-	 *  @return string      			Label
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -911,11 +910,11 @@ class Delivery extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string					Label
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode)
 	{
@@ -987,7 +986,7 @@ class Delivery extends CommonObject
 
 		$i = 0;
 		$line = new DeliveryLine($this->db);
-		$line->fk_product     = $prodids[0];
+		$line->fk_product     = reset($prodids);
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
 		$line->ref            = 'REFPROD';

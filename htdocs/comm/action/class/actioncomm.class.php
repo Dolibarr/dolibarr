@@ -454,15 +454,15 @@ class ActionComm extends CommonObject
 		if ($this->percentage > 100) {
 			$this->percentage = 100;
 		}
-		//if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
+		if (empty($this->datep) && $this->datep != '0') {	// We should not insert event in calendar without a start date
+			$this->datep = $now;
+		}
 		if (!empty($this->datep) && !empty($this->datef)) {
 			$this->durationp = ($this->datef - $this->datep); // deprecated
 		}
-		//if (!empty($this->date)  && !empty($this->dateend)) $this->durationa=($this->dateend - $this->date);
 		if (!empty($this->datep) && !empty($this->datef) && $this->datep > $this->datef) {
 			$this->datef = $this->datep;
 		}
-		//if (!empty($this->date)  && !empty($this->dateend) && $this->date > $this->dateend) $this->dateend=$this->date;
 		if (!isset($this->fk_project) || $this->fk_project < 0) {
 			$this->fk_project = 0;
 		}
@@ -559,8 +559,8 @@ class ActionComm extends CommonObject
 		$sql .= "ip";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)', ";
-		$sql .= "'".$this->db->idate($now)."', ";
-		$sql .= (strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : "null").", ";
+		$sql .= "'".$this->db->idate($now)."', ";	// date creation
+		$sql .= "'".$this->db->idate($this->datep)."', ";	// date start event
 		$sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
 		$sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape($this->durationp)."'" : "null").", "; // deprecated
 		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
@@ -1666,7 +1666,7 @@ class ActionComm extends CommonObject
 		}
 
 		$canread = 0;
-		if (!empty($user->rights->agenda->myactions->read) && $this->authorid == $user->id) {
+		if ($user->hasRight('agenda', 'myactions', 'read') && ($this->authorid == $user->id || $this->userownerid == $user->id)) {
 			$canread = 1; // Can read my event
 		}
 		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
@@ -2101,8 +2101,6 @@ class ActionComm extends CommonObject
 			dol_syslog(get_class($this)."::build_exportfile select events", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				// Note: Output of sql request is encoded in $conf->file->character_set_client
-				// This assignment in condition is not a bug. It allows walking the results.
 				$diff = 0;
 				while ($obj = $this->db->fetch_object($resql)) {
 					$qualified = true;

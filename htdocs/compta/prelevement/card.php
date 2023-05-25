@@ -249,7 +249,7 @@ if ($id > 0 || $ref) {
 	print '</td>';
 	print '</tr>';
 	*/
-	print '<tr><td class="nowrap">';
+	print '<tr><td class="titlefieldcreate">';
 	print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 	print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
 	print '<td>';
@@ -392,7 +392,7 @@ if ($id > 0 || $ref) {
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 		if (($page * $limit) > $nbtotalofrecords) {
@@ -412,7 +412,7 @@ if ($id > 0 || $ref) {
 
 		$urladd = "&id=".urlencode($id);
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$urladd .= '&limit='.urlencode($limit);
+			$urladd .= '&limit='.((int) $limit);
 		}
 
 		print '<form method="POST" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";

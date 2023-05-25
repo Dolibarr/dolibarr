@@ -161,7 +161,7 @@ if (!empty($triggers)) {
 			$module = 'fournisseur';
 		}
 		if ($module == 'shipping') {
-			$module = 'expedition_bon';
+			$module = 'expedition';
 		}
 		if ($module == 'member') {
 			$module = 'adherent';
