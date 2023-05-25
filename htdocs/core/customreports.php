@@ -418,7 +418,7 @@ $startyear = $endyear - 2;
 
 $param = '';
 
-print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" autocomplete="off">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="viewgraph">';
 print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
