@@ -775,25 +775,11 @@ if (isModEnabled('stock')) {
 	$formproduct = new FormProduct($db);
 }
 
-if ($id > 0) {
-	$res = $object->fetch($id, '', '', 1);
-	if ($res < 0) {
-		dol_print_error($db, $object->error);
-		exit;
-	}
-
-	if ($res == 0) {
-		$langs->load("errors");
-		print($langs->trans('ErrorRecordNotFound'));
-		exit;
-	}
-}
-
-if ($action == 'create' || $action == 'adduserldap') {
-	$title = $langs->trans("NewUser");
-} else {
+if ($object->id > 0) {
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('Card');
+} else {
+	$title = $langs->trans("NewUser");
 }
 
 $help_url = '';
@@ -1398,7 +1384,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "</form>";
 } else {
 	// View and edit mode
-	if ($object->id > 0) {
+	if ($id > 0) {
+		$res = $object->fetch($id, '', '', 1);
+		if ($res < 0) {
+			dol_print_error($db, $object->error);
+			exit;
+		}
 		$res = $object->fetch_optionals();
 
 		// Check if user has rights
