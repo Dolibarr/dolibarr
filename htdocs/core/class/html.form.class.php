@@ -22,7 +22,7 @@
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2023       Vincent de Grandpré     <vincent@de-grandpre.quebec>
- * Copyright (C) 2023		    Joachim Kueter			    <git-jk@bloxera.com>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2601,7 +2601,8 @@ class Form
 	 * @param string $warehouseStatus Warehouse status filter to group/count stock. Following comma separated filter options can be used.
 	 *                                'warehouseopen' = count products from open warehouses,
 	 *                                'warehouseclosed' = count products from closed warehouses,
-	 *                                'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 *                                'warehouseinternal' = count products from warehouses for internal correct/transfer only or
+	 * 								  this parameter can also be the numeric id of a given warehouse.
 	 * @param int $status_purchase Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
 	 * @return     array|string                Array of keys for json
 	 */
