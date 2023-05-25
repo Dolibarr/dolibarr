@@ -3068,10 +3068,12 @@ if ($action == 'create') {
 				}
 				$selectwarehouse .= '</span>';
 
+				$selectyesno = array(0 => $langs->trans('No'), 1 => $langs->trans('Yes'));
+				
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					$("#revertstock").change(function() {
-						if(this.checked) {
+						if(this.value > 0) {
 							$(".questionrevertstock").removeClass("hidden");
 						} else {
 							$(".questionrevertstock").addClass("hidden");
@@ -3081,7 +3083,7 @@ if ($action == 'create') {
 				</script>';
 
 				$formquestion = array(
-					array('type' => 'checkbox', 'name' => 'revertstock', 'label' => $langs->trans('RevertProductsToStock'), 'value' => 'false'),
+					array('type' => 'select', 'name' => 'revertstock', 'label' => $langs->trans("RevertProductsToStock"), 'select_show_empty' => 0, 'values' => $selectyesno),
 					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $selectwarehouse, 'tdclass' => 'questionrevertstock hidden')
 				);
 			}
