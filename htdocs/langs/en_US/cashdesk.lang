@@ -146,4 +146,6 @@ UsePriceHT=Use price excl. taxes and not price incl. taxes
 TerminalName=Terminal %s
 TerminalNameDesc=Terminal name
 LineDiscount=Line discount
+LineDiscountShort=Line disc.
 InvoiceDiscount=Invoice discount
+InvoiceDiscountShort=Invoice disc.
