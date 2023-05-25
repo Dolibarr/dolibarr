@@ -10448,10 +10448,8 @@ class Form
 		$ret = '';
 
 		$ret .= '<div class="divadvancedsearchfieldcomp inline-block">';
-		//$ret .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
 		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
-		//$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
 
 		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
@@ -10468,24 +10466,27 @@ class Form
 			$i = 0; $s = '';
 			$countparenthesis = 0;
 			while ($i < $nbofchars) {
-				if ($search_component_params_hidden[$i] == '(') {
+				$char = dol_substr($search_component_params_hidden, $i, 1);
+
+				if ($char == '(') {
 					$countparenthesis++;
-				} elseif ($search_component_params_hidden[$i] == ')') {
+				} elseif ($char == ')') {
 					$countparenthesis--;
 				}
 
 				if ($countparenthesis == 0) {
-					if (!empty($search_component_params_hidden[$i]) && !empty($search_component_params_hidden[$i+1]) && !empty($search_component_params_hidden[$i+2])
-						&& $search_component_params_hidden[$i] == 'A' && $search_component_params_hidden[$i+1] == 'N' && $search_component_params_hidden[$i+2] == 'D') {
+					$char2 = dol_substr($search_component_params_hidden, $i+1, 1);
+					$char3 = dol_substr($search_component_params_hidden, $i+2, 1);
+					if ($char == 'A' && $char2 == 'N' && $char3 == 'D') {
 						// We found a AND
 						$arrayofandtags[] = trim($s);
 						$s = '';
 						$i+=2;
 					} else {
-						$s .= $search_component_params_hidden[$i];
+						$s .= $char;
 					}
 				} else {
-					$s .= $search_component_params_hidden[$i];
+					$s .= $char;
 				}
 				$i++;
 			}
@@ -10500,8 +10501,9 @@ class Form
 				if ($errormessage) {
 					$this->error = 'ERROR in parsing search string: '.$errormessage;
 				}
-				$searchtags = preg_replace('/^\(/', '', $searchtags);
-				$searchtags = preg_replace('/\)$/', '', $searchtags);
+				// Remove first and last parenthesis but only if first is the opening and last the closing of the same group
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				$searchtags = removeGlobalParenthesis($searchtags);
 
 				$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch" data-ufilterid="'.($tmpkey+1).'" data-ufilter="'.dol_escape_htmltag($tmpval).'">';
 				$ret .= '<span class="tagsearchdelete select2-selection__choice__remove" data-ufilterid="'.($tmpkey+1).'">x</span> ';

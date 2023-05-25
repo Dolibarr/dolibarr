@@ -11849,7 +11849,7 @@ function jsonOrUnserialize($stringtodecode)
  * @param 	string		$filter		String with universal search string. Must be '(aaa:bbb:...) OR (ccc:ddd:...) ...' with
  * 									aaa is a field name (with alias or not) and
  * 									bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
- * 									Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (nom:like:'a%')'
+ * 									Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
  * @param	string		$errorstr	Error message string
  * @param	int			$noand		1=Do not add the AND before the condition string.
  * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
