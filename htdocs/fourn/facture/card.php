@@ -261,11 +261,9 @@ if (empty($reshook)) {
 		$isErasable = $object->is_erasable();
 
 		if (($usercandelete && $isErasable > 0) || ($usercancreate && $isErasable == 1)) {
-
 			$revertstock = GETPOST('revertstock');
-			
-			if ($revertstock) {
 
+			if ($revertstock) {
 				$idwarehouse = GETPOST('idwarehouse');
 
 				$qualified_for_stock_change = 0;
@@ -289,7 +287,6 @@ if (empty($reshook)) {
 						}
 					}
 				}
-
 			}
 
 			if (!$error) {
@@ -3045,7 +3042,6 @@ if ($action == 'create') {
 
 		// Confirmation de la suppression de la facture fournisseur
 		if ($action == 'delete') {
-
 			$formquestion = array();
 
 			$qualified_for_stock_change = 0;
