@@ -221,6 +221,8 @@ before_script:
       pgloader mysql://root@127.0.0.1/travis postgresql://postgres@/travis
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgres travis
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql -U postgres travis
+      # Create pgsql compatibility functions
+      psql -U postgres travis < htdocs/install/pgsql/functions/functions.sql
     fi
     echo
 
@@ -459,6 +461,9 @@ script:
   php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
   php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
   ls -alrt $TRAVIS_BUILD_DIR/
+  echo
+  #cat $TRAVIS_BUILD_DIR/upgrade17001800.log
+  #cat $TRAVIS_BUILD_DIR/upgrade17001800-2.log
 
 - |
   echo "Enabling new modules"
@@ -468,6 +473,7 @@ script:
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KNOWLEDGEMANAGEMENT,MAIN_MODULE_EVENTORGANIZATION,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EMAILCOLLECTOR >> $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?
   cd -
   set +e
