@@ -47,6 +47,8 @@ Stripe                 10.7.0        MIT Licence                 Yes            
 TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
+bacon, dasprid, swiss-qr-bill, kmukku, symfony/validator
+
 JS libraries:
 Ace                    1.4.14        BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
 ChartJS                3.7.1         MIT License                 Yes             JS library for graph
