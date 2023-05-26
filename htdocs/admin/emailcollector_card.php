@@ -395,9 +395,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringtarget = '';
 
 	// Note: $object->host has been loaded by the fetch
-	$usessl = 1;
-
-	$connectstringserver = $object->getConnectStringIMAP($usessl);
+	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {

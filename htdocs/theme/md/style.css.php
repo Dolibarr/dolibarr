@@ -2450,6 +2450,23 @@ div.fichehalfright {
 	} ?>
 }
 
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 1499px)
+{
+	div.fichehalfleft-lg {
+		float: none;
+		width: auto;
+	}
+	div.fichehalfright-lg {
+		float: none;
+		width: auto;
+	}
+
+	.fichehalfright-lg .fichehalfright {
+		padding-left:0;
+	}
+}
+
 /*div.firstcolumn div.box {
 	padding-right: 10px;
 }

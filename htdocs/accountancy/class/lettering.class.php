@@ -692,6 +692,9 @@ class Lettering extends BookKeeping
 
 		// Clean parameters
 		$document_ids = is_array($document_ids) ? $document_ids : array();
+		//remove empty entries
+		$document_ids = array_filter($document_ids);
+
 		$doc_type = trim($doc_type);
 
 		if (empty($document_ids)) {
@@ -742,10 +745,13 @@ class Lettering extends BookKeeping
 		// Clean parameters
 		$document_ids = is_array($document_ids) ? $document_ids : array();
 		$doc_type = trim($doc_type);
+		//remove empty entries
+		$document_ids = array_filter($document_ids);
 
 		if (empty($document_ids)) {
 			return array();
 		}
+
 		if (!is_array(self::$doc_type_infos[$doc_type])) {
 			$langs->load('errors');
 			$this->errors[] = $langs->trans('ErrorBadParameters');

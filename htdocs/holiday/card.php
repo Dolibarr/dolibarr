@@ -1089,7 +1089,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<td class="fieldrequired">';
 		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
 		print '</td>';
-		print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');;
+		print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');
 		// Si la demande ne vient pas de l'agenda
 		if (!GETPOST('date_debut_')) {
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);

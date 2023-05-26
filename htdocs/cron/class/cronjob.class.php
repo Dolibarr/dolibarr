@@ -1177,7 +1177,7 @@ class Cronjob extends CommonObject
 			return -1;
 		} else {
 			if (empty($user->id)) {
-				$this->error = " User user login:".$userlogin." do not exists";
+				$this->error = "User login: ".$userlogin." does not exist";
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				$conf->setEntityValues($this->db, $savcurrententity);
 				return -1;
