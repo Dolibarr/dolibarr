@@ -775,10 +775,6 @@ if ($rowid > 0) {
 			print "</table>\n";
 			print '</div>';
 			print '</form>';
-
-			if ($num > $limit) {
-				print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
-			}
 		} else {
 			dol_print_error($db);
 		}

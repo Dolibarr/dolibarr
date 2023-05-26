@@ -332,7 +332,8 @@ class FormTicket
 		if ($public) {
 			$filter = 'public=1';
 		}
-		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
+		$selected = (GETPOST('category_code') ? GETPOST('category_code') : $this->category_code);
+		$this->selectGroupTickets($selected, 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity => Priority
@@ -798,8 +799,10 @@ class FormTicket
 		}
 		$outputlangs->load("ticket");
 
+		$publicgroups = ($filtertype == 'public=1' || $filtertype == '(public:=:1)');
+
 		$ticketstat = new Ticket($this->db);
-		$ticketstat->loadCacheCategoriesTickets();
+		$ticketstat->loadCacheCategoriesTickets($publicgroups ? 1 : -1);	// get list of active ticket groups
 
 		if ($use_multilevel <= 0) {
 			print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
@@ -810,7 +813,7 @@ class FormTicket
 			if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
 				foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
 					// Exclude some record
-					if ($filtertype == 'public=1') {
+					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
 							continue;
 						}
@@ -1345,46 +1348,53 @@ class FormTicket
 
 		$send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 
-		// Example 1 : Adding jquery code
-		print '<script type="text/javascript">
-		jQuery(document).ready(function() {
-			send_email=' . $send_email.';
-			if (send_email) {
-				if (!jQuery("#send_msg_email").is(":checked")) {
-					jQuery("#send_msg_email").prop("checked", true).trigger("change");
-				}
-				jQuery(".email_line").show();
-			} else {
-				if (!jQuery("#private_message").is(":checked")) {
-					jQuery("#private_message").prop("checked", true).trigger("change");
-				}
-				jQuery(".email_line").hide();
-			}
 
-			jQuery("#send_msg_email").click(function() {
-				if(jQuery(this).is(":checked")) {
-					if (jQuery("#private_message").is(":checked")) {
-						jQuery("#private_message").prop("checked", false).trigger("change");
+			// Example 1 : Adding jquery code
+			print '<script type="text/javascript">
+			jQuery(document).ready(function() {
+				send_email=' . $send_email.';
+				if (send_email) {
+					if (!jQuery("#send_msg_email").is(":checked")) {
+						jQuery("#send_msg_email").prop("checked", true).trigger("change");
 					}
 					jQuery(".email_line").show();
-				}
-				else {
-					jQuery(".email_line").hide();
-				}
-            });
-
-            jQuery("#private_message").click(function() {
-				if (jQuery(this).is(":checked")) {
-					if (jQuery("#send_msg_email").is(":checked")) {
-						jQuery("#send_msg_email").prop("checked", false).trigger("change");
+				} else {
+					if (!jQuery("#private_message").is(":checked")) {
+						jQuery("#private_message").prop("checked", true).trigger("change");
 					}
 					jQuery(".email_line").hide();
-				}
-			});';
-		print '});
-		</script>';
+				}';
 
-		print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
+				// If constant set, allow to send private messages as email
+		if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+			print 'jQuery("#send_msg_email").click(function() {
+					if(jQuery(this).is(":checked")) {
+						if (jQuery("#private_message").is(":checked")) {
+							jQuery("#private_message").prop("checked", false).trigger("change");
+						}
+						jQuery(".email_line").show();
+					}
+					else {
+						jQuery(".email_line").hide();
+					}
+				});
+
+				jQuery("#private_message").click(function() {
+					if (jQuery(this).is(":checked")) {
+						if (jQuery("#send_msg_email").is(":checked")) {
+							jQuery("#send_msg_email").prop("checked", false).trigger("change");
+						}
+						jQuery(".email_line").hide();
+					}
+				});';
+		}
+
+			print '});
+			</script>';
+
+
+
+		print '<form method="post" name="ticket" id="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
@@ -1534,6 +1544,14 @@ class FormTicket
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
+			$out .= '    jQuery("#'.$addfileaction.'").prop("disabled", true);';
+			$out .= '    jQuery("#addedfile").on("change", function() {';
+			$out .= '        if (jQuery(this).val().length) {';
+			$out .= '            jQuery("#'.$addfileaction.'").prop("disabled", false);';
+			$out .= '        } else {';
+			$out .= '            jQuery("#'.$addfileaction.'").prop("disabled", true);';
+			$out .= '        }';
+			$out .= '    });';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
 			$out .= '    });';
@@ -1627,8 +1645,13 @@ class FormTicket
 		print '</table>';
 
 		print '<center><br>';
-		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'" />';
-		if ($this->withcancel) {
+		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'"';
+		// Add a javascript test to avoid to forget to submit file before sending email
+		if ($this->withfile == 2 && !empty($conf->use_javascript_ajax)) {
+			print ' onClick="if (document.ticket.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
+		}
+		print ' />';
+		if (!empty($this->withcancel)) {
 			print " &nbsp; &nbsp; ";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
@@ -1637,6 +1660,23 @@ class FormTicket
 		print '<input type="hidden" name="page_y">'."\n";
 
 		print "</form>\n";
+
+		// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
+		if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
+			print '<script type="text/javascript">';
+			print 'jQuery(document).ready(function () {';
+			print '		$(document).on("keypress", \'#ticket\', function (e) {		/* Note this is called at every key pressed ! */
+	    					var code = e.keyCode || e.which;
+	    					if (code == 13) {
+								console.log("Enter was intercepted and blocked");
+	        					e.preventDefault();
+	        					return false;
+	    					}
+						});';
+			print '})';
+			print '</script>';
+		}
+
 		print "<!-- End form TICKET -->\n";
 	}
 }

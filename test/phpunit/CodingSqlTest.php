@@ -158,6 +158,46 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
+	 * testEscape
+	 *
+	 * @return string
+	 */
+	public function testEscape()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		if ($db->type == 'mysqli') {
+			$a = 'abc"\'def';
+			print $a;
+			$result = $db->escape($a);	// $result must be abc\"\'def with mysql
+			$this->assertEquals('abc\"\\\'def', $result);
+		}
+	}
+
+	/**
+	 * testEscapeForLike
+	 *
+	 * @return string
+	 */
+	public function testEscapeForLike()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$a = 'abc"\'def_ghi%klm\\nop';
+		//print $a;
+		$result = $db->escapeforlike($a);	// $result must be abc"'def\_ghi\%klm\\nop with mysql
+		$this->assertEquals('abc"\'def\_ghi\%klm\\\\nop', $result);
+	}
+
+	/**
 	 * testSql
 	 *
 	 * @return string
@@ -275,6 +315,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 			$result=strpos($filecontent, 'eldy@');
 			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
 			$this->assertTrue($result===false, 'Found a bad key eldy@ into file '.$file);
+
+			$result=strpos($filecontent, 'INSERT INTO `llx_oauth_token`');
+			print __METHOD__." Result for checking we don't have data into llx_oauth_token = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a non expected insert into file '.$file);
 		}
 
 		return;

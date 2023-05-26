@@ -97,7 +97,7 @@ if ($action == 'add') {
 		} else {
 			if (!$amountto) {
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountTo")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountToOthercurrency")), null, 'errors');
 			}
 		}
 		if ($amountto < 0) {
@@ -183,7 +183,7 @@ llxHeader('', $title, $help_url);
 print '		<script type="text/javascript">
         	$(document).ready(function () {
     	  		$(".selectbankaccount").change(function() {
-						console.log("We change bank account");
+						console.log("We change bank account. We check if currency differs. If yes, we show multicurrency field");
 						init_page();
 				});
 
@@ -204,6 +204,7 @@ print '		<script type="text/javascript">
 								} else if (item.num!==0) {
 									currencycode1 = item.value;
 								}
+								console.log(currencycode1);
 
 								$.get("'.DOL_URL_ROOT.'/core/ajax/getaccountcurrency.php", {id: account2})
 									.done(function( data ) {
@@ -215,8 +216,10 @@ print '		<script type="text/javascript">
 											} else if (item.num!==0) {
 												currencycode2 = item.value;
 											}
+											console.log(currencycode2);
 
 											if (currencycode2!==currencycode1 && currencycode2!=="" && currencycode1!=="") {
+												console.log("We show multicurrency fields");
 						        				$(".multicurrency").show();
 						        			} else {
 												$(".multicurrency").hide();
@@ -272,7 +275,7 @@ print '<th>'.$langs->trans("TransferTo").'</th>';
 print '<th>'.$langs->trans("Date").'</th>';
 print '<th>'.$langs->trans("Description").'</th>';
 print '<th class="right">'.$langs->trans("Amount").'</th>';
-//print '<td class="hideobject" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
+print '<td class="hideobject multicurrency right">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
@@ -295,7 +298,7 @@ print '<td><input name="label" class="flat quatrevingtpercent" type="text" value
 
 print '<td class="right"><input name="amount" class="flat right" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
 
-//print '<td class="hideobject" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
+print '<td class="hideobject multicurrency right"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
 
 print "</table>";
 print '</div>';
