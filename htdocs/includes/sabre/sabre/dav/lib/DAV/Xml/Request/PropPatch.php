@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Request;
 
 use Sabre\Xml\Element;
@@ -17,8 +19,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PropPatch implements Element {
-
+class PropPatch implements Element
+{
     /**
      * The list of properties that will be updated and removed.
      *
@@ -45,24 +47,20 @@ class PropPatch implements Element {
      * If you are opening new elements, you must also close them again.
      *
      * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->properties as $propertyName => $propertyValue) {
-
             if (is_null($propertyValue)) {
-                $writer->startElement("{DAV:}remove");
+                $writer->startElement('{DAV:}remove');
                 $writer->write(['{DAV:}prop' => [$propertyName => $propertyValue]]);
                 $writer->endElement();
             } else {
-                $writer->startElement("{DAV:}set");
+                $writer->startElement('{DAV:}set');
                 $writer->write(['{DAV:}prop' => [$propertyName => $propertyValue]]);
                 $writer->endElement();
             }
-
         }
-
     }
 
     /**
@@ -84,10 +82,11 @@ class PropPatch implements Element {
      * the next element.
      *
      * @param Reader $reader
+     *
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $self = new self();
 
         $elementMap = $reader->elementMap;
@@ -98,21 +97,17 @@ class PropPatch implements Element {
         $elems = $reader->parseInnerTree($elementMap);
 
         foreach ($elems as $elem) {
-            if ($elem['name'] === '{DAV:}set') {
+            if ('{DAV:}set' === $elem['name']) {
                 $self->properties = array_merge($self->properties, $elem['value']['{DAV:}prop']);
             }
-            if ($elem['name'] === '{DAV:}remove') {
-
+            if ('{DAV:}remove' === $elem['name']) {
                 // Ensuring there are no values.
                 foreach ($elem['value']['{DAV:}prop'] as $remove => $value) {
                     $self->properties[$remove] = null;
                 }
-
             }
         }
 
         return $self;
-
     }
-
 }

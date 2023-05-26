@@ -1,4 +1,4 @@
-<?php
+<?php declare (strict_types=1);
 
 namespace Sabre\Event;
 
@@ -11,28 +11,19 @@ namespace Sabre\Event;
  * Using the trait + interface allows you to add EventEmitter capabilities
  * without having to change your base-class.
  *
- * @copyright Copyright (C) 2013-2015 fruux GmbH (https://fruux.com/).
+ * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-trait EventEmitterTrait {
+trait EmitterTrait {
 
-    /**
-     * The list of listeners
-     *
-     * @var array
-     */
-    protected $listeners = [];
 
     /**
      * Subscribe to an event.
      *
-     * @param string $eventName
-     * @param callable $callBack
-     * @param int $priority
      * @return void
      */
-    function on($eventName, callable $callBack, $priority = 100) {
+    function on(string $eventName, callable $callBack, int $priority = 100) {
 
         if (!isset($this->listeners[$eventName])) {
             $this->listeners[$eventName] = [
@@ -51,12 +42,9 @@ trait EventEmitterTrait {
     /**
      * Subscribe to an event exactly once.
      *
-     * @param string $eventName
-     * @param callable $callBack
-     * @param int $priority
      * @return void
      */
-    function once($eventName, callable $callBack, $priority = 100) {
+    function once(string $eventName, callable $callBack, int $priority = 100) {
 
         $wrapper = null;
         $wrapper = function() use ($eventName, $callBack, &$wrapper) {
@@ -90,13 +78,8 @@ trait EventEmitterTrait {
      *
      * Lastly, if there are 5 event handlers for an event. The continueCallback
      * will be called at most 4 times.
-     *
-     * @param string $eventName
-     * @param array $arguments
-     * @param callback $continueCallBack
-     * @return bool
      */
-    function emit($eventName, array $arguments = [], callable $continueCallBack = null) {
+    function emit(string $eventName, array $arguments = [], callable $continueCallBack = null) : bool {
 
         if (is_null($continueCallBack)) {
 
@@ -139,10 +122,9 @@ trait EventEmitterTrait {
      * The list is returned as an array, and the list of events are sorted by
      * their priority.
      *
-     * @param string $eventName
      * @return callable[]
      */
-    function listeners($eventName) {
+    function listeners(string $eventName) : array {
 
         if (!isset($this->listeners[$eventName])) {
             return [];
@@ -167,12 +149,8 @@ trait EventEmitterTrait {
      *
      * If the listener could not be found, this method will return false. If it
      * was removed it will return true.
-     *
-     * @param string $eventName
-     * @param callable $listener
-     * @return bool
      */
-    function removeListener($eventName, callable $listener) {
+    function removeListener(string $eventName, callable $listener) : bool {
 
         if (!isset($this->listeners[$eventName])) {
             return false;
@@ -195,10 +173,9 @@ trait EventEmitterTrait {
      * removed. If it is not specified, every listener for every event is
      * removed.
      *
-     * @param string $eventName
      * @return void
      */
-    function removeAllListeners($eventName = null) {
+    function removeAllListeners(string $eventName = null) {
 
         if (!is_null($eventName)) {
             unset($this->listeners[$eventName]);
@@ -207,5 +184,12 @@ trait EventEmitterTrait {
         }
 
     }
+
+    /**
+     * The list of listeners
+     *
+     * @var array
+     */
+    protected $listeners = [];
 
 }

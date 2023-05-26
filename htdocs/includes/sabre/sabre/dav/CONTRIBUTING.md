@@ -78,6 +78,28 @@ to accept the patch, but we'd still really like your contribution!
 To run the testsuite jump into the directory `cd tests` and trigger `phpunit`.
 Make sure you did a `composer install` beforehand.
 
+Release process
+---------------
+
+Generally, these are the steps taken to do releases.
+
+1. Update the changelog. Every repo will have a `CHANGELOG.md` file. This file
+   should have a new version, and contain all the changes since the last
+   release. I generally run a `git diff` to figure out if I missed any changes.
+   This file should also have the current date.
+2. If there were BC breaks, this usually now means a major version bump.
+3. Ensure that `lib/Version.php` or `lib/DAV/Version.php` also matches this
+   version number.
+4. Tag the release (Example `git tag 3.0.1` and push the tag (`git push --tags`).
+5. (only for the sabre/dav project), create a zip distribution. Run
+   `php bin/build.php`.
+6. For the relevant project, go to github and click the 'releases' tab. On this
+   tab I create the release with the relevant version. I also set the
+   description of the release to the same information of the changelog. In the
+   case of the `sabre/dav` project I also upload the zip distribution here.
+7. Write a blog post on sabre.io. This also automatically updates twitter.
+
+
 [1]: http://www.php-fig.org/psr/psr-1/
 [2]: http://www.php-fig.org/psr/psr-4/
 [3]: http://www.php-fig.org/psr/psr-2/

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Property;
 
 use Sabre\CalDAV\Plugin;
@@ -7,7 +9,7 @@ use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
 /**
- * supported-collation-set property
+ * supported-collation-set property.
  *
  * This property is a representation of the supported-collation-set property
  * in the CalDAV namespace.
@@ -19,8 +21,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedCollationSet implements XmlSerializable {
-
+class SupportedCollationSet implements XmlSerializable
+{
     /**
      * The xmlSerialize method is called during xml writing.
      *
@@ -38,20 +40,17 @@ class SupportedCollationSet implements XmlSerializable {
      * If you are opening new elements, you must also close them again.
      *
      * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $collations = [
             'i;ascii-casemap',
             'i;octet',
-            'i;unicode-casemap'
+            'i;unicode-casemap',
         ];
 
         foreach ($collations as $collation) {
-            $writer->writeElement('{' . Plugin::NS_CALDAV . '}supported-collation', $collation);
+            $writer->writeElement('{'.Plugin::NS_CALDAV.'}supported-collation', $collation);
         }
-
     }
-
 }
