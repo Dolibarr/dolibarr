@@ -45,7 +45,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
-
+// Function for better PHP x compatibility
 if (!function_exists('utf8_encode')) {
 	/**
 	 * Implement utf8_encode for PHP that does not support it.
@@ -71,6 +71,46 @@ if (!function_exists('utf8_decode')) {
 		return mb_convert_encoding($elements, 'ISO-8859-1', 'UTF-8');
 	}
 }
+if (!function_exists('str_starts_with')) {
+	/**
+	 * str_starts_with
+	 *
+	 * @param string $haystack	haystack
+	 * @param string $needle	needle
+	 * @return boolean
+	 */
+	function str_starts_with($haystack, $needle)
+	{
+		return (string) $needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
+	}
+}
+if (!function_exists('str_ends_with')) {
+	/**
+	 * str_ends_with
+	 *
+	 * @param string $haystack	haystack
+	 * @param string $needle	needle
+	 * @return boolean
+	 */
+	function str_ends_with($haystack, $needle)
+	{
+		return $needle !== '' && substr($haystack, -strlen($needle)) === (string) $needle;
+	}
+}
+if (!function_exists('str_contains')) {
+	/**
+	 * str_contains
+	 *
+	 * @param string $haystack	haystack
+	 * @param string $needle	needle
+	 * @return boolean
+	 */
+	function str_contains($haystack, $needle)
+	{
+		return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+	}
+}
+
 
 /**
  * Return the full path of the directory where a module (or an object of a module) stores its files. Path may depends on the entity if a multicompany module is enabled.
