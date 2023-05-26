@@ -356,6 +356,13 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation i
 WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to enable it 
 WarningPermissionAlreadyExist=Existing permissions for this object
 
+SwissQrOnlyVIR = SwissQR invoice can only get added on bank transfers.
+SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
+SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
+SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
+SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
+
 # Validate
 RequireValidValue = Value not valid
 RequireAtLeastXString = Requires at least %s character(s)
