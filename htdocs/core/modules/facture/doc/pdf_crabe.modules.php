@@ -2196,6 +2196,7 @@ class pdf_crabe extends ModelePDFFactures
 	 * 		@param	Facture		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
+	 *      @param	int			$heightforqrinvoice	Height for QR invoices
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0, $heightforqrinvoice = 0)

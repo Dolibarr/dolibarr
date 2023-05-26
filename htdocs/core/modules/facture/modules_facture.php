@@ -83,11 +83,11 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * Get the SwissQR object, including validation
 	 *
-	 * @param Facture $object  Invoice object
-	 * @param Translate $langs Translation object
-	 * @return SwissQrBill|bool The valid SwissQR object, or false
+	 * @param Facture 		$object  	Invoice object
+	 * @param Translate 	$langs 		Translation object
+	 * @return SwissQrBill|bool 		The valid SwissQR object, or false
 	 */
-	private function getSwissQrBill(\Facture $object, \Translate $langs) : SwissQrBill\QrBill|bool
+	private function getSwissQrBill(Facture $object, Translate $langs)
 	{
 		global $conf;
 
@@ -138,7 +138,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		// This is what you will need to identify incoming payments.
 		$qrBill->setPaymentReference(
 			SwissQrBill\DataGroup\Element\PaymentReference::create(
-				SwissQrBill\DataGroup\Element\PaymentReference::TYPE_NON,
+				SwissQrBill\DataGroup\Element\PaymentReference::TYPE_NON
 			)
 		);
 
