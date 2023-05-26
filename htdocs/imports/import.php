@@ -147,7 +147,7 @@ $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
 
 if (empty($updatekeys && !empty($objimport->array_import_updatekeys[0]))) {
-    $updatekeys = array_keys($objimport->array_import_updatekeys[0]);
+	$updatekeys = array_keys($objimport->array_import_updatekeys[0]);
 }
 
 $objmodelimport = new ModeleImports();
