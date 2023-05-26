@@ -462,8 +462,8 @@ script:
   php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
   ls -alrt $TRAVIS_BUILD_DIR/
   echo
-  cat $TRAVIS_BUILD_DIR/upgrade17001800.log
-  cat $TRAVIS_BUILD_DIR/upgrade17001800-2.log
+  #cat $TRAVIS_BUILD_DIR/upgrade17001800.log
+  #cat $TRAVIS_BUILD_DIR/upgrade17001800-2.log
 
 - |
   echo "Enabling new modules"
