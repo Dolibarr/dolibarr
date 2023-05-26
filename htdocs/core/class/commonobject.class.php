@@ -9899,14 +9899,16 @@ abstract class CommonObject
 		}
 
 		// Force values to default values when known
-		foreach ($this->fields as $key => $value) {
-			// If fields are already set, do nothing
-			if (array_key_exists($key, $fields)) {
-				continue;
-			}
+		if (property_exists($this, 'fields')) {
+			foreach ($this->fields as $key => $value) {
+				// If fields are already set, do nothing
+				if (array_key_exists($key, $fields)) {
+					continue;
+				}
 
-			if (!empty($value['default'])) {
-				$this->$key = $value['default'];
+				if (!empty($value['default'])) {
+					$this->$key = $value['default'];
+				}
 			}
 		}
 
