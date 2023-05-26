@@ -63,6 +63,7 @@ $constantes = array(
 	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>array('type'=>'emailtemplate:member'),
 	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>array('type'=>'emailtemplate:member'),
 	'ADHERENT_MAIL_FROM'							=>array('type'=>'string'),
+	'ADHERENT_CC_MAIL_FROM'							=>array('type'=>'string'),
 	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>array('type'=>'string'),
 	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>array('type'=>'html', 'tooltip'=>$helptext)
 );

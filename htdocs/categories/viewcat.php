@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
@@ -215,12 +217,14 @@ if ($elemid && $action == 'addintocategory' &&
 		$elementtype = 'user';
 	} elseif ($type == Categorie::TYPE_ACCOUNT) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-		$newobject = new User($db);
+		$newobject = new Account($db);
 		$elementtype = 'bank_account';
+	} else {
+		dol_print_error("Not supported value of type = ".$type);
 	}
 	$result = $newobject->fetch($elemid);
 
-	// TODO Add into categ
+	// Add into categ
 	$result = $object->add_type($newobject, $elementtype);
 	if ($result >= 0) {
 		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
@@ -925,8 +929,8 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 				print '<input type="hidden" name="action" value="addintocategory">';
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-					print $langs->trans("AddAccountIntoCategory").' &nbsp;';
-				$form->select_comptes('', 'elemid');
+				print $langs->trans("AddObjectIntoCategory").' &nbsp;';
+				print $form->select_comptes('', 'elemid', 0, '', 0, '', 0, '', 1);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
