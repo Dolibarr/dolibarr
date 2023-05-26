@@ -39,14 +39,14 @@ require_once './lib/replenishment.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('stockatdate'));
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service');
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('stockatdate'));
 
 //checks if a product has been ordered
 

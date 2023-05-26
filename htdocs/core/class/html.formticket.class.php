@@ -1371,29 +1371,35 @@ class FormTicket
 				}
 				jQuery(".email_line").hide();
 			}
+		';
 
-			jQuery("#send_msg_email").click(function() {
-				if(jQuery(this).is(":checked")) {
-					if (jQuery("#private_message").is(":checked")) {
-						jQuery("#private_message").prop("checked", false).trigger("change");
+		// If constant set, allow to send private messages as email
+		if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+			print 'jQuery("#send_msg_email").click(function() {
+					if(jQuery(this).is(":checked")) {
+						if (jQuery("#private_message").is(":checked")) {
+							jQuery("#private_message").prop("checked", false).trigger("change");
+						}
+						jQuery(".email_line").show();
 					}
-					jQuery(".email_line").show();
-				}
-				else {
-					jQuery(".email_line").hide();
-				}
-            });
+					else {
+						jQuery(".email_line").hide();
+					}
+				});
 
-            jQuery("#private_message").click(function() {
-				if (jQuery(this).is(":checked")) {
-					if (jQuery("#send_msg_email").is(":checked")) {
-						jQuery("#send_msg_email").prop("checked", false).trigger("change");
+				jQuery("#private_message").click(function() {
+					if (jQuery(this).is(":checked")) {
+						if (jQuery("#send_msg_email").is(":checked")) {
+							jQuery("#send_msg_email").prop("checked", false).trigger("change");
+						}
+						jQuery(".email_line").hide();
 					}
-					jQuery(".email_line").hide();
-				}
-			});';
+				});';
+		}
+
 		print '});
 		</script>';
+
 
 		print '<form method="post" name="ticket" id="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

@@ -382,16 +382,28 @@ class Entrepot extends CommonObject
 			// End call triggers
 		}
 
-		$elements = array('stock_mouvement', 'product_stock', 'product_warehouse_properties');
-		foreach ($elements as $table) {
-			if (!$error) {
-				$sql = "DELETE FROM ".$this->db->prefix().$table;
-				$sql .= " WHERE fk_entrepot = ".((int) $this->id);
+		if (!$error) {
+			$sql = "DELETE FROM ".$this->db->prefix()."product_batch";
+			$sql .= " WHERE fk_product_stock IN (SELECT rowid FROM ".$this->db->prefix()."product_stock as ps WHERE ps.fk_entrepot = ".((int) $this->id).")";
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
 
-				$result = $this->db->query($sql);
-				if (!$result) {
-					$error++;
-					$this->errors[] = $this->db->lasterror();
+		if (!$error) {
+			$elements = array('stock_mouvement', 'product_stock');
+			foreach ($elements as $table) {
+				if (!$error) {
+					$sql = "DELETE FROM ".$this->db->prefix().$table;
+					$sql .= " WHERE fk_entrepot = ".((int) $this->id);
+
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
 				}
 			}
 		}

@@ -157,7 +157,7 @@ class PriceParser
 		// Retrieve all extrafields if not already not know (should not happen)
 		if (! is_object($extrafields)) {
 			$extrafields = new ExtraFields($this->db);
-			$extrafields->fetch_name_optionals_label();
+			$extrafields->fetch_name_optionals_label($product->table_element);
 		}
 
 		$product->fetch_optionals();

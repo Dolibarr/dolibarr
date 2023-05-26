@@ -2314,7 +2314,7 @@ div.secondcolumn div.box {
 }
 
 /* Force values on one colum for small screen */
-@media only screen and (max-width: 1599px)
+@media only screen and (max-width: 1499px)
 {
 	div.fichehalfleft-lg {
 		float: none;
