@@ -89,14 +89,17 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	private function getSwissQrBill(Facture $object, Translate $langs)
 	{
-		global $conf;
+		if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') != 'bottom') {
+			return false;
+		}
 
 		if ($object->mode_reglement_code != 'VIR') {
 			$this->error = $langs->transnoentities("SwissQrOnlyVIR");
 			return false;
 		}
 
-		if (empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
+		if (empty($object->fk_account)) {
+			$this->error = 'Bank account must be defined to use this experimental feature';
 			return false;
 		}
 

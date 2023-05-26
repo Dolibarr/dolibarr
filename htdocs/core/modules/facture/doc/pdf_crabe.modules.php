@@ -907,7 +907,11 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
-					$this->addBottomQRInvoice($pdf, $object, $outputlangs);
+					$result = $this->addBottomQRInvoice($pdf, $object, $outputlangs);
+					if (!$result) {
+						$pdf->Close();
+						return 0;
+					}
 				}
 				$pdf->Close();
 
