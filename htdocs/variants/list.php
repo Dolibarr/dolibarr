@@ -140,9 +140,9 @@ $arrayfields['nb_products'] = array(
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->variants->read;
-$permissiontoadd = $user->rights->variants->write;
-$permissiontodelete = $user->rights->variants->delete;
+$permissiontoread = $user->hasRight('variants', 'read');
+$permissiontoadd = $user->hasRight('variants', 'write');
+$permissiontodelete = $user->hasRight('variants', 'delete');
 
 // Security check
 if (!isModEnabled('variants')) {
@@ -333,7 +333,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " ".$hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
@@ -677,7 +677,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled("categorie")) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -462,7 +462,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//$result = $db->query($sql);
 	//$nbtotalofrecords = $db->num_rows($result);
 
@@ -701,7 +701,7 @@ if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->right
 	$moreforfilter .= '</div>';
 }
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST) && isModEnabled("categorie") && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -995,6 +995,7 @@ while ($i < $imaxinloop) {
 		}
 		// Output Kanban
 		$arraydata['thirdparty'] = $socstatic;
+		$arraydata['selected'] = in_array($obj->rowid, $arrayofselected);
 		$contracttmp->date_contrat = $obj->date_contrat;
 		print $contracttmp->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {

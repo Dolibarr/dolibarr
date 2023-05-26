@@ -408,7 +408,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 
 
 // Latest donations
-if (isModEnabled('don') && !empty($user->rights->don->lire)) {
+if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
@@ -441,6 +441,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
+
 		if ($num) {
 			$total_ttc = $totalam = $total_ht = 0;
 

@@ -83,7 +83,7 @@ class modFournisseur extends DolibarrModules
 
 		$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "muscadet";
+		$this->const[$r][2] = "cornas";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -592,7 +592,7 @@ class modFournisseur extends DolibarrModules
 		if (empty($conf->multicurrency->enabled)) {
 			$this->import_fieldshidden_array[$r]['f.multicurrency_code'] = 'const-'.$conf->currency;
 		}
-		$this->import_regex_array[$r] = array('f.ref' => '(SI\d{4}-\d{4}|PROV.{1,32}$)', 'f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
+		$this->import_regex_array[$r] = array('f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
 		$import_sample = array(
 			'f.ref' => '(PROV001)',
 			'f.ref_supplier' => 'Supplier1',

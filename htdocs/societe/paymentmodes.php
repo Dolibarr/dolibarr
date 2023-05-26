@@ -1076,14 +1076,15 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) {
 			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard');
 		}
-		print load_fiche_titre($langs->trans('CreditCard').($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'fa-credit-card');
+		print load_fiche_titre($langs->trans('CreditCard'), $morehtmlright, 'fa-credit-card');
+		//($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)')
 
 		print '<!-- List of card payments -->'."\n";
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Label').'</td>';
-		print '<td>'.$langs->trans('StripeID').'</td>';	// external system ID
+		print '<td>'.$form->textwithpicto($langs->trans('ExternalSystemID'), $langs->trans("IDOfPaymentInAnExternalSystem")).'</td>';	// external system ID
 		print '<td>'.$langs->trans('Type').'</td>';
 		print '<td>'.$langs->trans('Informations').'</td>';
 		print '<td></td>';
@@ -1440,7 +1441,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre("RIB");
 		print_liste_field_titre("IBAN");
 		print_liste_field_titre("BIC");
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			print_liste_field_titre("RUM");
 			print_liste_field_titre("DateRUM");
 			print_liste_field_titre("WithdrawMode");
@@ -1530,7 +1531,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print dol_escape_htmltag($rib->bic);
 			print '</td>';
 
-			if (!empty($conf->prelevement->enabled)) {
+			if (isModEnabled('prelevement')) {
 				// RUM
 				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->rum).'">'.dol_escape_htmltag($rib->rum).'</td>';
@@ -1695,7 +1696,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			//var_dump($src);
 			print '</td>';
 
-			if (!empty($conf->prelevement->enabled)) {
+			if (isModEnabled('prelevement')) {
 				// RUM
 				print '<td valign="middle">';
 				//var_dump($src);
@@ -1762,6 +1763,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		dol_print_error($db);
 	}
 
+	//Hook to display your print listing (list of CB card from Stancer Plugin for example)
+	$parameters = array('arrayfields'=>array(), 'param'=>'', 'sortfield'=>'', 'sortorder'=>'', 'linetype'=>'');
+	$reshook = $hookmanager->executeHooks('printNewTable', $parameters, $object);
+	print $hookmanager->resPrint;
 
 	if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC)) {
 		print '<br>';

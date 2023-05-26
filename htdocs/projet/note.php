@@ -50,7 +50,7 @@ $socid = 0;
 $hookmanager->initHooks(array('projetnote'));
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$permissionnote = $user->rights->projet->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('projet', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*

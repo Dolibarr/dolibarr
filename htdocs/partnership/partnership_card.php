@@ -391,7 +391,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// 	));
 		// }
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToRefuse'), $text, 'confirm_refuse', $formquestion, '', 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToRefuse'), '', 'confirm_refuse', $formquestion, '', 1, 250);
 	}
 
 	// Call Hook formConfirm

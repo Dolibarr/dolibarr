@@ -299,7 +299,7 @@ class MultiCurrency extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " name = '".$this->db->escape($this->name)."'";
+		$sql .= " name = '".$this->db->escape($this->name)."',";
 		$sql .= " code = '".$this->db->escape($this->code)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -662,7 +662,7 @@ class MultiCurrency extends CommonObject
 					foreach ($TRate as $currency_code => $rate) {
 						$code = substr($currency_code, 3, 3);
 						$obj = new MultiCurrency($db);
-						if ($obj->fetch(null, $code) > 0) {
+						if ($obj->fetch(0, $code) > 0) {
 							$obj->updateRate($rate);
 						} elseif ($addifnotfound) {
 							$this->addRateFromDolibarr($code, $rate);

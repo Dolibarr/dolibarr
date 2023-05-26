@@ -119,7 +119,7 @@ if ($action == 'presend') {
 	print '<br>';
 	print load_fiche_titre($langs->trans($titreform));
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head('', '', '', -1);
 
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

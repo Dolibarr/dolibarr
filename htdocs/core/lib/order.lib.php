@@ -60,28 +60,28 @@ function commande_prepare_head(Commande $object)
 		$h++;
 	}
 
-	if ((isModEnabled('expedition_bon') && $user->hasRight('expedition', 'lire'))
-	|| (isModEnabled('delivery_note') && $user->hasRight('expedition', 'delivery', 'lire'))) {
+	if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
+		|| (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire'))) {
 		$nbShipments = $object->getNbOfShipments();
 		$nbReceiption = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
 		$text = '';
-		if (isModEnabled('expedition_bon')) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 			$text .= $langs->trans("Shipments");
 		}
-		if (isModEnabled('expedition_bon') && isModEnabled('delivery_note')) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 			$text .= ' - ';
 		}
-		if (isModEnabled('delivery_note')) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 			$text .= $langs->trans("Receivings");
 		}
 		if ($nbShipments > 0 || $nbReceiption > 0) {
 			$text .= '<span class="badge marginleftonlyshort">'.($nbShipments ? $nbShipments : 0);
 		}
-		if (isModEnabled('expedition_bon') && isModEnabled('delivery_note') && ($nbShipments > 0 || $nbReceiption > 0)) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($nbShipments > 0 || $nbReceiption > 0)) {
 			$text .= ' - ';
 		}
-		if (isModEnabled('expedition_bon') && isModEnabled('delivery_note') && ($nbShipments > 0 || $nbReceiption > 0)) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($nbShipments > 0 || $nbReceiption > 0)) {
 			$text .= ($nbReceiption ? $nbReceiption : 0);
 		}
 		if ($nbShipments > 0 || $nbReceiption > 0) {

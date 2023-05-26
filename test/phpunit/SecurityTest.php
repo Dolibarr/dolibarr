@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,11 +84,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SecurityTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -390,6 +392,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$_POST["param15"]="<img onerror<=alert(document.domain)> src=>0xbeefed";
+		//$_POST["param15b"]="<html><head><title>Example HTML</title></head><body><div><p>This is a paragraph.</div><ul><li>Item 1</li><li>Item 2</li></ol></body><html>";
 		$_POST["param16"]='<a style="z-index: 1000">abc</a>';
 		$_POST["param17"]='<span style="background-image: url(logout.php)">abc</span>';
 		$_POST["param18"]='<span style="background-image: url(...?...action=aaa)">abc</span>';
@@ -559,8 +562,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');
-		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');
+		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');	// With some PHP and libxml version, we got this when parsong invalid HTML
+		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');		// On other we got a HTML that has been cleaned
 
 
 		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
@@ -779,12 +782,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(301, $tmp['http_code'], 'Should GET url 301 without following -> 301');
+		$this->assertEquals(301, $tmp['http_code'], 'Should GET url 301 without a follow -> 301');
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(200, $tmp['http_code'], 'Should GET url 301 with following -> 200 but we get '.$tmp['http_code']);
+		$this->assertEquals(200, $tmp['http_code'], 'Should GET url 301 with a follow -> 200 but we get '.$tmp['http_code']);
 
 		$url = 'http://localhost';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL

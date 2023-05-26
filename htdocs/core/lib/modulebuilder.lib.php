@@ -483,15 +483,27 @@ function deletePerms($file)
 }
 
 /**
+ *  Compare two value
+ * @param int|string  $a value 1
+ * @param int|string  $b value 2
+ * @return int      less 0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
+*/
+function compareFirstValue($a, $b)
+{
+	return strcmp($a[0], $b[0]);
+}
+/**
  * Rewriting all permissions after any actions
  * @param string      $file            filename or path
  * @param array       $permissions     permissions existing in file
- * @param int|null         $key             key for permission needed
+ * @param int|null    $key             key for permission needed
  * @param array|null  $right           $right to update or add
- * @param int         $action          0 for delete, 1 for add, 2 for update
+ * @param string|null $objectname      name of object
+ * @param string|null $module          name of module
+ * @param int         $action          0 for delete, 1 for add, 2 for update, -1 when delete object completly, -2 for generate rights after add
  * @return int                         1 if OK,-1 if KO
  */
-function reWriteAllPermissions($file, $permissions, $key, $right, $action)
+function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
 {
 	$error = 0;
 	$rights = array();
@@ -503,6 +515,42 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 	} elseif ($action == 2 && !empty($right)) {
 		// update right from permissions array
 		array_splice($permissions, array_search($permissions[$key], $permissions), 1, $right);
+	} elseif ($action == -1 && !empty($objectname)) {
+		// when delete object
+		$key = null;
+		$right = null;
+		foreach ($permissions as $perms) {
+			if ($perms[4] === strtolower($objectname)) {
+				array_splice($permissions, array_search($perms, $permissions), 1);
+			}
+		}
+	} elseif ($action == -2 && !empty($objectname) && !empty($module)) {
+		$key= null;
+		$right = null;
+		$objectOfRights = array();
+		//check if object already declared in rights file
+		foreach ($permissions as $right) {
+			$objectOfRights[]= $right[4];
+		}
+		if (in_array(strtolower($objectname), $objectOfRights)) {
+			$error++;
+		} else {
+			$permsToadd = array();
+			$perms = array(
+				'read' => 'Read objects of '.ucfirst($module),
+				'write' => 'Create/Update objects of '.ucfirst($module),
+				'delete' => 'Delete objects of '.ucfirst($module)
+			);
+			$i = 0;
+			foreach ($perms as $index => $value) {
+				$permsToadd[$i][0] = '';
+				$permsToadd[$i][1] = $value;
+				$permsToadd[$i][4] = strtolower($objectname);
+				$permsToadd[$i][5] = $index;
+				array_push($permissions, $permsToadd[$i]);
+				$i++;
+			}
+		}
 	} else {
 		$error++;
 	}
@@ -515,11 +563,46 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
 			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
 		}
+			// for group permissions by object
+			$perms_grouped = array();
+		foreach ($permissions as $perms) {
+			$object = $perms[4];
+			if (!isset($perms_grouped[$object])) {
+				$perms_grouped[$object] = [];
+			}
+			$perms_grouped[$object][] = $perms;
+		}
+		//$perms_grouped = array_values($perms_grouped);
+		$permissions = $perms_grouped;
+
+
+		// parcourir les objets
+		$o=0;
+		foreach ($permissions as &$object) {
+			// récupérer la permission de l'objet
+			$p = 1;
+			foreach ($object as &$obj) {
+				if (str_contains($obj[5], 'read')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 0 + 1)";
+				} elseif (str_contains($obj[5], 'write')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 1 + 1)";
+				} elseif (str_contains($obj[5], 'delete')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 2 + 1)";
+				} else {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + ".$p." + 1)";
+					$p++;
+				}
+			}
+			usort($object, 'compareFirstValue');
+			$o++;
+		}
 
 		//convert to string
 		foreach ($permissions as $perms) {
-			$rights[] = implode(";\n\t\t", $perms);
-			$rights[] = "\$r++;\n\t\t";
+			foreach ($perms as $per) {
+				$rights[] = implode(";\n\t\t", $per);
+				$rights[] = "\$r++;\n\t\t";
+			}
 		}
 		$rights_str = implode("", $rights);
 		// delete all permission from file
@@ -527,6 +610,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 		// rewrite all permission again
 		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n\t\t".$rights_str));
 		return 1;
+	} else {
+		return -1;
 	}
 }
 
@@ -613,12 +698,30 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// end table
 	$table .= "|===";
+	$table .= "__ end table for object $objectname";
 	//write in file
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
 	return 1;
+}
+
+/**
+ * Delete property from documentation if we delete object
+ * @param  string  $file         file or path
+ * @param  string  $objectname   name of object wants to deleted
+ * @return void
+ */
+function deletePropsFromDoc($file, $objectname)
+{
+
+	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
+	$end = "__ end table for object ".ucfirst($objectname);
+	$str = file_get_contents($file);
+	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
+	$new_contents = preg_replace($search, '', $str);
+	file_put_contents($file, $new_contents);
 }
 
 /**
@@ -741,4 +844,218 @@ function writePermsInAsciiDoc($file, $destfile)
 		return -1;
 	}
 	return 1;
+}
+
+/**
+ * Add Object in ModuleApi File
+ * @param  string $file           path of file
+ * @param  array  $objects        array of objects in the module
+ * @param  string $modulename     name of module
+ * @return int                    1 if OK, -1 if KO
+ */
+function addObjectsToApiFile($file, $objects, $modulename)
+{
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file($file);
+	$includeClass = "dol_include_once('/mymodule/class/myobject.class.php');";
+	$props = "public \$myobject;";
+	$varcomented = "@var MyObject \$myobject {@type MyObject}";
+	$constructObj = "\$this->myobject = new MyObject(\$this->db);";
+
+	// add properties and declare them in consturctor
+	foreach ($content as $lineNumber => &$lineContent) {
+		if (strpos($lineContent, $varcomented) !== false) {
+			$lineContent = '';
+			foreach ($objects as $object) {
+				$lineContent .= "\t * @var ".$object." \$".strtolower($object)." {@type ".$object."}". PHP_EOL;
+			}
+			//var_dump($lineContent);exit;
+		}
+		if (strpos($lineContent, $props) !== false) {
+			$lineContent = '';
+			foreach ($objects as $object) {
+				$lineContent .= "\tpublic \$".strtolower($object).";". PHP_EOL;
+			}
+		}
+		if (strpos($lineContent, $constructObj) !== false) {
+			$lineContent = '';
+			foreach ($objects as $object) {
+				$lineContent .= "\t\t\$this->".strtolower($object)." = new ".$object."(\$this->db);". PHP_EOL;
+			}
+		}
+		if (strpos($lineContent, $includeClass) !== false) {
+			$lineContent = '';
+			foreach ($objects as $object) {
+				$lineContent .= "dol_include_once('/".strtolower($modulename)."/class/".strtolower($object).".class.php');". PHP_EOL;
+			}
+		}
+	}
+	$allContent = implode("", $content);
+	file_put_contents($file, $allContent);
+
+	//add methods for each object
+	$allContent = getFromFile($file, '/*begin methods CRUD*/', '/*end methods CRUD*/');
+	foreach ($objects as $object) {
+		$contentReplaced =str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
+		dolReplaceInFile($file, array('/*end methods CRUD*/' => '/*CRUD FOR '.strtoupper($object).'*/'."\n".$contentReplaced."\n\t".'/*END CRUD FOR '.strtoupper($object).'*/'."\n\t".'/*end methods CRUD*/'));
+	}
+	dolReplaceInFile($file, array($allContent => '','MyModule' => ucfirst($modulename)));
+	return 1;
+}
+
+/**
+ * Remove Object variables and methods from API_Module File
+ * @param string   $file         file api module
+ * @param string   $objectname   name of object whant to remove
+ * @param string   $modulename   name of module
+ * @return int                    1 if OK, -1 if KO
+ */
+function removeObjectFromApiFile($file, $objectname, $modulename)
+{
+	$begin = '/*CRUD FOR '.strtoupper($objectname).'*/';
+	$end = '/*END CRUD FOR '.strtoupper($objectname).'*/';
+	$includeClass = "dol_include_once('/".strtolower($modulename)."/class/".strtolower($objectname).".class.php');";
+	$varcomentedDel = "\t * @var ".$objectname." \$".strtolower($objectname)." {@type ".$objectname."}";
+	$propsDel = "\tpublic \$".strtolower($objectname).";";
+	$constructObjDel = "\t\t\$this->".strtolower($objectname)." = new ".$objectname."(\$this->db);";
+
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file($file);
+	// for delete property and the initialization from the construct
+	foreach ($content as $lineNumber => &$lineContent) {
+		if (strpos($lineContent, $includeClass) !== false) {
+			$lineContent = '';
+		}
+		if (strpos($lineContent, $varcomentedDel) !== false) {
+			$lineContent = '';
+		}
+		if (strpos($lineContent, $propsDel) !== false) {
+			$lineContent = '';
+		}
+		if (strpos($lineContent, $constructObjDel) !== false) {
+			$lineContent = '';
+		}
+	}
+	$allContent = implode("", $content);
+	file_put_contents($file, $allContent);
+	// for delete methods of object
+	$allContent = getFromFile($file, $begin, $end);
+	$check = dolReplaceInFile($file, array($allContent => ''));
+	if ($check) {
+		dolReplaceInFile($file, array($begin => '', $end => ''));
+	}
+	return 1;
+}
+
+/**
+ * Compare menus by their object
+ * @param  mixed  $a  first value
+ * @param  mixed  $b  seconde value
+ * @return int        1 if OK, -1 if KO
+ */
+function compareMenus($a, $b)
+{
+	return strcmp($a['fk_menu'], $b['fk_menu']);
+}
+
+/**
+ * @param    string         $file       path of filename
+ * @param    mixed          $menus      all menus for module
+ * @param    mixed|null     $menuWantTo  menu get for do actions
+ * @param    int|null       $key        key for the concerned menu
+ * @param    int            $action     for specify what action (0 = delete, 1 = add, 2 = update, -1 = when delete object)
+ * @return   int            1 if OK, -1 if KO
+ */
+function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
+{
+	$errors =0;
+	$counter = 0;
+	if (!file_exists($file)) {
+		return -1;
+	}
+	if ($action == 0 && !empty($key)) {
+		// delete menu manuelly
+		array_splice($menus, array_search($menus[$key], $menus), 1);
+	} elseif ($action == 1) {
+		// add menu manualy
+		array_push($menus, $menuWantTo);
+	} elseif ($action == 2 && !empty($key) && !empty($menuWantTo)) {
+		// update right from permissions array
+
+		// check if the values already exists
+		foreach ($menus as $index => $menu) {
+			if ($index !== $key) {
+				if ($menu['type'] === $menuWantTo['type']) {
+					if (strcasecmp(str_replace(' ', '', $menu['titre']), str_replace(' ', '', $menuWantTo['titre'])) === 0) {
+						$counter++;
+					}
+					if (strcasecmp(str_replace(' ', '', $menu['url']), str_replace(' ', '', $menuWantTo['url'])) === 0) {
+						$counter++;
+					}
+				}
+			}
+		}
+		if (!$counter) {
+			$menus[$key] = $menuWantTo;
+		} else {
+			$errors++;
+		}
+	} elseif ($action == -1 && !empty($menuWantTo)) {
+		// delete menus when delete Object
+		foreach ($menus as $index => $menu) {
+			if ((strpos(strtolower($menu['fk_menu']), strtolower($menuWantTo)) !== false) || (strpos(strtolower($menu['leftmenu']), strtolower($menuWantTo)) !== false)) {
+				array_splice($menus, array_search($menu, $menus), 1);
+			}
+		}
+	} else {
+		$errors++;
+	}
+	if (!$errors) {
+		// delete All LEFT Menus
+		$beginMenu = '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */';
+		$endMenu = '/* END MODULEBUILDER LEFTMENU MYOBJECT */';
+		$allMenus = getFromFile($file, $beginMenu, $endMenu);
+		dolReplaceInFile($file, array($allMenus => ''));
+
+		// orders menu with other menus that have the same object
+		usort($menus, 'compareMenus');
+
+		//prepare each menu and stock them in string
+		$str_menu = "";
+		foreach ($menus as $index =>$menu) {
+			$menu['position'] = "1000 + \$r";
+			if ($menu['type'] === 'left') {
+				$start = "\t\t".'/* LEFTMENU '.strtoupper($menu['titre']).' */';
+				$end   = "\t\t".'/* END LEFTMENU '.strtoupper($menu['titre']).' */';
+				$val_actuel = $menu;
+				$next_val = $menus[$index + 1];
+				$str_menu .= $start."\n";
+				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
+				$str_menu.= "\t\t\t 'fk_menu' =>'".$menu['fk_menu']."',\n";
+				$str_menu.= "\t\t\t 'type' =>'".$menu['type']."',\n";
+				$str_menu.= "\t\t\t 'titre' =>'".$menu['titre']."',\n";
+				$str_menu.= "\t\t\t 'mainmenu' =>'".$menu['mainmenu']."',\n";
+				$str_menu.= "\t\t\t 'leftmenu' =>'".$menu['leftmenu']."',\n";
+				$str_menu.= "\t\t\t 'url' =>'".$menu['url']."',\n";
+				$str_menu.= "\t\t\t 'langs' =>'".$menu['langs']."',\n";
+				$str_menu.= "\t\t\t 'position' =>".$menu['position'].",\n";
+				$str_menu.= "\t\t\t 'enabled' =>'".$menu['enabled']."',\n";
+				$str_menu.= "\t\t\t 'perms' =>'".$menu['perms']."',\n";
+				$str_menu.= "\t\t\t 'target' =>'".$menu['target']."',\n";
+				$str_menu.= "\t\t\t 'user' =>".$menu['user'].",\n";
+				$str_menu.= "\t\t);\n";
+
+				if ($val_actuel['leftmenu'] !== $next_val['leftmenu']) {
+					$str_menu .= $end."\n";
+				}
+			}
+		}
+
+		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
+		return 1;
+	}return -1;
 }

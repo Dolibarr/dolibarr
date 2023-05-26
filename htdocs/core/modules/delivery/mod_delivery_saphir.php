@@ -83,7 +83,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdelivery" value="'.$conf->global->DELIVERY_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdelivery" value="'.getDolGlobalString('DELIVERY_SAPHIR_MASK').'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -130,7 +130,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = $conf->global->DELIVERY_SAPHIR_MASK;
+		$mask = getDolGlobalString('DELIVERY_SAPHIR_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

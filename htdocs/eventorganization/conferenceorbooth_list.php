@@ -38,9 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 global $dolibarr_main_url_root;
 
-// for other modules
-//dol_include_once('/othermodule/class/otherobject.class.php');
-
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
 
@@ -74,6 +71,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical objects
+$project = new Project($db);
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
@@ -158,7 +156,6 @@ if (!$permissiontoread) accessforbidden();
  */
 
 if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && !empty($user->rights->eventorganization->write)) {
-	$project = new Project($db);
 	//If "set" fields keys is in projects fields
 	$project_attr=preg_replace('/^set/', '', $action);
 	if (array_key_exists($project_attr, $project->fields)) {
@@ -166,6 +163,7 @@ if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && !empty($
 		if ($result < 0) {
 			setEventMessages(null, $project->errors, 'errors');
 		} else {
+			$projectid = $project->id;
 			$project->{$project_attr}=GETPOST($project_attr);
 			$result=$project->update($user);
 			if ($result < 0) {
@@ -235,14 +233,13 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
+$title = $langs->trans('ListOfConferencesOrBooths');
 //$help_url = "EN:Module_ConferenceOrBooth|FR:Module_ConferenceOrBooth_FR|ES:Módulo_ConferenceOrBooth";
 $help_url = '';
-$title = $langs->trans('ListOfConferencesOrBooths');
 $morejs = array();
 $morecss = array();
 
 if ($projectid > 0 || $projectref) {
-	$project = new Project($db);
 	$result = $project->fetch($projectid, $projectref);
 	if ($result < 0) {
 		setEventMessages(null, $project->errors, 'errors');
@@ -590,7 +587,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -644,6 +641,12 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($project->id > 0) {
+	$param .= '&projectid='.((int) $project->id);
+}
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
 		foreach ($search[$key] as $skey) {
@@ -658,9 +661,6 @@ foreach ($search as $key => $val) {
 	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -901,7 +901,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
