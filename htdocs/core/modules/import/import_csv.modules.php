@@ -809,7 +809,7 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
 									$fieldArr = explode('.', $fieldname);
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
