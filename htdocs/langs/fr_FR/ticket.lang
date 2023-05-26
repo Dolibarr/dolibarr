@@ -259,6 +259,7 @@ TicketNotCreatedFromPublicInterface=Non disponible. Le ticket n’a pas été cr
 ErrorTicketRefRequired=La référence du ticket est requise
 TicketNoContractFoundToLink=Aucun contrat n'a été trouvé. Veuillez lier un contrat à ce ticket manuellement.
 TicketManyContractsLinked=Plusieurs contrats ont été liés à ce ticket. Veuillez choisir celui qui doit être utilisé.
+TicketRefAlreadyUsed=La référence [%s] est déjà utilisé, votre nouvelle référence est [%s]
 
 #
 # Logs
