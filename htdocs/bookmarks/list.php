@@ -408,7 +408,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Target
-		print '<td class="center">';
+		print '<td class="tdoverflowmax100 center">';
 		if ($obj->target == 0) {
 			print $langs->trans("BookmarkTargetReplaceWindowShort");
 		}
@@ -418,7 +418,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Author
-		print '<td class="center">';
+		print '<td class="tdoverflowmax100 center">';
 		if ($obj->fk_user > 0) {
 			if (empty($conf->cache['users'][$obj->fk_user])) {
 				$tmpuser = new User($db);

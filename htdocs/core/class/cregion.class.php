@@ -122,7 +122,7 @@ class Cregion
 		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : "'".$this->db->escape($this->fk_pays)."'").",";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
 		$sql .= " ".(!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'")."";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -245,7 +245,7 @@ class Cregion
 		$sql .= " fk_pays=".(isset($this->fk_pays) ? "'".$this->db->escape($this->fk_pays)."'" : "null").",";
 		$sql .= " nom=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "null").",";
 		$sql .= " cheflieu=".(isset($this->cheflieu) ? "'".$this->db->escape($this->cheflieu)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

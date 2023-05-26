@@ -14,7 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2023  Frédéric France             <frederic.france@netlogic.fr>
- * Copyright (C) 2019-2022  Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
@@ -1623,6 +1623,7 @@ function dol_strtolower($string, $encoding = "UTF-8")
  * @param 	string		$string		        String to encode
  * @param   string      $encoding           Character set encoding
  * @return 	string							String converted
+ * @see dol_ucfirst(), dol_ucwords()
  */
 function dol_strtoupper($string, $encoding = "UTF-8")
 {
@@ -1639,6 +1640,7 @@ function dol_strtoupper($string, $encoding = "UTF-8")
  * @param   string      $string         String to encode
  * @param   string      $encoding       Character set encodign
  * @return  string                      String converted
+ * @see dol_strtoupper(), dol_ucwords()
  */
 function dol_ucfirst($string, $encoding = "UTF-8")
 {
@@ -1650,11 +1652,12 @@ function dol_ucfirst($string, $encoding = "UTF-8")
 }
 
 /**
- * Convert first character of all the words of a string to upper. Never use ucfirst because it does not works with UTF8 strings.
+ * Convert first character of all the words of a string to upper.
  *
  * @param   string      $string         String to encode
  * @param   string      $encoding       Character set encodign
  * @return  string                      String converted
+ * @see dol_strtoupper(), dol_ucfirst()
  */
 function dol_ucwords($string, $encoding = "UTF-8")
 {
@@ -7718,7 +7721,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 				'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
 				'__USER_JOB__' => (string) $user->job,
-				'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
+				'__USER_REMOTE_IP__' => (string) getUserRemoteIP(),
+				'__USER_VCARD_URL__' => (string) $user->getOnlineVirtualCardUrl('', 'external')
 				));
 		}
 	}
@@ -8932,6 +8936,22 @@ function utf8_check($str)
 	}
 	return true;
 }
+
+/**
+ *      Check if a string is in UTF8
+ *
+ *      @param	string	$str        String to check
+ * 		@return	boolean				True if string is valid UTF8 string, false if corrupted
+ */
+function utf8_valid($str)
+{
+	/* 2 other methods to test if string is utf8
+	 $validUTF8 = mb_check_encoding($messagetext, 'UTF-8');
+	 $validUTF8b = ! (false === mb_detect_encoding($messagetext, 'UTF-8', true));
+	 */
+	return preg_match('//u', $str) ? true : false;
+}
+
 
 /**
  *      Check if a string is in ASCII
@@ -11826,19 +11846,30 @@ function jsonOrUnserialize($stringtodecode)
 /**
  * forgeSQLFromUniversalSearchCriteria
  *
- * @param 	string		$filter		String with universal search string. Must be  (aaa:bbb:...) with
+ * @param 	string		$filter		String with universal search string. Must be '(aaa:bbb:...) OR (ccc:ddd:...) ...' with
  * 									aaa is a field name (with alias or not) and
  * 									bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
- * @param	string		$error		Error message
- * @param	int			$noand		0=Default, 1=Do not add the AND before the condition string.
+ * 									Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+ * @param	string		$errorstr	Error message string
+ * @param	int			$noand		1=Do not add the AND before the condition string.
+ * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
+ * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
  */
-function forgeSQLFromUniversalSearchCriteria($filter, &$error = '', $noand = 0)
+function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
+	if (!preg_match('/^\(.*\)$/', $filter)) {    // If $filter does not start and end with ()
+		$filter = '(' . $filter . ')';
+	}
+
 	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
 
-	if (!dolCheckFilters($filter, $error)) {
-		return '1 = 2';		// Bad balance of parenthesis, we force a SQL not found
+	if (!dolCheckFilters($filter, $errorstr)) {
+		if ($noerror) {
+			return '1 = 2';
+		} else {
+			return 'Filter syntax error - '.$errorstr;		// Bad balance of parenthesis, we return an error message or force a SQL not found
+		}
 	}
 
 	// Test the filter syntax
@@ -11846,11 +11877,15 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '', $noand = 0)
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$error = 'Bad syntax of the search string, filter criteria is invalidated';
-		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
+		$errorstr = 'Bad syntax of the search string';
+		if ($noerror) {
+			return '1 = 2';
+		} else {
+			return 'Filter syntax error - '.$errorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
+		}
 	}
 
-	return ($noand ? "" : " AND ")."(".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
+	return ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).($nopar ? "" : ')');
 }
 
 /**
@@ -11889,7 +11924,7 @@ function dolCheckFilters($sqlfilters, &$error = '')
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
  * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
- * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+ * @return string                  Forged criteria. Example: "" or "()"
  */
 function dolForgeDummyCriteriaCallback($matches)
 {
@@ -11911,7 +11946,7 @@ function dolForgeDummyCriteriaCallback($matches)
  *
  * @param  array    $matches       	Array of found string by regex search.
  * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
- * @return string                  	Forged criteria. Example: "t.field like 'abc%'"
+ * @return string                  	Forged criteria. Example: "t.field LIKE 'abc%'"
  */
 function dolForgeCriteriaCallback($matches)
 {
@@ -11967,7 +12002,7 @@ function dolForgeCriteriaCallback($matches)
 		}
 	}
 
-	return $db->escape($operand).' '.strtoupper($operator).' '.$tmpescaped;
+	return '('.$db->escape($operand).' '.strtoupper($operator).' '.$tmpescaped.')';
 }
 
 
@@ -12124,6 +12159,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		$sql .= " a.percent as percent, 'action' as type,";
 		$sql .= " a.fk_element, a.elementtype,";
 		$sql .= " a.fk_contact,";
+		$sql .= " a.email_from as msg_from,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {
@@ -12323,6 +12359,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 						'userfirstname'=>$obj->user_firstname,
 						'userlastname'=>$obj->user_lastname,
 						'userphoto'=>$obj->user_photo,
+						'msg_from'=>$obj->msg_from,
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
@@ -12386,6 +12423,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		$userstatic = new User($db);
 		$contactstatic = new Contact($db);
 		$userGetNomUrlCache = array();
+		$contactGetNomUrlCache = array();
 
 		$out .= '<div class="filters-container" >';
 		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -12547,6 +12585,15 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 					$userGetNomUrlCache[$histo[$key]['userid']] = $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
 				}
 				$out .= $userGetNomUrlCache[$histo[$key]['userid']];
+			} elseif (!empty($histo[$key]['msg_from']) && $actionstatic->code == 'TICKET_MSG') {
+				if (!isset($contactGetNomUrlCache[$histo[$key]['msg_from']])) {
+					if ($contactstatic->fetch(0, null, '', $histo[$key]['msg_from']) > 0) {
+						$contactGetNomUrlCache[$histo[$key]['msg_from']] = $contactstatic->getNomUrl(-1, '', 16);
+					} else {
+						$contactGetNomUrlCache[$histo[$key]['msg_from']] = $histo[$key]['msg_from'];
+					}
+				}
+				$out .= $contactGetNomUrlCache[$histo[$key]['msg_from']];
 			}
 			$out .= '</div>';
 
