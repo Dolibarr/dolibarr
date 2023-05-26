@@ -2211,7 +2211,9 @@ class Form
 					$outarray2[$userstatic->id] = array(
 						'id'=>$userstatic->id,
 						'label'=>$labeltoshow,
-						'labelhtml'=>$labeltoshowhtml
+						'labelhtml'=>$labeltoshowhtml,
+						'color'=>'',
+						'picto'=>''
 					);
 
 					$i++;
