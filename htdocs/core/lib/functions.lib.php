@@ -8208,7 +8208,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
-		if ($object->element =='facture') {
+		if (is_object($object) && $object->element =='facture') {
 			if (is_object($object)) {
 				$totalpaye = $object->getSommePaiement();
 				$totalcreditnotes = $object->getSumCreditNotesUsed();
