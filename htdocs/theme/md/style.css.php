@@ -934,6 +934,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
