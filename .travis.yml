@@ -221,6 +221,8 @@ before_script:
       pgloader mysql://root@127.0.0.1/travis postgresql://postgres@/travis
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgres travis
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql -U postgres travis
+      # Create pgsql compatibility functions
+      psql -U postgres travis < htdocs/install/pgsql/functions/functions.sql
     fi
     echo
 

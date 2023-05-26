@@ -4284,12 +4284,13 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod = new $classformodule($db);
 				if (!empty($val['remove'])) {
 					$mod->remove('noboxes');
-					$mod->init($reloadmode);
 				}
 				if (!empty($val['deleteinsertmenus'])) {
 					// We only reload menus
 					$mod->delete_menus();
 					$mod->insert_menus();
+				} else {
+					$mod->init($reloadmode);
 				}
 			}
 		} else {	// Other generic cases/modules
