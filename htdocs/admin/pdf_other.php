@@ -173,7 +173,7 @@ if (isModEnabled('facture')) {
 	//if ($conf->use_javascript_ajax) {
 	//	print ajax_constantonoff('INVOICE_ADD_SWISS_QR_CODE');
 	//} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"), 'bottom' => $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").')');
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"), 'bottom' => $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").' - Need PHP 8.1+)');
 	print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
 	//}
 	print '</td></tr>';
