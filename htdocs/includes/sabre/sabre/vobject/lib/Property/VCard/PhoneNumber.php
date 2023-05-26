@@ -2,17 +2,19 @@
 
 namespace Sabre\VObject\Property\VCard;
 
+use Sabre\VObject\Property;
+
 /**
- * DateTime property.
+ * PhoneNumber property.
  *
- * This object encodes DATE-TIME values for vCards.
+ * This object encodes PHONE-NUMBER values.
  *
- * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
- * @author Evert Pot (http://evertpot.com/)
- * @license http://sabre.io/license/ Modified BSD License
+ * @author Christian Kraus <christian@kraus.work>
  */
-class DateTime extends DateAndOrTime
+class PhoneNumber extends Property\Text
 {
+    protected $structuredValues = [];
+
     /**
      * Returns the type of value.
      *
@@ -23,6 +25,6 @@ class DateTime extends DateAndOrTime
      */
     public function getValueType()
     {
-        return 'DATE-TIME';
+        return 'PHONE-NUMBER';
     }
 }
