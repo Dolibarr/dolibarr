@@ -431,5 +431,5 @@ ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);
 
 
 -- Email Collector
-ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN imap_encryption varchar(16) DEFAULT "ssl" AFTER hostcharset;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN imap_encryption varchar(16) DEFAULT 'ssl' AFTER hostcharset;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN norsh integer DEFAULT 0 AFTER imap_encryption;
