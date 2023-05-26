@@ -927,6 +927,8 @@ class SkillRank extends CommonObject
 			return $this->lines;
 		}
 		*/
+
+		return $this->lines;
 	}
 
 	/**

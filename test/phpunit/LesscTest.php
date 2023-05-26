@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +88,12 @@ class LesscTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SecurityTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -188,6 +190,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 			//var_dump($contentforlessc); exit;
 		} catch (exception $e) {
 			//echo "failed to compile lessc";
+			$result = 'Error';
 			dol_syslog("Failed to compile the CSS with lessc: ".$e->getMessage(), LOG_WARNING);
 		}
 
@@ -200,7 +203,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 }
 ";
 
-		print __METHOD__." SeparatorDecimal=".$result."\n";
+		print __METHOD__." Result=".$result."\n";
 		$this->assertEquals(trim($result), trim($cssexpected));
 
 		return;

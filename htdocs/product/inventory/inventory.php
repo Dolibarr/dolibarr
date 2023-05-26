@@ -297,7 +297,7 @@ if (empty($reshook)) {
 						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
 						$resultupdate = $inventoryline->update($user);
 					}
-				} else {
+				} elseif (GETPOSTISSET('id_' . $lineid)) {
 					// Delete record
 					$result = $inventoryline->fetch($lineid);
 					if ($result > 0) {
@@ -412,7 +412,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
 
 
 

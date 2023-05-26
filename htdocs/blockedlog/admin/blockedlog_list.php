@@ -550,7 +550,10 @@ if (is_array($blocks)) {
 			print '</td>';
 
 			// Link to source object
-			print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
+			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link)).'"').'>';
+			print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
+			print $object_link;
+			print '</td>';
 
 			// Amount
 			print '<td class="right nowraponall">'.price($block->amounts).'</td>';

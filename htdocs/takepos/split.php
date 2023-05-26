@@ -125,7 +125,7 @@ if ($action=="split") {
  */
 
 $invoice = new Facture($db);
-if ($invoiceid > 0) {
+if (isset($invoiceid) && $invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
@@ -134,7 +134,7 @@ if ($invoiceid > 0) {
 	if ($obj) {
 		$invoiceid = $obj->rowid;
 	}
-	if (!$invoiceid) {
+	if (!isset($invoiceid)) {
 		$invoiceid = 0; // Invoice does not exist yet
 	} else {
 		$invoice->fetch($invoiceid);

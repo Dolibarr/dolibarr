@@ -59,6 +59,16 @@ $substitutionarrayfortest = array(
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
+// List of sending methods
+$listofmethods = array();
+$listofmethods['default'] = $langs->trans('DefaultOutgoingEmailSetup');
+$listofmethods['mail'] = 'PHP mail function';
+//$listofmethods['simplemail']='Simplemail class';
+$listofmethods['smtps'] = 'SMTP/SMTPS socket library';
+if (version_compare(phpversion(), '7.0', '>=')) {
+	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
+}
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
@@ -146,16 +156,6 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 print load_fiche_titre($langs->trans("EMailsSetup"), '', 'title_setup');
 
 $head = email_admin_prepare_head();
-
-// List of sending methods
-$listofmethods = array();
-$listofmethods['default'] = $langs->trans('DefaultOutgoingEmailSetup');
-$listofmethods['mail'] = 'PHP mail function';
-//$listofmethods['simplemail']='Simplemail class';
-$listofmethods['smtps'] = 'SMTP/SMTPS socket library';
-if (version_compare(phpversion(), '7.0', '>=')) {
-	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
-}
 
 // List of oauth services
 $oauthservices = array();

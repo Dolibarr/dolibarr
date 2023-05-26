@@ -104,7 +104,7 @@ if ($result) {
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
-			print $localtax_static->getKanbanView('');
+			print $localtax_static->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

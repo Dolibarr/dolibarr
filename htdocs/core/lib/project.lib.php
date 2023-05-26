@@ -126,7 +126,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+	if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")
 		|| isModEnabled("propal") || isModEnabled('commande')
 		|| isModEnabled('facture') || isModEnabled('contrat')
 		|| isModEnabled('ficheinter') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
@@ -230,7 +230,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$head[$h][1] = $langs->trans("EventOrganization");
 
 		// Enable caching of conf or booth count
-		$nbConfOrBooth = 0;
+		$nbConfOrBooth = 0; $nbAttendees = 0;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 		$cachekey = 'count_conferenceorbooth_'.$project->id;
 		$dataretrieved = dol_getcache($cachekey);
@@ -248,8 +248,30 @@ function project_prepare_head(Project $project, $moreparam = '')
 			}
 			dol_setcache($cachekey, $nbConfOrBooth, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		if ($nbConfOrBooth > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbConfOrBooth . '</span>';
+		$cachekey = 'count_attendees_'.$project->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbAttendees = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+			$conforboothattendee=new ConferenceOrBoothAttendee($db);
+			$result = $conforboothattendee->fetchAll('', '', 0, 0, array('t.fk_project'=>$project->id));
+			//,
+			if (!is_array($result) && $result<0) {
+				setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
+			} else {
+				$nbAttendees = count($result);
+			}
+			dol_setcache($cachekey, $nbAttendees, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		if ($nbConfOrBooth > 0 || $nbAttendees > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("ConferenceOrBooth")).'">'.$nbConfOrBooth.'</span>';
+			if ($nbConfOrBooth > 0 && $nbAttendees > 0) {
+				$head[$h][1] .= ' / ';
+			}
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Attendees")).'">'.$nbAttendees.'</span>';
+			$head[$h][1] .= '</span>';
 		}
 		$head[$h][2] = 'eventorganisation';
 		$h++;

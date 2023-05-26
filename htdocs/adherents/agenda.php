@@ -73,7 +73,7 @@ $search_agenda_label = GETPOST('search_agenda_label');
 $objcanvas = null;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('memberagenda'));
+$hookmanager->initHooks(array('memberagenda', 'globalcard'));
 
 // Security check
 $result = restrictedArea($user, 'adherent', $id);

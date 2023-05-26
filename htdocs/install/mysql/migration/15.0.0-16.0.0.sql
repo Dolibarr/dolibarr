@@ -741,6 +741,9 @@ ALTER TABLE llx_loan_schedule ADD UNIQUE INDEX uk_loan_schedule_ref (fk_loan, da
 -- We need when upgrade 15 to 16 with Dolibarr v17+ for upgrade2 function migrate_user_photospath2()
 ALTER TABLE llx_user CHANGE COLUMN note note_private text;
 
+ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey, entity);
+
 
 -- Bank Thirdparty
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,'isModEnabled("societe") && isModEnabled("banque") && isModEnabled("prelevement")',0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\n__USER_SIGNATURE__',null, 0);

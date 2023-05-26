@@ -935,7 +935,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -1178,7 +1178,7 @@ if ($resql) {
 	if (!empty($user->rights->facture->paiement)) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
-	if (!empty($conf->prelevement->enabled) && !empty($user->rights->prelevement->bons->creer)) {
+	if (isModEnabled('prelevement') && !empty($user->rights->prelevement->bons->creer)) {
 		$langs->load("withdrawals");
 		$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
@@ -1195,6 +1195,7 @@ if ($resql) {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	// Show the new button only when this page is not opend from the Extended POS
+	$newcardbutton = '';
 	if ($contextpage != 'poslist') {
 		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
 		if (!empty($socid)) {
@@ -1929,10 +1930,7 @@ if ($resql) {
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				$facturestatic->socid = $companystatic->getNomUrl(1, 'company', 15);
-				$userstatic->fetch($obj->fk_user_author);
-				$facturestatic->fk_user_author = $userstatic->getNomUrl(1);
-				print $facturestatic->getKanbanView('');
+				print $facturestatic->getKanbanView('', array('thirdparty'=>$companystatic->getNomUrl(1, 'company', 15), 'userauthor'=>$userstatic->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
@@ -2451,15 +2449,15 @@ if ($resql) {
 					print '<td class="right nowrap">'.price($marginInfo['pa_total'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
+						$totalarray['pos'][$totalarray['nbfield']] = 'total_pa';
 					}
+					$totalarray['val']['total_pa'] += $marginInfo['pa_total'];
 				}
 				// Total margin
 				if (!empty($arrayfields['total_margin']['checked'])) {
 					print '<td class="right nowrap">'.price($marginInfo['total_margin'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
-					}
-					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
 					}
 					$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
@@ -2476,8 +2474,6 @@ if ($resql) {
 					print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
-					}
-					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
 					}
 					if ($i >= $imaxinloop - 1) {
@@ -2591,7 +2587,8 @@ if ($resql) {
 		}
 
 		// Use correct digits number for totals
-		$totalarray['val']['total_margin'] = price2num($totalarray['val']['total_margin'], 'MT');
+		$totalarray['val']['total_pa'] = (isset($totalarray['val']['total_pa']) ? price2num($totalarray['val']['total_pa'], 'MT') : null);
+		$totalarray['val']['total_margin'] = (isset($totalarray['val']['total_margin']) ? price2num($totalarray['val']['total_margin'], 'MT') : null);
 
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

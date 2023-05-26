@@ -42,6 +42,15 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	public $posxpicture;
+	public $posxtva;
+	public $posxup;
+	public $posxqty;
+	public $posxunit;
+	public $posxdesc;
+	public $posxdiscount;
+	public $postotalht;
+
 	public $tva;
 	public $tva_array;
 	public $localtax1;
