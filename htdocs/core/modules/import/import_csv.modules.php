@@ -311,9 +311,10 @@ class ImportCsv extends ModeleImports
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
+	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, $notrigger = false)
 	{
 		// phpcs:enable
 		global $langs, $conf, $user;
@@ -1034,27 +1035,35 @@ class ImportCsv extends ModeleImports
 				}
 			}
 
-			require_once DOL_DOCUMENT_ROOT . "/core/class/genericobject.class.php";
-			$genericObject = new GenericObject($this->db);
-			$table_name_without_prefix = preg_replace('/' . $this->db->prefix() . '/', '',$tablename);
-			$object_name = strtoupper($table_name_without_prefix);
-			$result = 0;
+            if ($updatedone) {
+                $this->nbupdate++;
+            }
 
-			if ($updatedone) {
-				$this->nbupdate++;
-				$result = $genericObject->call_trigger($object_name . '_IMPORT_UPDATE', $user);
-			}
+            if ($insertdone) {
+                $this->nbinsert++;
+            }
 
-			if ($insertdone) {
-				$this->nbinsert++;
-				$result = $genericObject->call_trigger($object_name . '_IMPORT_INSERT', $user);
-			}
+            if (!$notrigger) {
+                require_once DOL_DOCUMENT_ROOT . "/core/class/genericobject.class.php";
+                $genericObject = new GenericObject($this->db);
+                $table_name_without_prefix = preg_replace('/' . $this->db->prefix() . '/', '',$tablename);
+                $object_name = strtoupper($table_name_without_prefix);
+                $result = 0;
 
-			if ($result < 0) {
-				$this->error = $genericObject->error;
-				$this->errors += $genericObject->errors;
-				return -1;
-			}
+                if ($updatedone) {
+                    $result = $genericObject->call_trigger($object_name . '_IMPORT_UPDATE', $user);
+                }
+
+                if ($insertdone) {
+                    $result = $genericObject->call_trigger($object_name . '_IMPORT_INSERT', $user);
+                }
+
+                if ($result < 0) {
+                    $this->error = $genericObject->error;
+                    $this->errors += $genericObject->errors;
+                    return -1;
+                }
+            }
 		}
 
 		return 1;
