@@ -185,20 +185,21 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	protected function getHeightForQRInvoice(int $pagenbr, \Facture $object, \Translate $langs) : int
 	{
-		global $conf;
+		if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
+			// Keep it, to reset it after QRinvoice getter
+			$error = $this->error;
 
-		// Keep it, reset it after QRinvoice getter
-		$error = $this->error;
-
-		if (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
 			if (!$this->getSwissQrBill($object, $langs)) {
 				// Reset error to previous one if exists
-				$this->error = $error;
+				if (!empty($error)) {
+					$this->error = $error;
+				}
 				return 0;
 			}
-			// SWIFT's requirementis 105, but we get more room with 100 and the page nuber is in a nice place.
+			// SWIFT's requirementis 105, but we get more room with 100 and the page number is in a nice place.
 			return $pagenbr == 1 ? 100 : 0;
 		}
+
 		return 0;
 	}
 
@@ -210,7 +211,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 * @param Translate $langs   Translation object
 	 * @return bool for success
 	 */
-	public function addSwissQRInvoice(\TCPDF $pdf, \Facture $object, \Translate $langs) : bool
+	public function addBottomQRInvoice(\TCPDF $pdf, \Facture $object, \Translate $langs) : bool
 	{
 		if (!($qrBill = $this->getSwissQrBill($object, $langs))) {
 			return false;

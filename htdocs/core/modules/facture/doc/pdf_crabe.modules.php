@@ -354,10 +354,13 @@ class pdf_crabe extends ModelePDFFactures
 					$heightforfooter += 6;
 				}
 
-				$heightforqrinvoice_firstpage = $this->getHeightForQRInvoice(1, $object, $langs);
-				if ($heightforqrinvoice_firstpage > 0) {
-					// Shrink infotot to a base 30
-					$heightforinfotot = 30 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+				$heightforqrinvoice_firstpage = 0;
+				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
+					$heightforqrinvoice_firstpage = $this->getHeightForQRInvoice(1, $object, $langs);
+					if ($heightforqrinvoice_firstpage > 0) {
+						// Shrink infotot to a base 30
+						$heightforinfotot = 30 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+					}
 				}
 
 				if (class_exists('TCPDF')) {
@@ -493,7 +496,10 @@ class pdf_crabe extends ModelePDFFactures
 				$qrcodestring = '';
 				if (!empty($conf->global->INVOICE_ADD_ZATCA_QR_CODE)) {
 					$qrcodestring = $object->buildZATCAQRString();
+				} elseif (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == '1') {
+					$qrcodestring = $object->buildSwitzerlandQRString();
 				}
+
 				if ($qrcodestring) {
 					$qrcodecolor = array('25', '25', '25');
 					// set style for QR-code
@@ -601,9 +607,9 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pageposbefore = $pdf->getPage();
-					$page_bottom_margin = $heightforfooter + $heightforfreetext + $heightforinfotot + $this->getHeightForQRInvoice($pageposbefore, $object, $langs);
+					$page_bottom_margin = $heightforfooter + $heightforfreetext + $heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs);
 					$pdf->setPageOrientation('', 1, $page_bottom_margin);
+					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
@@ -900,7 +906,9 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->AliasNbPages();
 				}
 
-				$this->addSwissQRInvoice($pdf, $object, $outputlangs);
+				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
+					$this->addBottomQRInvoice($pdf, $object, $outputlangs);
+				}
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');

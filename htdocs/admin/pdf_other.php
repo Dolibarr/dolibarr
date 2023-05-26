@@ -70,7 +70,7 @@ if ($action == 'update') {
 		dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_ADD_SWISS_QR_CODE')) {
-		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'alpha'), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_CATEGORY_OF_OPERATION')) {
@@ -170,12 +170,12 @@ if (isModEnabled('facture')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), $langs->trans("INVOICE_ADD_SWISS_QR_CODEMore"));
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('INVOICE_ADD_SWISS_QR_CODE');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
-	}
+	//if ($conf->use_javascript_ajax) {
+	//	print ajax_constantonoff('INVOICE_ADD_SWISS_QR_CODE');
+	//} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"), 'bottom' => $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").')');
+	print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
+	//}
 	print '</td></tr>';
 
 	// Mention category of operations
