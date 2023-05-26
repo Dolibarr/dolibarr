@@ -41,3 +41,5 @@ docs/wikidocs
 
 # Mac
 .DS_Store
+
+.php_cs.cache

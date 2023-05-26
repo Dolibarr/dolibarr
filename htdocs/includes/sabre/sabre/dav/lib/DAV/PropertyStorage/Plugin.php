@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\PropertyStorage;
 
 use Sabre\DAV\INode;
@@ -23,8 +25,8 @@ use Sabre\DAV\ServerPlugin;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends ServerPlugin {
-
+class Plugin extends ServerPlugin
+{
     /**
      * If you only want this plugin to store properties for a limited set of
      * paths, you can use a pathFilter to do this.
@@ -43,14 +45,13 @@ class Plugin extends ServerPlugin {
     public $backend;
 
     /**
-     * Creates the plugin
+     * Creates the plugin.
      *
      * @param Backend\BackendInterface $backend
      */
-    function __construct(Backend\BackendInterface $backend) {
-
+    public function __construct(Backend\BackendInterface $backend)
+    {
         $this->backend = $backend;
-
     }
 
     /**
@@ -62,15 +63,13 @@ class Plugin extends ServerPlugin {
      * This method should set up the required event subscriptions.
      *
      * @param Server $server
-     * @return void
      */
-    function initialize(Server $server) {
-
-        $server->on('propFind',    [$this, 'propFind'], 130);
-        $server->on('propPatch',   [$this, 'propPatch'], 300);
-        $server->on('afterMove',   [$this, 'afterMove']);
+    public function initialize(Server $server)
+    {
+        $server->on('propFind', [$this, 'propFind'], 130);
+        $server->on('propPatch', [$this, 'propPatch'], 300);
+        $server->on('afterMove', [$this, 'afterMove']);
         $server->on('afterUnbind', [$this, 'afterUnbind']);
-
     }
 
     /**
@@ -80,34 +79,34 @@ class Plugin extends ServerPlugin {
      * plugin will look in the property storage backend to find them.
      *
      * @param PropFind $propFind
-     * @param INode $node
-     * @return void
+     * @param INode    $node
      */
-    function propFind(PropFind $propFind, INode $node) {
-
+    public function propFind(PropFind $propFind, INode $node)
+    {
         $path = $propFind->getPath();
         $pathFilter = $this->pathFilter;
-        if ($pathFilter && !$pathFilter($path)) return;
+        if ($pathFilter && !$pathFilter($path)) {
+            return;
+        }
         $this->backend->propFind($propFind->getPath(), $propFind);
-
     }
 
     /**
-     * Called during PROPPATCH operations
+     * Called during PROPPATCH operations.
      *
      * If there's any updated properties that haven't been stored, the
      * propertystorage backend can handle it.
      *
-     * @param string $path
+     * @param string    $path
      * @param PropPatch $propPatch
-     * @return void
      */
-    function propPatch($path, PropPatch $propPatch) {
-
+    public function propPatch($path, PropPatch $propPatch)
+    {
         $pathFilter = $this->pathFilter;
-        if ($pathFilter && !$pathFilter($path)) return;
+        if ($pathFilter && !$pathFilter($path)) {
+            return;
+        }
         $this->backend->propPatch($path, $propPatch);
-
     }
 
     /**
@@ -117,14 +116,14 @@ class Plugin extends ServerPlugin {
      * database.
      *
      * @param string $path
-     * @return void
      */
-    function afterUnbind($path) {
-
+    public function afterUnbind($path)
+    {
         $pathFilter = $this->pathFilter;
-        if ($pathFilter && !$pathFilter($path)) return;
+        if ($pathFilter && !$pathFilter($path)) {
+            return;
+        }
         $this->backend->delete($path);
-
     }
 
     /**
@@ -134,18 +133,20 @@ class Plugin extends ServerPlugin {
      *
      * @param string $source
      * @param string $destination
-     * @return void
      */
-    function afterMove($source, $destination) {
-
+    public function afterMove($source, $destination)
+    {
         $pathFilter = $this->pathFilter;
-        if ($pathFilter && !$pathFilter($source)) return;
+        if ($pathFilter && !$pathFilter($source)) {
+            return;
+        }
         // If the destination is filtered, afterUnbind will handle cleaning up
         // the properties.
-        if ($pathFilter && !$pathFilter($destination)) return;
+        if ($pathFilter && !$pathFilter($destination)) {
+            return;
+        }
 
         $this->backend->move($source, $destination);
-
     }
 
     /**
@@ -156,10 +157,9 @@ class Plugin extends ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'property-storage';
-
     }
 
     /**
@@ -173,13 +173,12 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
-            'name'        => $this->getPluginName(),
+            'name' => $this->getPluginName(),
             'description' => 'This plugin allows any arbitrary WebDAV property to be set on any resource.',
-            'link'        => 'http://sabre.io/dav/property-storage/',
+            'link' => 'http://sabre.io/dav/property-storage/',
         ];
-
     }
 }

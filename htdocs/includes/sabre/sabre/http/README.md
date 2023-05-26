@@ -1,7 +1,7 @@
 sabre/http
 ==========
 
-This library provides a toolkit to make working with the HTTP protocol easier.
+This library provides a toolkit to make working with the [HTTP protocol](https://tools.ietf.org/html/rfc2616) easier.
 
 Most PHP scripts run within a HTTP request but accessing information about the
 HTTP request is cumbersome at least.
@@ -30,8 +30,9 @@ Build status
 
 | branch | status |
 | ------ | ------ |
-| master | [![Build Status](https://travis-ci.org/fruux/sabre-http.svg?branch=master)](https://travis-ci.org/fruux/sabre-http) |
-| 3.0    | [![Build Status](https://travis-ci.org/fruux/sabre-http.svg?branch=3.0)](https://travis-ci.org/fruux/sabre-http) |
+| master | [![Build Status](https://travis-ci.org/sabre-io/http.svg?branch=master)](https://travis-ci.org/sabre-io/http) |
+| 4.2    | [![Build Status](https://travis-ci.org/sabre-io/http.svg?branch=4.2)](https://travis-ci.org/sabre-io/http) |
+| 3.0    | [![Build Status](https://travis-ci.org/sabre-io/http.svg?branch=3.0)](https://travis-ci.org/sabre-io/http) |
 
 Installation
 ------------
@@ -42,7 +43,7 @@ or edit a `composer.json` file, and make sure it contains something like this:
 ```json
 {
     "require" : {
-        "sabre/http" : "~3.0.0"
+        "sabre/http" : "~5.0.0"
     }
 }
 ```
@@ -571,7 +572,7 @@ function removeHeader($name);
 /**
  * Sets the HTTP version.
  *
- * Should be 1.0 or 1.1.
+ * Should be 1.0, 1.1 or 2.0.
  *
  * @param string $version
  * @return void
@@ -716,7 +717,7 @@ function removeHeader($name);
 /**
  * Sets the HTTP version.
  *
- * Should be 1.0 or 1.1.
+ * Should be 1.0, 1.1 or 2.0.
  *
  * @param string $version
  * @return void

@@ -4,7 +4,6 @@
 echo "SabreDAV migrate script for version 3.2\n";
 
 if ($argc < 2) {
-
     echo <<<HELLO
 
 This script help you migrate from a 3.1 database to 3.2 and later
@@ -37,14 +36,13 @@ php {$argv[0]} sqlite:data/sabredav.db
 HELLO;
 
     exit();
-
 }
 
 // There's a bunch of places where the autoloader could be, so we'll try all of
 // them.
 $paths = [
-    __DIR__ . '/../vendor/autoload.php',
-    __DIR__ . '/../../../autoload.php',
+    __DIR__.'/../vendor/autoload.php',
+    __DIR__.'/../../../autoload.php',
 ];
 
 foreach ($paths as $path) {
@@ -60,7 +58,7 @@ $pass = isset($argv[3]) ? $argv[3] : null;
 
 $backupPostfix = time();
 
-echo "Connecting to database: " . $dsn . "\n";
+echo 'Connecting to database: '.$dsn."\n";
 
 $pdo = new PDO($dsn, $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -69,15 +67,14 @@ $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 switch ($driver) {
-
-    case 'mysql' :
+    case 'mysql':
         echo "Detected MySQL.\n";
         break;
-    case 'sqlite' :
+    case 'sqlite':
         echo "Detected SQLite.\n";
         break;
-    default :
-        echo "Error: unsupported driver: " . $driver . "\n";
+    default:
+        echo 'Error: unsupported driver: '.$driver."\n";
         die(-1);
 }
 
@@ -91,7 +88,7 @@ try {
     echo "calendarinstances does not yet exist. Creating table and migrating data.\n";
 
     switch ($driver) {
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec(<<<SQL
 CREATE TABLE calendarinstances (
     id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -114,7 +111,7 @@ CREATE TABLE calendarinstances (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SQL
         );
-            $pdo->exec("
+            $pdo->exec('
 INSERT INTO calendarinstances
     (
         calendarid,
@@ -138,9 +135,9 @@ SELECT
     calendarcolor,
     transparent
 FROM calendars
-");
+');
             break;
-        case 'sqlite' :
+        case 'sqlite':
             $pdo->exec(<<<SQL
 CREATE TABLE calendarinstances (
     id integer primary key asc NOT NULL,
@@ -163,7 +160,7 @@ CREATE TABLE calendarinstances (
 );
 SQL
         );
-            $pdo->exec("
+            $pdo->exec('
 INSERT INTO calendarinstances
     (
         calendarid,
@@ -187,10 +184,9 @@ SELECT
     calendarcolor,
     transparent
 FROM calendars
-");
+');
             break;
     }
-
 }
 try {
     $result = $pdo->query('SELECT * FROM calendars LIMIT 1');
@@ -202,37 +198,34 @@ try {
     }
 
     $columnCount = count($row);
-    if ($columnCount === 3) {
+    if (3 === $columnCount) {
         echo "The calendars table has 3 columns already. Assuming this part of the migration was already done.\n";
         $migrateCalendars = false;
     } else {
-        echo "The calendars table has " . $columnCount . " columns.\n";
+        echo 'The calendars table has '.$columnCount." columns.\n";
         $migrateCalendars = true;
     }
-
 } catch (Exception $e) {
     echo "calendars table does not exist. This is a major problem. Exiting.\n";
     exit(-1);
 }
 
 if ($migrateCalendars) {
-
-    $calendarBackup = 'calendars_3_1_' . $backupPostfix;
+    $calendarBackup = 'calendars_3_1_'.$backupPostfix;
     echo "Backing up 'calendars' to '", $calendarBackup, "'\n";
 
     switch ($driver) {
-        case 'mysql' :
-            $pdo->exec('RENAME TABLE calendars TO ' . $calendarBackup);
+        case 'mysql':
+            $pdo->exec('RENAME TABLE calendars TO '.$calendarBackup);
             break;
-        case 'sqlite' :
-            $pdo->exec('ALTER TABLE calendars RENAME TO ' . $calendarBackup);
+        case 'sqlite':
+            $pdo->exec('ALTER TABLE calendars RENAME TO '.$calendarBackup);
             break;
-
     }
 
     echo "Creating new calendars table.\n";
     switch ($driver) {
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec(<<<SQL
 CREATE TABLE calendars (
     id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -242,7 +235,7 @@ CREATE TABLE calendars (
 SQL
 );
             break;
-        case 'sqlite' :
+        case 'sqlite':
             $pdo->exec(<<<SQL
 CREATE TABLE calendars (
     id integer primary key asc NOT NULL,
@@ -252,7 +245,6 @@ CREATE TABLE calendars (
 SQL
         );
             break;
-
     }
 
     echo "Migrating data from old to new table\n";
@@ -261,8 +253,6 @@ SQL
 INSERT INTO calendars (id, synctoken, components) SELECT id, synctoken, COALESCE(components,"VEVENT,VTODO,VJOURNAL") as components FROM $calendarBackup
 SQL
     );
-
 }
-
 
 echo "Upgrade to 3.2 schema completed.\n";

@@ -15,8 +15,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VFreeBusy extends VObject\Component {
-
+class VFreeBusy extends VObject\Component
+{
     /**
      * Checks based on the contained FREEBUSY information, if a timeslot is
      * available.
@@ -26,19 +26,18 @@ class VFreeBusy extends VObject\Component {
      *
      * @return bool
      */
-    function isFree(DateTimeInterface $start, DatetimeInterface $end) {
-
+    public function isFree(DateTimeInterface $start, DatetimeInterface $end)
+    {
         foreach ($this->select('FREEBUSY') as $freebusy) {
-
             // We are only interested in FBTYPE=BUSY (the default),
             // FBTYPE=BUSY-TENTATIVE or FBTYPE=BUSY-UNAVAILABLE.
-            if (isset($freebusy['FBTYPE']) && strtoupper(substr((string)$freebusy['FBTYPE'], 0, 4)) !== 'BUSY') {
+            if (isset($freebusy['FBTYPE']) && 'BUSY' !== strtoupper(substr((string) $freebusy['FBTYPE'], 0, 4))) {
                 continue;
             }
 
             // The freebusy component can hold more than 1 value, separated by
             // commas.
-            $periods = explode(',', (string)$freebusy);
+            $periods = explode(',', (string) $freebusy);
 
             foreach ($periods as $period) {
                 // Every period is formatted as [start]/[end]. The start is an
@@ -55,13 +54,10 @@ class VFreeBusy extends VObject\Component {
                 if ($start < $busyEnd && $end > $busyStart) {
                     return false;
                 }
-
             }
-
         }
 
         return true;
-
     }
 
     /**
@@ -79,24 +75,22 @@ class VFreeBusy extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
-            'UID'     => 1,
+            'UID' => 1,
             'DTSTAMP' => 1,
 
-            'CONTACT'   => '?',
-            'DTSTART'   => '?',
-            'DTEND'     => '?',
+            'CONTACT' => '?',
+            'DTSTART' => '?',
+            'DTEND' => '?',
             'ORGANIZER' => '?',
-            'URL'       => '?',
+            'URL' => '?',
 
-            'ATTENDEE'       => '*',
-            'COMMENT'        => '*',
-            'FREEBUSY'       => '*',
+            'ATTENDEE' => '*',
+            'COMMENT' => '*',
+            'FREEBUSY' => '*',
             'REQUEST-STATUS' => '*',
         ];
-
     }
-
 }
