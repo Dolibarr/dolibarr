@@ -1879,7 +1879,7 @@ if ($step == 5 && $datatoimport) {
 				}
 
 				// Run import
-				$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+				$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys, true);
 
 				if (count($obj->errors)) {
 					$arrayoferrors[$sourcelinenb] = $obj->errors;
