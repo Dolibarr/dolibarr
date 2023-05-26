@@ -1088,28 +1088,28 @@ class ImportXlsx extends ModeleImports
 				$this->nbinsert++;
 			}
 
-            if (!$notrigger) {
-                require_once DOL_DOCUMENT_ROOT . "/core/class/genericobject.class.php";
-                $genericObject = new GenericObject($this->db);
-                $table_name_without_prefix = preg_replace('/' . $this->db->prefix() . '/', '',$tablename);
-                $object_name = strtoupper($table_name_without_prefix);
-                $result = 0;
+			if (!$notrigger) {
+				require_once DOL_DOCUMENT_ROOT . "/core/class/genericobject.class.php";
+				$genericObject = new GenericObject($this->db);
+				$table_name_without_prefix = preg_replace('/' . $this->db->prefix() . '/', '', $tablename);
+				$object_name = strtoupper($table_name_without_prefix);
+				$result = 0;
 
-                if ($updatedone) {
-                    $result = $genericObject->call_trigger($object_name . '_IMPORT_UPDATE', $user);
-                }
+				if ($updatedone) {
+					$result = $genericObject->call_trigger($object_name . '_IMPORT_UPDATE', $user);
+				}
 
-                if ($insertdone) {
-                    $result = $genericObject->call_trigger($object_name . '_IMPORT_INSERT', $user);
-                }
+				if ($insertdone) {
+					$result = $genericObject->call_trigger($object_name . '_IMPORT_INSERT', $user);
+				}
 
-                if ($result < 0) {
-                    $this->error = $genericObject->error;
-                    $this->errors += $genericObject->errors;
-                    return -1;
-                }
-            }
-        }
+				if ($result < 0) {
+					$this->error = $genericObject->error;
+					$this->errors += $genericObject->errors;
+					return -1;
+				}
+			}
+		}
 
 		return 1;
 	}
