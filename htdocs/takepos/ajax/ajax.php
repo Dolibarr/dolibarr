@@ -290,7 +290,14 @@ if ($action == 'getProducts') {
 	}
 
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && empty(getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']))) {
-		$sql .= ' GROUP BY p.rowid HAVING SUM(ps.reel) > 0';
+		$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc';
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);
+		if ($reshook >= 0) {
+			$sql .= $hookmanager->resPrint;
+		}
+		$sql .= ' HAVING SUM(ps.reel) > 0';
 	}
 
 	// load only one page of products
