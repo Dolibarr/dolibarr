@@ -13,6 +13,6 @@ namespace Sabre\VObject\ITip;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SameOrganizerForAllComponentsException extends ITipException {
-
+class SameOrganizerForAllComponentsException extends ITipException
+{
 }

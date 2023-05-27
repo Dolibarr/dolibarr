@@ -18,7 +18,7 @@
 /**
  * \file        htdocs/zapier/class/hook.class.php
  * \ingroup     zapier
- * \brief       This file is a CRUD class file for Hook (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for Zapier Hook record (Create/Read/Update/Delete)
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -636,7 +636,6 @@ class Hook extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
-
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -659,49 +658,4 @@ class Hook extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 *
-	 * @return  int         0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
-	}
 }
-
-/**
- * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
- */
-/*
-class MyObjectLine
-{
-	// @var int ID
-	public $id;
-	// @var mixed Sample line property 1
-	public $prop1;
-	// @var mixed Sample line property 2
-	public $prop2;
-}
-*/

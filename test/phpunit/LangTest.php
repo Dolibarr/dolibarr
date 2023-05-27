@@ -212,13 +212,14 @@ class LangTest extends PHPUnit\Framework\TestCase
 
 			unset($tmplangs);
 
+			print "Check also some syntax rules into the language file\n";
 			$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
 			foreach ($filesarray2 as $key => $file) {
 				if (! preg_match('/\.lang$/', $file)) {
 					continue;
 				}
 
-				print 'Check lang file '.$file."\n";
+				//print 'Check lang file '.$file."\n";
 				$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
 
 				$result=preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.

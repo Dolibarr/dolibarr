@@ -4791,16 +4791,16 @@ class Form
 	/**
 	 *  Return a HTML select list of bank accounts
 	 *
-	 * @param string $selected Id account pre-selected
-	 * @param string $htmlname Name of select zone
-	 * @param int $status Status of searched accounts (0=open, 1=closed, 2=both)
-	 * @param string $filtre To filter list. This parameter must not come from input of users
-	 * @param int $useempty 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 * @param string $moreattrib To add more attribute on select
-	 * @param int $showcurrency Show currency in label
-	 * @param string $morecss More CSS
-	 * @param int $nooutput 1=Return string, do not send to output
-	 * @return    int                            <0 if error, Num of bank account found if OK (0, 1, 2, ...)
+	 * @param string 	$selected 		Id account pre-selected
+	 * @param string 	$htmlname 		Name of select zone
+	 * @param int 		$status 		Status of searched accounts (0=open, 1=closed, 2=both)
+	 * @param string 	$filtre 		To filter list. This parameter must not come from input of users
+	 * @param int 		$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @param string 	$moreattrib 	To add more attribute on select
+	 * @param int 		$showcurrency 	Show currency in label
+	 * @param string 	$morecss 		More CSS
+	 * @param int 		$nooutput 		1=Return string, do not send to output
+	 * @return int                   	<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
 	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
@@ -10431,23 +10431,25 @@ class Form
 	/**
 	 * Output the component to make advanced search criteries
 	 *
-	 * @param array $arrayofcriterias Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
-	 * @param array $search_component_params Array of selected search criterias
-	 * @param array $arrayofinputfieldsalreadyoutput Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
-	 * @param string $search_component_params_hidden String with $search_component_params criterias
-	 * @return    string                                              HTML component for advanced search
+	 * @param 	array 	$arrayofcriterias 					Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
+	 * @param 	array 	$search_component_params 			Array of selected search criterias
+	 * @param 	array 	$arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
+	 * @param 	string 	$search_component_params_hidden 	String with $search_component_params criterias
+	 * @return	string                                    	HTML component for advanced search
 	 */
 	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '')
 	{
 		global $langs;
 
+		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
+			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
+		}
+
 		$ret = '';
 
 		$ret .= '<div class="divadvancedsearchfieldcomp inline-block">';
-		//$ret .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
 		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
-		//$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
 
 		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
@@ -10456,16 +10458,58 @@ class Form
 		$ret .= '<div name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
 
 		if ($search_component_params_hidden) {
-			if (!preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
-				$search_component_params_hidden .= '(' . $search_component_params_hidden . ')';
+			// Split the criteria on each AND
+			//var_dump($search_component_params_hidden);
+
+			$nbofchars = dol_strlen($search_component_params_hidden);
+			$arrayofandtags = array();
+			$i = 0; $s = '';
+			$countparenthesis = 0;
+			while ($i < $nbofchars) {
+				$char = dol_substr($search_component_params_hidden, $i, 1);
+
+				if ($char == '(') {
+					$countparenthesis++;
+				} elseif ($char == ')') {
+					$countparenthesis--;
+				}
+
+				if ($countparenthesis == 0) {
+					$char2 = dol_substr($search_component_params_hidden, $i+1, 1);
+					$char3 = dol_substr($search_component_params_hidden, $i+2, 1);
+					if ($char == 'A' && $char2 == 'N' && $char3 == 'D') {
+						// We found a AND
+						$arrayofandtags[] = trim($s);
+						$s = '';
+						$i+=2;
+					} else {
+						$s .= $char;
+					}
+				} else {
+					$s .= $char;
+				}
+				$i++;
 			}
-			$errormessage = '';
-			$searchtags = forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
-			if ($errormessage) {
-				print 'ERROR in parsing search string: ' . dol_escape_htmltag($errormessage);
+			if ($s) {
+				$arrayofandtags[] = trim($s);
 			}
-			//var_dump($searchtags);
-			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> ' . dol_escape_htmltag($searchtags) . '</span>';
+
+			// Show each AND part
+			foreach ($arrayofandtags as $tmpkey => $tmpval) {
+				$errormessage = '';
+				$searchtags = forgeSQLFromUniversalSearchCriteria($tmpval, $errormessage, 1, 1);
+				if ($errormessage) {
+					$this->error = 'ERROR in parsing search string: '.$errormessage;
+				}
+				// Remove first and last parenthesis but only if first is the opening and last the closing of the same group
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				$searchtags = removeGlobalParenthesis($searchtags);
+
+				$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch" data-ufilterid="'.($tmpkey+1).'" data-ufilter="'.dol_escape_htmltag($tmpval).'">';
+				$ret .= '<span class="tagsearchdelete select2-selection__choice__remove" data-ufilterid="'.($tmpkey+1).'">x</span> ';
+				$ret .= dol_escape_htmltag($searchtags);
+				$ret .= '</span>';
+			}
 		}
 
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
@@ -10478,9 +10522,11 @@ class Form
 		if ($show_search_component_params_hidden) {
 			$ret .= '<input type="hidden" name="show_search_component_params_hidden" value="1">';
 		}
-		$ret .= "<!-- We store the full search string into this field. For example: (t.ref:like:'SO-%') and ((t.ref:like:'CO-%') or (t.ref:like:'AA%')) -->";
+		$ret .= "<!-- We store the full Universal Search String into this field. For example: (t.ref:like:'SO-%') AND ((t.ref:like:'CO-%') OR (t.ref:like:'AA%')) -->";
 		$ret .= '<input type="hidden" name="search_component_params_hidden" value="' . dol_escape_htmltag($search_component_params_hidden) . '">';
-		// For compatibility with forms that show themself the search criteria in addition of this component, we output the fields
+		// $ret .= "<!-- sql= ".forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage)." -->";
+
+		// For compatibility with forms that show themself the search criteria in addition of this component, we output these fields
 		foreach ($arrayofcriterias as $criterias) {
 			foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
 				if (in_array('search_' . $criteriafamilykey, $arrayofinputfieldsalreadyoutput)) {
@@ -10506,11 +10552,22 @@ class Form
 
 		$ret .= '</div>';
 
-		$ret .= "<!-- Syntax of Generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
+		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
 		$ret .= '<input type="text" placeholder="' . $langs->trans("Search") . '" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
 
 		$ret .= '</div>';
 		$ret .= '</div>';
+
+		$ret .= '<script>
+		jQuery(".tagsearchdelete").click(function() {
+			var filterid = $(this).parents().data("ufilterid");
+			console.log("We click to delete a criteria nb "+filterid);
+			// TODO Update the search_component_params_hidden with all data-ufilter except the one delete and post page
+
+		});
+		</script>
+		';
+
 
 		return $ret;
 	}

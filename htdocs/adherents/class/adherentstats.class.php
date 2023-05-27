@@ -279,7 +279,7 @@ class AdherentStats extends Stats
 			$sql .= " AND d.datefin > '".$this->db->idate(dol_get_first_day($startYear))."'";
 		}
 		$sql .= " AND c.fk_parent = 0";
-		$sql .= " GROUP BY c.rowid";
+		$sql .= " GROUP BY c.rowid ORDER BY label ASC";
 
 		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -315,7 +315,7 @@ class AdherentStats extends Stats
 						$totalstatus[$key] += $nb;
 					}
 				}
-				$MembersCountArray[$objp->fk_categorie]['total_adhtype'] = $totalrow;
+				$MembersCountArray[$objp->fk_categorie]['total_adhtag'] = $totalrow;
 				$i++;
 			}
 			$this->db->free($result);

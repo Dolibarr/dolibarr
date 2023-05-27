@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Element;
 
 use Sabre\DAV\Xml\Property\Complex;
@@ -17,8 +19,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Prop implements XmlDeserializable {
-
+class Prop implements XmlDeserializable
+{
     /**
      * The deserialize method is called during xml parsing.
      *
@@ -38,13 +40,15 @@ class Prop implements XmlDeserializable {
      * the next element.
      *
      * @param Reader $reader
+     *
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         // If there's no children, we don't do anything.
         if ($reader->isEmptyElement) {
             $reader->next();
+
             return [];
         }
 
@@ -52,22 +56,17 @@ class Prop implements XmlDeserializable {
 
         $reader->read();
         do {
-
-            if ($reader->nodeType === Reader::ELEMENT) {
-
+            if (Reader::ELEMENT === $reader->nodeType) {
                 $clark = $reader->getClark();
                 $values[$clark] = self::parseCurrentElement($reader)['value'];
-
             } else {
                 $reader->read();
             }
-
-        } while ($reader->nodeType !== Reader::END_ELEMENT);
+        } while (Reader::END_ELEMENT !== $reader->nodeType);
 
         $reader->read();
 
         return $values;
-
     }
 
     /**
@@ -81,10 +80,11 @@ class Prop implements XmlDeserializable {
      *   * value - The parsed value.
      *
      * @param Reader $reader
+     *
      * @return array
      */
-    private static function parseCurrentElement(Reader $reader) {
-
+    private static function parseCurrentElement(Reader $reader)
+    {
         $name = $reader->getClark();
 
         if (array_key_exists($name, $reader->elementMap)) {
@@ -95,22 +95,20 @@ class Prop implements XmlDeserializable {
                 $value = call_user_func($deserializer, $reader);
             } else {
                 $type = gettype($deserializer);
-                if ($type === 'string') {
-                    $type .= ' (' . $deserializer . ')';
-                } elseif ($type === 'object') {
-                    $type .= ' (' . get_class($deserializer) . ')';
+                if ('string' === $type) {
+                    $type .= ' ('.$deserializer.')';
+                } elseif ('object' === $type) {
+                    $type .= ' ('.get_class($deserializer).')';
                 }
-                throw new \LogicException('Could not use this type as a deserializer: ' . $type);
+                throw new \LogicException('Could not use this type as a deserializer: '.$type);
             }
         } else {
             $value = Complex::xmlDeserialize($reader);
         }
 
         return [
-            'name'  => $name,
+            'name' => $name,
             'value' => $value,
         ];
-
     }
-
 }

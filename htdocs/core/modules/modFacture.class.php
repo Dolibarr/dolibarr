@@ -318,7 +318,7 @@ class modFacture extends DolibarrModules
 			'f.date_lim_reglement' => '2021-12-24',
 			'f.note_public' => '',
 			'f.note_private' => '',
-			'f.model_pdf' => 'crabe',
+			'f.model_pdf' => 'sponge',
 			'f.multicurrency_code' => 'EUR',
 			'f.multicurrency_tx' => '1',
 			'f.multicurrency_total_ht' => '100',

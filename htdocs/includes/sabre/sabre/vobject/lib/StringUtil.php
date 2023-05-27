@@ -9,8 +9,8 @@ namespace Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class StringUtil {
-
+class StringUtil
+{
     /**
      * Returns true or false depending on if a string is valid UTF-8.
      *
@@ -18,15 +18,14 @@ class StringUtil {
      *
      * @return bool
      */
-    static function isUTF8($str) {
-
+    public static function isUTF8($str)
+    {
         // Control characters
         if (preg_match('%[\x00-\x08\x0B-\x0C\x0E\x0F]%', $str)) {
             return false;
         }
 
-        return (bool)preg_match('%%u', $str);
-
+        return (bool) preg_match('%%u', $str);
     }
 
     /**
@@ -39,12 +38,12 @@ class StringUtil {
      *
      * @return string
      */
-    static function convertToUTF8($str) {
-
+    public static function convertToUTF8($str)
+    {
         $encoding = mb_detect_encoding($str, ['UTF-8', 'ISO-8859-1', 'WINDOWS-1252'], true);
 
         switch ($encoding) {
-            case 'ISO-8859-1' :
+            case 'ISO-8859-1':
                 $newStr = utf8_encode($str);
                 break;
             /* Unreachable code. Not sure yet how we can improve this
@@ -53,14 +52,11 @@ class StringUtil {
                 $newStr = iconv('cp1252', 'UTF-8', $str);
                 break;
              */
-            default :
+            default:
                  $newStr = $str;
-
         }
 
         // Removing any control characters
-        return (preg_replace('%(?:[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F])%', '', $newStr));
-
+        return preg_replace('%(?:[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F])%', '', $newStr);
     }
-
 }
