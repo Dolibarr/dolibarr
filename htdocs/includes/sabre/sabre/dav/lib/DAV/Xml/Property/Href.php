@@ -39,9 +39,6 @@ class Href implements Element, HtmlOutput
      *
      * You must either pass a string for a single href, or an array of hrefs.
      *
-     * If auto-prefix is set to false, the hrefs will be treated as absolute
-     * and not relative to the servers base uri.
-     *
      * @param string|string[] $hrefs
      */
     public function __construct($hrefs)
@@ -87,8 +84,6 @@ class Href implements Element, HtmlOutput
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
      */
     public function xmlSerialize(Writer $writer)
     {
@@ -108,8 +103,6 @@ class Href implements Element, HtmlOutput
      *
      * The baseUri parameter is a url to the root of the application, and can
      * be used to construct local links.
-     *
-     * @param HtmlOutputHelper $html
      *
      * @return string
      */
@@ -140,8 +133,6 @@ class Href implements Element, HtmlOutput
      *
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
-     *
-     * @param Reader $reader
      *
      * @return mixed
      */

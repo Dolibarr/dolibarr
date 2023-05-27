@@ -59,8 +59,6 @@ class Plugin extends DAV\ServerPlugin
 
     /**
      * Initializes the plugin.
-     *
-     * @param DAV\Server $server
      */
     public function initialize(DAV\Server $server)
     {
@@ -131,9 +129,6 @@ class Plugin extends DAV\ServerPlugin
 
     /**
      * Adds all CardDAV-specific properties.
-     *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode    $node
      */
     public function propFindEarly(DAV\PropFind $propFind, DAV\INode $node)
     {
@@ -267,11 +262,10 @@ class Plugin extends DAV\ServerPlugin
      * This plugin uses this method to ensure that Card nodes receive valid
      * vcard data.
      *
-     * @param string    $path
-     * @param DAV\IFile $node
-     * @param resource  $data
-     * @param bool      $modified should be set to true, if this event handler
-     *                            changed &$data
+     * @param string   $path
+     * @param resource $data
+     * @param bool     $modified should be set to true, if this event handler
+     *                           changed &$data
      */
     public function beforeWriteContent($path, DAV\IFile $node, &$data, &$modified)
     {
@@ -288,11 +282,10 @@ class Plugin extends DAV\ServerPlugin
      * This plugin uses this method to ensure that Card nodes receive valid
      * vcard data.
      *
-     * @param string          $path
-     * @param resource        $data
-     * @param DAV\ICollection $parentNode
-     * @param bool            $modified   should be set to true, if this event handler
-     *                                    changed &$data
+     * @param string   $path
+     * @param resource $data
+     * @param bool     $modified should be set to true, if this event handler
+     *                           changed &$data
      */
     public function beforeCreateFile($path, &$data, DAV\ICollection $parentNode, &$modified)
     {
@@ -481,7 +474,6 @@ class Plugin extends DAV\ServerPlugin
      * Validates if a vcard makes it throught a list of filters.
      *
      * @param string $vcardData
-     * @param array  $filters
      * @param string $test      anyof or allof (which means OR or AND)
      *
      * @return bool
@@ -565,8 +557,6 @@ class Plugin extends DAV\ServerPlugin
      *       property. Any subsequence parameters with the same name are
      *       ignored.
      *
-     * @param array  $vProperties
-     * @param array  $filters
      * @param string $test
      *
      * @return bool
@@ -597,13 +587,20 @@ class Plugin extends DAV\ServerPlugin
                 foreach ($vProperties as $vProperty) {
                     // If we got all the way here, we'll need to validate the
                     // text-match filter.
-                    $success = DAV\StringUtil::textMatch($vProperty[$filter['name']]->getValue(), $filter['text-match']['value'], $filter['text-match']['collation'], $filter['text-match']['match-type']);
+                    if (isset($vProperty[$filter['name']])) {
+                        $success = DAV\StringUtil::textMatch(
+                            $vProperty[$filter['name']]->getValue(),
+                            $filter['text-match']['value'],
+                            $filter['text-match']['collation'],
+                            $filter['text-match']['match-type']
+                        );
+                        if ($filter['text-match']['negate-condition']) {
+                            $success = !$success;
+                        }
+                    }
                     if ($success) {
                         break;
                     }
-                }
-                if ($filter['text-match']['negate-condition']) {
-                    $success = !$success;
                 }
             } // else
 
@@ -628,8 +625,6 @@ class Plugin extends DAV\ServerPlugin
     /**
      * Validates if a text-filter can be applied to a specific property.
      *
-     * @param array  $texts
-     * @param array  $filters
      * @param string $test
      *
      * @return bool
@@ -640,14 +635,14 @@ class Plugin extends DAV\ServerPlugin
             $success = false;
             foreach ($texts as $haystack) {
                 $success = DAV\StringUtil::textMatch($haystack, $filter['value'], $filter['collation'], $filter['match-type']);
+                if ($filter['negate-condition']) {
+                    $success = !$success;
+                }
 
                 // Breaking on the first match
                 if ($success) {
                     break;
                 }
-            }
-            if ($filter['negate-condition']) {
-                $success = !$success;
             }
 
             if ($success && 'anyof' === $test) {
@@ -672,9 +667,6 @@ class Plugin extends DAV\ServerPlugin
      *
      * This event is scheduled late in the process, after most work for
      * propfind has been done.
-     *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode    $node
      */
     public function propFindLate(DAV\PropFind $propFind, DAV\INode $node)
     {
@@ -699,8 +691,7 @@ class Plugin extends DAV\ServerPlugin
      * Sabre\DAV\Browser\Plugin. This allows us to generate an interface users
      * can use to create new addressbooks.
      *
-     * @param DAV\INode $node
-     * @param string    $output
+     * @param string $output
      *
      * @return bool
      */
@@ -727,9 +718,6 @@ class Plugin extends DAV\ServerPlugin
      * This event is triggered after GET requests.
      *
      * This is used to transform data into jCal, if this was requested.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      */
     public function httpAfterGet(RequestInterface $request, ResponseInterface $response)
     {
