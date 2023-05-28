@@ -738,7 +738,7 @@ if (!defined('NOLOGIN')) {
 		// Verification security graphic code
 		if ($test && GETPOST("username", "alpha", 2) && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) && !isset($_SESSION['dol_bypass_antispam'])) {
 			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
+			$ok = (array_key_exists($sessionkey, $_SESSION) === true && $_SESSION[$sessionkey] === GETPOST('code', 'restricthtml'));
 
 			// Check code
 			if (!$ok) {
