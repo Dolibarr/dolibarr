@@ -314,7 +314,7 @@ class ImportCsv extends ModeleImports
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, $notrigger = false)
+	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
 		// phpcs:enable
 		global $langs, $conf, $user;
@@ -1041,28 +1041,6 @@ class ImportCsv extends ModeleImports
 
 			if ($insertdone) {
 				$this->nbinsert++;
-			}
-
-			if (!$notrigger) {
-				require_once DOL_DOCUMENT_ROOT . "/core/class/genericobject.class.php";
-				$genericObject = new GenericObject($this->db);
-				$table_name_without_prefix = preg_replace('/' . $this->db->prefix() . '/', '', $tablename);
-				$object_name = strtoupper($table_name_without_prefix);
-				$result = 0;
-
-				if ($updatedone) {
-					$result = $genericObject->call_trigger($object_name . '_IMPORT_UPDATE', $user);
-				}
-
-				if ($insertdone) {
-					$result = $genericObject->call_trigger($object_name . '_IMPORT_INSERT', $user);
-				}
-
-				if ($result < 0) {
-					$this->error = $genericObject->error;
-					$this->errors += $genericObject->errors;
-					return -1;
-				}
 			}
 		}
 
