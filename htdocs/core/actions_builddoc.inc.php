@@ -61,7 +61,7 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		} elseif (!empty($object->fk_account)) {
 			$object->fk_bank = $object->fk_account;
 		}
-			//}
+		//}
 
 
 		$outputlangs = $langs;
