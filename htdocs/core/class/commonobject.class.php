@@ -5383,7 +5383,6 @@ abstract class CommonObject
 
 				// On verifie l'emplacement du modele
 				$file = dol_buildpath($reldir.$modelspath.$file, 0);
-				var_dump($file);
 				if (file_exists($file)) {
 					$filefound = $file;
 					$classname = $prefix.'_'.$modele;
