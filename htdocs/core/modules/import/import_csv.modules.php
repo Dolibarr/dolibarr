@@ -1037,7 +1037,6 @@ class ImportCsv extends ModeleImports
 			if ($updatedone) {
 				$this->nbupdate++;
 			}
-
 			if ($insertdone) {
 				$this->nbinsert++;
 			}
