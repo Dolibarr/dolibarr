@@ -1164,7 +1164,7 @@ foreach ($listofreferent as $key => $value) {
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
-				$idofelementuser = $tmp[1];
+				$idofelementuser = $tmp[1] ?? null;
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {
@@ -1192,7 +1192,7 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_third = 0;
 					$total_ttc_by_third = 0;
 				}
-				$saved_third_id = $element->thirdparty->id;
+				$saved_third_id = $element->thirdparty->id ?? null;
 
 				$qualifiedfortotal = true;
 				if ($key == 'invoice') {
@@ -1239,7 +1239,8 @@ foreach ($listofreferent as $key => $value) {
 
 					$element_doc = $element->element;
 					$filename = dol_sanitizeFileName($element->ref);
-					$filedir = $conf->{$element_doc}->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+					$path = $conf?->{$element_doc}?->multidir_output[$element->entity] ?? null;
+					$filedir = $path.'/'.dol_sanitizeFileName($element->ref);
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc = 'commande_fournisseur';
@@ -1489,7 +1490,8 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
 
-					$total_time = $total_time + $total_time_by_line;
+					if (!isset($total_time)) $total_time = $total_time_by_line;
+					else $total_time += $total_time_by_line;
 				}
 
 				if (canApplySubtotalOn($tablename)) {
