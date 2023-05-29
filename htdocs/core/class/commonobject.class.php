@@ -5334,7 +5334,6 @@ abstract class CommonObject
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams = null)
 	{
 		global $conf, $langs, $user, $hookmanager, $action;
-
 		$srctemplatepath = '';
 
 		$parameters = array('modelspath'=>$modelspath, 'modele'=>$modele, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'hidedesc'=>$hidedesc, 'hideref'=>$hideref, 'moreparams'=>$moreparams);
@@ -5384,6 +5383,7 @@ abstract class CommonObject
 
 				// On verifie l'emplacement du modele
 				$file = dol_buildpath($reldir.$modelspath.$file, 0);
+				var_dump($file);
 				if (file_exists($file)) {
 					$filefound = $file;
 					$classname = $prefix.'_'.$modele;
