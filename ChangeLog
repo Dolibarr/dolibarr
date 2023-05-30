@@ -213,6 +213,7 @@ Following changes may create regressions for some external modules, but were nec
 * The type 'text' in ->fields property dos not accept html content anymore. Use the type 'html' for that.
 * The module for WebService SOAP API have been deprecated. Use instead the Webservice REST API module.
 * The method htmlPrintOnlinePaymentFooter() used for public footer pages has been renamed into htmlPrintOnlineFooter() and moved into company.lib.php
+* The method getCheckOption() and deleteCPUser() of class Holiday has been removed (it was not used)
 
 
 ***** ChangeLog for 17.0.2 compared to 17.0.1 *****
