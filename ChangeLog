@@ -1,4 +1,5 @@
 --------------------------------------------------------------
+
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
@@ -86,7 +87,7 @@ FIX: wrong colspan for tasks list
 
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
-For uses:
+For uses
 ---------
 
 NEW: PHP 8.2 compatibility (test not yet completed).
@@ -205,7 +206,7 @@ NEW: Now we can edit amount on vat and salaries clone action
 NEW: only get openned contact from liste_contact function, to not have acces to closed contact as mail receiver
 NEW: operation type in email collector to load or create contact
 NEW: option filter for NoSalesRepresentativeAffected in proposals list
-NEW: Option to manage deposit slips for more payment modes (not only
+NEW: Option to manage deposit slips for more payment modes (not only)
 NEW: Option to show column for field and line selection on the left
 NEW: Order export : allow to export field 'shipment method'.
 NEW: payment default values when supplier order created from reception
@@ -263,7 +264,7 @@ NEW: A new tab for reception and shipment
 NEW: Use the more recent PDF templates for documents by default on a fresh install
 NEW: Better design for the page of discounts of a thirdparty
 
-For developers or integrators:
+For developers or integrators
 ------------------------------
 
 NEW: Make it possible to select hours and minutes in form_confirm
@@ -282,20 +283,18 @@ NEW: add sent info in the parameters provided to the hook sendMailAfter
 NEW: add setAsSelectUser into factory for generic setup page
 NEW: add option keepspace into dol_string_nospecialchar()
 
-
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * Minimal PHP version is now PHP 7.1 instead of PHP 7.0
 * The deprecated method "escapeunderscore()" of database handlers has been removed. You must use "escapeforlike()" instead.
-* The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
+* The method "nb_expedition()" has been renamed into "countNbOfShipments()"
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 * Deprecated property libelle removed from entrepot class.
 * The type 'text' in ->fields property dos not accept html content anymore. Use the type 'html' for that.
 * The module for WebService SOAP API have been deprecated. Use instead the Webservice REST API module.
 * The method htmlPrintOnlinePaymentFooter() used for public footer pages has been renamed into htmlPrintOnlineFooter() and moved into company.lib.php
-
-
 
 ***** ChangeLog for 17.0.1 compared to 17.0.0 *****
 
@@ -349,11 +348,9 @@ FIX: task have the same entity of project
 FIX: token error when closing ticket from public interface
 FIX: Warning on purchase order + Property fk_commande not defined
 
-
-
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
 
-For users:
+For users
 ---------------
 
 NEW: Minimal PHP version is now PHP 7.0 instead of PHP 5.6
@@ -543,6 +540,7 @@ NEW: Add option FICHINTER_ALLOW_EXTERNAL_DOWNLOAD
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * Minimal PHP version is now PHP 7.0 instead of PHP 5.6
 * Core has introduced a Universal Filter Syntax for seach criteria. Example: ((((field1:=:value1) OR (field2:in:1,2,3)) AND ...). In rare case, some filters
   could be provided by URL parameters. For such cases (societe/ajax/company.php), use of Universal Filter Syntax become mandatory. 
@@ -995,6 +993,7 @@ NEW: Option  INVOICEREC_SET_AUTOFILL_DATE_START/END
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * There is a new specific permission to be allowed to enter timesheets. If you use timesheet, don't forget to give the new permission (disable and
   enable the module project if it is not visible).
 * The default value for MAIN_SECURITY_CSRF_WITH_TOKEN has been set to 2. It means any POST and any GET request that contains the "action" or "massaction"
@@ -1369,6 +1368,7 @@ NEW: Experimental feature to manage user sessions in database
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * ALL EXTERNAL MODULES THAT WERE NOT CORRECTLY DEVELOPPED WILL NOT WORK ON V15 (All modules that forgot to manage the security token field
   into forms will be broken. The security token field is expected since Dolibarr v9 but a lot of external modules did not implement it).
 * Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
@@ -1880,6 +1880,7 @@ NEW: add hook addSectionECMAuto method to add custom directory into ECM auto fil
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * Module SimplePOS is deprecated. If you need a POS module, please use the module TakePOS.
 * The ICS value for direct debit or credit transfer is now stored on each bank account instead of into the global setup.
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
@@ -2338,6 +2339,7 @@ NEW: add hook "loginCheckSecurityAccess"
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * The object "livraison" has been renamed into "delivery" (directory, class, keys, methods with livraison in name ...).
 * All properties ->contactid have been renamed into ->contact_id
 * All properties ->titre have been renamed into ->title
@@ -2864,6 +2866,7 @@ NEW: Hidden option MAIN_TEMP_DIR
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * PHP 5.5 is no more supported. Minimum PHP is now 5.6+.
 * Default mode for GETPOST function is now 'alphanohtml' instead of 'none'. So check when you make POST or GET requests with
   HTML content that you make a GETPOST('myparam', 'restricthtml') or GETPOST('myparam', 'none') if you really need posted content without sanitizing
@@ -3376,6 +3379,7 @@ NEW: Upgrade ACE editor to v1.4.6
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * Properties ->libelle_incoterms were renamed into ->label_incoterms
 * Removed the method liste_array() of project class. It was not used by core code.
 * The function show_theme() hase been renamed into showSkins()
@@ -4081,6 +4085,7 @@ NEW: Look and feel v10 - Add CSS 'tabBarNoTop'
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * PHP 5.4 is no more supported. Minimum PHP is now 5.5+.
 * The PHP extension php-intl is not mandatory and must be installed to have new features working correctly.
 * Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus for consistency with naming rules.
@@ -4398,6 +4403,7 @@ NEW: hook on dispatch order fourn
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * If you use some links like viewimages.php?modulepart=mycompany&file=... in your external modules, you must
   replace them with links like viewimages.php?modulepart=mycompany&file=logos/... (note that link change only for
   modulepart=mycompany that now works like others).
@@ -4907,6 +4913,7 @@ NEW: hook getnomurltooltip is replaced with hook getNomUrl more powerfull
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * Remove old deprecated hook 'insertExtraFields'. Triggers must be used for action on CRUD events.
 * Hook 'maildao' was renamed into 'mail' into the method sendfile that send emails, and method was renamed from
   'doaction' into 'sendMail'.
@@ -5472,6 +5479,7 @@ If you enabled (for test) the experimental BlockedLog module before 7.0, you mus
 way to save data for final version has changed.
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+
 * The methode "cloture" on contract were renamed into "closeAll".
 * The method "is_erasable" of invoice return a value <= 0 if not erasable (value is meaning) instead of always 0.
 * The substitution key for reference of objects is now __REF__ whatever is the object (it replaces __ORDERREF__,
@@ -5850,6 +5858,7 @@ NEW: Upgrade jquery to 3.3.1 and jquery-ui to 1.12
 WARNING:
 
 Following changes may create regression for some external modules, but were necessary to make Dolibarr better:
+
 * The hook getNodeList has been replaced by a normalized 'addreplace' hook getDirList.
 * The trigger USER_SETINGROUP and USER_REMOVEFROMGROUP has been replaced with trigger USER_MODIFY.
 * The page societe/soc.php was renamed into societe/card.php to match page naming conventions.
@@ -6161,6 +6170,7 @@ WARNING:
 
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
+
 - Function delete of class Facture (invoice) need the object $user as first parameter. Also you must
   check you make a fetch on object before calling the delete.
 - The old driver of "mysql" has been removed. Dolibarr use the new one (mysqli) by default.
@@ -6503,6 +6513,7 @@ Dolibarr 4.0 should be compatible with PHP 7 but more feedbacks are still expect
 
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
+
 - Function log() of class CommandeFournisseur has been removed. Using it is no more required.
 - Class Resource was renamed into DolResource to avoid conflict with a reserved PHP word.
 - Method commonobject->add_thumb() has been renamed into commonobject->addThumbs().
@@ -6907,6 +6918,7 @@ Mysql minimum version is now 5.0.3
 
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
+
 - Deprecated Product::setPriceExpression. Use Product::update instead
 - Deprecated hidden option MAIN_USE_CUSTOM_TRANSLATION has been removed. Use table llx_overwrite_trans instead.
 - Trigger LINECONTRACT_INSERT has been renamed into LINECONTRACT_CREATE to match common denomination.
@@ -7495,6 +7507,7 @@ NEW: Introduce function dolGetFirstLineOfText.
 
 WARNING: Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
+
 - Removed hook supplierorderdao into supplier order creation. This is a business event, so we must use the
   trigger ORDER_SUPPLIER_CREATE instead.
 - Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
@@ -7673,6 +7686,7 @@ make a Dolibarr upgrade.
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+
 - New: Match other auth system: Login can be done entering login or user
        email (this open the road for SSO).
 - New: Agenda export by project #1967.
@@ -7779,6 +7793,7 @@ For users:
 - Fix: [ task #1728 ] Deactivate RIB suggest in proposals / invoices / orders
 
 For users, new experimental module (need to set feature level of instance to experimental to see them):
+
 - New: Module Accounting Expert to manage accountancy
 		Special Thanks to developpers :
 			Olivier Geffroy
@@ -7795,10 +7810,12 @@ For users, new experimental module (need to set feature level of instance to exp
 - Removed: unmaintained OScommerce module
 
 For translators:
+
 - Update language files.
 - New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
+
 - New: Syslog module can be set to use ChromePHP plugin to output log server into browser console.
 - New: Add a css style "cursorpointer".
 - New: Select list of users can return user into hierarchy.
@@ -7911,9 +7928,11 @@ FIX: total amount in tpl linked object are not reset
 FIX: when multicompany was enabled, this function didn't check just on the good entity (problem when both company use same mask)
 
 ***** ChangeLog for 3.6.4 compared to 3.6.3 *****
+
 - Fix: [ bug #2893 ] Dolibarr error when viewing an invoice after changing invoice mask
 
 ***** ChangeLog for 3.6.3 compared to 3.6.2 *****
+
 - Fix: ref_ext was not saved when recording a customer order from web service
 - Fix: withdrawal create error if in the same month are deleted previus withdrawals.
 - Fix: amarok is a bugged theme making dolidroid failed. We switch to eldy automatically with dolidroid.
@@ -7957,6 +7976,7 @@ FIX: when multicompany was enabled, this function didn't check just on the good 
 - Fix: [ bug #3342 ] Taxes dictionary page does not accept localized decimals for localtax2 rate
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
+
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
 - Fix: bug 1588 : relative discount.
 - Fix: label of input method not translated.
@@ -7977,6 +7997,7 @@ FIX: when multicompany was enabled, this function didn't check just on the good 
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
+
 - Fix: Can upload files on services.
 - Fix: sql errors on update fichinter.
 - Fix: debian script syntax error.
@@ -8003,6 +8024,7 @@ For users:
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
+
 - New: Update ckeditor to version 4.
 - New: Add form "search customer order" on commercial main page.
 - New: Can create contract from an order.
@@ -8076,9 +8098,11 @@ For users:
 - Fix: [ bug #1521 ] The second order's page from a provider shows all orders
 
 For translators:
+
 - Update language files.
 
 For developers:
+
 - New: Add path file of trigger into admin trigger list page.
 - New: More phpunit tests.
 - New: Payments and supplier payment pages tabs can now be extended from modules.
@@ -8367,6 +8391,7 @@ Fix: [ bug #1410 ] Add customer order line asks for required Unit Price but does
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
+
 - New: Add hidden option BANK_DISABLE_DIRECT_INPUT.
 - New: More options to select status of users into select user list.
 - New: [ task #862 ] Add ODT on shipments.
@@ -8434,14 +8459,17 @@ For users:
 - Fix: Some config data are shared between suppliers orders and suppliers invoices
 
 New experimental module:
+
 - New: [ task #157 ] Add a Skype button (adherents / third parties / contacts)
 
 For translators:
+
 - Qual: Normalized sort order of all languages files with English reference files.
 - New: Add language code files for South Africa, France new Caledonia, Vietnam.
 - New: Translate string for email to change password.
 
 For developers:
+
 - New: DolGraph can build graph with three lines.
 - New: DolGraph accept a parameter to cache data of graph getNbByMonthWithPrevYear.
 - New: Can enable tuning info with option MAIN_SHOW_TUNING_INFO.
@@ -8562,6 +8590,7 @@ Qual: Add travis-ci integration.
 
 ***** ChangeLog for 3.4 compared to 3.3.* *****
 For users:
+
 - New: Can use ODS templates as document templates.
 - New: Add link to autofill/reset with quantity to ship when creating a
   delivery receipt.
@@ -8619,9 +8648,11 @@ For users:
 - Fix: Expedition creation, can retrieve product from other expedition
 
 For translators:
+
 - Update language files.
 
 For developers:
+
 - System of menu managers has been rewritten to reduce code to do same things.
 - An external module can force its theme.
 - Add function dol_set_focus('#xxx').
@@ -8644,6 +8675,7 @@ For developers:
 
 
 WARNING: If you used external modules, some of them may need to be upgraded due to:
+
 - Fields of classes were renamed to be normalized (nom, prenom, cp, ville, adresse, tel
   were renamed into lastname, firstname, zip, town, address, phone).
   This may also be true for some fields into web services.
@@ -8657,6 +8689,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 
 
 ***** ChangeLog for 3.3.5 compared to 3.3.4 *****
+
 - Fix: Change to make debian package ok despite removal of ckeditor.
 - Fix: jcrop file to match debian rules
 - Fix: Add missing country UK.
@@ -8664,16 +8697,19 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 - Fix: Add missing label on project field.
 
 ***** ChangeLog for 3.3.4 compared to 3.3.3 *****
+
 - Fix: [ bug #1001 ] Social Contribution : State not correct
 - Fix: Better management of pdf generation when tcpdf is not available.
 - Fix: Change to be more debian compliant natively.
 
 ***** ChangeLog for 3.3.3 compared to 3.3.2 *****
+
 - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
 - Fix: [ bug #934 ] Error on proformat invoice creation (pgsql)
 - Fix: [ bug #947 ] Can't create proposal lines with unit price = 0
 
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
+
 - Fix: Dutch (nl_NL) translation
 - Generalize fix: file with a specific mask not found, again
 - Fix: translations and BILL_SUPPLIER_BUILDDOC trigger
@@ -8704,6 +8740,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 - Fix: [ bug #806 ] Tasks are ordered alphabetically instead of chronological order
 
 ***** ChangeLog for 3.3.1 compared to 3.3 *****
+
 - Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
 - Fix: Package for launchpad
 - Fix: [ bug #736 ] Missing column in llx_c_chargesociales
@@ -8713,6 +8750,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 
 ***** ChangeLog for 3.3 compared to 3.2.* *****
 For users:
+
 - New: Add holiday module, to declare and follow holidays of your employees.
 - New: Add margin management module.
 - New: Add new theme Amarok.
@@ -8782,6 +8820,7 @@ For users:
 - New: [ task #527 ] After cloning a suplier invoice, go onto invoice ref into edit mode
 
 New experimental module:
+
 - New: Add commissions management module.
 
 - Fix: [ bug #499 ] Supplier order input method not translated
@@ -8795,6 +8834,7 @@ New experimental module:
 - Fix: [ bug #622 ] Attaching wrong file when sending the invoice via e-mail
 
 For developers:
+
 - New: Add webservice for thirdparty creation and list.
 - New: A module can overwrite templates parts.
 - New: Can add a link on title field of added dictionary.
@@ -8824,6 +8864,7 @@ For developers:
 - Fix: [ bug #657 ] Usergroup class' GROUP_DELETE trigger incorrectly named
 
 For translators:
+
 - New: Update language files (de, tr, pt, ca, es, en, fr).
 - New: Added bg_BG autotranslated language.
 - New: Translate the donation receipt.
@@ -8833,6 +8874,7 @@ Dolibarr license has also been updated from GPLv2+ to GPLv3+.
 
 
 ***** ChangeLog for 3.2.3 compared to 3.2.2 *****
+
 - Fix: Some permission into agenda module.
 - Fix: Generation of PDF was not using correct font for some languages.
 - Fix some translations.
@@ -8850,6 +8892,7 @@ Dolibarr license has also been updated from GPLv2+ to GPLv3+.
 
 
 ***** ChangeLog for 3.2.2 compared to 3.2.1 *****
+
 - Fix: Modify spanish VAT to new rates.
 - Fix: Add error message when creating already existing product.
 - Fix: Edition of percentage of an event.
@@ -8861,6 +8904,7 @@ Dolibarr license has also been updated from GPLv2+ to GPLv3+.
 
 
 ***** ChangeLog for 3.2.1 compared to 3.2.0 *****
+
 - Fix: Edit of projects.
 - Fix: Activation of modules does not fails if directory install was removed.
 - Fix: [ bug #444 ] Regression on auto-closing for proposals and orders.
@@ -8894,6 +8938,7 @@ WARNING: Because of a major datastructure change onto supplier prices tables, be
 to make a backup of your database before making upgrade.
 
 For users:
+
 - New: Each user can remove/add its own boxes.
 - New: Add signature at end of predefined email text.
 - New: Can use personalized fields on products/services.
@@ -8958,6 +9003,7 @@ For users:
 - Fix: [ bug #427 ] Bad links to wiki help in certains menus
 
 For developers:
+
 - New: Can add a left menu into an existing top menu or left menu.
 - New: Add webservice to get or create a product or service.
 - New: Add webservice to get a user.
@@ -8994,6 +9040,7 @@ Fix: bug #405 - Late icon always displayed on comm/propal.php
 
 
 ***** ChangeLog for 3.1.2 compared to 3.1.1 *****
+
 - Fix: Can clone a proposal
 - Fix: Add member ID in substitution method
 - Fix: Duplicate end tag and missing form parts
@@ -9006,6 +9053,7 @@ Fix: bug #405 - Late icon always displayed on comm/propal.php
 
 
 ***** ChangeLog for 3.1.1 compared to 3.1.0 *****
+
 - New: Add option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS. With this option added,
        credit notes are not removed from total amount of invoice but are just
        payments used to reducs remain to pay.
@@ -9026,6 +9074,7 @@ Fix: bug #405 - Late icon always displayed on comm/propal.php
 ***** ChangeLog for 3.1 compared to 3.0 *****
 WARNING: IE6 browser is no more supported in this version.
 For users:
+
 - New: War against number of clicks:
      - When adding a free bank transaction, form to add next one is still
        visible (save one click).
@@ -9104,6 +9153,7 @@ For users:
 - Fix: Admin dict data is showing with active language
 
 For developers:
+
 - New: External modules can add tabs on agenda views.
 - New: External modules can also remove default tabs.
 - New: External modules can force skin directory so force their own skins.
@@ -9121,6 +9171,7 @@ For developers:
 - New: Can add user login into menu urls added by modules.
 
 For translators:
+
 - New: Add fa_IR language.
 - Fix: Move language ar_AR to ar_SA, sv_SV to sv_SE and da_Da to da_DK.
 
@@ -9128,6 +9179,7 @@ For translators:
 
 ***** ChangeLog for 3.0 compared to 2.9.* *****
 For users:
+
 - New: Can edit date of cheque receipts.
 - New: Add Sales journal and Purchase journal report.
 - New: Can create supplier invoice from supplier order.
@@ -9197,12 +9249,14 @@ For users:
 - Fix: Can edit ordering methods.
 
 For translators:
+
 - New: Update and complete slovenian language sl_SL.
 - New: Add full manually translated files for de_AT en de_DE (thanks to eCleaner.at).
 - New: Create the language ja_JP.
 - New: Add el_GR language.
 
 For developers:
+
 - New: Add jquery by default.
 - New: Removed PWC libraries.
 - New: Removed Scriptaculous libraries.
@@ -9223,6 +9277,7 @@ For developers:
 
 ***** ChangeLog for 2.9 compared to 2.8.* *****
 For users:
+
 - New: POS module allow to choose which warehouse to use.
 - New: Support "Department/State" field on company setup, contact,
        bank account and members card.
@@ -9298,12 +9353,14 @@ For users:
 - Fix: Access to phpMyAdmin is now ok on new DoliWamp installation.
 
 For translators:
+
 - Fix: Major update of italian translation (it_IT).
 - Fix: A lot of translation fixes in all languages.
 - New: Added translations (sl_SL, is_IS).
 - New: Add translations for the DoliWamp installer.
 
 For developers:
+
 - More comments in code.
 - Uniformize some code.
 - All arrays "lignes" were renamed into "lines".
@@ -9318,6 +9375,7 @@ For developers:
 - Snapshot is provided with PHPunit tests.
 
 WARNING:
+
 - A lot of class files (*.class.php) has moved into subdirectories. So If you use
   or develop non official modules that includes Dolibarr classes, you will have to rename
   path to thoose classes into the include function.
@@ -9330,6 +9388,7 @@ WARNING:
 
 ***** ChangeLog for 2.8.1 compared to 2.8 *****
 For users:
+
 - Fix: Works on database with _ in name.
 - Fix: Broken feature in trips and expense module.
 - Fix: Can use $ in database and login/pass values.
@@ -9340,6 +9399,7 @@ For users:
 
 ***** ChangeLog for 2.8 compared to 2.7.* *****
 For users:
+
 - New: Support note on trips module
 - New: Can link contacts to projects
 - New: Can removed attached file on email form if attachment was wrong.
@@ -9381,6 +9441,7 @@ For users:
 - Fix: Can change password if has only permission change password.
 
 For developers:
+
 - Qual: Reorganize /dev directory.
 - Qual: Change the way items are linked together.
 - Qual: The login page now use a template in /core/template/login.tpl.php.
@@ -9390,6 +9451,7 @@ For developers:
 
 ***** ChangeLog for 2.7.1 compared to 2.7 *****
 For users:
+
 - Fix: Bad decimal management for it_IT and fr_BE languages.
 - Fix: A third party created from a member is created as a
        customer.
@@ -9402,6 +9464,7 @@ For users:
 
 ***** ChangeLog for 2.7 compared to 2.6.* *****
 For users:
+
 - New: Add a print icon to show a page to print without menus.
 - New: Can add a free text on bank cheque receipts.
 - New: Price level can be defined also for prospects.
@@ -9467,10 +9530,12 @@ For users:
   with contact or user synchronization.
 
 For translators:
+
 - Update some language files.
 - Can accept right to left languages. Added an "automatic" arabe translation.
 
 For developers:
+
 - An external module can force the third party code to be required whatever
   is the rule of third party code module.
 - Update fckeditor to 2.6.4.
@@ -9500,6 +9565,7 @@ For developers:
 
 ***** ChangeLog for 2.6 compared to 2.5.* *****
 For users:
+
 - New: Add filter on status in emailing selector for Dolibarr users.
 - New: Can add bookmarks on all pages.
 - New: Enhance bank transactions reporting.
@@ -9565,12 +9631,14 @@ For users:
 - Fix: Creation of a member from the example public page works.
 
 For translators:
+
 - Added 10 more new language files.
 - Added autotranslator tool. A tool to build/update automatically
   languages files using Google API for a new language. Wonderful to start a
   new translation.
 
 For developers:
+
 - Removed some deprecated files.
 - Removed treemenu library.
 - Renamed all function dolibarr_xxx into dol_xxx to have same prefix everywhere.
@@ -9582,6 +9650,7 @@ For developers:
 
 ***** ChangeLog for 2.5 compared to 2.4.* *****
 For users:
+
 - Sessions timeout can be configured to overwrite PHP setup.
 - Can filter on date in services list.
 - Support bookmark add of product cards.
@@ -9620,12 +9689,14 @@ For users:
 - Can choose login of dolibarr account created when create from contact
 
 For translators:
+
 - The errors language file contains only error or warning messages with
   prefix Error or Warning.
 - HTML Output is by default in UTF8 and language files can be provided
   in UTF8.
 
 For developers:
+
 - Update skeletons (some fixes and add function createFromClone).
 - Add an experimental Cash Desk module.
 - Added new triggers events in agenda module.
@@ -9645,6 +9716,7 @@ For developers:
 
 ***** ChangeLog for 2.4 compared to 2.2.* *****
 For users:
+
 - Add a calendar module (module agenda) with ical/vcal/rss export.
 - Look enhancement in graphics (thanks artichow).
 - Add tel and fax on delivery addresses.
@@ -9680,10 +9752,12 @@ For users:
 - Some bug fixes.
 
 For translators:
+
 - Added spanish es_ES translation.
 - Added en_AU translation.
 
 For developers:
+
 - Removed useless code:
   Replaced phplot and phplot5 librairies by artichow.
   Removed cryptograph library replaced by artichow.
@@ -9698,6 +9772,7 @@ For developers:
 
 
 ***** ChangeLog for 2.2 compared to 2.1.* *****
+
 - Add more statistics on main page.
 - Add option to add message on login page.
 - Management of categories for third parties.
@@ -9731,6 +9806,7 @@ For developers:
 
 
 ***** ChangeLog for 2.1 compared to 2.0.* *****
+
 - Added a better installer.
 - Support user and groups permissions.
 - Translation in english and support for several languages.
