@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
- * Copyright (C) 2013-2020  Philippe Grand	            <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2023  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2018-2020  Frédéric France             <frederic.france@netlogic.fr>
  *
@@ -72,9 +72,9 @@ class pdf_strato extends ModelePDFContract
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
+	 * e.g.: PHP ≥ 7.1 = array(7, 1)
 	 */
-	public $phpmin = array(7, 0);
+	public $phpmin = array(7, 1);
 
 	/**
 	 * Dolibarr version of the loaded document
