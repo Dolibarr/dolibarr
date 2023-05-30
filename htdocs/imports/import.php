@@ -1900,7 +1900,9 @@ if ($step == 5 && $datatoimport) {
 
 				$reshook = $hookmanager->executeHooks('ImportInsert', $parameters);
 				if ($reshook < 0) {
-					$arrayoferrors[$sourcelinenb] = implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors));
+					$arrayoferrors[$sourcelinenb][] = [
+						'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+					];
 				}
 
 				if (empty($reshook)) {
@@ -2307,7 +2309,9 @@ if ($step == 6 && $datatoimport) {
 
 			$reshook = $hookmanager->executeHooks('ImportInsert', $parameters);
 			if ($reshook < 0) {
-				$arrayoferrors[$sourcelinenb] = implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors));
+				$arrayoferrors[$sourcelinenb][] = [
+					'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+				];
 			}
 
 			if (empty($reshook)) {
