@@ -1382,14 +1382,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			// Regenerate left menu entry in descriptor for $objectname
 			$stringtoadd = "
 		\$this->menu[\$r++]=array(
-			'fk_menu'=>'fk_mainmenu=mymodule',     
-			'type'=>'left',                          
+			'fk_menu'=>'fk_mainmenu=mymodule',
+			'type'=>'left',
 			'titre'=>'MyObject',
 			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'myobject',
 			'url'=>'/mymodule/myobject_list.php',
-			'langs'=>'mymodule@mymodule',	       
+			'langs'=>'mymodule@mymodule',
 			'position'=>1000+\$r,
 			'enabled'=>'\$conf->testmodule->enabled',
 			'perms'=>'1',
@@ -2610,7 +2610,7 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int')) {
 				}
 				if ($result < 0) {
 					setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
-					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.$key+1);
+					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
 					exit;
 				}
 				setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);

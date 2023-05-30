@@ -83,9 +83,9 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * Get the SwissQR object, including validation
 	 *
-	 * @param Facture 		$object  	Invoice object
-	 * @param Translate 	$langs 		Translation object
-	 * @return SwissQrBill|bool 		The valid SwissQR object, or false
+	 * @param 	Facture 				$object  	Invoice object
+	 * @param 	Translate 				$langs 		Translation object
+	 * @return 	SwissQrBill\QrBill|bool 			The valid SwissQR object, or false
 	 */
 	private function getSwissQrBill(Facture $object, Translate $langs)
 	{
