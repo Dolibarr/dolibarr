@@ -74,9 +74,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
+	 * e.g.: PHP ≥ 7.1 = array(7, 1)
 	 */
-	public $phpmin = array(7, 0);
+	public $phpmin = array(7, 1);
 
 	/**
 	 * Dolibarr version of the loaded document
