@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
- * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2023 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2020      John BOTELLA
 
@@ -66,9 +66,9 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
+	 * e.g.: PHP ≥ 7.1 = array(7, 1)
 	 */
-	public $phpmin = array(7, 0);
+	public $phpmin = array(7, 1);
 
 	/**
 	 * Dolibarr version of the loaded document
