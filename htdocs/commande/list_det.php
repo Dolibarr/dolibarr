@@ -1436,7 +1436,8 @@ if ($resql) {
 		if (empty($i)) {
 			$oldref = $obj->product_ref;
 		}
-		if ($oldref != $obj->product_ref) {
+		if ($oldref != $obj->product_ref && $sortfield == 'pr.ref') {
+			// TODO make new /core/tpl/list_print_sub_total.php
 			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 			$oldref = $obj->product_ref;
 		}
