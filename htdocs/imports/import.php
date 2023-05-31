@@ -1886,7 +1886,7 @@ if ($step == 5 && $datatoimport) {
 				$parameters = array(
 					'step'                         => $step,
 					'datatoimport'                 => $datatoimport,
-					'obj'                          => $obj,
+					'obj'                          => &$obj,
 					'arrayrecord'                  => $arrayrecord,
 					'array_match_file_to_database' => $array_match_file_to_database,
 					'objimport'                    => $objimport,
@@ -2295,7 +2295,7 @@ if ($step == 6 && $datatoimport) {
 			$parameters = array(
 				'step'                         => $step,
 				'datatoimport'                 => $datatoimport,
-				'obj'                          => $obj,
+				'obj'                          => &$obj,
 				'arrayrecord'                  => $arrayrecord,
 				'array_match_file_to_database' => $array_match_file_to_database,
 				'objimport'                    => $objimport,
