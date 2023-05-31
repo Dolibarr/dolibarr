@@ -813,7 +813,7 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'GenerateOrdersSuppliers'=>img_picto('', 'doc', 'class="pictofixedwidth"').$langs->trans("GenerateOrdersSupplie"),
+		// TODO add mass action here
 	);
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
