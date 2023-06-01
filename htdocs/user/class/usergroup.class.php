@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 }
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -39,6 +40,8 @@ if (isModEnabled('ldap')) {
  */
 class UserGroup extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
