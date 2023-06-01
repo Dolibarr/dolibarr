@@ -14,8 +14,8 @@ use
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class LanguageTag extends Property {
-
+class LanguageTag extends Property
+{
     /**
      * Sets a raw value coming from a mimedir (iCalendar/vCard) file.
      *
@@ -23,13 +23,10 @@ class LanguageTag extends Property {
      * not yet done, but parameters are not included.
      *
      * @param string $val
-     *
-     * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $this->setValue($val);
-
     }
 
     /**
@@ -37,10 +34,9 @@ class LanguageTag extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         return $this->getValue();
-
     }
 
     /**
@@ -51,10 +47,8 @@ class LanguageTag extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'LANGUAGE-TAG';
-
     }
-
 }

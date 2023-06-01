@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\Xml\Request;
 
 use Sabre\DAV\Exception\BadRequest;
@@ -18,8 +20,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PrincipalSearchPropertySetReport implements XmlDeserializable {
-
+class PrincipalSearchPropertySetReport implements XmlDeserializable
+{
     /**
      * The deserialize method is called during xml parsing.
      *
@@ -39,10 +41,11 @@ class PrincipalSearchPropertySetReport implements XmlDeserializable {
      * the next element.
      *
      * @param Reader $reader
+     *
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         if (!$reader->isEmptyElement) {
             throw new BadRequest('The {DAV:}principal-search-property-set element must be empty');
         }
@@ -51,8 +54,7 @@ class PrincipalSearchPropertySetReport implements XmlDeserializable {
         $reader->next();
 
         $self = new self();
+
         return $self;
-
     }
-
 }

@@ -195,7 +195,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				continue;
 			}
 
-			print 'Check php file '.$file['fullname']."\n";
+			//print 'Check php file '.$file['relativename']."\n";
 			$filecontent=file_get_contents($file['fullname']);
 
 			if (preg_match('/\.class\.php/', $file['relativename'])

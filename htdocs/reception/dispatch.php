@@ -426,7 +426,7 @@ if ($id > 0 || !empty($ref)) {
 	print '</td>';
 	print '</tr>';
 	print '</table>';
-	
+
 	print '<br><center>';
 	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'autofill', 'class="pictofixedwidth"').$langs->trans("RestoreWithCurrentQtySaved").'</a></td>';
 	// Link to clear qty

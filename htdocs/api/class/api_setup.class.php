@@ -310,8 +310,8 @@ class Setup extends DolibarrApi
 	/**
 	 * Get region by ID.
 	 *
-	 * @param int       $id        ID of region
-	 * @return array    		   Array of cleaned object properties
+	 * @param 	int       $id       ID of region
+	 * @return 	Object 				Object with cleaned properties
 	 *
 	 * @url     GET dictionary/regions/{id}
 	 *
@@ -325,8 +325,8 @@ class Setup extends DolibarrApi
 	/**
 	 * Get region by Code.
 	 *
-	 * @param string    $code      Code of region
-	 * @return array 			   Array of cleaned object properties
+	 * @param 	string    $code     Code of region
+	 * @return 	Object 				Object with cleaned properties
 	 *
 	 * @url     GET dictionary/regions/byCode/{code}
 	 *

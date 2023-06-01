@@ -5212,7 +5212,7 @@ if ($action == 'create') {
 				print '<td class="right"><span class="amount">'.price($obj->amount_ttc).'</span></td>';
 				print '<td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">';
-				print img_picto($langs->trans("RemoveDiscount"), 'unlink');
+				print img_picto($langs->transnoentitiesnoconv("RemoveDiscount"), 'unlink');
 				print '</a>';
 				print '</td></tr>';
 				$i++;

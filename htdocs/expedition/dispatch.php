@@ -684,7 +684,7 @@ if ($id > 0 || !empty($ref)) {
 							print $linktoprod;
 							print "</td>";
 						}
-						
+
 						// Define unit price for PMP calculation
 						$up_ht_disc = $objp->subprice;
 						if (!empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) {
@@ -722,7 +722,7 @@ if ($id > 0 || !empty($ref)) {
 							while ($j < $numd) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
-								
+
 								if (isModEnabled('productbatch') && !empty($objd->batch)) {
 									$type = 'batch';
 
@@ -753,10 +753,10 @@ if ($id > 0 || !empty($ref)) {
 									print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 									print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
 									print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
-									
+
 									print '<!-- This is a U.P. (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
 									print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
-									
+
 									print '</td>';
 
 									print '<td>';
@@ -866,7 +866,7 @@ if ($id > 0 || !empty($ref)) {
 							}
 							$suffix = "_".$j."_".$i;
 						}
-						
+
 						if ($j == 0) {
 							if (isModEnabled('productbatch') && !empty($objp->tobatch)) {
 								$type = 'batch';
@@ -972,7 +972,7 @@ if ($id > 0 || !empty($ref)) {
 							}
 
 							print '</td>';
-							
+
 							// Warehouse
 							print '<td class="right">';
 							if (count($listwarehouses) > 1) {

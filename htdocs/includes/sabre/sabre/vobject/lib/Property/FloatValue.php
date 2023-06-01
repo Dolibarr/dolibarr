@@ -15,8 +15,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class FloatValue extends Property {
-
+class FloatValue extends Property
+{
     /**
      * In case this is a multi-value property. This string will be used as a
      * delimiter.
@@ -32,17 +32,14 @@ class FloatValue extends Property {
      * not yet done, but parameters are not included.
      *
      * @param string $val
-     *
-     * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $val = explode($this->delimiter, $val);
         foreach ($val as &$item) {
-            $item = (float)$item;
+            $item = (float) $item;
         }
         $this->setParts($val);
-
     }
 
     /**
@@ -50,13 +47,12 @@ class FloatValue extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         return implode(
             $this->delimiter,
             $this->getParts()
         );
-
     }
 
     /**
@@ -67,10 +63,9 @@ class FloatValue extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'FLOAT';
-
     }
 
     /**
@@ -80,20 +75,19 @@ class FloatValue extends Property {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         $val = array_map('floatval', $this->getParts());
 
         // Special-casing the GEO property.
         //
         // See:
         // http://tools.ietf.org/html/draft-ietf-jcardcal-jcal-04#section-3.4.1.2
-        if ($this->name === 'GEO') {
+        if ('GEO' === $this->name) {
             return [$val];
         }
 
         return $val;
-
     }
 
     /**
@@ -101,42 +95,32 @@ class FloatValue extends Property {
      * object.
      *
      * @param array $value
-     *
-     * @return void
      */
-    function setXmlValue(array $value) {
-
+    public function setXmlValue(array $value)
+    {
         $value = array_map('floatval', $value);
         parent::setXmlValue($value);
-
     }
 
     /**
      * This method serializes only the value of a property. This is used to
      * create xCard or xCal documents.
      *
-     * @param Xml\Writer $writer  XML writer.
-     *
-     * @return void
+     * @param Xml\Writer $writer XML writer
      */
-    protected function xmlSerializeValue(Xml\Writer $writer) {
-
+    protected function xmlSerializeValue(Xml\Writer $writer)
+    {
         // Special-casing the GEO property.
         //
         // See:
         // http://tools.ietf.org/html/rfc6321#section-3.4.1.2
-        if ($this->name === 'GEO') {
-
+        if ('GEO' === $this->name) {
             $value = array_map('floatval', $this->getParts());
 
             $writer->writeElement('latitude', $value[0]);
             $writer->writeElement('longitude', $value[1]);
-
-        }
-        else {
+        } else {
             parent::xmlSerializeValue($writer);
         }
-
     }
-
 }

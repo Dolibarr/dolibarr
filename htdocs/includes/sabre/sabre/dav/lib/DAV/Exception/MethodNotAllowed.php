@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Exception;
 
 use Sabre\DAV;
 
 /**
- * MethodNotAllowed
+ * MethodNotAllowed.
  *
  * The 405 is thrown when a client tried to create a directory on an already existing directory
  *
@@ -13,17 +15,16 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MethodNotAllowed extends DAV\Exception {
-
+class MethodNotAllowed extends DAV\Exception
+{
     /**
-     * Returns the HTTP statuscode for this exception
+     * Returns the HTTP statuscode for this exception.
      *
      * @return int
      */
-    function getHTTPCode() {
-
+    public function getHTTPCode()
+    {
         return 405;
-
     }
 
     /**
@@ -32,16 +33,15 @@ class MethodNotAllowed extends DAV\Exception {
      * The headers must be returned as an array.
      *
      * @param \Sabre\DAV\Server $server
+     *
      * @return array
      */
-    function getHTTPHeaders(\Sabre\DAV\Server $server) {
-
+    public function getHTTPHeaders(\Sabre\DAV\Server $server)
+    {
         $methods = $server->getAllowedMethods($server->getRequestUri());
 
         return [
             'Allow' => strtoupper(implode(', ', $methods)),
         ];
-
     }
-
 }

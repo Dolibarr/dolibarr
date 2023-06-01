@@ -278,7 +278,7 @@ abstract class ActionsContactCardCommon
 	/**
 	 *  Assign POST values into object
 	 *
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post()
 	{
