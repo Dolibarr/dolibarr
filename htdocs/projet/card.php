@@ -984,7 +984,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '<br>';
 			}
 			if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-				print '<input type="checkbox" id="usage_task" name="usage_task"' . (GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')) . '"> ';
+				print '<input type="checkbox" id="usage_task" name="usage_task"' . (GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')) . '> ';
 				$htmltext = $langs->trans("ProjectFollowTasks");
 				print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
 				print '<script>';
@@ -1023,7 +1023,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 					function set_usage_bill_time() {
 						console.log("set_usage_bill_time");
-						if (jQuery("#usage_bill_time").prop("checked")) {
+						if (jQuery("#usage_bill_time").prop("checked") || jQuery("#usage_task").prop("checked") ) {
 							console.log("Show bill time fields");
 							jQuery(".classusebilltime").show();
 						} else {
@@ -1250,7 +1250,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '<br>';
 			}
 			if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-				print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+				print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'> ';
 				$htmltext = $langs->trans("ProjectFollowTasks");
 				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 				print '<br>';
