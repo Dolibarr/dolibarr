@@ -39,6 +39,7 @@ EndSubscription=Fin adhésion
 SubscriptionId=Id adhésion
 WithoutSubscription=Sans adhésion
 WaitingSubscription=Adhésion en attente
+WaitingSubscriptionShort=En attente
 MemberId=ID adhérent
 MemberRef=Réf adhérent
 NewMember=Nouvel adhérent

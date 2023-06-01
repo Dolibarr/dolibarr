@@ -306,7 +306,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'unlinkdiscount' && $usercancreate) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
-		$result = $discount->fetch(GETPOST("discountid"));
+		$result = $discount->fetch(GETPOSTINT("discountid"));
 		$discount->unlink_invoice();
 	} elseif ($action == 'valid' && $usercancreate) {
 		// Validation
@@ -5211,7 +5211,9 @@ if ($action == 'create') {
 				print '</td>';
 				print '<td class="right"><span class="amount">'.price($obj->amount_ttc).'</span></td>';
 				print '<td class="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">'.img_delete().'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">';
+				print img_picto($langs->trans("RemoveDiscount"), 'unlink');
+				print '</a>';
 				print '</td></tr>';
 				$i++;
 				if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
