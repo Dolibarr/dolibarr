@@ -29,7 +29,7 @@ class mailing_partnership extends MailingTargets
 	public $desc = "Thirdparties or members included into a partnership program";
 	public $require_admin = 0;
 
-	public $require_module = array(); // This module allows to select by categories must be also enabled if category module is not activated
+	public $require_module = array('partnership'); // This module allows to select by categories must be also enabled if category module is not activated
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
