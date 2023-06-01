@@ -1,14 +1,14 @@
 <?php
 
-include __DIR__ . '/../vendor/autoload.php';
+include __DIR__.'/../vendor/autoload.php';
 
 if ($argc < 4) {
-    echo "sabre/vobject ", Sabre\VObject\Version::VERSION, " RRULE benchmark\n";
+    echo 'sabre/vobject ', Sabre\VObject\Version::VERSION, " RRULE benchmark\n";
     echo "\n";
     echo "This script can be used to measure the speed of the 'recurrence expansion'\n";
-    echo "system.";
+    echo 'system.';
     echo "\n";
-    echo "Usage: " . $argv[0] . " inputfile.ics startdate enddate\n";
+    echo 'Usage: '.$argv[0]." inputfile.ics startdate enddate\n";
     die();
 }
 

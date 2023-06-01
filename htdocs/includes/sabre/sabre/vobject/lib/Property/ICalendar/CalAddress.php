@@ -14,8 +14,8 @@ use
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CalAddress extends Text {
-
+class CalAddress extends Text
+{
     /**
      * In case this is a multi-value property. This string will be used as a
      * delimiter.
@@ -32,10 +32,9 @@ class CalAddress extends Text {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'CAL-ADDRESS';
-
     }
 
     /**
@@ -48,14 +47,14 @@ class CalAddress extends Text {
      *
      * @return string
      */
-    function getNormalizedValue() {
-
+    public function getNormalizedValue()
+    {
         $input = $this->getValue();
         if (!strpos($input, ':')) {
             return $input;
         }
         list($schema, $everythingElse) = explode(':', $input, 2);
-        return strtolower($schema) . ':' . $everythingElse;
 
+        return strtolower($schema).':'.$everythingElse;
     }
 }

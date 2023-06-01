@@ -511,7 +511,7 @@ if ($id > 0) {		// For user tab
 
 		print '<br>';
 
-		showMyBalance($object, $user_id);
+		print showMyBalance($object, $user_id);
 	}
 
 	print dol_get_fiche_end();
@@ -1109,9 +1109,9 @@ $db->close();
  */
 function showMyBalance($holiday, $user_id)
 {
-	global $conf, $langs;
+	global $langs;
 
-	$alltypeleaves = $holiday->getTypes(1, -1); // To have labels
+	//$alltypeleaves = $holiday->getTypes(1, -1); // To have labels
 
 	$out = '';
 	$nb_holiday = 0;
@@ -1121,6 +1121,7 @@ function showMyBalance($holiday, $user_id)
 		$nb_holiday += $nb_type;
 		$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 	}
-	print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
-	print $out;
+	$out = $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>'.$out;
+
+	return $out;
 }

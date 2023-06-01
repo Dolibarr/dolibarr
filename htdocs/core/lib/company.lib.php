@@ -53,7 +53,7 @@ function societe_prepare_head(Societe $object)
 	$h++;
 
 	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
-		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire) {
+		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->hasRight('societe', 'contact', 'lire')) {
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0;
 			// Enable caching of thirdrparty count Contacts
@@ -2367,9 +2367,9 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
 	}
 
-	print '<!-- htmlPrintOnlinePaymentFooter -->'."\n";
+	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
-	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
+	print '<footer class="center paddingleft paddingright opacitymedium centpercent">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';

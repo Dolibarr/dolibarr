@@ -1338,7 +1338,7 @@ class Account extends CommonObject
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         <0 if KO, >0 if OK
 	 */
 	public function load_state_board($filteraccountid = 0)
 	{
@@ -1366,6 +1366,7 @@ class Account extends CommonObject
 				$this->nb["banklines"] = $obj->nb;
 			}
 			$this->db->free($resql);
+			return 1;
 		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
@@ -2611,7 +2612,8 @@ class AccountLine extends CommonObjectLine
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		//global $langs;
+
 		//$langs->load('companies');
 		/*
 		if ($mode == 0)
@@ -2644,6 +2646,8 @@ class AccountLine extends CommonObjectLine
 			if ($status==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
 			if ($status==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
 		}*/
+
+		return '';
 	}
 
 

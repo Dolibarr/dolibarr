@@ -1,6 +1,67 @@
 ChangeLog
 =========
 
+4.2.2 (2020-01-14)
+------------------
+
+* #465: Add TZ in iTip REPLY iTip messages
+* #486: Add PHONE-NUMBER value type (used for TEL in vCard 3.0)
+
+4.2.1 (2019-12-18)
+------------------
+
+* #469, #451: fix compat with php 7.4
+* #443: prevent running in indefinte loop
+* #449: Preventing creating a component for a root document
+* #450: Fix parse with option Forgiving with trailing equal
+* #459: fixed typo in VCalendar which resulting in usage of the wrong TimeZone
+* #462: Broker::parseEventForOrganizer copies DTSTAMP from $eventInfo that causes broken scheduling
+
+4.2.0 (2019-02-19)
+------------------
+
+* #432: DTSTAMP must be specified in UTC
+* #435: ORGANIZER e-mail address are case-insensitive
+* #441: Repairing BASE64 encoded vCard version 3
+
+4.2.0-alpha1 (2018-09-26)
+-------------------------
+
+* #412: Broker: add timezone to CANCEL messages
+* #424: Support php7.3
+
+4.1.6 (2018-04-20)
+------------------
+
+* #406, #407, #408, #409: Another round of performance improvements in serialization of properties (@gharlan, @staabm)
+* #410: Fixes in iTip for handling `BYDAY=SA,SO` (@gharlan)
+* #381: Fixes in iTip handling of `SCHEDULE-FORCE-SEND` (@alecpl)
+
+4.1.5 (2018-03-08)
+------------------
+
+* #404: Serialization: Performance boost for long properties (@gharlan)
+
+4.1.4 (2017-12-22)
+------------------
+
+* #383: Fix possible infinite loop in RRuleIterator, when the RRule FREQ
+  is YEARLY and it uses BYYEARDAY only (@mvdnes).
+* #392: Improved significant change detection. This should reduce the number of
+  unneeded update emails in scheduling systems. (@alecpl).
+* #395: Removed `Canada/East-Saskatchewan` timezone, as it got removed
+  from PHP as well. (@remicollet).
+
+
+4.1.3 (2017-10-18)
+------------------
+
+* #363: Repair script and de-duplicate properties that are only allowed once,
+  but appear more than once. (@ddolcimascolo).
+* #377: Added Pacific Time (US & Canada) as exchange timezone
+* #384: Added fallback for VCards without `FN`
+
+
 4.1.2 (2016-12-15)
 ------------------
 

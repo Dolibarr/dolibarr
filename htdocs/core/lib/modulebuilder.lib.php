@@ -950,3 +950,112 @@ function removeObjectFromApiFile($file, $objectname, $modulename)
 	}
 	return 1;
 }
+
+/**
+ * Compare menus by their object
+ * @param  mixed  $a  first value
+ * @param  mixed  $b  seconde value
+ * @return int        1 if OK, -1 if KO
+ */
+function compareMenus($a, $b)
+{
+	return strcmp($a['fk_menu'], $b['fk_menu']);
+}
+
+/**
+ * @param    string         $file       path of filename
+ * @param    mixed          $menus      all menus for module
+ * @param    mixed|null     $menuWantTo  menu get for do actions
+ * @param    int|null       $key        key for the concerned menu
+ * @param    int            $action     for specify what action (0 = delete, 1 = add, 2 = update, -1 = when delete object)
+ * @return   int            1 if OK, -1 if KO
+ */
+function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
+{
+	$errors =0;
+	$counter = 0;
+	if (!file_exists($file)) {
+		return -1;
+	}
+	if ($action == 0 && !empty($key)) {
+		// delete menu manuelly
+		array_splice($menus, array_search($menus[$key], $menus), 1);
+	} elseif ($action == 1) {
+		// add menu manualy
+		array_push($menus, $menuWantTo);
+	} elseif ($action == 2 && !empty($key) && !empty($menuWantTo)) {
+		// update right from permissions array
+
+		// check if the values already exists
+		foreach ($menus as $index => $menu) {
+			if ($index !== $key) {
+				if ($menu['type'] === $menuWantTo['type']) {
+					if (strcasecmp(str_replace(' ', '', $menu['titre']), str_replace(' ', '', $menuWantTo['titre'])) === 0) {
+						$counter++;
+					}
+					if (strcasecmp(str_replace(' ', '', $menu['url']), str_replace(' ', '', $menuWantTo['url'])) === 0) {
+						$counter++;
+					}
+				}
+			}
+		}
+		if (!$counter) {
+			$menus[$key] = $menuWantTo;
+		} else {
+			$errors++;
+		}
+	} elseif ($action == -1 && !empty($menuWantTo)) {
+		// delete menus when delete Object
+		foreach ($menus as $index => $menu) {
+			if ((strpos(strtolower($menu['fk_menu']), strtolower($menuWantTo)) !== false) || (strpos(strtolower($menu['leftmenu']), strtolower($menuWantTo)) !== false)) {
+				array_splice($menus, array_search($menu, $menus), 1);
+			}
+		}
+	} else {
+		$errors++;
+	}
+	if (!$errors) {
+		// delete All LEFT Menus
+		$beginMenu = '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */';
+		$endMenu = '/* END MODULEBUILDER LEFTMENU MYOBJECT */';
+		$allMenus = getFromFile($file, $beginMenu, $endMenu);
+		dolReplaceInFile($file, array($allMenus => ''));
+
+		// orders menu with other menus that have the same object
+		usort($menus, 'compareMenus');
+
+		//prepare each menu and stock them in string
+		$str_menu = "";
+		foreach ($menus as $index =>$menu) {
+			$menu['position'] = "1000 + \$r";
+			if ($menu['type'] === 'left') {
+				$start = "\t\t".'/* LEFTMENU '.strtoupper($menu['titre']).' */';
+				$end   = "\t\t".'/* END LEFTMENU '.strtoupper($menu['titre']).' */';
+				$val_actuel = $menu;
+				$next_val = $menus[$index + 1];
+				$str_menu .= $start."\n";
+				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
+				$str_menu.= "\t\t\t 'fk_menu' =>'".$menu['fk_menu']."',\n";
+				$str_menu.= "\t\t\t 'type' =>'".$menu['type']."',\n";
+				$str_menu.= "\t\t\t 'titre' =>'".$menu['titre']."',\n";
+				$str_menu.= "\t\t\t 'mainmenu' =>'".$menu['mainmenu']."',\n";
+				$str_menu.= "\t\t\t 'leftmenu' =>'".$menu['leftmenu']."',\n";
+				$str_menu.= "\t\t\t 'url' =>'".$menu['url']."',\n";
+				$str_menu.= "\t\t\t 'langs' =>'".$menu['langs']."',\n";
+				$str_menu.= "\t\t\t 'position' =>".$menu['position'].",\n";
+				$str_menu.= "\t\t\t 'enabled' =>'".$menu['enabled']."',\n";
+				$str_menu.= "\t\t\t 'perms' =>'".$menu['perms']."',\n";
+				$str_menu.= "\t\t\t 'target' =>'".$menu['target']."',\n";
+				$str_menu.= "\t\t\t 'user' =>".$menu['user'].",\n";
+				$str_menu.= "\t\t);\n";
+
+				if ($val_actuel['leftmenu'] !== $next_val['leftmenu']) {
+					$str_menu .= $end."\n";
+				}
+			}
+		}
+
+		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
+		return 1;
+	}return -1;
+}

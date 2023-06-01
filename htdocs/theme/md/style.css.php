@@ -934,6 +934,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
@@ -1079,6 +1083,9 @@ textarea.centpercent {
 }
 .wordbreak {
 	word-break: break-all;
+}
+td.wordbreak img {
+	max-width: 100%;
 }
 .bold {
 	font-weight: bold !important;
@@ -2361,7 +2368,6 @@ div.backgroundsemitransparent {
 }
 
 
-
 #id-right {
 	padding-<?php print $left; ?>: 0 ! important;
 }
@@ -2446,6 +2452,23 @@ div.fichehalfright {
 	<?php if ($conf->browser->layout == 'phone') {
 		print "margin-top: 10px;\n";
 	} ?>
+}
+
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 1499px)
+{
+	div.fichehalfleft-lg {
+		float: none;
+		width: auto;
+	}
+	div.fichehalfright-lg {
+		float: none;
+		width: auto;
+	}
+
+	.fichehalfright-lg .fichehalfright {
+		padding-left:0;
+	}
 }
 
 /*div.firstcolumn div.box {
@@ -3122,6 +3145,13 @@ table.login_table_securitycode tr td {
 	max-width: 170px;
 	max-height: 90px;
 }
+.loginbuttonexternal {
+	width: 300px;
+	margin: auto;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 5px;
+}
 
 
 .atoplogin.dropdown .dropdown-menu {
@@ -3419,7 +3449,7 @@ div.blockvmenupair, div.blockvmenuimpair
 	background: var(--colorbackvmenu1);
 
 	padding-bottom: 10px;
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e8e8e8;
 }
 div.blockvmenubookmarks
 {
@@ -3581,7 +3611,7 @@ div.tabBar {
 	padding-left: 24px;
 	padding-right: 24px;
 	padding-bottom: 23px;
-	margin: 0px 0px 18px 0px;
+	margin: 0px 0px 20px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border-right: 1px solid #CCC;
@@ -4554,7 +4584,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .tagtr:nth-child(even):not(:last-of-type) .oddeven.tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e8e8e8;
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
@@ -4572,7 +4602,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e8e8e8;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -4700,8 +4730,10 @@ span.dashboardlineko {
 	color: #FFFFFF ! important;
 	border-radius: .25em;
 }
-.boxtable {
+.divboxtable {
 	margin-bottom: 20px !important;
+}
+.boxtable {
 	border-bottom-width: 1px;
 }
 .boxtablenotop {
@@ -4989,7 +5021,7 @@ span.buttonpaymentsmall {
 	min-width: 320px; font-size: 16px;
 }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; margin-bottom: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
@@ -5055,7 +5087,7 @@ div#card-errors {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* Formulaire confirmation (When Ajax JQuery is used) and Dialog popups           */
 /* ============================================================================== */
 
 .ui-dialog-titlebar {
@@ -5064,7 +5096,7 @@ div#card-errors {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
 
 div#dialogforpopup {
@@ -6612,7 +6644,7 @@ div.multi-select-menu[role="menu"] {
   height: 0;
   border-style: solid;
   border-width: 0.5em 0.23em 0em 0.23em;
-  border-color: #444 transparent transparent transparent;
+  border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
 }
 
@@ -6620,7 +6652,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-container--open .multi-select-button:after {
   border-width: 0 0.4em 0.4em 0.4em;
-  border-color: transparent transparent #999 transparent;
+  border-color: transparent transparent #888 transparent;
 }
 
 .multi-select-menuitem {
@@ -6630,6 +6662,7 @@ div.multi-select-menu[role="menu"] {
 }
 label.multi-select-menuitem {
 	line-height: 24px;
+	text-align: start;
 }
 
 

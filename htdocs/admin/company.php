@@ -118,7 +118,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 		// Remove to check file size to large
 		/*if ($_FILES[$varforimage]["tmp_name"]) {*/
-			$reg = array();
+		$reg = array();
 		if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
 			$original_file = $reg[1];
 
