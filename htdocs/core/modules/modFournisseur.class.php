@@ -814,6 +814,7 @@ class modFournisseur extends DolibarrModules
 			'cd.fk_commande'    => 'PurchaseOrder*',
 			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product'     => 'IdProduct',
+			'cd.ref'     		=> 'Ref',
 			'cd.description'    => 'LineDescription',
 			'cd.tva_tx'         => 'LineVATRate',
 			'cd.qty'            => 'LineQty',
