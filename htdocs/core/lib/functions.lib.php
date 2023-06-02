@@ -2084,7 +2084,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				}
 			} elseif (!empty($links[$i][1])) {
 				$outmore .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
-				$outmore .= preg_replace('/([a-z])\/([a-z])/i', '\\1 / \\2', $links[$i][1]); // Replace x/y with x / y to allow wrap on long composed texts.
+				$outmore .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
 				$outmore .= '</a>'."\n";
 			}
 			$outmore .= '</div>';
@@ -4202,7 +4202,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
-				'gears', 'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+				'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'hands-helping', 'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
 				'knowledgemanagement',
@@ -4442,7 +4442,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($srconly) {
 		return $fullpathpicto;
 	}
-		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
+
+	// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
 	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
