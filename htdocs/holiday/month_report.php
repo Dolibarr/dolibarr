@@ -35,20 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('holiday', 'hrm'));
 
-// Security check
-$socid = 0;
-$id = GETPOST('id', 'int');
-
-if ($user->socid > 0) {	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-$result = restrictedArea($user, 'holiday', $id, '');
-
 $action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
 $optioncss   = GETPOST('optioncss', 'aZ');
+$socid = 0;
+$id = GETPOST('id', 'int');
 
 $search_ref         = GETPOST('search_ref', 'alphanohtml');
 $search_employee    = GETPOST('search_employee', 'int');
@@ -75,6 +67,14 @@ $hookmanager->initHooks(array('leavemovementlist'));
 
 $arrayfields = array();
 $arrayofmassactions = array();
+
+// Security check
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+$result = restrictedArea($user, 'holiday', $id, '');
+
 
 /*
  * Actions
@@ -352,9 +352,9 @@ print '</tr>';
 if ($num == 0) {
 	print '<tr><td colspan="11"><span class="opacitymedium">'.$langs->trans('None').'</span></td></tr>';
 } else {
+	$tmpuser = new User($db);
 	while ($obj = $db->fetch_object($resql)) {
-		$user = new User($db);
-		$user->fetch($obj->fk_user);
+		$tmpuser->fetch($obj->fk_user);
 
 		$date_start = $db->jdate($obj->date_debut, true);
 		$date_end = $db->jdate($obj->date_fin, true);
@@ -421,7 +421,7 @@ if ($num == 0) {
 			print '<td>'.$arraytypeleaves[$obj->fk_type].'</td>';
 		}
 		if (!empty($arrayfields['cp.fk_user']['checked'])) {
-			print '<td class="tdoverflowmax150">'.$user->getFullName($langs).'</td>';
+			print '<td class="tdoverflowmax150">'.$tmpuser->getNomUrl(-1).'</td>';
 		}
 
 		if (!empty($arrayfields['cp.date_debut']['checked'])) {
