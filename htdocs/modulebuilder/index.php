@@ -2521,7 +2521,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 		if (GETPOST('type') == 'left') {
 			unset($menuToAdd['prefix']);
 			if (empty(GETPOST('fk_menu'))) {
-				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha').'';
+				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha');
 			} else {
 				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha').',fk_leftmenu='.GETPOST('fk_menu');
 			}
