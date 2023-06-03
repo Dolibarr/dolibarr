@@ -320,10 +320,8 @@ if (empty($reshook)) {
 
 				// External modules should update their ones too
 				if (!$error) {
-					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
-						'soc_origin' => $soc_origin->id,
-						'soc_dest' => $object->id
-					), $object, $action);
+					$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $object->id);
+					$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $object, $action);
 
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
