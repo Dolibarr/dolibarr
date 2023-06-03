@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required because used in classes that inherit
 
-use \Sprain\SwissQrBill;
+use Sprain\SwissQrBill;
 
 /**
  *	Parent class of invoice document generators
