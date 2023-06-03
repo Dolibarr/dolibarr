@@ -219,8 +219,9 @@ if ($result > 0) {
 
 	// Amount
 	print '<tr><td>'.$langs->trans('Amount').'</td>';
-	print '<td>'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
+	print '<td><span class="amount">'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</span></td></tr>';
 
+	// Status of validation of payment
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 		print '<tr><td>'.$langs->trans('Status').'</td>';
 		print '<td>'.$object->getLibStatut(4).'</td></tr>';
