@@ -506,7 +506,7 @@ class VCard extends VObject\Document {
                 switch ($property->name) {
 
                     case 'VERSION':
-                        continue;
+                       break;
 
                     case 'XML':
                         $value = $property->getParts();
