@@ -153,7 +153,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 		if (empty($forceseed)) {
 			$ivseed = dolGetRandomBytes($ivlen);
 		} else {
-			$ivseed = dol_trunc(md5($forceseed), $ivlen, 'right', 'UTF-8', 1);
+			$ivseed = dol_substr(md5($forceseed), 0, $ivlen, 'ascii', 1);
 		}
 
 		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
