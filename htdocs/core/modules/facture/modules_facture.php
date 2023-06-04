@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required because used in classes that inherit
 
-use \Sprain\SwissQrBill;
+use Sprain\SwissQrBill;
 
 /**
  *	Parent class of invoice document generators
@@ -83,9 +83,9 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * Get the SwissQR object, including validation
 	 *
-	 * @param Facture 		$object  	Invoice object
-	 * @param Translate 	$langs 		Translation object
-	 * @return SwissQrBill|bool 		The valid SwissQR object, or false
+	 * @param 	Facture 				$object  	Invoice object
+	 * @param 	Translate 				$langs 		Translation object
+	 * @return 	SwissQrBill\QrBill|bool 			The valid SwissQR object, or false
 	 */
 	private function getSwissQrBill(Facture $object, Translate $langs)
 	{
@@ -108,7 +108,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		// Create a new instance of SwissQrBill, containing default headers with fixed values
 		$qrBill = SwissQrBill\QrBill::create();
 
-		// First, check creditor address
+		// First, set creditor address
 		$address = SwissQrBill\DataGroup\Element\CombinedAddress::create(
 			$this->emetteur->name,
 			$this->emetteur->address,
@@ -160,7 +160,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 			)
 		);
 
-		// Check debtor address; We _know_ zip&town have to be filled, so skip that if unfilled.
+		// Set debtor address; We _know_ zip&town have to be filled, so skip that if unfilled.
 		if (!empty($object->thirdparty->zip) && !empty($object->thirdparty->town)) {
 			$address = SwissQrBill\DataGroup\Element\CombinedAddress::create(
 				$object->thirdparty->name,
@@ -181,12 +181,12 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * Get the height for bottom-page QR invoice in mm, depending on the page number.
 	 *
-	 * @param int       $pagenbr Page number
-	 * @param Facture   $object  Invoice object
-	 * @param Translate $langs   Translation object
-	 * @return int      Height in mm of the bottom-page QR invoice. Can be zero if not on right page; not enabled
+	 * @param int       $pagenbr 	Page number
+	 * @param Facture   $object  	Invoice object
+	 * @param Translate $langs   	Translation object
+	 * @return int      			Height in mm of the bottom-page QR invoice. Can be zero if not on right page; not enabled
 	 */
-	protected function getHeightForQRInvoice(int $pagenbr, \Facture $object, \Translate $langs) : int
+	protected function getHeightForQRInvoice(int $pagenbr, Facture $object, Translate $langs) : int
 	{
 		if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 			// Keep it, to reset it after QRinvoice getter
@@ -209,12 +209,12 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * Add SwissQR invoice at bottom of page 1
 	 *
-	 * @param TCPDF     $pdf     TCPDF object
-	 * @param Facture   $object  Invoice object
-	 * @param Translate $langs   Translation object
-	 * @return bool for success
+	 * @param TCPDF     $pdf     	TCPDF object
+	 * @param Facture   $object  	Invoice object
+	 * @param Translate $langs   	Translation object
+	 * @return bool 				True for for success
 	 */
-	public function addBottomQRInvoice(\TCPDF $pdf, \Facture $object, \Translate $langs) : bool
+	public function addBottomQRInvoice(TCPDF $pdf, Facture $object, Translate $langs) : bool
 	{
 		if (!($qrBill = $this->getSwissQrBill($object, $langs))) {
 			return false;

@@ -358,12 +358,10 @@ if (empty($reshook)) {
 
 				// External modules should update their ones too
 				if (!$error) {
+					$parameters = array('soc_origin' => $productOrigin->id, 'soc_dest' => $object->id);
 					$reshook = $hookmanager->executeHooks(
 						'replaceProduct',
-						array(
-							'soc_origin' => $productOrigin->id,
-							'soc_dest' => $object->id,
-						),
+						$parameters,
 						$object,
 						$action
 					);

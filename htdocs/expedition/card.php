@@ -224,7 +224,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
-		$object->note = GETPOST('note', 'alpha');
+		$object->note = GETPOST('note', 'restricthtml');
+		$object->note_private = GETPOST('note', 'restricthtml');
 		$object->origin = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOST('projectid', 'int');

@@ -153,7 +153,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 		if (empty($forceseed)) {
 			$ivseed = dolGetRandomBytes($ivlen);
 		} else {
-			$ivseed = dol_trunc(md5($forceseed), $ivlen, 'right', 'UTF-8', 1);
+			$ivseed = dol_substr(md5($forceseed), 0, $ivlen, 'ascii', 1);
 		}
 
 		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
@@ -847,14 +847,15 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$feature = 'agenda';
 			$dbtablename = 'actioncomm';
 		}
-
 		if ($feature == 'payment_sc') {
 			$feature = "chargesociales";
+			$objectid = $object->fk_charge;
 		}
+
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment','chargesociales'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkother = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -1002,7 +1003,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		//var_dump($checkonentitydone);
+		//var_dump($sql);
 
 		if (!$checkonentitydone && !in_array($feature, $nocheck) && $objectid > 0) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 			// If external user: Check permission for external users

@@ -289,6 +289,12 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 if (!empty($canvas)) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
+if ($search_ref) {
+	$sql .= natural_search('p.ref', $search_ref);
+}
+if ($search_nom) {
+	$sql .= natural_search('p.label', $search_nom);
+}
 $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.pmp, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms, p.duration, p.tobuy, p.stock';
 // Add where from hooks

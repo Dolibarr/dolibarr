@@ -455,3 +455,5 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.2', 'ΑΠΥ', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.3', 'Απλοποιημένο Τιμολόγιο', 0);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.5', 'Απόδειξη Λιανικής Πώλησης για Λογ/σμό Τρίτων', 0);
+
+ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_member;

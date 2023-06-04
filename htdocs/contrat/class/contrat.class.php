@@ -738,6 +738,10 @@ class Contrat extends CommonObject
 					}
 
 					return $this->id;
+				} else {
+					dol_syslog(get_class($this)."::fetch Contract failed");
+					$this->error = "Fetch contract failed";
+					return -1;
 				}
 			} else {
 				dol_syslog(get_class($this)."::fetch Contract not found");
@@ -1664,7 +1668,7 @@ class Contrat extends CommonObject
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	string		$rang 				Position
-	 *  @return int              				< 0 si erreur, > 0 si ok
+	 *  @return int              				<0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = 0, $fk_unit = null, $rang = 0)
 	{
@@ -1819,6 +1823,9 @@ class Contrat extends CommonObject
 
 				$this->db->commit();
 				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
 			}
 		} else {
 			$this->db->rollback();

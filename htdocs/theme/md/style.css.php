@@ -980,6 +980,9 @@ th .button {
 .centpercentimp {
 	width: 100% !important;
 }
+.centpercentwithout1imp {
+	width: calc(100% - 1px) !important;
+}
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
 }

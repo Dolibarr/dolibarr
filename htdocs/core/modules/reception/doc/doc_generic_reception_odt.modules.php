@@ -42,12 +42,6 @@ class doc_generic_reception_odt extends ModelePdfReception
 	public $emetteur; // Objet societe qui emet
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';

@@ -442,7 +442,7 @@ if ($action == 'create') {
 			// Incoterms
 			if (isModEnabled('incoterm')) {
 				print '<tr><td>';
-				print '<table width="100%" class="nobordernopadding"><tr><td>';
+				print '<table class="centpercent nobordernopadding"><tr><td>';
 				print $langs->trans('IncotermLabel');
 				print '<td><td class="right">';
 				if ($user->rights->expedition->delivery->creer) {
@@ -465,13 +465,13 @@ if ($action == 'create') {
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			print nl2br($object->note_public);
+			print dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_public));
 			print "</td></tr>";
 
 			// Note Private
 			print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 			print '<td colspan="3">';
-			print nl2br($object->note_private);
+			print dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private));
 			print "</td></tr>";
 			*/
 

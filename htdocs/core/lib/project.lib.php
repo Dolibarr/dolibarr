@@ -619,6 +619,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	// We declare counter as global because we want to edit them into recursive call
 	global $total_projectlinesa_spent, $total_projectlinesa_planned, $total_projectlinesa_spent_if_planned, $total_projectlinesa_declared_if_planned, $total_projectlinesa_tobill, $total_projectlinesa_billed, $total_budget_amount;
+	global $totalarray;
 
 	if ($level == 0) {
 		$total_projectlinesa_spent = 0;
@@ -628,6 +629,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		$total_projectlinesa_tobill = 0;
 		$total_projectlinesa_billed = 0;
 		$total_budget_amount = 0;
+		$totalarray = array();
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -700,6 +702,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->duration_effective = $lines[$i]->duration;
 				$taskstatic->budget_amount = $lines[$i]->budget_amount;
 
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					$selected = 0;
+					if (in_array($lines[$i]->id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb' . $lines[$i]->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lines[$i]->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
+					print '</td>';
+				}
 
 				if ($showproject) {
 					// Project ref
@@ -936,14 +948,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td class="tdlineupdown center"></td>';
 
 				// Action column
-				print '<td class="nowrap" align="center">';
-				$selected = 0;
-				if (in_array($lines[$i]->id, $arrayofselected)) {
-					$selected = 1;
-				}
-				print '<input id="cb' . $lines[$i]->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lines[$i]->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					$selected = 0;
+					if (in_array($lines[$i]->id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb' . $lines[$i]->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lines[$i]->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 
-				print '</td>';
+					print '</td>';
+				}
 
 				print "</tr>\n";
 
@@ -976,6 +990,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0 || $total_budget_amount > 0)
 		&& $level <= 0) {
 		print '<tr class="liste_total nodrag nodrop">';
+
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class=""></td>';
+		}
+
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		if ($showproject) {
 			print '<td></td><td></td>';
@@ -1092,18 +1111,21 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			print '<td></td>';
 		}
 
-		//Check if Extrafields is totalizable
-		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key=>$value) {
-			if ($arrayfields['ef.'.$key]['checked'] == 1) {
-				print '<td align="right">';
+		// Check if Extrafields is totalizable
+		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
+			if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
+				print '<td class="right">';
 				if ($value == 1) {
-					print $totalarray['totalizable'][$key]['total'];
+					print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
 				}
 				print '</td>';
 			}
 		}
 
-		print '<td class=""></td>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class=""></td>';
+		}
+
 		print '</tr>';
 	}
 
