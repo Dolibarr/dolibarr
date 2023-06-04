@@ -98,7 +98,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !emp
 
 		// Check URL is external
 		if (!getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS')) {
-			if (!empty($newUrlArray['path']) && preg_match('/\.svg/i', $newUrlArray['path'])) {
+			if (!empty($newUrlArray['path']) && preg_match('/\.svg$/i', $newUrlArray['path'])) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans('ErrorSVGFilesNotAllowedAsLinksWithout', 'MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS'), null, 'errors');
@@ -106,7 +106,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !emp
 		}
 		// Alow external links to svg ?
 		if (!getDolGlobalString('MAIN_ALLOW_LOCAL_LINKS_AS_EXTERNAL_LINKS')) {
-			// Test $newUrlAray['host'] to check link is external
+			// Test $newUrlAray['host'] to check link is external using isIPAllowed()
 			// TODO
 		}
 
