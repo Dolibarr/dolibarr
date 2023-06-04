@@ -244,7 +244,7 @@ class UserGroup extends CommonObject
 
 		$ret = array();
 
-		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.photo, u.fk_soc, u.entity, u.employee, u.email";
+		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.photo, u.fk_soc, u.entity, u.employee, u.email, u.statut as status";
 		if (!empty($this->id)) {
 			$sql .= ", ug.entity as usergroup_entity";
 		}
@@ -286,6 +286,7 @@ class UserGroup extends CommonObject
 						$newuser->socid = $obj->fk_soc;
 						$newuser->entity = $obj->entity;
 						$newuser->employee = $obj->employee;
+						$newuser->status = $obj->status;
 
 						$ret[$obj->rowid] = $newuser;
 					} else {
