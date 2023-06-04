@@ -9350,22 +9350,22 @@ class Form
 	}
 
 	/**
-	 *    Return a HTML area with the reference of object and a navigation bar for a business object
-	 *    Note: To complete search with a particular filter on select, you can set $object->next_prev_filter set to define SQL criterias.
+	 * Return a HTML area with the reference of object and a navigation bar for a business object
+	 * Note: To complete search with a particular filter on select, you can set $object->next_prev_filter set to define SQL criterias.
 	 *
-	 * @param object $object Object to show.
-	 * @param string $paramid Name of parameter to use to name the id into the URL next/previous link.
-	 * @param string $morehtml More html content to output just before the nav bar.
-	 * @param int $shownav Show Condition (navigation is shown if value is 1).
-	 * @param string $fieldid Name of field id into database to use for select next and previous (we make the select max and min on this field compared to $object->ref). Use 'none' to disable next/prev.
-	 * @param string $fieldref Name of field ref of object (object->ref) to show or 'none' to not show ref.
-	 * @param string $morehtmlref More html to show after ref.
-	 * @param string $moreparam More param to add in nav link url. Must start with '&...'.
-	 * @param int $nodbprefix Do not include DB prefix to forge table name.
-	 * @param string $morehtmlleft More html code to show before ref.
-	 * @param string $morehtmlstatus More html code to show under navigation arrows (status place).
-	 * @param string $morehtmlright More html code to show after ref.
-	 * @return    string                    Portion HTML with ref + navigation buttons
+	 * @param object 	$object 		Object to show.
+	 * @param string 	$paramid 		Name of parameter to use to name the id into the URL next/previous link.
+	 * @param string 	$morehtml 		More html content to output just before the nav bar.
+	 * @param int 		$shownav 		Show Condition (navigation is shown if value is 1).
+	 * @param string 	$fieldid 		Name of field id into database to use for select next and previous (we make the select max and min on this field compared to $object->ref). Use 'none' to disable next/prev.
+	 * @param string 	$fieldref 		Name of field ref of object (object->ref) to show or 'none' to not show ref.
+	 * @param string 	$morehtmlref 	More html to show after ref.
+	 * @param string 	$moreparam 		More param to add in nav link url. Must start with '&...'.
+	 * @param int 		$nodbprefix 	Do not include DB prefix to forge table name.
+	 * @param string 	$morehtmlleft 	More html code to show before ref.
+	 * @param string 	$morehtmlstatus More html code to show under navigation arrows (status place).
+	 * @param string 	$morehtmlright 	More html code to show after ref.
+	 * @return string                   Portion HTML with ref + navigation buttons
 	 */
 	public function showrefnav($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $morehtmlright = '')
 	{
@@ -9536,8 +9536,10 @@ class Form
 			} else {
 				$ret .= dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities($object->societe) . ')' : '');
 			}
-		} elseif (in_array($object->element, array('contact', 'user', 'usergroup'))) {
+		} elseif (in_array($object->element, array('contact', 'user'))) {
 			$ret .= dol_htmlentities($object->getFullName($langs)) . $addgendertxt;
+		} elseif ($object->element == 'usergroup') {
+			$ret .= dol_htmlentities($object->name);
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
 			$ret .= $object->ref . '<br>' . $object->label;
 		} elseif (in_array($object->element, array('adherent_type'))) {
@@ -9547,7 +9549,6 @@ class Form
 		} elseif ($fieldref != 'none') {
 			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
 		}
-
 		if ($morehtmlref) {
 			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
 			if (substr($morehtmlref, 0, 4) != '<div') {
