@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012 Destailleur Laurent <eldy@users.sourceforge.net>
- * Copyright (C) 2014 	   Henry Florian <florian.henry@open-concept.pro>
+ * Copyright (C) 2010-2012 Destailleur Laurent 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
+ * Copyright (C) 2023 	   Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +136,8 @@ if (empty($reshook)) {
 				$object->label = GETPOST("libelle-" . $key);
 				$object->description = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
 				$object->other = dol_htmlcleanlastbr(GETPOST("other-" . $key, 'restricthtml'));
+
+				$object->update($object->id, $user);
 			} else {
 				$object->multilangs[$key]["label"] = GETPOST("libelle-" . $key);
 				$object->multilangs[$key]["description"] = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
