@@ -3721,6 +3721,7 @@ class Propal extends CommonObject
 	{
 		global $conf, $langs, $user;
 
+		$langs->load('propal');
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 
