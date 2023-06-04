@@ -139,6 +139,7 @@ if (empty($reshook)) {
 	if ($action == 'setcost_price') {
 		if ($id) {
 			$result = $object->fetch($id);
+			$object->oldcopy = dol_clone($object);
 			$object->cost_price = price2num($cost_price);
 			$result = $object->update($object->id, $user);
 			if ($result > 0) {

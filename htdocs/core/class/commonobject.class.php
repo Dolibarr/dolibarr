@@ -793,7 +793,8 @@ abstract class CommonObject
 
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array(
-			'tooltipcontentarray' => &$datas
+			'tooltipcontentarray' => &$datas,
+			'params' => $params,
 		);
 		// Note that $action and $object may have been modified by some hooks
 		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
