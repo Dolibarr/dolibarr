@@ -4578,6 +4578,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 		padding: 0px 0px 0px 0px;
 	}
+
+	td.tdwidgetstate {
+		text-align: center;
+	}
+
 	.boxstats, .boxstats130 {
 		margin: 3px;
 	}

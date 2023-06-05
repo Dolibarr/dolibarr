@@ -4667,6 +4667,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		margin-right: 0 !important;
 	}
 
+	td.tdwidgetstate {
+		text-align: center;
+	}
+
 	.boxstats, .boxstats130 {
 		margin: 3px;
 		border: 1px solid #ddd;
