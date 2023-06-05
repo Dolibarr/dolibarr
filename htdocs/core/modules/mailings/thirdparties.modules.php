@@ -29,7 +29,7 @@ class mailing_thirdparties extends MailingTargets
 	public $desc = "Third parties (by categories)";
 	public $require_admin = 0;
 
-	public $require_module = array("societe", "category"); // This module allows to select by categories must be also enabled if category module is not activated
+	public $require_module = array("societe"); // This module allows to select by categories must be also enabled if category module is not activated
 
 	public $enabled = '$conf->societe->enabled';
 
