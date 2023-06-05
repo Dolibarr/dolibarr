@@ -1473,7 +1473,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'mon module'=>$module,
 				'Mon module'=>$module,
 				'htdocs/modulebuilder/template/'=>strtolower($modulename),
-				//'myobject'=>strtolower($objectname),
+				'myobject'=>strtolower($objectname),
 				'MyObject'=>$objectname,
 				//'MYOBJECT'=>strtoupper($objectname),
 				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
@@ -2499,6 +2499,10 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			setEventMessages($langs->trans("ErrorCoherenceMenu", $langs->transnoentities("leftmenu"), $langs->transnoentities("type")), null, 'errors');
 		}
 	}
+	if (GETPOST('type', 'alpha') == 'top') {
+		$error++;
+		setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
+	}
 
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 	if (!$error) {
@@ -2598,6 +2602,11 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int')) {
 				$menuModify['enabled'] = "\$conf->".strtolower($module)."->enabled";
 			} else {
 				$menuModify['enabled'] = "0";
+			}
+
+			if (GETPOST('type', 'alpha') == 'top') {
+				$error++;
+				setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
 			}
 			if (!$error) {
 				//update menu
