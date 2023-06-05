@@ -630,7 +630,7 @@ $listofreferent = array(
 	'lang'=>'agenda',
 	'buttonnew'=>'AddEvent',
 	'testnew'=>$user->rights->agenda->myactions->create,
-	'test'=> isModEnabled('agenda') && $user->rights->agenda->myactions->read),
+	'test'=> isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')),
 */
 );
 
