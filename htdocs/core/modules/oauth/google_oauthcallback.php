@@ -104,7 +104,11 @@ if ($state) {
 }
 
 if ($action != 'delete' && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
+	if (empty($backtourl)) {
+		$backtourl = DOL_URL_ROOT.'/';
+	}
 	header('Location: '.$backtourl);
 	exit();
 }
@@ -147,6 +151,8 @@ if ($action == 'delete') {
 }
 
 if (!GETPOST('code')) {
+	dol_syslog("Page is called without code parameter defined");
+
 	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
 	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
