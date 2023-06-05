@@ -154,6 +154,9 @@ if (!GETPOST('code')) {
 	$_SESSION['oauthstateanticsrf'] = $state;
 
 	// Save more data into session
+	// Not required. All data are savec into $_SESSION['datafromloginform'] when form is posted with a click on Login with
+	// Google with param actionlogin=login and beforeoauthloginredirect=1, by the functions_googleoauth.php.
+	/*
 	if (!empty($_POST["tz"])) {
 		$_SESSION["tz"] = $_POST["tz"];
 	}
@@ -166,6 +169,7 @@ if (!GETPOST('code')) {
 	if (!empty($_POST["dst_second"])) {
 		$_SESSION["dst_second"] = $_POST["dst_second"];
 	}
+	*/
 
 	if ($forlogin) {
 		$apiService->setApprouvalPrompt('force');
