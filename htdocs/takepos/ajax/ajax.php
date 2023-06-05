@@ -289,7 +289,7 @@ if ($action == 'getProducts') {
 		$sql .= $hookmanager->resPrint;
 	}
 
-	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && empty(getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']))) {
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && !getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 		$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc';
 		// Add fields from hooks
 		$parameters = array();
