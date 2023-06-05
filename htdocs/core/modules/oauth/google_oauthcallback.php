@@ -312,7 +312,7 @@ if (!GETPOST('code')) {
 						$username = $tmpuser->login;
 
 						$_SESSION['googleoauth_receivedlogin'] = dol_hash($conf->file->instance_unique_id.$username, '0');
-						dol_syslog('$_SESSION[\'googleoauth_receivedlogin\']='.$_SESSION['googleoauth_receivedlogin']);
+						dol_syslog('We set $_SESSION[\'googleoauth_receivedlogin\']='.$_SESSION['googleoauth_receivedlogin']);
 					} else {
 						$errormessage = "Failed to login using Google. User with the Email '".$useremail."' was not found";
 						if ($entitytosearchuser > 0) {
@@ -320,6 +320,8 @@ if (!GETPOST('code')) {
 						}
 						$_SESSION["dol_loginmesg"] = $errormessage;
 						$errorincheck++;
+
+						dol_syslog($errormessage);
 					}
 				}
 			} else {
