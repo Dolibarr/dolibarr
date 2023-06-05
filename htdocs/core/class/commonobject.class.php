@@ -793,7 +793,8 @@ abstract class CommonObject
 
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array(
-			'tooltipcontentarray' => &$datas
+			'tooltipcontentarray' => &$datas,
+			'params' => $params,
 		);
 		// Note that $action and $object may have been modified by some hooks
 		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
@@ -9891,6 +9892,21 @@ abstract class CommonObject
 				$this->{$key} = $value;
 			}
 		}
+
+		// Force values to default values when known
+		if (property_exists($this, 'fields')) {
+			foreach ($this->fields as $key => $value) {
+				// If fields are already set, do nothing
+				if (array_key_exists($key, $fields)) {
+					continue;
+				}
+
+				if (!empty($value['default'])) {
+					$this->$key = $value['default'];
+				}
+			}
+		}
+
 		return 1;
 	}
 

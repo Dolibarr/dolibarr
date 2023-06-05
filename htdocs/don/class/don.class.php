@@ -478,7 +478,7 @@ class Don extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
@@ -566,7 +566,6 @@ class Don extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $user, $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -629,8 +628,6 @@ class Don extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
 		$sql .= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
 		$sql .= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
@@ -728,7 +725,7 @@ class Don extends CommonObject
 	public function valid_promesse($id, $userid, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $langs, $user;
+		global $user;
 
 		$error = 0;
 
@@ -761,23 +758,6 @@ class Don extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *    Classify the donation as paid, the donation was received
-	 *
-	 *	@deprecated
-	 *  @see setPaid()
-	 *  @param	int		$id           	    id of donation
-	 *  @param    int		$modepayment   	    mode of payment
-	 *  @return   int      					<0 if KO, >0 if OK
-	 */
-	public function set_paid($id, $modepayment = 0)
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
-		return $this->setPaid($id, $modepayment);
 	}
 
 	/**
@@ -897,8 +877,6 @@ class Don extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->nb = array();
 
 		$sql = "SELECT count(d.rowid) as nb";
@@ -1042,7 +1020,7 @@ class Don extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/dons/";
+		//$modelpath = "core/modules/dons/";
 
 		// TODO Restore use of commonGenerateDocument instead of dedicated code here
 		//return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);

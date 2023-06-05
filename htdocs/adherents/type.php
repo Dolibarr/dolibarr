@@ -537,10 +537,12 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		print nl2br($object->note)."</td></tr>";
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
+		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		print nl2br($object->mail_valid)."</td></tr>";
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->mail_valid));
+		print "</td></tr>";
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

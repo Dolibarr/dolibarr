@@ -160,7 +160,7 @@ $Config['QuickUploadPath']['File'] = $Config['UserFilesPath'];
 $Config['QuickUploadAbsolutePath']['File'] = $Config['UserFilesAbsolutePath'];
 
 $Config['AllowedExtensions']['Image'] = array('bmp', 'gif', 'jpeg', 'jpg', 'png', 'ai');
-if (!empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
+if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 	$Config['AllowedExtensions']['Image'][] = 'svg';
 }
 $Config['DeniedExtensions']['Image']	= array();

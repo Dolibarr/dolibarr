@@ -45,7 +45,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
-
+// Function for better PHP x compatibility
 if (!function_exists('utf8_encode')) {
 	/**
 	 * Implement utf8_encode for PHP that does not support it.
@@ -71,6 +71,46 @@ if (!function_exists('utf8_decode')) {
 		return mb_convert_encoding($elements, 'ISO-8859-1', 'UTF-8');
 	}
 }
+if (!function_exists('str_starts_with')) {
+	/**
+	 * str_starts_with
+	 *
+	 * @param string $haystack	haystack
+	 * @param string $needle	needle
+	 * @return boolean
+	 */
+	function str_starts_with($haystack, $needle)
+	{
+		return (string) $needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
+	}
+}
+if (!function_exists('str_ends_with')) {
+	/**
+	 * str_ends_with
+	 *
+	 * @param string $haystack	haystack
+	 * @param string $needle	needle
+	 * @return boolean
+	 */
+	function str_ends_with($haystack, $needle)
+	{
+		return $needle !== '' && substr($haystack, -strlen($needle)) === (string) $needle;
+	}
+}
+if (!function_exists('str_contains')) {
+	/**
+	 * str_contains
+	 *
+	 * @param string $haystack	haystack
+	 * @param string $needle	needle
+	 * @return boolean
+	 */
+	function str_contains($haystack, $needle)
+	{
+		return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+	}
+}
+
 
 /**
  * Return the full path of the directory where a module (or an object of a module) stores its files. Path may depends on the entity if a multicompany module is enabled.
@@ -1542,6 +1582,7 @@ function dol_escape_json($stringtoescape)
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
+ *  When we output string on pages, we use dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes, and use dol_escape_htmltag() for simple labels.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
@@ -2044,7 +2085,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				}
 			} elseif (!empty($links[$i][1])) {
 				$outmore .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
-				$outmore .= preg_replace('/([a-z])\/([a-z])/i', '\\1 / \\2', $links[$i][1]); // Replace x/y with x / y to allow wrap on long composed texts.
+				$outmore .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
 				$outmore .= '</a>'."\n";
 			}
 			$outmore .= '</div>';
@@ -4162,7 +4203,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
-				'gears', 'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+				'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'hands-helping', 'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
 				'knowledgemanagement',
@@ -4402,7 +4443,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($srconly) {
 		return $fullpathpicto;
 	}
-		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
+
+	// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
 	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
@@ -7058,21 +7100,29 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	int		$cleanalsojavascript	Remove also occurence of 'javascript:'.
  *  @param	int		$allowiframe			Allow iframe tags.
  *  @param	array	$allowed_tags			List of allowed tags to replace the default list
+ *  @param	int		$allowlink				Allow link tags.
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array())
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0)
 {
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
-			"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
+			"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li",
 			"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
 		);
 	}
 	$allowed_tags[] = "comment";		// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
 	if ($allowiframe) {
-		$allowed_tags[] = "iframe";
+		if (!in_array('iframe', $allowed_tags)) {
+			$allowed_tags[] = "iframe";
+		}
+	}
+	if ($allowlink) {
+		if (!in_array('link', $allowed_tags)) {
+			$allowed_tags[] = "link";
+		}
 	}
 
 	$allowed_tags_string = join("><", $allowed_tags);
@@ -7263,7 +7313,8 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 
 /**
  * Replace CRLF in string with a HTML BR tag.
- * WARNING: The content after operation contains some HTML tags (the <br>) so be sure to also have encode the special chars of stringtoencode into HTML before.
+ * WARNING: The content after operation contains some HTML tags (the <br>) so be sure to also have
+ *          encoded the special chars of stringtoencode into HTML before with dol_htmlentitiesbr().
  *
  * @param	string	$stringtoencode		String to encode
  * @param	int     $nl2brmode			0=Adding br before \n, 1=Replacing \n by br
@@ -7290,7 +7341,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
- * @param	string	$check						'restricthtmlnolink' or  'restricthtml' or 'restricthtmlallowunvalid'
+ * @param	string	$check						'restricthtmlnolink' or 'restricthtml' or 'restricthtmlallowunvalid'
  * @return	string								HTML sanitized
  */
 function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
@@ -7361,9 +7412,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			$out = preg_replace('/&apos;/i', "&#39;", $out);
 		} while ($oldstringtoclean != $out);
 
-		// Check the limit of external links in a Rich text content. We count '<img' and 'url('
+		// Check the limit of external links that are automatically executed in a Rich text content. We count:
+		// '<img' to avoid <img src="http...">
+		// 'url(' to avoid inline style like background: url(http...
+		// '<link' to avoid <link href="http...">
 		$reg = array();
-		preg_match_all('/(<img|url\()/i', $out, $reg);
+		preg_match_all('/(<img|url\(|<link)/i', $out, $reg);
 		$nbextlink = count($reg[0]);
 		if ($nbextlink > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
 			$out = 'TooManyLinksIntoHTMLString';
@@ -7389,13 +7443,14 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *              - MultiCell -> param must not be encoded into HTML.
  *              Because writeHTMLCell convert also \n into <br>, if function
  *              is used to build PDF, nl2brmode must be 1.
+ *  When we output string on pages, we use dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes, and use dol_escape_htmltag() for simple labels.
  *
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
  *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
- *  @see dolGetFirstLineOfText()
+ *  @see dol_escape_htmltag(), dolGetFirstLineOfText()
  */
 function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UTF-8', $removelasteolbr = 1)
 {
@@ -11846,19 +11901,30 @@ function jsonOrUnserialize($stringtodecode)
 /**
  * forgeSQLFromUniversalSearchCriteria
  *
- * @param 	string		$filter		String with universal search string. Must be  (aaa:bbb:...) with
+ * @param 	string		$filter		String with universal search string. Must be '(aaa:bbb:...) OR (ccc:ddd:...) ...' with
  * 									aaa is a field name (with alias or not) and
  * 									bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
- * @param	string		$error		Error message
- * @param	int			$noand		0=Default, 1=Do not add the AND before the condition string.
+ * 									Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+ * @param	string		$errorstr	Error message string
+ * @param	int			$noand		1=Do not add the AND before the condition string.
+ * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
+ * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
  */
-function forgeSQLFromUniversalSearchCriteria($filter, &$error = '', $noand = 0)
+function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
+	if (!preg_match('/^\(.*\)$/', $filter)) {    // If $filter does not start and end with ()
+		$filter = '(' . $filter . ')';
+	}
+
 	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
 
-	if (!dolCheckFilters($filter, $error)) {
-		return '1 = 2';		// Bad balance of parenthesis, we force a SQL not found
+	if (!dolCheckFilters($filter, $errorstr)) {
+		if ($noerror) {
+			return '1 = 2';
+		} else {
+			return 'Filter syntax error - '.$errorstr;		// Bad balance of parenthesis, we return an error message or force a SQL not found
+		}
 	}
 
 	// Test the filter syntax
@@ -11866,11 +11932,15 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '', $noand = 0)
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$error = 'Bad syntax of the search string, filter criteria is invalidated';
-		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
+		$errorstr = 'Bad syntax of the search string';
+		if ($noerror) {
+			return '1 = 2';
+		} else {
+			return 'Filter syntax error - '.$errorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
+		}
 	}
 
-	return ($noand ? "" : " AND ")."(".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
+	return ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).($nopar ? "" : ')');
 }
 
 /**
@@ -11909,7 +11979,7 @@ function dolCheckFilters($sqlfilters, &$error = '')
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
  * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
- * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+ * @return string                  Forged criteria. Example: "" or "()"
  */
 function dolForgeDummyCriteriaCallback($matches)
 {
@@ -11931,7 +12001,7 @@ function dolForgeDummyCriteriaCallback($matches)
  *
  * @param  array    $matches       	Array of found string by regex search.
  * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
- * @return string                  	Forged criteria. Example: "t.field like 'abc%'"
+ * @return string                  	Forged criteria. Example: "t.field LIKE 'abc%'"
  */
 function dolForgeCriteriaCallback($matches)
 {
@@ -11987,7 +12057,7 @@ function dolForgeCriteriaCallback($matches)
 		}
 	}
 
-	return $db->escape($operand).' '.strtoupper($operator).' '.$tmpescaped;
+	return '('.$db->escape($operand).' '.strtoupper($operator).' '.$tmpescaped.')';
 }
 
 

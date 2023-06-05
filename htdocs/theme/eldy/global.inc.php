@@ -686,6 +686,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
@@ -733,6 +737,9 @@ th .button {
 }
 .centpercentimp {
 	width: 100% !important;
+}
+.centpercentwithout1imp {
+	width: calc(100% - 1px) !important;
 }
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
@@ -2314,7 +2321,7 @@ div.secondcolumn div.box {
 }
 
 /* Force values on one colum for small screen */
-@media only screen and (max-width: 1599px)
+@media only screen and (max-width: 1499px)
 {
 	div.fichehalfleft-lg {
 		float: none;

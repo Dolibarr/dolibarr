@@ -132,6 +132,11 @@ class Societe extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -194,8 +199,8 @@ class Societe extends CommonObject
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>45),
 		'code_client' =>array('type'=>'varchar(24)', 'label'=>'CustomerCode', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'code_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'SupplierCode', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'CodeCompta', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'code_compta_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'CodeComptaSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'CustomerAccountancyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'code_compta_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'SupplierAccountancyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>85),

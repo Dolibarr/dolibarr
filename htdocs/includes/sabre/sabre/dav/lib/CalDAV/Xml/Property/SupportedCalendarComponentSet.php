@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Property;
 
 use Sabre\CalDAV\Plugin;
@@ -21,8 +23,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedCalendarComponentSet implements Element {
-
+class SupportedCalendarComponentSet implements Element
+{
     /**
      * List of supported components.
      *
@@ -37,21 +39,19 @@ class SupportedCalendarComponentSet implements Element {
      *
      * @param array $components
      */
-    function __construct(array $components) {
-
+    public function __construct(array $components)
+    {
         $this->components = $components;
-
     }
 
     /**
-     * Returns the list of supported components
+     * Returns the list of supported components.
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->components;
-
     }
 
     /**
@@ -71,18 +71,14 @@ class SupportedCalendarComponentSet implements Element {
      * If you are opening new elements, you must also close them again.
      *
      * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->components as $component) {
-
-            $writer->startElement('{' . Plugin::NS_CALDAV . '}comp');
+            $writer->startElement('{'.Plugin::NS_CALDAV.'}comp');
             $writer->writeAttributes(['name' => $component]);
             $writer->endElement();
-
         }
-
     }
 
     /**
@@ -104,16 +100,17 @@ class SupportedCalendarComponentSet implements Element {
      * the next element.
      *
      * @param Reader $reader
+     *
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree();
 
         $components = [];
 
-        foreach ((array)$elems as $elem) {
-            if ($elem['name'] === '{' . Plugin::NS_CALDAV . '}comp') {
+        foreach ((array) $elems as $elem) {
+            if ($elem['name'] === '{'.Plugin::NS_CALDAV.'}comp') {
                 $components[] = $elem['attributes']['name'];
             }
         }
@@ -123,7 +120,5 @@ class SupportedCalendarComponentSet implements Element {
         }
 
         return new self($components);
-
     }
-
 }

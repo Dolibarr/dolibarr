@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Browser;
 
 /**
@@ -13,8 +15,8 @@ namespace Sabre\DAV\Browser;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface HtmlOutput {
-
+interface HtmlOutput
+{
     /**
      * Generate html representation for this value.
      *
@@ -27,8 +29,8 @@ interface HtmlOutput {
      * be used to construct local links.
      *
      * @param HtmlOutputHelper $html
+     *
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html);
-
+    public function toHtml(HtmlOutputHelper $html);
 }

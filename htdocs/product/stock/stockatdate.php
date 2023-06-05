@@ -39,14 +39,14 @@ require_once './lib/replenishment.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('stockatdate'));
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service');
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('stockatdate'));
 
 //checks if a product has been ordered
 
@@ -288,6 +288,12 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 }
 if (!empty($canvas)) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
+}
+if ($search_ref) {
+	$sql .= natural_search('p.ref', $search_ref);
+}
+if ($search_nom) {
+	$sql .= natural_search('p.label', $search_nom);
 }
 $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.pmp, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms, p.duration, p.tobuy, p.stock';

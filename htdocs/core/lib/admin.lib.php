@@ -1766,7 +1766,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 				}
 				print '</div>';
 				//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
-			} elseif ($const == 'ADHERENT_MAIL_FROM') {
+			} elseif (in_array($const, ['ADHERENT_MAIL_FROM', 'ADHERENT_CC_MAIL_FROM'])) {
 				print ' '.img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
 			}
 

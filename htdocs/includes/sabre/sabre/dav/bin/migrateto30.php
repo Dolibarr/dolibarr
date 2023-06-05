@@ -4,7 +4,6 @@
 echo "SabreDAV migrate script for version 3.0\n";
 
 if ($argc < 2) {
-
     echo <<<HELLO
 
 This script help you migrate from a pre-3.0 database to 3.0 and later
@@ -36,14 +35,13 @@ php {$argv[0]} sqlite:data/sabredav.db
 HELLO;
 
     exit();
-
 }
 
 // There's a bunch of places where the autoloader could be, so we'll try all of
 // them.
 $paths = [
-    __DIR__ . '/../vendor/autoload.php',
-    __DIR__ . '/../../../autoload.php',
+    __DIR__.'/../vendor/autoload.php',
+    __DIR__.'/../../../autoload.php',
 ];
 
 foreach ($paths as $path) {
@@ -57,7 +55,7 @@ $dsn = $argv[1];
 $user = isset($argv[2]) ? $argv[2] : null;
 $pass = isset($argv[3]) ? $argv[3] : null;
 
-echo "Connecting to database: " . $dsn . "\n";
+echo 'Connecting to database: '.$dsn."\n";
 
 $pdo = new PDO($dsn, $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -66,15 +64,14 @@ $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 switch ($driver) {
-
-    case 'mysql' :
+    case 'mysql':
         echo "Detected MySQL.\n";
         break;
-    case 'sqlite' :
+    case 'sqlite':
         echo "Detected SQLite.\n";
         break;
-    default :
-        echo "Error: unsupported driver: " . $driver . "\n";
+    default:
+        echo 'Error: unsupported driver: '.$driver."\n";
         die(-1);
 }
 
@@ -90,9 +87,8 @@ try {
         echo "Renaming propertystorage -> propertystorage_old$random and creating new table.\n";
 
         switch ($driver) {
-
-            case 'mysql' :
-                $pdo->exec('RENAME TABLE propertystorage TO propertystorage_old' . $random);
+            case 'mysql':
+                $pdo->exec('RENAME TABLE propertystorage TO propertystorage_old'.$random);
                 $pdo->exec('
     CREATE TABLE propertystorage (
         id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -102,10 +98,10 @@ try {
         value MEDIUMBLOB
     );
                 ');
-                $pdo->exec('CREATE UNIQUE INDEX path_property_' . $random . '  ON propertystorage (path(600), name(100));');
+                $pdo->exec('CREATE UNIQUE INDEX path_property_'.$random.'  ON propertystorage (path(600), name(100));');
                 break;
-            case 'sqlite' :
-                $pdo->exec('ALTER TABLE propertystorage RENAME TO propertystorage_old' . $random);
+            case 'sqlite':
+                $pdo->exec('ALTER TABLE propertystorage RENAME TO propertystorage_old'.$random);
                 $pdo->exec('
 CREATE TABLE propertystorage (
     id integer primary key asc,
@@ -115,9 +111,8 @@ CREATE TABLE propertystorage (
     value blob
 );');
 
-                $pdo->exec('CREATE UNIQUE INDEX path_property_' . $random . ' ON propertystorage (path, name);');
+                $pdo->exec('CREATE UNIQUE INDEX path_property_'.$random.' ON propertystorage (path, name);');
                 break;
-
         }
     } elseif (array_key_exists('valuetype', $row)) {
         echo "valuetype field exists. Assuming that this part of the migration has\n";
@@ -126,7 +121,6 @@ CREATE TABLE propertystorage (
         echo "2.1 schema detected. Going to perform upgrade.\n";
         $addValueType = true;
     }
-
 } catch (Exception $e) {
     echo "Could not find a propertystorage table. Skipping this part of the\n";
     echo "upgrade.\n";
@@ -134,19 +128,17 @@ CREATE TABLE propertystorage (
 }
 
 if ($addValueType) {
-
     switch ($driver) {
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec('ALTER TABLE propertystorage ADD valuetype INT UNSIGNED');
             break;
-        case 'sqlite' :
+        case 'sqlite':
             $pdo->exec('ALTER TABLE propertystorage ADD valuetype INT');
 
             break;
     }
 
     $pdo->exec('UPDATE propertystorage SET valuetype = 1 WHERE valuetype IS NULL ');
-
 }
 
 echo "Migrating vcardurl\n";
@@ -155,16 +147,14 @@ $result = $pdo->query('SELECT id, uri, vcardurl FROM principals WHERE vcardurl I
 $stmt1 = $pdo->prepare('INSERT INTO propertystorage (path, name, valuetype, value) VALUES (?, ?, 3, ?)');
 
 while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
-
     // Inserting the new record
     $stmt1->execute([
-        'addressbooks/' . basename($row['uri']),
+        'addressbooks/'.basename($row['uri']),
         '{http://calendarserver.org/ns/}me-card',
-        serialize(new Sabre\DAV\Xml\Property\Href($row['vcardurl']))
+        serialize(new Sabre\DAV\Xml\Property\Href($row['vcardurl'])),
     ]);
 
     echo serialize(new Sabre\DAV\Xml\Property\Href($row['vcardurl']));
-
 }
 
 echo "Done.\n";

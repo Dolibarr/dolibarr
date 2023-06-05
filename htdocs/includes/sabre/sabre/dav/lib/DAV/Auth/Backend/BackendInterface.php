@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Auth\Backend;
 
 use Sabre\HTTP\RequestInterface;
@@ -12,8 +14,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface BackendInterface {
-
+interface BackendInterface
+{
     /**
      * When this method is called, the backend must check if authentication was
      * successful.
@@ -38,11 +40,12 @@ interface BackendInterface {
      *
      * principals/users/[username]
      *
-     * @param RequestInterface $request
+     * @param RequestInterface  $request
      * @param ResponseInterface $response
+     *
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response);
+    public function check(RequestInterface $request, ResponseInterface $response);
 
     /**
      * This method is called when a user could not be authenticated, and
@@ -61,10 +64,8 @@ interface BackendInterface {
      * append your own WWW-Authenticate header instead of overwriting the
      * existing one.
      *
-     * @param RequestInterface $request
+     * @param RequestInterface  $request
      * @param ResponseInterface $response
-     * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response);
-
+    public function challenge(RequestInterface $request, ResponseInterface $response);
 }

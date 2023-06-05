@@ -2415,7 +2415,7 @@ if ($id > 0) {
 		}
 
 		// Description
-		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak sensiblehtmlcontent">';
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 		print '</td></tr>';
 

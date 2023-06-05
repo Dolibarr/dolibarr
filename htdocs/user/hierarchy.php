@@ -70,7 +70,7 @@ $userstatic = new User($db);
 $canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 
 // Permission to list
-if ($contextpage == 'employeelist' && $search_employee == 1) {
+if (isModEnabled('salaries') && $contextpage == 'employeelist' && $search_employee == 1) {
 	if (!$user->hasRight("salaries", "read")) {
 		accessforbidden();
 	}

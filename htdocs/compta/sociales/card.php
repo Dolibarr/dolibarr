@@ -79,8 +79,8 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-if ($id > 0) {
-	$object->fetch($id);
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
 }
 
 $permissiontoread = $user->rights->tax->charges->lire;
@@ -111,13 +111,11 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Classify paid
-	if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes') {
-		$object->fetch($id);
+	if ($action == 'confirm_paid' && $permissiontoadd && $confirm == 'yes') {
 		$result = $object->setPaid($user);
 	}
 
 	if ($action == 'reopen' && $user->rights->tax->charges->creer) {
-		$result = $object->fetch($id);
 		if ($object->paye) {
 			$result = $object->setUnpaid($user);
 			if ($result > 0) {
@@ -130,19 +128,16 @@ if (empty($reshook)) {
 	}
 
 	// Link to a project
-	if ($action == 'classin' && $user->rights->tax->charges->creer) {
-		$object->fetch($id);
+	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOST('fk_project'));
 	}
 
-	if ($action == 'setfk_user' && $user->rights->tax->charges->creer) {
-		$object->fetch($id);
+	if ($action == 'setfk_user' && $permissiontoadd) {
 		$object->fk_user = $fk_user;
 		$object->update($user);
 	}
 
-	if ($action == 'setlib' && $user->rights->tax->charges->creer) {
-		$object->fetch($id);
+	if ($action == 'setlib' && $permissiontoadd) {
 		$result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -150,8 +145,7 @@ if (empty($reshook)) {
 	}
 
 	// payment mode
-	if ($action == 'setmode' && $user->rights->tax->charges->creer) {
-		$object->fetch($id);
+	if ($action == 'setmode' && $permissiontoadd) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -159,8 +153,7 @@ if (empty($reshook)) {
 	}
 
 	// Bank account
-	if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
-		$object->fetch($id);
+	if ($action == 'setbankaccount' && $permissiontoadd) {
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -168,8 +161,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete social contribution
-	if ($action == 'confirm_delete' && $confirm == 'yes') {
-		$object->fetch($id);
+	if ($action == 'confirm_delete' && $permissiontodelete && $confirm == 'yes') {
 		$totalpaid = $object->getSommePaiement();
 		if (empty($totalpaid)) {
 			$result = $object->delete($user);
@@ -186,7 +178,7 @@ if (empty($reshook)) {
 
 
 	// Add social contribution
-	if ($action == 'add' && $user->rights->tax->charges->creer) {
+	if ($action == 'add' && $permissiontoadd) {
 		$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 		if (!$dateech) {
@@ -224,7 +216,7 @@ if (empty($reshook)) {
 	}
 
 
-	if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
+	if ($action == 'update' && !$cancel && $permissiontoadd) {
 		$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 		if (!$dateech) {
@@ -245,7 +237,7 @@ if (empty($reshook)) {
 			$object->date_ech = $dateech;
 			$object->periode = $dateperiod;
 			$object->amount = $amount;
-			$object->fk_user	= $fk_user;
+			$object->fk_user = $fk_user;
 
 			$result = $object->update($user);
 			if ($result <= 0) {
@@ -259,12 +251,10 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->charges->creer)) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 		$db->begin();
 
-		$originalId = $id;
-
-		$object->fetch($id);
+		$originalId = $object->id;
 
 		if ($object->id > 0) {
 			$object->id = $object->ref = null;
