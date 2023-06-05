@@ -28,7 +28,7 @@
 
 // Force keyforprovider
 $forlogin = 0;
-if (preg_match('/^forlogin-/', $_GET['state'])) {
+if (!empty($_GET['state']) && preg_match('/^forlogin-/', $_GET['state'])) {
 	$forlogin = 1;
 	$_GET['keyforprovider'] = 'Login';
 }
@@ -147,11 +147,25 @@ if ($action == 'delete') {
 }
 
 if (!GETPOST('code')) {
-	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect
+	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
 	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
+
+	// Save more data into session
+	if (!empty($_POST["tz"])) {
+		$_SESSION["tz"] = $_POST["tz"];
+	}
+	if (!empty($_POST["tz_string"])) {
+		$_SESSION["tz_string"] = $_POST["tz_string"];
+	}
+	if (!empty($_POST["dst_first"])) {
+		$_SESSION["dst_first"] = $_POST["dst_first"];
+	}
+	if (!empty($_POST["dst_second"])) {
+		$_SESSION["dst_second"] = $_POST["dst_second"];
+	}
 
 	if ($forlogin) {
 		$apiService->setApprouvalPrompt('force');
@@ -227,6 +241,7 @@ if (!GETPOST('code')) {
 			$extraparams = $token->getExtraParams();
 			$jwt = explode('.', $extraparams['id_token']);
 
+			$username = '';
 			$useremail = '';
 
 			// Extract the middle part, base64 decode, then json_decode it
@@ -326,7 +341,7 @@ if (!GETPOST('code')) {
 
 			// If call back to url for a OAUTH2 login
 			if ($forlogin) {
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&username='.urlencode($username).'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}
