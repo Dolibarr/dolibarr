@@ -271,17 +271,17 @@ class modMyModule extends DolibarrModules
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->read)
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'read'))
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->write)
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'write'))
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->delete)
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'delete'))
 		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 

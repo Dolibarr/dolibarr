@@ -296,7 +296,7 @@ class ActionsMyModule
 		global $user;
 
 		if ($parameters['features'] == 'myobject') {
-			if ($user->rights->mymodule->myobject->read) {
+			if ($user->hasRight('mymodule', 'myobject', 'read')) {
 				$this->results['result'] = 1;
 				return 1;
 			} else {

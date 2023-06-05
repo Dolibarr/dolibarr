@@ -1184,7 +1184,7 @@ if ($resql) {
 		}
 	}
 
-	if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
+	if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->rights->supplier_invoice->creer) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
 	if ($permissiontodelete) {
