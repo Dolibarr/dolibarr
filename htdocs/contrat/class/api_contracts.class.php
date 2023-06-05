@@ -660,11 +660,6 @@ class Contracts extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		unset($object->address);
-
-		unset($object->date_start);
-		unset($object->date_start_real);
-		unset($object->date_end);
-		unset($object->date_end_real);
 		unset($object->civility_id);
 
 		return $object;
