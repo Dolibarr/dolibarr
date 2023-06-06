@@ -264,6 +264,7 @@ class Contrat extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::hookConstructor();
 	}
 
 	/**
@@ -3065,6 +3066,7 @@ class ContratLigne extends CommonObjectLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::hookConstructor();
 	}
 
 

@@ -655,6 +655,18 @@ abstract class CommonObject
 
 	// No constructor as it is an abstract class
 
+	/**
+	 * hookConstructor
+	 * @return void
+	 */
+	public function hookConstructor()
+	{
+		global $hookmanager;
+
+		$hookmanager->initHooks(array($this->element . 'construct'));
+		// Note that $this may have been modified by some hooks
+		$hookmanager->executeHooks('hookConstruct', [], $this);
+	}
 
 	/**
 	 * Check an object id/ref exists
