@@ -24,8 +24,8 @@ filter  = web-dolibarr-rulesbruteforce
 logpath = /mypath/documents/documents/dolibarr.log
 action  = %(action_mw)s
 bantime  = 86400     ; 1 day
-findtime = 3600      ; 1 hour
-maxretry = 10
+findtime = 14400     ; 4 hours
+maxretry = 20
 
 
 [web-dol-limitpublic]
