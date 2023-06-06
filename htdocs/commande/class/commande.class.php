@@ -3624,7 +3624,7 @@ class Commande extends CommonOrder
 			if ($mode == 'shippedtobill') {
 				$url = DOL_URL_ROOT.'/commande/list.php?search_status=3&search_billed=0&mainmenu=commercial&leftmenu=orders';
 				$label = $langs->trans("OrdersToBill"); // We set here bill but may be billed or ordered
-				$labelShort = $langs->trans("StatusOrderDelivered").' / '.$langs->trans("ToBill");
+				$labelShort = $langs->trans("StatusOrderDelivered").' '.$langs->trans("and").' '.$langs->trans("ToBill");
 			}
 
 			$response = new WorkboardResponse();
