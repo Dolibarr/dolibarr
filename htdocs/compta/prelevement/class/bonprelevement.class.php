@@ -203,6 +203,7 @@ class BonPrelevement extends CommonObject
 		$this->methodes_trans = array(0 => 'Internet', 2 => 'Email', 3 => 'Api');
 
 		$this->fetched = 0;
+		parent::getConstructorHook();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -417,6 +417,7 @@ class Contact extends CommonObject
 				}
 			}
 		}*/
+		parent::getConstructorHook();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

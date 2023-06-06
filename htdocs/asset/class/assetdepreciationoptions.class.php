@@ -138,6 +138,7 @@ class AssetDepreciationOptions extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

@@ -160,6 +160,7 @@ class ActionCommReminder extends CommonObject
 		if (!isModEnabled('multicompany')) {
 			$this->fields['entity']['enabled'] = 0;
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

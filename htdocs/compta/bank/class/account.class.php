@@ -386,6 +386,7 @@ class Account extends CommonObject
 			self::STATUS_OPEN => $langs->trans("StatusAccountOpened"),
 			self::STATUS_CLOSED => $langs->trans("StatusAccountClosed")
 		);
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -2006,6 +2007,7 @@ class AccountLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**

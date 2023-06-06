@@ -293,6 +293,7 @@ class Categorie extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

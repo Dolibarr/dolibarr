@@ -147,6 +147,7 @@ class UserGroup extends CommonObject
 	{
 		$this->db = $db;
 		$this->nb_rights = 0;
+		parent::getConstructorHook();
 	}
 
 

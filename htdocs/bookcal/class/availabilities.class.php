@@ -223,6 +223,7 @@ class Availabilities extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

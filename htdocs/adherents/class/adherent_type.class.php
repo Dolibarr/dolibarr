@@ -154,6 +154,7 @@ class AdherentType extends CommonObject
 	{
 		$this->db = $db;
 		$this->status = 1;
+		parent::getConstructorHook();
 	}
 
 	/**

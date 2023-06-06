@@ -186,6 +186,7 @@ class PaymentVarious extends CommonObject
 		$this->db = $db;
 		$this->element = 'payment_various';
 		$this->table_element = 'payment_various';
+		parent::getConstructorHook();
 	}
 
 	/**

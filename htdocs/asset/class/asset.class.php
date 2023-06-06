@@ -207,6 +207,7 @@ class Asset extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**
