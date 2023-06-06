@@ -395,6 +395,7 @@ class Propal extends CommonObject
 		$this->id = $propalid;
 
 		$this->duree_validite = getDolGlobalInt('PROPALE_VALIDITY_DURATION', 0);
+		parent::getConstructorHook();
 	}
 
 
@@ -4177,6 +4178,7 @@ class PropaleLigne extends CommonObjectLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**
