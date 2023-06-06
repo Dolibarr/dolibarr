@@ -665,7 +665,7 @@ abstract class CommonObject
 
 		$hookmanager->initHooks(array($this->element . 'construct'));
 		// Note that $this may have been modified by some hooks
-		$hookmanager->executeHooks('hookConstruct', [], $this);
+		$hookmanager->executeHooks('hookConstructor', [], $this);
 	}
 
 	/**
