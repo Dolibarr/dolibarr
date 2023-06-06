@@ -411,6 +411,7 @@ class Commande extends CommonOrder
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -4282,6 +4283,7 @@ class OrderLine extends CommonOrderLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**

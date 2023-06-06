@@ -573,6 +573,7 @@ class Product extends CommonObject
 	{
 		$this->db = $db;
 		$this->canvas = '';
+		parent::getConstructorHook();
 	}
 
 	/**
