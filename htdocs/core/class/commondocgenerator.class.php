@@ -107,6 +107,12 @@ abstract class CommonDocGenerator
 	public $emetteur;
 
 	/**
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 7.1 = array(7, 1)
+	 */
+	public $phpmin = array(7, 1);
+
+	/**
 	 * @var array	Array of columns
 	 */
 	public $cols;

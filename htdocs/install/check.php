@@ -83,7 +83,7 @@ if (!empty($useragent)) {
 
 // Check PHP version min
 $arrayphpminversionerror = array(5, 6, 0);
-$arrayphpminversionwarning = array(7, 0, 0);
+$arrayphpminversionwarning = array(7, 1, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
 	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning
@@ -171,7 +171,7 @@ if (!function_exists("easter_date")) {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Calendar")."<br>\n";
 }
 
-// Check if Curl is supported
+// Check if Xml is supported
 if (!function_exists("simplexml_load_string")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Xml")."<br>\n";
@@ -200,7 +200,7 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	}
 }
 
-// Check if Curl is supported
+// Check if Imap is supported
 if (!function_exists("imap_open")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
@@ -209,6 +209,7 @@ if (!function_exists("imap_open")) {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
 }
 
+// Check if Zip is supported
 if (!class_exists('ZipArchive')) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "ZIP")."<br>\n";

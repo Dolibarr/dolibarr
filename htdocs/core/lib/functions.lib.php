@@ -1582,6 +1582,7 @@ function dol_escape_json($stringtoescape)
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
+ *  When we output string on pages, we use dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes, and use dol_escape_htmltag() for simple labels.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
@@ -2084,7 +2085,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				}
 			} elseif (!empty($links[$i][1])) {
 				$outmore .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
-				$outmore .= preg_replace('/([a-z])\/([a-z])/i', '\\1 / \\2', $links[$i][1]); // Replace x/y with x / y to allow wrap on long composed texts.
+				$outmore .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
 				$outmore .= '</a>'."\n";
 			}
 			$outmore .= '</div>';
@@ -4202,7 +4203,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
-				'gears', 'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+				'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'hands-helping', 'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
 				'knowledgemanagement',
@@ -4442,7 +4443,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($srconly) {
 		return $fullpathpicto;
 	}
-		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
+
+	// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
 	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
@@ -5252,7 +5254,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	$now = dol_now();
 
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now, '%Y%m%d%H%M%S'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.'-'.dol_print_date($now, '%Y%m%d%H%M%S'));
 	if ($errormessage) {
 		print '<br><br>'.$errormessage;
 	}
@@ -7098,21 +7100,29 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	int		$cleanalsojavascript	Remove also occurence of 'javascript:'.
  *  @param	int		$allowiframe			Allow iframe tags.
  *  @param	array	$allowed_tags			List of allowed tags to replace the default list
+ *  @param	int		$allowlink				Allow link tags.
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array())
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0)
 {
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
-			"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
+			"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li",
 			"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
 		);
 	}
 	$allowed_tags[] = "comment";		// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
 	if ($allowiframe) {
-		$allowed_tags[] = "iframe";
+		if (!in_array('iframe', $allowed_tags)) {
+			$allowed_tags[] = "iframe";
+		}
+	}
+	if ($allowlink) {
+		if (!in_array('link', $allowed_tags)) {
+			$allowed_tags[] = "link";
+		}
 	}
 
 	$allowed_tags_string = join("><", $allowed_tags);
@@ -7303,7 +7313,8 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 
 /**
  * Replace CRLF in string with a HTML BR tag.
- * WARNING: The content after operation contains some HTML tags (the <br>) so be sure to also have encode the special chars of stringtoencode into HTML before.
+ * WARNING: The content after operation contains some HTML tags (the <br>) so be sure to also have
+ *          encoded the special chars of stringtoencode into HTML before with dol_htmlentitiesbr().
  *
  * @param	string	$stringtoencode		String to encode
  * @param	int     $nl2brmode			0=Adding br before \n, 1=Replacing \n by br
@@ -7330,7 +7341,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
- * @param	string	$check						'restricthtmlnolink' or  'restricthtml' or 'restricthtmlallowunvalid'
+ * @param	string	$check						'restricthtmlnolink' or 'restricthtml' or 'restricthtmlallowunvalid'
  * @return	string								HTML sanitized
  */
 function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
@@ -7401,9 +7412,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			$out = preg_replace('/&apos;/i', "&#39;", $out);
 		} while ($oldstringtoclean != $out);
 
-		// Check the limit of external links in a Rich text content. We count '<img' and 'url('
+		// Check the limit of external links that are automatically executed in a Rich text content. We count:
+		// '<img' to avoid <img src="http...">
+		// 'url(' to avoid inline style like background: url(http...
+		// '<link' to avoid <link href="http...">
 		$reg = array();
-		preg_match_all('/(<img|url\()/i', $out, $reg);
+		preg_match_all('/(<img|url\(|<link)/i', $out, $reg);
 		$nbextlink = count($reg[0]);
 		if ($nbextlink > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
 			$out = 'TooManyLinksIntoHTMLString';
@@ -7429,13 +7443,14 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *              - MultiCell -> param must not be encoded into HTML.
  *              Because writeHTMLCell convert also \n into <br>, if function
  *              is used to build PDF, nl2brmode must be 1.
+ *  When we output string on pages, we use dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes, and use dol_escape_htmltag() for simple labels.
  *
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
  *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
- *  @see dolGetFirstLineOfText()
+ *  @see dol_escape_htmltag(), dolGetFirstLineOfText()
  */
 function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UTF-8', $removelasteolbr = 1)
 {
