@@ -153,6 +153,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as cv";
 		$sql .= " WHERE cv.taux = ".((float) $txtva);
 		$sql .= " AND cv.fk_pays = ".((int) $countryid);
+		$sql .= " AND cv.entity IN (".getEntity('c_tva').")";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
