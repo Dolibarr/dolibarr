@@ -656,10 +656,10 @@ abstract class CommonObject
 	// No constructor as it is an abstract class
 
 	/**
-	 * hookConstructor
+	 * getHookConstructor
 	 * @return void
 	 */
-	public function hookConstructor()
+	public function getHookConstructor()
 	{
 		global $hookmanager;
 
