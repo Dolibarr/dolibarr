@@ -68,7 +68,6 @@ return [
     'Brazil/West',
     'Canada/Atlantic',
     'Canada/Central',
-    'Canada/East-Saskatchewan',
     'Canada/Eastern',
     'Canada/Mountain',
     'Canada/Newfoundland',

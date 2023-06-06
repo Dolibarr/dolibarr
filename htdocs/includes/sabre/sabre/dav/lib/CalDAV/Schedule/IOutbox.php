@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Schedule;
 
 /**
@@ -10,6 +12,6 @@ namespace Sabre\CalDAV\Schedule;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IOutbox extends \Sabre\DAV\ICollection, \Sabre\DAVACL\IACL {
-
+interface IOutbox extends \Sabre\DAV\ICollection, \Sabre\DAVACL\IACL
+{
 }

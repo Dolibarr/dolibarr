@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +56,12 @@ class FormAdminTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return FactureTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -138,7 +140,7 @@ class FormAdminTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new FormAdmin($this->savdb);
+		$localobject=new FormAdmin($db);
 		$result=$localobject->select_paper_format('', 'paperformat_id', 'A4', 0, 1);
 
 		$this->assertEquals($result, '<select class="flat" id="paperformat_id" name="paperformat_id"><option value="EUA4">Format A4 - 210x297 mm</option></select>');

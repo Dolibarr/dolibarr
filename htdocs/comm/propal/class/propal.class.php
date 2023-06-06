@@ -122,6 +122,7 @@ class Propal extends CommonObject
 	/**
 	 * Status of the quote
 	 * @var int
+	 * @deprecated Try to use $status now
 	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
 	 */
 	public $statut;
@@ -326,7 +327,7 @@ class Propal extends CommonObject
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LocalTax1', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LocalTax2', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
-		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>150),
+		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>150),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
 		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>161),
@@ -1288,6 +1289,10 @@ class Propal extends CommonObject
 							dol_print_error($this->db);
 							break;
 						}
+
+						// Set the id on created row
+						$line->id = $result;
+
 						// Defined the new fk_parent_line
 						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
@@ -1422,6 +1427,8 @@ class Propal extends CommonObject
 				}
 
 				foreach ($object->lines as $line) {
+					$line->id = 0;
+
 					if ($line->fk_product > 0) {
 						$prod = new Product($this->db);
 						$res = $prod->fetch($line->fk_product);
@@ -1606,7 +1613,8 @@ class Propal extends CommonObject
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
-				$this->ref_ext           = $obj->ref_ext;
+				$this->ref_customer         = $obj->ref_client;
+				$this->ref_ext              = $obj->ref_ext;
 
 				$this->remise               = $obj->remise;				// TODO deprecated
 				$this->remise_percent       = $obj->remise_percent;		// TODO deprecated
@@ -3713,6 +3721,7 @@ class Propal extends CommonObject
 	{
 		global $conf, $langs, $user;
 
+		$langs->load('propal');
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 
@@ -3796,10 +3805,11 @@ class Propal extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = '';
 		if ($user->rights->propal->lire) {
@@ -3831,7 +3841,7 @@ class Propal extends CommonObject
 				$label = $langs->trans("Proposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -3997,10 +4007,9 @@ class Propal extends CommonObject
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_project')) {
 			$return .= '<span class="info-box-ref"> | '.$this->fk_project.'</span>';

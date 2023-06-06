@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**
@@ -101,6 +102,11 @@ class Commande extends CommonOrder
 	 * @var string Thirdparty ref of order
 	 */
 	public $ref_client;
+
+	/**
+	 * @var string Thirdparty ref of order
+	 */
+	public $ref_customer;
 
 	/**
 	 * @var int Contact ID
@@ -1245,6 +1251,7 @@ class Commande extends CommonOrder
 		$this->date_validation    = '';
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) {
 			$this->ref_client = '';
+			$this->ref_customer = '';
 		}
 
 		// Do not clone ref_ext
@@ -1355,6 +1362,9 @@ class Commande extends CommonOrder
 			$line->marge_tx			= $marginInfos[1];
 			$line->marque_tx		= $marginInfos[2];
 
+			$line->origin           = $object->element;
+			$line->origin_id        = $object->lines[$i]->id;
+
 			// get extrafields from original line
 			$object->lines[$i]->fetch_optionals();
 			foreach ($object->lines[$i]->array_options as $options_key => $value) {
@@ -1380,6 +1390,7 @@ class Commande extends CommonOrder
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
+		$this->ref_customer         = $object->ref_client;
 
 		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN)) {
 			$this->note_private         = $object->note_private;
@@ -1896,7 +1907,7 @@ class Commande extends CommonOrder
 				$this->ref = $obj->ref;
 				$this->ref_client = $obj->ref_client;
 				$this->ref_customer = $obj->ref_client;
-				$this->ref_ext				= $obj->ref_ext;
+				$this->ref_ext = $obj->ref_ext;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -2946,6 +2957,7 @@ class Commande extends CommonOrder
 			if (!$error) {
 				$this->oldcopy = clone $this;
 				$this->ref_client = $ref_client;
+				$this->ref_customer = $ref_client;
 			}
 
 			if (!$notrigger && empty($error)) {
@@ -3333,6 +3345,9 @@ class Commande extends CommonOrder
 		}
 		if (isset($this->ref_client)) {
 			$this->ref_client = trim($this->ref_client);
+		}
+		if (isset($this->ref_customer)) {
+			$this->ref_customer = trim($this->ref_customer);
 		}
 		if (isset($this->note) || isset($this->note_private)) {
 			$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
@@ -3758,6 +3773,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $langs, $user;
 
+		$langs->load('orders');
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 
@@ -3768,7 +3784,7 @@ class Commande extends CommonOrder
 		if ($user->hasRight('commande', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
 			if (isset($this->statut)) {
-				$datas[] = ' '.$this->getLibStatut(5);
+				$datas['status'] = ' '.$this->getLibStatut(5);
 			}
 			$datas['Ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			if (!$nofetch) {
@@ -3865,11 +3881,11 @@ class Commande extends CommonOrder
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
@@ -3877,7 +3893,7 @@ class Commande extends CommonOrder
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 
 			$target_value = array('_self', '_blank', '_parent', '_top');
@@ -3897,7 +3913,7 @@ class Commande extends CommonOrder
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -4196,7 +4212,7 @@ class Commande extends CommonOrder
 
 		$now = dol_now();
 
-		return max($this->date, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+		return max($this->date, $this->delivery_date) < ($now - $conf->commande->client->warning_delay);
 	}
 
 	/**
@@ -4208,7 +4224,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $langs;
 
-		if (empty($this->date_livraison)) {
+		if (empty($this->delivery_date)) {
 			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		} else {
 			$text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->date_livraison, 'day');

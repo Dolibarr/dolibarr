@@ -316,7 +316,7 @@ if (empty($reshook)) {
 			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid = GETPOST("typeid", 'int');
-			//$object->note = trim(GETPOST("comment","alpha"));
+			//$object->note = trim(GETPOST("comment", "restricthtml"));
 			$object->morphy = GETPOST("morphy", 'alpha');
 
 			if (GETPOST('deletephoto', 'alpha')) {
@@ -1336,7 +1336,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (!$value['active']) {
 					break;
 				}
-				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'"></td></tr>';
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (isset($object->socialnetworks[$key])? $object->socialnetworks[$key] : null)).'"></td></tr>';
 			}
 		}
 
@@ -1403,7 +1403,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</table>';
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("Save", '');
+		print $form->buttonsSaveCancel("Save", 'Cancel');
 
 		print '</form>';
 	}
@@ -2041,7 +2041,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($useonlinepayment) {
 				print '<br>';
 				if (empty($amount)) {   // Take the maximum amount among what the member is supposed to pay / has paid in the past
-					$amount = price(max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount));
+					$amount = max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount);
 				}
 				if (empty($amount)) {
 					$amount = 0;

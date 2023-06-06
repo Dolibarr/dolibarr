@@ -108,10 +108,13 @@ class Client extends Societe
 	{
 		global $langs;
 
-		$sql = "SELECT id, code, libelle as label, picto FROM ".MAIN_DB_PREFIX."c_stcomm";
+		$sql = "SELECT id, code, libelle as label, picto, sortorder";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm";
 		if ($active >= 0) {
 			$sql .= " WHERE active = ".((int) $active);
 		}
+		$sql .= $this->db->order('sortorder,id', 'ASC,ASC');
+
 		$resql = $this->db->query($sql);
 		$num = $this->db->num_rows($resql);
 		$i = 0;

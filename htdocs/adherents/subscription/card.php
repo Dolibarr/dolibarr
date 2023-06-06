@@ -228,7 +228,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="2">';
-	print '<input type="text" class="flat" size="60" name="note" value="'.$object->note.'"></td></tr>';
+	print '<input type="text" class="flat" size="60" name="note" value="'.$object->note_private.'"></td></tr>';
 
 	// Bank line
 	if (isModEnabled("banque") && (!empty($conf->global->ADHERENT_BANK_USE) || $object->fk_bank)) {
@@ -324,7 +324,7 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private)).'</td></tr>';
 
 	// Bank line
 	if (isModEnabled("banque") && (!empty($conf->global->ADHERENT_BANK_USE) || $object->fk_bank)) {
@@ -352,10 +352,10 @@ if ($rowid && $action != 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
-		if (!empty($bankline->rappro)) {
+		if (!empty($bankline->rappro) || empty($bankline)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		} else {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated").'" href="#">'.$langs->trans("Modify")."</a></div>";
 		}
 	}
 

@@ -368,7 +368,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -511,7 +511,7 @@ if ($id > 0) {		// For user tab
 
 		print '<br>';
 
-		showMyBalance($object, $user_id);
+		print showMyBalance($object, $user_id);
 	}
 
 	print dol_get_fiche_end();
@@ -895,7 +895,7 @@ if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) 
 					$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
 				}
 
-				$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow);
+				$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow, 'selected'=>$selected);
 			}
 			print $holidaystatic->getKanbanView('', $arraydata);
 			if ($i == ($imaxinloop - 1)) {
@@ -1109,9 +1109,9 @@ $db->close();
  */
 function showMyBalance($holiday, $user_id)
 {
-	global $conf, $langs;
+	global $langs;
 
-	$alltypeleaves = $holiday->getTypes(1, -1); // To have labels
+	//$alltypeleaves = $holiday->getTypes(1, -1); // To have labels
 
 	$out = '';
 	$nb_holiday = 0;
@@ -1121,6 +1121,7 @@ function showMyBalance($holiday, $user_id)
 		$nb_holiday += $nb_type;
 		$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 	}
-	print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
-	print $out;
+	$out = $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>'.$out;
+
+	return $out;
 }

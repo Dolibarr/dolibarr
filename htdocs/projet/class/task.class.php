@@ -203,7 +203,7 @@ class Task extends CommonObjectLine
 		$sql .= ", progress";
 		$sql .= ", budget_amount";
 		$sql .= ") VALUES (";
-		$sql .= ((int) $conf->entity);
+		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
 		$sql .= ", ".(!empty($this->ref) ? "'".$this->db->escape($this->ref)."'" : 'null');
 		$sql .= ", ".((int) $this->fk_task_parent);
@@ -279,6 +279,7 @@ class Task extends CommonObjectLine
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
+		$sql .= " t.entity,";
 		$sql .= " t.fk_projet as fk_project,";
 		$sql .= " t.fk_task_parent,";
 		$sql .= " t.label,";
@@ -323,6 +324,7 @@ class Task extends CommonObjectLine
 
 				$this->id = $obj->rowid;
 				$this->ref = $obj->ref;
+				$this->entity = $obj->entity;
 				$this->fk_project = $obj->fk_project;
 				$this->fk_task_parent = $obj->fk_task_parent;
 				$this->label = $obj->label;
@@ -758,10 +760,11 @@ class Task extends CommonObjectLine
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option == 'withproject' ? '&withproject=1' : '');
 		// Add param to save lastsearch_values or not
@@ -779,8 +782,8 @@ class Task extends CommonObjectLine
 				$label = $langs->trans("ShowTask");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.' nowraponall"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.' nowraponall"';
 		} else {
 			$linkclose .= ' class="nowraponall"';
 		}
@@ -793,7 +796,7 @@ class Task extends CommonObjectLine
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="paddingright"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1248,7 +1251,7 @@ class Task extends CommonObjectLine
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
-		if (empty($this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
@@ -1351,6 +1354,7 @@ class Task extends CommonObjectLine
 		$sql .= " s.nom as thirdparty_name,";
 		$sql .= " s.email as thirdparty_email,";
 		$sql .= " ptt.rowid,";
+		$sql .= " ptt.ref_ext,";
 		$sql .= " ptt.fk_element as fk_task,";
 		$sql .= " ptt.element_date as task_date,";
 		$sql .= " ptt.element_datehour as task_datehour,";
@@ -1401,6 +1405,7 @@ class Task extends CommonObjectLine
 				$newobj->task_label = $obj->task_label;
 
 				$newobj->timespent_line_id = $obj->rowid;
+				$newobj->timespent_line_ref_ext = $obj->ref_ext;
 				$newobj->timespent_line_date = $this->db->jdate($obj->task_date);
 				$newobj->timespent_line_datehour	= $this->db->jdate($obj->task_datehour);
 				$newobj->timespent_line_withhour = $obj->task_date_withhour;
@@ -2356,30 +2361,27 @@ class Task extends CommonObjectLine
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $conf;
-
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
-		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box info-box-sm info-box-kanban">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_project') ) {
-			$return .= '<br><span class="info-box-status ">'.$this->fk_project.'</span>';
+		if (!empty($arraydata['projectlink'])) {
+			//$tmpproject = $arraydata['project'];
+			//$return .= '<br><span class="info-box-status ">'.$tmpproject->getNomProject().'</span>';
+			$return .= '<br><span class="info-box-status ">'.$arraydata['projectlink'].'</span>';
 		}
 		if (property_exists($this, 'budget_amount')) {
-			$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
-		}
-		if (property_exists($this, 'fk_statut')) {
-			$return .= '<br><span class="info-box-status ">'.$this->fk_statut.'</span>';
+			//$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		if (property_exists($this, 'duration_effective')) {
-			$return .= '<div class="info-box-label opacitymedium">'.getTaskProgressView($this, false, false).'</div>';
+			$return .= '<br><br><div class="info-box-label progressinkanban">'.getTaskProgressView($this, false, true).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

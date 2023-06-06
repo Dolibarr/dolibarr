@@ -187,10 +187,10 @@ $error = 0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Facture($db);
-$hookmanager->initHooks(array('invoicelist'));
+$hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
@@ -609,6 +609,8 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+$sql = preg_replace('/,\s*$/', '', $sql);
+//$sql .= ", COUNT(rc.rowid) as anotherfield";
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -935,7 +937,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -975,7 +977,10 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $langs->trans('CustomersInvoices'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+	// Output page
+	// --------------------------------------------------------------------
+
+	llxHeader('', $title, 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 	if ($socid > 0) {
 		$soc = new Societe($db);
@@ -993,7 +998,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -1178,7 +1183,7 @@ if ($resql) {
 	if (!empty($user->rights->facture->paiement)) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
-	if (!empty($conf->prelevement->enabled) && !empty($user->rights->prelevement->bons->creer)) {
+	if (isModEnabled('prelevement') && !empty($user->rights->prelevement->bons->creer)) {
 		$langs->load("withdrawals");
 		$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
@@ -1195,6 +1200,7 @@ if ($resql) {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	// Show the new button only when this page is not opend from the Extended POS
+	$newcardbutton = '';
 	if ($contextpage != 'poslist') {
 		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
 		if (!empty($socid)) {
@@ -1208,7 +1214,6 @@ if ($resql) {
 
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -1309,13 +1314,14 @@ if ($resql) {
 	}
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-	// Filters lines
+	// Fields title search
+	// --------------------------------------------------------------------
 	print '<tr class="liste_titre_filter">';
 
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-		// Action column
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre center actioncolumn">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -1929,10 +1935,7 @@ if ($resql) {
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				$facturestatic->socid = $companystatic->getNomUrl(1, 'company', 15);
-				$userstatic->fetch($obj->fk_user_author);
-				$facturestatic->fk_user_author = $userstatic->getNomUrl(1);
-				print $facturestatic->getKanbanView('');
+				print $facturestatic->getKanbanView('', array('thirdparty'=>$companystatic->getNomUrl(1, 'company', 15), 'userauthor'=>$userstatic->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
@@ -1961,11 +1964,17 @@ if ($resql) {
 						print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 
 				// No
 				if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 					print '<td>'.(($offset * $limit) + $i).'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 
 				// Ref
@@ -2357,6 +2366,9 @@ if ($resql) {
 
 				if (!empty($arrayfields['f.retained_warranty']['checked'])) {
 					print '<td align="right">'.(!empty($obj->retained_warranty) ? price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 
 				if (!empty($arrayfields['dynamount_payed']['checked'])) {
@@ -2451,15 +2463,15 @@ if ($resql) {
 					print '<td class="right nowrap">'.price($marginInfo['pa_total'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
+						$totalarray['pos'][$totalarray['nbfield']] = 'total_pa';
 					}
+					$totalarray['val']['total_pa'] += $marginInfo['pa_total'];
 				}
 				// Total margin
 				if (!empty($arrayfields['total_margin']['checked'])) {
 					print '<td class="right nowrap">'.price($marginInfo['total_margin'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
-					}
-					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
 					}
 					$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
@@ -2476,8 +2488,6 @@ if ($resql) {
 					print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
-					}
-					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
 					}
 					if ($i >= $imaxinloop - 1) {
@@ -2589,6 +2599,10 @@ if ($resql) {
 
 			$i++;
 		}
+
+		// Use correct digits number for totals
+		$totalarray['val']['total_pa'] = (isset($totalarray['val']['total_pa']) ? price2num($totalarray['val']['total_pa'], 'MT') : null);
+		$totalarray['val']['total_margin'] = (isset($totalarray['val']['total_margin']) ? price2num($totalarray['val']['total_margin'], 'MT') : null);
 
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

@@ -50,7 +50,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 }
 
-$permissionnote = ($user->rights->produit->creer || $user->rights->service->creer); // Used by the include of actions_setnotes.inc.php
+$permissionnote = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')); // Used by the include of actions_setnotes.inc.php
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -70,7 +70,9 @@ $hookmanager->initHooks(array('productnote'));
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }

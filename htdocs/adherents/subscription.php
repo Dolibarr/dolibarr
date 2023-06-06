@@ -451,7 +451,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 $param .= '&id='.$rowid;
 if ($optioncss != '') {
@@ -583,6 +583,19 @@ if ($rowid > 0) {
 
 	// Birth Date
 	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+	// Default language
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+		//$s=picto_from_langcode($object->default_lang);
+		//print ($s?$s.' ':'');
+		$langs->load("languages");
+		$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+		print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
+		print $labellang;
+		print '</td></tr>';
+	}
 
 	// Public
 	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
@@ -755,7 +768,7 @@ if ($rowid > 0) {
 				print '</td>';
 				print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
 				print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
-				print '<td class="right">'.price($objp->subscription).'</td>';
+				print '<td class="right amount">'.price($objp->subscription).'</td>';
 				if (isModEnabled('banque')) {
 					print '<td class="right">';
 					if ($objp->bid) {
@@ -982,7 +995,7 @@ if ($rowid > 0) {
 
 		if ($adht->subscription) {
 			// Amount
-			print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'. price(GETPOSTISSET('subscription') ? GETPOST('subscription') : $adht->amount).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'.(GETPOSTISSET('subscription') ? GETPOST('subscription') : price($adht->amount, 0, '', 0)).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
 
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td>';

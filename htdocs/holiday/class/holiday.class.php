@@ -1363,9 +1363,11 @@ class Holiday extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 
@@ -1380,7 +1382,9 @@ class Holiday extends CommonObject
 			$url .= '&save_lastsearch_values=1';
 		}
 		//}
-		$linkstart = '<a href="'.$url.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
@@ -1691,33 +1695,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *	Retourne un checked si vrai
-	 *
-	 *  @param	string	$name       name du paramètre de configuration
-	 *  @return string      		retourne checked si > 0
-	 */
-	public function getCheckOption($name)
-	{
-
-		$sql = "SELECT value";
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday_config";
-		$sql .= " WHERE name = '".$this->db->escape($name)."'";
-
-		$result = $this->db->query($sql);
-
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
-
-			// Si la valeur est 1 on retourne checked
-			if ($obj->value) {
-				return 'checked';
-			}
-		}
-	}
-
-
-	/**
-	 *  Créer les entrées pour chaque utilisateur au moment de la configuration
+	 *  Create entries for each user at setup step
 	 *
 	 *  @param	boolean		$single		Single
 	 *  @param	int			$userid		Id user
@@ -1751,22 +1729,6 @@ class Holiday extends CommonObject
 			}
 		}
 	}
-
-	/**
-	 *  Supprime un utilisateur du module Congés Payés
-	 *
-	 *  @param	int		$user_id        ID de l'utilisateur à supprimer
-	 *  @return boolean      			Vrai si pas d'erreur, faut si Erreur
-	 */
-	public function deleteCPuser($user_id)
-	{
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday_users";
-		$sql .= " WHERE fk_user = ".((int) $user_id);
-
-		$this->db->query($sql);
-	}
-
 
 	/**
 	 *  Return balance of holiday for one user
@@ -2486,7 +2448,7 @@ class Holiday extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.$arraydata['user']->getNomUrl(-1).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.$arraydata['user']->getNomUrl(-1).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_type')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : ';

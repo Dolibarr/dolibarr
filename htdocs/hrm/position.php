@@ -279,7 +279,7 @@ if ($action == 'create') {
 
 	print '<input type="submit" class="button" name="add" value="' . dol_escape_htmltag($langs->trans("Create")) . '">';
 	print '&nbsp; ';
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="javascript:history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -424,7 +424,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$resql = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($resql);
 		if (($page * $limit) > $nbtotalofrecords) {    // if total of record found is smaller than page * limit, goto and load page 0
@@ -464,7 +464,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 		$param .= '&contextpage=' . urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit=' . urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key]) && count($search[$key])) {
@@ -985,7 +985,7 @@ function DisplayPositionList()
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$resql = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($resql);
 		if (($page * $limit) > $nbtotalofrecords) {    // if total of record found is smaller than page * limit, goto and load page 0
@@ -1020,24 +1020,24 @@ function DisplayPositionList()
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	$param = 'fk_job=' . $fk_job;
+	$param = 'fk_job='.$fk_job;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-		$param .= '&contextpage=' . urlencode($contextpage);
+		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit=' . urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key]) && count($search[$key])) {
 			foreach ($search[$key] as $skey) {
-				$param .= '&search_' . $key . '[]=' . urlencode($skey);
+				$param .= '&search_'.$key.'[]='.urlencode($skey);
 			}
 		} else {
-			$param .= '&search_' . $key . '=' . urlencode($search[$key]);
+			$param .= '&search_'.$key.'='.urlencode($search[$key]);
 		}
 	}
 	if ($optioncss != '') {
-		$param .= '&optioncss=' . urlencode($optioncss);
+		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';

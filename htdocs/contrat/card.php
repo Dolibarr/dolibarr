@@ -441,6 +441,11 @@ if (empty($reshook)) {
 			$idprod = 0;
 		} else {
 			$idprod = GETPOST('idprod', 'int');
+
+			if (!empty($conf->global->MAIN_DISABLE_FREE_LINES) && $idprod <= 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
+				$error++;
+			}
 		}
 
 		$tva_tx = GETPOST('tva_tx', 'alpha');
@@ -746,12 +751,22 @@ if (empty($reshook)) {
 
 			$fk_unit = GETPOST('unit', 'alpha');
 
+			// update price_ht with discount
+			// TODO Use object->updateline instead objedtline->update
+
+			$price_ht =  price2num(GETPOST('elprice'), 'MU');
+			$remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			if ($remise_percent > 0) {
+				$remise = round(($price_ht * $remise_percent / 100), 2);
+				$price_ht = ($price_ht - $remise);
+			}
+
 			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = price2num(GETPOST('elprice'), 'MU');
+			$objectline->price_ht = $price_ht;
 			$objectline->subprice = price2num(GETPOST('elprice'), 'MU');
 			$objectline->qty = price2num(GETPOST('elqty'), 'MS');
-			$objectline->remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			$objectline->remise_percent = $remise_percent;
 			$objectline->tva_tx = ($txtva ? $txtva : 0); // Field may be disabled, so we use vat rate 0
 			$objectline->vat_src_code = $vat_src_code;
 			$objectline->localtax1_tx = is_numeric($localtax1_tx) ? $localtax1_tx : 0;
@@ -1322,8 +1337,9 @@ if ($action == 'create') {
 			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
 		} elseif ($action == 'clone') {
+			$filter = '(s.client:IN:1,2,3)';
 			// Clone confirmation
-			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', $filter)));
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
@@ -1851,7 +1867,7 @@ if ($action == 'create') {
 
 			// Area with status and activation info of line
 			if ($object->statut > 0) {
-				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
+				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').' centpercent">';
 
 				print '<tr class="oddeven" '.$moreparam.'>';
 				print '<td><span class="valignmiddle hideonsmartphone">'.$langs->trans("ServiceStatus").':</span> '.$object->lines[$cursorline - 1]->getLibStatut(4).'</td>';
@@ -1922,7 +1938,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="ligne" value="'.GETPOST('ligne', 'int').'">';
 				print '<input type="hidden" name="confirm" value="yes">';
 
-				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
+				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').' centpercent">';
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_start;
@@ -1956,7 +1972,7 @@ if ($action == 'create') {
 				print '</tr>';
 
 				print '<tr class="oddeven">';
-				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.dol_escape_htmltag(GETPOST("comment", 'alphanohtml')).'"></td>';
+				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.(isModEnabled('margin') ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.dol_escape_htmltag(GETPOST("comment", 'alphanohtml')).'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"> &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -1979,7 +1995,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="action" value="confirm_closeline">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
+				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').' centpercent">';
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_start_real;

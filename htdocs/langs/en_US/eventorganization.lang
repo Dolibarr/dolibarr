@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Conference Or Booth
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Manage the organization of an event
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or par
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page

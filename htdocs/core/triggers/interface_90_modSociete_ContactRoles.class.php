@@ -107,9 +107,13 @@ class InterfaceContactRoles extends DolibarrTriggers
 						}
 					}
 
+					// We disable this message, it shows the message in api, public page or batch actions when it should not.
+					// Message setting must be done by the calling GUI page and not set inside the trigger.
+					/*
 					if ($nb > 0) {
 						setEventMessages($langs->trans('ContactAddedAutomatically', $nb), null, 'mesgs');
 					}
+					*/
 				}
 			}
 		}

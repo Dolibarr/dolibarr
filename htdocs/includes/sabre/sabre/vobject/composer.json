@@ -37,9 +37,7 @@
         "sabre/xml"    : ">=1.5 <3.0"
     },
     "require-dev" : {
-        "phpunit/phpunit" : "*",
-        "sabre/cs"        : "^1.0.0"
-
+        "phpunit/phpunit" : "> 4.8.35, <6.0.0"
     },
     "suggest" : {
         "hoa/bench"       : "If you would like to run the benchmark scripts"
@@ -71,6 +69,11 @@
     "autoload" : {
         "psr-4" : {
             "Sabre\\VObject\\" : "lib/"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Sabre\\VObject\\" : "tests/VObject"
         }
     },
     "bin" : [

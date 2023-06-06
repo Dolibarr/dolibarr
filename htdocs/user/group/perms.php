@@ -210,6 +210,7 @@ if ($object->id > 0) {
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 
@@ -218,21 +219,37 @@ if ($object->id > 0) {
 	// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 	if (!empty($conf->mutlicompany->enabled)) {
 		print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-		print '<td colspan="2">'.$object->name;
-		if (!$object->entity) {
+		print '<td class="valeur">'.dol_escape_htmltag($object->name);
+		if (empty($object->entity)) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
 		}
 		print "</td></tr>\n";
 	}
 
-	// Note
-	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td>';
-	print '<td class="valeur sensiblehtmlcontent">';
-	print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note));
-	print '</td>';
-	print "</tr>\n";
+	// Multicompany
+	if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+		$mc->getInfo($object->entity);
+		print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
+		print '<td class="valeur">'.dol_escape_htmltag($mc->label);
+		print "</td></tr>\n";
+	}
 
-	print '</table><br>';
+	unset($object->fields['nom']); // Name already displayed in banner
+
+	// Common attributes
+	$keyforbreak = '';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+	print '</table>';
+	print '</div>';
+	print '</div>';
+
+	print '<div class="clearboth"></div>';
+
+	print '<br>';
 
 	if ($user->admin) {
 		print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));

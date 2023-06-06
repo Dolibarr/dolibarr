@@ -162,7 +162,7 @@ function versiondolibarrarray()
  *  @param		int		$nocommentremoval			Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
  *  @param		int		$colspan					2=Add a colspan=2 on td
- *  @param		int		$onlysqltoimportwebsite		Only sql resquests used to import a website template is allowed
+ *  @param		int		$onlysqltoimportwebsite		Only sql resquests used to import a website template are allowed
  * 	@return		int									<=0 if KO, >0 if OK
  */
 function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0)
@@ -1166,33 +1166,45 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 		if ($withdeps) {
 			if (isset($objMod->depends) && is_array($objMod->depends) && !empty($objMod->depends)) {
 				// Activation of modules this module depends on
-				// this->depends may be array('modModule1', 'mmodModule2') or array('always1'=>"modModule1", 'FR'=>'modModule2')
-				foreach ($objMod->depends as $key => $modulestring) {
+				// this->depends may be array('modModule1', 'mmodModule2') or array('always'=>array('modModule1'), 'FR'=>array('modModule2"))
+				foreach ($objMod->depends as $key => $modulestringorarray) {
 					//var_dump((! is_numeric($key)) && ! preg_match('/^always/', $key) && $mysoc->country_code && ! preg_match('/^'.$mysoc->country_code.'/', $key));exit;
 					if ((!is_numeric($key)) && !preg_match('/^always/', $key) && $mysoc->country_code && !preg_match('/^'.$mysoc->country_code.'/', $key)) {
 						dol_syslog("We are not concerned by dependency with key=".$key." because our country is ".$mysoc->country_code);
 						continue;
 					}
-					$activate = false;
-					foreach ($modulesdir as $dir) {
-						if (file_exists($dir.$modulestring.".class.php")) {
-							$resarray = activateModule($modulestring);
-							if (empty($resarray['errors'])) {
-								$activate = true;
-							} else {
-								foreach ($resarray['errors'] as $errorMessage) {
-									dol_syslog($errorMessage, LOG_ERR);
-								}
-							}
-							break;
-						}
+
+					if (!is_array($modulestringorarray)) {
+						$modulestringorarray = array($modulestringorarray);
 					}
 
-					if ($activate) {
-						$ret['nbmodules'] += $resarray['nbmodules'];
-						$ret['nbperms'] += $resarray['nbperms'];
-					} else {
-						$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
+					foreach ($modulestringorarray as $modulestring) {
+						$activate = false;
+						$activateerr = '';
+						foreach ($modulesdir as $dir) {
+							if (file_exists($dir.$modulestring.".class.php")) {
+								$resarray = activateModule($modulestring);
+								if (empty($resarray['errors'])) {
+									$activate = true;
+								} else {
+									$activateerr = join(', ', $resarray['errors']);
+									foreach ($resarray['errors'] as $errorMessage) {
+										dol_syslog($errorMessage, LOG_ERR);
+									}
+								}
+								break;
+							}
+						}
+
+						if ($activate) {
+							$ret['nbmodules'] += $resarray['nbmodules'];
+							$ret['nbperms'] += $resarray['nbperms'];
+						} else {
+							if ($activateerr) {
+								$ret['errors'][] = $activateerr;
+							}
+							$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
+						}
 					}
 				}
 			}
@@ -1754,7 +1766,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 				}
 				print '</div>';
 				//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
-			} elseif ($const == 'ADHERENT_MAIL_FROM') {
+			} elseif (in_array($const, ['ADHERENT_MAIL_FROM', 'ADHERENT_CC_MAIL_FROM'])) {
 				print ' '.img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
 			}
 

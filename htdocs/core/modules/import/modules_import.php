@@ -43,7 +43,7 @@ class ModeleImports
 	public $error = '';
 
 	/**
-	 * @var int id of driver
+	 * @var string Code of driver
 	 */
 	public $id;
 
@@ -74,6 +74,9 @@ class ModeleImports
 	public $liblabel = array();
 
 	public $libversion = array();
+
+	public $charset;
+
 
 	/**
 	 * @var	array	Element mapping from table name
@@ -126,7 +129,7 @@ class ModeleImports
 	/**
 	 * getDriverId
 	 *
-	 * @return string		Id
+	 * @return int		Id
 	 */
 	public function getDriverId()
 	{
@@ -253,7 +256,7 @@ class ModeleImports
 	}
 
 	/**
-	 *  Renvoi libelle d'un driver import
+	 *  Return label of driver import
 	 *
 	 *	@param	string	$key	Key
 	 *	@return	string
@@ -264,7 +267,7 @@ class ModeleImports
 	}
 
 	/**
-	 *  Renvoi la description d'un driver import
+	 *  Return description of import drivervoi la description d'un driver import
 	 *
 	 *	@param	string	$key	Key
 	 *	@return	string

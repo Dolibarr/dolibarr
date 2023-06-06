@@ -80,12 +80,6 @@ class pdf_beluga extends ModelePDFProjects
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -242,11 +236,11 @@ class pdf_beluga extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->project->dir_output) {
+		if ($conf->project->multidir_output[$object->entity]) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->project->dir_output;
+			$dir = $conf->project->multidir_output[$object->entity];
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -462,7 +456,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'actioncomm',
 						'datefieldname'=>'datep',
 						'disableamount'=>1,
-						'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->read,
+						'test'=> isModEnabled('agenda') && $user->rights->agenda->allactions->read,
 						'lang'=>'agenda')
 				);
 

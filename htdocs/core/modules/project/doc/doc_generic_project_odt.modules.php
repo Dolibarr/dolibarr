@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
@@ -50,10 +50,10 @@ if (isModEnabled('facture')) {
 if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+if (isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (isModEnabled('contrat')) {
@@ -82,12 +82,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 * @var Societe
 	 */
 	public $emetteur;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -184,15 +178,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$task				Task Object
+	 *	@param  Task			$task				Task Object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_tasks(Task $task, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$resarray = array(
 			'task_ref'=>$task->ref,
 			'task_fk_project'=>$task->fk_project,
@@ -203,6 +195,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 			'task_fk_parent'=>$task->fk_parent,
 			'task_duration'=>$task->duration,
 			'task_duration_hour'=>convertSecondToTime($task->duration, 'all'),
+			'task_planned_workload'=>$task->planned_workload,
+			'task_planned_workload_hour'=>convertSecondToTime($task->planned_workload, 'all'),
 			'task_progress'=>$task->progress,
 			'task_public'=>$task->public,
 			'task_date_start'=>dol_print_date($task->date_start, 'day'),
@@ -1048,7 +1042,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'class' => 'ActionComm',
 						'table' => 'actioncomm',
 						'disableamount' => 1,
-						'test' => $conf->agenda->enabled && $user->rights->agenda->allactions->lire
+						'test' => isModEnabled('agenda') && $user->rights->agenda->allactions->lire
 					),
 				);
 

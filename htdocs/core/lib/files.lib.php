@@ -1808,9 +1808,15 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles, $upload_dir);
 
 				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists'
-					global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
-
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+					$tmparraysize = getDefaultImageSizes();
+					$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+					$maxheightsmall = $tmparraysize['maxheightsmall'];
+					$maxwidthmini = $tmparraysize['maxwidthmini'];
+					$maxheightmini = $tmparraysize['maxheightmini'];
+					//$quality = $tmparraysize['quality'];
+					$quality = 50;	// For thumbs, we force quality to 50
 
 					// Generate thumbs.
 					if ($generatethumbs) {
@@ -1819,10 +1825,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 							// We can't use $object->addThumbs here because there is no $object known
 
 							// Used on logon for example
-							$imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+							$imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
 							// Create mini thumbs for image (Ratio is near 16/9)
 							// Used on menu or for setup page for example
-							$imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+							$imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
 						}
 					}
 
@@ -2315,7 +2321,7 @@ function dol_uncompress($inputfile, $outputdir)
 			$res = $zip->open($inputfile);
 			if ($res === true) {
 				//$zip->extractTo($outputdir.'/');
-				// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
+				// We must extract one file at time so we can check that file name does not contain '..' to avoid transversal path of zip built for example using
 				// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
 				// with -l is the range of dot to go back in path.
 				// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
@@ -2600,7 +2606,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->medias->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
-		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
+		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.(log|json)$/', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/'.$original_file;
 	} elseif ($modulepart == 'doctemplates' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates
@@ -2976,7 +2982,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->commande->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
-	} elseif ($modulepart == 'project' && !empty($conf->project->dir_output)) {
+	} elseif ($modulepart == 'project' && !empty($conf->project->multidir_output[$entity])) {
 		// Wrapping pour les projets
 		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -2988,9 +2994,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
 			}
 		}
-		$original_file = $conf->project->dir_output.'/'.$original_file;
+		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
-	} elseif ($modulepart == 'project_task' && !empty($conf->project->dir_output)) {
+	} elseif ($modulepart == 'project_task' && !empty($conf->project->multidir_output[$entity])) {
 		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
@@ -3001,7 +3007,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
-		$original_file = $conf->project->dir_output.'/'.$original_file;
+		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping pour les commandes fournisseurs
@@ -3253,7 +3259,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$partsofdirinoriginalfile = explode('/', $original_file);
 			if (!empty($partsofdirinoriginalfile[1])) {	// If original_file is xxx/filename (xxx is a part we will use)
 				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
-				if ($partofdirinoriginalfile && !empty($fuser->rights->$modulepart->$partofdirinoriginalfile) && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) {
+				if ($partofdirinoriginalfile && ($fuser->hasRight($modulepart, $partofdirinoriginalfile, 'lire') || $fuser->hasRight($modulepart, $partofdirinoriginalfile, 'read'))) {
 					$accessallowed = 1;
 				}
 			}
@@ -3336,15 +3342,26 @@ function dol_cache_refresh($directory, $filename, $cachetime)
 /**
  * Read object from cachefile.
  *
- * @param string $directory Directory of cache
- * @param string $filename Name of filecache
- * @return mixed Unserialise from file
+ * @param string $directory 	Directory of cache
+ * @param string $filename 		Name of filecache
+ * @return mixed 				Unserialise from file
  */
 function dol_readcachefile($directory, $filename)
 {
 	$cachefile = $directory.$filename;
 	$object = unserialize(file_get_contents($cachefile));
 	return $object;
+}
+
+/**
+ * Return the relative dirname (relative to DOL_DATA_ROOT) of a full path string.
+ *
+ * @param 	string $pathfile		Full path of a file
+ * @return 	string					Path of file relative to DOL_DATA_ROOT
+ */
+function dirbasename($pathfile)
+{
+	return preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'\//', '', $pathfile);
 }
 
 
@@ -3417,7 +3434,7 @@ function dragAndDropFileUpload($htmlname)
 			$("#'.$htmlname.'").addClass("cssDragDropArea");
 			$(".cssDragDropArea").on("dragenter", function(ev) {
 				// Entering drop area. Highlight area
-				console.log("We add class highlightDragDropArea")
+				console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
 				enterTargetDragDrop = ev.target;
 				$(this).addClass("highlightDragDropArea");
 				$("#'.$htmlname.'Message").removeClass("hidden");
@@ -3427,7 +3444,7 @@ function dragAndDropFileUpload($htmlname)
 			$(".cssDragDropArea").on("dragleave", function(ev) {
 				// Going out of drop area. Remove Highlight
 				if (enterTargetDragDrop == ev.target){
-					console.log("We remove class highlightDragDropArea")
+					console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
 					$("#'.$htmlname.'Message").addClass("hidden");
 					$(this).removeClass("highlightDragDropArea");
 				}
@@ -3463,7 +3480,23 @@ function dragAndDropFileUpload($htmlname)
 					data: fd,
 					success:function() {
 						console.log("Uploaded.", arguments);
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
+						/* arguments[0] is the json string of files */
+						/* arguments[1] is the value for variable "success", can be 0 or 1 */
+						let listoffiles = JSON.parse(arguments[0]);
+						console.log(listoffiles);
+						let nboferror = 0;
+						for (let i = 0; i < listoffiles.length; i++) {
+							console.log(listoffiles[i].error);
+							if (listoffiles[i].error) {
+								nboferror++;
+							}
+						}
+						console.log(nboferror);
+						if (nboferror > 0) {
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings";
+						} else {
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
+						}
 					},
 					error:function() {
 						console.log("Error Uploading.", arguments)

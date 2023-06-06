@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('products', 'stocks', 'productbatch', 'categories'));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -48,7 +49,7 @@ $mode       = GETPOST('mode', 'aZ');
 
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $type = GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
@@ -82,6 +83,7 @@ if (GETPOSTISSET('catid')) {
 } else {
 	$search_categ = GETPOST('search_categ', 'int');
 }
+$search_warehouse_categ = GETPOST('search_warehouse_categ', 'int');
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -127,13 +129,30 @@ if (!empty($canvas)) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productreassortlotlist'));
+$hookmanager->initHooks(array('reassortlotlist'));
 
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service', 0, 'product&product');
+
+// Definition of array of fields for columns
+$arrayfields = array(
+	array('type'=>'varchar', 'label'=>'Ref', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'varchar', 'label'=>'Label', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'int', 'label'=>'Warehouse', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'varchar', 'label'=>'Lot', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'varchar', 'label'=>'DLC', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'varchar', 'label'=>'DLUO', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'int', 'label'=>'Stock', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'int', 'label'=>'StatusSell', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'int', 'label'=>'StatusBuy', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+);
+
+//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
+$arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 
 /*
@@ -173,11 +192,12 @@ if (empty($reshook)) {
 		$search['eatby_dtend'] = '';
 		$sref = "";
 		$snom = "";
-		$sall = "";
+		$search_all = "";
 		$tosell = "";
 		$tobuy = "";
 		$search_sale = "";
 		$search_categ = "";
+		$search_warehouse_categ = "";
 		$search_toolowstock = '';
 		$search_subjecttolotserial = '';
 		$search_batch = '';
@@ -255,8 +275,24 @@ if (!empty($search_categ) && $search_categ != '-1') {
 	}
 	$sql .= ")";
 }
-if ($sall) {
-	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
+if (!empty($search_warehouse_categ) && $search_warehouse_categ != '-1') {
+	$sql .= " AND ";
+	if ($search_warehouse_categ == -2) {
+		$sql .= " NOT EXISTS ";
+	} else {
+		$sql .= " EXISTS ";
+	}
+	$sql .= "(";
+	$sql .= " SELECT cp.fk_categorie, cp.fk_warehouse";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_warehouse as cp";
+	$sql .= " WHERE cp.fk_warehouse = e.rowid"; // Join for the needed table to filter by categ
+	if ($search_warehouse_categ > 0) {
+		$sql .= " AND cp.fk_categorie = " . ((int) $search_warehouse_categ);
+	}
+	$sql .= ")";
+}
+if ($search_all) {
+	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $search_all);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type)) {
@@ -375,7 +411,7 @@ if (!empty($sql_having)) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 
@@ -402,7 +438,7 @@ $num = $db->num_rows($resql);
 
 $i = 0;
 
-if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall or $snom or $sref)) {
+if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all or $snom or $sref)) {
 	$objp = $db->fetch_object($resql);
 	header("Location: card.php?id=$objp->rowid");
 	exit;
@@ -427,7 +463,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -443,8 +479,8 @@ foreach ($search as $key => $val) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($sall) {
-	$param .= "&sall=".urlencode($sall);
+if ($search_all) {
+	$param .= "&search_all=".urlencode($search_all);
 }
 if ($tosell) {
 	$param .= "&tosell=".urlencode($tosell);
@@ -485,6 +521,9 @@ if ($search_sale) {
 if (!empty($search_categ) && $search_categ != '-1') {
 	$param .= "&search_categ=".urlencode($search_categ);
 }
+if (!empty($search_warehouse_categ) && $search_warehouse_categ != '-1') {
+	$param .= "&search_warehouse_categ=".urlencode($search_warehouse_categ);
+}
 if ($search_stock_physique) {
 	$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 }
@@ -508,7 +547,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'product', 0, '', '', $limit, 0, 0, 1);
 
-
+/*
 if ($search_categ > 0) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
@@ -517,16 +556,26 @@ if ($search_categ > 0) {
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
+*/
 
 // Filter on categories
 $moreforfilter = '';
 if (isModEnabled('categorie')) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
+	$moreforfilter .= img_picto($langs->trans('ProductsCategoriesShort'), 'category', 'class="pictofixedwidth"');
+	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, $langs->trans("ProductsCategoryShort"), 'maxwidth400');
 	$moreforfilter .= '</div>';
 }
+// Filter on warehouse categories
+if (isModEnabled('categorie')) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto($langs->trans('StockCategoriesShort'), 'category', 'class="pictofixedwidth"');
+	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_WAREHOUSE, $search_warehouse_categ, 'search_warehouse_categ', 1, $langs->trans("StockCategoriesShort"), 'maxwidth400');
+	$moreforfilter .= '</div>';
+}
+
 $moreforfilter.='<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial?' checked':'').'>';
+
 
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -552,18 +601,19 @@ if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print '</td>';
 }
 print '<td class="liste_titre">';
-print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
+print '<input class="flat" type="text" name="sref" size="6" value="'.dol_escape_htmltag($sref).'">';
 print '</td>';
 print '<td class="liste_titre">';
-print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
+print '<input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'">';
 print '</td>';
 if (isModEnabled("service") && $type == 1) {
 	print '<td class="liste_titre">';
 	print '&nbsp;';
 	print '</td>';
 }
-print '<td class="liste_titre"><input class="flat" type="text" name="search_warehouse" size="6" value="'.$search_warehouse.'"></td>';
-print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.$search_batch.'"></td>';
+
+print '<td class="liste_titre"><input class="flat" type="text" name="search_warehouse" size="6" value="'.dol_escape_htmltag($search_warehouse).'"></td>';
+print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.dol_escape_htmltag($search_batch).'"></td>';
 if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	print '<td class="liste_titre center">';
 	$key = 'sellby';
@@ -701,6 +751,9 @@ while ($i < $imaxinloop) {
 	// Action column
 	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print '<td></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Ref
@@ -708,9 +761,15 @@ while ($i < $imaxinloop) {
 	print $product_static->getNomUrl(1, '', 16);
 	//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Label
 	print '<td>'.$objp->label.'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	if (isModEnabled("service") && $type == 1) {
 		print '<td class="center">';
@@ -724,6 +783,9 @@ while ($i < $imaxinloop) {
 		} else {
 			print $objp->duration;
 		}
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 		print '</td>';
 	}
 	//print '<td class="right">'.$objp->stock_theorique.'</td>';
@@ -735,6 +797,9 @@ while ($i < $imaxinloop) {
 	if ($objp->fk_entrepot > 0) {
 		print $warehousetmp->getNomUrl(1);
 	}
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 	print '</td>';
 
 	// Lot
@@ -742,14 +807,23 @@ while ($i < $imaxinloop) {
 	if ($product_lot_static->batch) {
 		print $product_lot_static->getNomUrl(1);
 	}
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 	print '</td>';
 
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<td class="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<td class="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print '<td class="right">';
@@ -768,15 +842,27 @@ while ($i < $imaxinloop) {
 		}
 	}
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '<td class="right">';
 	print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 	print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product_static->id.'&search_warehouse='.$objp->fk_entrepot.'&search_batch='.($objp->batch != 'Undefined' ? $objp->batch : 'Undefined').'">'.$langs->trans("Movements").'</a>';
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '<td class="right nowrap">'.$product_static->LibStatut($objp->statut, 5, 0).'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '<td class="right nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Fields values from hook
 	$parameters = array('obj'=>$objp);
@@ -786,11 +872,26 @@ while ($i < $imaxinloop) {
 	// Action column
 	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print '<td></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print "</tr>\n";
 	$i++;
 }
+
+// If no record found
+if ($num == 0) {
+	$colspan = 2;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
 
 $db->free($resql);
 

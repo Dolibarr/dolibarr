@@ -214,7 +214,7 @@ if ($object->id > 0) {
 	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$param = '&id='.$object->id.'&socid='.$socid;
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.((int) $limit);
 
 
 		//print load_fiche_titre($langs->trans("ActionsOnStockTransfer"), '', '');

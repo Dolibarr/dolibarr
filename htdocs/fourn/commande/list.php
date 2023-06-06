@@ -9,7 +9,7 @@
  * Copyright (C) 2018-2021 Frédéric France		<frederic.france@netlogic.fr>
  * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
- * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,6 +385,12 @@ if (empty($reshook)) {
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
 				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 			} else {
+				// Search if the VAT reverse-charge is activated by default in supplier card to resume the information
+				if (!empty($cmd->socid) > 0) {
+					$societe = new Societe($db);
+					$societe->fetch($cmd->socid);
+					$objecttmp->vat_reverse_charge = $societe->vat_reverse_charge;
+				}
 				$objecttmp->socid = $cmd->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
 				$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -586,7 +592,7 @@ if (empty($reshook)) {
 				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode($limit);
+				$param .= '&limit='.((int) $limit);
 			}
 			if ($sall) {
 				$param .= '&sall='.urlencode($sall);
@@ -964,7 +970,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -1012,7 +1018,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -1688,7 +1694,7 @@ if ($resql) {
 			$thirdpartytmp->fournisseur = $obj->fournisseur;
 			$objectstatic->socid = $thirdpartytmp->getNomUrl('supplier', 0, 0, -1);
 			// Output Kanban
-			print $objectstatic->getKanbanView('');
+			print $objectstatic->getKanbanView('', array('selected' => in_array($objectstatic->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

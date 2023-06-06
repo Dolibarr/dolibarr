@@ -22,7 +22,8 @@ CREATE TABLE llx_partnership(
 	status smallint DEFAULT 0 NOT NULL, 
 	fk_type integer DEFAULT 0 NOT NULL,
 	fk_soc integer, 
-	fk_member integer, 
+	fk_member integer,
+	email_partnership varchar(64),      -- if different than email of thirdparty or member 
 	date_partnership_start date NOT NULL, 
 	date_partnership_end date NULL, 
 	entity integer DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
