@@ -900,7 +900,8 @@ if ($search_status <> '') {
 	if ($search_status == -3) {	// "validated + in process + delivered"
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
 		//$sql.= ' AND c.facture = 0'; // invoice not created
-		$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
+		//$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
+		$sql .= ' AND NOT (c.fk_statut = 3 AND c.facture = 1) AND NOT c.fk_statut = -1'; // not delivered + invoice and not canceled 
 	}
 	if ($search_status == -4) {	//  "validate + in progress"
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
