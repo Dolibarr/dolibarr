@@ -30,6 +30,7 @@
 /**
  *  Class to stock current configuration
  */
+#[\AllowDynamicProperties]
 class Conf
 {
 	/**
