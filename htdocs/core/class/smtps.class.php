@@ -1140,10 +1140,8 @@ class SMTPs
 
 	/**
 	 * Inserts given addresses into structured format.
-	 * This method takes a list of given addresses, via an array
-	 * or a COMMA delimted string, and inserts them into a highly
-	 * structured array. This array is designed to remove duplicate
-	 * addresses and to sort them by Domain.
+	 * This method takes a list of given addresses, via an array or a COMMA delimted string, and inserts them into a highly
+	 * structured array. This array is designed to remove duplicate addresses and to sort them by Domain.
 	 *
 	 * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
 	 * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
@@ -1245,7 +1243,9 @@ class SMTPs
 		}
 
 		// Pull User Name and Host.tld apart
-		list($_aryEmail['user'], $_aryEmail['host']) = explode('@', $_aryEmail['addr']);
+		$_tmpHost = explode('@', $_aryEmail['addr']);
+		$_aryEmail['user'] = $_tmpHost[0];
+		$_aryEmail['host'] = $_tmpHost[1];
 
 		// Put the brackets back around the address
 		$_aryEmail['addr'] = '<'.$_aryEmail['addr'].'>';

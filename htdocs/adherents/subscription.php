@@ -134,7 +134,7 @@ if ($reshook < 0) {
 }
 
 // Create third party from a member
-if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
+if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 	if ($result > 0) {
 		// Creation of thirdparty
 		$company = new Societe($db);

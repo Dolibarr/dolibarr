@@ -89,7 +89,6 @@ if (!$user->hasRight("modulebuilder", "run")) {
 	accessforbidden('ModuleBuilderNotAllowed');
 }
 
-
 // Dir for custom dirs
 $tmp = explode(',', $dolibarr_main_document_root_alt);
 $dirins = $tmp[0];
@@ -1382,14 +1381,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			// Regenerate left menu entry in descriptor for $objectname
 			$stringtoadd = "
 		\$this->menu[\$r++]=array(
-			'fk_menu'=>'fk_mainmenu=mymodule',     
-			'type'=>'left',                          
+			'fk_menu'=>'fk_mainmenu=mymodule',
+			'type'=>'left',
 			'titre'=>'MyObject',
 			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'myobject',
 			'url'=>'/mymodule/myobject_list.php',
-			'langs'=>'mymodule@mymodule',	       
+			'langs'=>'mymodule@mymodule',
 			'position'=>1000+\$r,
 			'enabled'=>'\$conf->testmodule->enabled',
 			'perms'=>'1',
@@ -1474,7 +1473,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'mon module'=>$module,
 				'Mon module'=>$module,
 				'htdocs/modulebuilder/template/'=>strtolower($modulename),
-				//'myobject'=>strtolower($objectname),
+				'myobject'=>strtolower($objectname),
 				'MyObject'=>$objectname,
 				//'MYOBJECT'=>strtoupper($objectname),
 				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
@@ -2500,6 +2499,10 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			setEventMessages($langs->trans("ErrorCoherenceMenu", $langs->transnoentities("leftmenu"), $langs->transnoentities("type")), null, 'errors');
 		}
 	}
+	if (GETPOST('type', 'alpha') == 'top') {
+		$error++;
+		setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
+	}
 
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 	if (!$error) {
@@ -2522,7 +2525,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 		if (GETPOST('type') == 'left') {
 			unset($menuToAdd['prefix']);
 			if (empty(GETPOST('fk_menu'))) {
-				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha').'';
+				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha');
 			} else {
 				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha').',fk_leftmenu='.GETPOST('fk_menu');
 			}
@@ -2600,6 +2603,11 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int')) {
 			} else {
 				$menuModify['enabled'] = "0";
 			}
+
+			if (GETPOST('type', 'alpha') == 'top') {
+				$error++;
+				setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
+			}
 			if (!$error) {
 				//update menu
 				$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
@@ -2610,7 +2618,7 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int')) {
 				}
 				if ($result < 0) {
 					setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
-					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.$key+1);
+					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
 					exit;
 				}
 				setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
@@ -2923,8 +2931,8 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd">';
 	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="idpicto" value="'.(GETPOSTISSET('idpicto') ? GETPOST('idpicto') : getDolGlobalString('MODULEBUILDER_DEFAULTPICTO', 'fa-generic')).'" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
-	print $form->textwithpicto('', $langs->trans("Example").': fa-generic, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+	print '<input type="text" name="idpicto" value="'.(GETPOSTISSET('idpicto') ? GETPOST('idpicto') : getDolGlobalString('MODULEBUILDER_DEFAULTPICTO', 'fa-file-o')).'" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+	print $form->textwithpicto('', $langs->trans("Example").': fa-file-o, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd">';
@@ -3331,9 +3339,13 @@ if ($module == 'initmodule') {
 					if (empty($firstobjectname)) {
 						$firstobjectname = $objectname;
 					}
+					$pictoname = 'generic';
+					if (preg_match('/\$picto\s*=\s*["\']([^"\']+)["\']/', $tmpcontent, $reg)) {
+						$pictoname = $reg[1];
+					}
 
 					$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname;
-					$head3[$h][1] = $objectname;
+					$head3[$h][1] = img_picto('', $pictoname, 'class="pictofixedwidth"').$objectname;
 					$head3[$h][2] = $objectname;
 					$h++;
 				}
@@ -3341,7 +3353,7 @@ if ($module == 'initmodule') {
 
 			if ($h > 1) {
 				$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj=deleteobject';
-				$head3[$h][1] =img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("DangerZone");
+				$head3[$h][1] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Dangeddddddd|fffffffffffrZone");
 				$head3[$h][2] = 'deleteobject';
 				$h++;
 			}
@@ -3355,7 +3367,7 @@ if ($module == 'initmodule') {
 				}
 			}
 
-			print dol_get_fiche_head($head3, $tabobj, '', -1, ''); // Level 3
+			print dol_get_fiche_head($head3, $tabobj, '', -1, '', 0, '', '', 0, 'forobjectsuffix'); // Level 3
 
 			if ($tabobj == 'newobject') {
 				// New object tab
@@ -3378,8 +3390,8 @@ if ($module == 'initmodule') {
 				print '<div class="tagtr"><div class="tagtd">';
 				print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
-				print '<input type="text" name="idpicto" value="fa-generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
-				print $form->textwithpicto('', $langs->trans("Example").': fa-generic, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+				print '<input type="text" name="idpicto" value="fa-file-o" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+				print $form->textwithpicto('', $langs->trans("Example").': fa-file-o, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
 				print '</div></div>';
 
 				print '<div class="tagtr"><div class="tagtd">';
@@ -3514,7 +3526,14 @@ if ($module == 'initmodule') {
 
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
 						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
-						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
+
+						if (is_object($tmpobject) && property_exists($tmpobject, 'picto')) {
+							$pathtopicto = $tmpobject->picto;
+							$realpathtopicto = '';
+						} else {
+							$pathtopicto = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
+							$realpathtopicto = $dirread.'/'.$pathtopicto;
+						}
 
 						//var_dump($pathtoclass);
 						//var_dump($dirread);
@@ -3533,7 +3552,6 @@ if ($module == 'initmodule') {
 						$realpathtosqlextrakey = $dirread.'/'.$pathtosqlextrakey;
 						$realpathtolib      = $dirread.'/'.$pathtolib;
 						$realpathtoobjlib   = $dirread.'/'.$pathtoobjlib;
-						$realpathtopicto    = $dirread.'/'.$pathtopicto;
 
 						if (empty($realpathtoapi)) { 	// For compatibility with some old modules
 							$pathtoapi = strtolower($module).'/class/api_'.strtolower($module).'s.class.php';
@@ -3552,12 +3570,12 @@ if ($module == 'initmodule') {
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 						// Image
-						if (dol_is_file($realpathtopicto)) {
+						if ($realpathtopicto && dol_is_file($realpathtopicto)) {
 							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.(dol_is_file($realpathtopicto) ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtopicto).(dol_is_file($realpathtopicto) ? '' : '</strike>').'</strong>';
 							//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 							print '<br>';
 						} elseif (!empty($tmpobject)) {
-							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : '.img_picto('', $tmpobject->picto, 'class="pictofixedwidth"');
+							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : '.img_picto('', $tmpobject->picto, 'class="pictofixedwidth"').$tmpobject->picto;
 							print '<br>';
 						}
 
