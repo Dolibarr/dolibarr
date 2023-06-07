@@ -237,9 +237,15 @@ class Facture extends CommonInvoice
 	 */
 	public $lines = array();
 
+	/**
+	 * @var FactureLigne
+	 */
 	public $line;
 	public $extraparams = array();
 
+	/**
+	 * @var int ID facture rec
+	 */
 	public $fac_rec;
 
 	public $date_pointoftax;
@@ -6008,6 +6014,9 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $table_element = 'facturedet';
 
+	/**
+	 * @var FactureLigne
+	 */
 	public $oldline;
 
 	//! From llx_facturedet
@@ -6064,6 +6073,16 @@ class FactureLigne extends CommonInvoiceLine
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+
+	/**
+	 *      Constructor
+	 *
+	 *      @param     DoliDB	$db      handler d'acces base de donnee
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 	/**
 	 *	Load invoice line from database
