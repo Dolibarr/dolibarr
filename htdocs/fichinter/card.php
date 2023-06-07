@@ -734,6 +734,7 @@ if (empty($reshook)) {
 			// Actions on extra fields
 			$result = $object->insertExtraFields('INTERVENTION_MODIFY');
 			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
