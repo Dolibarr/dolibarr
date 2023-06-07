@@ -4440,7 +4440,7 @@ class Facture extends CommonInvoice
 			$remise = 0;
 		}
 
-		if ($user->rights->facture->creer) {
+		if ($user->hasRight('facture', 'creer')) {
 			$remise = price2num($remise, 2);
 
 			$error = 0;
@@ -4504,7 +4504,7 @@ class Facture extends CommonInvoice
 			$remise = 0;
 		}
 
-		if ($user->rights->facture->creer) {
+		if ($user->hasRight('facture', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();

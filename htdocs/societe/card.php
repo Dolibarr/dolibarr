@@ -188,7 +188,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		$error = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);
@@ -413,7 +413,7 @@ if (empty($reshook)) {
 
 	// Add new or update third party
 	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode'))
-	&& ($action == 'add' || $action == 'update') && $user->rights->societe->creer) {
+	&& ($action == 'add' || $action == 'update') && $user->hasRight('societe', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (!GETPOST('name')) {
@@ -933,31 +933,31 @@ if (empty($reshook)) {
 	}
 
 	// Set third-party type
-	if ($action == 'set_thirdpartytype' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdpartytype' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setThirdpartyType(GETPOST('typent_id', 'int'));
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && $user->rights->societe->creer && isModEnabled('incoterm')) {
+	if ($action == 'set_incoterms' && $user->hasRight('societe', 'creer') && isModEnabled('incoterm')) {
 		$object->fetch($socid);
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdparty' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setParent(GETPOST('parent_id', 'int'));
 	}
 
 	// Set sales representatives
-	if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer) {
+	if ($action == 'set_salesrepresentatives' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->rights->societe->creer) {
+	if ($action == 'setwarehouse' && $user->hasRight('societe', 'creer')) {
 		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
 	}
 
@@ -3192,7 +3192,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $dolibarr_user->getLoginUrl(-1);
 		} else {
 			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
-			if (!$object->user_id && $user->rights->user->user->creer) {
+			if (!$object->user_id && $user->hasRight('user', 'user', 'creer')) {
 				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 		}

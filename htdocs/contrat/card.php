@@ -2150,7 +2150,7 @@ if ($action == 'create') {
 
 				if (isModEnabled('facture') && $object->statut > 0) {
 					$langs->load("bills");
-					if ($user->rights->facture->creer) {
+					if ($user->hasRight('facture', 'creer')) {
 						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");

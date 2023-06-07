@@ -118,7 +118,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_end = '';
 }
 
-if (is_array($changeaccount) && count($changeaccount) > 0 && $user->rights->accounting->bind->write) {
+if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('accounting', 'bind', 'write')) {
 	$error = 0;
 
 	if (!(GETPOST('account_parent', 'int') >= 0)) {

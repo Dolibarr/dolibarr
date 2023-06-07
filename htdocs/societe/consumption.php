@@ -147,7 +147,7 @@ if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
-//if (isModEnabled('agenda') && $user->rights->agenda->myactions->read) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
+//if (isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
 $elementTypeArray = array();
 
 if ($object->client) {

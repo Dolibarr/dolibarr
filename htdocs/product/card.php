@@ -242,7 +242,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 	// merge products
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		$error = 0;
 		$productOriginId = GETPOST('product_origin', 'int');
 		$productOrigin = new Product($db);

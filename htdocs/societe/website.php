@@ -349,7 +349,7 @@ $arrayofmassactions = array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->delete) {
+if ($user->hasRight('mymodule', 'delete')) {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {

@@ -608,13 +608,13 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif (!empty($feature2)) {													// This is for permissions on 2 levels (module->object->write)
 				foreach ($feature2 as $subfeature) {
-					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->creer) {
+					if ($subfeature == 'user' && $user->id == $objectid && $user->hasRight('user', 'self', 'creer')) {
 						continue; // User can edit its own card
 					}
-					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->password) {
+					if ($subfeature == 'user' && $user->id == $objectid && $user->hasRight('user', 'self', 'password')) {
 						continue; // User can edit its own password
 					}
-					if ($subfeature == 'user' && $user->id != $objectid && $user->rights->user->user->password) {
+					if ($subfeature == 'user' && $user->id != $objectid && $user->hasRight('user', 'user', 'password')) {
 						continue; // User can edit another user's password
 					}
 
