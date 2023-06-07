@@ -6083,6 +6083,7 @@ class FactureLigne extends CommonInvoiceLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**
