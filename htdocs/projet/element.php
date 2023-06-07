@@ -1193,6 +1193,7 @@ foreach ($listofreferent as $key => $value) {
 
 					$total_ht_by_third = 0;
 					$total_ttc_by_third = 0;
+				}
 
 				$saved_third_id = !empty($element->thirdparty->id) ? $element->thirdparty->id : 0;
 
