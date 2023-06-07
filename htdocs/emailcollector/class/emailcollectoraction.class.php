@@ -144,6 +144,7 @@ class EmailCollectorAction extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

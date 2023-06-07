@@ -173,6 +173,7 @@ class ConferenceOrBooth extends ActionComm
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

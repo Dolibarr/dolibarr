@@ -47,6 +47,7 @@ class Fournisseur extends Societe
 
 		$this->client = 0;
 		$this->fournisseur = 1;
+		parent::getConstructorHook();
 	}
 
 

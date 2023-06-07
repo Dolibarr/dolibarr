@@ -240,6 +240,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**

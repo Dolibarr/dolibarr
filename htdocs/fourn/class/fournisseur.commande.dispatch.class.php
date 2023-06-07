@@ -135,6 +135,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$this->statuts_short[0] = 'Received';
 		$this->statuts_short[1] = 'Verified';
 		$this->statuts_short[2] = 'Denied';
+		parent::getConstructorHook();
 	}
 
 

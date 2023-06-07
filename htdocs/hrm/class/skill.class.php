@@ -216,6 +216,7 @@ class Skill extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

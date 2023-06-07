@@ -204,6 +204,7 @@ class SkillRank extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

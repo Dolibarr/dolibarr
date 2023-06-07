@@ -196,6 +196,7 @@ class Skilldet extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

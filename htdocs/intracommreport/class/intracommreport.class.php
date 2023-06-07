@@ -95,6 +95,7 @@ class IntracommReport extends CommonObject
 	{
 		$this->db = $db;
 		$this->exporttype = 'deb';
+		parent::getConstructorHook();
 	}
 
 	/**

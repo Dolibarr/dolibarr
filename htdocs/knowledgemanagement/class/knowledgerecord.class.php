@@ -222,6 +222,7 @@ class KnowledgeRecord extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**
