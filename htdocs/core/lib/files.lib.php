@@ -2509,7 +2509,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->medias->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
-		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
+		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.(log|json)$/', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/'.$original_file;
 	} elseif ($modulepart == 'doctemplates' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates
@@ -3135,7 +3135,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$partsofdirinoriginalfile = explode('/', $original_file);
 			if (!empty($partsofdirinoriginalfile[1])) {	// If original_file is xxx/filename (xxx is a part we will use)
 				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
-				if ($partofdirinoriginalfile && !empty($fuser->rights->$modulepart->$partofdirinoriginalfile) && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) {
+				if ($partofdirinoriginalfile && ($fuser->hasRight($modulepart, $partofdirinoriginalfile, 'lire') || $fuser->hasRight($modulepart, $partofdirinoriginalfile, 'read'))) {
 					$accessallowed = 1;
 				}
 			}
