@@ -237,9 +237,15 @@ class Facture extends CommonInvoice
 	 */
 	public $lines = array();
 
+	/**
+	 * @var FactureLigne
+	 */
 	public $line;
 	public $extraparams = array();
 
+	/**
+	 * @var int ID facture rec
+	 */
 	public $fac_rec;
 
 	public $date_pointoftax;
