@@ -231,6 +231,7 @@ class Partnership extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -1383,5 +1384,6 @@ class PartnershipLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 }

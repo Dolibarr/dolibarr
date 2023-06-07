@@ -183,6 +183,7 @@ class Entrepot extends CommonObject
 		} else {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

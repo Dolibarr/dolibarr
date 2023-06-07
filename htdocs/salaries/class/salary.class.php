@@ -137,6 +137,7 @@ class Salary extends CommonObject
 		$this->db = $db;
 		$this->element = 'salary';
 		$this->table_element = 'salary';
+		parent::getConstructorHook();
 	}
 
 	/**

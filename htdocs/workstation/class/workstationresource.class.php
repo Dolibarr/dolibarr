@@ -81,6 +81,7 @@ class WorkstationResource extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

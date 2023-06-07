@@ -357,6 +357,7 @@ class Ticket extends CommonObject
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
+		parent::getConstructorHook();
 	}
 
 	/**

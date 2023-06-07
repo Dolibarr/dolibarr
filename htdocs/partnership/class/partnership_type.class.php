@@ -117,6 +117,7 @@ class PartnershipType extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

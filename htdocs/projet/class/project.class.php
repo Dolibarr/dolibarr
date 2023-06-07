@@ -376,6 +376,7 @@ class Project extends CommonObject
 			$this->fields['price_booth']['enabled'] = 0;
 			$this->fields['max_attendees']['enabled'] = 0;
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

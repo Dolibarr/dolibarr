@@ -189,6 +189,7 @@ class ProductAttribute extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

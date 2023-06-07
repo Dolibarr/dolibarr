@@ -216,6 +216,7 @@ class CTicketCategory extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

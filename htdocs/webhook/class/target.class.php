@@ -211,6 +211,7 @@ class Target extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

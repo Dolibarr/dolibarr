@@ -112,6 +112,7 @@ class PaymentSalary extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**
