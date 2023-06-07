@@ -124,6 +124,9 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+	$search_omitChildren = GETPOST('search_omitChildren', 'alpha') == 'on' ? 1 : 0;
+}
 
 
 $mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
@@ -601,6 +604,12 @@ if ($search_login) {
 if ($search_import_key) {
 	$sql .= natural_search(array('p.import_key'), $search_import_key);
 }
+if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+	if ($search_omitChildren == 1) {
+		$sql .= " AND p.fk_project IS NULL";
+	}
+}
+
 // Search for tag/category ($searchCategoryProjectList is an array of ID)
 $searchCategoryProjectList = $search_category_array;
 $searchCategoryProjectOperator = 0;
@@ -1016,6 +1025,11 @@ if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST) && isMo
 	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
 	$moreforfilter .= $form->textwithpicto('', $langs->trans('UseOrOperatorForCategories') . ' : ' . $tmptitle, 1, 'help', '', 0, 2, 'tooltip_cat_cus'); // Tooltip on click
 	$moreforfilter .= '</div>';
+}
+
+if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+	//Checkbox for omitting child projects filter
+	$moreforfilter .= '<p style="display: inline-block; margin-left: 5px;">'.$langs->trans("Omit sub-projects").' </p><input type="checkbox" style="margin-left: 10px" class="valignmiddle" id="search_omitChildren" name="search_omitChildren"'.($search_omitChildren ? ' checked="checked"' : '').'"> ';
 }
 
 if (!empty($moreforfilter)) {
