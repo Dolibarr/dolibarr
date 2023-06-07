@@ -1229,7 +1229,7 @@ if ($action == 'create') {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->facture->creer) {
+			if ($user->hasRight('facture', 'creer')) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
@@ -1684,7 +1684,7 @@ if ($action == 'create') {
 				),
 			);
 			if (empty($object->suspended)) {
-				if ($user->rights->facture->creer) {
+				if ($user->hasRight('facture', 'creer')) {
 					if (!empty($object->frequency) && $object->nb_gen_max > 0 && ($object->nb_gen_done >= $object->nb_gen_max)) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("MaxGenerationReached")) . '">' . $langs->trans("CreateBill") . '</a></div>';
 					} else {
@@ -1699,7 +1699,7 @@ if ($action == 'create') {
 				}
 			}
 
-			if ($user->rights->facture->creer) {
+			if ($user->hasRight('facture', 'creer')) {
 				if (empty($object->suspended)) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("Disable").'</a></div>';
 				} else {

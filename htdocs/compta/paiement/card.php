@@ -537,7 +537,7 @@ print '<div class="tabsAction">';
 
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 	if ($user->socid == 0 && $object->statut == 0 && $action == '') {
-		if ($user->rights->facture->paiement) {
+		if ($user->hasRight('facture', 'paiement')) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
 		}
 	}

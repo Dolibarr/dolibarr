@@ -103,8 +103,14 @@ if ($state) {
 	$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
 }
 
-if ($action != 'delete' && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+// Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
+// but not when callback was ok and we recall the page
+if ($action != 'delete' && !GETPOST('afteroauthloginreturn', 'int') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
+	if (empty($backtourl)) {
+		$backtourl = DOL_URL_ROOT.'/';
+	}
 	header('Location: '.$backtourl);
 	exit();
 }
@@ -147,6 +153,8 @@ if ($action == 'delete') {
 }
 
 if (!GETPOST('code')) {
+	dol_syslog("Page is called without code parameter defined");
+
 	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
 	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
@@ -291,6 +299,7 @@ if (!GETPOST('code')) {
 				}
 
 				// If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
+				// $userinfo['hd'] is the domain name of Gmail account.
 				// TODO
 			}
 
@@ -342,11 +351,12 @@ if (!GETPOST('code')) {
 			unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
 			if (empty($backtourl)) {
-				$backtourl = DOL_URL_ROOT;
+				$backtourl = DOL_URL_ROOT.'/';
 			}
 
-			// If call back to url for a OAUTH2 login
+			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
+				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
 				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];

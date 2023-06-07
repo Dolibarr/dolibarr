@@ -61,7 +61,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
@@ -287,7 +287,7 @@ if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || 
 	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->rights->user->user->creer) {
+if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -867,7 +867,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 }
 
 // Edit
-if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->user->creer) {
+if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user', 'user', 'creer')) {
 	$title = $langs->trans("User");
 	print dol_get_fiche_head($head, 'bank', $title, 0, 'user');
 
@@ -982,11 +982,11 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 	print $form->buttonsSaveCancel("Modify");
 }
 
-if ($id && $action == 'edit' && $user->rights->user->user->creer) {
+if ($id && $action == 'edit' && $user->hasRight('user', 'user', 'creer')) {
 	print '</form>';
 }
 
-if ($id && $action == 'create' && $user->rights->user->user->creer) {
+if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
 	print '</form>';
 }
 
