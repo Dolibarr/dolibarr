@@ -95,7 +95,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		if ($user->socid) $socid = $user->socid;
 		if (empty($user->rights->societe->client->voir) || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 
-		if ($user->rights->facture->lire) {
+		if ($user->hasRight('facture', 'lire')) {
 			$mesg = '';
 
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';

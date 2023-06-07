@@ -657,44 +657,28 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= "|".$attUnique;
 	}
 	$table .="\n";
-	$countKeys = count($keys);
-	for ($j=0;$j<$countKeys;$j++) {
-		$string = $keys[$j];
+	foreach ($keys as $string) {
 		$string = trim($string, "'");
 		$string = rtrim($string, ",");
-
-		$array = [];
-		eval("\$array = [$string];");
+		$array = eval("return [$string];");
 
 		// check if is array after cleaning string
 		if (!is_array($array)) {
 			return -1;
 		}
-		// name of field
-		$field = array_keys($array);
-		// all values of each property
-		$values = array_values($array);
 
+		$field = array_keys($array);
+		$values = array_values($array)[0];
 
 		// check each field has all properties and add it if missed
-		if (count($values[0]) <=22) {
-			foreach ($attributesUnique as $cle) {
-				if (!in_array($cle, array_keys($values[0]))) {
-					$values[0][$cle] = '';
-				}
+		foreach ($attributesUnique as $attUnique) {
+			if (!array_key_exists($attUnique, $values)) {
+				$values[$attUnique] = '';
 			}
 		}
 
-		//reorganize $values with order attributeUnique
-		$valuesRestructured = array();
-		foreach ($attributesUnique as $key) {
-			if (array_key_exists($key, $values[0])) {
-				$valuesRestructured[$key] = $values[0][$key];
-			}
-		}
-		// write all values of properties for each field
-		$table .= "|*".$field[0]."*|";
-		$table .= implode("|", array_values($valuesRestructured))."\n";
+		$table .= "|*" . $field[0] . "*|";
+		$table .= implode("|", $values) . "\n";
 	}
 	// end table
 	$table .= "|===";
@@ -780,8 +764,7 @@ function writePermsInAsciiDoc($file, $destfile)
 	$string .= "\n";
 	//content table
 	$array = explode(";", $content);
-	$indexIgnored = 15;
-	$permissions = array_slice($array, $indexIgnored, null, true);
+	$permissions = array_filter($array);
 	// delete  occurrences "$r++" and ID
 	$permissions = str_replace('$r++', 1, $permissions);
 
@@ -806,21 +789,12 @@ function writePermsInAsciiDoc($file, $destfile)
 	array_pop($permsN);
 
 	// Group permissions by Object and add it to string
-	$temp_array = [];
 	$final_array = [];
-	$countRights = count($permsN);
-	for ($i = 0; $i < $countRights ; $i++) {
-		// Add current element to temporary array
-		$temp_array[] = $permsN[$i];
-		//  add them to the final array and empty the temporary array
-		if (count($temp_array) == 2) {
-			$final_array[] = $temp_array;
-			$temp_array = [];
-		}
-	}
-	//  add it to the final array
-	if (count($temp_array) > 0) {
+	$index = 0;
+	while ($index < count($permsN)) {
+		$temp_array = [$permsN[$index], $permsN[$index + 1]];
 		$final_array[] = $temp_array;
+		$index += 2;
 	}
 
 	$result = array();

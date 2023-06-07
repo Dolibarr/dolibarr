@@ -3298,7 +3298,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Chat").' '.$value).'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
-			if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
+			if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create')) {
 				$addlink = 'AC_SKYPE';
 				$link = '';
 				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) {
@@ -3634,7 +3634,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 
-		//if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
 			$link = '';

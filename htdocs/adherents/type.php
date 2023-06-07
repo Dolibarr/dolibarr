@@ -350,7 +350,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			} else {
 				print '<tr class="oddeven">';
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					if ($user->rights->adherent->configurer) {
+					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
@@ -374,7 +374,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				print '<td class="center">'.yn($objp->vote).'</td>';
 				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					if ($user->rights->adherent->configurer) {
+					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}

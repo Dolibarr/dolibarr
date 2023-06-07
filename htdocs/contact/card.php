@@ -143,7 +143,7 @@ if (empty($reshook)) {
 	}
 
 	// Creation utilisateur depuis contact
-	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
+	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
 		// Recuperation contact actuel
 		$result = $object->fetch($id);
 
@@ -313,7 +313,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->contact->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('societe', 'contact', 'supprimer')) {
 		$result = $object->fetch($id);
 		$object->oldcopy = clone $object;
 
@@ -1390,7 +1390,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print $langs->trans('ProspectLevel');
 				print '<td>';
-				if ($action != 'editlevel' && $user->rights->societe->contact->creer) {
+				if ($action != 'editlevel' && $user->hasRight('societe', 'contact', 'creer')) {
 					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 				}
 				print '</tr></table>';
@@ -1491,7 +1491,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $dolibarr_user->getLoginUrl(-1);
 		} else {
 			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
-			if (!$object->user_id && $user->rights->user->user->creer) {
+			if (!$object->user_id && $user->hasRight('user', 'user', 'creer')) {
 				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add', 'class="pictofixedwidth"').$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 		}
@@ -1527,11 +1527,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Activer
-			if ($object->statut == 0 && $user->rights->societe->contact->creer) {
+			if ($object->statut == 0 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
-			if ($object->statut == 1 && $user->rights->societe->contact->creer) {
+			if ($object->statut == 1 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a>';
 			}
 

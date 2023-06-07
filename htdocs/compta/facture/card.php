@@ -4801,7 +4801,6 @@ if ($action == 'create') {
 	if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && $object->type == $object::TYPE_CREDIT_NOTE) {
 		$sign = -1; // We invert sign for output
 	}
-
 	print '<tr>';
 	// Amount HT
 	print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
@@ -4849,7 +4848,7 @@ if ($action == 'create') {
 	print '<td class="nowrap amountcard right">' . price($sign * $object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount TTC
-		print '<td class="nowrap amountcard right">' . price($sign * $object->total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</tr>';
 
