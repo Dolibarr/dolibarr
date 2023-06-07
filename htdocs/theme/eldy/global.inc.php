@@ -5507,7 +5507,9 @@ td.event-past span  {
 	background: var(--colorbacktitle);
 }*/
 
-.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
+.ui-autocomplete-loading {
+	background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat;
+}
 .ui-autocomplete {
 		   position:absolute;
 		   width:auto;
@@ -5522,7 +5524,9 @@ td.event-past span  {
 		   margin:0px;
 		   padding:0px;
 		 }
-.ui-autocomplete ul li.selected { background-color: var(--inputbackgroundcolor);}
+.ui-autocomplete ul li.selected {
+	background-color: var(--inputbackgroundcolor);
+}
 .ui-autocomplete ul li {
 		   list-style-type:none;
 		   display:block;

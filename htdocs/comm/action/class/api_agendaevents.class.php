@@ -289,7 +289,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'delete')) {
 			throw new RestException(401, "Insufficient rights to delete your Agenda Event");
 		}
 

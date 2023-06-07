@@ -151,7 +151,7 @@ if ($permission) {
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
-			if (!empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer) {
+			if (!empty($object->socid) && $object->socid > 1 && $user->hasRight('societe', 'creer')) {
 				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$selectedCompany.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
 			print $newcardbutton;

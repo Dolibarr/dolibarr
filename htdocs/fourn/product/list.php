@@ -141,7 +141,7 @@ $arrayofmassactions = array(
 	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-if ($user->rights->mymodule->supprimer) {
+if ($user->hasRight('mymodule', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
