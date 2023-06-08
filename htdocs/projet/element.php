@@ -367,271 +367,271 @@ print '<br>';
  */
 
 $listofreferent = array(
-'entrepot'=>array(
-	'name'=>"Warehouse",
-	'title'=>"ListWarehouseAssociatedProject",
-	'class'=>'Entrepot',
-	'table'=>'entrepot',
-	'datefieldname'=>'date_entrepot',
-	'urlnew'=>DOL_URL_ROOT.'/product/stock/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'entrepot',
-	'buttonnew'=>'AddWarehouse',
-	'project_field'=>'fk_project',
-	'testnew'=>$user->hasRight('stock', 'creer'),
-	'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'lire') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT)),
-'propal'=>array(
-	'name'=>"Proposals",
-	'title'=>"ListProposalsAssociatedProject",
-	'class'=>'Propal',
-	'table'=>'propal',
-	'datefieldname'=>'datep',
-	'urlnew'=>DOL_URL_ROOT.'/comm/propal/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'propal',
-	'buttonnew'=>'AddProp',
-	'testnew'=>$user->hasRight('propal', 'creer'),
-	'test'=>!empty($conf->propal->enabled) && $user->hasRight('propal', 'lire')),
-'order'=>array(
-	'name'=>"CustomersOrders",
-	'title'=>"ListOrdersAssociatedProject",
-	'class'=>'Commande',
-	'table'=>'commande',
-	'datefieldname'=>'date_commande',
-	'urlnew'=>DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'orders',
-	'buttonnew'=>'CreateOrder',
-	'testnew'=>$user->hasRight('commande', 'creer'),
-	'test'=>!empty($conf->commande->enabled) && $user->hasRight('commande', 'lire')),
-'invoice'=>array(
-	'name'=>"CustomersInvoices",
-	'title'=>"ListInvoicesAssociatedProject",
-	'class'=>'Facture',
-	'margin'=>'add',
-	'table'=>'facture',
-	'datefieldname'=>'datef',
-	'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'bills',
-	'buttonnew'=>'CreateBill',
-	'testnew'=>$user->hasRight('facture', 'creer'),
-	'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
-'invoice_predefined'=>array(
-	'name'=>"PredefinedInvoices",
-	'title'=>"ListPredefinedInvoicesAssociatedProject",
-	'class'=>'FactureRec',
-	'table'=>'facture_rec',
-	'datefieldname'=>'datec',
-	'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'bills',
-	'buttonnew'=>'CreateBill',
-	'testnew'=>$user->hasRight('facture', 'creer'),
-	'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
-'proposal_supplier'=>array(
-	'name'=>"SupplierProposals",
-	'title'=>"ListSupplierProposalsAssociatedProject",
-	'class'=>'SupplierProposal',
-	'table'=>'supplier_proposal',
-	'datefieldname'=>'date_valid',
-	'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
-	'lang'=>'supplier_proposal',
-	'buttonnew'=>'AddSupplierProposal',
-	'testnew'=>$user->hasRight('supplier_proposal', 'creer'),
-	'test'=>!empty($conf->supplier_proposal->enabled) && $user->hasRight('supplier_proposal', 'lire')),
-'order_supplier'=>array(
-	'name'=>"SuppliersOrders",
-	'title'=>"ListSupplierOrdersAssociatedProject",
-	'class'=>'CommandeFournisseur',
-	'table'=>'commande_fournisseur',
-	'datefieldname'=>'date_commande',
-	'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
-	'lang'=>'suppliers',
-	'buttonnew'=>'AddSupplierOrder',
-	'testnew'=>$user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'),
-	'test'=>!empty($conf->supplier_order->enabled) && $user->hasRight('fournisseur', 'commande', 'lire') || $user->hasRight('supplier_order', 'lire')),
-'invoice_supplier'=>array(
-	'name'=>"BillsSuppliers",
-	'title'=>"ListSupplierInvoicesAssociatedProject",
-	'class'=>'FactureFournisseur',
-	'margin'=>'minus',
-	'table'=>'facture_fourn',
-	'datefieldname'=>'datef',
-	'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
-	'lang'=>'suppliers',
-	'buttonnew'=>'AddSupplierInvoice',
-	'testnew'=>$user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'),
-	'test'=>!empty($conf->supplier_invoice->enabled) && $user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire')),
-'contract'=>array(
-	'name'=>"Contracts",
-	'title'=>"ListContractAssociatedProject",
-	'class'=>'Contrat',
-	'table'=>'contrat',
-	'datefieldname'=>'date_contrat',
-	'urlnew'=>DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'contracts',
-	'buttonnew'=>'AddContract',
-	'testnew'=>$user->hasRight('contrat', 'creer'),
-	'test'=>!empty($conf->contrat->enabled) && $user->hasRight('contrat', 'lire')),
-'intervention'=>array(
-	'name'=>"Interventions",
-	'title'=>"ListFichinterAssociatedProject",
-	'class'=>'Fichinter',
-	'table'=>'fichinter',
-	'datefieldname'=>'date_valid',
-	'disableamount'=>0,
-	'margin'=>'',
-	'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'interventions',
-	'buttonnew'=>'AddIntervention',
-	'testnew'=>$user->hasRight('ficheinter', 'creer'),
-	'test'=>!empty($conf->ficheinter->enabled) && $user->hasRight('ficheinter', 'lire')),
-'shipping'=>array(
-	'name'=>"Shippings",
-	'title'=>"ListShippingAssociatedProject",
-	'class'=>'Expedition',
-	'table'=>'expedition',
-	'datefieldname'=>'date_valid',
-	'urlnew'=>DOL_URL_ROOT.'/expedition/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'sendings',
-	'buttonnew'=>'CreateShipment',
-	'testnew'=>0,
-	'test'=>isModEnabled('expedition') && $user->hasRight('expedition', 'lire')),
-'mrp'=>array(
-	'name'=>"MO",
-	'title'=>"ListMOAssociatedProject",
-	'class'=>'Mo',
-	'table'=>'mrp_mo',
-	'datefieldname'=>'date_valid',
-	'urlnew'=>DOL_URL_ROOT.'/mrp/mo_card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'mrp',
-	'buttonnew'=>'CreateMO',
-	'testnew'=>$user->hasRight('mrp', 'write'),
-	'project_field'=>'fk_project',
-	'nototal'=>1,
-	'test'=>!empty($conf->mrp->enabled) && $user->hasRight('mrp', 'read')),
-'trip'=>array(
-	'name'=>"TripsAndExpenses",
-	'title'=>"ListExpenseReportsAssociatedProject",
-	'class'=>'Deplacement',
-	'table'=>'deplacement',
-	'datefieldname'=>'dated',
-	'margin'=>'minus',
-	'disableamount'=>1,
-	'urlnew'=>DOL_URL_ROOT.'/deplacement/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'trips',
-	'buttonnew'=>'AddTrip',
-	'testnew'=>$user->hasRight('deplacement', 'creer'),
-	'test'=>!empty($conf->deplacement->enabled) && $user->hasRight('deplacement', 'lire')),
-'expensereport'=>array(
-	'name'=>"ExpenseReports",
-	'title'=>"ListExpenseReportsAssociatedProject",
-	'class'=>'ExpenseReportLine',
-	'table'=>'expensereport_det',
-	'datefieldname'=>'date',
-	'margin'=>'minus',
-	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'trips',
-	'buttonnew'=>'AddTrip',
-	'testnew'=>$user->hasRight('expensereport', 'creer'),
-	'test'=>!empty($conf->expensereport->enabled) && $user->hasRight('expensereport', 'lire')),
-'donation'=>array(
-	'name'=>"Donation",
-	'title'=>"ListDonationsAssociatedProject",
-	'class'=>'Don',
-	'margin'=>'add',
-	'table'=>'don',
-	'datefieldname'=>'datedon',
-	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'donations',
-	'buttonnew'=>'AddDonation',
-	'testnew'=>$user->hasRight('don', 'creer'),
-	'test'=>!empty($conf->don->enabled) && $user->hasRight('don', 'lire')),
-'loan'=>array(
-	'name'=>"Loan",
-	'title'=>"ListLoanAssociatedProject",
-	'class'=>'Loan',
-	'margin'=>'add',
-	'table'=>'loan',
-	'datefieldname'=>'datestart',
-	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/loan/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'loan',
-	'buttonnew'=>'AddLoan',
-	'testnew'=>$user->hasRight('loan', 'write'),
-	'test'=>!empty($conf->loan->enabled) && $user->hasRight('loan', 'read')),
-'chargesociales'=>array(
-	'name'=>"SocialContribution",
-	'title'=>"ListSocialContributionAssociatedProject",
-	'class'=>'ChargeSociales',
-	'margin'=>'minus',
-	'table'=>'chargesociales',
-	'datefieldname'=>'date_ech',
-	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'compta',
-	'buttonnew'=>'AddSocialContribution',
-	'testnew'=>$user->hasRight('tax', 'charges', 'lire'),
-	'test'=>!empty($conf->tax->enabled) && $user->hasRight('tax', 'charges', 'lire')),
-'project_task'=>array(
-	'name'=>"TaskTimeSpent",
-	'title'=>"ListTaskTimeUserProject",
-	'class'=>'Task',
-	'margin'=>'minus',
-	'table'=>'projet_task',
-	'datefieldname'=>'element_date',
-	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'buttonnew'=>'AddTimeSpent',
-	'testnew'=>$user->hasRight('project', 'creer'),
-	'test'=>!empty($conf->project->enabled) && $user->hasRight('projet', 'lire') && empty($conf->global->PROJECT_HIDE_TASKS)),
-'stock_mouvement'=>array(
-	'name'=>"MouvementStockAssociated",
-	'title'=>"ListMouvementStockProject",
-	'class'=>'MouvementStock',
-	'table'=>'stock_mouvement',
-	'datefieldname'=>'datem',
-	'margin'=>'minus',
-	'disableamount'=>0,
-	'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)),
-'salaries'=>array(
-	'name'=>"Salaries",
-	'title'=>"ListSalariesAssociatedProject",
-	'class'=>'Salary',
-	'table'=>'salary',
-	'datefieldname'=>'datesp',
-	'margin'=>'minus',
-	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/salaries/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'salaries',
-	'buttonnew'=>'AddSalary',
-	'testnew'=>$user->hasRight('salaries', 'write'),
-	'test'=>!empty($conf->salaries->enabled) && $user->hasRight('salaries', 'read')),
-'variouspayment'=>array(
-	'name'=>"VariousPayments",
-	'title'=>"ListVariousPaymentsAssociatedProject",
-	'class'=>'PaymentVarious',
-	'table'=>'payment_various',
-	'datefieldname'=>'datev',
-	'margin'=>'minus',
-	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'banks',
-	'buttonnew'=>'AddVariousPayment',
-	'testnew'=>$user->hasRight('banque', 'modifier'),
-	'test'=>isModEnabled("banque") && $user->hasRight('banque', 'lire') && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
-/* No need for this, available on dedicated tab "Agenda/Events"
-'agenda'=>array(
-	'name'=>"Agenda",
-	'title'=>"ListActionsAssociatedProject",
-	'class'=>'ActionComm',
-	'table'=>'actioncomm',
-	'datefieldname'=>'datep',
-	'disableamount'=>1,
-	'urlnew'=>DOL_URL_ROOT.'/comm/action/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-	'lang'=>'agenda',
-	'buttonnew'=>'AddEvent',
-	'testnew'=>$user->rights->agenda->myactions->create,
-	'test'=> isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')),
-*/
+	'entrepot'=>array(
+		'name'=>"Warehouse",
+		'title'=>"ListWarehouseAssociatedProject",
+		'class'=>'Entrepot',
+		'table'=>'entrepot',
+		'datefieldname'=>'date_entrepot',
+		'urlnew'=>DOL_URL_ROOT.'/product/stock/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'entrepot',
+		'buttonnew'=>'AddWarehouse',
+		'project_field'=>'fk_project',
+		'testnew'=>$user->hasRight('stock', 'creer'),
+		'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'lire') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT)),
+	'propal'=>array(
+		'name'=>"Proposals",
+		'title'=>"ListProposalsAssociatedProject",
+		'class'=>'Propal',
+		'table'=>'propal',
+		'datefieldname'=>'datep',
+		'urlnew'=>DOL_URL_ROOT.'/comm/propal/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'propal',
+		'buttonnew'=>'AddProp',
+		'testnew'=>$user->hasRight('propal', 'creer'),
+		'test'=>!empty($conf->propal->enabled) && $user->hasRight('propal', 'lire')),
+	'order'=>array(
+		'name'=>"CustomersOrders",
+		'title'=>"ListOrdersAssociatedProject",
+		'class'=>'Commande',
+		'table'=>'commande',
+		'datefieldname'=>'date_commande',
+		'urlnew'=>DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'orders',
+		'buttonnew'=>'CreateOrder',
+		'testnew'=>$user->hasRight('commande', 'creer'),
+		'test'=>!empty($conf->commande->enabled) && $user->hasRight('commande', 'lire')),
+	'invoice'=>array(
+		'name'=>"CustomersInvoices",
+		'title'=>"ListInvoicesAssociatedProject",
+		'class'=>'Facture',
+		'margin'=>'add',
+		'table'=>'facture',
+		'datefieldname'=>'datef',
+		'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'bills',
+		'buttonnew'=>'CreateBill',
+		'testnew'=>$user->hasRight('facture', 'creer'),
+		'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
+	'invoice_predefined'=>array(
+		'name'=>"PredefinedInvoices",
+		'title'=>"ListPredefinedInvoicesAssociatedProject",
+		'class'=>'FactureRec',
+		'table'=>'facture_rec',
+		'datefieldname'=>'datec',
+		'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'bills',
+		'buttonnew'=>'CreateBill',
+		'testnew'=>$user->hasRight('facture', 'creer'),
+		'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
+	'proposal_supplier'=>array(
+		'name'=>"SupplierProposals",
+		'title'=>"ListSupplierProposalsAssociatedProject",
+		'class'=>'SupplierProposal',
+		'table'=>'supplier_proposal',
+		'datefieldname'=>'date_valid',
+		'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
+		'lang'=>'supplier_proposal',
+		'buttonnew'=>'AddSupplierProposal',
+		'testnew'=>$user->hasRight('supplier_proposal', 'creer'),
+		'test'=>!empty($conf->supplier_proposal->enabled) && $user->hasRight('supplier_proposal', 'lire')),
+	'order_supplier'=>array(
+		'name'=>"SuppliersOrders",
+		'title'=>"ListSupplierOrdersAssociatedProject",
+		'class'=>'CommandeFournisseur',
+		'table'=>'commande_fournisseur',
+		'datefieldname'=>'date_commande',
+		'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
+		'lang'=>'suppliers',
+		'buttonnew'=>'AddSupplierOrder',
+		'testnew'=>$user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'),
+		'test'=>!empty($conf->supplier_order->enabled) && $user->hasRight('fournisseur', 'commande', 'lire') || $user->hasRight('supplier_order', 'lire')),
+	'invoice_supplier'=>array(
+		'name'=>"BillsSuppliers",
+		'title'=>"ListSupplierInvoicesAssociatedProject",
+		'class'=>'FactureFournisseur',
+		'margin'=>'minus',
+		'table'=>'facture_fourn',
+		'datefieldname'=>'datef',
+		'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
+		'lang'=>'suppliers',
+		'buttonnew'=>'AddSupplierInvoice',
+		'testnew'=>$user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'),
+		'test'=>!empty($conf->supplier_invoice->enabled) && $user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire')),
+	'contract'=>array(
+		'name'=>"Contracts",
+		'title'=>"ListContractAssociatedProject",
+		'class'=>'Contrat',
+		'table'=>'contrat',
+		'datefieldname'=>'date_contrat',
+		'urlnew'=>DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'contracts',
+		'buttonnew'=>'AddContract',
+		'testnew'=>$user->hasRight('contrat', 'creer'),
+		'test'=>!empty($conf->contrat->enabled) && $user->hasRight('contrat', 'lire')),
+	'intervention'=>array(
+		'name'=>"Interventions",
+		'title'=>"ListFichinterAssociatedProject",
+		'class'=>'Fichinter',
+		'table'=>'fichinter',
+		'datefieldname'=>'date_valid',
+		'disableamount'=>0,
+		'margin'=>'',
+		'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'interventions',
+		'buttonnew'=>'AddIntervention',
+		'testnew'=>$user->hasRight('ficheinter', 'creer'),
+		'test'=>!empty($conf->ficheinter->enabled) && $user->hasRight('ficheinter', 'lire')),
+	'shipping'=>array(
+		'name'=>"Shippings",
+		'title'=>"ListShippingAssociatedProject",
+		'class'=>'Expedition',
+		'table'=>'expedition',
+		'datefieldname'=>'date_valid',
+		'urlnew'=>DOL_URL_ROOT.'/expedition/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'sendings',
+		'buttonnew'=>'CreateShipment',
+		'testnew'=>0,
+		'test'=>isModEnabled('expedition') && $user->hasRight('expedition', 'lire')),
+	'mrp'=>array(
+		'name'=>"MO",
+		'title'=>"ListMOAssociatedProject",
+		'class'=>'Mo',
+		'table'=>'mrp_mo',
+		'datefieldname'=>'date_valid',
+		'urlnew'=>DOL_URL_ROOT.'/mrp/mo_card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'mrp',
+		'buttonnew'=>'CreateMO',
+		'testnew'=>$user->hasRight('mrp', 'write'),
+		'project_field'=>'fk_project',
+		'nototal'=>1,
+		'test'=>!empty($conf->mrp->enabled) && $user->hasRight('mrp', 'read')),
+	'trip'=>array(
+		'name'=>"TripsAndExpenses",
+		'title'=>"ListExpenseReportsAssociatedProject",
+		'class'=>'Deplacement',
+		'table'=>'deplacement',
+		'datefieldname'=>'dated',
+		'margin'=>'minus',
+		'disableamount'=>1,
+		'urlnew'=>DOL_URL_ROOT.'/deplacement/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'trips',
+		'buttonnew'=>'AddTrip',
+		'testnew'=>$user->hasRight('deplacement', 'creer'),
+		'test'=>!empty($conf->deplacement->enabled) && $user->hasRight('deplacement', 'lire')),
+	'expensereport'=>array(
+		'name'=>"ExpenseReports",
+		'title'=>"ListExpenseReportsAssociatedProject",
+		'class'=>'ExpenseReportLine',
+		'table'=>'expensereport_det',
+		'datefieldname'=>'date',
+		'margin'=>'minus',
+		'disableamount'=>0,
+		'urlnew'=>DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'trips',
+		'buttonnew'=>'AddTrip',
+		'testnew'=>$user->hasRight('expensereport', 'creer'),
+		'test'=>!empty($conf->expensereport->enabled) && $user->hasRight('expensereport', 'lire')),
+	'donation'=>array(
+		'name'=>"Donation",
+		'title'=>"ListDonationsAssociatedProject",
+		'class'=>'Don',
+		'margin'=>'add',
+		'table'=>'don',
+		'datefieldname'=>'datedon',
+		'disableamount'=>0,
+		'urlnew'=>DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'donations',
+		'buttonnew'=>'AddDonation',
+		'testnew'=>$user->hasRight('don', 'creer'),
+		'test'=>!empty($conf->don->enabled) && $user->hasRight('don', 'lire')),
+	'loan'=>array(
+		'name'=>"Loan",
+		'title'=>"ListLoanAssociatedProject",
+		'class'=>'Loan',
+		'margin'=>'add',
+		'table'=>'loan',
+		'datefieldname'=>'datestart',
+		'disableamount'=>0,
+		'urlnew'=>DOL_URL_ROOT.'/loan/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'loan',
+		'buttonnew'=>'AddLoan',
+		'testnew'=>$user->hasRight('loan', 'write'),
+		'test'=>!empty($conf->loan->enabled) && $user->hasRight('loan', 'read')),
+	'chargesociales'=>array(
+		'name'=>"SocialContribution",
+		'title'=>"ListSocialContributionAssociatedProject",
+		'class'=>'ChargeSociales',
+		'margin'=>'minus',
+		'table'=>'chargesociales',
+		'datefieldname'=>'date_ech',
+		'disableamount'=>0,
+		'urlnew'=>DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'compta',
+		'buttonnew'=>'AddSocialContribution',
+		'testnew'=>$user->hasRight('tax', 'charges', 'lire'),
+		'test'=>!empty($conf->tax->enabled) && $user->hasRight('tax', 'charges', 'lire')),
+	'project_task'=>array(
+		'name'=>"TaskTimeSpent",
+		'title'=>"ListTaskTimeUserProject",
+		'class'=>'Task',
+		'margin'=>'minus',
+		'table'=>'projet_task',
+		'datefieldname'=>'element_date',
+		'disableamount'=>0,
+		'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'buttonnew'=>'AddTimeSpent',
+		'testnew'=>$user->hasRight('project', 'creer'),
+		'test'=>!empty($conf->project->enabled) && $user->hasRight('projet', 'lire') && empty($conf->global->PROJECT_HIDE_TASKS)),
+	'stock_mouvement'=>array(
+		'name'=>"MouvementStockAssociated",
+		'title'=>"ListMouvementStockProject",
+		'class'=>'MouvementStock',
+		'table'=>'stock_mouvement',
+		'datefieldname'=>'datem',
+		'margin'=>'minus',
+		'disableamount'=>0,
+		'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)),
+	'salaries'=>array(
+		'name'=>"Salaries",
+		'title'=>"ListSalariesAssociatedProject",
+		'class'=>'Salary',
+		'table'=>'salary',
+		'datefieldname'=>'datesp',
+		'margin'=>'minus',
+		'disableamount'=>0,
+		'urlnew'=>DOL_URL_ROOT.'/salaries/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'salaries',
+		'buttonnew'=>'AddSalary',
+		'testnew'=>$user->hasRight('salaries', 'write'),
+		'test'=>!empty($conf->salaries->enabled) && $user->hasRight('salaries', 'read')),
+	'variouspayment'=>array(
+		'name'=>"VariousPayments",
+		'title'=>"ListVariousPaymentsAssociatedProject",
+		'class'=>'PaymentVarious',
+		'table'=>'payment_various',
+		'datefieldname'=>'datev',
+		'margin'=>'minus',
+		'disableamount'=>0,
+		'urlnew'=>DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang'=>'banks',
+		'buttonnew'=>'AddVariousPayment',
+		'testnew'=>$user->hasRight('banque', 'modifier'),
+		'test'=>isModEnabled("banque") && $user->hasRight('banque', 'lire') && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
+		/* No need for this, available on dedicated tab "Agenda/Events"
+		 'agenda'=>array(
+		 'name'=>"Agenda",
+		 'title'=>"ListActionsAssociatedProject",
+		 'class'=>'ActionComm',
+		 'table'=>'actioncomm',
+		 'datefieldname'=>'datep',
+		 'disableamount'=>1,
+		 'urlnew'=>DOL_URL_ROOT.'/comm/action/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		 'lang'=>'agenda',
+		 'buttonnew'=>'AddEvent',
+		 'testnew'=>$user->rights->agenda->myactions->create,
+		'test'=> isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')),
+		*/
 );
 
 // Change rules for profit/benefit calculation
@@ -857,8 +857,8 @@ foreach ($listofreferent as $key => $value) {
 								if (($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
 									|| !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
 									|| empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
-								) {
-									$total_ht_by_line -= $loanSchedule->amount_capital;
+									) {
+										$total_ht_by_line -= $loanSchedule->amount_capital;
 								}
 							}
 						}
@@ -1013,7 +1013,7 @@ foreach ($listofreferent as $key => $value) {
 		$idtofilterthirdparty = 0;
 		$array_of_element_linkable_with_different_thirdparty = array('facture_fourn', 'commande_fournisseur');
 		if (!in_array($tablename, $array_of_element_linkable_with_different_thirdparty)) {
-			$idtofilterthirdparty = !empty($object->thirdparty->id) ? $object->thirdparty->id : 0;
+			$idtofilterthirdparty = empty($object->thirdparty->id) ? 0 : $object->thirdparty->id;
 			if (!empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) {
 				$idtofilterthirdparty .= ','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 			}
@@ -1164,9 +1164,7 @@ foreach ($listofreferent as $key => $value) {
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
-
 				$idofelementuser = isset($tmp[1]) ? $tmp[1] : "";
-
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {
@@ -1193,9 +1191,9 @@ foreach ($listofreferent as $key => $value) {
 
 					$total_ht_by_third = 0;
 					$total_ttc_by_third = 0;
+				}
 
-				$saved_third_id = !empty($element->thirdparty->id) ? $element->thirdparty->id : 0;
-
+				$saved_third_id = empty($element->thirdparty->id) ? 0 : $element->thirdparty->id;
 
 				$qualifiedfortotal = true;
 				if ($key == 'invoice') {
@@ -1242,8 +1240,12 @@ foreach ($listofreferent as $key => $value) {
 
 					$element_doc = $element->element;
 					$filename = dol_sanitizeFileName($element->ref);
-					$path = $conf?->{$element_doc}?->multidir_output[$element->entity] ?? null;
-					$filedir = $path.'/'.dol_sanitizeFileName($element->ref);
+					if (!empty($conf->$element_doc)) {
+						$confelementdoc = $conf->$element_doc;
+						$filedir = $confelementdoc->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+					} else {
+						$filedir = '';
+					}
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc = 'commande_fournisseur';
@@ -1254,7 +1256,11 @@ foreach ($listofreferent as $key => $value) {
 						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
 					}
 
-					print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+					print '<div class="inline-block valignmiddle">';
+					if ($filedir) {
+						print $formfile->getDocumentsLink($element_doc, $filename, $filedir);
+					}
+					print '</div>';
 
 					// Show supplier ref
 					if (!empty($element->ref_supplier)) {
@@ -1539,7 +1545,7 @@ foreach ($listofreferent as $key => $value) {
 				}
 				//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
 				//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
-							// If fichinter add the total_duration
+				// If fichinter add the total_duration
 				if ($tablename == 'fichinter') {
 					print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 				}
