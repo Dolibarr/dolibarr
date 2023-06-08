@@ -264,7 +264,7 @@ if (empty($reshook)) {
 					// TODO Mutualise the list into object societe.class.php
 					$objects = array(
 						'Adherent' => '/adherents/class/adherent.class.php',
-						'Don' => '/don/class/don.class.php',
+						'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
 						'Societe' => '/societe/class/societe.class.php',
 						//'Categorie' => '/categories/class/categorie.class.php',
 						'ActionComm' => '/comm/action/class/actioncomm.class.php',
@@ -285,7 +285,7 @@ if (empty($reshook)) {
 						'Delivery' => '/delivery/class/delivery.class.php',
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
-						'Ticket' => '/ticket/class/ticket.class.php',
+						'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
 						'User' => '/user/class/user.class.php',
 						'Account' => '/compta/bank/class/account.class.php',
 						'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
@@ -293,6 +293,13 @@ if (empty($reshook)) {
 
 					//First, all core objects must update their tables
 					foreach ($objects as $object_name => $object_file) {
+						if (is_array($object_file)) {
+							if (empty($object_file['enabled'])) {
+								continue;
+							}
+							$object_file = $object_file['file'];
+						}
+
 						require_once DOL_DOCUMENT_ROOT.$object_file;
 
 						if (!$error && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {
