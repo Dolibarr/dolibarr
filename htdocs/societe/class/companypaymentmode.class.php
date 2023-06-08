@@ -150,7 +150,7 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * @var string iban
 	 * @deprecated
-	 * @see iban_prefix
+	 * @see $iban_prefix
 	 */
 	public $iban;
 

@@ -466,7 +466,7 @@ class modFournisseur extends DolibarrModules
 			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'uv.login'=>'UserValidation', 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC",
 			'fd.total_tva'=>"LineTotalVAT", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
-			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
+			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'SupplierRef', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
 		if (isModEnabled("multicurrency")) {
@@ -814,6 +814,7 @@ class modFournisseur extends DolibarrModules
 			'cd.fk_commande'    => 'PurchaseOrder*',
 			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product'     => 'IdProduct',
+			'cd.ref'     		=> 'SupplierRef',
 			'cd.description'    => 'LineDescription',
 			'cd.tva_tx'         => 'LineVATRate',
 			'cd.qty'            => 'LineQty',

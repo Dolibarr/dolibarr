@@ -826,18 +826,20 @@ if (!defined('NOLOGIN')) {
 
 			if ($login) {
 				$dol_authmode = $conf->authmode; // This properties is defined only when logged, to say what mode was successfully used
-				$dol_tz = $_POST["tz"];
-				$dol_tz_string = $_POST["tz_string"];
+				$dol_tz = empty($_POST["tz"]) ? (empty($_SESSION["tz"]) ? '' : $_SESSION["tz"]) : $_POST["tz"];
+				$dol_tz_string = empty($_POST["tz_string"]) ? (empty($_SESSION["tz_string"]) ? '' : $_SESSION["tz_string"]) : $_POST["tz_string"];
 				$dol_tz_string = preg_replace('/\s*\(.+\)$/', '', $dol_tz_string);
 				$dol_tz_string = preg_replace('/,/', '/', $dol_tz_string);
 				$dol_tz_string = preg_replace('/\s/', '_', $dol_tz_string);
 				$dol_dst = 0;
 				// Keep $_POST here. Do not use GETPOSTISSET
-				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"])) {
+				$dol_dst_first = empty($_POST["dst_first"]) ? (empty($_SESSION["dst_first"]) ? '' : $_SESSION["dst_first"]) : $_POST["dst_first"];
+				$dol_dst_second = empty($_POST["dst_second"]) ? (empty($_SESSION["dst_second"]) ? '' : $_SESSION["dst_second"]) : $_POST["dst_second"];
+				if ($dol_dst_first && $dol_dst_second) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 					$datenow = dol_now();
-					$datefirst = dol_stringtotime($_POST["dst_first"]);
-					$datesecond = dol_stringtotime($_POST["dst_second"]);
+					$datefirst = dol_stringtotime($dol_dst_first);
+					$datesecond = dol_stringtotime($dol_dst_second);
 					if ($datenow >= $datefirst && $datenow < $datesecond) {
 						$dol_dst = 1;
 					}
@@ -1079,7 +1081,8 @@ if (!defined('NOLOGIN')) {
 			}
 
 			$action = '';
-			$reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('updateSession', $parameters, $user, $action);
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
@@ -3708,7 +3711,8 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		$reshook = $hookmanager->executeHooks('beforeBodyClose'); // Note that $action and $object may have been modified by some hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			print $hookmanager->resPrint;
 		}

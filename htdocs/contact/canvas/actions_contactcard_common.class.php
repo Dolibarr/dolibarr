@@ -253,7 +253,7 @@ abstract class ActionsContactCardCommon
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 
-			$this->tpl['note'] = nl2br($this->object->note);
+			$this->tpl['note'] = $this->object->note_private;
 		}
 
 		if ($action == 'create_user') {

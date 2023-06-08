@@ -246,7 +246,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 			return $prefix.$yymm."-".$num;
 		} else {
 			dol_print_error('', 'Bad parameter for getNextValue');
-			retun -1;
+			return -1;
 		}
 	}
 

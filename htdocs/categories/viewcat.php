@@ -112,11 +112,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Product($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'product';
-	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) {
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'supplier';
-	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) {
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'customer';
@@ -125,7 +125,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
-	} elseif ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -140,7 +140,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Project($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'project';
-	} elseif ($type == Categorie::TYPE_USER && $user->rights->user->user->creer) {
+	} elseif ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$tmpobject = new User($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -174,13 +174,13 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 
 if ($elemid && $action == 'addintocategory' &&
 	(($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) ||
-	 ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) ||
-	 ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) ||
+	 ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) ||
+	 ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
 	 ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) ||
 	 ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) ||
-	 ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) ||
-	 ($type == Categorie::TYPE_USER && $user->rights->user->user->creer) ||
+	 ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) ||
+	 ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) ||
 	 ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
    )) {
 	if ($type == Categorie::TYPE_PRODUCT) {

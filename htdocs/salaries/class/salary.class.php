@@ -148,8 +148,6 @@ class Salary extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		// Clean parameters
@@ -226,10 +224,8 @@ class Salary extends CommonObject
 	 */
 	public function fetch($id, $user = null)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " s.rowid,";
-
 		$sql .= " s.tms,";
 		$sql .= " s.fk_user,";
 		$sql .= " s.datep,";
@@ -246,7 +242,6 @@ class Salary extends CommonObject
 		$sql .= " s.fk_user_author,";
 		$sql .= " s.fk_user_modif,";
 		$sql .= " s.fk_account";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 		$sql .= " WHERE s.rowid = ".((int) $id);
@@ -649,9 +644,15 @@ class Salary extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+
+		if ($return) {
+			$this->paye = 1;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -667,9 +668,15 @@ class Salary extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+
+		if ($return) {
+			$this->paye = 0;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 

@@ -40,7 +40,7 @@ function user_prepare_head(User $object)
 
 	$canreadperms = true;
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-		$canreadperms = ($user->admin || ($user->id != $object->id && $user->rights->user->user_advance->readperms) || ($user->id == $object->id && $user->rights->user->self_advance->readperms));
+		$canreadperms = ($user->admin || ($user->id != $object->id && $user->hasRight('user', 'user_advance', 'readperms')) || ($user->id == $object->id && $user->hasRight('user', 'self_advance', 'readperms')));
 	}
 
 	$h = 0;

@@ -201,7 +201,7 @@ if (empty($reshook)) {
 	}
 
 	// Create user from a member
-	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
+	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
 		$jobposition = new RecruitmentJobPosition($db);
 		$jobposition->fetch($object->fk_recruitmentjobposition);
 

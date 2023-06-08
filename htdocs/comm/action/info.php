@@ -53,7 +53,7 @@ if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
-$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create);
+$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
 
 
 /*

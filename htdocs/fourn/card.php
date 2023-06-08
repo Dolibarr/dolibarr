@@ -807,7 +807,7 @@ if ($object->id > 0) {
 	$langs->load('bills');
 	$facturestatic = new FactureFournisseur($db);
 
-	if ($user->rights->fournisseur->facture->lire) {
+	if ($user->hasRight('fournisseur', 'facture', 'lire')) {
 		// TODO move to DAO class
 		$sql = 'SELECT f.rowid, f.libelle as label, f.ref, f.ref_supplier, f.fk_statut, f.datef as df, f.total_ht, f.total_tva, f.total_ttc, f.paye,';
 		$sql .= ' SUM(pf.amount) as am';
