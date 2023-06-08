@@ -841,7 +841,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action=="setbatchid") {
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='".$batchid."' where rowid=".$idoflineadded;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code=".((int) $batchid)." where rowid=".((int) $idoflineadded);
 		$db->query($sql);
 	}
 
