@@ -57,7 +57,7 @@ if ($id > 0 || !empty($ref)) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
 		$caneditfielduser = ((($user->id == $object->user_id) && !empty($user->rights->user->self->creer))
 			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'creer')));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'password'))
 			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'password')));
 	}
 }

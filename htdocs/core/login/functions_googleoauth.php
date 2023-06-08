@@ -49,7 +49,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 	if (GETPOST('actionlogin') == 'login') {
 		if (GETPOST('beforeoauthloginredirect')) {
 			// We post the form on the login page by clicking on the link to login using Google.
-			dol_syslog("We post the form on the login page by clicking on the link to login using Google");
+			dol_syslog("We post the form on the login page by clicking on the link to login using Google. We save _SESSION['datafromloginform']");
 
 			// We save data of form into a variable
 			$_SESSION['datafromloginform'] = array(
@@ -114,7 +114,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 			}
 
 			// If googleoauth_login has been set (by google_oauthcallback after a successfull OAUTH2 request on openid scope
-			if (dol_verifyHash($conf->file->instance_unique_id.$usertotest, $_SESSION['googleoauth_receivedlogin'], '0')) {
+			if (!empty($_SESSION['googleoauth_receivedlogin']) && dol_verifyHash($conf->file->instance_unique_id.$usertotest, $_SESSION['googleoauth_receivedlogin'], '0')) {
 				unset($_SESSION['googleoauth_receivedlogin']);
 				$login = $usertotest;
 			}

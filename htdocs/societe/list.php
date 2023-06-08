@@ -1826,7 +1826,7 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 			// Prospect level
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print $companystatic->getLibProspLevel();
 			print "</td>";
 			if (!$i) {
@@ -1836,7 +1836,7 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 			// Prospect status
-			print '<td class="center nowrap">';
+			print '<td class="center nowraponall">';
 
 			$prospectid = $obj->rowid;
 			$statusprospect = $obj->stcomm_id;

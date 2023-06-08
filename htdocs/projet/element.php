@@ -492,7 +492,7 @@ $listofreferent = array(
 	'lang'=>'sendings',
 	'buttonnew'=>'CreateShipment',
 	'testnew'=>0,
-	'test'=>$conf->expedition->enabled && $user->hasRight('expedition', 'lire')),
+	'test'=>isModEnabled('expedition') && $user->hasRight('expedition', 'lire')),
 'mrp'=>array(
 	'name'=>"MO",
 	'title'=>"ListMOAssociatedProject",
@@ -630,7 +630,7 @@ $listofreferent = array(
 	'lang'=>'agenda',
 	'buttonnew'=>'AddEvent',
 	'testnew'=>$user->rights->agenda->myactions->create,
-	'test'=> isModEnabled('agenda') && $user->rights->agenda->myactions->read),
+	'test'=> isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')),
 */
 );
 
@@ -1013,7 +1013,7 @@ foreach ($listofreferent as $key => $value) {
 		$idtofilterthirdparty = 0;
 		$array_of_element_linkable_with_different_thirdparty = array('facture_fourn', 'commande_fournisseur');
 		if (!in_array($tablename, $array_of_element_linkable_with_different_thirdparty)) {
-			$idtofilterthirdparty = $object->thirdparty->id;
+			$idtofilterthirdparty = !empty($object->thirdparty->id) ? $object->thirdparty->id : 0;
 			if (!empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) {
 				$idtofilterthirdparty .= ','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 			}
@@ -1164,7 +1164,9 @@ foreach ($listofreferent as $key => $value) {
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
-				$idofelementuser = $tmp[1];
+
+				$idofelementuser = isset($tmp[1]) ? $tmp[1] : "";
+
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {
@@ -1191,8 +1193,9 @@ foreach ($listofreferent as $key => $value) {
 
 					$total_ht_by_third = 0;
 					$total_ttc_by_third = 0;
-				}
-				$saved_third_id = $element->thirdparty->id;
+
+				$saved_third_id = !empty($element->thirdparty->id) ? $element->thirdparty->id : 0;
+
 
 				$qualifiedfortotal = true;
 				if ($key == 'invoice') {
@@ -1239,7 +1242,8 @@ foreach ($listofreferent as $key => $value) {
 
 					$element_doc = $element->element;
 					$filename = dol_sanitizeFileName($element->ref);
-					$filedir = $conf->{$element_doc}->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+					$path = $conf?->{$element_doc}?->multidir_output[$element->entity] ?? null;
+					$filedir = $path.'/'.dol_sanitizeFileName($element->ref);
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc = 'commande_fournisseur';
@@ -1268,7 +1272,7 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Date or TimeSpent
-				$date = ''; $total_time_by_line = null;
+				$date = ''; $total_time_by_line = null; $total_time = 0;
 				if ($tablename == 'expensereport_det') {
 					$date = $element->date; // No draft status on lines
 				} elseif ($tablename == 'stock_mouvement') {
@@ -1489,7 +1493,8 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
 
-					$total_time = $total_time + $total_time_by_line;
+					if (!isset($total_time)) $total_time = $total_time_by_line;
+					else $total_time += $total_time_by_line;
 				}
 
 				if (canApplySubtotalOn($tablename)) {

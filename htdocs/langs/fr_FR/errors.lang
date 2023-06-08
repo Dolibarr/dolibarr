@@ -312,6 +312,7 @@ ErrorEqualModule=Module invalide dans <b>%s</b>.
 ErrorFieldValue=La valeur pour <b>%s</b> est incorrecte
 ErrorCoherenceMenu=Le champ <b>%s</b> est requis lorsque <b>%s</b> vaut 'left'
 ErrorMenuExistValue=Un menu existe déjà avec ce titre ou cette URL
+ErrorTypeMenu=Impossible de rajouter un autre menu sur la navbar pour le même module ,pas encore traité
 
 
 # Warnings

@@ -350,7 +350,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			} else {
 				print '<tr class="oddeven">';
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					if ($user->rights->adherent->configurer) {
+					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
@@ -374,7 +374,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				print '<td class="center">'.yn($objp->vote).'</td>';
 				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					if ($user->rights->adherent->configurer) {
+					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
@@ -537,10 +537,12 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		print nl2br($object->note)."</td></tr>";
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
+		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		print nl2br($object->mail_valid)."</td></tr>";
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->mail_valid));
+		print "</td></tr>";
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

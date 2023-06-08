@@ -691,6 +691,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
 		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
 
+		$stringtotest = 'text <link href="aaa"> text';
+		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1, 0, array(), 0);
+		$this->assertEquals('text  text', $decodedstring, 'Function did not sanitize correclty with test 4a');
+
+		$stringtotest = 'text <link href="aaa"> text';
+		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1, 0, array(), 1);
+		$this->assertEquals('text <link href="aaa"> text', $decodedstring, 'Function did not sanitize correclty with test 4b');
+
 		return 0;
 	}
 

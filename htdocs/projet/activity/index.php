@@ -97,7 +97,7 @@ $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyTasksDesc");
 } else {
-	if ($user->rights->projet->all->lire && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$tooltiphelp = $langs->trans("TasksDesc");
 	} else {
 		$tooltiphelp = $langs->trans("TasksPublicDesc");
