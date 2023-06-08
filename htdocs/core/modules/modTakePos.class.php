@@ -280,7 +280,7 @@ class modTakePos extends DolibarrModules
 			if ($result > 0) {
 				dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY1", $result, 'chaine', 0, '', $conf->entity);
 			} else {
-				setEventMessages($societe->error, $category->errors, 'errors');
+				setEventMessages($societe->error, $societe->errors, 'errors');
 			}
 		}	
 
