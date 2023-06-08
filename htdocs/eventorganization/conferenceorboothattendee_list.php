@@ -600,7 +600,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		//print '</span>';
 		print '</td><td>';
 		$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.$projectstatic->id;
-		$encodedsecurekey = dol_hash(getDolUserString("EVENTORGANIZATION_SECUREKEYEVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
+		$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEYEVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
 		$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -617,7 +617,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		//print '</span>';
 		print '</td><td>';
 		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
-		$encodedsecurekey = dol_hash(getDolUserString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
+		$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
