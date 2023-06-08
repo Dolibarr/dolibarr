@@ -280,6 +280,14 @@ print '</td><td class="right">';
 print "</td>";
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("SupportSubProjects").'</td>';
+print '<td width="60" class="right">';
+print ajax_constantonoff("PROJECT_SUPPORT_SUB_PROJECT", null, null, 0, 0, 1);
+print '</td><td class="right">';
+print "</td>";
+print '</tr>';
+
 print '</table></form>';
 
 print '<br>';
