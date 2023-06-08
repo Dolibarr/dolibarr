@@ -1306,7 +1306,7 @@ if ($num) {
 
 // If no record found
 if ($nbqualified == 0) {
-	$colspan = 10;
+	$colspan = 12;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
