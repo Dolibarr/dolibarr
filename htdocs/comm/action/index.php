@@ -584,7 +584,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	// Local calendar
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
 
-	if ($user->rights->holiday->read) {
+	if ($user->hasRight("holiday", "read")) {
 		// Holiday calendar
 		$s .= '
             <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday
@@ -1011,7 +1011,7 @@ if ($showbirthday) {
 	}
 }
 
-if ($user->rights->holiday->read) {
+if ($user->hasRight("holiday", "read")) {
 	// LEAVE-HOLIDAY CALENDAR
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
