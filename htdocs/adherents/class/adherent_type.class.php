@@ -1008,7 +1008,7 @@ class AdherentType extends CommonObject
 
 		//$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.urlencode($this->ref).'">'.img_edit().'</a></span>';
 		} else {
 			$return .= '<span class="right">&nbsp;</span>';

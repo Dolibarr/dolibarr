@@ -381,7 +381,7 @@ if (empty($reshook)) {
 		$param = '&type='.$type.$param;
 	}
 
-	//if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
+	//if ($action == 'delbookkeepingyearconfirm' && $user->hasRight('accounting', 'mouvements', 'supprimer')_tous) {
 	//	$delmonth = GETPOST('delmonth', 'int');
 	//	$delyear = GETPOST('delyear', 'int');
 	//	if ($delyear == -1) {

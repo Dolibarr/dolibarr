@@ -153,7 +153,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editeatby';
+			$action = 'editeatby';
 		} else {
 			$action = 'view';
 		}
@@ -164,7 +164,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editsellby';
+			$action = 'editsellby';
 		} else {
 			$action = 'view';
 		}
@@ -175,7 +175,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('eol_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editeol_date';
+			$action = 'editeol_date';
 		} else {
 			$action = 'view';
 		}
@@ -186,7 +186,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('manufacturing_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editmanufacturing_date';
+			$action = 'editmanufacturing_date';
 		} else {
 			$action = 'view';
 		}
@@ -197,7 +197,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('scrapping_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editscrapping_date';
+			$action = 'editscrapping_date';
 		} else {
 			$action = 'view';
 		}
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCT_MODIFY');
 		if ($result < 0) { // Prévoir un test de format de durée
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editqc_frequency';
+			$action = 'editqc_frequency';
 		} else {
 			$action = 'view';
 		}

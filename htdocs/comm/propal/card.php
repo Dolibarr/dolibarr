@@ -2800,7 +2800,7 @@ if ($action == 'create') {
 	print '<td>' . $langs->trans('AmountTTC') . '</td>';
 	print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</tr>';
 

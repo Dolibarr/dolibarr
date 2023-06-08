@@ -1875,7 +1875,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						}
 					} else {
 						if ($user->hasRight('agenda', 'allactions', 'create') ||
-							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
+							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
 								$cssclass .= " movable cursormove";
 						} else {
 							$cssclass .= " unmovable";
