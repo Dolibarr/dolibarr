@@ -266,9 +266,23 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $db;
+		global $conf, $db, $langs, $user;
+		$langs->load("cashdesk");
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+		
+		//Default customer for Point of sale
+		if (empty(getDolGlobalInt('CASHDESK_ID_THIRDPARTY1'))) {
+			$societe = new Societe($db);
+			$societe->nom = $langs->trans("DefaultPOSThirdLabel");
+			$societe->client = 1;
+			$result = $societe->create($user);
+			if ($result > 0) {
+				dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY1", $result, 'chaine', 0, '', $conf->entity);
+			} else {
+				setEventMessages($societe->error, $societe->errors, 'errors');
+			}
+		}
 
 		$result = $this->_load_tables('/install/mysql/', 'takepos');
 		if ($result < 0) {
