@@ -6817,7 +6817,7 @@ function yn($yesno, $case = 1, $color = 0)
 
 	$result = 'unknown';
 	$classname = '';
-	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') { 	// A mettre avant test sur no a cause du == 0
+	if ($yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// A mettre avant test sur no a cause du == 0
 		$result = $langs->trans('yes');
 		if ($case == 1 || $case == 3) {
 			$result = $langs->trans("Yes");

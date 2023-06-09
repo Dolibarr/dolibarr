@@ -1351,7 +1351,7 @@ class DolGraph
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
-				$this->stringtoshow .= ', tooltips: { mode: \'nearest\',
+				$this->stringtoshow .= 'tooltips: { mode: \'nearest\',
 					callbacks: {';
 				if (is_array($this->tooltipsTitles)) {
 					$this->stringtoshow .='
