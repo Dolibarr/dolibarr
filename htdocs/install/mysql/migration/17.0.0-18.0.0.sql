@@ -460,3 +460,9 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_member;
 
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
+
+-- Drop the composite unique index that exists on llx_commande_fournisseur to rebuild a new one without the fk_soc.
+-- The old design allowed for a duplicate reference as long as fk_soc was not the same.
+-- VMYSQL4.1 DROP INDEX uk_commande_fournisseur_ref on llx_commande_fournisseur;
+-- VPGSQL8.2 DROP INDEX uk_commande_fournisseur_ref;
+ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, entity);
