@@ -56,10 +56,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	{
 		global $conf;
 		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) || trim($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) == '') {
-			$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER = '';
+			$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER = '411';
 		}
 		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') {
-			$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '';
+			$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
 		}
 		$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
 		$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
