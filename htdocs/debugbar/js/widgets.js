@@ -72,4 +72,27 @@
 
     });
 
+	/**
+     * An extension of KVListWidget where the data represents a list
+     * of variables
+     *
+     * Options:
+     *  - data
+     */
+    var TriggerListWidget = PhpDebugBar.Widgets.TriggerListWidget = PhpDebugBar.Widgets.KVListWidget.extend({
+
+        className: csscls('widgets-kvlist widgets-hooklist'),
+
+        itemRenderer: function(dt, dd, key, object) {
+         $('<span />').attr('title', key).text(key).appendTo(dt);
+
+
+            dd.html('<span><strong>File: </strong> ' + object.file
+                + '</span><span><strong>Line: </strong>' + object.line
+                + '</span><span><strong>Count: </strong>' + object.count
+                + '</span>'
+            );
+        }
+    });
+
 })(PhpDebugBar.$);

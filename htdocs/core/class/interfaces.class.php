@@ -68,6 +68,28 @@ class Interfaces
 	public function run_triggers($action, $object, $user, $langs, $conf)
 	{
 		// phpcs:enable
+		global $debugbar;
+
+		if (is_object($debugbar) && get_class($debugbar) === 'DolibarrDebugBar') {
+			if (!is_array($_SESSION['triggersHistory'])) {
+				$_SESSION['triggersHistory'] = [];
+			}
+			$trace = debug_backtrace();
+			if (isset($trace[0])) {
+				$triggerInformations = [
+					'name' => $action,
+					'file' => $trace[0]['file'],
+					'line' => $trace[0]['line'],
+				];
+				$hash = md5(serialize($triggerInformations));
+				if (!empty($_SESSION['triggersHistory'][$hash])) {
+					$_SESSION['triggersHistory'][$hash]['count']++;
+				} else {
+					$triggerInformations['count'] = 1;
+					$_SESSION['triggersHistory'][$hash] = $triggerInformations;
+				}
+			}
+		}
 		// Check parameters
 		if (!is_object($object) || !is_object($conf)) {	// Error
 			$this->error = 'function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
