@@ -1517,12 +1517,11 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 
 	$db->begin();
 
+	$err = 0;
+
 	// Query to find all duplicate supplier orders
-	$dbPrefix = MAIN_DB_PREFIX;
-	$sql = <<<SQL
-select * from {$dbPrefix}commande_fournisseur
-where ref in (select cf.ref from {$dbPrefix}commande_fournisseur cf group by cf.ref, cf.entity having count(cf.rowid) > 1);
-SQL;
+	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "commande_fournisseur";
+	$sql .= " WHERE ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf GROUP BY cf.ref, cf.entity HAVING COUNT(cf.rowid) > 1)";
 
 	// Build a list of ref => []CommandeFournisseur
 	$duplicateSupplierOrders = [];
@@ -1534,6 +1533,8 @@ SQL;
 
 			$duplicateSupplierOrders[$rawSupplierOrder->ref] [] = $supplierOrder;
 		}
+	} else {
+		$err++;
 	}
 
 	// Process all duplicate supplier order and regenerate the reference for all except the first one
@@ -1546,12 +1547,18 @@ SQL;
 
 			$newRef = $supplierOrder->getNextNumRef($soc);
 
-			$sql = 'update ' . MAIN_DB_PREFIX . 'commande_fournisseur cf set cf.ref = "' . $db->escape($newRef) . '" where cf.rowid = ' . (int) $supplierOrder->id;
-			$db->query($sql);
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "commande_fournisseur cf SET cf.ref = '" . $db->escape($newRef) . "' WHERE cf.rowid = " . (int)$supplierOrder->id;
+			if (!$db->query($sql)) {
+				$err++;
+			}
 		}
 	}
 
-	$db->commit();
+	if ($err == 0) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
 }
 
 print '</table>';
