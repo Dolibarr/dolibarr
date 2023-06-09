@@ -25,6 +25,7 @@
  *  \brief      Description and activation file for the module TakePos
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -281,6 +282,28 @@ class modTakePos extends DolibarrModules
 				dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY1", $result, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($societe->error, $societe->errors, 'errors');
+			}
+		}
+		
+		//Create category if not exists
+		$categories = new Categorie($this->db);
+		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
+		if (is_array($cate_arbo)) {
+			if (!count($cate_arbo)) {
+				$category = new Categorie($db);
+				$category->label = $langs->trans("DefaultPOSCatLabel");
+				$category->type = Categorie::TYPE_PRODUCT;
+				$result = $category->create($user);
+				if ($result > 0) {
+					$product = new Product($db);
+					$product->status = 1;
+					$product->ref = "takepos";
+					$product->label = $langs->trans("DefaultPOSProductLabel");
+					$product->create($user);
+					$product->setCategories($result);
+				} else {
+					setEventMessages($category->error, $category->errors, 'errors');
+				}
 			}
 		}	
 
