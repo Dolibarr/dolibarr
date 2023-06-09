@@ -463,6 +463,6 @@ ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
 
 -- Drop the composite unique index that exists on llx_actioncomm to rebuild a new one without unique feature.
 -- The old design introduced a deadlock over traffic intense Dolibarr instance.
--- VMYSQL4.1 DROP INDEX uk_actioncomm_ref on llx_table;
+-- VMYSQL4.1 DROP INDEX uk_actioncomm_ref on llx_actioncomm;
 -- VPGSQL8.2 DROP INDEX uk_actioncomm_ref;
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref (ref, entity);
