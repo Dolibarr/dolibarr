@@ -1510,6 +1510,50 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	echo '<tr><td>'.join('</td></tr><tr><td>', $errors).'</td></tr>';
 }
 
+// Repair llx_commande_fournisseur to eleminate duplicate reference
+if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
+	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+	$db->begin();
+
+	// Query to find all duplicate supplier orders
+	$dbPrefix = MAIN_DB_PREFIX;
+	$sql = <<<SQL
+select * from {$dbPrefix}commande_fournisseur
+where ref in (select cf.ref from {$dbPrefix}commande_fournisseur cf group by cf.ref, cf.entity having count(cf.rowid) > 1);
+SQL;
+
+	// Build a list of ref => []CommandeFournisseur
+	$duplicateSupplierOrders = [];
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($rawSupplierOrder = $db->fetch_object($resql)) {
+			$supplierOrder = new CommandeFournisseur($db);
+			$supplierOrder->setVarsFromFetchObj($rawSupplierOrder);
+
+			$duplicateSupplierOrders[$rawSupplierOrder->ref] [] = $supplierOrder;
+		}
+	}
+
+	// Process all duplicate supplier order and regenerate the reference for all except the first one
+	foreach ($duplicateSupplierOrders as $ref => $supplierOrders) {
+		/** @var CommandeFournisseur $supplierOrder */
+		foreach (array_slice($supplierOrders, 1) as $supplierOrder) {
+			// Definition of supplier order numbering model name
+			$soc = new Societe($db);
+			$soc->fetch($supplierOrder->fourn_id);
+
+			$newRef = $supplierOrder->getNextNumRef($soc);
+
+			$sql = 'update ' . MAIN_DB_PREFIX . 'commande_fournisseur cf set cf.ref = "' . $db->escape($newRef) . '" where cf.rowid = ' . (int) $supplierOrder->id;
+			$db->query($sql);
+		}
+	}
+
+	$db->commit();
+}
+
 print '</table>';
 
 
