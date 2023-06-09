@@ -3353,7 +3353,7 @@ if ($module == 'initmodule') {
 
 			if ($h > 1) {
 				$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj=deleteobject';
-				$head3[$h][1] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Dangeddddddd|fffffffffffrZone");
+				$head3[$h][1] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("DangerZone");
 				$head3[$h][2] = 'deleteobject';
 				$h++;
 			}
