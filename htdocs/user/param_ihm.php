@@ -193,7 +193,7 @@ $tmparray['index.php'] = array('label'=>'Dashboard', 'picto'=>'graph');
 if (isModEnabled("societe")) {
 	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = array('label'=>'ThirdPartiesArea', 'picto'=>'company');
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = array('label'=>'ProjectsArea', 'picto'=>'project');
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		$tmparray['projet/list.php?mainmenu=project&leftmenu=&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead'] = array('label'=>'ListOpenLeads', 'picto'=>'project');
