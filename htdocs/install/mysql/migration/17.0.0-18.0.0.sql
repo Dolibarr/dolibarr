@@ -409,6 +409,7 @@ CREATE TABLE llx_c_invoice_subtype (
   active tinyint DEFAULT 1 NOT NULL
 ) ENGINE=innodb;
 
+ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN code varchar(4);
 ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
 
 ALTER TABLE llx_projet ADD COLUMN fk_project integer DEFAULT NULL;
