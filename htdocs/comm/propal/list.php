@@ -1834,8 +1834,8 @@ if ($resql) {
 
 			// Town
 			if (!empty($arrayfields['s.town']['checked'])) {
-				print '<td class="nocellnopadd">';
-				print $obj->town;
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
+				print dol_escape_htmltag($obj->town);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
