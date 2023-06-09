@@ -605,7 +605,9 @@ foreach ($tabcomplete as $key => $value) {
 $keytable = '';
 if ($id > 0) {
 	$arrayofkeys = array_keys($tabcomplete);
-	$keytable = $arrayofkeys[$id - 1];
+	if (array_key_exists($id -1, $arrayofkeys)) {
+		$keytable = $arrayofkeys[$id - 1];
+	}
 }
 
 // Defaut sortorder
@@ -2238,7 +2240,9 @@ if ($id > 0) {
 								$valuetoshow = $obj->{$value}." ".img_picto("",  $obj->{$value});
 							} elseif ($value == 'type_duration') {
 								$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
-								$valuetoshow =$TDurationTypes[$obj->{$value}];
+								if (!empty($obj->{$value}) && array_key_exists($obj->{$value}, $TDurationTypes)) {
+									$valuetoshow = $TDurationTypes[$obj->{$value}];
+								}
 							}
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($value == 'note' && $id == 10) {
@@ -2428,12 +2432,12 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 	$withentity = '';
 
 	foreach ($fieldlist as $field => $value) {
-		if ($value == 'entity') {
+		if ($value == 'entity' && isset($obj->$value)) {
 			$withentity = $obj->$value;
 			continue;
 		}
 
-		if (in_array($value, array('code', 'libelle', 'type')) && $tabname == "c_actioncomm" && in_array($obj->type, array('system', 'systemauto'))) {
+		if (in_array($value, array('code', 'libelle', 'type')) && $tabname == "c_actioncomm" && isset($obj->$value) && in_array($obj->type, array('system', 'systemauto'))) {
 			$hidden = (!empty($obj->{$value}) ? $obj->{$value}:'');
 			print '<td>';
 			print '<input type="hidden" name="'. $value .'" value="'.$hidden.'">';
@@ -2530,10 +2534,12 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			// Special case for labels
 			if ($tabname == 'c_payment_term') {
 				$langs->load("bills");
-				$transkey = "PaymentCondition".strtoupper($obj->code);
-				if ($langs->trans($transkey) != $transkey) {
-					$transfound = 1;
-					print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
+				if (isset($obj->code) && !empty($obj->code)) {
+					$transkey = "PaymentCondition" . strtoupper($obj->code);
+					if ($langs->trans($transkey) != $transkey) {
+						$transfound = 1;
+						print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
+					}
 				}
 			}
 			if (!$transfound) {

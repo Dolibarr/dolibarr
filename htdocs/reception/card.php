@@ -1062,10 +1062,10 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
-				if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+				if (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 					print '<td>'.$langs->trans("BuyingPrice").'</td>';
 				}
-				if (empty($conf->productbatch->enabled)) {
+				if (isModEnabled('productbatch')) {
 					print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
 					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
 				}
@@ -1075,10 +1075,10 @@ if ($action == 'create') {
 				}
 				if (isModEnabled('productbatch')) {
 					print '<td class="left">'.$langs->trans("batch_number").'</td>';
-					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+					if (!getDolGlobalInt('PRODUCT_DISABLE_SELLBY')) {
 						print '<td class="left">'.$langs->trans("SellByDate").'</td>';
 					}
-					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+					if (!getDolGlobalInt('PRODUCT_DISABLE_EATBY')) {
 						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
 					}
 				}
@@ -1208,10 +1208,12 @@ if ($action == 'create') {
 
 
 				$warehouseObject = null;
-				if (isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+				if (isModEnabled('stock')) {
+					// If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 					print '<!-- Case warehouse already known or product not a predefined product -->';
-
-					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
+					if (array_key_exists($dispatchLines[$indiceAsked]['ent'], $product->stock_warehouse)) {
+						$stock = +$product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
+					}
 					$deliverableQty = $dispatchLines[$indiceAsked]['qty'];
 					$cost_price = $dispatchLines[$indiceAsked]['pu'];
 
