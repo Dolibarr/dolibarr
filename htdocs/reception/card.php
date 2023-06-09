@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -742,7 +742,7 @@ llxHeader('', $title, 'Reception');
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -829,7 +829,7 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($objectsrc->fk_project)) {
 					$projectid = $objectsrc->fk_project;
@@ -1062,10 +1062,10 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
-				if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+				if (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 					print '<td>'.$langs->trans("BuyingPrice").'</td>';
 				}
-				if (empty($conf->productbatch->enabled)) {
+				if (isModEnabled('productbatch')) {
 					print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
 					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
 				}
@@ -1075,10 +1075,10 @@ if ($action == 'create') {
 				}
 				if (isModEnabled('productbatch')) {
 					print '<td class="left">'.$langs->trans("batch_number").'</td>';
-					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+					if (!getDolGlobalInt('PRODUCT_DISABLE_SELLBY')) {
 						print '<td class="left">'.$langs->trans("SellByDate").'</td>';
 					}
-					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+					if (!getDolGlobalInt('PRODUCT_DISABLE_EATBY')) {
 						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
 					}
 				}
@@ -1208,10 +1208,12 @@ if ($action == 'create') {
 
 
 				$warehouseObject = null;
-				if (isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+				if (isModEnabled('stock')) {
+					// If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 					print '<!-- Case warehouse already known or product not a predefined product -->';
-
-					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
+					if (array_key_exists($dispatchLines[$indiceAsked]['ent'], $product->stock_warehouse)) {
+						$stock = +$product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
+					}
 					$deliverableQty = $dispatchLines[$indiceAsked]['qty'];
 					$cost_price = $dispatchLines[$indiceAsked]['pu'];
 
@@ -1422,7 +1424,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
 			if (0) {    // Do not change on reception

@@ -154,7 +154,7 @@ if ($object->id > 0) {
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	/*if (!empty($conf->project->enabled))
+	/*if (isModEnabled('project'))
 	{
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project') . ' ';

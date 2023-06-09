@@ -84,7 +84,7 @@ class FreeBusyData
             'type' => $type,
         ];
 
-        $preceedingItem = $this->data[$insertStartIndex - 1];
+        $precedingItem = $this->data[$insertStartIndex - 1];
         if ($this->data[$insertStartIndex - 1]['start'] === $start) {
             // The old item starts at the exact same point as the new item.
             --$insertStartIndex;
@@ -122,11 +122,11 @@ class FreeBusyData
         // between.
         if (-1 === $itemsToDelete) {
             $itemsToDelete = 0;
-            if ($newItem['end'] < $preceedingItem['end']) {
+            if ($newItem['end'] < $precedingItem['end']) {
                 $newItems[] = [
                     'start' => $newItem['end'] + 1,
-                    'end' => $preceedingItem['end'],
-                    'type' => $preceedingItem['type'],
+                    'end' => $precedingItem['end'],
+                    'type' => $precedingItem['type'],
                 ];
             }
         }

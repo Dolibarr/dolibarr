@@ -90,8 +90,6 @@ class SystemStatus implements NotificationInterface
      *
      * Important note 2: If you are writing any new elements, you are also
      * responsible for closing them.
-     *
-     * @param Writer $writer
      */
     public function xmlSerialize(Writer $writer)
     {
@@ -116,8 +114,6 @@ class SystemStatus implements NotificationInterface
     /**
      * This method serializes the entire notification, as it is used in the
      * response body.
-     *
-     * @param Writer $writer
      */
     public function xmlSerializeFull(Writer $writer)
     {

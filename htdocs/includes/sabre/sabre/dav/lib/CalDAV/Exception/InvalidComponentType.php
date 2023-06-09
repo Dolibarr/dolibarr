@@ -20,9 +20,6 @@ class InvalidComponentType extends DAV\Exception\Forbidden
      * Adds in extra information in the xml response.
      *
      * This method adds the {CALDAV:}supported-calendar-component as defined in rfc4791
-     *
-     * @param DAV\Server  $server
-     * @param \DOMElement $errorNode
      */
     public function serialize(DAV\Server $server, \DOMElement $errorNode)
     {

@@ -39,8 +39,6 @@ class Prop implements XmlDeserializable
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
-     *
      * @return mixed
      */
     public static function xmlDeserialize(Reader $reader)
@@ -78,8 +76,6 @@ class Prop implements XmlDeserializable
      * This method returns arn array with 2 properties:
      *   * name - A clark-notation XML element name.
      *   * value - The parsed value.
-     *
-     * @param Reader $reader
      *
      * @return array
      */

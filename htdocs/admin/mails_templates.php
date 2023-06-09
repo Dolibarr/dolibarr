@@ -236,7 +236,7 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('eventorganization') && !empty($user->rights->eventorganization->read)) {
 	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
-if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
+if (isModEnabled('partnership') && !empty($user->rights->partnership->read)) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
 
@@ -1306,7 +1306,7 @@ if ($num) {
 
 // If no record found
 if ($nbqualified == 0) {
-	$colspan = 10;
+	$colspan = 12;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
