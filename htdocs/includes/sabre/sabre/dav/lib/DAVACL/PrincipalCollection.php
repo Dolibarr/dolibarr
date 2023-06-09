@@ -29,8 +29,6 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
      * at least contain a uri item. Other properties may or may not be
      * supplied by the authentication backend.
      *
-     * @param array $principal
-     *
      * @return \Sabre\DAV\INode
      */
     public function getChildForPrincipal(array $principal)
@@ -58,7 +56,6 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
      * property for you.
      *
      * @param string $name
-     * @param MkCol  $mkCol
      *
      * @throws InvalidResourceType
      */

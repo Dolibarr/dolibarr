@@ -27,9 +27,6 @@ class CalendarQueryValidator
      *
      * The list of filters must be formatted as parsed by \Sabre\CalDAV\CalendarQueryParser
      *
-     * @param VObject\Component\VCalendar $vObject
-     * @param array                       $filters
-     *
      * @return bool
      */
     public function validate(VObject\Component\VCalendar $vObject, array $filters)
@@ -52,9 +49,6 @@ class CalendarQueryValidator
      * component we're checking should be specified, not the component to check
      * itself.
      *
-     * @param VObject\Component $parent
-     * @param array             $filters
-     *
      * @return bool
      */
     protected function validateCompFilters(VObject\Component $parent, array $filters)
@@ -73,9 +67,17 @@ class CalendarQueryValidator
                 return false;
             }
 
-            if ($filter['time-range']) {
+            if (array_key_exists('time-range', $filter) && $filter['time-range']) {
                 foreach ($parent->{$filter['name']} as $subComponent) {
-                    if ($this->validateTimeRange($subComponent, $filter['time-range']['start'], $filter['time-range']['end'])) {
+                    $start = null;
+                    $end = null;
+                    if (array_key_exists('start', $filter['time-range'])) {
+                        $start = $filter['time-range']['start'];
+                    }
+                    if (array_key_exists('end', $filter['time-range'])) {
+                        $end = $filter['time-range']['end'];
+                    }
+                    if ($this->validateTimeRange($subComponent, $start, $end)) {
                         continue 2;
                     }
                 }
@@ -116,9 +118,6 @@ class CalendarQueryValidator
      * property we're checking should be specified, not the property to check
      * itself.
      *
-     * @param VObject\Component $parent
-     * @param array             $filters
-     *
      * @return bool
      */
     protected function validatePropFilters(VObject\Component $parent, array $filters)
@@ -137,9 +136,17 @@ class CalendarQueryValidator
                 return false;
             }
 
-            if ($filter['time-range']) {
+            if (array_key_exists('time-range', $filter) && $filter['time-range']) {
                 foreach ($parent->{$filter['name']} as $subComponent) {
-                    if ($this->validateTimeRange($subComponent, $filter['time-range']['start'], $filter['time-range']['end'])) {
+                    $start = null;
+                    $end = null;
+                    if (array_key_exists('start', $filter['time-range'])) {
+                        $start = $filter['time-range']['start'];
+                    }
+                    if (array_key_exists('end', $filter['time-range'])) {
+                        $end = $filter['time-range']['end'];
+                    }
+                    if ($this->validateTimeRange($subComponent, $start, $end)) {
                         continue 2;
                     }
                 }
@@ -180,9 +187,6 @@ class CalendarQueryValidator
      * A list of param-filters needs to be specified. Also the parent of the
      * parameter we're checking should be specified, not the parameter to check
      * itself.
-     *
-     * @param VObject\Property $parent
-     * @param array            $filters
      *
      * @return bool
      */
@@ -231,8 +235,7 @@ class CalendarQueryValidator
      * A single text-match should be specified as well as the specific property
      * or parameter we need to validate.
      *
-     * @param VObject\Node|string $check     value to check against
-     * @param array               $textMatch
+     * @param VObject\Node|string $check value to check against
      *
      * @return bool
      */
@@ -253,9 +256,8 @@ class CalendarQueryValidator
      * This is all based on the rules specified in rfc4791, which are quite
      * complex.
      *
-     * @param VObject\Node $component
-     * @param DateTime     $start
-     * @param DateTime     $end
+     * @param DateTime $start
+     * @param DateTime $end
      *
      * @return bool
      */
@@ -272,11 +274,9 @@ class CalendarQueryValidator
             case 'VEVENT':
             case 'VTODO':
             case 'VJOURNAL':
-
                 return $component->isInTimeRange($start, $end);
 
             case 'VALARM':
-
                 // If the valarm is wrapped in a recurring event, we need to
                 // expand the recursions, and validate each.
                 //

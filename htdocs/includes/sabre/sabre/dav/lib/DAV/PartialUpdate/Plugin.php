@@ -39,8 +39,6 @@ class Plugin extends DAV\ServerPlugin
      * Initializes the plugin.
      *
      * This method is automatically called by the Server class after addPlugin.
-     *
-     * @param DAV\Server $server
      */
     public function initialize(DAV\Server $server)
     {
@@ -106,9 +104,6 @@ class Plugin extends DAV\ServerPlugin
      * The WebDAV patch request can be used to modify only a part of an
      * existing resource. If the resource does not exist yet and the first
      * offset is not 0, the request fails
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      */
     public function httpPatch(RequestInterface $request, ResponseInterface $response)
     {
@@ -190,8 +185,6 @@ class Plugin extends DAV\ServerPlugin
      * [2,10,15] - update bytes 10, 11, 12, 13, 14, 15
      * [2,10,null] - update bytes 10 until the end of the patch body
      * [3,-5] - update from 5 bytes from the end of the file.
-     *
-     * @param RequestInterface $request
      *
      * @return array|null
      */

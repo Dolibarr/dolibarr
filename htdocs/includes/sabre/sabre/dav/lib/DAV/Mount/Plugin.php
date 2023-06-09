@@ -28,8 +28,6 @@ class Plugin extends DAV\ServerPlugin
 
     /**
      * Initializes the plugin and registers event handles.
-     *
-     * @param DAV\Server $server
      */
     public function initialize(DAV\Server $server)
     {
@@ -40,9 +38,6 @@ class Plugin extends DAV\ServerPlugin
     /**
      * 'beforeMethod' event handles. This event handles intercepts GET requests ending
      * with ?mount.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -67,8 +62,7 @@ class Plugin extends DAV\ServerPlugin
     /**
      * Generates the davmount response.
      *
-     * @param ResponseInterface $response
-     * @param string            $uri      absolute uri
+     * @param string $uri absolute uri
      */
     public function davMount(ResponseInterface $response, $uri)
     {
