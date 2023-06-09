@@ -723,7 +723,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 							print '<td class="right">';
 							print price($sign * $remaintopay);
-							if (!empty($conf->paymentbybanktransfer->enabled)) {
+							if (isModEnabled('paymentbybanktransfer')) {
 								$numdirectdebitopen = 0;
 								$totaldirectdebit = 0;
 								$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";

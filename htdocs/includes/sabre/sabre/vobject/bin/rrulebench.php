@@ -9,7 +9,7 @@ if ($argc < 4) {
     echo 'system.';
     echo "\n";
     echo 'Usage: '.$argv[0]." inputfile.ics startdate enddate\n";
-    die();
+    exit();
 }
 
 list(, $inputFile, $startDate, $endDate) = $argv;

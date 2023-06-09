@@ -27,8 +27,6 @@ class CorePlugin extends ServerPlugin
 
     /**
      * Sets up the plugin.
-     *
-     * @param Server $server
      */
     public function initialize(Server $server)
     {
@@ -69,9 +67,6 @@ class CorePlugin extends ServerPlugin
 
     /**
      * This is the default implementation for the GET method.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -210,9 +205,6 @@ class CorePlugin extends ServerPlugin
     /**
      * HTTP OPTIONS.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     *
      * @return bool
      */
     public function httpOptions(RequestInterface $request, ResponseInterface $response)
@@ -244,9 +236,6 @@ class CorePlugin extends ServerPlugin
      * HTTP response headers, without the body. This is used by clients to
      * determine if a remote file was changed, so they can use a local cached
      * version, instead of downloading it again
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -281,9 +270,6 @@ class CorePlugin extends ServerPlugin
      * HTTP Delete.
      *
      * The HTTP delete method, deletes a given uri
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      */
     public function httpDelete(RequestInterface $request, ResponseInterface $response)
     {
@@ -314,9 +300,6 @@ class CorePlugin extends ServerPlugin
      * The response body is also an xml document, containing information about every uri resource and the requested properties
      *
      * It has to return a HTTP 207 Multi-status status code
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      */
     public function httpPropFind(RequestInterface $request, ResponseInterface $response)
     {
@@ -373,9 +356,6 @@ class CorePlugin extends ServerPlugin
      *
      * This method is called to update properties on a Node. The request is an XML body with all the mutations.
      * In this XML body it is specified which properties should be set/updated and/or deleted
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -442,9 +422,6 @@ class CorePlugin extends ServerPlugin
      * This HTTP method updates a file, or creates a new one.
      *
      * If a new resource was created, a 201 Created status code should be returned. If an existing resource is updated, it's a 204 No Content
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -546,9 +523,6 @@ class CorePlugin extends ServerPlugin
      *
      * The MKCOL method is used to create a new collection (directory) on the server
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     *
      * @return bool
      */
     public function httpMkcol(RequestInterface $request, ResponseInterface $response)
@@ -607,9 +581,6 @@ class CorePlugin extends ServerPlugin
      *
      * This method moves one uri to a different uri. A lot of the actual request processing is done in getCopyMoveInfo
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     *
      * @return bool
      */
     public function httpMove(RequestInterface $request, ResponseInterface $response)
@@ -663,9 +634,6 @@ class CorePlugin extends ServerPlugin
      * This method copies one uri to a different uri, and works much like the MOVE request
      * A lot of the actual request processing is done in getCopyMoveInfo
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     *
      * @return bool
      */
     public function httpCopy(RequestInterface $request, ResponseInterface $response)
@@ -677,6 +645,10 @@ class CorePlugin extends ServerPlugin
         if (!$this->server->emit('beforeBind', [$copyInfo['destination']])) {
             return false;
         }
+        if (!$this->server->emit('beforeCopy', [$path, $copyInfo['destination']])) {
+            return false;
+        }
+
         if ($copyInfo['destinationExists']) {
             if (!$this->server->emit('beforeUnbind', [$copyInfo['destination']])) {
                 return false;
@@ -685,6 +657,7 @@ class CorePlugin extends ServerPlugin
         }
 
         $this->server->tree->copy($path, $copyInfo['destination']);
+        $this->server->emit('afterCopy', [$path, $copyInfo['destination']]);
         $this->server->emit('afterBind', [$copyInfo['destination']]);
 
         // If a resource was overwritten we should send a 204, otherwise a 201
@@ -701,9 +674,6 @@ class CorePlugin extends ServerPlugin
      *
      * Although the REPORT method is not part of the standard WebDAV spec (it's from rfc3253)
      * It's used in a lot of extensions, so it made sense to implement it into the core.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -733,8 +703,7 @@ class CorePlugin extends ServerPlugin
      * Here we check if a user attempted to update a protected property and
      * ensure that the process fails if this is the case.
      *
-     * @param string    $path
-     * @param PropPatch $propPatch
+     * @param string $path
      */
     public function propPatchProtectedPropertyCheck($path, PropPatch $propPatch)
     {
@@ -757,8 +726,7 @@ class CorePlugin extends ServerPlugin
      * Here we check if a node implements IProperties and let the node handle
      * updating of (some) properties.
      *
-     * @param string    $path
-     * @param PropPatch $propPatch
+     * @param string $path
      */
     public function propPatchNodeUpdate($path, PropPatch $propPatch)
     {
@@ -774,9 +742,6 @@ class CorePlugin extends ServerPlugin
      * This method is called when properties are retrieved.
      *
      * Here we add all the default properties.
-     *
-     * @param PropFind $propFind
-     * @param INode    $node
      */
     public function propFind(PropFind $propFind, INode $node)
     {
@@ -832,9 +797,6 @@ class CorePlugin extends ServerPlugin
      *
      * This event is called a bit later, so plugins have a chance first to
      * populate the result.
-     *
-     * @param PropFind $propFind
-     * @param INode    $node
      */
     public function propFindNode(PropFind $propFind, INode $node)
     {
@@ -851,9 +813,6 @@ class CorePlugin extends ServerPlugin
      *
      * This specific handler is called very late in the process, because we
      * want other systems to first have a chance to handle the properties.
-     *
-     * @param PropFind $propFind
-     * @param INode    $node
      */
     public function propFindLate(PropFind $propFind, INode $node)
     {

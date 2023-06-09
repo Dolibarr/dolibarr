@@ -58,8 +58,6 @@ class SimpleCollection extends Collection
 
     /**
      * Adds a new childnode to this collection.
-     *
-     * @param INode $child
      */
     public function addChild(INode $child)
     {

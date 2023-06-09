@@ -67,8 +67,6 @@ class SharingPlugin extends DAV\ServerPlugin
      * addPlugin is called.
      *
      * This method should set up the required event subscriptions.
-     *
-     * @param DAV\Server $server
      */
     public function initialize(DAV\Server $server)
     {
@@ -99,9 +97,6 @@ class SharingPlugin extends DAV\ServerPlugin
      * node.
      *
      * This allows us to inject any properties early.
-     *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode    $node
      */
     public function propFindEarly(DAV\PropFind $propFind, DAV\INode $node)
     {
@@ -118,9 +113,6 @@ class SharingPlugin extends DAV\ServerPlugin
      * This method is triggered *after* all properties have been retrieved.
      * This allows us to inject the correct resourcetype for calendars that
      * have been shared.
-     *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode    $node
      */
     public function propFindLate(DAV\PropFind $propFind, DAV\INode $node)
     {
@@ -154,8 +146,7 @@ class SharingPlugin extends DAV\ServerPlugin
      * Even though this is no longer in the current spec, we keep this around
      * because OS X 10.7 may still make use of this feature.
      *
-     * @param string        $path
-     * @param DAV\PropPatch $propPatch
+     * @param string $path
      */
     public function propPatch($path, DAV\PropPatch $propPatch)
     {
@@ -182,9 +173,6 @@ class SharingPlugin extends DAV\ServerPlugin
 
     /**
      * We intercept this to handle POST requests on calendars.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool|null
      */
@@ -225,7 +213,6 @@ class SharingPlugin extends DAV\ServerPlugin
             // Both the DAV:share-resource and CALENDARSERVER:share requests
             // behave identically.
             case '{'.Plugin::NS_CALENDARSERVER.'}share':
-
                 $sharingPlugin = $this->server->getPlugin('sharing');
                 $sharingPlugin->shareResource($path, $message->sharees);
 
@@ -240,7 +227,6 @@ class SharingPlugin extends DAV\ServerPlugin
             // The invite-reply document is sent when the user replies to an
             // invitation of a calendar share.
             case '{'.Plugin::NS_CALENDARSERVER.'}invite-reply':
-
                 // This only works on the calendar-home-root node.
                 if (!$node instanceof CalendarHome) {
                     return;
@@ -284,7 +270,6 @@ class SharingPlugin extends DAV\ServerPlugin
                 return false;
 
             case '{'.Plugin::NS_CALENDARSERVER.'}publish-calendar':
-
                 // We can only deal with IShareableCalendar objects
                 if (!$node instanceof ISharedCalendar) {
                     return;
@@ -312,7 +297,6 @@ class SharingPlugin extends DAV\ServerPlugin
                 return false;
 
             case '{'.Plugin::NS_CALENDARSERVER.'}unpublish-calendar':
-
                 // We can only deal with IShareableCalendar objects
                 if (!$node instanceof ISharedCalendar) {
                     return;

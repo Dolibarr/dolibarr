@@ -37,7 +37,6 @@ interface IPrincipalCollection extends DAV\ICollection
      * This method should simply return a list of 'child names', which may be
      * used to call $this->getChild in the future.
      *
-     * @param array  $searchProperties
      * @param string $test
      *
      * @return array
