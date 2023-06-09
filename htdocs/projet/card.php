@@ -1424,6 +1424,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 
 	// Presend form
+	$triggersendname = 'PROJECT_SENTBYMAIL';
 	$modelmail = 'project';
 	$defaulttopic = 'SendProjectRef';
 	$diroutput = $conf->project->multidir_output[$object->entity];

@@ -835,7 +835,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$langs->loadLangs(array("agenda", "other", "projects"));
 
 			if (empty($object->actionmsg2)) {
-				$object->actionmsg2 = $langs->transnoentities("ProjectModifiedInDolibarr", $object->ref);
+				$object->actionmsg2 = $langs->transnoentities("ProjectSentByEMail", $object->ref);
+			}
+			$object->actionmsg = $langs->transnoentities("ProjectSentByEMail", $object->ref);
+			//$object->actionmsg .= "\n".$langs->transnoentities("Task").': ???';
+			if (!empty($object->usage_opportunity) && is_object($object->oldcopy) && $object->opp_status != $object->oldcopy->opp_status) {
+				$object->actionmsg .= "\n".$langs->transnoentitiesnoconv("OpportunityStatus").': '.$object->oldcopy->opp_status.' -> '.$object->opp_status;
+			}
+
+			$object->sendtoid = 0;
+		} elseif ($action == 'PROJECT_SENTBYMAIL') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("ProjectSentInDolibarr", $object->ref);
 			}
 			$object->actionmsg = $langs->transnoentities("ProjectModifiedInDolibarr", $object->ref);
 			//$object->actionmsg .= "\n".$langs->transnoentities("Task").': ???';
