@@ -69,8 +69,6 @@ trait ACLTrait
      * Updates the ACL.
      *
      * This method will receive a list of new ACE's as an array argument.
-     *
-     * @param array $acl
      */
     public function setACL(array $acl)
     {

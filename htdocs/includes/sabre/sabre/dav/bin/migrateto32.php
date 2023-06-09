@@ -75,7 +75,7 @@ switch ($driver) {
         break;
     default:
         echo 'Error: unsupported driver: '.$driver."\n";
-        die(-1);
+        exit(-1);
 }
 
 echo "Creating 'calendarinstances'\n";

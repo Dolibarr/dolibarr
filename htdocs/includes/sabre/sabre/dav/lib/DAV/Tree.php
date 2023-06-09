@@ -37,8 +37,6 @@ class Tree
      * Creates the object.
      *
      * This method expects the rootObject to be passed as a parameter
-     *
-     * @param ICollection $rootNode
      */
     public function __construct(ICollection $rootNode)
     {
@@ -143,8 +141,6 @@ class Tree
      *
      * @param string $sourcePath      The path to the file which should be moved
      * @param string $destinationPath The full destination path, so not just the destination parent node
-     *
-     * @return int
      */
     public function move($sourcePath, $destinationPath)
     {
@@ -230,7 +226,7 @@ class Tree
         // flushing the entire cache
         $path = trim($path, '/');
         foreach ($this->cache as $nodePath => $node) {
-            if ('' === $path || $nodePath == $path || 0 === strpos($nodePath, $path.'/')) {
+            if ('' === $path || $nodePath == $path || 0 === strpos((string) $nodePath, $path.'/')) {
                 unset($this->cache[$nodePath]);
             }
         }
@@ -288,15 +284,15 @@ class Tree
     /**
      * copyNode.
      *
-     * @param INode       $source
-     * @param ICollection $destinationParent
-     * @param string      $destinationName
+     * @param string $destinationName
      */
     protected function copyNode(INode $source, ICollection $destinationParent, $destinationName = null)
     {
         if ('' === (string) $destinationName) {
             $destinationName = $source->getName();
         }
+
+        $destination = null;
 
         if ($source instanceof IFile) {
             $data = $source->get();

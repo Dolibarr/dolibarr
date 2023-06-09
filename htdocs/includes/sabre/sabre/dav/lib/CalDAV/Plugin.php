@@ -183,8 +183,6 @@ class Plugin extends DAV\ServerPlugin
 
     /**
      * Initializes the plugin.
-     *
-     * @param DAV\Server $server
      */
     public function initialize(DAV\Server $server)
     {
@@ -245,7 +243,7 @@ class Plugin extends DAV\ServerPlugin
      * @param mixed  $report
      * @param mixed  $path
      *
-     * @return bool
+     * @return bool|null
      */
     public function report($reportName, $report, $path)
     {
@@ -271,9 +269,6 @@ class Plugin extends DAV\ServerPlugin
     /**
      * This function handles the MKCALENDAR HTTP method, which creates
      * a new calendar.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -323,9 +318,6 @@ class Plugin extends DAV\ServerPlugin
      * This method handler is invoked before any after properties for a
      * resource are fetched. This allows us to add in any CalDAV specific
      * properties.
-     *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode    $node
      */
     public function propFind(DAV\PropFind $propFind, DAV\INode $node)
     {
@@ -641,8 +633,6 @@ class Plugin extends DAV\ServerPlugin
     /**
      * This method is responsible for parsing the request and generating the
      * response for the CALDAV:free-busy-query REPORT.
-     *
-     * @param Xml\Request\FreeBusyQueryReport $report
      */
     protected function freeBusyQueryReport(Xml\Request\FreeBusyQueryReport $report)
     {
@@ -719,11 +709,10 @@ class Plugin extends DAV\ServerPlugin
      * This plugin uses this method to ensure that CalDAV objects receive
      * valid calendar data.
      *
-     * @param string    $path
-     * @param DAV\IFile $node
-     * @param resource  $data
-     * @param bool      $modified should be set to true, if this event handler
-     *                            changed &$data
+     * @param string   $path
+     * @param resource $data
+     * @param bool     $modified should be set to true, if this event handler
+     *                           changed &$data
      */
     public function beforeWriteContent($path, DAV\IFile $node, &$data, &$modified)
     {
@@ -757,11 +746,10 @@ class Plugin extends DAV\ServerPlugin
      * This plugin uses this method to ensure that newly created calendar
      * objects contain valid calendar data.
      *
-     * @param string          $path
-     * @param resource        $data
-     * @param DAV\ICollection $parentNode
-     * @param bool            $modified   should be set to true, if this event handler
-     *                                    changed &$data
+     * @param string   $path
+     * @param resource $data
+     * @param bool     $modified should be set to true, if this event handler
+     *                           changed &$data
      */
     public function beforeCreateFile($path, &$data, DAV\ICollection $parentNode, &$modified)
     {
@@ -927,9 +915,6 @@ class Plugin extends DAV\ServerPlugin
     /**
      * This method is triggered whenever a subsystem reqeuests the privileges
      * that are supported on a particular node.
-     *
-     * @param INode $node
-     * @param array $supportedPrivilegeSet
      */
     public function getSupportedPrivilegeSet(INode $node, array &$supportedPrivilegeSet)
     {
@@ -946,8 +931,7 @@ class Plugin extends DAV\ServerPlugin
      * DAV\Browser\Plugin. This allows us to generate an interface users
      * can use to create new calendars.
      *
-     * @param DAV\INode $node
-     * @param string    $output
+     * @param string $output
      *
      * @return bool
      */
@@ -974,9 +958,6 @@ class Plugin extends DAV\ServerPlugin
      * This event is triggered after GET requests.
      *
      * This is used to transform data into jCal, if this was requested.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      */
     public function httpAfterGet(RequestInterface $request, ResponseInterface $response)
     {

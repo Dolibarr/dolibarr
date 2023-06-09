@@ -24,9 +24,9 @@ class DateAndOrTime extends Property
     /**
      * Field separator.
      *
-     * @var string|null
+     * @var string
      */
-    public $delimiter = null;
+    public $delimiter = '';
 
     /**
      * Returns the type of value.
@@ -45,8 +45,6 @@ class DateAndOrTime extends Property
      * Sets a multi-valued property.
      *
      * You may also specify DateTimeInterface objects here.
-     *
-     * @param array $parts
      */
     public function setParts(array $parts)
     {
@@ -80,8 +78,6 @@ class DateAndOrTime extends Property
 
     /**
      * Sets the property as a DateTime object.
-     *
-     * @param DateTimeInterface $dt
      */
     public function setDateTime(DateTimeInterface $dt)
     {
