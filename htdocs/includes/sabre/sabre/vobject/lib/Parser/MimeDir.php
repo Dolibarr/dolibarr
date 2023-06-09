@@ -167,7 +167,11 @@ class MimeDir extends Parser
 
         while (true) {
             // Reading until we hit END:
-            $line = $this->readLine();
+            try {
+                $line = $this->readLine();
+            } catch (EofException $oEx) {
+                $line = 'END:'.$this->root->name;
+            }
             if ('END:' === strtoupper(substr($line, 0, 4))) {
                 break;
             }
@@ -343,7 +347,7 @@ class MimeDir extends Parser
             ) (?=[;:,])
             /xi";
 
-        //echo $regex, "\n"; die();
+        //echo $regex, "\n"; exit();
         preg_match_all($regex, $line, $matches, PREG_SET_ORDER);
 
         $property = [
@@ -372,12 +376,22 @@ class MimeDir extends Parser
                 $value = $this->unescapeParam($value);
 
                 if (is_null($lastParam)) {
+                    if ($this->options & self::OPTION_IGNORE_INVALID_LINES) {
+                        // When the property can't be matched and the configuration
+                        // option is set to ignore invalid lines, we ignore this line
+                        // This can happen when servers provide faulty data as iCloud
+                        //  frequently does with X-APPLE-STRUCTURED-LOCATION
+                        continue;
+                    }
                     throw new ParseException('Invalid Mimedir file. Line starting at '.$this->startLine.' did not follow iCalendar/vCard conventions');
                 }
                 if (is_null($property['parameters'][$lastParam])) {
                     $property['parameters'][$lastParam] = $value;
                 } elseif (is_array($property['parameters'][$lastParam])) {
                     $property['parameters'][$lastParam][] = $value;
+                } elseif ($property['parameters'][$lastParam] === $value) {
+                    // When the current value of the parameter is the same as the
+                    // new one, then we can leave the current parameter as it is.
                 } else {
                     $property['parameters'][$lastParam] = [
                         $property['parameters'][$lastParam],
@@ -439,7 +453,7 @@ class MimeDir extends Parser
             $propObj->add(null, $namelessParameter);
         }
 
-        if ('QUOTED-PRINTABLE' === strtoupper($propObj['ENCODING'])) {
+        if (isset($propObj['ENCODING']) && 'QUOTED-PRINTABLE' === strtoupper($propObj['ENCODING'])) {
             $propObj->setQuotedPrintableValue($this->extractQuotedPrintableValue());
         } else {
             $charset = $this->charset;
@@ -450,10 +464,8 @@ class MimeDir extends Parser
             switch (strtolower($charset)) {
                 case 'utf-8':
                     break;
-                case 'iso-8859-1':
-                    $property['value'] = utf8_encode($property['value']);
-                    break;
                 case 'windows-1252':
+                case 'iso-8859-1':
                     $property['value'] = mb_convert_encoding($property['value'], 'UTF-8', $charset);
                     break;
                 default:
@@ -518,7 +530,7 @@ class MimeDir extends Parser
      *
      * Now for the parameters
      *
-     * If delimiter is not set (null) this method will just return a string.
+     * If delimiter is not set (empty string) this method will just return a string.
      * If it's a comma or a semi-colon the string will be split on those
      * characters, and always return an array.
      *

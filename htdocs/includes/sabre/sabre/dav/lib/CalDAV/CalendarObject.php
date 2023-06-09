@@ -49,10 +49,6 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *   * size - (optional) The size of the data in bytes.
      *   * lastmodified - (optional) format as a unix timestamp.
      *   * acl - (optional) Use this to override the default ACL for the node.
-     *
-     * @param Backend\BackendInterface $caldavBackend
-     * @param array                    $calendarInfo
-     * @param array                    $objectData
      */
     public function __construct(Backend\BackendInterface $caldavBackend, array $calendarInfo, array $objectData)
     {

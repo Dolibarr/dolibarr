@@ -42,9 +42,8 @@ class HomeCollection extends AbstractPrincipalCollection implements IACL
     /**
      * Creates the home collection.
      *
-     * @param BackendInterface $principalBackend
-     * @param string           $storagePath      where the actual files are stored
-     * @param string           $principalPrefix  list of principals to iterate
+     * @param string $storagePath     where the actual files are stored
+     * @param string $principalPrefix list of principals to iterate
      */
     public function __construct(BackendInterface $principalBackend, $storagePath, $principalPrefix = 'principals')
     {
@@ -70,8 +69,6 @@ class HomeCollection extends AbstractPrincipalCollection implements IACL
      * The passed array contains principal information, and is guaranteed to
      * at least contain a uri item. Other properties may or may not be
      * supplied by the authentication backend.
-     *
-     * @param array $principalInfo
      *
      * @return \Sabre\DAV\INode
      */

@@ -112,8 +112,6 @@ class Client extends HTTP\Client
      *  requests to 'discover' this information.
      *
      *  Encoding is a bitmap with one of the ENCODING constants.
-     *
-     * @param array $settings
      */
     public function __construct(array $settings)
     {
@@ -192,7 +190,6 @@ class Client extends HTTP\Client
      * made to the server to also return all child resources.
      *
      * @param string $url
-     * @param array  $properties
      * @param int    $depth
      *
      * @return array
@@ -261,7 +258,6 @@ class Client extends HTTP\Client
      * attempt is made to delete the property.
      *
      * @param string $url
-     * @param array  $properties
      *
      * @return bool
      */
@@ -359,7 +355,6 @@ class Client extends HTTP\Client
      * @param string               $method
      * @param string               $url
      * @param string|resource|null $body
-     * @param array                $headers
      *
      * @throws clientException, in case a curl error occurred
      *
@@ -414,7 +409,6 @@ class Client extends HTTP\Client
      *      .. etc ..
      *   ]
      * ]
-     *
      *
      * @param string $body xml body
      *

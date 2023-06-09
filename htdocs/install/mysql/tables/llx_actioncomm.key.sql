@@ -29,4 +29,4 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_recurid (recurid);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref_ext (ref_ext);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
 
-ALTER TABLE llx_actioncomm ADD UNIQUE INDEX uk_actioncomm_ref (ref, entity);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref (ref, entity);

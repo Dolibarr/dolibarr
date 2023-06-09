@@ -24,7 +24,6 @@ interface CreatePrincipalSupport extends BackendInterface
      * of the principal.
      *
      * @param string $path
-     * @param MkCol  $mkCol
      */
     public function createPrincipal($path, MkCol $mkCol);
 }
