@@ -266,7 +266,9 @@ class vCard
 	public function setEmail($address, $type = "")
 	{
 		$key = "EMAIL";
-		if ($type != "") {
+		if ($type == "PREF") {
+			$key .= ";PREF=1";
+		} elseif (!empty($type)) {
 			$key .= ";TYPE=".dol_strtolower($type);
 		}
 		$this->properties[$key] = $address;
