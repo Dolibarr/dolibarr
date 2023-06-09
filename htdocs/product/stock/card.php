@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -280,7 +280,7 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -318,7 +318,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
@@ -440,7 +440,7 @@ if ($action == 'create') {
 			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 				if ($usercancreate) {
@@ -887,7 +887,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$projectid = $object->fk_project;
 				$langs->load('projects');
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';

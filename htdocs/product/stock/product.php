@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -531,7 +531,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
