@@ -145,3 +145,6 @@ ShowProductReference=Show reference of products
 UsePriceHT=Use price excl. taxes and not price incl. taxes
 TerminalName=Terminal %s
 TerminalNameDesc=Terminal name
+DefaultPOSThirdLabel=TakePOS sales
+DefaultPOSCatLabel=Point of sale
+DefaultPOSProductLabel=Undefined product
