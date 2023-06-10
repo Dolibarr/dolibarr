@@ -480,7 +480,12 @@ abstract class CommonDocGenerator
 		}
 
 		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
-
+		
+		if (get_class($object) == 'CommandeFournisseur') {
+			/* @var $object CommandeFournisseur*/
+			$object->date_validation =  $object->date_valid;
+			$object->date_commande = $object->date;
+		}
 		$resarray = array(
 			$array_key.'_id'=>$object->id,
 			$array_key.'_ref' => (property_exists($object, 'ref') ? $object->ref : ''),
@@ -498,7 +503,8 @@ abstract class CommonDocGenerator
 			$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
 			$array_key.'_date_modification'=>(!empty($object->date_modification) ?dol_print_date($object->date_modification, 'day') : ''),
 			$array_key.'_date_validation'=>(!empty($object->date_validation) ?dol_print_date($object->date_validation, 'dayhour') : ''),
-			$array_key.'_date_delivery_planed'=>(!empty($object->date_livraison) ?dol_print_date($object->date_livraison, 'day') : ''),
+			$array_key.'_date_approve'=>(!empty($object->date_approve) ?dol_print_date($object->date_approve, 'day') : ''),
+			$array_key.'_date_delivery_planed'=>(!empty($object->delivery_date) ?dol_print_date($object->delivery_date, 'day') : ''),
 			$array_key.'_date_close'=>(!empty($object->date_cloture) ?dol_print_date($object->date_cloture, 'dayhour') : ''),
 
 			$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
@@ -628,7 +634,9 @@ abstract class CommonDocGenerator
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
 		}
-
+//		print_r($resarray);
+//		print_r($object);
+//		die();
 		return $resarray;
 	}
 
