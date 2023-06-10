@@ -98,9 +98,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $thirdpartystatic = new Societe($db);
 
-llxHeader("", $langs->trans("AccountancyTreasuryArea"));
+llxHeader("", $langs->trans("InvoicesArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
+print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
