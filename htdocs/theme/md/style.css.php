@@ -3409,10 +3409,6 @@ div.blockvmenulogo
 	max-width: 100px;
 	vertical-align: middle;
 }
-.backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.7);
-	border-radius: 5px;
-}
 .menulogocontainer img.mycompany {
 	object-fit: contain;
 	width: inherit;
