@@ -315,8 +315,7 @@ if (empty($reshook)) {
 			$result = $object->set_date($user, $datep);
 			if ($result < 0) {
 				dol_print_error($db, $object->error);
-			}
-			else { 
+			} else {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
@@ -331,7 +330,7 @@ if (empty($reshook)) {
 					if ($ret > 0) {
 						$object->fetch_thirdparty();
 					}
-					
+
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 			}
