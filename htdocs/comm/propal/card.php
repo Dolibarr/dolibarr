@@ -316,6 +316,25 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				dol_print_error($db, $object->error);
 			}
+			else { 
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$model = $object->model_pdf;
+					$ret = $object->fetch($id); // Reload to get new records
+					if ($ret > 0) {
+						$object->fetch_thirdparty();
+					}
+					
+					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				}
+			}
 		}
 	} elseif ($action == 'setecheance' && $usercancreate) {
 		$result = $object->set_echeance($user, dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
