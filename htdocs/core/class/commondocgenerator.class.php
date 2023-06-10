@@ -480,7 +480,7 @@ abstract class CommonDocGenerator
 		}
 
 		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
-		
+
 		if (get_class($object) == 'CommandeFournisseur') {
 			/* @var $object CommandeFournisseur*/
 			$object->date_validation =  $object->date_valid;
