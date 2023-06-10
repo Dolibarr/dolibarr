@@ -221,7 +221,7 @@ if (isModEnabled('ticket')) {
 	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = array('label'=>'Tickets', 'picto'=>'ticket');
 }
 // add bookmarks to available landing pages
-if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
+if (!getDolGlobalString('MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES')) {
 	$sql = "SELECT b.rowid, b.fk_user, b.url, b.title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 	$sql .= " WHERE b.entity IN (".getEntity('bookmark').")";
@@ -234,7 +234,7 @@ if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
 		$i = 0;
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0) {
-			$tmparray['sep'.$i] = '<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>';
+			$tmparray['sep'.$i] = array('data-html'=>'<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>', 'label'=>'--- '.$langs->trans("Bookmarks"));
 			while ($i < $num_rows) {
 				$obj = $db->fetch_object($resql);
 
@@ -255,6 +255,7 @@ if ($reshook < 0) {
 } elseif ($reshook == 0) {
 	$tmparray = array_merge($tmparray, $hookmanager->resArray);
 }
+
 foreach ($tmparray as $key => $val) {
 	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
 	$tmparray[$key]['label'] = $langs->trans($val['label']);
