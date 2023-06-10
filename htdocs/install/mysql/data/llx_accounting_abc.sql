@@ -112,6 +112,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account EC EC-SUPERCIAS
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 84, 'EC-SUPERCIAS', 'Plan de cuentas Ecuador', 1);
 
+-- Description of chart of account CO CO-PUC
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 70, 'CO-PUC', 'Plan único de cuentas Colombia', 1);
 
 -- Description of chart of account LU PCN2020-LUXEMBURG
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN2020-LUXEMBURG', 'Plan comptable normalisé 2020 Luxembourgeois', 1);

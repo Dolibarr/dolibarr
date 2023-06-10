@@ -409,8 +409,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
  */
 function dol_compare_file($a, $b)
 {
-	global $sortorder;
-	global $sortfield;
+	global $sortorder, $sortfield;
 
 	$sortorder = strtoupper($sortorder);
 
@@ -440,6 +439,8 @@ function dol_compare_file($a, $b)
 		}
 		return ($a->size < $b->size) ? $retup : $retdown;
 	}
+
+	return 0;
 }
 
 

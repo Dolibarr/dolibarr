@@ -466,3 +466,7 @@ ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
 -- VMYSQL4.1 DROP INDEX uk_actioncomm_ref on llx_actioncomm;
 -- VPGSQL8.2 DROP INDEX uk_actioncomm_ref;
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref (ref, entity);
+
+-- Bump llx_reception.ref_supplier to allow up to 255 characters to match llx_commande_fournisseur.ref_supplier.
+-- See: https://github.com/Dolibarr/dolibarr/pull/25034
+ALTER TABLE llx_reception MODIFY COLUMN ref_supplier varchar(255);
