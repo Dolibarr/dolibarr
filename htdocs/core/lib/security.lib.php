@@ -377,6 +377,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'myactions|allactions';
 		$dbt_select = 'id';
 	}
+	if ($features == 'bank') {
+		$features = 'banque';
+	}
 	if ($features == 'facturerec') {
 		$features = 'facture';
 	}

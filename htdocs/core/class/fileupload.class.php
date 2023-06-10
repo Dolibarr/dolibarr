@@ -59,7 +59,7 @@ class FileUpload
 		$filename = $element_prop['classfile'];
 		$dir_output = $element_prop['dir_output'];
 
-		//print 'fileupload.class.php: element='.$element.' pathname='.$pathname.' filename='.$filename.' dir_output='.$dir_output;
+		//print 'fileupload.class.php: element='.$element.' pathname='.$pathname.' filename='.$filename.' dir_output='.$dir_output."\n";
 
 		if (empty($dir_output)) {
 			setEventMessage('The element '.$element.' is not supported for uploading file. dir_output is unknow.', 'errors');

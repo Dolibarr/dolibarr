@@ -211,7 +211,8 @@ function isModEnabled($module)
 	// Fix special cases
 	$arrayconv = array(
 		'project' => 'projet',
-		'contract' => 'contrat'
+		'contract' => 'contrat',
+		'bank' => 'banque'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
@@ -11386,7 +11387,7 @@ function getElementProperties($element_type)
 		$classname = 'AdherentType';
 	} elseif ($element_type == 'bank_account') {
 		$classpath = 'compta/bank/class';
-		$module = 'banque';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
 	} elseif ($element_type == 'category') {
@@ -11586,7 +11587,6 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
-	//var_dump($element_prop);
 
 	if (is_array($element_prop) && isModEnabled($element_prop['module'])) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
