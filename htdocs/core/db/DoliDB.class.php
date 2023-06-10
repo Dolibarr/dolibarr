@@ -283,7 +283,7 @@ abstract class DoliDB implements Database
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null)
+	public function order($sortfield = '', $sortorder = '')
 	{
 		if (!empty($sortfield)) {
 			$oldsortorder = '';
