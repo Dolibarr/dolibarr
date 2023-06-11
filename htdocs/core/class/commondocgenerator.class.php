@@ -634,9 +634,7 @@ abstract class CommonDocGenerator
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
 		}
-//		print_r($resarray);
-//		print_r($object);
-//		die();
+
 		return $resarray;
 	}
 
