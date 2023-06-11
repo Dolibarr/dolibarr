@@ -102,6 +102,7 @@ $search_tobuy = GETPOST("search_tobuy");
 $search_country = GETPOST("search_country", 'aZ09');
 $search_state = GETPOST("state_id", 'intcomma');
 $search_tobatch = GETPOST("search_tobatch");
+$search_stockable_product = GETPOST('search_stockable_product', 'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
 $search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
 $search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_export", 'alpha');
@@ -278,6 +279,19 @@ $arrayfields = array(
 	'p.tobuy' => array('label' => $langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked' => 1, 'position' => 1000),
 	'p.import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'checked' => -1, 'position' => 1100),
 );
+
+if(! empty($conf->stock->enabled)) {
+	// service
+	if($type == 1) {
+		if(! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
+		}
+	}
+	else {
+		//product
+		$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
+	}
+}
 /*foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
@@ -373,6 +387,7 @@ if (empty($reshook)) {
 
 		$show_childproducts = '';
 		$search_import_key = '';
+		$search_stockable_product = '';
 		$search_accountancy_code_sell = '';
 		$search_accountancy_code_sell_intra = '';
 		$search_accountancy_code_sell_export = '';
@@ -458,7 +473,7 @@ if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 }
 $sql .= ' p.datec as date_creation, p.tms as date_modification, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
-$sql .= ' p.fk_country, p.fk_state,';
+$sql .= ' p.fk_country, p.fk_state, p.stockable_product,';
 $sql .= ' p.import_key,';
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
@@ -565,6 +580,9 @@ if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell !=
 if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1) {
 	$sql .= " AND p.tobuy = ".((int) $search_tobuy);
 }
+if (isset($search_stockable_product) && dol_strlen($search_stockable_product) > 0 && $search_stockable_product != -1) {
+	$sql .= " AND p.stockable_product = '". $search_stockable_product . "'";
+}
 if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch != -1) {
 	$sql .= " AND p.tobatch = ".((int) $search_tobatch);
 }
@@ -650,7 +668,7 @@ if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
-$sql .= ' p.fk_country, p.fk_state,';
+$sql .= ' p.fk_country, p.fk_state, p.stockable_product,';
 $sql .= ' p.import_key';
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ', p.fk_unit, cu.label';
@@ -837,6 +855,9 @@ if ($search_accountancy_code_buy_export) {
 }
 if ($search_finished) {
 	$param .= "&search_finished=".urlencode($search_finished);
+}
+if($search_stockable_product != '') {
+	$param .= "&search_stockable_product=".urlencode($search_stockable_product);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1177,6 +1198,11 @@ if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 	print '&nbsp;';
 	print '</td>';
 }
+// Managed_in_stock
+$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes'));
+if (!empty($arrayfields['p.stockable_product']['checked'])){
+	print '<td class="liste_titre center">'.Form::selectarray('search_stockable_product', $array, $search_stockable_product).'</td>';
+}
 // Desired stock
 if (!empty($arrayfields['p.desiredstock']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1425,6 +1451,9 @@ if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 	print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.stockable_product']['checked'])) {
+	print_liste_field_titre($arrayfields['p.stockable_product']['label'], $_SERVER['PHP_SELF'], 'p.stockable_product', '', $param, '', $sortfield, $sortorder, 'center ');
+}
 if (!empty($arrayfields['p.desiredstock']['checked'])) {
 	print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"], "p.desiredstock", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -1574,6 +1603,7 @@ while ($i < $imaxinloop) {
 		$product_static->volume_units = $obj->volume_units;
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
+		$product_static->stockable_product = $obj->stockable_product;
 		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			$product_static->fk_unit = $obj->fk_unit;
 		}
@@ -2081,6 +2111,14 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// not managed in stock
+		if(! empty($arrayfields['p.stockable_product']['checked'])) {
+			print '<td class="nowrap center">';
+			print ($product_static->stockable_product == '1') ? $langs->trans('Yes') : $langs->trans('No');
+			print '</td>';
+		}
+
 		// Desired stock
 		if (!empty($arrayfields['p.desiredstock']['checked'])) {
 			print '<td class="right">';
