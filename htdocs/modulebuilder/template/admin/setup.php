@@ -320,9 +320,6 @@ $myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey != $type) {
-		continue;
-	}
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Orders Numbering model
