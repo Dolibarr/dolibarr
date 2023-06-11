@@ -424,7 +424,7 @@ class MouvementStock extends CommonObject
 					return -8;
 				}
 			} else {
-				if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) {
+				if ((empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) && $product->not_managed_in_stock == Product::ENABLED_STOCK) {
 					$langs->load("stocks");
 					$this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
 					$this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
@@ -434,7 +434,7 @@ class MouvementStock extends CommonObject
 			}
 		}
 
-		if ($movestock) {	// Change stock for current product, change for subproduct is done after
+		if ($movestock && $product->not_managed_in_stock == PRODUCT::ENABLED_STOCK) {	// Change stock for current product, change for subproduct is done after
 			// Set $origin_type, origin_id and fk_project
 			$fk_project = $this->fk_project;
 			if (!empty($this->origin_type)) {			// This is set by caller for tracking reason
@@ -610,8 +610,10 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && !$error) {
 			// Call trigger
-			$result = $this->call_trigger('STOCK_MOVEMENT', $user);
-			if ($result < 0) $error++;
+			if ($product->not_managed_in_stock != Product::NOT_MANAGED_IN_STOCK ) {
+				$result = $this->call_trigger('STOCK_MOVEMENT', $user);
+				if ($result < 0) $error++;
+			}
 			// End call triggers
 
 			// Check unicity for serial numbered equipments once all movement were done.

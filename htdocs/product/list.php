@@ -96,6 +96,7 @@ $search_country = GETPOST("search_country", 'int');
 $search_state = GETPOST("state_id", 'int');
 $fourn_id = GETPOST("fourn_id", 'int');
 $search_tobatch = GETPOST("search_tobatch", 'int');
+$search_not_managed_in_stock = GETPOST('search_not_managed_in_stock', 'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
 $search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
 $search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_export", 'alpha');
@@ -268,6 +269,19 @@ $arrayfields = array(
 	'p.tosell'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Sell").')', 'checked'=>1, 'position'=>1000),
 	'p.tobuy'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked'=>1, 'position'=>1000)
 );
+
+if(! empty($conf->stock->enabled)) {
+	// service
+	if($type == 1) {
+		if(! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			$arrayfields['p.not_managed_in_stock'] = array('label' => $langs->trans('NotManagedInStock'), 'checked' => 0, 'position' => 1001);
+		}
+	}
+	else {
+		//product
+		$arrayfields['p.not_managed_in_stock'] = array('label' => $langs->trans('NotManagedInStock'), 'checked' => 0, 'position' => 1001);
+	}
+}
 /*foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
@@ -360,6 +374,7 @@ if (empty($reshook)) {
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
 		$show_childproducts = '';
+		$search_not_managed_in_stock = '';
 		$search_accountancy_code_sell = '';
 		$search_accountancy_code_sell_intra = '';
 		$search_accountancy_code_sell_export = '';
@@ -444,7 +459,7 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
-$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state,';
+$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state, p.not_managed_in_stock,';
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
@@ -542,6 +557,9 @@ if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell !=
 if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1) {
 	$sql .= " AND p.tobuy = ".((int) $search_tobuy);
 }
+if (isset($search_not_managed_in_stock) && dol_strlen($search_not_managed_in_stock) > 0 && $search_not_managed_in_stock != -1) {
+	$sql .= " AND p.not_managed_in_stock = '". $search_not_managed_in_stock . "'";
+}
 if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch != -1) {
 	$sql .= " AND p.tobatch = ".((int) $search_tobatch);
 }
@@ -626,7 +644,7 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 } else {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
-$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state';
+$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state, p.not_managed_in_stock';
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ', p.fk_unit, cu.label';
 }
@@ -809,6 +827,9 @@ if ($search_accountancy_code_buy_export) {
 }
 if ($search_finished) {
 	$param = "&search_finished=".urlencode($search_finished);
+}
+if($search_not_managed_in_stock != '') {
+	$param = "&search_not_managed_in_stock=".urlencode($search_not_managed_in_stock);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1141,6 +1162,11 @@ if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 	print '&nbsp;';
 	print '</td>';
 }
+// Managed_in_stock
+$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes'));
+if (!empty($arrayfields['p.not_managed_in_stock']['checked'])){
+	print '<td class="liste_titre center">'.Form::selectarray('search_not_managed_in_stock', $array, $search_not_managed_in_stock).'</td>';
+}
 // Desired stock
 if (!empty($arrayfields['p.desiredstock']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1380,6 +1406,9 @@ if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 	print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.not_managed_in_stock']['checked'])) {
+	print_liste_field_titre($arrayfields['p.not_managed_in_stock']['label'], $_SERVER['PHP_SELF'], 'p.not_managed_in_stock', '', $param, '', $sortfield, $sortorder, 'center ');
+}
 if (!empty($arrayfields['p.desiredstock']['checked'])) {
 	print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"], "p.desiredstock", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -1524,6 +1553,7 @@ while ($i < $imaxinloop) {
 		$product_static->volume_units = $obj->volume_units;
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
+		$product_static->not_managed_in_stock = $obj->not_managed_in_stock;
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$product_static->fk_unit = $obj->fk_unit;
 		}
@@ -2010,6 +2040,14 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// not managed in stock
+		if(! empty($arrayfields['p.not_managed_in_stock']['checked'])) {
+			print '<td class="nowrap center">';
+			print ($product_static->not_managed_in_stock == '1') ? $langs->trans('Yes') : $langs->trans('No');
+			print '</td>';
+		}
+
 		// Desired stock
 		if (!empty($arrayfields['p.desiredstock']['checked'])) {
 			print '<td class="right">';
