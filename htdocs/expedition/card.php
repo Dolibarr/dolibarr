@@ -336,7 +336,7 @@ if (empty($reshook)) {
 						//shipment from multiple stock locations
 						$nbstockline = count($stockLine[$i]);
 						for ($j = 0; $j < $nbstockline; $j++) {
-							if ($stockLine[$i][$j]['qty'] > 0) {
+							if ($stockLine[$i][$j]['qty'] > 0 || $stockLine[$i][$j]['qty'] == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
 								if ($ret < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
