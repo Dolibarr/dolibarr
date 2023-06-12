@@ -430,3 +430,7 @@ ConfirmEditExtrafield = Sélectionnez l'extrafield que vous souhaitez modifier
 ConfirmEditExtrafieldQuestion = Voulez-vous vraiment modifier cet extrafield ?
 ModifyValueExtrafields = Modifier la valeur d'un extrafield
 OrProductsWithCategories=Ou des produits avec des tags/catégories
+NotManagedInStock=Désactiver la gestion des stocks
+NotManagedInStockDescription=Si cette option est activée, la modification du stock pour cet élément n'est pas prise en compte. Les mouvements de stock ne seront pas pris en compte dans les commandes client, commande fournisseur, expédition, réception, ordre de fabrication.<br /> Dans les faits, cette option se comporte comme une activation/désactivation du module stock mais à l'échelle du produit/service
+StockDisabled=Stock désactivé
+StockEnabled=Stock activé

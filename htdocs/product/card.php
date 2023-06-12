@@ -625,6 +625,9 @@ if (empty($reshook)) {
 				$object->fk_unit = null;
 			}
 
+			// managed_in_stock
+			$object->not_managed_in_stock	 = GETPOSTISSET('not_managed_in_stock');
+
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
 			$accountancy_code_sell_export = GETPOST('accountancy_code_sell_export', 'alpha');
@@ -800,6 +803,9 @@ if (empty($reshook)) {
 				} else {
 					$object->fk_default_bom = null;
 				}
+				
+				// managed_in_stock
+				$object->not_managed_in_stock   = GETPOSTISSET('not_managed_in_stock');
 
 				$units = GETPOST('units', 'int');
 				if ($units > 0) {
@@ -2076,6 +2082,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
 				print '</td></tr>';
 				*/
+
+				print '<tr><td valign="top">' . $langs->trans("NotManagedInStock") . '</td>';
+				$checked = $object->not_managed_in_stock == 1 ? "checked" : "";
+				print '<td><input type="checkbox" id="not_managed_in_stock" name="not_managed_in_stock" '. $checked . ' /></td></tr>';
 			}
 
 			if ($object->isService() && $conf->workstation->enabled) {
@@ -2108,6 +2118,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</label>';
 
 				print '</td></tr>';
+
+				if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					print '<tr><td valign="top">' . $langs->trans("NotManagedInStock") . '</td>';
+					$checked = $object->not_managed_in_stock == 1 ? "checked" : "";
+					print '<td><input type="checkbox" id="not_managed_in_stock" name="not_managed_in_stock" ' . $checked . ' /></td></tr>';
+				}
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
 					// Nature
@@ -2572,6 +2588,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td>';
 			}
 
+			// Workstation
 			if ($object->isService() && isModEnabled('workstation')) {
 				$workstation = new Workstation($db);
 				$res = $workstation->fetch($object->fk_default_workstation);
@@ -2579,6 +2596,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
 				print '</td>';
+			} 
+
+			// View not_managed_in_stock
+			if (($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) && !empty($conf->stock->enabled)) {
+				print '<tr><td valign="top">' . $form->textwithpicto($langs->trans("NotManagedInStock"), $langs->trans('NotManagedInStockDescription')) . '</td>';
+				$checked = $object->not_managed_in_stock == 1 ? $langs->trans('Yes') : $langs->trans('No');
+				print '<td>'. $checked .'</td></tr>';
 			}
 
 			// Parent product.
@@ -2623,6 +2647,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
 
 				print '</td></tr>';
+
+				// view not_managed_in_stock
+				if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_SUPPORTS_SERVICES) ) {
+					print '<tr><td valign="top">' . $form->textwithpicto($langs->trans("NotManagedInStock"), $langs->trans('NotManagedInStockDescription')) . '</td>';
+					$checked = $object->not_managed_in_stock == 1 ? $langs->trans('Yes') : $langs->trans('No');
+					print '<td>'. $checked .'</td></tr>';
+				}
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
 					// Nature
