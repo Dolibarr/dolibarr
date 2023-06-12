@@ -182,7 +182,7 @@ $elementList = array();
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToUser'));
-if (isModEnabled('adherent') && !empty($user->rights->adherent->lire)) {
+if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
 	$elementList['member'] = img_picto('', 'object_member', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToMember'));
 }
 if (isModEnabled('recruitment') && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
@@ -194,13 +194,13 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 if (isModEnabled('project')) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
-if (isModEnabled("propal") && !empty($user->rights->propal->lire)) {
+if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$elementList['propal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendProposal'));
 }
-if (isModEnabled('commande') && !empty($user->rights->commande->lire)) {
+if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 	$elementList['order_send'] = img_picto('', 'order', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendOrder'));
 }
-if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$elementList['facture_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
 }
 if (isModEnabled("expedition")) {

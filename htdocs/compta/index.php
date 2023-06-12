@@ -129,7 +129,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
