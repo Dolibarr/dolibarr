@@ -1547,7 +1547,7 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 
 			$newRef = $supplierOrder->getNextNumRef($soc);
 
-			$sql = "UPDATE " . MAIN_DB_PREFIX . "commande_fournisseur cf SET cf.ref = '" . $db->escape($newRef) . "' WHERE cf.rowid = " . (int)$supplierOrder->id;
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "commande_fournisseur cf SET cf.ref = '" . $db->escape($newRef) . "' WHERE cf.rowid = " . (int) $supplierOrder->id;
 			if (!$db->query($sql)) {
 				$err++;
 			}
