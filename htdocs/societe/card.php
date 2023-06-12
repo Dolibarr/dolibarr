@@ -811,7 +811,7 @@ if (empty($reshook)) {
 				}
 
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
-				if (!$error && !empty($user->rights->categorie->lire)) {
+				if (!$error && $user->hasRight('categorie', 'lire')) {
 					// Customer categories association
 					$categories = GETPOST('custcats', 'array');
 					$result = $object->setCategories($categories, 'customer');
@@ -1816,7 +1816,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Customer
@@ -2556,7 +2556,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-			if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 				// Customer
 				print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
@@ -3002,7 +3002,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Tags / categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			// Customer
 			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
