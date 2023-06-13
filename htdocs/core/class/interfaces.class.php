@@ -75,11 +75,11 @@ class Interfaces
 				$_SESSION['triggersHistory'] = [];
 			}
 			$trace = debug_backtrace();
-			if (isset($trace[0])) {
+			if (isset($trace[1])) {
 				$triggerInformations = [
 					'name' => $action,
-					'file' => $trace[0]['file'],
-					'line' => $trace[0]['line'],
+					'file' => $trace[1]['file'],
+					'line' => $trace[1]['line'],
 				];
 				$hash = md5(serialize($triggerInformations));
 				if (!empty($_SESSION['triggersHistory'][$hash])) {
