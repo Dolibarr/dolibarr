@@ -198,13 +198,13 @@ class CActionComm
 						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->rights->facture->lire);
 						$qualified = 0;
 						// Special cases
-						if ($obj->module == 'invoice' && isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+						if ($obj->module == 'invoice' && isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 							$qualified = 1;
 						}
 						if ($obj->module == 'order' && isModEnabled('commande') && empty($user->rights->commande->lire)) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'propal' && isModEnabled("propal") && !empty($user->rights->propal->lire)) {
+						if ($obj->module == 'propal' && isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 							$qualified = 1;
 						}
 						if ($obj->module == 'invoice_supplier' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->facture->lire)) || (isModEnabled('supplier_invoice') && !empty($user->rights->supplier_invoice->lire)))) {

@@ -580,7 +580,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Tags / Categories
-if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	print '<tr><td>'.$langs->trans("Categories").'</td>';
 	print '<td colspan="2">';
 	print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);

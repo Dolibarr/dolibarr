@@ -1669,10 +1669,10 @@ class ActionComm extends CommonObject
 		if ($user->hasRight('agenda', 'myactions', 'read') && ($this->authorid == $user->id || $this->userownerid == $user->id)) {
 			$canread = 1; // Can read my event
 		}
-		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
+		if ($user->hasRight('agenda', 'myactions', 'read') && array_key_exists($user->id, $this->userassigned)) {
 			$canread = 1; // Can read my event i am assigned
 		}
-		if (!empty($user->rights->agenda->allactions->read)) {
+		if ($user->hasRight('agenda', 'allactions', 'read')) {
 			$canread = 1; // Can read all event of other
 		}
 		if (!$canread) {
