@@ -7681,11 +7681,11 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<(b|em|i|u)(\s+[^>]+)?>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<br\/>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr)\/>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) {
 			return true; // must accept <img src="http://example.com/aaa.png" />
