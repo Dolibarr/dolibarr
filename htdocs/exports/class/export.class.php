@@ -586,9 +586,10 @@ class Export
 	 *      @param      array		$array_selected     Filter on array of fields to export
 	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
 	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
+	 * 		@param		string		$separator			separator to fill $objmodel->separator with the new separator
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
-	public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
+	public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '', $separator = '')
 	{
 		// phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -611,6 +612,10 @@ class Export
 		$classname = "Export".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
+
+		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator)) {
+			$objmodel->separator = $separator;
+		}
 
 		if (!empty($sqlquery)) {
 			$sql = $sqlquery;

@@ -72,6 +72,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 					require_once $file;
 					if (class_exists($classname)) {
 						$module = new $classname($db);
+						// var_dump($classname);
 
 						// Picto
 						$this->picto[$module->id] = $module->picto;
