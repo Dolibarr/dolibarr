@@ -7273,9 +7273,13 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 			$firstline = preg_replace('/<br[^>]*>.*$/s', '', $text); // The s pattern modifier means the . can match newline characters
 			$firstline = preg_replace('/<div[^>]*>.*$/s', '', $firstline); // The s pattern modifier means the . can match newline characters
 		} else {
-			$firstline = preg_replace('/[\n\r].*/', '', $text);
+			if (isset($text)) {
+				$firstline = preg_replace('/[\n\r].*/', '', $text);
+			} else {
+				$firstline = '';
+			}
 		}
-		return $firstline.((strlen($firstline) != strlen($text)) ? '...' : '');
+		return $firstline.(isset($firstline) && isset($text) && (strlen($firstline) != strlen($text)) ? '...' : '');
 	} else {
 		$ishtml = 0;
 		if (dol_textishtml($text)) {
@@ -8119,7 +8123,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = !empty($object->array_options['options_'.$key]) ? $object->array_options['options_'.$key] :'';
 							}
 						}
 					}
