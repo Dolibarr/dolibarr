@@ -1721,7 +1721,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$val = '';
 			}
 
-			$sql = "SELECT count(*)";
+			$sql = "SELECT count(*) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."const";
 			$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
 			$sql .= " AND entity = ".((int) $entity);
@@ -1745,7 +1745,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$err++;
 					}
 				} else {
-					dol_syslog(get_class($this)."::insert_const constant '".$name."' already exists", LOG_WARNING);
+					dol_syslog(get_class($this)."::insert_const constant '".$name."' already exists", LOG_DEBUG);
 				}
 			} else {
 				$err++;

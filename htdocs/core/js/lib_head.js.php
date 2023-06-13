@@ -1299,6 +1299,9 @@ $(document).ready(function() {
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
+<?php
+if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 $(document).on('select2:open', () => {
 	console.log("Execute the focus (click on combo or use space when on component");
 	let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
@@ -1308,5 +1311,8 @@ $(document).on('select2:open', () => {
 		},0);
 	});
 });
+	<?php
+}
+?>
 
 // End of lib_head.js.php

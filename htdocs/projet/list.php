@@ -501,7 +501,6 @@ if ($search_opp_percent) {
 $sql .= dolSqlDateFilter('p.dateo', $search_sday, $search_smonth, $search_syear);
 $sql .= dolSqlDateFilter('p.datee', $search_eday, $search_emonth, $search_eyear);
 
-
 if ($search_date_start_start) {
 	$sql .= " AND p.dateo >= '".$db->idate($search_date_start_start)."'";
 }
@@ -734,7 +733,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
@@ -807,9 +806,6 @@ if ($search_date_end_end) {
 }
 if ($socid) {
 	$param .= '&socid='.urlencode($socid);
-}
-if (!empty($search_categ)) {
-	$param .= '&search_categ='.urlencode($search_categ);
 }
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
@@ -973,7 +969,7 @@ $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('ProjectsWithThisContact');
-$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->selectcontacts(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth250 widthcentpercentminusx');
+$moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$form->selectcontacts(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth250 widthcentpercentminusx');
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
@@ -1404,7 +1400,7 @@ while ($i < $imaxinloop) {
 		}
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall tdoverflowmax200" title="'.dol_escape_htmltag($object->ref).'">';
 			print $object->getNomUrl(1, (!empty(GETPOST('search_usage_event_organization', 'int'))?'eventorganization':''));
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
@@ -1797,10 +1793,12 @@ while ($i < $imaxinloop) {
 		}
 		// Email MsgID
 		if (!empty($arrayfields['p.email_msgid']['checked'])) {
-			print '<td class="center">';
-			print $obj->email_msgid;
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->email_msgid).'">';
+			print dol_escape_htmltag($obj->email_msgid);
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Import key
 		if (!empty($arrayfields['p.import_key']['checked'])) {

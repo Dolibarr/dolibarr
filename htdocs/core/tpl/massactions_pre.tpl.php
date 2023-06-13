@@ -278,6 +278,7 @@ if ($massaction == 'presend') {
 	$formmail->param['id'] = join(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
+		// Note: MAILING_LIMIT_SENDBYWEB may be forced by conf.php file and variable $dolibarr_mailing_limit_sendbyweb
 		$langs->load("errors");
 		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';

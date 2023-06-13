@@ -117,7 +117,7 @@ if ($setnewpassword && $username && $passworduidhash) {
 
 
 ?>
-<!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
+<!-- BEGIN PHP TEMPLATE PASSWORDRESET.TPL.PHP -->
 
 <body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
@@ -278,21 +278,23 @@ if (!empty($morelogincontent)) {
 </form>
 
 
-<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
 <?php
 if ($mode == 'dolibarr' || !$disabled) {
 	if (empty($message)) {
+		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 		print '<span class="passwordmessagedesc opacitymedium">';
 		print $langs->trans('EnterNewPasswordHere');
 		print '</span>';
+		print '</div>';
 	}
 } else {
+	print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 	print '<div class="warning center">';
 	print $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
 	print '</div>';
+	print '</div>';
 }
 ?>
-</div>
 
 
 <br>
