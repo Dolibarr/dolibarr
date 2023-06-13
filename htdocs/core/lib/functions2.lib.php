@@ -1501,13 +1501,13 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 function get_string_between($string, $start, $end)
 {
 	$string = " ".$string;
-	 $ini = strpos($string, $start);
+	$ini = strpos($string, $start);
 	if ($ini == 0) {
 		return "";
 	}
-	 $ini += strlen($start);
-	 $len = strpos($string, $end, $ini) - $ini;
-	 return substr($string, $ini, $len);
+	$ini += strlen($start);
+	$len = strpos($string, $end, $ini) - $ini;
+	return substr($string, $ini, $len);
 }
 
 /**
@@ -1724,11 +1724,11 @@ function numero_semaine($time)
 
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
-	(
-	date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
-	-
-	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
-	) / 7
+		(
+		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+		-
+		date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
+		) / 7
 	) + 1;
 
 	// Cas particulier de la semaine 53
@@ -2084,23 +2084,23 @@ function getSoapParams()
 	//print extension_loaded('soap');
 	if ($proxyuse) {
 		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
-					  'proxy_use'      => 1,
-					  'proxy_host'     => $proxyhost,
-					  'proxy_port'     => $proxyport,
-					  'proxy_login'    => $proxyuser,
-					  'proxy_password' => $proxypass,
-					  'trace'		   => 1
+			'response_timeout'=>$response_timeout,
+			'proxy_use'      => 1,
+			'proxy_host'     => $proxyhost,
+			'proxy_port'     => $proxyport,
+			'proxy_login'    => $proxyuser,
+			'proxy_password' => $proxypass,
+			'trace'		   => 1
 		);
 	} else {
 		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
-					  'proxy_use'      => 0,
-					  'proxy_host'     => false,
-					  'proxy_port'     => false,
-					  'proxy_login'    => false,
-					  'proxy_password' => false,
-					  'trace'		   => 1
+			'response_timeout'=>$response_timeout,
+			'proxy_use'      => 0,
+			'proxy_host'     => false,
+			'proxy_port'     => false,
+			'proxy_login'    => false,
+			'proxy_password' => false,
+			'trace'		   => 1
 		);
 	}
 	return $params;
@@ -2672,6 +2672,10 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
+	} elseif ($moduleobject == 'paymentsalaries') {
+		$moduledirforclass = 'salaries';
+	} elseif ($moduleobject == 'paymentexpensereports') {
+		$moduledirforclass = 'expensereport';
 	}
 
 	return $moduledirforclass;
@@ -2844,8 +2848,8 @@ function phpSyntaxError($code)
 		if (preg_match("'syntax error, (.+) in .+ on line (\d+)$'s", $code, $code)) {
 			$code[2] = (int) $code[2];
 			$code = $code[2] <= $braces
-			? array($code[1], $code[2])
-			: array('unexpected $end'.substr($code[1], 14), $braces);
+				? array($code[1], $code[2])
+				: array('unexpected $end'.substr($code[1], 14), $braces);
 		} else {
 			$code = array('syntax error', 0);
 		}
