@@ -121,8 +121,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Get account by ID.
 	 *
-	 * @param 	int	$id    						ID of account
-	 * @return  	Object              		Object with cleaned properties
+	 * @param int    $id    ID of account
+	 * @return array Account object
 	 *
 	 * @throws RestException
 	 */
@@ -312,9 +312,9 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Update account
 	 *
-	 * @param 	int    $id              ID of account
-	 * @param 	array  $request_data    data
-	 * @return	Object              	Object with cleaned properties
+	 * @param int    $id              ID of account
+	 * @param array  $request_data    data
+	 * @return int
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -564,5 +564,42 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(503, 'Error when adding link to account line: '.$account->error);
 		}
 		return $result;
+	}
+
+	/**
+	 * Update an account line
+	 *
+	 * @param int    $id    		ID of account
+	 * @param int    $line_id       ID of account line
+	 * @param string $label         Label {@from body}
+	 * @return int  ID of link
+	 *
+	 * @url PUT {id}/lines/{line_id}
+	 */
+	public function updateLine($id, $line_id, $label)
+	{
+		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+			throw new RestException(401);
+		}
+
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'account not found');
+		}
+
+		$accountLine = new AccountLine($this->db);
+		$result = $accountLine->fetch($line_id);
+		if (!$result) {
+			throw new RestException(404, 'account line not found');
+		}
+
+		$accountLine->label = sanitizeVal($label);
+
+		$result = $accountLine->update_label();
+		if ($result < 0) {
+			throw new RestException(503, 'Error when updating link to account line: '.$accountLine->error);
+		}
+		return $accountLine->id;
 	}
 }
