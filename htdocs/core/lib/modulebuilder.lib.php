@@ -648,7 +648,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// write the begin of table with specifics options
 	$table = "== DATA SPECIFICATIONS\n";
-	$table .= "== Table of fields and their properties for object *$objectname* : \n";
+	$table .= "=== Table of fields with properties for object *$objectname* : \n";
 	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
 	$table .= "|===\n";
 	$table .= "|code";
@@ -684,7 +684,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	$table .= "|===\n";
 	$table .= "__ end table for object $objectname\n";
 	//write in file
-	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
+	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
