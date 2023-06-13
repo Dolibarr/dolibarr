@@ -296,6 +296,14 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				if ($obj) {
 					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 				}
+			} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
+				$sql = 'SELECT rowid, email_from FROM '.MAIN_DB_PREFIX.'c_email_templates';
+				$sql .= ' WHERE rowid = '.(int) $reg[1];
+				$resql = $db->query($sql);
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$from = $obj->email_from;
+				}
 			} else {
 				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
 			}
