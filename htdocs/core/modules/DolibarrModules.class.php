@@ -135,6 +135,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $menu = array();
 
 	/**
+	 * @var array 	Module translation entries
+	 */
+	public $overwrite_translation = array();
+
+	/**
 	 * @var array Module parts
 	 *  array(
 	 *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
@@ -465,6 +470,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err += $this->insert_menus();
 		}
 
+		// Insert translation entries into database
+		if (!$err) {
+			$err += $this->insert_translations();
+		}
+
 		// Create module's directories
 		if (!$err) {
 			$err += $this->create_dirs();
@@ -561,6 +571,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// Remove module's menus (entries in llx_menu)
 		if (!$err) {
 			$err += $this->delete_menus();
+		}
+
+		// Remove module's translations (entries in llx_overwrite_trans)
+		if (!$err) {
+			$err += $this->delete_translations();
 		}
 
 		// Remove module's directories
@@ -2107,6 +2122,100 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$this->error = $this->db->lasterror();
 			$err++;
 		}
+
+		return $err;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Adds translation entries
+	 *
+	 * @return int     Error count (0 if OK)
+	 */
+	public function insert_translations()
+	{
+		// phpcs:enable
+		global $conf, $user;
+
+		if (!is_array($this->overwrite_translation) || empty($this->overwrite_translation)) {
+			return 0;
+		}
+
+		dol_syslog(get_class($this)."::insert_translations", LOG_DEBUG);
+
+		$err = 0;
+
+		$this->db->begin();
+
+		foreach ($this->overwrite_translation as $key => $value) {
+			$transvalue = $this->db->escape($value);
+			$tmp 		= explode(':', $key);
+			$lang 		= $tmp[0];
+			$transkey 	= $tmp[1];
+
+			if(empty($lang) || empty($transkey)) continue; // Can't insert if no lang or no transkey (should not happen)
+
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans (entity, lang, transkey, transvalue)";
+			$sql .= " VALUES (1, ";
+			$sql .= "'".$this->db->escape($lang)."', ";
+			$sql .= "'".$this->db->escape($transkey)."', ";
+			$sql .= "'".$this->db->escape(!empty($transvalue) ? $transvalue : "")."'";
+			$sql .= ")";
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$err++;
+			}
+		}
+
+		if (!$err) {
+			$this->db->commit();
+		} else {
+			dol_syslog(get_class($this)."::insert_translations ".$this->error, LOG_ERR);
+			$this->db->rollback();
+		}
+
+		return $err;
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Removes translation entries
+	 *
+	 * @return int Error count (0 if OK)
+	 */
+	public function delete_translations()
+	{
+		// phpcs:enable
+		global $conf;
+
+		if (!is_array($this->overwrite_translation) || empty($this->overwrite_translation)) {
+			return 0;
+		}
+
+		$err = 0;
+		foreach ($this->overwrite_translation as $key => $value) {
+			$transvalue = $this->db->escape($value);
+			$tmp 		= explode(':', $key);
+			$lang 		= $tmp[0];
+			$transkey 	= $tmp[1];
+
+			if(empty($lang) || empty($transkey)) continue; // No need to delete if no lang or no transkey (should not happen)
+
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."overwrite_trans";
+			$sql .= " WHERE lang = '".$this->db->escape($lang)."'";
+			$sql .= " AND transkey =  '".$this->db->escape($transkey)."'";
+			if($transvalue) $sql .= " AND transvalue =  '".$this->db->escape($transvalue)."'";
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$err++;
+			}
+		}
+
+		dol_syslog(get_class($this)."::delete_translations", LOG_DEBUG);
 
 		return $err;
 	}
