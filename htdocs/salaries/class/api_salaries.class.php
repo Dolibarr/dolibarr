@@ -36,7 +36,6 @@ class Salaries extends DolibarrApi
 		'fk_user',
 		'label',
 		'amount',
-		'salary'
 	);
 
 	/**
