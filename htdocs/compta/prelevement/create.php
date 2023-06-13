@@ -423,11 +423,11 @@ if ($resql) {
 
 	if ($num) {
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		$bac = new CompanyBankAccount($db);
 
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
 
+			$bac = new CompanyBankAccount($db);
 			$bac->fetch(0, $obj->socid);
 
 			print '<tr class="oddeven">';
