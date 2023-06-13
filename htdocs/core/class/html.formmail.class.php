@@ -698,18 +698,25 @@ class FormMail extends Form
 				$out .= "</td></tr>\n";
 			}
 
-			// With option one email per recipient
+			// With option for one email per recipient
 			if (!empty($this->withoptiononeemailperrecipient)) {
 				if (abs($this->withoptiononeemailperrecipient) == 1) {
 					$out .= '<tr><td class="minwidth200">';
 					$out .= $langs->trans("GroupEmails");
 					$out .= '</td><td>';
 					$out .= ' <input type="checkbox" id="oneemailperrecipient" value="1" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
-					$out .= '<label for="oneemailperrecipient">'.$langs->trans("OneEmailPerRecipient").'</label>';
-					$out .= '<span class="hideonsmartphone opacitymedium">';
-					$out .= ' - ';
-					$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
-					$out .= '</span>';
+					$out .= '<label for="oneemailperrecipient">';
+					$out .= $form->textwithpicto($langs->trans("OneEmailPerRecipient"), $langs->trans("WarningIfYouCheckOneRecipientPerEmail"), 1, 'help');
+					$out .= '</label>';
+					//$out .= '<span class="hideonsmartphone opacitymedium">';
+					//$out .= ' - ';
+					//$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+					//$out .= '</span>';
+					if (getDolGlobalString('MASS_ACTION_EMAIL_ON_DIFFERENT_THIRPARTIES_ADD_CUSTOM_EMAIL')) {
+						if (!empty($this->withto) && !is_array($this->withto)) {
+							$out .= ' '.$langs->trans("or").' <input type="email" name="emailto" value="">';
+						}
+					}
 					$out .= '</td></tr>';
 				} else {
 					$out .= '<tr><td><input type="hidden" name="oneemailperrecipient" value="1"></td><td></td></tr>';
