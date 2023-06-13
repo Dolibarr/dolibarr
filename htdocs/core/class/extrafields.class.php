@@ -958,9 +958,9 @@ class ExtraFields
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
+		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
+		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
@@ -1120,6 +1120,9 @@ class ExtraFields
 					if ((string) $okey == '') {
 						continue;
 					}
+
+					$valarray = explode('|', $val);
+					$val = $valarray[0];
 
 					if ($langfile && $val) {
 						$options[$okey] = $langs->trans($val);
@@ -1591,9 +1594,9 @@ class ExtraFields
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
+		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
+		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
@@ -2080,17 +2083,17 @@ class ExtraFields
 
 				$enabled = 1;
 				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
-					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '1');
+					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
 				}
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = intval(dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1'));
+					$visibility = intval(dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '2'));
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '1');
+					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '2');
 				}
 				if (empty($enabled)
 					|| (
@@ -2119,8 +2122,12 @@ class ExtraFields
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 
-						// Field is not defined. We mark this as a problem. We may fix it later if there is a default value and $todefaultifmissing is set.
+						// Field is not defined. We mark this as an error. We may fix it later if there is a default value and $todefaultifmissing is set.
+
 						$nofillrequired++;
+						if (!empty($this->attributes[$object->table_element]['langfile'][$key])) {
+							$langs->load($this->attributes[$object->table_element]['langfile'][$key]);
+						}
 						$error_field_required[$key] = $langs->transnoentitiesnoconv($value);
 					}
 				}

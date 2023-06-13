@@ -168,6 +168,11 @@ if (empty($reshook)) {
 		$moline->origin_type = 'free'; // free consume line
 		$moline->position = 0;
 
+		// Is it a product or a service ?
+		$tmpproduct = new Product($db);
+		$tmpproduct->fetch($moline->fk_product);
+		$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
+
 		$resultline = $moline->create($user, false); // Never use triggers here
 		if ($resultline <= 0) {
 			$error++;

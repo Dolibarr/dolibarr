@@ -2392,7 +2392,7 @@ class pdf_sponge extends ModelePDFFactures
 					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
 					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
 				}
-				if (!empty($carac_client_shipping) && (isset($object->contact->socid) && $object->contact->socid != $object->socid)) {
+				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
 
 					// Show shipping frame
@@ -2576,7 +2576,7 @@ class pdf_sponge extends ModelePDFFactures
 			'width' => 19, // in mm
 			'status' => false,
 			'title' => array(
-				'textkey' => 'Progress'
+				'textkey' => 'ProgressShort'
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2619,7 +2619,7 @@ class pdf_sponge extends ModelePDFFactures
 			'width' => 26, // in mm
 			'status' => empty($conf->global->PDF_PROPAL_HIDE_PRICE_EXCL_TAX) ? true : false,
 			'title' => array(
-				'textkey' => 'TotalHT'
+				'textkey' => 'TotalHTShort'
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2630,7 +2630,7 @@ class pdf_sponge extends ModelePDFFactures
 			'width' => 26, // in mm
 			'status' => empty($conf->global->PDF_PROPAL_SHOW_PRICE_INCL_TAX) ? false : true,
 			'title' => array(
-				'textkey' => 'TotalTTC'
+				'textkey' => 'TotalTTCShort'
 			),
 			'border-left' => true, // add left line separator
 		);

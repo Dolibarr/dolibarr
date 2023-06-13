@@ -1166,7 +1166,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
-						if ($result < 0) {
+						if (is_numeric($result) && $result < 0) {
 							$this->error = $luser->error;
 							dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 							$error++;

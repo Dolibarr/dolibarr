@@ -507,7 +507,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'folder');
 
-print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
 print '<br>';
 
 print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';

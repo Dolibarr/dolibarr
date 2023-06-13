@@ -213,6 +213,7 @@ if ($id > 0 || $ref) {
 	$acc = new Account($db);
 	$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
 
+	// Bank account
 	print '<tr><td class="titlefieldcreate">';
 	$labelofbankfield = "BankToReceiveWithdraw";
 	if ($object->type == 'bank-transfer') {
