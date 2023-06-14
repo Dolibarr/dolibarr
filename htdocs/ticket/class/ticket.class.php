@@ -500,8 +500,13 @@ class Ticket extends CommonObject
 				if ($this->add_contact($this->fk_user_assign, 'SUPPORTTEC', 'internal') < 0) {
 					$error++;
 				}
-			}
+				$ret = $this->assignUser($user, $this->fk_user_assign);
+				if ($ret < 0) {
+					$error ++;
+				setEventMessages($this->error, $this->errors, 'errors');
+				}
 
+			}
 
 			//Update extrafield
 			if (!$error) {
