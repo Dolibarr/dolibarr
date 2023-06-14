@@ -56,6 +56,7 @@ $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
@@ -213,7 +214,17 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$noback = 0;
+
 			$db->commit();
+
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+
+			if (empty($noback)) {
+				header("Location: " . $urltogo);
+				exit;
+			}
 		} else {
 			$db->rollback();
 		}
