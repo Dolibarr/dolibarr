@@ -160,12 +160,22 @@ if ($action == 'search') {
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= ', pl.label as labelm, pl.description as descriptionm';
 	}
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
 	}
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
 	if ($key != "") {
 		// For natural search
 		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
