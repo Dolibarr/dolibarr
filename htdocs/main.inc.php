@@ -2902,7 +2902,7 @@ function top_menu_search()
 		$stringforfirstkey .= ' CTL +';
 	}
 
-	$searchInput = '<input name="search_all"'.($stringforfirstkey ? ' title="'.dol_escape_htmltag($stringforfirstkey.' s').'"' : '').' accesskey="s" id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
+	$searchInput = '<input name="search_all"'.($stringforfirstkey ? ' title="'.dol_escape_htmltag($stringforfirstkey.' s').'"' : '').' id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
 
 	$defaultAction = '';
 	$buttonList = '<div class="dropdown-global-search-button-list" >';
