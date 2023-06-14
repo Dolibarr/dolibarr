@@ -210,7 +210,7 @@ if ($object->id > 0) {
 	$objcon = new stdClass();
 
 	$out = '&origin='.$object->element.'&originid='.$object->id;
-	$permok = $user->rights->agenda->myactions->create;
+	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) == 'Societe') {
