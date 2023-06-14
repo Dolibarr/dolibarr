@@ -691,7 +691,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'produit|service') {
-				if (!$user->rights->produit->supprimer && !$user->rights->service->supprimer) {
+				if (!$user->hasRight('produit', 'supprimer') && !$user->hasRight('service', 'supprimer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
