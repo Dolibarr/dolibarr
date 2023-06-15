@@ -353,6 +353,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} else {
 		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
 	}
+	if ($objectid == "-1") {
+		$objectid = 0;
+	}
 	if ($objectid) {
 		$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
 	}

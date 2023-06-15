@@ -8457,8 +8457,9 @@ abstract class CommonObject
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
 			return $user->rights->fournisseur->facture;
-		} elseif ($element == 'evaluation') {
-			return $user->rights->hrm->evaluation;
+		} elseif (!empty($user->rights->{$this->module}->{$element})) {
+			// for modules built with ModuleBuilder
+			return $user->rights->{$this->module}->{$element};
 		}
 
 		return $user->rights->{$element};
