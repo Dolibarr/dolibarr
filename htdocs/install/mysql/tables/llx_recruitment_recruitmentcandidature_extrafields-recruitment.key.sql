@@ -15,5 +15,5 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_recruitmentcandidature_fk_object(fk_object);
+ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD UNIQUE INDEX uk_recruitmentcandidature_fk_object (fk_object);
 -- END MODULEBUILDER INDEXES
