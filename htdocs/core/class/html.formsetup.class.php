@@ -15,6 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 /**
  * This class help you create setup render
@@ -623,7 +624,7 @@ class FormSetupItem
 	 * TODO each type must have setAs{type} method to help configuration
 	 *   And set var as protected when its done configuration must be done by method
 	 *   this is important for retrocompatibility of futures versions
-	 * @var string $type  'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
+	 * @var string $type  'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type', 'password'
 	 */
 	protected $type = 'string';
 
@@ -632,13 +633,18 @@ class FormSetupItem
 	public $cssClass = '';
 
 	/**
+	 * @var string Key to encode/decode password fields
+	 */
+	private $encodeKey;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $confKey the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
-		global $langs, $db, $conf, $form;
+		global $langs, $db, $conf, $form, $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
 		$this->db = $db;
 
 		if (!empty($form) && is_object($form) && get_class($form) == 'Form') { // the form class has a cache inside so I am using it to optimize
@@ -650,6 +656,7 @@ class FormSetupItem
 		$this->langs = $langs;
 		$this->entity = $conf->entity;
 
+		$this->encodeKey = $dolibarr_main_instance_unique_id ?: $dolibarr_main_cookie_cryptkey;
 		$this->confKey = $confKey;
 		$this->loadValueFromConf();
 	}
@@ -704,6 +711,10 @@ class FormSetupItem
 
 		if (!empty($this->saveCallBack) && is_callable($this->saveCallBack)) {
 			return call_user_func($this->saveCallBack, $this);
+		}
+
+		if ($this->type === 'password') {
+			$this->fieldValue = dol_encode($this->fieldValue, $this->encodeKey);
 		}
 
 		// Modify constant only if key was posted (avoid resetting key to the null value)
@@ -858,6 +869,11 @@ class FormSetupItem
 			$out.= $formcompany->selectProspectCustomerType($this->fieldValue, $this->confKey);
 		} elseif ($this->type == 'securekey') {
 			$out.= $this->generateInputFieldSecureKey();
+		} elseif ($this->type == 'password') {
+			if (!empty($this->fieldValue)) {
+				$this->fieldAttr['value'] = dol_decode($this->fieldValue, $this->encodeKey);
+			}
+			$out.= $this->generateInputFieldPassword();
 		} elseif ($this->type == 'product') {
 			if (isModEnabled("product") || isModEnabled("service")) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
@@ -972,6 +988,11 @@ class FormSetupItem
 		return $out;
 	}
 
+	public function generateInputFieldPassword()
+	{
+		if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
+		return '<input type="password" '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+	}
 
 	/**
 	 * @return string
@@ -1139,6 +1160,8 @@ class FormSetupItem
 			} elseif ($resprod < 0) {
 				$this->setErrors($product->errors);
 			}
+		} elseif ($this->type === 'password') {
+			$out.= empty($this->fieldValue) ? '' : '********';
 		} else {
 			$out.= $this->fieldValue;
 		}
@@ -1310,6 +1333,17 @@ class FormSetupItem
 	public function setAsSecureKey()
 	{
 		$this->type = 'securekey';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a password
+	 * Stored value for this type of input will be encrypted
+	 * @return self
+	 */
+	public function setAsPassword()
+	{
+		$this->type = 'password';
 		return $this;
 	}
 
