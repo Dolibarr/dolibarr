@@ -191,7 +191,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		$error = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
-		$soc_origin = new Societe($db);
+		$soc_origin = new Societe($db);		// The thirdparty that we will delete
 
 		if ($soc_origin_id <= 0) {
 			$langs->load('errors');
@@ -239,6 +239,11 @@ if (empty($reshook)) {
 							$object->array_options[$key] = $val;
 						}
 					}
+				}
+
+				// If alias name is not defined on target thirdparty, we can store in it the old name of company.
+				if (empty($object->name_bis) && $object->name != $soc_origin->name) {
+					$object->name_bis = $soc_origin->name;
 				}
 
 				// Merge categories
@@ -331,7 +336,7 @@ if (empty($reshook)) {
 
 
 				if (!$error) {
-					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id, 'mergefromname'=>$soc_origin->name);
 
 					// Call trigger
 					$result = $object->call_trigger('COMPANY_MODIFY', $user);
@@ -343,7 +348,7 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					//We finally remove the old thirdparty
+					// We finally remove the old thirdparty
 					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
 						setEventMessages($soc_origin->error, $soc_origin->errors, 'errors');
 						$error++;
@@ -616,10 +621,10 @@ if (empty($reshook)) {
 
 				$result = $object->create($user);
 
-				if (empty($error) && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
+				if ($result >= 0 && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
 					// Add mass emailing flag into table mailing_unsubscribe
-					$result = $object->setNoEmail($object->no_email);
-					if ($result < 0) {
+					$resultnoemail = $object->setNoEmail($object->no_email);
+					if ($resultnoemail < 0) {
 						$error++;
 						$errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
 						$action = 'create';
