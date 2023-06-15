@@ -211,7 +211,7 @@ if ($date && $dateIsValid) {
 		$sql .= " AND p.label LIKE '%".$db->escape($search_nom)."%' ";
 	}
 	$sql .= " GROUP BY sm.fk_product, sm.fk_entrepot";
-	
+
 	$resql = $db->query($sql);
 
 	if ($resql) {
