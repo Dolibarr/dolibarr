@@ -2955,7 +2955,7 @@ class Product extends CommonObject
 			if (!empty($conf->global->STOCK_CALCULATE_ON_BILL) && $forVirtualStock) {
 				if (!empty($conf->global->DECREASE_ONLY_UNINVOICEDPRODUCTS)) {
 					$adeduire = 0;
-					$sql = "SELECT sum(".$this->db->ifsql('f.type=2',-1,1)." * fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet fd ";
+					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', -1, 1)." * fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet fd ";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."facture f ON fd.fk_facture = f.rowid ";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element el ON el.fk_target = f.rowid and el.targettype = 'facture' and sourcetype = 'commande'";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."commande c ON el.fk_source = c.rowid ";
