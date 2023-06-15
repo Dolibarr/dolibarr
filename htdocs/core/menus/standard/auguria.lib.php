@@ -375,7 +375,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	}
 
 	if (isModEnabled('accounting') && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') { 	// Entry in accountancy journal for each bank account
-		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy', 10);
+		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy_journal', 10);
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
