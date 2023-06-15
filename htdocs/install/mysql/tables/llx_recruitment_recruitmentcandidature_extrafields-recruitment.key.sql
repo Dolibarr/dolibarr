@@ -16,4 +16,5 @@
 
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD UNIQUE INDEX uk_recruitmentcandidature_fk_object (fk_object);
+ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD CONSTRAINT fk_recruitmentcandidature FOREIGN KEY (fk_object) REFERENCES llx_recruitment_recruitmentcandidature (rowid);
 -- END MODULEBUILDER INDEXES

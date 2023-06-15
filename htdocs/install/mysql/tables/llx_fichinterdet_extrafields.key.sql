@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_fichinterdet_extrafields ADD UNIQUE INDEX uk_ficheinterdet_extrafields (fk_object);
+ALTER TABLE llx_fichinterdet_extrafields ADD CONSTRAINT fk_ficheinterdet FOREIGN KEY (fk_object) REFERENCES llx_fichinterdet (rowid);

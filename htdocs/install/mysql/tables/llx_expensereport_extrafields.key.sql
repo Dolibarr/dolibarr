@@ -18,4 +18,4 @@
 
 
 ALTER TABLE llx_expensereport_extrafields ADD UNIQUE INDEX uk_expensereport_extrafields (fk_object);
-
+ALTER TABLE llx_expensereport_extrafields ADD CONSTRAINT fk_expensereport FOREIGN KEY (fk_object) REFERENCES llx_expensereport (rowid);

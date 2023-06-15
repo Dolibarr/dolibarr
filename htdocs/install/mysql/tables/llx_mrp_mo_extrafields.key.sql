@@ -16,4 +16,5 @@
 
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_mrp_mo_extrafields ADD UNIQUE INDEX uk_mrp_mo_fk_object (fk_object);
+ALTER TABLE llx_mrp_mo_extrafields ADD CONSTRAINT fk_mrp_mo FOREIGN KEY (fk_object) REFERENCES llx_mrp_mo (rowid);
 -- END MODULEBUILDER INDEXES

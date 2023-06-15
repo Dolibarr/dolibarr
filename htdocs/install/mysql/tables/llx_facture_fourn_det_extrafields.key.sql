@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_facture_fourn_det_extrafields ADD UNIQUE INDEX uk_facture_fourn_det_extrafields (fk_object);
+ALTER TABLE llx_facture_fourn_det_extrafields ADD CONSTRAINT fk_facture_fourn_det FOREIGN KEY (fk_object) REFERENCES llx_facture_fourn_det (rowid);

@@ -18,4 +18,4 @@
 
 
 ALTER TABLE llx_holiday_extrafields ADD UNIQUE INDEX uk_holiday_extrafields (fk_object);
-
+ALTER TABLE llx_holiday_extrafields ADD CONSTRAINT fk_holiday FOREIGN KEY (fk_object) REFERENCES llx_holiday (rowid);

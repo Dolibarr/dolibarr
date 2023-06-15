@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_product_fournisseur_price_extrafields ADD UNIQUE INDEX uk_product_fournisseur_price_extrafields (fk_object);
+ALTER TABLE llx_product_fournisseur_price_extrafields ADD CONSTRAINT fk_product_fournisseur_price FOREIGN KEY (fk_object) REFERENCES llx_product_fournisseur_price (rowid);

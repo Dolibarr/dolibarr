@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields (fk_object);
+ALTER TABLE llx_usergroup_extrafields ADD CONSTRAINT fk_usergroup FOREIGN KEY (fk_object) REFERENCES llx_usergroup (rowid);

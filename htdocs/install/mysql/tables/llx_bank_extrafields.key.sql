@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_bank_extrafields ADD UNIQUE INDEX uk_bank_extrafields (fk_object);
+ALTER TABLE llx_bank_extrafields ADD CONSTRAINT fk_bank FOREIGN KEY (fk_object) REFERENCES llx_bank (rowid);

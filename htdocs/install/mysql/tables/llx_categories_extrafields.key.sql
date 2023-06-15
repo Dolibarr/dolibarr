@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_categories_extrafields ADD UNIQUE INDEX uk_categories_extrafields (fk_object);
+ALTER TABLE llx_categories_extrafields ADD CONSTRAINT fk_categories FOREIGN KEY (fk_object) REFERENCES llx_categorie (rowid);

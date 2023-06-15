@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_supplier_proposaldet_extrafields ADD UNIQUE INDEX uk_supplier_proposaldet_extrafields (fk_object);
+ALTER TABLE llx_supplier_proposaldet_extrafields ADD CONSTRAINT fk_supplier_proposaldet FOREIGN KEY (fk_object) REFERENCES llx_supplier_proposaldet (rowid);

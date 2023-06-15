@@ -16,4 +16,5 @@
 
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD UNIQUE INDEX uk_conferenceorboothattendee_fk_object (fk_object);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD CONSTRAINT idx_conferenceorboothattendee FOREIGN KEY (fk_object) REFERENCES llx_eventorganization_conferenceorboothattendee (rowid);
 -- END MODULEBUILDER INDEXES

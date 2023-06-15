@@ -21,3 +21,4 @@
 
 
 ALTER TABLE llx_adherent_extrafields ADD UNIQUE INDEX uk_adherent_extrafields (fk_object);
+ALTER TABLE llx_adherent_extrafields ADD CONSTRAINT fk_adherent FOREIGN KEY (fk_object) REFERENCES llx_adherent (rowid);

@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_bom_bom_extrafields ADD UNIQUE INDEX uk_bom_bom_extrafields_fk_object (fk_object);
+ALTER TABLE llx_bom_bom_extrafields ADD CONSTRAINT fk_bom_bom FOREIGN KEY_fk_object (fk_object) REFERENCES llx_bom_bom (rowid);

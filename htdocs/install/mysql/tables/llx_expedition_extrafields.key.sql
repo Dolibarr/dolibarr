@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_expedition_extrafields ADD UNIQUE INDEX uk_expedition_extrafields (fk_object);
+ALTER TABLE llx_expedition_extrafields ADD CONSTRAINT fk_expedition FOREIGN KEY (fk_object) REFERENCES llx_expedition (rowid);

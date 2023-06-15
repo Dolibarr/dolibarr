@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_ecm_files_extrafields ADD UNIQUE INDEX uk_ecm_files_extrafields (fk_object);
+ALTER TABLE llx_ecm_files_extrafields ADD CONSTRAINT fk_ecm_files FOREIGN KEY (fk_object) REFERENCES llx_ecm_files (rowid);

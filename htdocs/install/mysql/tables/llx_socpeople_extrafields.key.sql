@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_socpeople_extrafields ADD UNIQUE INDEX uk_socpeople_extrafields (fk_object);
+ALTER TABLE llx_socpeople_extrafields ADD CONSTRAINT fk_socpeople FOREIGN KEY (fk_object) REFERENCES llx_socpeople (rowid);

@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_reception_extrafields ADD UNIQUE INDEX uk_reception_extrafields (fk_object);
+ALTER TABLE llx_reception_extrafields ADD CONSTRAINT fk_reception FOREIGN KEY (fk_object) REFERENCES llx_reception (rowid);

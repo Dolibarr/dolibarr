@@ -17,3 +17,4 @@
 -- ============================================================================
 
 ALTER TABLE llx_commande_fournisseurdet_extrafields ADD UNIQUE INDEX uk_commande_fournisseurdet_extrafields (fk_object);
+ALTER TABLE llx_commande_fournisseurdet_extrafields ADD CONSTRAINT fk_commande_fournisseurdet FOREIGN KEY (fk_object) REFERENCES llx_commande_fournisseurdet (rowid);

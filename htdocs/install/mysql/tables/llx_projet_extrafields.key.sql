@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_projet_extrafields ADD UNIQUE INDEX uk_projet_extrafields (fk_object);
+ALTER TABLE llx_projet_extrafields ADD CONSTRAINT fk_projet FOREIGN KEY (fk_object) REFERENCES llx_projet (rowid);

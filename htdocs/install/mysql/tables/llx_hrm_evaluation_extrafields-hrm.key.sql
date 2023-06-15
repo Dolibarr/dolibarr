@@ -18,4 +18,5 @@
 
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_hrm_evaluation_extrafields ADD UNIQUE INDEX uk_evaluation_fk_object (fk_object);
+ALTER TABLE llx_hrm_evaluation_extrafields ADD CONSTRAINT fk_evaluation FOREIGN KEY (fk_object) REFERENCES llx_hrm_evaluation (rowid);
 -- END MODULEBUILDER INDEXES
