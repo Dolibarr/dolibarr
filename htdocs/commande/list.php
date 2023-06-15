@@ -1642,13 +1642,13 @@ if ($resql) {
 	// Amount/Total (TTC / gross) in foreign currency
 	if (!empty($arrayfields['c.multicurrency_total_ttc']['checked'])) {
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
+		print '<input class="flat width75" type="text" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
 		print '</td>';
 	}
 	// Author
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print '<td class="liste_titre" align="center">';
-		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
+		print '<td class="liste_titre">';
+		print '<input class="flat width75" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
 	// Sales Representative
@@ -1843,7 +1843,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['c.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
