@@ -428,9 +428,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak='fk_c_ticket_category';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$object->fields['answer']['enabled'] = 0;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
-	$object->fields['answer']['enabled'] = 1;
 
 	// Categories
 	if (isModEnabled('categorie')) {
@@ -449,13 +447,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	// Add field answer
-	print '<br>';
-	print $langs->trans($object->fields['answer']['label']).'<br>';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%', 1);
-	$out = $doleditor->Create(1);
-	print $out;
 
 	print dol_get_fiche_end();
 
