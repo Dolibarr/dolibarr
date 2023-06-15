@@ -87,7 +87,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 					$labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code).' ('.$langs->transnoentitiesnoconv("NotClosedYet").")";
 				}
 			}
-			if (empty($labelStatus)) {
+			if (empty($labelStatus) && isset($listofopplabel[$status])) {
 				$labelStatus = $listofopplabel[$status];
 			}
 			if (empty($labelStatus)) {
