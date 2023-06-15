@@ -884,6 +884,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 		//check when we want delete api_file
 		if (strpos($relativefilename, 'api') !== false) {
+			$file_api = $destdir.'/class/api_'.strtolower($module).'.class.php';
 			$removeFile = removeObjectFromApiFile($file_api, $objectname, $module);
 			$var = getFromFile($file_api, '/*begin methods CRUD*/', '/*end methods CRUD*/');
 			if (str_word_count($var) == 0) {
