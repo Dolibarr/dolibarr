@@ -188,7 +188,7 @@ print dol_get_fiche_end();
 // Actions buttons
 
 $out = '';
-$permok = $user->rights->agenda->myactions->create;
+$permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
 	$out .= '&originid='.$object->id.'&origin=order_supplier';
 }

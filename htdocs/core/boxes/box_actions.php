@@ -84,7 +84,7 @@ class box_actions extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestActionsToDo", $max));
 
-		if ($user->rights->agenda->myactions->read) {
+		if ($user->hasRight('agenda', 'myactions', 'read')) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
 			$sql .= ", ta.code";
 			$sql .= ", ta.libelle as type_label";

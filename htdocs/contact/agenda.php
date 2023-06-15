@@ -257,7 +257,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$out = '';
 		$newcardbutton = '';
 		if (isModEnabled('agenda')) {
-			$permok = $user->rights->agenda->myactions->create;
+			$permok = $user->hasRight('agenda', 'myactions', 'create');
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
 					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
