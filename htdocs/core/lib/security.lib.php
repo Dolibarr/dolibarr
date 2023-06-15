@@ -116,6 +116,7 @@ function dolGetRandomBytes($length)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string
+ *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
 function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
@@ -170,6 +171,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
  *	@param   string		$chain		string to encode
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id
  *	@return  string					encoded string
+ *  @since v17
  *  @see dolEncrypt(), dol_hash()
  */
 function dolDecrypt($chain, $key = '')
