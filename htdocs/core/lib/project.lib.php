@@ -1125,8 +1125,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 		}
 
-		// Tick to drag and drop
-		print '<td class="tdlineupdown center"></td>';
+		// Column for the drag and drop
+		print '<td class=""></td>';
 
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class=""></td>';
