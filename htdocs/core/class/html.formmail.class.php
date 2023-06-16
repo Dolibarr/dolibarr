@@ -432,7 +432,9 @@ class FormMail extends Form
 			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 				if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
 					foreach ($this->param['fileinit'] as $file) {
-						$this->add_attached_files($file, basename($file), dol_mimetype($file));
+						if (!empty($file)) {
+							$this->add_attached_files($file, basename($file), dol_mimetype($file));
+						}
 					}
 				}
 			}
@@ -1090,7 +1092,7 @@ class FormMail extends Form
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 				}
 
 				$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
@@ -1128,7 +1130,7 @@ class FormMail extends Form
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 				}
 				$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
 				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
