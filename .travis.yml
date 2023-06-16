@@ -7,6 +7,10 @@ os: linux
 dist: focal
 
 language: php
+php:
+ - 7.1
+ - 8.1
+ - 8.2 
 
 git:
   depth: 1
@@ -28,7 +32,7 @@ before_install:
   echo $PHP_VERSION_NAME
   ls ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
-  phpenv config-rm xdebug.ini
+  phpenv config-rm xdebug.ini || echo "xdebug not available"
   phpenv rehash
   echo
 
