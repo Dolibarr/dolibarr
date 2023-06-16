@@ -904,7 +904,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					print '<td class="center">';
 					$ifisrt = 1;
 					foreach (array('internal', 'external') as $source) {
-						$tab = $lines[$i]->liste_contact(-1, $source);
+						//$tab = $lines[$i]->liste_contact(-1, $source);
+						$tab = $lines[$i]->liste_contact(-1, $source, 0, '', 1);
+
 						$numcontact = count($tab);
 						if (!empty($numcontact)) {
 							foreach ($tab as $contacttask) {
