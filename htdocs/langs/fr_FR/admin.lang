@@ -2040,6 +2040,7 @@ EnterCalculationRuleIfPreviousFieldIsYes=Entrez la règle de calcul si le champ 
 SeveralLangugeVariatFound=Plusieurs variantes de langue trouvées
 RemoveSpecialChars=Supprimer les caractères spéciaux
 COMPANY_AQUARIUM_CLEAN_REGEX=Filtre Regex pour nettoyer la valeur (COMPANY_AQUARIUM_CLEAN_REGEX)
+COMPANY_AQUARIUM_NO_PREFIX=Ne pas utiliser de préfixe, uniquement le code client et fournisseur (COMPANY_AQUARIUM_NO_PREFIX)
 COMPANY_DIGITARIA_CLEAN_REGEX=Filtre de regex pour nettoyer la valeur (COMPANY_DIGITARIA_CLEAN_REGEX)
 COMPANY_DIGITARIA_UNIQUE_CODE=Doublons non autorisés
 RemoveSpecialWords=Nettoyer certains mots lors de la génération des comptes comptables des tiers
