@@ -834,14 +834,18 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Progress calculated (Note: ->duration is time spent)
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
-					print '<td class="right">';
+					$s = ''; $shtml = '';
 					if ($lines[$i]->planned_workload || $lines[$i]->duration) {
 						if ($lines[$i]->planned_workload) {
-							print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload, 2).' %';
+							$s = round(100 * $lines[$i]->duration / $lines[$i]->planned_workload, 2).' %';
+							$shtml = $s;
 						} else {
-							print '<span class="opacitymedium">'.$langs->trans('WorkloadNotDefined').'</span>';
+							$s = $langs->trans('WorkloadNotDefined');
+							$shtml = '<span class="opacitymedium">'.$s.'</span>';
 						}
 					}
+					print '<td class="right tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+					print $shtml;
 					print '</td>';
 				}
 
