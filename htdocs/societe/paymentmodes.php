@@ -47,14 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 $langs->loadLangs(array("companies", "commercial", "banks", "bills", 'paypal', 'stripe', 'withdrawals'));
 
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', '', '');
-
-
 // Get parameters
 $id = GETPOST("id", "int");
 $source = GETPOST("source", "alpha"); // source can be a source or a paymentmode
@@ -84,6 +76,19 @@ $permissiontoadd = $user->hasRight('societe', 'creer'); // Used by the include o
 
 $permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
 
+
+// Security check
+$socid = GETPOST("socid", "int");
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+// Check permission on company
+// TODO To delete a bank statement (when $permissiontoaddupdatepaymentinformation is true), we need permission to delete company. Rename action 'delete' into 'delete_paymentmode'
+$result = restrictedArea($user, 'societe', '', '');
+
+
+// Init Stripe objects
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
 	$servicestatus = 0;
