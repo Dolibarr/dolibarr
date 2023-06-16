@@ -363,9 +363,34 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Return single field from query.
+	 * Only to be used with SELECT queries.
+	 * Don't add LIMIT to your query, it will be added by this method
+	 *
+	 * @param 	string 				$sql 	The sql query string
+	 * @return 	mixed    			False on failure, null on empty, field value on success (could be null)
+	 */
+	public function getVar($sql)
+	{
+		$sql .= ' LIMIT 1';
+
+		$res = $this->query($sql);
+		if ($res) {
+			$arr = $this->fetch_row($res);
+			if ($arr) {
+				return $arr[0];
+			} else {
+				return null;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Return first result from query as object
 	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
-	 * Dont add LIMIT to your query, it will be added by this method
+	 * Don't add LIMIT to your query, it will be added by this method
 	 *
 	 * @param 	string 				$sql 	The sql query string
 	 * @return 	bool|int|object    			False on failure, 0 on empty, object on success
@@ -404,6 +429,29 @@ abstract class DoliDB implements Database
 			if ($this->num_rows($res) > 0) {
 				while ($obj = $this->fetch_object($res)) {
 					$results[] = $obj;
+				}
+			}
+			return $results;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Return a column from query as an array.
+	 * Only to be used with SELECT queries.
+	 *
+	 * @param 	string 		$sql 		The sql query string
+	 * @return 	bool|array				Result
+	 */
+	public function getCol($sql)
+	{
+		$res = $this->query($sql);
+		if ($res) {
+			$results = array();
+			if ($this->num_rows($res) > 0) {
+				while ($arr = $this->fetch_row($res)) {
+					$results[] = $arr[0];
 				}
 			}
 			return $results;
