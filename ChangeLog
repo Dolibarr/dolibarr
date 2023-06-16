@@ -19,7 +19,7 @@ NEW: Accountancy - Manage intra-community VAT on supplier invoices - FPC22
 NEW: Can upload a file with drag and drop on purchase invoice, vats, salaries and social contributions 
 NEW: authentication mode: #22740 Add OpenID Connect impl
 NEW: authentication mode: Add experimental support for Google OAuth2 connexion
-NEW: adapt category and product pictures sizes on TakePOS
+NEW: TakePOS: adapt category and product pictures sizes on TakePOS
 NEW: Supplier Invoices: add ability of ODT support to supplier invoices
 NEW: Add a public virtual card page for each user
 NEW: Add a status on supplier price ref (WIP to close a supplier ref)
@@ -27,30 +27,30 @@ NEW: add bookmarks in selectable landing pages for users
 NEW: Add column ext_payment_site into societe_rib to allow multiple payment mode
 NEW: add convertion of images to webp for a single image in website media editor
 NEW: Add CRC for currency symbol before amount
-NEW: add a CSS editor into the admin GUI
+NEW: GUI: add a CSS editor into the admin GUI
 NEW: add customer code to invoices listing
 NEW: Add Customer Order delivered (ORDER_NEW) in module Notification
 NEW: Add date due and labels into customer comm card
-NEW: Add dropdown button actions (example on Create button on project)
+NEW: GUI: Add dropdown button actions (example on Create button on project)
 NEW: Tickets: added an option to display the progress of tickets on the public interface
-NEW: Add field reply-to in email collector as possible filter
+NEW: Email-Collector: Add field reply-to in email collector as possible filter
 NEW: Add filter on nb of generation done in list of recurring invoices
 NEW: Add filters and sort on product unit column
 NEW: adding button Send Email on the salary file
 NEW: Add link to edit VAT list from error message of missing VAT
-NEW: add link to thirdparty tickets history
+NEW: Tickets: add link to thirdparty tickets history
 NEW: add margins in paiement/card.php
 NEW: Add mass action delete on VAT
-NEW: Add fields zip, town, country for owner of a bank account
+NEW: Bank: Add fields zip, town, country for owner of a bank account
 NEW: Members: add numbering modules for members
 NEW: Add origin info when create a product batch when created from a movement stock
 NEW: Add possibility to choose format #21426
 NEW: Add SQL contraint on product_stock table to allow only exsting product and warehouse#23543
-NEW: Add statistics by amount on statistics of products.
+NEW: Products: Add statistics by amount on statistics of products.
 NEW: Add STRIPE_DEBUG, a way to log Stripe IPN
-NEW: Add sub total in order list det
-NEW: Add warehouse create and modify triggers.
-NEW: Add widget box_members_by_tags.php
+NEW: Orders: add sub total in order list det
+NEW: Stock: Add warehouse create and modify triggers.
+NEW: Members: Add widget box_members_by_tags.php
 NEW: An external module can modify the quick search fields
 NEW: Auto activate some modules on install (Export/Import/Wysiwyg editor)
 NEW: Autofill email form with the email template with status "Default" on
@@ -70,7 +70,7 @@ NEW: Proposals: Can modify margin rates in offers like VAT rates.
 NEW: Salary: Can modify the date of payment of a salary (if not reconciled)
 NEW: OAuth: Can now edit service name for oauth token
 NEW: Reception: Can receive more than qty ordered on reception
-NEW: Can select several warehouses into the view stock at date in past
+NEW: Stock: Can select several warehouses into the view stock at date in past
 NEW: Can select the export format during export of journals
 NEW: Can set a checkbox in formconfirm by clicking on the label
 NEW: Can set background style with MAIN_LOGIN_BACKGROUND_STYLE
@@ -81,7 +81,7 @@ NEW: can stay on edit field when errors occurs
 NEW: GeoIP: Can test a geoip conversion from the geoip setup page
 NEW: Members: Captcha for public member's subscription form
 NEW: category of operation for crabe PDF model
-NEW: color for start date and owner
+NEW: GUI: color for start date and owner
 NEW: comment in api_mymodule for seperate methods
 NEW: constant PROPALE_ADDON_NOTE_PUBLIC_DEFAULT
 NEW: create email substitution variable for intervention signature URL
@@ -93,7 +93,7 @@ NEW: dolExplodeIntoArray can accept regex
 NEW: dol_sort_array can sort on alphabetical order even if val is num
 NEW: don't have closed contact proposed as receiver for the mails
 NEW: MO: Dynamic choice of warehouse and batch in MO production.
-NEW: element time integration code + sql
+NEW: element time integration code + SQL
 NEW: events list with color
 NEW: expend/collapse list of social networks
 NEW: Proposals: filter for Signed+Billed in proposals
@@ -105,17 +105,17 @@ NEW: helper functions for dates + small demo case
 NEW: hook printFieldListFrom in contact list
 NEW: inc.php: handle parameters from argv
 NEW: Website Module: Increment website counter on each page access in website module
-NEW: Invalidate all sessions of a user when password is modified.
+NEW: Security: Invalidate all sessions of a user when password is modified.
 NEW: Invoice - show category of operations
-NEW: iSuiteExpert export model
+NEW: Accountancy - iSuiteExpert export model
 NEW: Keep a link between user created from recruitment and application
-NEW: limit load products in TakePOS
+NEW: TakePOS: limit load products in TakePOS
 NEW: List product in orders
 NEW: map table to element for get entity in import
 NEW: migration script + delete old table + rename fields and indexes
 NEW: Multicurrency REST API to create, update, delete, update rate...
 NEW: Multiselect for filter on prospection status
-NEW: Name and date to print on PDF Sign
+NEW: PDF: Name and date to print on PDF Sign
 NEW: [Bulk delete Project tasks]
 NEW: No overwrite of optionals during put() contact
 NEW: Notification for Sign or Refused Propal from Online Page
@@ -138,10 +138,10 @@ NEW: referential objects of batch
 NEW: remove default percentage for event creation url
 NEW: remove keys whose table element is the same as element in map list
 NEW: repair script skip views
-NEW: Save date to invalidate other session into user table
+NEW: Security: Save date to invalidate other session into user table
 NEW: search on time spent duration range
-NEW: Send an email when ticket assigned
-NEW: Send a notification email when ticket assigned
+NEW: Tickets: Send an email when ticket assigned
+NEW: --Send a notification email when ticket assigned--
 NEW: sepaStripe now creates the payment mode with type pm_ using new API
 NEW: set payment default values when supplier order created from reception
 NEW: Tickets: set ticket status to answered if the client has answered from the public interface
@@ -175,12 +175,13 @@ NEW: Add option PDF_SHOW_EMAIL_AFTER_USER_CONTACT to show email after specific a
 NEW: Widgets: Implement MAIN_ACTIVATE_FILECACHE on birthday widget
 NEW: Widgets: Add widget "The next upcoming events"
 NEW: Widgets: Add widget of open opportunities
-NEW: Use an ajax component to swith prospection status on thidparty list
-NEW: Comment on survey is possible only after vote.
+NEW: Use an ajax component to swith prospection status on thirdparty list
+NEW: Survey: Comment on survey is possible only after vote.
 NEW: Add partial payment reason "withholding tax"
-NEW: A new tab for reception and shipment
+NEW: GUI: A new tab for reception and shipment
 NEW: Use the more recent PDF templates for documents by default on a fresh install
 NEW: Better design for the page of discounts of a thirdparty
+
 
 For developers or integrators:
 ------------------------------
