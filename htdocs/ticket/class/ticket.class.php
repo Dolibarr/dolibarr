@@ -500,6 +500,14 @@ class Ticket extends CommonObject
 				if ($this->add_contact($this->fk_user_assign, 'SUPPORTTEC', 'internal') < 0) {
 					$error++;
 				}
+				if (!$error && !$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('TICKET_ASSIGNED', $user);
+					if ($result < 0) {
+						$error++;
+					}
+				}
+					// End call triggers
 			}
 
 
