@@ -14,6 +14,7 @@
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2023      Benjamin Grembi       <info@oarces.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +103,6 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOST('search_status', 'intcomma');
 $search_paymentmode = GETPOST('search_paymentmode', 'int');
 $search_paymentterms = GETPOST('search_paymentterms', 'int');
 $search_module_source = GETPOST('search_module_source', 'alpha');
@@ -144,6 +144,10 @@ $search_product_category = GETPOST('search_product_category', 'int');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
+
+$search_status = GETPOST('search_status', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
+$object_statut = GETPOST('search_statut', 'alpha');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -341,6 +345,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_multicurrency_montant_vat = '';
 	$search_multicurrency_montant_ttc = '';
 	$search_status = '';
+	$object_statut = '';																																	
 	$search_paymentmode = '';
 	$search_paymentterms = '';
 	$search_module_source = '';
@@ -380,6 +385,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_categ_cus = 0;
 	$option = '';
 	$socid = 0;
+}
+
+if ($object_statut != '') {
+	$search_status = $object_statut;
 }
 
 if (empty($reshook)) {
