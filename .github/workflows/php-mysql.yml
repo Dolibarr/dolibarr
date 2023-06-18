@@ -18,6 +18,8 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: password
+        ports:
+        - 32574:3306
 
     steps:
     - uses: actions/checkout@v3
@@ -38,14 +40,14 @@ jobs:
       run: |
         sudo apt-get install -y mysql-client
         mysql --version | head -
-        mysql -e "SELECT VERSION();"  | head -
-        mysql --host 127.0.0.1 -uroot -ppassword -e "SHOW DATABASES"
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SELECT VERSION();"  | head -
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
         echo "MySQL"
-        mysql --host 127.0.0.1 -u root -ppassword -e 'DROP DATABASE IF EXISTS travis;'
-        mysql --host 127.0.0.1 -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS travis;'
-        mysql --host 127.0.0.1 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
-        mysql --host 127.0.0.1 -u root -ppassword -e 'FLUSH PRIVILEGES;'
-        mysql --host 127.0.0.1 -u root -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'DROP DATABASE IF EXISTS travis;'
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'CREATE DATABASE IF NOT EXISTS travis;'
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
 
     - name: Generate Dolibarr conf file
       run: |
