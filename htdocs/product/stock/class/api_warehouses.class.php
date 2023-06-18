@@ -71,10 +71,10 @@ class Warehouses extends DolibarrApi
 			throw new RestException(404, 'warehouse not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('warehouse', $this->warehouse->id)) {
+/*		if (!DolibarrApi::_checkAccessToResource('warehouse', $this->warehouse->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-
+*/
 		return $this->_cleanObjectDatas($this->warehouse);
 	}
 
