@@ -1,0 +1,75 @@
+name: Test CI
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: password
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Version
+      run: composer -V
+
+    - name: Set vendor-dir
+      run: composer -n config -g vendor-dir htdocs/includes
+
+    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+    # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+    # - name: Run test suite
+    #   run: composer run-script test
+    
+    - name: Create database
+      run: |
+        sudo apt-get install -y mysql-client
+        mysql --version | head -
+        mysql -e "SELECT VERSION();"  | head -
+        mysql --host 127.0.0.1 -uroot -ppassword -e "SHOW DATABASES"
+        echo "MySQL"
+        mysql --host 127.0.0.1 -u root -ppassword -e 'DROP DATABASE IF EXISTS travis;'
+        mysql --host 127.0.0.1 -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS travis;'
+        mysql --host 127.0.0.1 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+        mysql --host 127.0.0.1 -u root -ppassword -e 'FLUSH PRIVILEGES;'
+        mysql --host 127.0.0.1 -u root -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
+
+    - name: Generate Dolibarr conf file
+      run: |
+        export CONF_FILE=htdocs/conf/conf.php
+        echo "Setting up Dolibarr $CONF_FILE"
+        echo '<?php' > $CONF_FILE
+        echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_port=\'3306\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
+        cat $CONF_FILE
+        echo      
+
+    - name: Create document directory
+      run: |
+        echo "Create documents directory and set permissions"
+        # and admin/temp subdirectory needed for unit tests
+        mkdir -p $TRAVIS_BUILD_DIR/documents/admin/temp
+        sudo chmod -R a+rwx $TRAVIS_BUILD_DIR/documents
+        echo "***** First line of dolibarr.log" > $TRAVIS_BUILD_DIR/documents/dolibarr.log
+        echo
