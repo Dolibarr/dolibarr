@@ -67,8 +67,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param 	int 	$id Id of third party to load
-	 * @return 	array|mixed Cleaned Societe object
+	 * @param 	int 	$id 			Id of third party to load
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */

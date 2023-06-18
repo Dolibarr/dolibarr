@@ -55,8 +55,8 @@ class Warehouses extends DolibarrApi
 	 *
 	 * Return an array with warehouse informations
 	 *
-	 * @param 	int 	$id ID of warehouse
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of warehouse
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */

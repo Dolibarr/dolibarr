@@ -55,8 +55,8 @@ class Mos extends DolibarrApi
 	 *
 	 * Return an array with MO informations
 	 *
-	 * @param 	int 	$id ID of MO
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of MO
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url	GET {id}
 	 * @throws 	RestException

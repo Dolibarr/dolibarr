@@ -60,9 +60,8 @@ class Contracts extends DolibarrApi
 	 *
 	 * Return an array with contract informations
 	 *
-	 * @param       int         $id         ID of contract
-	 * @return 	array|mixed data without useless information
-	 *
+	 * @param   int         $id         ID of contract
+	 * @return  Object              	Object with cleaned properties
 	 * @throws 	RestException
 	 */
 	public function get($id)
