@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - 1*
+      - 2*
   pull_request:
     types: [opened]
 

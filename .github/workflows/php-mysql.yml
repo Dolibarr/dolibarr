@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - develop
+      - 1*
+      - 2*
   #pull_request:
   #  branches: [ "develop" ]
 
