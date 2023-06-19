@@ -35,7 +35,7 @@ jobs:
     - name: Install packages for PHP 8.1
       run: |
         composer -n require --ignore-platform-reqs phpunit/phpunit ^8
-        sudo apt-get install -y pgloader
+        sudo apt-get install -y pgloader memcached
 
     - name: Adding path of binaries tools installed by composer to the PATH
       run: | 
@@ -94,6 +94,31 @@ jobs:
         cat $CONF_FILE
         echo      
 
+    - name: Generate install.forced.php file to test installation
+      run: |
+        export INSTALL_FORCED_FILE=$GITHUB_WORKSPACE/htdocs/install/install.forced.php
+        echo "Setting up Dolibarr $INSTALL_FORCED_FILE to test installation"
+        # Ensure we catch errors
+        set +e
+        echo '<?php ' > $INSTALL_FORCED_FILE
+        echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
+        # For mysql
+        echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
+        #echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databaselogin=\'travis\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databasepass=\'password\'';' >> $INSTALL_FORCED_FILE
+        # For mysql
+        echo '$'force_install_port=\'3306\'';' >> $INSTALL_FORCED_FILE
+        #echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_main_data_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $INSTALL_FORCED_FILE
+        #cat $INSTALL_FORCED_FILE
+
     - name: Create document directory
       run: |
         echo "Create documents directory and set permissions"
@@ -113,16 +138,33 @@ jobs:
         # enable php-fpm
         #sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
         #sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
-        sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
+        #sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
         #echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
         #sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
         #- sudo chown -R travis:travis /var/lib/apache2/fastcgi
         # start php-fpm
         #~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
         # configure apache virtual hosts
+        a2query -c
+        a2query -s
+        a2query -m
         ls /etc/apache2/sites-available
-        sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
+        sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
         sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
         sudo cat /etc/apache2/sites-available/000-default.conf
         sudo service apache2 restart
+
+    - name: Chech Apache availability
+      run: |
+        echo "Checking webserver availability by a wget -O - http://127.0.0.1"
+        # Ensure we stop on error with set -e
+        set +e
+        ls /var/log/apache2
+        # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
+        wget -O - http://127.0.0.1 > test.html
+        head test.html
+        sudo cat /var/log/apache2/access_log
+        sudo cat /var/log/apache2/error_log
+        set +e
+        echo
 
