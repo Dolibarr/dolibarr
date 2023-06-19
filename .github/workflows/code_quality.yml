@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 1
           #php-version: '7.1'
       - name: 'Qodana Scan'
-        uses: JetBrains/qodana-action@v2023.1.0
+        uses: JetBrains/qodana-action@v2023.1.4
         #with:
         #  php-version: '7.1'
         env:
