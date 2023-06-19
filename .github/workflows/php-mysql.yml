@@ -113,19 +113,22 @@ jobs:
         echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_main_data_root=\'/var/www/html\'';' >> $INSTALL_FORCED_FILE
         cat $INSTALL_FORCED_FILE
+    
     - name: Create document directory
       run: |
         echo "Create documents directory and set permissions"
         # and admin/temp subdirectory needed for unit tests
-        mkdir -p $GITHUB_WORKSPACE/htdocs/documents/admin/temp
-        sudo chmod -R a+rwx $GITHUB_WORKSPACE/htdocs/documents
-        echo "***** First line of dolibarr.log" > $GITHUB_WORKSPACE/htdocs/documents/dolibarr.log
+        mkdir -p /var/www/html/documents/admin/temp
+        sudo chmod -R a+rwx /var/www/html/documents
+        echo "***** First line of dolibarr.log" > /var/www/html/documents/dolibarr.log
         echo
   
     - name: Copy app into /var/www/html
       run: | 
         sudo cp -r $GITHUB_WORKSPACE/htdocs/. /var/www/html
         sudo mv /var/www/html/index.html /var/www/html/index.disabled.html
+        sudo ln -fs /var/www/html /var/www/htdocs
+        sudo cp -r $GITHUB_WORKSPACE/test/. /var/www/test
 
     - name: Setup Apache
       run: |
@@ -268,7 +271,7 @@ jobs:
         # Ensure we catch errors. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
         set -e
         cd /var/www/html
-        includes/bin/phpunit -d memory_limit=-1 -c $GITHUB_WORKSPACE/test/phpunit/phpunittest.xml $GITHUB_WORKSPACE/test/phpunit/AllTests.php
+        includes/bin/phpunit -d memory_limit=-1 -c /var/www/test/phpunit/phpunittest.xml /var/www/test/phpunit/AllTests.php
         phpunitresult=$?
         echo "Phpunit return code = $phpunitresult"
         set +e     
