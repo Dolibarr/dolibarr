@@ -595,7 +595,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$nbko++;
 				}
 			} elseif ($feature == 'banque') {
-				if (empty($user->rights->banque->modifier)) {
+				if (!$user->hasRight('banque', 'modifier')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -716,7 +716,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
-				if (empty($user->rights->banque->modifier)) {
+				if (!$user->hasRight('banque', 'modifier')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'cheque') {

@@ -911,7 +911,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 	if ($user->hasRight("banque", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$permission = $user->rights->banque->creer;
+		$permission = $user->hasRight('banque', 'creer');
 
 		$accounts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($accounts < 0) {
