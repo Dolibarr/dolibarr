@@ -131,6 +131,7 @@ jobs:
     - name: Setup Apache
       run: |
         echo "Setting up Apache + FPM"
+        whoami
         # setup link for php legacy
         #sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
         # install apache web server
@@ -153,7 +154,7 @@ jobs:
         sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
         sudo cat /etc/apache2/sites-available/000-default.conf
         a2ensite 000-default
-        a2dissite 000-default-ssl
+        #a2dissite 000-default-ssl
         ls /etc/apache2/sites-enabled
         sudo service apache2 restart
 
