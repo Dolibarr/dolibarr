@@ -38,6 +38,7 @@ addons:
   apt:
     sources:
     - sourceline: 'ppa:ondrej/php'
+    update: true
     packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
