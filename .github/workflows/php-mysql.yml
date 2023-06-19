@@ -138,7 +138,6 @@ jobs:
         ls /etc/apache2/sites-available
         #sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
         #sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
-        #sudo cat /etc/apache2/sites-available/000-default.conf
         a2ensite 000-default
         a2enmod php8.1
         ls /etc/apache2/sites-enabled
@@ -151,7 +150,6 @@ jobs:
         sudo chmod -R 777 /home/runner/work/
         sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
         sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
-        sudo service apache2 restart
         ls -l /home/runner
         ls -l /home/runner/work
         ls -l /var/www
@@ -161,6 +159,8 @@ jobs:
         ls -l /var/www/html/conf
         ls -l /var/www/html/install/
         set +e
+        sudo cat /etc/apache2/sites-enabled/000-default.conf
+        sudo service apache2 restart
         curl -I localhost
     - name: Chech Apache availability
       run: |
@@ -168,9 +168,6 @@ jobs:
         # Ensure we stop on error with set -e
         set +e
         ls /var/log/apache2
-        cat /var/log/apache2/access.log
-        cat /var/log/apache2/error.log
-        cat /var/log/apache2/other_vhosts_access.log
         wget -O - http://127.0.0.1/robots.txt
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
         wget -O - http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
