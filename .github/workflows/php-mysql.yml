@@ -38,7 +38,7 @@ jobs:
       run: |
         composer -n require --ignore-platform-reqs phpunit/phpunit ^8
         sudo apt-get install -y pgloader memcached
-        rm -fr htdocs/includes/phpunit/php-code-coverage
+        sudo rm -fr htdocs/includes/phpunit/php-code-coverage
         
     - name: Adding path of binaries tools installed by composer to the PATH
       run: | 
