@@ -138,9 +138,9 @@ if ($id > 0 || !empty($ref)) {
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->recruitment->recruitmentjobposition->read;
-$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write;
-$permissiontodelete = $user->rights->recruitment->recruitmentjobposition->delete;
+$permissiontoread = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
+$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write');
+$permissiontodelete = $user->hasRight('recruitment', 'recruitmentjobposition', 'delete');
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
