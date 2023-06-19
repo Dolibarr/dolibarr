@@ -169,7 +169,7 @@ jobs:
         #wget -O - --debug http://127.0.0.1/robots.txt
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
         wget -O - --debug http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
-        head -n 50 $GITHUB_WORKSPACE/test.html
+        head -n 100 $GITHUB_WORKSPACE/test.html
         
         echo Logs are...
         #sudo cat /tmp/install.log
