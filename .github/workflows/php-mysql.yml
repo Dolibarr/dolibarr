@@ -32,6 +32,13 @@ jobs:
     - name: Set vendor-dir
       run: composer -n config -g vendor-dir htdocs/includes
 
+    - name: Adding path of binaries tools installed by composer to the PATH
+      run: | 
+        export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
+        echo $PATH
+        ls $GITHUB_WORKSPACE/vendor
+        ls $GITHUB_WORKSPACE/htdocs/includes/bin
+
     - name: Version information
       run: |
         composer -V

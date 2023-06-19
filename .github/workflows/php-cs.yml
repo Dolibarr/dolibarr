@@ -48,6 +48,13 @@ jobs:
           php-parallel-lint/php-var-dump-check ~0.4 \
           squizlabs/php_codesniffer ^3
 
+    - name: Adding path of binaries tools installed by composer to the PATH
+      run: | 
+        export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
+        echo $PATH
+        ls $GITHUB_WORKSPACE/vendor
+        ls $GITHUB_WORKSPACE/htdocs/includes/bin
+
     - name: Version information
       run: |
         composer -V
