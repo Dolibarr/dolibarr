@@ -121,7 +121,7 @@ class Proposals extends DolibarrApi
 	 */
 	private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
 	{
-		if (!DolibarrApiAccess::$user->rights->propal->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -162,7 +162,7 @@ class Proposals extends DolibarrApi
 	{
 		global $db, $conf;
 
-		if (!DolibarrApiAccess::$user->rights->propal->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -295,7 +295,7 @@ class Proposals extends DolibarrApi
 	{
 		$filters = "";
 
-		if (!DolibarrApiAccess::$user->rights->propal->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(401);
 		}
 

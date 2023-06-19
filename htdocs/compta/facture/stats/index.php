@@ -44,7 +44,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
-if ($mode == 'customer' && !$user->rights->facture->lire) {
+if ($mode == 'customer' && !$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 if ($mode == 'supplier' && empty($user->rights->fournisseur->facture->lire)) {

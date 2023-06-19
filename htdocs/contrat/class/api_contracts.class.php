@@ -528,7 +528,7 @@ class Contracts extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->contrat->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('contrat', 'supprimer')) {
 			throw new RestException(401);
 		}
 		$result = $this->contract->fetch($id);

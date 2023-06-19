@@ -504,7 +504,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif ($feature == 'payment') {
-			if (empty($user->rights->facture->lire)) {
+			if (!$user->hasRight('facture', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
