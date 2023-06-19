@@ -160,12 +160,12 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$thirdpartystatic->email = $objp->email;
 					$thirdpartystatic->entity = $objp->entity;
 					$thirdpartystatic->tva_intra = $objp->tva_intra;
-					$thirdpartystatic->idprof1 = $objp->idprof1;
-					$thirdpartystatic->idprof2 = $objp->idprof2;
-					$thirdpartystatic->idprof3 = $objp->idprof3;
-					$thirdpartystatic->idprof4 = $objp->idprof4;
-					$thirdpartystatic->idprof5 = $objp->idprof5;
-					$thirdpartystatic->idprof6 = $objp->idprof6;
+					$thirdpartystatic->idprof1 = !empty($objp->idprof1) ? $objp->idprof1 : '';
+					$thirdpartystatic->idprof2 = !empty($objp->idprof2) ? $objp->idprof2 : '';
+					$thirdpartystatic->idprof3 = !empty($objp->idprof3) ? $objp->idprof3 : '';
+					$thirdpartystatic->idprof4 = !empty($objp->idprof4) ? $objp->idprof4 : '';
+					$thirdpartystatic->idprof5 = !empty($objp->idprof5) ? $objp->idprof5 : '';
+					$thirdpartystatic->idprof6 = !empty($objp->idprof6) ? $objp->idprof6 : '';
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
