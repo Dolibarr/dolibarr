@@ -1,4 +1,4 @@
-name: GitHub CI PHPUnit Mysql
+name: GitHub CI PHP 8.1 MySQL
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  github_ci_mysql:
+  github_ci_php81_mysql:
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -121,7 +121,7 @@ jobs:
         echo "Setting up Dolibarr $INSTALL_FORCED_FILE to test installation"
         # Ensure we catch errors
         set +e
-        echo '<?php ' > $INSTALL_FORCED_FILE
+        echo '<?php' > $INSTALL_FORCED_FILE
         echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
         # For mysql
         echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
@@ -163,7 +163,6 @@ jobs:
         pwd
         whoami
         # install apache web server
-        a2query -c
         a2query -s
         a2query -m
         ls /etc/apache2/sites-available
@@ -178,11 +177,9 @@ jobs:
         sudo chown -R www-data:www-data /etc/apache2/sites-available/
         sudo chmod -R 777 /etc/apache2/sites-available/
         sudo chown -R www-data:www-data /var/www/html/
-        #sudo chmod -R 777 /home/runner/work/
-        #ls -l /home/runner/work
         ls -l /var/www/html
-        ls -l /var/www/html/conf
-        ls -l /var/www/html/install/
+        #ls -l /var/www/html/conf
+        #ls -l /var/www/html/install/
         set +e
         sudo cat /etc/apache2/sites-enabled/000-default.conf
         sudo service apache2 restart
@@ -309,8 +306,9 @@ jobs:
         phpunitresult=$?
         echo "Phpunit return code = $phpunitresult"
         set +e     
-        
+
     - name: Code quality check - Lint
+      if: github.event_name == 'push'
       run: |
         htdocs/includes/bin/parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
           --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
@@ -319,10 +317,12 @@ jobs:
           --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
 
     - name: Code quality check - phpcs
+      if: github.event_name == 'push'
       run: |
          htdocs/includes/bin/phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;     
 
     - name: Code quality check - var-dump-check
+      if: github.event_name == 'push'
       run: |
         htdocs/includes/bin/var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
 
