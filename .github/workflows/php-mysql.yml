@@ -79,7 +79,7 @@ jobs:
 
     - name: Generate Dolibarr conf file
       run: |
-        export CONF_FILE=htdocs/conf/conf.php
+        export CONF_FILE=$GITHUB_WORKSPACE/htdocs/conf/conf.php
         echo "Setting up Dolibarr $CONF_FILE"
         echo '<?php' > $CONF_FILE
         echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
@@ -93,7 +93,6 @@ jobs:
         echo '$'dolibarr_main_db_port=\'3306\'';' >> $CONF_FILE
         echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
         cat $CONF_FILE
-        echo      
 
     - name: Generate install.forced.php file to test installation
       run: |
@@ -118,7 +117,7 @@ jobs:
         echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_main_data_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $INSTALL_FORCED_FILE
-        #cat $INSTALL_FORCED_FILE
+        cat $INSTALL_FORCED_FILE
 
     - name: Create document directory
       run: |
@@ -150,7 +149,7 @@ jobs:
         a2query -s
         a2query -m
         ls /etc/apache2/sites-available
-        sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
+        sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
         sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
         sudo cat /etc/apache2/sites-available/000-default.conf
         sudo service apache2 restart
@@ -164,8 +163,8 @@ jobs:
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
         wget -O - http://127.0.0.1 > test.html
         head test.html
-        sudo cat /var/log/apache2/access_log
-        sudo cat /var/log/apache2/error_log
+        sudo cat /var/log/apache2/access.log
+        sudo cat /var/log/apache2/error.log
         set +e
         echo
 
