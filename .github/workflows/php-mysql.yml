@@ -29,7 +29,6 @@ jobs:
     - name: Version PHP
       run: |
         php -i | head -
-
     - name: Set vendor-dir
       run: composer -n config -g vendor-dir htdocs/includes
 
@@ -37,14 +36,12 @@ jobs:
       run: |
         composer -n require --ignore-platform-reqs phpunit/phpunit ^8
         sudo apt-get install -y pgloader memcached
-
     - name: Adding path of binaries tools installed by composer to the PATH
       run: | 
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
         #ls $GITHUB_WORKSPACE/vendor
         #ls $GITHUB_WORKSPACE/htdocs/includes/bin
-
     - name: Version information
       run: |
         composer -V
@@ -60,7 +57,6 @@ jobs:
         psql --version
         echo "Check pgloader version"
         pgloader --version
-
     - name: Create database
       run: |
         pwd
@@ -76,15 +72,14 @@ jobs:
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
-
     - name: Generate Dolibarr conf file
       run: |
         export CONF_FILE=$GITHUB_WORKSPACE/htdocs/conf/conf.php
         echo "Setting up Dolibarr $CONF_FILE"
         echo '<?php' > $CONF_FILE
         echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_document_root=\'/var/www/html\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_data_root=\'/var/www/html/documents\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_document_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_data_root=\'$GITHUB_WORKSPACE/htdocs/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
@@ -93,7 +88,6 @@ jobs:
         echo '$'dolibarr_main_db_port=\'3306\'';' >> $CONF_FILE
         echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
         cat $CONF_FILE
-
     - name: Generate install.forced.php file to test installation
       run: |
         export INSTALL_FORCED_FILE=$GITHUB_WORKSPACE/htdocs/install/install.forced.php
@@ -116,9 +110,8 @@ jobs:
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_main_data_root=\'/var/www/html\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_main_data_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $INSTALL_FORCED_FILE
         cat $INSTALL_FORCED_FILE
-
     - name: Create document directory
       run: |
         echo "Create documents directory and set permissions"
@@ -132,7 +125,7 @@ jobs:
       run: | 
         sudo cp -r $GITHUB_WORKSPACE/htdocs/. /var/www/html
         sudo mv /var/www/html/index.html /var/www/html/index.disabled.html
-  
+
     - name: Setup Apache
       run: |
         pwd
@@ -149,18 +142,15 @@ jobs:
         a2ensite 000-default
         a2enmod php8.1
         ls /etc/apache2/sites-enabled
-
         sudo adduser $(whoami) www-data
         sudo adduser $(whoami) root
         sudo adduser root www-data
         sudo chown -R www-data:www-data /etc/apache2/sites-available/
         sudo chmod -R 777 /etc/apache2/sites-available/
         sudo chown -R www-data:www-data /var/www/html/
-
-        #sudo chmod -R 777 /home/runner/work/
-        #sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
-        #sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
-
+        sudo chmod -R 777 /home/runner/work/
+        sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
+        sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
         sudo service apache2 restart
         ls -l /home/runner
         ls -l /home/runner/work
@@ -168,16 +158,20 @@ jobs:
         ls -l /var/www/html
         ls -l /var/www/html/conf
         ls -l /var/www/html/install/
+        ls -l /var/www/html/conf
+        ls -l /var/www/html/install/
         set +e
         curl -I localhost
-
     - name: Chech Apache availability
       run: |
         echo "Checking webserver availability by a wget -O - http://127.0.0.1"
         # Ensure we stop on error with set -e
         set +e
         ls /var/log/apache2
-
+        cat /var/log/apache2/access.log
+        cat /var/log/apache2/error.log
+        cat /var/log/apache2/other_vhosts_access.log
+        wget -O - http://127.0.0.1/robots.txt
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
         wget -O - http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
         head $GITHUB_WORKSPACE/test.html
@@ -185,7 +179,6 @@ jobs:
         echo Logs are...
         sudo cat /var/log/apache2/access.log
         sudo cat /var/log/apache2/error.log
-        cat /var/log/apache2/other_vhosts_access.log
+        sudo cat /var/log/apache2/other_vhosts_access.log
         set +e
         echo
-
