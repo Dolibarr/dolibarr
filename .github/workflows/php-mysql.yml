@@ -22,6 +22,7 @@ jobs:
         - 32574:3306
 
     steps:
+    # git clone dolibarr into GITHUB_WORKSPACE = /home/runner/work/dolibarr/dolibarr
     - uses: actions/checkout@v3
 
     - name: Version
@@ -30,12 +31,6 @@ jobs:
     - name: Set vendor-dir
       run: composer -n config -g vendor-dir htdocs/includes
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    # - name: Run test suite
-    #   run: composer run-script test
-    
     - name: Create database
       run: |
         pwd
@@ -58,8 +53,8 @@ jobs:
         echo "Setting up Dolibarr $CONF_FILE"
         echo '<?php' > $CONF_FILE
         echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_document_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_data_root=\'$GITHUB_WORKSPACE/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
@@ -74,7 +69,8 @@ jobs:
       run: |
         echo "Create documents directory and set permissions"
         # and admin/temp subdirectory needed for unit tests
-        mkdir -p $TRAVIS_BUILD_DIR/documents/admin/temp
-        sudo chmod -R a+rwx $TRAVIS_BUILD_DIR/documents
-        echo "***** First line of dolibarr.log" > $TRAVIS_BUILD_DIR/documents/dolibarr.log
+        mkdir -p $GITHUB_WORKSPACE/documents/admin/temp
+        sudo chmod -R a+rwx $GITHUB_WORKSPACE/documents
+        echo "***** First line of dolibarr.log" > $GITHUB_WORKSPACE/documents/dolibarr.log
         echo
+        
