@@ -3,6 +3,7 @@ name: GitHub CI Coding Style
 on:
   push:
   pull_request:
+    types: [opened]
 
 permissions:
   contents: read
