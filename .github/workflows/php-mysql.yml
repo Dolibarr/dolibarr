@@ -194,6 +194,10 @@ jobs:
         set -e
         sudo chmod -R a+rwx $GITHUB_WORKSPACE
         sudo chmod -R a+rwx /var/www/html/install
+        ls -l /var
+        ls -l /var/www
+        ls -l /var/www/html
+        ls -l /var/www/html/install
         cd /var/www/html/install
         php upgrade.php 3.5.0 3.6.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade350360.log
         php upgrade2.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-2.log
