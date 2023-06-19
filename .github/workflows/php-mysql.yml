@@ -155,9 +155,11 @@ jobs:
         sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
         sudo service apache2 restart
         ls -l /home/runner
+        ls -l /home/runner/work
         ls -l /var/www
         curl -I localhost
         curl -I 127.0.0.1
+        wget -O - http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
 
     - name: Chech Apache availability
       run: |
