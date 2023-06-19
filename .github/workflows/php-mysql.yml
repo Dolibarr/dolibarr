@@ -25,6 +25,10 @@ jobs:
     # git clone dolibarr into GITHUB_WORKSPACE = /home/runner/work/dolibarr/dolibarr
     - uses: actions/checkout@v3
 
+    - name: Version PHP
+      run: |
+        php -i | head -
+
     - name: Version
       run: composer -V
 
