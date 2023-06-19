@@ -42,7 +42,6 @@ jobs:
     
     - name: Install packages for PHP 8.1
       run: |
-        composer self-update 2.4.4
         composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
           php-parallel-lint/php-parallel-lint ^1.2 \
           php-parallel-lint/php-console-highlighter ^0 \
