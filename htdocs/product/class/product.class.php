@@ -4252,6 +4252,8 @@ class Product extends CommonObject
 	 */
 	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
 	{
+		global $user;
+
 		// phpcs:enable
 		// Clean parameters
 		if (!is_numeric($id_pere)) {
@@ -4290,6 +4292,18 @@ class Product extends CommonObject
 					dol_print_error($this->db);
 					return -1;
 				} else {
+					if (!$notrigger) {
+
+						// Call trigger
+						$result = $this->call_trigger('PRODUCT_SUBPRODUCT_ADD', $user);
+						if ($result < 0) {
+							$this->error = $this->db->lasterror();
+							dol_syslog(get_class($this).'::addSubproduct error='.$this->error, LOG_ERR);
+							return -1;
+						}
+					}
+						// End call triggers
+
 					return 1;
 				}
 			} else {
@@ -4311,6 +4325,8 @@ class Product extends CommonObject
 	 */
 	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
 	{
+		global $user;
+
 		// phpcs:enable
 		// Clean parameters
 		if (!is_numeric($id_pere)) {
@@ -4335,6 +4351,15 @@ class Product extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		} else {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_SUBPRODUCT_UPDATE', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::updateSubproduct error='.$this->error, LOG_ERR);
+				return -1;
+			}
+			// End call triggers
+
 			return 1;
 		}
 	}
@@ -4347,8 +4372,10 @@ class Product extends CommonObject
 	 * @param  int $fk_child  Id of child product
 	 * @return int            < 0 if KO, > 0 if OK
 	 */
-	public function del_sousproduit($fk_parent, $fk_child)
+	public function del_sousproduit($fk_parent, $fk_child, $notrigger = 0)
 	{
+		global $user;
+
 		// phpcs:enable
 		if (!is_numeric($fk_parent)) {
 			$fk_parent = 0;
@@ -4385,6 +4412,18 @@ class Product extends CommonObject
 				}
 			}
 		}
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_SUBPRODUCT_DELETE', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::delSubproduct error='.$this->error, LOG_ERR);
+				return -1;
+			}
+			// End call triggers
+		}
+
 		return 1;
 	}
 
