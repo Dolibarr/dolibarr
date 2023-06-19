@@ -178,4 +178,97 @@ jobs:
         sudo cat /var/log/apache2/error.log
         sudo cat /var/log/apache2/other_vhosts_access.log
         set +e
+
+    - name: Upgrading Dolibarr
+      run: |
+        # Ensure we catch errors. Set this to +e if you want to go to the end to see log files.
+        set +e
+        cd htdocs/install
+        php upgrade.php 3.5.0 3.6.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade350360.log
+        php upgrade2.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-2.log
+        php step5.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-3.log
+        php upgrade.php 3.6.0 3.7.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade360370.log
+        php upgrade2.php 3.6.0 3.7.0 > $GITHUB_WORKSPACE/upgrade360370-2.log
+        php step5.php 3.6.0 3.7.0 > $GITHUB_WORKSPACE/upgrade360370-3.log
+        php upgrade.php 3.7.0 3.8.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade370380.log
+        php upgrade2.php 3.7.0 3.8.0 > $GITHUB_WORKSPACE/upgrade370380-2.log
+        php step5.php 3.7.0 3.8.0 > $GITHUB_WORKSPACE/upgrade370380-3.log
+        php upgrade.php 3.8.0 3.9.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade380390.log
+        php upgrade2.php 3.8.0 3.9.0 > $GITHUB_WORKSPACE/upgrade380390-2.log
+        php step5.php 3.8.0 3.9.0 > $GITHUB_WORKSPACE/upgrade380390-3.log
+        php upgrade.php 3.9.0 4.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade390400.log
+        php upgrade2.php 3.9.0 4.0.0 > $GITHUB_WORKSPACE/upgrade390400-2.log
+        php step5.php 3.9.0 4.0.0 > $GITHUB_WORKSPACE/upgrade390400-3.log
+        php upgrade.php 4.0.0 5.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade400500.log
+        php upgrade2.php 4.0.0 5.0.0 > $GITHUB_WORKSPACE/upgrade400500-2.log
+        php step5.php 4.0.0 5.0.0 > $GITHUB_WORKSPACE/upgrade400500-3.log
+        php upgrade.php 5.0.0 6.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade500600.log
+        php upgrade2.php 5.0.0 6.0.0 > $GITHUB_WORKSPACE/upgrade500600-2.log
+        php step5.php 5.0.0 6.0.0 > $GITHUB_WORKSPACE/upgrade500600-3.log
+        php upgrade.php 6.0.0 7.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade600700.log
+        php upgrade2.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-2.log
+        php step5.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-3.log
+        php upgrade.php 7.0.0 8.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade700800.log
+        php upgrade2.php 7.0.0 8.0.0 > $GITHUB_WORKSPACE/upgrade700800-2.log
+        php step5.php 7.0.0 8.0.0 > $GITHUB_WORKSPACE/upgrade700800-3.log
+        php upgrade.php 8.0.0 9.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade800900.log
+        php upgrade2.php 8.0.0 9.0.0 > $GITHUB_WORKSPACE/upgrade800900-2.log
+        php step5.php 8.0.0 9.0.0 > $GITHUB_WORKSPACE/upgrade800900-3.log
+        php upgrade.php 9.0.0 10.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade9001000.log
+        php upgrade2.php 9.0.0 10.0.0 > $GITHUB_WORKSPACE/upgrade9001000-2.log
+        php step5.php 9.0.0 10.0.0 > $GITHUB_WORKSPACE/upgrade9001000-3.log
+        php upgrade.php 10.0.0 11.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade10001100.log
+        php upgrade2.php 10.0.0 11.0.0 > $GITHUB_WORKSPACE/upgrade10001100-2.log
+        php step5.php 10.0.0 11.0.0 > $GITHUB_WORKSPACE/upgrade10001100-3.log
+        php upgrade.php 11.0.0 12.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade11001200.log
+        php upgrade2.php 11.0.0 12.0.0 > $GITHUB_WORKSPACE/upgrade11001200-2.log
+        php step5.php 11.0.0 12.0.0 > $GITHUB_WORKSPACE/upgrade11001200-3.log
+        php upgrade.php 12.0.0 13.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade12001300.log
+        php upgrade2.php 12.0.0 13.0.0 > $GITHUB_WORKSPACE/upgrade12001300-2.log
+        php step5.php 12.0.0 13.0.0 > $GITHUB_WORKSPACE/upgrade12001300-3.log
+        php upgrade.php 13.0.0 14.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade13001400.log
+        php upgrade2.php 13.0.0 14.0.0 > $GITHUB_WORKSPACE/upgrade13001400-2.log
+        php step5.php 13.0.0 14.0.0 > $GITHUB_WORKSPACE/upgrade13001400-3.log
+        php upgrade.php 14.0.0 15.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade14001500.log
+        php upgrade2.php 14.0.0 15.0.0 > $GITHUB_WORKSPACE/upgrade14001500-2.log
+        php step5.php 14.0.0 15.0.0 > $GITHUB_WORKSPACE/upgrade14001500-3.log
+        php upgrade.php 15.0.0 16.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade15001600.log
+        php upgrade2.php 15.0.0 16.0.0 > $GITHUB_WORKSPACE/upgrade15001600-2.log
+        php step5.php 15.0.0 16.0.0 > $GITHUB_WORKSPACE/upgrade15001600-3.log
+        php upgrade.php 16.0.0 17.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade16001700.log
+        php upgrade2.php 16.0.0 17.0.0 > $GITHUB_WORKSPACE/upgrade16001700-2.log
+        php step5.php 16.0.0 17.0.0 > $GITHUB_WORKSPACE/upgrade16001700-3.log
+        php upgrade.php 17.0.0 18.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade17001800.log
+        php upgrade2.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-2.log
+        php step5.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-3.log
+        ls -alrt $GITHUB_WORKSPACE/
         echo
+        cat $GITHUB_WORKSPACE/upgrade17001800.log
+        cat $GITHUB_WORKSPACE/upgrade17001800-2.log        
+
+    - name: Enabling new modules
+      run: | 
+        # Enable modules not enabled into original dump
+        set -e
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_STRIPE,MAIN_MODULE_EXPENSEREPORT > $GITHUB_WORKSPACE/enablemodule.log
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $GITHUB_WORKSPACE/enablemodule.log
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $GITHUB_WORKSPACE/enablemodule.log
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KNOWLEDGEMANAGEMENT,MAIN_MODULE_EVENTORGANIZATION,MAIN_MODULE_PARTNERSHIP >> $GITHUB_WORKSPACE/enablemodule.log
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EMAILCOLLECTOR >> $GITHUB_WORKSPACE/enablemodule.log
+        echo $?
+        cd -
+        set +e
+        echo
+        #cat /tmp/dolibarr_install.log
+        cat $GITHUB_WORKSPACE/enablemodule.log
+
+    - name: Unit testing
+      run: |
+        # Ensure we catch errors. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
+        set -e
+        htdocs/includes/bin/phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+        phpunitresult=$?
+        echo "Phpunit return code = $phpunitresult"
+        set +e     
+
+
