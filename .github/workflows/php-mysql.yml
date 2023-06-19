@@ -86,7 +86,7 @@ jobs:
         echo '$'dolibarr_main_db_pass=\'password\'';' >> $CONF_FILE
         echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_port=\'3306\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_port=\'32574\'';' >> $CONF_FILE
         echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
         cat $CONF_FILE
     - name: Generate install.forced.php file to test installation
