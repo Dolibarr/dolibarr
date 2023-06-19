@@ -143,9 +143,9 @@ jobs:
         a2query -s
         a2query -m
         ls /etc/apache2/sites-available
-        sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
-        sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
-        sudo cat /etc/apache2/sites-available/000-default.conf
+        #sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
+        #sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
+        #sudo cat /etc/apache2/sites-available/000-default.conf
         a2ensite 000-default
         ls /etc/apache2/sites-enabled
 
