@@ -305,7 +305,7 @@ class DoliStorage implements TokenStorageInterface
 		} else {
 			// insert (should not happen)
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, state, entity)";
-			$sql.= " VALUES ('".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."', '".$this->db->escape($newstate)."', ".((int) $conf->entity).")";
+			$sql.= " VALUES ('".$this->db->escape($servicepluskeyforprovider)."', '".$this->db->escape($newstate)."', ".((int) $conf->entity).")";
 			$resql = $this->db->query($sql);
 		}
 
