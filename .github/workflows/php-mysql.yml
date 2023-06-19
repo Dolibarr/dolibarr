@@ -183,7 +183,7 @@ jobs:
       run: |
         # Ensure we catch errors. Set this to +e if you want to go to the end to see log files.
         set +e
-        cd htdocs/install
+        cd /var/www/html/install
         php upgrade.php 3.5.0 3.6.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade350360.log
         php upgrade2.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-2.log
         php step5.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-3.log
@@ -250,6 +250,7 @@ jobs:
       run: | 
         # Enable modules not enabled into original dump
         set -e
+        cd /var/www/html/install
         php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_STRIPE,MAIN_MODULE_EXPENSEREPORT > $GITHUB_WORKSPACE/enablemodule.log
         php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $GITHUB_WORKSPACE/enablemodule.log
         php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $GITHUB_WORKSPACE/enablemodule.log
@@ -266,9 +267,9 @@ jobs:
       run: |
         # Ensure we catch errors. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
         set -e
-        htdocs/includes/bin/phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+        cd /var/www/html
+        includes/bin/phpunit -d memory_limit=-1 -c $GITHUB_WORKSPACE/test/phpunit/phpunittest.xml $GITHUB_WORKSPACE/test/phpunit/AllTests.php
         phpunitresult=$?
         echo "Phpunit return code = $phpunitresult"
         set +e     
-
 
