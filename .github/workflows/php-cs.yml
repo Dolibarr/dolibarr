@@ -59,21 +59,17 @@ jobs:
         composer -V
         # Check Parallel-lint version
         echo "Parallel-lint version"
-        which parallel-lint
-        parallel-lint -V
+        htdocs/includes/bin/parallel-lint -V
         # Check PHP CodeSniffer version
         echo "PHPCS version"
-        which phpcs
-        phpcs --version | head -
-        phpcs -i | head -
+        htdocs/includes/bin/phpcs --version | head -
+        htdocs/includes/bin/phpcs -i | head -
         # Check PHP Vardump check version
         echo "PHP Vardump check version"
-        which var_dump_check
-        var_dump_check --version
+        htdocs/includes/bin/var_dump_check --version
         # Check PHPUnit version
         echo "PHPUnit version"
-        which phpunit
-        phpunit --version | head -
+        htdocs/includes/bin/phpunit --version | head -
         # Check Apache version
         echo "Apache version"
         apache2 -v | head -

@@ -32,33 +32,23 @@ jobs:
     - name: Set vendor-dir
       run: composer -n config -g vendor-dir htdocs/includes
 
+    - name: Install packages for PHP 8.1
+      run: |
+        composer -n require --ignore-platform-reqs phpunit/phpunit ^8
+
     - name: Adding path of binaries tools installed by composer to the PATH
       run: | 
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
         #ls $GITHUB_WORKSPACE/vendor
-        ls $GITHUB_WORKSPACE/htdocs/includes/bin
+        #ls $GITHUB_WORKSPACE/htdocs/includes/bin
 
     - name: Version information
       run: |
         composer -V
-        # Check Parallel-lint version
-        echo "Parallel-lint version"
-        which parallel-lint
-        parallel-lint -V
-        # Check PHP CodeSniffer version
-        echo "PHPCS version"
-        which phpcs
-        phpcs --version | head -
-        phpcs -i | head -
-        # Check PHP Vardump check version
-        echo "PHP Vardump check version"
-        which var_dump_check
-        var_dump_check --version
         # Check PHPUnit version
         echo "PHPUnit version"
-        which phpunit
-        phpunit --version | head -
+        htdocs/includes/bin/phpunit --version | head -
         # Check Apache version
         echo "Apache version"
         apache2 -v | head -
