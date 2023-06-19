@@ -256,6 +256,9 @@ jobs:
         php upgrade.php 17.0.0 18.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade17001800.log
         php upgrade2.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-2.log
         php step5.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-3.log
+        
+    - name: Result of migration scripts
+      run: |
         ls -alrt $GITHUB_WORKSPACE/
         echo
         cat $GITHUB_WORKSPACE/upgrade17001800.log
@@ -265,6 +268,7 @@ jobs:
       run: | 
         # Enable modules not enabled into original dump
         set -e
+        ls -alrt $GITHUB_WORKSPACE
         cd /var/www/html/install
         php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_STRIPE,MAIN_MODULE_EXPENSEREPORT > $GITHUB_WORKSPACE/enablemodule.log
         php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $GITHUB_WORKSPACE/enablemodule.log
