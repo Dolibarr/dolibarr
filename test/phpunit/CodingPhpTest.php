@@ -176,22 +176,22 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname', SORT_ASC, 0, 1, '', 1);
 
 		foreach ($filesarray as $key => $file) {
-			if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/includes\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/install\/doctemplates\/websites\//', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/install\/doctemplates\/websites\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/custom\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/dolimed/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/dolimed/', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/nltechno/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/nltechno/', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/teclib/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/teclib/', $file['fullname'])) {
 				continue;
 			}
 
