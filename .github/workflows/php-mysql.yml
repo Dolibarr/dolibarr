@@ -78,8 +78,8 @@ jobs:
         echo "Setting up Dolibarr $CONF_FILE"
         echo '<?php' > $CONF_FILE
         echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_document_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_data_root=\'$GITHUB_WORKSPACE/htdocs/documents\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_document_root=\'/var/www/html/htdocs\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_data_root=\'/var/www/html/htdocs/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
@@ -110,7 +110,7 @@ jobs:
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_main_data_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_main_data_root=\'/var/www/html/htdocs\'';' >> $INSTALL_FORCED_FILE
         cat $INSTALL_FORCED_FILE
     - name: Create document directory
       run: |
@@ -156,8 +156,6 @@ jobs:
         ls -l /var/www/html
         ls -l /var/www/html/conf
         ls -l /var/www/html/install/
-        ls -l /var/www/html/conf
-        ls -l /var/www/html/install/
         set +e
         sudo cat /etc/apache2/sites-enabled/000-default.conf
         sudo service apache2 restart
@@ -174,6 +172,7 @@ jobs:
         head $GITHUB_WORKSPACE/test.html
         
         echo Logs are...
+        sudo cat /tmp/install.log
         sudo cat /var/log/apache2/access.log
         sudo cat /var/log/apache2/error.log
         sudo cat /var/log/apache2/other_vhosts_access.log
