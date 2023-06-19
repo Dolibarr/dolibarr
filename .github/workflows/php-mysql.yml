@@ -129,12 +129,13 @@ jobs:
         sudo echo "***** First line of dolibarr.log" > /var/www/html/documents/dolibarr.log
         sudo chmod a+rwx /var/www/html/documents/dolibarr.log
   
-    - name: Copy app into /var/www/html
+    - name: Copy app into /var/www
       run: | 
         sudo cp -r $GITHUB_WORKSPACE/htdocs/. /var/www/html
         sudo mv /var/www/html/index.html /var/www/html/index.disabled.html
         sudo ln -fs /var/www/html /var/www/htdocs
         sudo cp -r $GITHUB_WORKSPACE/test/. /var/www/test
+        sudo cp -r $GITHUB_WORKSPACE/dev/. /var/www/dev
 
     - name: Setup Apache
       run: |
