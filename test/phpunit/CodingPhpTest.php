@@ -270,7 +270,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			if (!preg_match('/test\/phpunit/', $file['fullname'])) {
 				$ok=true;
 				$matches=array();
-				preg_match_all('/(.)\s*var_dump/', $filecontent, $matches, PREG_SET_ORDER);
+				preg_match_all('/(.)\s*var_dump\(/', $filecontent, $matches, PREG_SET_ORDER);
 				//var_dump($matches);
 				foreach ($matches as $key => $val) {
 					if ($val[1] != '/' && $val[1] != '*') {
