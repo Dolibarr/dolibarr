@@ -152,6 +152,9 @@ jobs:
         sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
         sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
         sudo cat /etc/apache2/sites-available/000-default.conf
+        a2ensite 000-default
+        a2dissite 000-default-ssl
+        ls /etc/apache2/sites-enabled
         sudo service apache2 restart
 
     - name: Chech Apache availability
@@ -160,11 +163,14 @@ jobs:
         # Ensure we stop on error with set -e
         set +e
         ls /var/log/apache2
-        sudo cat /var/log/apache2/access.log
-        sudo cat /var/log/apache2/error.log
+        cat /var/log/apache2/access.log
+        cat /var/log/apache2/error.log
+        cat /var/log/apache2/other_vhosts_access.log
+        wget -O - http://127.0.0.1/robots.txt
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
-        wget -O - http://127.0.0.1 > $GITHUB_WORKSPACE/test.html
+        wget -O - http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
         head $GITHUB_WORKSPACE/test.html
+        echo Logs are...
         sudo cat /var/log/apache2/access.log
         sudo cat /var/log/apache2/error.log
         set +e
