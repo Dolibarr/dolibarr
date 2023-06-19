@@ -82,7 +82,7 @@ jobs:
         echo '$'dolibarr_main_data_root=\'/var/www/html/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_user=\'root\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_pass=\'password\'';' >> $CONF_FILE
         echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
