@@ -84,7 +84,7 @@ jobs:
         echo '<?php' > $CONF_FILE
         echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_document_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_data_root=\'$GITHUB_WORKSPACE/documents\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_data_root=\'$GITHUB_WORKSPACE/htdocs/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
@@ -123,10 +123,14 @@ jobs:
       run: |
         echo "Create documents directory and set permissions"
         # and admin/temp subdirectory needed for unit tests
-        mkdir -p $GITHUB_WORKSPACE/documents/admin/temp
-        sudo chmod -R a+rwx $GITHUB_WORKSPACE/documents
-        echo "***** First line of dolibarr.log" > $GITHUB_WORKSPACE/documents/dolibarr.log
+        mkdir -p $GITHUB_WORKSPACE/htdocs/documents/admin/temp
+        sudo chmod -R a+rwx $GITHUB_WORKSPACE/htdocs/documents
+        echo "***** First line of dolibarr.log" > $GITHUB_WORKSPACE/htdocs/documents/dolibarr.log
         echo
+  
+    - name: Copy app into /var/www/html
+      run: | 
+        cp -r $GITHUB_WORKSPACE/htdocs/ /var/www/html
   
     - name: Setup Apache
       run: |
@@ -144,6 +148,7 @@ jobs:
         sudo cat /etc/apache2/sites-available/000-default.conf
         a2ensite 000-default
         ls /etc/apache2/sites-enabled
+
         sudo adduser $(whoami) www-data
         sudo adduser $(whoami) root
         sudo adduser root www-data
@@ -157,9 +162,11 @@ jobs:
         ls -l /home/runner
         ls -l /home/runner/work
         ls -l /var/www
+        set +e
         curl -I localhost
         curl -I 127.0.0.1
         wget -O - http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
+        cat $GITHUB_WORKSPACE/test.html
 
     - name: Chech Apache availability
       run: |
