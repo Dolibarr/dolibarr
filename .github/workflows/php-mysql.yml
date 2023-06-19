@@ -273,6 +273,7 @@ jobs:
         # Ensure we catch errors. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
         set -e
         cd /var/www/html
+        sudo chmod -R a+rwx /var/www/html/documents
         includes/bin/phpunit -d memory_limit=-1 -c /var/www/test/phpunit/phpunittest.xml /var/www/test/phpunit/AllTests.php
         phpunitresult=$?
         echo "Phpunit return code = $phpunitresult"
