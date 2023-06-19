@@ -130,7 +130,7 @@ jobs:
   
     - name: Copy app into /var/www/html
       run: | 
-        sudo cp -r $GITHUB_WORKSPACE/htdocs/ /var/www/html
+        sudo cp -r $GITHUB_WORKSPACE/htdocs/. /var/www/html
   
     - name: Setup Apache
       run: |
