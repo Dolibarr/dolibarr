@@ -78,8 +78,8 @@ jobs:
         echo "Setting up Dolibarr $CONF_FILE"
         echo '<?php' > $CONF_FILE
         echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_document_root=\'/var/www/html/htdocs\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_data_root=\'/var/www/html/htdocs/documents\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_document_root=\'/var/www/html\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_data_root=\'/var/www/html/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
@@ -110,7 +110,7 @@ jobs:
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_main_data_root=\'/var/www/html/htdocs\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_main_data_root=\'/var/www/html\'';' >> $INSTALL_FORCED_FILE
         cat $INSTALL_FORCED_FILE
     - name: Create document directory
       run: |
