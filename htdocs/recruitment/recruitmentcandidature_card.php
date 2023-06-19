@@ -579,7 +579,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Button to convert into a user
 			if ($object->status == $object::STATUS_CONTRACT_SIGNED) {
-				if ($user->rights->user->user->creer) {
+				if ($user->hasRight('user', 'user', 'creer')) {
 					$useralreadyexists = $object->fk_user;
 					if (empty($useralreadyexists)) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';

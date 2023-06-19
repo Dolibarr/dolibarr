@@ -666,7 +666,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// Check create user permission
 	$createuserok = 1;
 	if (GETPOST('action', 'aZ09') == 'confirm_create_user' && GETPOST("confirm", 'aZ09') == 'yes') {
-		if (!$user->rights->user->user->creer) {
+		if (!$user->hasRight('user', 'user', 'creer')) {
 			$createuserok = 0;
 		}
 
