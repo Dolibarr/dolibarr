@@ -121,8 +121,9 @@ jobs:
         echo "Create documents directory and set permissions"
         # and admin/temp subdirectory needed for unit tests
         sudo mkdir -p /var/www/html/documents/admin/temp
-        sudo echo "***** First line of dolibarr.log" > /var/www/html/documents/dolibarr.log
         sudo chmod -R a+rwx /var/www/html/documents
+        sudo echo "***** First line of dolibarr.log" > /var/www/html/documents/dolibarr.log
+        sudo chmod a+rwx /var/www/html/documents/dolibarr.log
   
     - name: Copy app into /var/www/html
       run: | 
