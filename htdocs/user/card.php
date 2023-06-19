@@ -1092,7 +1092,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $valuetoshow;
 	print '</td></tr>';
 
-	if (!empty($conf->api->enabled)) {
+	if (isModEnabled('api')) {
 		// API key
 		//$generated_password = getRandomPassword(false);
 		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
@@ -1890,7 +1890,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
+			if (isModEnabled('api') && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {

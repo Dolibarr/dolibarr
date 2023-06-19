@@ -60,7 +60,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->accounting->mouvements->lire);
+		$this->hidden = !$user->hasRight('accounting', 'mouvements', 'lire');
 	}
 
 	/**

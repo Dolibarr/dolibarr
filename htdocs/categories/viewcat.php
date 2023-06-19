@@ -911,7 +911,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 	if ($user->hasRight("banque", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$permission = $user->rights->banque->creer;
+		$permission = $user->hasRight('banque', 'creer');
 
 		$accounts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($accounts < 0) {
@@ -1127,7 +1127,7 @@ if ($type == Categorie::TYPE_USER) {
 
 					// Link to delete from category
 					print '<td class="right">';
-					if ($user->rights->user->user->creer) {
+					if ($user->hasRight('user', 'user', 'creer')) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$type."&action=unlink&token=".newToken()."&removeelem=".$userentry->id."'>";
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
