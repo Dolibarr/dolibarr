@@ -4411,11 +4411,14 @@ function migrate_user_photospath()
 		$user = $fuser; // To avoid error during migration
 	}
 
-	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user"; // Get list of all users
+	$sql = "SELECT rowid as uid, entity from ".MAIN_DB_PREFIX."user"; // Get list of all users
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			$fuser->fetch($obj->uid);
+			//$fuser->fetch($obj->uid);
+			$fuser->id = $obj->uid;
+			$fuser->entity = $obj->entity;
+
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
 			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
 			if ($entity > 1) {
@@ -4485,7 +4488,7 @@ function migrate_user_photospath()
  */
 function migrate_user_photospath2()
 {
-	global $conf, $db, $langs, $user;
+	global $db, $langs, $user;
 
 	print '<tr><td colspan="4">';
 

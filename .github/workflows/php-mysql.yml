@@ -187,7 +187,7 @@ jobs:
     - name: Upgrading Dolibarr
       run: |
         # Ensure we catch errors. Set this to +e if you want to go to the end to see log files.
-        set +e
+        set -e
         cd /var/www/html/install
         php upgrade.php 3.5.0 3.6.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade350360.log
         php upgrade2.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-2.log
