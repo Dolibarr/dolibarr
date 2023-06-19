@@ -5213,7 +5213,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		if (function_exists('top_httphead')) {	// In CLI context, the method does not exists
 			top_httphead();
 		}
-		http_response_code(500);
+		//http_response_code(500);
+		http_response_code(202);
 	}
 
 	if (empty($dolibarr_main_prod)) {
