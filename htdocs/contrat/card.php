@@ -98,7 +98,7 @@ $extralabelslines = $extrafields->fetch_name_optionals_label($object->table_elem
 
 $permissionnote = $user->hasRight('contrat', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('contrat', 'creer'); // Used by the include of actions_dellink.inc.php
-$permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->statut == $object::STATUS_DRAFT) || $user->rights->contrat->supprimer;
+$permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->statut == $object::STATUS_DRAFT) || $user->hasRight('contrat', 'supprimer');
 $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontoedit = $permissiontoadd;
 $error = 0;
@@ -865,7 +865,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer) {
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('contrat', 'supprimer')) {
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: list.php?restore_lastsearch_values=1");

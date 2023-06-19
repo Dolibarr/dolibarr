@@ -179,7 +179,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $permissiontoread = $user->hasRight('contrat', 'lire');
 $permissiontoadd = $user->hasRight('contrat', 'creer');
-$permissiontodelete = $user->rights->contrat->supprimer;
+$permissiontodelete = $user->hasRight('contrat', 'supprimer');
 
 
 /*
