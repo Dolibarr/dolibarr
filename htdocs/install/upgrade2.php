@@ -4500,11 +4500,15 @@ function migrate_user_photospath2()
 		$user = $fuser; // To avoid error during migration
 	}
 
-	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user"; // Get list of all users
+	$sql = "SELECT rowid as uid, entity, photo from ".MAIN_DB_PREFIX."user"; // Get list of all users
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			$fuser->fetch($obj->uid);
+			//$fuser->fetch($obj->uid);
+			$fuser->id = $obj->uid;
+			$fuser->entity = $obj->entity;
+			$fuser->photo = $obj->photo;
+
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
 			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
 			if ($entity > 1) {
