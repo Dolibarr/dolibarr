@@ -165,7 +165,7 @@ if ($action == 'setcost_price') {
 	}
 }
 
-if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)) {
+if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'crerr')) {
 	$seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 	$desiredstock = GETPOST('desiredstock');
 
@@ -204,7 +204,7 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 	exit;
 }
 
-if ($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->creer)) {
+if ($action == 'delete_productstockwarehouse' && $user->hasRight('produit', 'crerr')) {
 	$pse = new ProductStockEntrepot($db);
 
 	$pse->fetch(GETPOST('fk_productstockwarehouse', 'int'));
@@ -216,7 +216,7 @@ if ($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->
 }
 
 // Set stock limit
-if ($action == 'setseuil_stock_alerte' && !empty($user->rights->produit->creer)) {
+if ($action == 'setseuil_stock_alerte' && $user->hasRight('produit', 'crerr')) {
 	$object = new Product($db);
 	$result = $object->fetch($id);
 	$object->seuil_stock_alerte = $stocklimit;
@@ -230,7 +230,7 @@ if ($action == 'setseuil_stock_alerte' && !empty($user->rights->produit->creer))
 }
 
 // Set desired stock
-if ($action == 'setdesiredstock' && !empty($user->rights->produit->creer)) {
+if ($action == 'setdesiredstock' && $user->hasRight('produit', 'crerr')) {
 	$object = new Product($db);
 	$result = $object->fetch($id);
 	$object->desiredstock = $desiredstock;
@@ -1263,14 +1263,14 @@ if (!$variants) {
 		print '<br><br>';
 		print load_fiche_titre($langs->trans('AddNewProductStockWarehouse'));
 
-		if (!empty($user->rights->produit->creer)) {
+		if ($user->hasRight('produit', 'crerr')) {
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="addlimitstockwarehouse">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 		print '<table class="noborder centpercent">';
-		if (!empty($user->rights->produit->creer)) {
+		if ($user->hasRight('produit', 'crerr')) {
 			print '<tr class="liste_titre"><td>'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
 			print '<td class="right"><input name="seuil_stock_alerte" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
 			print '<td class="right"><input name="desiredstock" type="text" placeholder="'.$langs->trans("DesiredStock").'" /></td>';
@@ -1294,7 +1294,7 @@ if (!$variants) {
 				print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
 				print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
 				print '<td class="right">'.$line['desiredstock'].'</td>';
-				if (!empty($user->rights->produit->creer)) {
+				if ($user->hasRight('produit', 'crerr')) {
 					print '<td class="right"><a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse&token='.newToken().'">'.img_delete().'</a></td>';
 				}
 				print '</tr>';
@@ -1303,7 +1303,7 @@ if (!$variants) {
 
 		print "</table>";
 
-		if (!empty($user->rights->produit->creer)) {
+		if ($user->hasRight('produit', 'crerr')) {
 			print '</form>';
 		}
 	}
