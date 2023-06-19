@@ -13,8 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
-
+  github_ci_mysql:
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -179,10 +178,8 @@ jobs:
         sudo chown -R www-data:www-data /etc/apache2/sites-available/
         sudo chmod -R 777 /etc/apache2/sites-available/
         sudo chown -R www-data:www-data /var/www/html/
-        sudo chmod -R 777 /home/runner/work/
-        ls -l /home/runner
-        ls -l /home/runner/work
-        ls -l /var/www
+        #sudo chmod -R 777 /home/runner/work/
+        #ls -l /home/runner/work
         ls -l /var/www/html
         ls -l /var/www/html/conf
         ls -l /var/www/html/install/
@@ -312,4 +309,20 @@ jobs:
         phpunitresult=$?
         echo "Phpunit return code = $phpunitresult"
         set +e     
+        
+    - name: Code quality check - Lint
+      run: |
+        htdocs/includes/bin/parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+          --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+          --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+          --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+          --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
+
+    - name: Code quality check - phpcs
+      run: |
+         htdocs/includes/bin/phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;     
+
+    - name: Code quality check - var-dump-check
+      run: |
+        htdocs/includes/bin/var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
 
