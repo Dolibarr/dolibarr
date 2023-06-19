@@ -1,4 +1,4 @@
-name: Test Coding Style
+name: GitHub CI Coding Style
 
 on:
   push:
@@ -51,10 +51,6 @@ jobs:
     - name: Version information
       run: |
         composer -V
-        php composer -V
-        # Check PHP
-        echo "PHP version"
-        php -i | head -
         # Check Parallel-lint version
         echo "Parallel-lint version"
         which parallel-lint

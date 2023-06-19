@@ -1,4 +1,4 @@
-name: Test CI
+name: GitHub CI PHPUnit Mysql
 
 on:
   push:
@@ -29,11 +29,38 @@ jobs:
       run: |
         php -i | head -
 
-    - name: Version
-      run: composer -V
-
     - name: Set vendor-dir
       run: composer -n config -g vendor-dir htdocs/includes
+
+    - name: Version information
+      run: |
+        composer -V
+        # Check Parallel-lint version
+        echo "Parallel-lint version"
+        which parallel-lint
+        parallel-lint -V
+        # Check PHP CodeSniffer version
+        echo "PHPCS version"
+        which phpcs
+        phpcs --version | head -
+        phpcs -i | head -
+        # Check PHP Vardump check version
+        echo "PHP Vardump check version"
+        which var_dump_check
+        var_dump_check --version
+        # Check PHPUnit version
+        echo "PHPUnit version"
+        which phpunit
+        phpunit --version | head -
+        # Check Apache version
+        echo "Apache version"
+        apache2 -v | head -
+        # Check Database
+        echo "Database version"
+        mysql --version | head -
+        psql --version
+        echo "Check pgloader version"
+        pgloader --version
 
     - name: Create database
       run: |
@@ -78,7 +105,7 @@ jobs:
         echo "***** First line of dolibarr.log" > $GITHUB_WORKSPACE/documents/dolibarr.log
         echo
   
-    - name: Install Apache
+    - name: Setup Apache
       run: |
         echo "Setting up Apache + FPM"
         # setup link for php legacy
