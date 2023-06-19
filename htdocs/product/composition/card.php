@@ -76,8 +76,8 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
@@ -90,7 +90,7 @@ if ($cancel) {
 }
 
 // Add subproduct to product
-if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 	$error = 0;
 	$maxprod = GETPOST("max_prod", 'int');
 
@@ -225,7 +225,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Product card
 	 */
-	if ($user->rights->produit->lire || $user->rights->service->lire) {
+	if ($user->rights->produit->lire || $user->hasRight('service', 'lire')) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
@@ -460,7 +460,7 @@ if ($id > 0 || !empty($ref)) {
 					}
 
 					// Qty + IncDec
-					if ($user->rights->produit->creer || $user->rights->service->creer) {
+					if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" class="right" /></td>';
 						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec'] == 1 ? 'checked' : '').' /></td>';
 					} else {
@@ -567,7 +567,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td></td>';
 
 			print '<td class="center">';
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
+			if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			}
 			print '</td>';
@@ -588,7 +588,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		/*if($user->rights->produit->creer || $user->rights->service->creer) {
+		/*if($user->rights->produit->creer || $user->hasRight('service', 'creer')) {
 			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		}*/
 
@@ -598,7 +598,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		// Form with product to add
-		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->rights->produit->creer || $user->rights->service->creer)) {
+		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 			print '<br>';
 
 			$rowspan = 1;

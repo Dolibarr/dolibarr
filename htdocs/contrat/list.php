@@ -177,8 +177,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->contrat->lire;
-$permissiontoadd = $user->rights->contrat->creer;
+$permissiontoread = $user->hasRight('contrat', 'lire');
+$permissiontoadd = $user->hasRight('contrat', 'creer');
 $permissiontodelete = $user->rights->contrat->supprimer;
 
 
