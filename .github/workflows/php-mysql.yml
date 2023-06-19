@@ -102,10 +102,10 @@ jobs:
         #echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_databaselogin=\'travis\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databaselogin=\'root\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_databasepass=\'password\'';' >> $INSTALL_FORCED_FILE
         # For mysql
-        echo '$'force_install_port=\'3306\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_port=\'32574\'';' >> $INSTALL_FORCED_FILE
         #echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
@@ -149,8 +149,8 @@ jobs:
         sudo chmod -R 777 /etc/apache2/sites-available/
         sudo chown -R www-data:www-data /var/www/html/
         sudo chmod -R 777 /home/runner/work/
-        sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
-        sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
+        #sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
+        #sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
         ls -l /home/runner
         ls -l /home/runner/work
         ls -l /var/www
@@ -170,7 +170,7 @@ jobs:
         #wget -O - --debug http://127.0.0.1/robots.txt
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
         wget -O - --debug http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
-        head -n 100 $GITHUB_WORKSPACE/test.html
+        head -n 200 $GITHUB_WORKSPACE/test.html
         
         echo Logs are...
         #sudo cat /tmp/install.log
