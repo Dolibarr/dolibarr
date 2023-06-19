@@ -195,7 +195,7 @@ class CActionComm
 					}
 
 					if ($qualified && !empty($obj->module)) {
-						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->rights->facture->lire);
+						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->hasRight('facture', 'lire'));
 						$qualified = 0;
 						// Special cases
 						if ($obj->module == 'invoice' && isModEnabled('facture') && $user->hasRight('facture', 'lire')) {

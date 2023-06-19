@@ -467,7 +467,7 @@ if ($result || !($id > 0)) {
 			if ($graphfiles == 'order' && empty($user->rights->commande->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'invoices' && empty($user->rights->facture->lire)) {
+			if ($graphfiles == 'invoices' && !$user->hasRight('facture', 'lire')) {
 				continue;
 			}
 			if ($graphfiles == 'proposals_suppliers' && empty($user->rights->supplier_proposal->lire)) {

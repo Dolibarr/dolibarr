@@ -421,7 +421,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->facture->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 				throw new RestException(401);
 			}
 

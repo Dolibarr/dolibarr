@@ -193,7 +193,7 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->propal->lire && !DolibarrApiAccess::$user->rights->commande->lire && !DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->rights->propal->lire && !DolibarrApiAccess::$user->rights->commande->lire && !DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -1249,7 +1249,7 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->propal->lire && !DolibarrApiAccess::$user->rights->commande->lire && !DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->rights->propal->lire && !DolibarrApiAccess::$user->rights->commande->lire && !DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 
