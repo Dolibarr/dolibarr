@@ -156,9 +156,11 @@ jobs:
         sudo chown -R www-data:www-data /etc/apache2/sites-available/
         sudo chmod -R 777 /etc/apache2/sites-available/
         sudo chown -R www-data:www-data /var/www/html/
-        sudo chmod -R 777 /home/runner/work/
-        sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
-        sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
+
+        #sudo chmod -R 777 /home/runner/work/
+        #sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
+        #sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
+
         sudo service apache2 restart
         ls -l /home/runner
         ls -l /home/runner/work
