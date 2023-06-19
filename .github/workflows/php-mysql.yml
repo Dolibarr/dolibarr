@@ -137,6 +137,7 @@ jobs:
         sudo ln -fs /var/www/html /var/www/htdocs
         sudo cp -r $GITHUB_WORKSPACE/test/. /var/www/test
         sudo cp -r $GITHUB_WORKSPACE/dev/. /var/www/dev
+        sudo cp -r $GITHUB_WORKSPACE/scripts/. /var/www/scripts
 
     - name: Setup Apache
       run: |
@@ -160,8 +161,6 @@ jobs:
         sudo chmod -R 777 /etc/apache2/sites-available/
         sudo chown -R www-data:www-data /var/www/html/
         sudo chmod -R 777 /home/runner/work/
-        #sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
-        #sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
         ls -l /home/runner
         ls -l /home/runner/work
         ls -l /var/www
