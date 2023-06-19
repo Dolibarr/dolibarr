@@ -2,9 +2,8 @@ name: GitHub CI Coding Style
 
 on:
   push:
-    branches: [ "develop" ]
   pull_request:
-    branches: [ "develop" ]
+    types: [opened]
 
 permissions:
   contents: read
