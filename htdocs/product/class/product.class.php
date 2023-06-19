@@ -15,7 +15,8 @@
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
- *
+ * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -4250,7 +4251,7 @@ class Product extends CommonObject
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @return int                < 0 if KO, > 0 if OK
 	 */
-	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
 		global $user;
 
@@ -4293,7 +4294,6 @@ class Product extends CommonObject
 					return -1;
 				} else {
 					if (!$notrigger) {
-
 						// Call trigger
 						$result = $this->call_trigger('PRODUCT_SUBPRODUCT_ADD', $user);
 						if ($result < 0) {
@@ -4323,7 +4323,7 @@ class Product extends CommonObject
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @return int                < 0 if KO, > 0 if OK
 	 */
-	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
 		global $user;
 
@@ -4351,14 +4351,16 @@ class Product extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		} else {
-			// Call trigger
-			$result = $this->call_trigger('PRODUCT_SUBPRODUCT_UPDATE', $user);
-			if ($result < 0) {
-				$this->error = $this->db->lasterror();
-				dol_syslog(get_class($this).'::updateSubproduct error='.$this->error, LOG_ERR);
-				return -1;
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('PRODUCT_SUBPRODUCT_UPDATE', $user);
+				if ($result < 0) {
+					$this->error = $this->db->lasterror();
+					dol_syslog(get_class($this).'::updateSubproduct error='.$this->error, LOG_ERR);
+					return -1;
+				}
+				// End call triggers
 			}
-			// End call triggers
 
 			return 1;
 		}
