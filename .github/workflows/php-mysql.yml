@@ -139,9 +139,9 @@ jobs:
         a2query -s
         a2query -m
         ls /etc/apache2/sites-available
-        sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
-        sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
-        sudo cat /etc/apache2/sites-available/000-default.conf
+        #sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
+        #sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
+        #sudo cat /etc/apache2/sites-available/000-default.conf
         a2ensite 000-default
         ls /etc/apache2/sites-enabled
         sudo adduser $(whoami) www-data
@@ -150,9 +150,14 @@ jobs:
         sudo chown -R www-data:www-data /etc/apache2/sites-available/
         sudo chmod -R 777 /etc/apache2/sites-available/
         sudo chown -R www-data:www-data /var/www/html/
+        sudo chmod -R 777 /home/runner/work/
         sudo chmod -R 777 $GITHUB_WORKSPACE/htdocs/
         sudo chown -R www-data:www-data $GITHUB_WORKSPACE/htdocs/
         sudo service apache2 restart
+        ls -l /home/runner
+        ls -l /var/www
+        curl -I localhost
+        curl -I 127.0.0.1
 
     - name: Chech Apache availability
       run: |
