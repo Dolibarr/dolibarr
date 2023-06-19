@@ -2547,7 +2547,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
 				} else {
-					print $object->state_label;
+					print $object->state;
 				}
 				print '</td></tr>';
 			}

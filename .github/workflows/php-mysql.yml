@@ -6,8 +6,8 @@ on:
       - develop
       - 1*
       - 2*
-  #pull_request:
-  #  branches: [ "develop" ]
+  pull_request:
+    types: [opened]
 
 permissions:
   contents: read
@@ -27,29 +27,49 @@ jobs:
     steps:
     # git clone dolibarr into GITHUB_WORKSPACE = /home/runner/work/dolibarr/dolibarr
     - uses: actions/checkout@v3
-
+      with:
+        fetch-depth: 1
+        
     - name: Version PHP
       run: |
         php -i | head -
+
     - name: Set vendor-dir
       run: composer -n config -g vendor-dir htdocs/includes
 
     - name: Install packages for PHP 8.1
       run: |
-        composer -n require --ignore-platform-reqs phpunit/phpunit ^8
+        sudo add-apt-repository -y ppa:ondrej/php
+        sudo apt-get update
         sudo apt-get install -y pgloader memcached
+        sudo apt install apache2 php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring php-intl libapache2-mod-php
+
+        composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
+          php-parallel-lint/php-parallel-lint ^1.2 \
+          php-parallel-lint/php-console-highlighter ^0 \
+          php-parallel-lint/php-var-dump-check ~0.4 \
+          squizlabs/php_codesniffer ^3
         sudo rm -fr htdocs/includes/phpunit/php-code-coverage/src/Report/Html
 
     - name: Adding path of binaries tools installed by composer to the PATH
       run: | 
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
-        #ls $GITHUB_WORKSPACE/vendor
-        #ls $GITHUB_WORKSPACE/htdocs/includes/bin
+        ls $GITHUB_WORKSPACE/htdocs/includes/bin
 
     - name: Version information
       run: |
         composer -V
+        # Check Parallel-lint version
+        echo "Parallel-lint version"
+        htdocs/includes/bin/parallel-lint -V
+        # Check PHP CodeSniffer version
+        echo "PHPCS version"
+        htdocs/includes/bin/phpcs --version | head -
+        htdocs/includes/bin/phpcs -i | head -
+        # Check PHP Vardump check version
+        echo "PHP Vardump check version"
+        htdocs/includes/bin/var-dump-check --version
         # Check PHPUnit version
         echo "PHPUnit version"
         htdocs/includes/bin/phpunit --version | head -
@@ -144,7 +164,6 @@ jobs:
         pwd
         whoami
         # install apache web server
-        sudo apt install apache2 php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring php-intl libapache2-mod-php
         a2query -c
         a2query -s
         a2query -m
