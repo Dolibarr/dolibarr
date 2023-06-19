@@ -83,8 +83,8 @@ jobs:
         echo "Setting up Dolibarr $CONF_FILE"
         echo '<?php' > $CONF_FILE
         echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_document_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_data_root=\'$GITHUB_WORKSPACE/htdocs/documents\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_document_root=\'/var/www/html\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_data_root=\'/var/www/html/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
@@ -116,7 +116,7 @@ jobs:
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_main_data_root=\'$GITHUB_WORKSPACE/htdocs\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_main_data_root=\'/var/www/html\'';' >> $INSTALL_FORCED_FILE
         cat $INSTALL_FORCED_FILE
 
     - name: Create document directory
@@ -131,6 +131,7 @@ jobs:
     - name: Copy app into /var/www/html
       run: | 
         sudo cp -r $GITHUB_WORKSPACE/htdocs/. /var/www/html
+        mv /var/www/html/index.html /var/www/html/index.disabled.html
   
     - name: Setup Apache
       run: |
@@ -163,6 +164,8 @@ jobs:
         ls -l /home/runner/work
         ls -l /var/www
         ls -l /var/www/html
+        ls -l /var/www/html/conf
+        ls -l /var/www/html/install/
         set +e
         curl -I localhost
 
@@ -172,17 +175,15 @@ jobs:
         # Ensure we stop on error with set -e
         set +e
         ls /var/log/apache2
-        cat /var/log/apache2/access.log
-        cat /var/log/apache2/error.log
-        cat /var/log/apache2/other_vhosts_access.log
-        wget -O - http://127.0.0.1/robots.txt
+
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
-        wget -O - http://127.0.0.1/index.php > $GITHUB_WORKSPACE/test.html 2>&1
+        wget -O - http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
         head $GITHUB_WORKSPACE/test.html
         
         echo Logs are...
         sudo cat /var/log/apache2/access.log
         sudo cat /var/log/apache2/error.log
+        cat /var/log/apache2/other_vhosts_access.log
         set +e
         echo
 
