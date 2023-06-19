@@ -46,7 +46,7 @@ jobs:
         echo $PATH
         #ls $GITHUB_WORKSPACE/vendor
         #ls $GITHUB_WORKSPACE/htdocs/includes/bin
-        
+
     - name: Version information
       run: |
         composer -V
@@ -78,6 +78,7 @@ jobs:
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';" 
     - name: Generate Dolibarr conf file
       run: |
         export CONF_FILE=$GITHUB_WORKSPACE/htdocs/conf/conf.php
