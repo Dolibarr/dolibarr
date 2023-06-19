@@ -41,7 +41,7 @@ jobs:
         sudo add-apt-repository -y ppa:ondrej/php
         sudo apt-get update
         sudo apt-get install -y pgloader memcached
-        sudo apt install apache2 php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring php-intl libapache2-mod-php
+        sudo apt install apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-ldap php8.1-xml php8.1-mbstring php8.1-intl libapache2-mod-php8.1
 
         composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
           php-parallel-lint/php-parallel-lint ^1.2 \
