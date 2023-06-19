@@ -258,6 +258,7 @@ jobs:
         php step5.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-3.log
         
     - name: Result of migration scripts
+      if: always()
       run: |
         ls -alrt $GITHUB_WORKSPACE/
         echo
