@@ -1507,6 +1507,11 @@ if ($resql)
             if (!$i) $totalarray['nbfield']++;
     	}
 
+        // Fields from hook
+        $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
+        $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp);    // Note that $action and $objecttmpect may have been modified by hook
+        print $hookmanager->resPrint;
+
     	// Action edit/delete
     	print '<td class="nowraponall" align="center">';
     	// Transaction reconciliated or edit link
