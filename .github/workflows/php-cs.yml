@@ -66,7 +66,7 @@ jobs:
         htdocs/includes/bin/phpcs -i | head -
         # Check PHP Vardump check version
         echo "PHP Vardump check version"
-        htdocs/includes/bin/var_dump_check --version
+        htdocs/includes/bin/var-dump-check --version
         # Check PHPUnit version
         echo "PHPUnit version"
         htdocs/includes/bin/phpunit --version | head -
