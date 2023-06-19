@@ -134,7 +134,7 @@ jobs:
         # setup link for php legacy
         #sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
         # install apache web server
-        sudo apt-get install apache2 php-fpm php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring php-intl libapache2-mod-php
+        sudo apt-get install apache2 php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring php-intl libapache2-mod-php
         # enable php-fpm
         #sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
         #sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
@@ -160,9 +160,11 @@ jobs:
         # Ensure we stop on error with set -e
         set +e
         ls /var/log/apache2
+        sudo cat /var/log/apache2/access.log
+        sudo cat /var/log/apache2/error.log
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
-        wget -O - http://127.0.0.1 > test.html
-        head test.html
+        wget -O - http://127.0.0.1 > $GITHUB_WORKSPACE/test.html
+        head $GITHUB_WORKSPACE/test.html
         sudo cat /var/log/apache2/access.log
         sudo cat /var/log/apache2/error.log
         set +e
