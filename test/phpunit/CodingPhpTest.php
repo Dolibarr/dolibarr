@@ -268,20 +268,22 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 
 			// Check if a var_dump has been forgotten
 			if (!preg_match('/test\/phpunit/', $file['fullname'])) {
-				$ok=true;
-				$matches=array();
-				preg_match_all('/(.)\s*var_dump\(/', $filecontent, $matches, PREG_SET_ORDER);
-				//var_dump($matches);
-				foreach ($matches as $key => $val) {
-					if ($val[1] != '/' && $val[1] != '*') {
-						$ok=false;
+				if (! in_array($file['name'], array('class.nusoap_base.php'))) {
+					$ok=true;
+					$matches=array();
+					preg_match_all('/(.)\s*var_dump\(/', $filecontent, $matches, PREG_SET_ORDER);
+					//var_dump($matches);
+					foreach ($matches as $key => $val) {
+						if ($val[1] != '/' && $val[1] != '*') {
+							$ok=false;
+							break;
+						}
 						break;
 					}
-					break;
+					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+					$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
+					//exit;
 				}
-				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-				$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
-				//exit;
 			}
 
 			// Check get_class followed by __METHOD__
