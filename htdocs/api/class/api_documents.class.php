@@ -349,7 +349,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->propal->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -377,7 +377,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->commande->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 				throw new RestException(401);
 			}
 

@@ -338,7 +338,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
 		if (!DolibarrApiAccess::$user->rights->facture->creer) {
