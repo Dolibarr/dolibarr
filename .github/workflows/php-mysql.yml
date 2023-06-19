@@ -260,7 +260,7 @@ jobs:
       run: |
         ls -alrt $GITHUB_WORKSPACE/
         echo Show content of last file
-        cat "$(ls -rt | tail -n1)"
+        cat "$(ls -rt $GITHUB_WORKSPACE/ | tail -n1)"
 
     - name: Enabling new modules
       run: | 
