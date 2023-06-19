@@ -38,12 +38,15 @@ jobs:
       run: |
         composer -n require --ignore-platform-reqs phpunit/phpunit ^8
         sudo apt-get install -y pgloader memcached
+        rm -fr htdocs/includes/phpunit/php-code-coverage
+        
     - name: Adding path of binaries tools installed by composer to the PATH
       run: | 
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
         #ls $GITHUB_WORKSPACE/vendor
         #ls $GITHUB_WORKSPACE/htdocs/includes/bin
+        
     - name: Version information
       run: |
         composer -V
@@ -59,6 +62,7 @@ jobs:
         psql --version
         echo "Check pgloader version"
         pgloader --version
+        
     - name: Create database
       run: |
         pwd
