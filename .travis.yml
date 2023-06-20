@@ -50,11 +50,15 @@ jobs:
     - stage: PHP 7.0-8.1
       if: type = push
       php: '7.1'
-      env: DB=postgresql
+      env: 
+      - DB=postgresql
+      - TRAVIS_PHP_VERSION=7.1
     - stage: PHP 7.0-8.1
       if: type = pull_request OR type = push
       php: '8.1'
-      env: DB=mysql
+      env: 
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=8.1
     #- stage: PHP Dev
     #  if: type = push AND branch = developdisabled
     #  php: '8.2'
@@ -87,6 +91,7 @@ install:
 - |
   sudo update-alternatives --set php /usr/bin/php8.1 
   php -i | head -
+  echo $TRAVIS_PHP_VERSION
 
 - |
   echo "Updating Composer config"
@@ -96,7 +101,7 @@ install:
 
 - |
   echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
-  echo "(version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
+  echo "(composer version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
     composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7.5 \
@@ -122,6 +127,7 @@ install:
                                                  php-parallel-lint/php-var-dump-check ~0.4 \
                                                  squizlabs/php_codesniffer ^3
   fi
+
   # Remove non expected files
   rm -fr /home/travis/build/Dolibarr/dolibarr/htdocs/includes/phpunit/php-code-coverage/src/Report/Html/Renderer/Template/js
   echo
@@ -141,20 +147,6 @@ before_script:
     echo Current dir is `pwd`
     echo Home dir is `echo ~`
     echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
-
-  - |
-    composer -V
-    #echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
-    #phpenv config-add /tmp/xdebug.ini
-    #echo
-
-  - |
-    echo "Setting up PHP"
-    echo
-    echo "Set timezone"
-    echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
-    phpenv rehash
-    echo
 
   - |
     echo "Versions information"
@@ -264,7 +256,7 @@ before_script:
   - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
   #- sudo chown -R travis:travis /var/lib/apache2/fastcgi
   # start php-fpm
-  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+  #- ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
   # configure apache virtual hosts
   - sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
