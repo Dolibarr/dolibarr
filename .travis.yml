@@ -81,26 +81,36 @@ before_install:
   sudo rm -fr /root/.phpenv
   sudo add-apt-repository -y ppa:ondrej/php
   sudo apt-get update
+  echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
 
 - |
-  echo Install packages for PHP 8.1
+  echo Install packages for PHP
   sudo apt-get install -y pgloader memcached
-  sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
+  	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
+  	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
+  fi
 
 install:
 - |
-  sudo update-alternatives --set php /usr/bin/php8.1 
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
+    sudo update-alternatives --set php /usr/bin/php7.1
+  fi 
+  if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
+    sudo update-alternatives --set php /usr/bin/php8.1
+  fi 
   php -i | head -
-  echo $TRAVIS_PHP_VERSION
-
+  
 - |
   echo "Updating Composer config"
-  cd ~
   curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
   HASH=`curl -sS https://composer.github.io/installer.sig`
   echo $HASH
   php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
   sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  sudo chmod -R a+rwx /usr/local/bin/composer
   composer -V
   composer -n config -g vendor-dir htdocs/includes
   echo
@@ -109,7 +119,7 @@ install:
   echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
   echo "(composer version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
-    composer self-update 2.2.18
+    sudo composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7.5 \
                         php-parallel-lint/php-parallel-lint ^1 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -117,7 +127,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
-    #composer self-update 2.2.18
+    sudo composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7.5 \
                         php-parallel-lint/php-parallel-lint ^1.2 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -126,7 +136,7 @@ install:
   fi
   # phpunit 9 is required for php 8
   if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-      #composer self-update 2.4.4
+      sudo composer self-update 2.4.4
       composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
                                                  php-parallel-lint/php-console-highlighter ^0 \
