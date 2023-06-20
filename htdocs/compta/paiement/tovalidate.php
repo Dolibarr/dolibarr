@@ -53,7 +53,7 @@ if (!$sortfield) {
 }
 
 // Security check
-if (empty($user->rights->facture->lire)) {
+if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 

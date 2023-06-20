@@ -54,7 +54,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->facture->lire);
+		$this->hidden = !$user->hasRight('facture', 'lire');
 	}
 
 	/**

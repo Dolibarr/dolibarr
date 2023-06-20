@@ -185,7 +185,7 @@ $elementList['user'] = img_picto('', 'user', 'class="pictofixedwidth"').dol_esca
 if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
 	$elementList['member'] = img_picto('', 'object_member', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToMember'));
 }
-if (isModEnabled('recruitment') && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
+if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
 }
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
@@ -221,7 +221,7 @@ if (isModEnabled("supplier_order") && ($user->hasRight('fournisseur', 'commande'
 if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 	$elementList['invoice_supplier_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
 }
-if (isModEnabled('contrat') && !empty($user->rights->contrat->lire)) {
+if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 	$elementList['contract'] = img_picto('', 'contract', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendContract'));
 }
 if (isModEnabled('ticket') && !empty($user->rights->ticket->read)) {

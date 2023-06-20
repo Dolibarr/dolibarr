@@ -380,7 +380,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function createUser($id, $request_data = null)
 	{
-		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
+		//if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 		//throw new RestException(401);
 		//}
 
@@ -394,7 +394,7 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
-		if (!DolibarrApiAccess::$user->rights->user->user->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 			throw new RestException(401, 'No permission to create user');
 		}
 

@@ -58,8 +58,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * Return an array with Expense Report informations
 	 *
-	 * @param       int         $id         ID of Expense Report
-	 * @return 	    array|mixed             Data without useless information
+	 * @param   int         $id         ID of Expense Report
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */

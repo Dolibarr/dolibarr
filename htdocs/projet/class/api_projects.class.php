@@ -58,8 +58,8 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project informations
 	 *
-	 * @param       int         $id         ID of project
-	 * @return 	array|mixed data without useless information
+	 * @param   int         $id         ID of project
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */

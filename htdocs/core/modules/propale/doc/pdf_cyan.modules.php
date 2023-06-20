@@ -1656,7 +1656,8 @@ class pdf_cyan extends ModelePDFPropales
 			$displaydate = "day";
 		}
 
-		$posy += 4;
+		//$posy += 4;
+		$posy = $pdf->getY();
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, $displaydate, false, $outputlangs, true), '', 'R');

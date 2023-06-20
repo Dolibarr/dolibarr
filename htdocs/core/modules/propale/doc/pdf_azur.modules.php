@@ -1591,7 +1591,8 @@ class pdf_azur extends ModelePDFPropales
 			$displaydate = "day";
 		}
 
-		$posy += 4;
+		//$posy += 4;
+		$posy = $pdf->getY();
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($object->date, $displaydate, false, $outputlangs, true), '', 'R');
