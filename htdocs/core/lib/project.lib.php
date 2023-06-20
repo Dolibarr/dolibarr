@@ -350,7 +350,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/messaging.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -834,14 +834,18 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Progress calculated (Note: ->duration is time spent)
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
-					print '<td class="right">';
+					$s = ''; $shtml = '';
 					if ($lines[$i]->planned_workload || $lines[$i]->duration) {
 						if ($lines[$i]->planned_workload) {
-							print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload, 2).' %';
+							$s = round(100 * $lines[$i]->duration / $lines[$i]->planned_workload, 2).' %';
+							$shtml = $s;
 						} else {
-							print '<span class="opacitymedium">'.$langs->trans('WorkloadNotDefined').'</span>';
+							$s = $langs->trans('WorkloadNotDefined');
+							$shtml = '<span class="opacitymedium">'.$s.'</span>';
 						}
 					}
+					print '<td class="right tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+					print $shtml;
 					print '</td>';
 				}
 
@@ -904,7 +908,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					print '<td class="center">';
 					$ifisrt = 1;
 					foreach (array('internal', 'external') as $source) {
-						$tab = $lines[$i]->liste_contact(-1, $source);
+						//$tab = $lines[$i]->liste_contact(-1, $source);
+						$tab = $lines[$i]->liste_contact(-1, $source, 0, '', 1);
+
 						$numcontact = count($tab);
 						if (!empty($numcontact)) {
 							foreach ($tab as $contacttask) {
@@ -987,6 +993,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
+	// Total line
 	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0 || $total_budget_amount > 0)
 		&& $level <= 0) {
 		print '<tr class="liste_total nodrag nodrop">';
@@ -1121,6 +1128,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 			}
 		}
+
+		// Column for the drag and drop
+		print '<td class=""></td>';
 
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class=""></td>';

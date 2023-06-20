@@ -78,7 +78,7 @@ $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
 $formquestion = array();
 
-$usercanissuepayment = !empty($user->rights->facture->paiement);
+$usercanissuepayment = $user->hasRight('facture', 'paiement');
 
 $fieldid = 'rowid';
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
@@ -360,7 +360,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Invoice with Paypal transaction
 		// TODO add hook here
-		if (!empty($conf->paypalplus->enabled) && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
+		if (isModEnabled('paypalplus') && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
 			if (!empty($conf->global->PAYPAL_BANK_ACCOUNT)) {
 				$accountid = $conf->global->PAYPAL_BANK_ACCOUNT;
 			}

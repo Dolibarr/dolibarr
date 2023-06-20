@@ -373,7 +373,7 @@ if ($result > 0) {
 
 	// Delete payment
 	if ($user->socid == 0 && $action == '') {
-		if ($user->rights->fournisseur->facture->supprimer) {
+		if ($user->hasRight('fournisseur', 'facture', 'supprimer')) {
 			if ($allow_delete) {
 				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 			} else {

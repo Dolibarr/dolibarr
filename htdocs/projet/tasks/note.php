@@ -91,7 +91,7 @@ if ($id > 0 || $ref) {
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
-$permissionnote = ($user->rights->projet->creer || $user->rights->projet->all->creer);
+$permissionnote = ($user->hasRight('projet', 'creer') || $user->hasRight('projet', 'all', 'creer'));
 
 
 /*
@@ -133,7 +133,7 @@ if ($object->id > 0) {
 		$head = project_prepare_head($projectstatic);
 		print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
-		$param = ($mode == 'mine' ? '&mode=mine' : '');
+		$param = (isset($mode) && $mode == 'mine' ? '&mode=mine' : '');
 		// Project card
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -142,7 +142,7 @@ if ($object->id > 0) {
 		// Title
 		$morehtmlref .= $projectstatic->title;
 		// Thirdparty
-		if ($projectstatic->thirdparty->id > 0) {
+		if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 			$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';

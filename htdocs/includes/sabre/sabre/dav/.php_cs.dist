@@ -6,7 +6,7 @@ $config->getFinder()
     ->in(__DIR__);
 $config->setRules([
     '@PSR1' => true,
-    '@Symfony' =>true
+    '@Symfony' => true
 ]);
 
 return $config;

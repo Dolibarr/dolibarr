@@ -38,9 +38,6 @@ class ProxyRead implements IProxyRead
      * Creates the object.
      *
      * Note that you MUST supply the parent principal information.
-     *
-     * @param DAVACL\PrincipalBackend\BackendInterface $principalBackend
-     * @param array                                    $principalInfo
      */
     public function __construct(DAVACL\PrincipalBackend\BackendInterface $principalBackend, array $principalInfo)
     {
@@ -143,8 +140,6 @@ class ProxyRead implements IProxyRead
      * The list of members is always overwritten, never appended to.
      *
      * This method should throw an exception if the members could not be set.
-     *
-     * @param array $principals
      */
     public function setGroupMemberSet(array $principals)
     {

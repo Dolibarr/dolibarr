@@ -1674,7 +1674,7 @@ class Propal extends CommonObject
 				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 				$this->deposit_percent      = $obj->deposit_percent;
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->user_author_id = $obj->fk_user_author;
 				$this->user_valid_id = $obj->fk_user_valid;
@@ -2108,7 +2108,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."'";
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2166,9 +2166,10 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_end_validity != '' ? "'".$this->db->idate($date_end_validity)."'" : 'null');
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".((int) self::STATUS_DRAFT);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->errors[] = $this->db->error();
@@ -3812,7 +3813,7 @@ class Propal extends CommonObject
 		}
 
 		$url = '';
-		if ($user->rights->propal->lire) {
+		if ($user->hasRight('propal', 'lire')) {
 			if ($option == '') {
 				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
 			} elseif ($option == 'compta') {  // deprecated

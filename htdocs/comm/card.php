@@ -606,7 +606,7 @@ if ($object->id > 0) {
 	}
 
 	// Categories
-	if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 		$langs->load("categories");
 		print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 		print '<td>';

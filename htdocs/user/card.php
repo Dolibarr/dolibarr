@@ -13,7 +13,7 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1092,7 +1092,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $valuetoshow;
 	print '</td></tr>';
 
-	if (!empty($conf->api->enabled)) {
+	if (isModEnabled('api')) {
 		// API key
 		//$generated_password = getRandomPassword(false);
 		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
@@ -1890,7 +1890,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
+			if (isModEnabled('api') && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {
@@ -2313,7 +2313,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
 			print '<td>';
 			if ($caneditfield) {
-				print img_picto('', 'user').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+				print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 			} else {
 				print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
 				$huser = new User($db);
@@ -2331,7 +2331,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print '<td>';
 				if ($caneditfield) {
-					print img_picto('', 'user').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
 					print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
 					$evuser = new User($db);
@@ -2350,7 +2350,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print '<td>';
 				if ($caneditfield) {
-					print img_picto('', 'user').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
 					print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
 					$hvuser = new User($db);
@@ -2547,7 +2547,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
 				} else {
-					print $object->state_label;
+					print $object->state;
 				}
 				print '</td></tr>';
 			}

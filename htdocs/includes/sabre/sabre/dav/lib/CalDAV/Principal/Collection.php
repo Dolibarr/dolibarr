@@ -23,8 +23,6 @@ class Collection extends DAVACL\PrincipalCollection
     /**
      * Returns a child object based on principal information.
      *
-     * @param array $principalInfo
-     *
      * @return User
      */
     public function getChildForPrincipal(array $principalInfo)

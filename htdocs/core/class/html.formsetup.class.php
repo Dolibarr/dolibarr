@@ -243,7 +243,7 @@ class FormSetup
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
-		global $hookmanager;
+		global $hookmanager, $conf;
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
@@ -264,6 +264,10 @@ class FormSetup
 		$this->db->begin();
 		$error = 0;
 		foreach ($this->items as $item) {
+			if ($item->getType() == 'yesno' && !empty($conf->use_javascript_ajax)) {
+				continue;
+			}
+
 			$res = $item->setValueFromPost();
 			if ($res > 0) {
 				$item->saveConfValue();
@@ -900,7 +904,7 @@ class FormSetupItem
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 		return $doleditor->Create(1);
 	}
 

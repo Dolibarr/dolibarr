@@ -476,7 +476,7 @@ $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_
 $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS) && isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS) && isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('ProductsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');

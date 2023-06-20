@@ -124,24 +124,6 @@ class User extends CommonObject
 	public $signature;
 
 	/**
-	 * @var string Address
-	 */
-	public $address;
-
-	/**
-	 * @var string zip code
-	 */
-	public $zip;
-
-	/**
-	 * @var string town
-	 */
-	public $town;
-	public $state_id; // The state/department
-	public $state_code;
-	public $state;
-
-	/**
 	 * @var string office phone
 	 */
 	public $office_phone;

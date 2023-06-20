@@ -40,8 +40,6 @@ class Plugin extends DAV\ServerPlugin
 
     /**
      * __construct.
-     *
-     * @param Backend\BackendInterface $locksBackend
      */
     public function __construct(Backend\BackendInterface $locksBackend)
     {
@@ -52,8 +50,6 @@ class Plugin extends DAV\ServerPlugin
      * Initializes the plugin.
      *
      * This method is automatically called by the Server class after addPlugin.
-     *
-     * @param DAV\Server $server
      */
     public function initialize(DAV\Server $server)
     {
@@ -84,9 +80,6 @@ class Plugin extends DAV\ServerPlugin
     /**
      * This method is called after most properties have been found
      * it allows us to add in any Lock-related properties.
-     *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode    $node
      */
     public function propFind(DAV\PropFind $propFind, DAV\INode $node)
     {
@@ -158,9 +151,6 @@ class Plugin extends DAV\ServerPlugin
      * If a lock is to be refreshed, no body should be supplied and there should be a valid If header containing the lock
      *
      * Additionally, a lock can be requested for a non-existent file. In these case we're obligated to create an empty file as per RFC4918:S7.3
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -260,9 +250,6 @@ class Plugin extends DAV\ServerPlugin
      *
      * This WebDAV method allows you to remove a lock from a node. The client should provide a valid locktoken through the Lock-token http header
      * The server should return 204 (No content) on success
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      */
     public function httpUnlock(RequestInterface $request, ResponseInterface $response)
     {
@@ -308,6 +295,10 @@ class Plugin extends DAV\ServerPlugin
     {
         $locks = $this->getLocks($path, $includeChildren = true);
         foreach ($locks as $lock) {
+            // don't delete a lock on a parent dir
+            if (0 !== strpos($lock->uri, $path)) {
+                continue;
+            }
             $this->unlockNode($path, $lock);
         }
     }
@@ -318,8 +309,7 @@ class Plugin extends DAV\ServerPlugin
      * All the locking information is supplied in the lockInfo object. The object has a suggested timeout, but this can be safely ignored
      * It is important that if the existing timeout is ignored, the property is overwritten, as this needs to be sent back to the client
      *
-     * @param string   $uri
-     * @param LockInfo $lockInfo
+     * @param string $uri
      *
      * @return bool
      */
@@ -337,8 +327,7 @@ class Plugin extends DAV\ServerPlugin
      *
      * This method removes a lock from a uri. It is assumed all the supplied information is correct and verified
      *
-     * @param string   $uri
-     * @param LockInfo $lockInfo
+     * @param string $uri
      *
      * @return bool
      */
@@ -380,15 +369,13 @@ class Plugin extends DAV\ServerPlugin
     /**
      * Generates the response for successful LOCK requests.
      *
-     * @param LockInfo $lockInfo
-     *
      * @return string
      */
     protected function generateLockResponse(LockInfo $lockInfo)
     {
         return $this->server->xml->write('{DAV:}prop', [
             '{DAV:}lockdiscovery' => new DAV\Xml\Property\LockDiscovery([$lockInfo]),
-        ]);
+        ], $this->server->getBaseUri());
     }
 
     /**
@@ -401,8 +388,7 @@ class Plugin extends DAV\ServerPlugin
      * must be present in the request, and reject requests without the proper
      * tokens.
      *
-     * @param RequestInterface $request
-     * @param mixed            $conditions
+     * @param mixed $conditions
      */
     public function validateTokens(RequestInterface $request, &$conditions)
     {

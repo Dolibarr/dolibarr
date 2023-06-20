@@ -46,8 +46,6 @@ class Plugin extends ServerPlugin
 
     /**
      * Creates the plugin.
-     *
-     * @param Backend\BackendInterface $backend
      */
     public function __construct(Backend\BackendInterface $backend)
     {
@@ -61,8 +59,6 @@ class Plugin extends ServerPlugin
      * addPlugin is called.
      *
      * This method should set up the required event subscriptions.
-     *
-     * @param Server $server
      */
     public function initialize(Server $server)
     {
@@ -77,9 +73,6 @@ class Plugin extends ServerPlugin
      *
      * If there's any requested properties that don't have a value yet, this
      * plugin will look in the property storage backend to find them.
-     *
-     * @param PropFind $propFind
-     * @param INode    $node
      */
     public function propFind(PropFind $propFind, INode $node)
     {
@@ -97,8 +90,7 @@ class Plugin extends ServerPlugin
      * If there's any updated properties that haven't been stored, the
      * propertystorage backend can handle it.
      *
-     * @param string    $path
-     * @param PropPatch $propPatch
+     * @param string $path
      */
     public function propPatch($path, PropPatch $propPatch)
     {

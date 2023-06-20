@@ -98,7 +98,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$listofopplabel = array();
 		$listofoppcode = array();
 		$colorseriesstat = array();
-		$bordercolorseries = array();
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= " WHERE active=1";
@@ -116,24 +115,19 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$listofoppcode[$objp->rowid] = $objp->code;
 				switch ($objp->code) {
 					case 'PROSP':
-						$colorseriesstat[$objp->rowid] = '#FFFFFF';
-						$bordercolorseries[$objp->rowid] = $badgeStatus0;
+						$colorseriesstat[$objp->rowid] = '-'.$badgeStatus0;
 						break;
 					case 'QUAL':
-						$colorseriesstat[$objp->rowid] = '#FFFFFF';
-						$bordercolorseries[$objp->rowid] = $badgeStatus1;
+						$colorseriesstat[$objp->rowid] = '-'.$badgeStatus1;
 						break;
 					case 'PROPO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus1;
-						$bordercolorseries[$objp->rowid] = $badgeStatus1;
 						break;
 					case 'NEGO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus4;
-						$bordercolorseries[$objp->rowid] = $badgeStatus4;
 						break;
 					case 'WON':
 						$colorseriesstat[$objp->rowid] = $badgeStatus6;
-						$bordercolorseries[$objp->rowid] = $badgeStatus6;
 						break;
 					default:
 						break;
@@ -234,7 +228,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->SetLegend($liststatus);
 					$dolgraph->setHideXValues(true);
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
-					$dolgraph->setBorderColor(array_values($bordercolorseries));
+					//$dolgraph->setBorderColor(array_values($bordercolorseries));
 					$dolgraph->setShowLegend(2);
 					if (!empty($conf->dol_optimize_smallscreen)) {
 						$dolgraph->SetWidth(320);

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2022	Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2022	Anthony Berton       	<bertonanthony@gmail.com>
+/* Copyright (C) 2022-2023	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2022	    Anthony Berton       	<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
  *	\brief      Set of functions used for FTP
  *	\ingroup    core
  */
-
-
 
 
 /**
@@ -153,6 +151,7 @@ function dol_ftp_close($connect_id)
 			return ftp_close($connect_id);
 		}
 	}
+	return true;
 }
 
 /**

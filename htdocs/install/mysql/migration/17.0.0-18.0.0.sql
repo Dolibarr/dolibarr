@@ -409,6 +409,7 @@ CREATE TABLE llx_c_invoice_subtype (
   active tinyint DEFAULT 1 NOT NULL
 ) ENGINE=innodb;
 
+ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN code varchar(4);
 ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
 
 ALTER TABLE llx_projet ADD COLUMN fk_project integer DEFAULT NULL;
@@ -459,3 +460,19 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_member;
 
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
+
+-- Drop the composite unique index that exists on llx_commande_fournisseur to rebuild a new one without the fk_soc.
+-- The old design allowed for a duplicate reference as long as fk_soc was not the same.
+-- VMYSQL4.1 DROP INDEX uk_commande_fournisseur_ref on llx_commande_fournisseur;
+-- VPGSQL8.2 DROP INDEX uk_commande_fournisseur_ref;
+ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, entity);
+
+-- Drop the composite unique index that exists on llx_actioncomm to rebuild a new one without unique feature.
+-- The old design introduced a deadlock over traffic intense Dolibarr instance.
+-- VMYSQL4.1 DROP INDEX uk_actioncomm_ref on llx_actioncomm;
+-- VPGSQL8.2 DROP INDEX uk_actioncomm_ref;
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref (ref, entity);
+
+-- Bump llx_reception.ref_supplier to allow up to 255 characters to match llx_commande_fournisseur.ref_supplier.
+-- See: https://github.com/Dolibarr/dolibarr/pull/25034
+ALTER TABLE llx_reception MODIFY COLUMN ref_supplier varchar(255);

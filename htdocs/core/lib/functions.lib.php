@@ -211,7 +211,8 @@ function isModEnabled($module)
 	// Fix special cases
 	$arrayconv = array(
 		'project' => 'projet',
-		'contract' => 'contrat'
+		'contract' => 'contrat',
+		'bank' => 'banque'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
@@ -3298,7 +3299,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Chat").' '.$value).'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
-			if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
+			if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create')) {
 				$addlink = 'AC_SKYPE';
 				$link = '';
 				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) {
@@ -3634,7 +3635,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 
-		//if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
 			$link = '';
@@ -5212,7 +5213,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		if (function_exists('top_httphead')) {	// In CLI context, the method does not exists
 			top_httphead();
 		}
-		http_response_code(500);
+		//http_response_code(500);		// If we use 500, message is not ouput with some command line tools
+		http_response_code(202);		// If we use 202, this is not really an error message, but this allow to ouput message on command line tools
 	}
 
 	if (empty($dolibarr_main_prod)) {
@@ -6817,7 +6819,7 @@ function yn($yesno, $case = 1, $color = 0)
 
 	$result = 'unknown';
 	$classname = '';
-	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') { 	// A mettre avant test sur no a cause du == 0
+	if ($yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// A mettre avant test sur no a cause du == 0
 		$result = $langs->trans('yes');
 		if ($case == 1 || $case == 3) {
 			$result = $langs->trans("Yes");
@@ -7272,9 +7274,13 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 			$firstline = preg_replace('/<br[^>]*>.*$/s', '', $text); // The s pattern modifier means the . can match newline characters
 			$firstline = preg_replace('/<div[^>]*>.*$/s', '', $firstline); // The s pattern modifier means the . can match newline characters
 		} else {
-			$firstline = preg_replace('/[\n\r].*/', '', $text);
+			if (isset($text)) {
+				$firstline = preg_replace('/[\n\r].*/', '', $text);
+			} else {
+				$firstline = '';
+			}
 		}
-		return $firstline.((strlen($firstline) != strlen($text)) ? '...' : '');
+		return $firstline.(isset($firstline) && isset($text) && (strlen($firstline) != strlen($text)) ? '...' : '');
 	} else {
 		$ishtml = 0;
 		if (dol_textishtml($text)) {
@@ -7680,11 +7686,11 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<(b|em|i|u)(\s+[^>]+)?>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<br\/>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr)\/>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) {
 			return true; // must accept <img src="http://example.com/aaa.png" />
@@ -8118,7 +8124,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = !empty($object->array_options['options_'.$key]) ? $object->array_options['options_'.$key] :'';
 							}
 						}
 					}
@@ -11386,7 +11392,7 @@ function getElementProperties($element_type)
 		$classname = 'AdherentType';
 	} elseif ($element_type == 'bank_account') {
 		$classpath = 'compta/bank/class';
-		$module = 'banque';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
 	} elseif ($element_type == 'category') {
@@ -11586,7 +11592,6 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
-	//var_dump($element_prop);
 
 	if (is_array($element_prop) && isModEnabled($element_prop['module'])) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
@@ -12594,7 +12599,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			}
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
-				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && !empty($user->rights->agenda->myactions->create))) {
+				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
 				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}
 

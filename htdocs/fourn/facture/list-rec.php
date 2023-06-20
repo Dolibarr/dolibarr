@@ -873,7 +873,7 @@ if ($resql) {
 			}
 			// Action column
 			print '<td class="center tdoverflowmax125">';
-			if ($user->rights->facture->creer && empty($supplierinvoicerectmp->suspended)) {
+			if ($user->hasRight('facture', 'creer') && empty($supplierinvoicerectmp->suspended)) {
 				if ($supplierinvoicerectmp->isMaxNbGenReached()) {
 					print $langs->trans("MaxNumberOfGenerationReached");
 				} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {

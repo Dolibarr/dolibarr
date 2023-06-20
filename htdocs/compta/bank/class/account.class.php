@@ -992,8 +992,6 @@ class Account extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		if (empty($id) && empty($ref)) {
 			$this->error = "ErrorBadParameters";
 			return -1;
@@ -2570,8 +2568,9 @@ class AccountLine extends CommonObjectLine
 			$result .= $langs->trans("BankLineConciliated").': ';
 			$result .= yn($this->rappro);
 		}
-		if ($option == 'showall' || $option == 'showconciliatedandaccounted') {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
+		if (isModEnabled('accounting') && ($option == 'showall' || $option == 'showconciliatedandaccounted')) {
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+			$sql .= " WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
