@@ -1160,11 +1160,13 @@ class FormCompany extends Form
 						console.log("We change a value into a field selectprospectstatus");
 						var statusid = $(this).val();
 						var prospectid = $(this).attr("data-socid");
+						var image = $(this).prev("img");
 						$.ajax({
 							type: "POST",
 							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
 							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\'},
 							success: function(response) {
+								image.attr("src", "../theme/eldy/img/stcomm" + statusid + ".png");
 						}
 					});
 				});
