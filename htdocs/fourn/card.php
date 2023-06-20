@@ -411,6 +411,7 @@ if ($object->id > 0) {
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
+	print '<br>';
 
 	// Lien recap
 	$boxstat .= '<div class="box box-halfright">';
@@ -530,16 +531,6 @@ if ($object->id > 0) {
 
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-	// Lien recap
-	/*
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
-	print '</tr>';
-	print '</table>';
-	print '<br>';
-	*/
 
 	/*
 	 * List of products

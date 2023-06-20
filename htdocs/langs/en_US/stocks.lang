@@ -317,3 +317,4 @@ StockTransferRightRead=Read stocks transfers
 StockTransferRightCreateUpdate=Create/Update stocks transfers
 StockTransferRightDelete=Delete stocks transfers
 BatchNotFound=Lot / serial not found for this product
+WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse

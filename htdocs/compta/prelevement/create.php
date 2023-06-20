@@ -183,8 +183,6 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-llxHeader('', $langs->trans("NewStandingOrder"));
-
 if (prelevement_check_config($type) < 0) {
 	$langs->load("errors");
 	$modulenametoshow = "Withdraw";
@@ -195,20 +193,12 @@ if (prelevement_check_config($type) < 0) {
 }
 
 
-/*$h=0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
-$head[$h][1] = $langs->trans("NewStandingOrder");
-$head[$h][2] = 'payment';
-$hselected = 'payment';
-$h++;
-
-print dol_get_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
-*/
-
 $title = $langs->trans("NewStandingOrder");
 if ($type == 'bank-transfer') {
 	$title = $langs->trans("NewPaymentByBankTransfer");
 }
+
+llxHeader('', $title);
 
 print load_fiche_titre($title);
 
@@ -221,12 +211,12 @@ if ($nb < 0) {
 }
 print '<table class="border centpercent tableforfield">';
 
-$title = $langs->trans("NbOfInvoiceToWithdraw");
+$labeltoshow = $langs->trans("NbOfInvoiceToWithdraw");
 if ($type == 'bank-transfer') {
-	$title = $langs->trans("NbOfInvoiceToPayByBankTransfer");
+	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransfer");
 }
 
-print '<tr><td class="titlefieldcreate">'.$title.'</td>';
+print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
 print '<td>';
 print $nb;
 print '</td></tr>';
@@ -433,11 +423,11 @@ if ($resql) {
 
 	if ($num) {
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		$bac = new CompanyBankAccount($db);
 
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
 
+			$bac = new CompanyBankAccount($db);
 			$bac->fetch(0, $obj->socid);
 
 			print '<tr class="oddeven">';

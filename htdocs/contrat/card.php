@@ -744,12 +744,22 @@ if (empty($reshook)) {
 
 			$fk_unit = GETPOST('unit', 'alpha');
 
+			// update price_ht with discount
+			// TODO Use object->updateline instead objedtline->update
+
+			$price_ht =  price2num(GETPOST('elprice'), 'MU');
+			$remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			if ($remise_percent > 0) {
+				$remise = round(($price_ht * $remise_percent / 100), 2);
+				$price_ht = ($price_ht - $remise);
+			}
+
 			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = price2num(GETPOST('elprice'), 'MU');
+			$objectline->price_ht = $price_ht;
 			$objectline->subprice = price2num(GETPOST('elprice'), 'MU');
 			$objectline->qty = price2num(GETPOST('elqty'), 'MS');
-			$objectline->remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			$objectline->remise_percent = $remise_percent;
 			$objectline->tva_tx = ($txtva ? $txtva : 0); // Field may be disabled, so we use vat rate 0
 			$objectline->vat_src_code = $vat_src_code;
 			$objectline->localtax1_tx = is_numeric($localtax1_tx) ? $localtax1_tx : 0;

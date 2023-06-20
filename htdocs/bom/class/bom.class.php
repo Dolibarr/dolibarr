@@ -1391,21 +1391,32 @@ class BOM extends CommonObject
 						}
 					}
 				} else {
-					//Convert qty to hour
-					$unit = measuringUnitString($line->fk_unit, '', '', 1);
-					$qty = convertDurationtoHour($line->qty, $unit);
+					// Convert qty of line into hours
+					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
+					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 
 					if (isModEnabled('workstation') && !empty($tmpproduct->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
 						$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 
-						if ($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+						if ($res > 0) $line->total_cost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 						else {
 							$this->error = $workstation->error;
 								return -3;
 						}
 					} else {
-						$line->total_cost = price2num($qty * $tmpproduct->cost_price, 'MT');
+						$defaultdurationofservice = $tmpproduct->duration;
+						$reg = array();
+						$qtyhourservice = 0;
+						if (preg_match('/^(\d+)([a-z]+)$/', $defaultdurationofservice, $reg)) {
+							$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+						}
+
+						if ($qtyhourservice) {
+							$line->total_cost = price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
+						} else {
+							$line->total_cost = price2num($line->qty * $tmpproduct->cost_price, 'MT');
+						}
 					}
 
 					$this->total_cost += $line->total_cost;

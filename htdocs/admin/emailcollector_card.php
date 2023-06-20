@@ -685,18 +685,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</table>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	// Operations
-	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="noborder margintable noshadow">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table id="tablelines" class="noborder noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
 	print '</tr>';
 
 	$arrayoftypes = array(
-		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
-		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName").'/'.$langs->transnoentities("AliasNameShort").'/'.$langs->transnoentities("Email").'/'.$langs->transnoentities("ID")),
+		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName").'/'.$langs->transnoentities("AliasNameShort").'/'.$langs->transnoentities("Email").'/'.$langs->transnoentities("ID")),
 		'recordjoinpiece' => 'AttachJoinedDocumentsToObject',
 		'recordevent' => 'RecordEvent'
 	);
