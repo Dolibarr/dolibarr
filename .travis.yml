@@ -4,7 +4,7 @@
 
 # We use dist: bionic = 18.04, focal = 20.04
 os: linux
-dist: focal
+dist: bionic
 
 language: generic
 
@@ -47,13 +47,13 @@ jobs:
   #allow_failures:
   #- php: nightly
   include:
-    #- stage: PHP 7.0-8.1
-    #  if: type = push
-    #  php: '7.1'
-    #  env: DB=postgresql
+    - stage: PHP 7.0-8.1
+      if: type = push
+      php: '7.1'
+      env: DB=postgresql
     - stage: PHP 7.0-8.1
       if: type = pull_request OR type = push
-      #php: '8.1'
+      php: '8.1'
       env: DB=mysql
     #- stage: PHP Dev
     #  if: type = push AND branch = developdisabled
