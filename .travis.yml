@@ -152,6 +152,7 @@ install:
   echo "Adding path of binaries tools installed by composer to the PATH"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo $PATH
+  ls $TRAVIS_BUILD_DIR/htdocs/includes
   ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   echo
 
