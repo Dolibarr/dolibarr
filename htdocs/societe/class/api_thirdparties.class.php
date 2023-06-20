@@ -1084,7 +1084,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getInvoicesQualifiedForReplacement($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {
@@ -1127,7 +1127,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getInvoicesQualifiedForCreditNote($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {

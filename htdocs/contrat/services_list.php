@@ -476,7 +476,7 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-//if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+//if ($user->hasRight('contrat', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 //if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -519,7 +519,7 @@ $morefilter = '';
 $moreforfilter = '';
 
 // If the user can view categories of products
-if (isModEnabled('categorie') && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if (isModEnabled('categorie') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
