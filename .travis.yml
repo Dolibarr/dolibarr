@@ -73,8 +73,8 @@ notifications:
 before_install:
 - |
   #echo "Add ondrej PPA"
-  #sudo add-apt-repository -y ppa:ondrej/php
-  #sudo apt-get update
+  sudo add-apt-repository -y ppa:ondrej/php
+  sudo apt-get update
   phpenv install --list
   phpenv versions --list
   sudo apt-get install -y pgloader memcached
