@@ -18,9 +18,9 @@ services:
 - postgresql
 
 
-addons:
+#addons:
   # Force postgresql version
-  postgresql: '10'
+  #postgresql: '10'
   #apt:
     #sources:
     #- sourceline: 'ppa:ondrej/php'
@@ -87,10 +87,10 @@ before_install:
   echo Install packages for PHP
   sudo apt-get install -y pgloader memcached
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
-  	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
+  	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
-  	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
+  	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
   fi
 
 install:
@@ -206,7 +206,8 @@ before_script:
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
       echo "MySQL"
       mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
-      mysql -u root -e 'CREATE DATABASE IF NOT EXISTS travis;'
+      mysql -u root -e 'CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';'
+      mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       mysql -u root -e 'FLUSH PRIVILEGES;'
       mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
@@ -284,11 +285,11 @@ before_script:
 
 script:
 - |
-  echo "Checking webserver availability by a wget -O - http://127.0.0.1"
+  echo "Checking webserver availability by a wget -O - --debug http://127.0.0.1"
   # Ensure we stop on error with set -e
   set +e
   # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
-  wget -O - http://127.0.0.1 > test.html
+  wget -O - --debug http://127.0.0.1 > test.html
   head test.html
   sudo cat /var/log/apache2/travis_error_log
   set +e

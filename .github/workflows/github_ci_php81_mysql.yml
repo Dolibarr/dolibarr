@@ -186,7 +186,7 @@ jobs:
         curl -I localhost
     - name: Chech Apache availability
       run: |
-        echo "Checking webserver availability by a wget -O - http://127.0.0.1"
+        echo "Checking webserver availability by a wget -O - --debug http://127.0.0.1"
         # Ensure we stop on error with set -e
         set +e
         ls /var/log/apache2
