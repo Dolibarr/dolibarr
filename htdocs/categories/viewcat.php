@@ -107,7 +107,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
 if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
-	if ($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpobject = new Product($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -173,7 +173,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 }
 
 if ($elemid && $action == 'addintocategory' &&
-	(($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) ||
+	(($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) ||
 	 ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
@@ -493,7 +493,7 @@ $typeid = $type;
 // List of products or services (type is type of category)
 if ($type == Categorie::TYPE_PRODUCT) {
 	if ($user->hasRight("product", "read")) {
-		$permission = ($user->rights->produit->creer || $user->rights->service->creer);
+		$permission = ($user->rights->produit->creer || $user->hasRight('service', 'creer'));
 
 		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($prods < 0) {
@@ -911,7 +911,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 	if ($user->hasRight("banque", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$permission = $user->rights->banque->creer;
+		$permission = $user->hasRight('banque', 'creer');
 
 		$accounts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($accounts < 0) {
@@ -1127,7 +1127,7 @@ if ($type == Categorie::TYPE_USER) {
 
 					// Link to delete from category
 					print '<td class="right">';
-					if ($user->rights->user->user->creer) {
+					if ($user->hasRight('user', 'user', 'creer')) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$type."&action=unlink&token=".newToken()."&removeelem=".$userentry->id."'>";
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');

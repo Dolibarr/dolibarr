@@ -394,7 +394,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $moreforfilter = '';
 
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_ACCOUNT, $search_category_list);
 }
 
@@ -835,7 +835,7 @@ if (!$found) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 // Show total line

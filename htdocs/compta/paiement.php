@@ -78,7 +78,7 @@ $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
 $formquestion = array();
 
-$usercanissuepayment = !empty($user->rights->facture->paiement);
+$usercanissuepayment = $user->hasRight('facture', 'paiement');
 
 $fieldid = 'rowid';
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);

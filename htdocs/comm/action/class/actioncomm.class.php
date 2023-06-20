@@ -1669,10 +1669,10 @@ class ActionComm extends CommonObject
 		if ($user->hasRight('agenda', 'myactions', 'read') && ($this->authorid == $user->id || $this->userownerid == $user->id)) {
 			$canread = 1; // Can read my event
 		}
-		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
+		if ($user->hasRight('agenda', 'myactions', 'read') && array_key_exists($user->id, $this->userassigned)) {
 			$canread = 1; // Can read my event i am assigned
 		}
-		if (!empty($user->rights->agenda->allactions->read)) {
+		if ($user->hasRight('agenda', 'allactions', 'read')) {
 			$canread = 1; // Can read all event of other
 		}
 		if (!$canread) {
@@ -1718,8 +1718,8 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br>';
 			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
 			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.dol_escape_htmltag($this->email_subject);
-			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
-			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
+			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), !empty($this->email_from) ? $this->email_from : '');
+			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), !empty($this->email_to) ? $this->email_to : '');
 			if (!empty($this->email_tocc)) {
 				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
 			}

@@ -6618,6 +6618,11 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					}
 					break;
+				case 'link':
+					if ($this->array_options["options_".$key] === '') {
+						$this->array_options["options_".$key] = null;
+					}
+					break;
 				/*
 				case 'link':
 					$param_list = array_keys($attributeParam['options']);
@@ -8443,16 +8448,19 @@ abstract class CommonObject
 	{
 		global $user;
 
+		$module = $this->module;
 		$element = $this->element;
+
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
 			return $user->rights->fournisseur->facture;
-		} elseif ($element == 'evaluation') {
-			return $user->rights->hrm->evaluation;
+		} elseif ($module && !empty($user->rights->$module->$element)) {
+			// for modules built with ModuleBuilder
+			return $user->rights->$module->$element;
 		}
 
-		return $user->rights->{$element};
+		return $user->rights->$element;
 	}
 
 	/**
@@ -8747,7 +8755,7 @@ abstract class CommonObject
 								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
 							// Special cas for product
-							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+							if ($modulepart == 'product' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 								// Link to resize
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
@@ -8776,7 +8784,7 @@ abstract class CommonObject
 						}
 						if ($showaction) {
 							// Special case for product
-							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+							if ($modulepart == 'product' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 								// Link to resize
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 

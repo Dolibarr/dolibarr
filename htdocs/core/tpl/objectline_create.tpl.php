@@ -423,7 +423,8 @@ if ($nolinesbefore) {
 	$coldisplay++;
 	?>
 	<td class="nobottom linecolqty right">
-	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1); ?>">
+	<?php $default_qty = (empty($conf->global->MAIN_OBJECTLINE_CREATE_EMPTY_QTY_BY_DEFAULT) ? 1 : ''); ?>
+	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : $default_qty); ?>">
 	</td>
 	<?php
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {

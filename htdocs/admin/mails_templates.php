@@ -182,10 +182,10 @@ $elementList = array();
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToUser'));
-if (isModEnabled('adherent') && !empty($user->rights->adherent->lire)) {
+if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
 	$elementList['member'] = img_picto('', 'object_member', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToMember'));
 }
-if (isModEnabled('recruitment') && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
+if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
 }
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
@@ -194,13 +194,13 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 if (isModEnabled('project')) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
-if (isModEnabled("propal") && !empty($user->rights->propal->lire)) {
+if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$elementList['propal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendProposal'));
 }
-if (isModEnabled('commande') && !empty($user->rights->commande->lire)) {
+if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 	$elementList['order_send'] = img_picto('', 'order', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendOrder'));
 }
-if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$elementList['facture_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
 }
 if (isModEnabled("expedition")) {
@@ -221,7 +221,7 @@ if (isModEnabled("supplier_order") && ($user->hasRight('fournisseur', 'commande'
 if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 	$elementList['invoice_supplier_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
 }
-if (isModEnabled('contrat') && !empty($user->rights->contrat->lire)) {
+if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 	$elementList['contract'] = img_picto('', 'contract', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendContract'));
 }
 if (isModEnabled('ticket') && !empty($user->rights->ticket->read)) {
@@ -1144,7 +1144,7 @@ if ($num) {
 				// If template is for a module, check module is enabled.
 				if ($obj->module) {
 					$tempmodulekey = $obj->module;
-					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+					if (empty($conf->$tempmodulekey) || !isModEnabled($tempmodulekey)) {
 						$i++;
 						continue;
 					}

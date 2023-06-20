@@ -96,7 +96,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql1 .= ", f.paye, f.fk_statut as status, f.type";
 			$sql1 .= ", f.tms";
 			$sql1 .= ", SUM(pf.amount) as am";
-			$sql2 .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql2 = " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql2 .= ",".MAIN_DB_PREFIX."facture_fourn as f";
 			$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
@@ -112,7 +112,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			if ($user->socid) {
 				$sql2 .= " AND s.rowid = ".((int) $user->socid);
 			}
-			$sql3 .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
+			$sql3 = " GROUP BY s.rowid, s.nom, s.name_alias, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			$sql3 .= " f.rowid, f.ref, f.ref_supplier, f.date_lim_reglement,";
 			$sql3 .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut, f.tms";
 			$sql3 .= " ORDER BY datelimite DESC, f.ref_supplier DESC ";
@@ -160,12 +160,12 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$thirdpartystatic->email = $objp->email;
 					$thirdpartystatic->entity = $objp->entity;
 					$thirdpartystatic->tva_intra = $objp->tva_intra;
-					$thirdpartystatic->idprof1 = $objp->idprof1;
-					$thirdpartystatic->idprof2 = $objp->idprof2;
-					$thirdpartystatic->idprof3 = $objp->idprof3;
-					$thirdpartystatic->idprof4 = $objp->idprof4;
-					$thirdpartystatic->idprof5 = $objp->idprof5;
-					$thirdpartystatic->idprof6 = $objp->idprof6;
+					$thirdpartystatic->idprof1 = !empty($objp->idprof1) ? $objp->idprof1 : '';
+					$thirdpartystatic->idprof2 = !empty($objp->idprof2) ? $objp->idprof2 : '';
+					$thirdpartystatic->idprof3 = !empty($objp->idprof3) ? $objp->idprof3 : '';
+					$thirdpartystatic->idprof4 = !empty($objp->idprof4) ? $objp->idprof4 : '';
+					$thirdpartystatic->idprof5 = !empty($objp->idprof5) ? $objp->idprof5 : '';
+					$thirdpartystatic->idprof6 = !empty($objp->idprof6) ? $objp->idprof6 : '';
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {

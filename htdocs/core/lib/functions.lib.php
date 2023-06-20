@@ -5213,7 +5213,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		if (function_exists('top_httphead')) {	// In CLI context, the method does not exists
 			top_httphead();
 		}
-		http_response_code(500);
+		//http_response_code(500);		// If we use 500, message is not ouput with some command line tools
+		http_response_code(202);		// If we use 202, this is not really an error message, but this allow to ouput message on command line tools
 	}
 
 	if (empty($dolibarr_main_prod)) {
@@ -7273,9 +7274,13 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 			$firstline = preg_replace('/<br[^>]*>.*$/s', '', $text); // The s pattern modifier means the . can match newline characters
 			$firstline = preg_replace('/<div[^>]*>.*$/s', '', $firstline); // The s pattern modifier means the . can match newline characters
 		} else {
-			$firstline = preg_replace('/[\n\r].*/', '', $text);
+			if (isset($text)) {
+				$firstline = preg_replace('/[\n\r].*/', '', $text);
+			} else {
+				$firstline = '';
+			}
 		}
-		return $firstline.((strlen($firstline) != strlen($text)) ? '...' : '');
+		return $firstline.(isset($firstline) && isset($text) && (strlen($firstline) != strlen($text)) ? '...' : '');
 	} else {
 		$ishtml = 0;
 		if (dol_textishtml($text)) {
@@ -7681,11 +7686,11 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<(b|em|i|u)(\s+[^>]+)?>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<br\/>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr)\/>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
+		} elseif (preg_match('/<(br|hr|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) {
 			return true; // must accept <img src="http://example.com/aaa.png" />
@@ -8119,7 +8124,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = !empty($object->array_options['options_'.$key]) ? $object->array_options['options_'.$key] :'';
 							}
 						}
 					}
@@ -12594,7 +12599,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			}
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
-				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && !empty($user->rights->agenda->myactions->create))) {
+				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
 				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}
 

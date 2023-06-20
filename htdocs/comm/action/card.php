@@ -2514,8 +2514,8 @@ if ($id > 0) {
 			$filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$genallowed = $user->rights->agenda->myactions->read;
-			$delallowed = $user->rights->agenda->myactions->create;
+			$genallowed = $user->hasRight('agenda', 'myactions', 'read');
+			$delallowed = $user->hasRight('agenda', 'myactions', 'create');
 
 
 			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $langs->getDefaultLang());

@@ -93,7 +93,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
 	// Search contract
-	if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
 	}
 

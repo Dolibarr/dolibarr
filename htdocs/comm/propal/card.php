@@ -1690,9 +1690,18 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');
 
+	$cond_reglement_id = $mode_reglement_id = 0;
+
 	$soc = new Societe($db);
 	if ($socid > 0) {
 		$res = $soc->fetch($socid);
+
+		if (GETPOSTINT('cond_reglement_id') == 0) {
+			$cond_reglement_id = $soc->cond_reglement_id;
+		}
+		if (GETPOSTINT('mode_reglement_id') == 0) {
+			$mode_reglement_id = $soc->mode_reglement_id;
+		}
 	}
 
 	// Load objectsrc
@@ -1762,6 +1771,15 @@ if ($action == 'create') {
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
 		}
+	}
+
+	// when payment term is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if (empty($cond_reglement_id)) {
+		$cond_reglement_id = GETPOST("cond_reglement_id", 'int');
+	}
+	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if (empty($mode_reglement_id)) {
+		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
 
 	//Warehouse default if null
@@ -1868,15 +1886,13 @@ if ($action == 'create') {
 	print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
 	// at last resort we take the payment term id which may be filled by default values set (if not getpostisset)
-	$paymentTermId = (GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : GETPOST('cond_reglement_id', 'int'));
-	print $form->getSelectConditionsPaiements($paymentTermId, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
+	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	$paymentMethod = (GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id', 'int') != 0) ? GETPOST('mode_reglement_id', 'int') : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : GETPOST('mode_reglement_id', 'int'));
-	print $form->select_types_paiements($paymentMethod, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
