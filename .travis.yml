@@ -23,14 +23,15 @@ before_install:
   echo "Add ondrej PPA"
   sudo add-apt-repository -y ppa:ondrej/php
   sudo apt-get update
-  echo "Disabling Xdebug for composer"
-  export PHP_VERSION_NAME=$(phpenv version-name)
-  echo $PHP_VERSION_NAME
-  ls ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/
-  cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
-  phpenv config-rm xdebug.ini || echo "xdebug not available"
-  phpenv rehash
-  echo
+  #echo "Disabling Xdebug for composer"
+  #export PHP_VERSION_NAME=$(phpenv version-name)
+  #echo $PHP_VERSION_NAME
+  #ls ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/
+  #cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
+  #phpenv config-rm xdebug.ini || echo "xdebug not available"
+  #phpenv rehash
+  sudo apt-get install -y pgloader memcached
+  sudo apt install apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
 
 addons:
   # Force postgresql version
@@ -45,22 +46,11 @@ addons:
     - apache2
     # We need pgloader for import mysql database into pgsql
     - pgloader
-    - php
-    - php7.1
-    - php7.1-pgsql
-    - php7.1-mysqli
-    - php7.1-xml
-    - php7.1-intl
     - php8.1
     - php8.1-pgsql
     - php8.1-mysqli
     - php8.1-xml
     - php8.1-intl
-    - php8.2
-    - php8.2-pgsql
-    - php8.2-mysqli
-    - php8.2-xml
-    - php8.2-intl
     
 env:
   global:
@@ -90,8 +80,6 @@ notifications:
     on_success: never # [always|never|change] default: change
     on_failure: never # [always|never|change] default: always
   irc:
-    channels:
-    - "chat.freenode.net#dolibarr"
     on_success: change
     on_failure: always
     use_notice: true
@@ -99,14 +87,18 @@ notifications:
 
 install:
 - |
+  php -i | head -
+
+- |
   echo "Updating Composer config"
   composer -V
-  #rm $TRAVIS_BUILD_DIR/composer.json
-  #rm $TRAVIS_BUILD_DIR/composer.lock
-  #composer -n init
-  #composer -n config vendor-dir htdocs/includes
   composer -n config -g vendor-dir htdocs/includes
   echo
+
+- |
+  echo Install packages for PHP 8.1
+  sudo apt-get install -y pgloader memcached
+  sudo apt install apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
 
 - |
   echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
@@ -144,7 +136,6 @@ install:
   echo "Adding path of binaries tools installed by composer to the PATH"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo $PATH
-  ls $TRAVIS_BUILD_DIR/vendor
   ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   echo
 
@@ -158,9 +149,10 @@ before_script:
     echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
 
   - |
-    echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
-    phpenv config-add /tmp/xdebug.ini
-    echo
+    composer -V
+    #echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
+    #phpenv config-add /tmp/xdebug.ini
+    #echo
 
   - |
     echo "Setting up PHP"
@@ -199,7 +191,6 @@ before_script:
     # Check Database
     echo "Database version"
     mysql --version | head -
-    mysql -e "SELECT VERSION();"  | head -
     psql --version
     if [ "$DB" = 'postgresql' ]; then
       echo "Check pgloader version"
@@ -262,20 +253,20 @@ before_script:
     echo
 
 
-  - echo "Setting up Apache + FPM"
+  - echo "Setting up Apache"
   # setup link for php legacy
-  - sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
+  #- sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
   # install apache web server
-  - sudo apt-get install apache2 php-fpm php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring libapache2-mod-php
+  #- sudo apt-get install apache2 php-fpm php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring libapache2-mod-php
   # enable php-fpm
-  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-  - |
-    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-      # Copy the included pool
-      sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
-    fi
-  - sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
-  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  #- sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+  #- |
+  #  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+  #    # Copy the included pool
+  #    sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
+  #  fi
+  #- sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
+  #- echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
   #- sudo chown -R travis:travis /var/lib/apache2/fastcgi
   # start php-fpm
