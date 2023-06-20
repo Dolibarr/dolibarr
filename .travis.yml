@@ -18,40 +18,25 @@ services:
 - postgresql
 
 
-before_install:
-- |
-  echo "Add ondrej PPA"
-  sudo add-apt-repository -y ppa:ondrej/php
-  sudo apt-get update
-  #echo "Disabling Xdebug for composer"
-  #export PHP_VERSION_NAME=$(phpenv version-name)
-  #echo $PHP_VERSION_NAME
-  #ls ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/
-  #cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
-  #phpenv config-rm xdebug.ini || echo "xdebug not available"
-  #phpenv rehash
-  sudo apt-get install -y pgloader memcached
-  sudo apt install apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
-
 addons:
   # Force postgresql version
   postgresql: '10'
-  apt:
-    sources:
-    - sourceline: 'ppa:ondrej/php'
-    update: true
-    packages:
+  #apt:
+    #sources:
+    #- sourceline: 'ppa:ondrej/php'
+    #update: true
+    #packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
-    - apache2
+    #- apache2
     # We need pgloader for import mysql database into pgsql
-    - pgloader
-    - php8.1
-    - php8.1-pgsql
-    - php8.1-mysqli
-    - php8.1-xml
-    - php8.1-intl
-    
+    #- pgloader
+    #- php8.1
+    #- php8.1-pgsql
+    #- php8.1-mysqli
+    #- php8.1-xml
+    #- php8.1-intl
+
 env:
   global:
   # Set to true for very verbose output
@@ -62,18 +47,18 @@ jobs:
   #allow_failures:
   #- php: nightly
   include:
-    - stage: PHP 7.0-8.1
-      if: type = push
-      php: '7.1'
-      env: DB=postgresql
+    #- stage: PHP 7.0-8.1
+    #  if: type = push
+    #  php: '7.1'
+    #  env: DB=postgresql
     - stage: PHP 7.0-8.1
       if: type = pull_request OR type = push
-      php: '8.1'
+      #php: '8.1'
       env: DB=mysql
-    - stage: PHP Dev
-      if: type = push AND branch = developdisabled
-      php: '8.2'
-      env: DB=mysql
+    #- stage: PHP Dev
+    #  if: type = push AND branch = developdisabled
+    #  php: '8.2'
+    #  env: DB=mysql
 
 notifications:
   email:
@@ -86,6 +71,13 @@ notifications:
 
 
 install:
+- |
+  echo "Add ondrej PPA"
+  sudo add-apt-repository -y ppa:ondrej/php
+  sudo apt-get update
+  sudo apt-get install -y pgloader memcached
+  sudo apt install apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
+
 - |
   php -i | head -
 
@@ -493,7 +485,7 @@ after_script:
   sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
   echo "After script - Output last lines of apache error.log"
   sudo ls /var/log/apache2
-  sudo tail -n 50 /var/log/apache2/travis_error_log
+  sudo tail -n 200 /var/log/apache2/travis_error_log
 
 after_success:
 - |
@@ -511,14 +503,14 @@ after_failure:
   done
   # Show Apache log file
   echo "Debugging informations for file apache error.log"
-  sudo tail -n 50 /var/log/apache2/travis_error_log
+  sudo tail -n 200 /var/log/apache2/travis_error_log
   if [ "$DEBUG" = true ]; then
     # Dolibarr log file
     echo "Debugging informations for file dolibarr.log (latest 50 lines)"
-    tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
+    tail -n 200 $TRAVIS_BUILD_DIR/documents/dolibarr.log
     # Database log file
     echo "Debugging informations for file mysql error.log"
-    sudo tail -n 50 /var/log/mysql/error.log
+    sudo tail -n 200 /var/log/mysql/error.log
     # TODO: PostgreSQL log file
     echo
   fi
