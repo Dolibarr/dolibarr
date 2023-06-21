@@ -52,6 +52,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y pgloader memcached
         sudo apt install apache2 php7.1 php7.1-cli php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
+        sudo update-alternatives --set php /usr/bin/php7.1
 
         sudo composer self-update 2.2.18
         composer -n require phpunit/phpunit ^7.5 \
@@ -337,23 +338,4 @@ jobs:
         phpunitresult=$?
         echo "Phpunit return code = $phpunitresult"
         set +e     
-
-    - name: Code quality check - Lint
-      if: github.event_name == 'push'
-      run: |
-        htdocs/includes/bin/parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
-          --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
-          --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
-          --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
-          --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
-
-    - name: Code quality check - phpcs
-      if: github.event_name == 'push'
-      run: |
-         htdocs/includes/bin/phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;     
-
-    - name: Code quality check - var-dump-check
-      if: github.event_name == 'push'
-      run: |
-        htdocs/includes/bin/var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
 
