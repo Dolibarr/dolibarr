@@ -240,15 +240,12 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
 			if (image_format_supported($filepath) == 1) {
 				$filepathnoext = preg_replace("/\.[a-z0-9]+$/i", "", $filepath);
-
-				if (! dol_is_file($filepathnoext.'.webp')) {	// If file does not exists yet
-					$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp', 90);
-					if (!dol_is_file($result)) {
-						$error++;
-						setEventMessages($result, null, 'errors');
-					} else {
-						$nbconverted++;
-					}
+				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp', 90);
+				if (!dol_is_file($result)) {
+					$error++;
+					setEventMessages($result, null, 'errors');
+				} else {
+					$nbconverted++;
 				}
 			}
 		}
