@@ -8173,8 +8173,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__EVENT_TYPE__'] = $outputlangs->trans("Action".$object->type_code);
 				$substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, '%A %d %b %Y');
 				$substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, '%H:%M:%S');
-				$substitutionarray['__EVENT_DATE_SHORT__'] = dol_print_date($object->datep, '%d/%m/%y');
-				$substitutionarray['__EVENT_TIME_SHORT__'] = dol_print_date($object->datep, '%H:%M');
+				$substitutionarray['__EVENT_DATE_SHORT__'] = dol_print_date($object->datep, 'day', 0, $outputlangs);
+				$substitutionarray['__EVENT_TIME_SHORT__'] = dol_print_date($object->datep, 'hour', 0, $outputlangs);
 			}
 		}
 	}
