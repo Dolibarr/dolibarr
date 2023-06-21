@@ -1407,7 +1407,7 @@ class ActionComm extends CommonObject
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".((int) $user->id);
 		}
 		$sql .= " WHERE 1 = 1";
@@ -1421,7 +1421,7 @@ class ActionComm extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND a.fk_soc = ".((int) $user->socid);
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
 			$sql .= " OR ar.fk_element = ".((int) $user->id);
 			$sql .= ")";
