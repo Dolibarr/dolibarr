@@ -48,20 +48,21 @@ jobs:
 
     - name: Install packages for PHP 7.1
       run: |
+        sudo composer self-update 2.2.18
+
         sudo add-apt-repository -y ppa:ondrej/php
         sudo apt-get update
         sudo apt-get install -y pgloader memcached
         sudo apt install apache2 php7.1 php7.1-cli php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
         sudo update-alternatives --set php /usr/bin/php7.1
-
-        sudo composer self-update 2.2.18
+        php -i | head -
+        
         composer -n require phpunit/phpunit ^7.5 \
                         php-parallel-lint/php-parallel-lint ^1 \
                         php-parallel-lint/php-console-highlighter ^0 \
                         php-parallel-lint/php-var-dump-check ~0.4 \
                         squizlabs/php_codesniffer ^3
         #For php7.3
-        #sudo composer self-update 2.2.18
         #composer -n require phpunit/phpunit ^7.5 \
         #                php-parallel-lint/php-parallel-lint ^1.2 \
         #                php-parallel-lint/php-console-highlighter ^0 \
