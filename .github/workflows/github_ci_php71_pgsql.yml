@@ -57,7 +57,9 @@ jobs:
         sudo update-alternatives --set php /usr/bin/php7.1
         php -i | head -
         
-        composer -n require phpunit/phpunit ^7.5 \
+        cd $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        composer -n require --ignore-platform-reqs phpunit/phpunit ^7.5 \
                         php-parallel-lint/php-parallel-lint ^1 \
                         php-parallel-lint/php-console-highlighter ^0 \
                         php-parallel-lint/php-var-dump-check ~0.4 \
@@ -74,6 +76,8 @@ jobs:
       run: | 
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
+        ls $GITHUB_WORKSPACE/htdocs/
+        ls $GITHUB_WORKSPACE/htdocs/includes/
         ls $GITHUB_WORKSPACE/htdocs/includes/bin
 
     - name: Version information
