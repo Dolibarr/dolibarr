@@ -95,6 +95,11 @@ before_install:
   	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
   fi
 
+- |
+  psql -c 'create database travis_ci_test;' -U postgres
+  psql -c 'create database travis;' -U postgres
+
+ 
 install:
 - |
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
