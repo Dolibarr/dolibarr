@@ -126,6 +126,10 @@ jobs:
         #psql -c 'create database travis;' -U postgres
         #psql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
         #pgloader mysql://root:pass@127.0.0.1/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
+        ps fauxww | grep postgres
+        ls /etc/postgresql/13/main/
+        cat /etc/postgresql/11/main/pg_hba.conf
+        #$(PGPASSWORD="postgres"; psql -h 127.0.0.1 -p 5432 -U postgres -l -A)
         psql -h 127.0.0.1 -p 5432 -U postgres -l -A
 
         echo sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
