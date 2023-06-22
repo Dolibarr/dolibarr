@@ -203,9 +203,9 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				$startdatef = dol_print_date($startdate, "dayhourxcard", 'gmt');
 
 				if ($fulldayevent) {
-					// Local time
+					// Local time should be used to prevent users in time zones earlier than GMT from being one day earlier
 					$prefix     = ";VALUE=DATE";
-					$startdatef = dol_print_date($startdate, "dayxcard", 'gmt');
+					$startdatef = dol_print_date($startdate, "dayxcard", 'tzserver');
 				}
 
 				fwrite($calfileh, "DTSTART".$prefix.":".$startdatef."\n");
@@ -232,7 +232,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 					// We add 1 second so we reach the +1 day needed for full day event (DTEND must be next day after event)
 					// This is mention in https://datatracker.ietf.org/doc/html/rfc5545:
 					// "The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event."
-					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'gmt');
+					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'tzserver');
 				}
 
 				fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");
