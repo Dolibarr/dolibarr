@@ -451,10 +451,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Add field answer
 	print '<br>';
+
 	print $langs->trans($object->fields['answer']['label']).'<br>';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%', 1);
-	$out = $doleditor->Create(1);
+	$out .= '<div class="fichecenter">';
+	$out .= '<div class="underbanner clearboth"></div>';
+	$out .= '<table class="border centpercent tableforfield">';
+	$out .= '<tr class="field_answer">';
+	$out .= '<td class="valuefield fieldname_answer wordbreak"><div class="longmessagecut">'.$object->answer.'</div></td></tr></table>';
+
 	print $out;
 
 	print dol_get_fiche_end();
