@@ -175,16 +175,14 @@ jobs:
         set +e
         echo '<?php' > $INSTALL_FORCED_FILE
         echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
-        # For mysql
-        echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
-        #echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
+        #echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_databaselogin=\'root\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_databasepass=\'password\'';' >> $INSTALL_FORCED_FILE
-        # For mysql
-        echo '$'force_install_port=\'32574\'';' >> $INSTALL_FORCED_FILE
-        #echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
+        #echo '$'force_install_port=\'32574\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
