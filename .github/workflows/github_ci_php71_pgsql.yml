@@ -145,10 +145,10 @@ jobs:
         sudo chmod -R a+rwx /tmp/pgloader/
         echo sudo pgloader mysql://root:password@127.0.0.1:32574/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         sudo pgloader mysql://root:password@127.0.0.1:32574/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
-        echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgres travis
-        echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql -U postgres travis
+        echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql postgresql://postgres:postgres@127.0.0.1:5432/travis
+        echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | postgresql://postgres:postgres@127.0.0.1:5432/travis
         # Create pgsql compatibility functions
-        psql -U postgres travis < htdocs/install/pgsql/functions/functions.sql
+        postgresql://postgres:postgres@127.0.0.1:5432/travis < htdocs/install/pgsql/functions/functions.sql
 
     - name: Generate Dolibarr conf file
       run: |
