@@ -26,6 +26,8 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -141,7 +143,8 @@ jobs:
         sudo /etc/init.d/postgresql restart
 
         #$(PGPASSWORD="postgres"; psql -h 127.0.0.1 -p 5432 -U postgres -l -A)
-        psql -h 127.0.0.1 -p 5432 -U postgres -l -A
+        psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A
+        #psql -h 127.0.0.1 -p 5432 -U postgres -l -A
 
         echo sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         sudo mkdir -p /tmp/pgloader

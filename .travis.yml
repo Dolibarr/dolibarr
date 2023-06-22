@@ -41,6 +41,7 @@ env:
   global:
   # Set to true for very verbose output
   - DEBUG=false
+  #- PGPORT=5433
 
 jobs:
   fast_finish: true
@@ -96,10 +97,21 @@ before_install:
   fi
 
 - |
-  echo Install packages for PHP
+  echo Install pgsql if run is for pgsql
   if [ "$DB" = 'postgresql' ]; then
-    psql -U postgres -h 127.0.0.1 -c 'create database travis_ci_test;'
-    psql -U postgres -h 127.0.0.1 -c 'create database travis;'
+    echo "Check pgloader version"
+    pgloader --version
+    ps fauxww | grep postgres
+    ls /etc/postgresql/13/main/
+    sudo cat /etc/postgresql/13/main/pg_hba.conf
+    sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/13/main/pg_hba.conf
+    sudo cat /etc/postgresql/13/main/pg_hba.conf
+
+    sudo service postgresql restart
+    
+    psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A
+    #psql -U postgres -h 127.0.0.1 -c 'create database travis_ci_test;'
+    #psql -U postgres -h 127.0.0.1 -c 'create database travis;'
   fi
  
 install:
@@ -204,14 +216,6 @@ before_script:
     echo "Database version"
     mysql --version | head -
     psql --version
-    if [ "$DB" = 'postgresql' ]; then
-      echo "Check pgloader version"
-      pgloader --version
-      ps fauxww | grep postgres
-      ls /etc/postgresql/13/main/
-      sudo cat /etc/postgresql/11/main/pg_hba.conf
-    fi
-    echo
 
   - |
     echo "Setting up database"
