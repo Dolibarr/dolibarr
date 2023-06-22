@@ -103,15 +103,15 @@ before_install:
     pgloader --version
     ps fauxww | grep postgres
     ls /etc/postgresql/13/main/
-    sudo cat /etc/postgresql/13/main/pg_hba.conf
+    
     sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/13/main/pg_hba.conf
     sudo cat /etc/postgresql/13/main/pg_hba.conf
 
     sudo service postgresql restart
     
     psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A
-    #psql -U postgres -h 127.0.0.1 -c 'create database travis_ci_test;'
-    #psql -U postgres -h 127.0.0.1 -c 'create database travis;'
+    
+    psql postgresql://postgres:postgres@127.0.0.1:5432 -c 'create database travis;'
   fi
  
 install:

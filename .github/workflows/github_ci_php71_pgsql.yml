@@ -130,25 +130,20 @@ jobs:
         #pgloader mysql://root:pass@127.0.0.1/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
         ps fauxww | grep postgres
         ls /etc/postgresql/14/main/
-        sudo cat /etc/postgresql/14/main/pg_hba.conf
         sudo chmod -R a+rwx /etc/postgresql/14/main/pg_hba.conf
         
-        sudo echo "local   all         postgres                          trust" > /etc/postgresql/14/main/pg_hba.conf
-        sudo echo "host    all         all         127.0.0.1/32          trust" >> /etc/postgresql/14/main/pg_hba.conf
-        sudo echo "host    all         all         0.0.0.0/0             trust" >> /etc/postgresql/14/main/pg_hba.conf
-        sudo echo "host    all         all         ::1/128               trust" >> /etc/postgresql/14/main/pg_hba.conf
-
+        sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/14/main/pg_hba.conf
         sudo cat /etc/postgresql/14/main/pg_hba.conf
 
         sudo /etc/init.d/postgresql restart
 
-        #$(PGPASSWORD="postgres"; psql -h 127.0.0.1 -p 5432 -U postgres -l -A)
         psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A
-        #psql -h 127.0.0.1 -p 5432 -U postgres -l -A
 
-        echo sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
+        psql postgresql://postgres:postgres@127.0.0.1:5432 -c 'create database travis;'
+
         sudo mkdir -p /tmp/pgloader
         sudo chmod -R a+rwx /tmp/pgloader/
+        echo sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgres travis
         echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql -U postgres travis
