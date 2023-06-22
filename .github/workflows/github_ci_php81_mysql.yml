@@ -96,7 +96,7 @@ jobs:
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
         echo "Drop and create database"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'DROP DATABASE IF EXISTS travis;'
-        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';'
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
