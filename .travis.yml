@@ -112,7 +112,7 @@ before_install:
     psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A
 
     psql postgresql://postgres:postgres@127.0.0.1:5432 -c 'create database travis;'
-    psql postgresql://postgres:postgres@127.0.0.1:5432 -c 'CREATE USER travis WITH ENCRYPTED PASSWORD 'travis';'
+    psql postgresql://postgres:postgres@127.0.0.1:5432 -c "CREATE USER travis WITH ENCRYPTED PASSWORD 'travis';"
     psql postgresql://postgres:postgres@127.0.0.1:5432 -c 'GRANT ALL PRIVILEGES ON DATABASE travis TO travis;'
 
     psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A

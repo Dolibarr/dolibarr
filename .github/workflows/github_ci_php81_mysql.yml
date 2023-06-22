@@ -42,7 +42,7 @@ jobs:
         sudo add-apt-repository -y ppa:ondrej/php
         sudo apt-get update
         sudo apt-get install -y pgloader memcached
-        sudo apt install apache2 php8.1 php8.1-cli php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
+        sudo apt install apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
         sudo update-alternatives --set php /usr/bin/php8.1
         php -i | head -
         
@@ -294,7 +294,7 @@ jobs:
         echo $?
         cd -
 
-    - name: Result of migration scripts
+    - name: Result of enabling modules scripts
       if: always()
       run: |
         echo Show content of enablemodule.log file
