@@ -112,6 +112,10 @@ before_install:
     psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A
 
     psql postgresql://postgres:postgres@127.0.0.1:5432 -c 'create database travis;'
+    psql postgresql://postgres:postgres@127.0.0.1:5432 -c 'CREATE USER travis WITH ENCRYPTED PASSWORD 'travis';'
+    psql postgresql://postgres:postgres@127.0.0.1:5432 -c 'GRANT ALL PRIVILEGES ON DATABASE travis TO travis;'
+
+    psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A
   fi
  
 install:
@@ -229,14 +233,14 @@ before_script:
       mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
-      echo sudo pgloader mysql://root@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
+      echo "PGSQL"
       sudo mkdir -p /tmp/pgloader
       sudo chmod -R a+rwx /tmp/pgloader/
       sudo pgloader mysql://root@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
-      echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql postgresql://postgres:postgres@127.0.0.1:5432/travis
-      echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql postgresql://postgres:postgres@127.0.0.1:5432/travis
+      echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql ''postgresql://postgres:postgres@127.0.0.1:5432/travis''
+      echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql ''postgresql://postgres:postgres@127.0.0.1:5432/travis''
       # Create pgsql compatibility functions
-      psql postgresql://postgres:postgres@127.0.0.1:5432/travis < htdocs/install/pgsql/functions/functions.sql
+      psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'' < htdocs/install/pgsql/functions/functions.sql
     fi
     echo
 
