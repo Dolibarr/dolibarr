@@ -411,20 +411,25 @@ function encodedecode_dbpassconf($level = 0)
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
 				if (preg_match('/crypted:/i', $buffer)) {
 					// method dol_encode/dol_decode
+					$mode = 'crypted:';
 					$val = preg_replace('/crypted:/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
 				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
 					// method dolEncrypt/dolDecrypt
+					$mode = 'dolcrypt:';
 					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dolDecrypt($buffer);
 					$passwd = $val;
 				} else {
 					$passwd = $val;
+					$mode = 'crypted:';
 					$val = dol_encode($val);
 					$passwd_crypted = $val;
+					// TODO replace with dolEncrypt()
+					// ...
 				}
 				$lineofpass = 1;
 			}
@@ -436,7 +441,7 @@ function encodedecode_dbpassconf($level = 0)
 					$config .= '$dolibarr_main_db_pass=\''.$passwd.'\';'."\n";
 				}
 				if ($level == 1) {
-					$config .= '$dolibarr_main_db_pass=\'crypted:'.$passwd_crypted.'\';'."\n";
+					$config .= '$dolibarr_main_db_pass=\''.$mode.$passwd_crypted.'\';'."\n";
 				}
 
 				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
