@@ -31,7 +31,9 @@ jobs:
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5          
+          --health-retries 5
+        ports:
+          - 5432:5432      
 
     steps:
     # git clone dolibarr into GITHUB_WORKSPACE = /home/runner/work/dolibarr/dolibarr
@@ -42,9 +44,6 @@ jobs:
     - name: Version PHP
       run: |
         php -i | head -
-
-    - name: Set vendor-dir
-      run: composer -n config -g vendor-dir htdocs/includes
 
     - name: Install packages for PHP 7.1
       run: |
@@ -78,9 +77,7 @@ jobs:
       run: | 
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
-        ls $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE/htdocs/
-        ls $GITHUB_WORKSPACE/htdocs/includes/
+        # We must have a directory bin created by the previous composer call
         ls $GITHUB_WORKSPACE/htdocs/includes/bin
 
     - name: Version information
@@ -129,7 +126,9 @@ jobs:
         #psql -c 'create database travis;' -U postgres
         #psql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
         #pgloader mysql://root:pass@127.0.0.1/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
-        echo sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres@/travis
+        psql -h 127.0.0.1 -p 5432 -U postgres -l -A
+
+        echo sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         sudo mkdir -p /tmp/pgloader
         sudo chmod -R a+rwx /tmp/pgloader/
         sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres@/travis

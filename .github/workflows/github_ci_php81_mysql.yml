@@ -33,9 +33,6 @@ jobs:
       run: |
         php -i | head -
 
-    - name: Set vendor-dir
-      run: composer -n config -g vendor-dir htdocs/includes
-
     - name: Install packages for PHP 8.1
       run: |
         sudo composer self-update 2.2.18
@@ -60,6 +57,7 @@ jobs:
       run: | 
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
+        # We must have a directory bin created by the previous composer call
         ls $GITHUB_WORKSPACE/htdocs/includes/bin
 
     - name: Version information
