@@ -96,9 +96,11 @@ before_install:
   fi
 
 - |
-  psql -c 'create database travis_ci_test;' -U postgres
-  psql -c 'create database travis;' -U postgres
-
+  echo Install packages for PHP
+  if [ "$DB" = 'postgresql' ]; then
+    psql -U postgres -h 127.0.0.1 -c 'create database travis_ci_test;'
+    psql -U postgres -h 127.0.0.1 -c 'create database travis;'
+  fi
  
 install:
 - |
@@ -207,7 +209,7 @@ before_script:
       pgloader --version
       ps fauxww | grep postgres
       ls /etc/postgresql/13/main/
-      cat /etc/postgresql/11/main/pg_hba.conf
+      sudo cat /etc/postgresql/11/main/pg_hba.conf
     fi
     echo
 
@@ -226,10 +228,10 @@ before_script:
       #psql -c 'create database travis;' -U postgres
       #psql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
       #pgloader mysql://root:pass@127.0.0.1/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
-      echo sudo pgloader mysql://root@127.0.0.1/travis postgresql://postgres@/travis
+      echo sudo pgloader mysql://root@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
       sudo mkdir -p /tmp/pgloader
       sudo chmod -R a+rwx /tmp/pgloader/
-      sudo pgloader mysql://root@127.0.0.1/travis postgresql://postgres@/travis
+      sudo pgloader mysql://root@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgres travis
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql -U postgres travis
       # Create pgsql compatibility functions

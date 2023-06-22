@@ -128,14 +128,14 @@ jobs:
         #pgloader mysql://root:pass@127.0.0.1/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
         ps fauxww | grep postgres
         ls /etc/postgresql/14/main/
-        cat /etc/postgresql/14/main/pg_hba.conf
+        sudo cat /etc/postgresql/14/main/pg_hba.conf
         #$(PGPASSWORD="postgres"; psql -h 127.0.0.1 -p 5432 -U postgres -l -A)
         psql -h 127.0.0.1 -p 5432 -U postgres -l -A
 
         echo sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         sudo mkdir -p /tmp/pgloader
         sudo chmod -R a+rwx /tmp/pgloader/
-        sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres@/travis
+        sudo pgloader mysql://root:password@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgres travis
         echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql -U postgres travis
         # Create pgsql compatibility functions
