@@ -129,6 +129,7 @@ jobs:
         ps fauxww | grep postgres
         ls /etc/postgresql/14/main/
         sudo cat /etc/postgresql/14/main/pg_hba.conf
+        sudo chmod -R a+rwx /etc/postgresql/14/main/pg_hba.conf
         
         sudo echo "local   all         postgres                          trust" > /etc/postgresql/14/main/pg_hba.conf
         sudo echo "host    all         all         127.0.0.1/32          trust" >> /etc/postgresql/14/main/pg_hba.conf
