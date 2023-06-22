@@ -233,6 +233,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
 
+	// Remove constant MAIN_INFO_SOCIETE_SETUP_TODO_WARNING
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_SETUP_TODO_WARNING", $conf->entity);
+
 	if (!$error) {
 		if (GETPOST('save')) {	// To avoid to show message when we juste switch the country that resubmit the form.
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
