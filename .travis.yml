@@ -2,11 +2,11 @@
 # from Dolibarr GitHub repository.
 # For syntax, see https://docs.travis-ci.com/user/languages/php/
 
-# We use dist: bionic = 18.04
+# We use dist: bionic = 18.04, focal = 20.04
 os: linux
-dist: bionic
+dist: focal
 
-language: php
+language: generic
 
 git:
   depth: 1
@@ -18,46 +18,25 @@ services:
 - postgresql
 
 
-before_install:
-- |
-  echo "Add ondrej PPA"
-  sudo add-apt-repository -y ppa:ondrej/php
-  sudo apt-get update
-  echo "Disabling Xdebug for composer"
-  export PHP_VERSION_NAME=$(phpenv version-name)
-  echo $PHP_VERSION_NAME
-  ls ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/
-  cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
-  phpenv config-rm xdebug.ini
-  phpenv rehash
-  echo
-
-addons:
+#addons:
   # Force postgresql version
-  postgresql: '10'
-  apt:
-    sources:
-    - sourceline: 'ppa:ondrej/php'
-    packages:
+  #postgresql: '10'
+  #apt:
+    #sources:
+    #- sourceline: 'ppa:ondrej/php'
+    #update: true
+    #packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
-    - apache2
+    #- apache2
     # We need pgloader for import mysql database into pgsql
-    - pgloader
-    - php
-    - php7.1-pgsql
-    - php7.1-mysqli
-    - php7.1-xml
-    - php7.1-intl
-    - php8.1-pgsql
-    - php8.1-mysqli
-    - php8.1-xml
-    - php8.1-intl
-    - php8.2-pgsql
-    - php8.2-mysqli
-    - php8.2-xml
-    - php8.2-intl
-    
+    #- pgloader
+    #- php8.1
+    #- php8.1-pgsql
+    #- php8.1-mysqli
+    #- php8.1-xml
+    #- php8.1-intl
+
 env:
   global:
   # Set to true for very verbose output
@@ -71,15 +50,19 @@ jobs:
     - stage: PHP 7.0-8.1
       if: type = push
       php: '7.1'
-      env: DB=postgresql
+      env: 
+      - DB=postgresql
+      - TRAVIS_PHP_VERSION=7.1
     - stage: PHP 7.0-8.1
       if: type = pull_request OR type = push
       php: '8.1'
-      env: DB=mysql
-    - stage: PHP Dev
-      if: type = push AND branch = developdisabled
-      php: '8.2'
-      env: DB=mysql
+      env: 
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=8.1
+    #- stage: PHP Dev
+    #  if: type = push AND branch = developdisabled
+    #  php: '8.2'
+    #  env: DB=mysql
 
 notifications:
   email:
@@ -93,22 +76,59 @@ notifications:
     use_notice: true
 
 
+before_install:
+- |
+  echo "Remove awful phpenv and install packages"
+  sudo rm -fr ~/.phpenv
+  sudo rm -fr /root/.phpenv
+  sudo add-apt-repository -y ppa:ondrej/php
+  sudo apt-get update
+  echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
+
+- |
+  echo Install packages for PHP
+  sudo apt-get install -y pgloader memcached
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
+  	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
+  	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
+  fi
+
+- |
+  echo Install packages for PHP
+  if [ "$DB" = 'postgresql' ]; then
+    psql -U postgres -h 127.0.0.1 -c 'create database travis_ci_test;'
+    psql -U postgres -h 127.0.0.1 -c 'create database travis;'
+  fi
+ 
 install:
 - |
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
+    sudo update-alternatives --set php /usr/bin/php7.1
+  fi 
+  if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
+    sudo update-alternatives --set php /usr/bin/php8.1
+  fi 
+  php -i | head -
+  
+- |
   echo "Updating Composer config"
+  curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
+  HASH=`curl -sS https://composer.github.io/installer.sig`
+  echo $HASH
+  php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+  sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  sudo chmod -R a+rwx /usr/local/bin/composer
   composer -V
-  #rm $TRAVIS_BUILD_DIR/composer.json
-  #rm $TRAVIS_BUILD_DIR/composer.lock
-  #composer -n init
-  #composer -n config vendor-dir htdocs/includes
   composer -n config -g vendor-dir htdocs/includes
   echo
 
 - |
   echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
-  echo "(version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
+  echo "(composer version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
-    composer self-update 2.2.18
+    sudo composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7.5 \
                         php-parallel-lint/php-parallel-lint ^1 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -116,7 +136,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
-    composer self-update 2.2.18
+    sudo composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7.5 \
                         php-parallel-lint/php-parallel-lint ^1.2 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -125,13 +145,14 @@ install:
   fi
   # phpunit 9 is required for php 8
   if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-      composer self-update 2.4.4
+      sudo composer self-update 2.4.4
       composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
                                                  php-parallel-lint/php-console-highlighter ^0 \
                                                  php-parallel-lint/php-var-dump-check ~0.4 \
                                                  squizlabs/php_codesniffer ^3
   fi
+
   # Remove non expected files
   rm -fr /home/travis/build/Dolibarr/dolibarr/htdocs/includes/phpunit/php-code-coverage/src/Report/Html/Renderer/Template/js
   echo
@@ -140,7 +161,7 @@ install:
   echo "Adding path of binaries tools installed by composer to the PATH"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo $PATH
-  ls $TRAVIS_BUILD_DIR/vendor
+  ls $TRAVIS_BUILD_DIR/htdocs/includes
   ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   echo
 
@@ -152,19 +173,6 @@ before_script:
     echo Current dir is `pwd`
     echo Home dir is `echo ~`
     echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
-
-  - |
-    echo "Re-enabling Xdebug for PHP CodeSniffer and PHP Unit"
-    phpenv config-add /tmp/xdebug.ini
-    echo
-
-  - |
-    echo "Setting up PHP"
-    echo
-    echo "Set timezone"
-    echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
-    phpenv rehash
-    echo
 
   - |
     echo "Versions information"
@@ -195,11 +203,13 @@ before_script:
     # Check Database
     echo "Database version"
     mysql --version | head -
-    mysql -e "SELECT VERSION();"  | head -
     psql --version
     if [ "$DB" = 'postgresql' ]; then
       echo "Check pgloader version"
       pgloader --version
+      ps fauxww | grep postgres
+      ls /etc/postgresql/13/main/
+      sudo cat /etc/postgresql/11/main/pg_hba.conf
     fi
     echo
 
@@ -208,7 +218,8 @@ before_script:
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
       echo "MySQL"
       mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
-      mysql -u root -e 'CREATE DATABASE IF NOT EXISTS travis;'
+      mysql -u root -e 'CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';'
+      mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       mysql -u root -e 'FLUSH PRIVILEGES;'
       mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
@@ -217,10 +228,14 @@ before_script:
       #psql -c 'create database travis;' -U postgres
       #psql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
       #pgloader mysql://root:pass@127.0.0.1/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
-      echo pgloader mysql://root@127.0.0.1/travis postgresql://postgres@/travis
-      pgloader mysql://root@127.0.0.1/travis postgresql://postgres@/travis
+      echo sudo pgloader mysql://root@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
+      sudo mkdir -p /tmp/pgloader
+      sudo chmod -R a+rwx /tmp/pgloader/
+      sudo pgloader mysql://root@127.0.0.1/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql -U postgres travis
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql -U postgres travis
+      # Create pgsql compatibility functions
+      psql -U postgres travis < htdocs/install/pgsql/functions/functions.sql
     fi
     echo
 
@@ -256,24 +271,24 @@ before_script:
     echo
 
 
-  - echo "Setting up Apache + FPM"
+  - echo "Setting up Apache"
   # setup link for php legacy
-  - sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
+  #- sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
   # install apache web server
-  - sudo apt-get install apache2 php-fpm php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring libapache2-mod-php
+  #- sudo apt-get install apache2 php-fpm php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring libapache2-mod-php
   # enable php-fpm
-  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-  - |
-    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-      # Copy the included pool
-      sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
-    fi
-  - sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
-  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  #- sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+  #- |
+  #  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+  #    # Copy the included pool
+  #    sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
+  #  fi
+  #- sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
+  #- echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
   #- sudo chown -R travis:travis /var/lib/apache2/fastcgi
   # start php-fpm
-  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+  #- ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
   # configure apache virtual hosts
   - sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
@@ -284,11 +299,11 @@ before_script:
 
 script:
 - |
-  echo "Checking webserver availability by a wget -O - http://127.0.0.1"
+  echo "Checking webserver availability by a wget -O - --debug http://127.0.0.1"
   # Ensure we stop on error with set -e
   set +e
   # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
-  wget -O - http://127.0.0.1 > test.html
+  wget -O - --debug http://127.0.0.1 > test.html
   head test.html
   sudo cat /var/log/apache2/travis_error_log
   set +e
@@ -298,7 +313,6 @@ script:
   echo "Checking PHP syntax errors (only 1 version to not overload travis and avoid duplicate tests)"
   # Ensure we catch errors
   set -e
-  #parallel-lint --exclude htdocs/includes --blame .
   # Exclusions are defined in the ruleset.xml file
   if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
     parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
@@ -459,6 +473,9 @@ script:
   php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
   php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
   ls -alrt $TRAVIS_BUILD_DIR/
+  echo
+  #cat $TRAVIS_BUILD_DIR/upgrade17001800.log
+  #cat $TRAVIS_BUILD_DIR/upgrade17001800-2.log
 
 - |
   echo "Enabling new modules"
@@ -468,6 +485,7 @@ script:
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KNOWLEDGEMANAGEMENT,MAIN_MODULE_EVENTORGANIZATION,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EMAILCOLLECTOR >> $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?
   cd -
   set +e
@@ -492,7 +510,7 @@ after_script:
   sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
   echo "After script - Output last lines of apache error.log"
   sudo ls /var/log/apache2
-  sudo tail -n 50 /var/log/apache2/travis_error_log
+  sudo tail -n 200 /var/log/apache2/travis_error_log
 
 after_success:
 - |
@@ -510,14 +528,14 @@ after_failure:
   done
   # Show Apache log file
   echo "Debugging informations for file apache error.log"
-  sudo tail -n 50 /var/log/apache2/travis_error_log
+  sudo tail -n 200 /var/log/apache2/travis_error_log
   if [ "$DEBUG" = true ]; then
     # Dolibarr log file
     echo "Debugging informations for file dolibarr.log (latest 50 lines)"
-    tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
+    tail -n 200 $TRAVIS_BUILD_DIR/documents/dolibarr.log
     # Database log file
     echo "Debugging informations for file mysql error.log"
-    sudo tail -n 50 /var/log/mysql/error.log
+    sudo tail -n 200 /var/log/mysql/error.log
     # TODO: PostgreSQL log file
     echo
   fi

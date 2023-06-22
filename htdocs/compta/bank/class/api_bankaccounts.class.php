@@ -121,8 +121,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Get account by ID.
 	 *
-	 * @param 	int	$id    						ID of account
-	 * @return  	Object              		Object with cleaned properties
+	 * @param 	int			$id				ID of account
+	 * @return  Object              		Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */

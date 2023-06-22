@@ -226,7 +226,7 @@ if ($action == 'edit') {
 					print "</textarea>\n";
 				} elseif ($val['type']== 'html') {
 					require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-					$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+					$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($val['type'] == 'yesno') {
 					print $form->selectyesno($constname, getDolGlobalString($constname), 1);

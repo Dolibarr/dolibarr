@@ -164,9 +164,14 @@ if ($action == 'add') {
 				} else {
 					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
-						list($key, $value) = explode(',', $param_ligne);
-						if (!array_key_exists('options', $params)) {
-							$params['options'] = array();
+						if (strpos($param_ligne, ',')!==false) {
+							list($key, $value) = explode(',', $param_ligne);
+							if (!array_key_exists('options', $params)) {
+								$params['options'] = array();
+							}
+						} else {
+							$key=$param_ligne;
+							$value=null;
 						}
 						$params['options'][$key] = $value;
 					}

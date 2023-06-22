@@ -8,12 +8,15 @@
         "Hooks",
         "Plugin",
         "Signal",
-        "Async"
+        "Async",
+        "EventLoop",
+        "Reactor",
+        "Coroutine"
     ],
     "homepage": "http://sabre.io/event/",
     "license": "BSD-3-Clause",
     "require": {
-        "php": ">=5.5"
+        "php": ">=7.0"
     },
     "authors": [
         {
@@ -38,7 +41,7 @@
         ]
     },
     "require-dev": {
-        "sabre/cs": "~0.0.4",
+        "sabre/cs": "~1.0.0",
         "phpunit/phpunit" : "*"
     },
     "config" : {

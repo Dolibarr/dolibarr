@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Auth\Backend;
 
-use Sabre\DAV;
 use Sabre\HTTP;
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 /**
- * HTTP Basic authentication backend class
+ * HTTP Basic authentication backend class.
  *
  * This class can be used by authentication objects wishing to use HTTP Basic
  * Most of the digest logic is handled, implementors just need to worry about
@@ -19,8 +20,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractBasic implements BackendInterface {
-
+abstract class AbstractBasic implements BackendInterface
+{
     /**
      * Authentication Realm.
      *
@@ -39,13 +40,14 @@ abstract class AbstractBasic implements BackendInterface {
     protected $principalPrefix = 'principals/';
 
     /**
-     * Validates a username and password
+     * Validates a username and password.
      *
      * This method should return true or false depending on if login
      * succeeded.
      *
      * @param string $username
      * @param string $password
+     *
      * @return bool
      */
     abstract protected function validateUserPass($username, $password);
@@ -54,12 +56,10 @@ abstract class AbstractBasic implements BackendInterface {
      * Sets the authentication realm for this backend.
      *
      * @param string $realm
-     * @return void
      */
-    function setRealm($realm) {
-
+    public function setRealm($realm)
+    {
         $this->realm = $realm;
-
     }
 
     /**
@@ -86,12 +86,10 @@ abstract class AbstractBasic implements BackendInterface {
      *
      * principals/users/[username]
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Basic(
             $this->realm,
             $request,
@@ -103,10 +101,10 @@ abstract class AbstractBasic implements BackendInterface {
             return [false, "No 'Authorization: Basic' header found. Either the client didn't send one, or the server is misconfigured"];
         }
         if (!$this->validateUserPass($userpass[0], $userpass[1])) {
-            return [false, "Username or password was incorrect"];
+            return [false, 'Username or password was incorrect'];
         }
-        return [true, $this->principalPrefix . $userpass[0]];
 
+        return [true, $this->principalPrefix.$userpass[0]];
     }
 
     /**
@@ -125,20 +123,14 @@ abstract class AbstractBasic implements BackendInterface {
      * WWW-Authenticate headers may already have been set, and you'll want to
      * append your own WWW-Authenticate header instead of overwriting the
      * existing one.
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Basic(
             $this->realm,
             $request,
             $response
         );
         $auth->requireLogin();
-
     }
-
 }

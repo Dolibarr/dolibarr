@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Property;
 
 use Sabre\DAV;
@@ -20,10 +22,10 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class LockDiscovery implements XmlSerializable {
-
+class LockDiscovery implements XmlSerializable
+{
     /**
-     * locks
+     * locks.
      *
      * @var LockInfo[]
      */
@@ -37,17 +39,16 @@ class LockDiscovery implements XmlSerializable {
      *
      * @var bool
      */
-    static $hideLockRoot = false;
+    public static $hideLockRoot = false;
 
     /**
-     * __construct
+     * __construct.
      *
      * @param LockInfo[] $locks
      */
-    function __construct($locks) {
-
+    public function __construct($locks)
+    {
         $this->locks = $locks;
-
     }
 
     /**
@@ -61,18 +62,14 @@ class LockDiscovery implements XmlSerializable {
      *
      * Important note 2: If you are writing any new elements, you are also
      * responsible for closing them.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->locks as $lock) {
-
             $writer->startElement('{DAV:}activelock');
 
             $writer->startElement('{DAV:}lockscope');
-            if ($lock->scope === LockInfo::SHARED) {
+            if (LockInfo::SHARED === $lock->scope) {
                 $writer->writeElement('{DAV:}shared');
             } else {
                 $writer->writeElement('{DAV:}exclusive');
@@ -86,21 +83,23 @@ class LockDiscovery implements XmlSerializable {
 
             if (!self::$hideLockRoot) {
                 $writer->startElement('{DAV:}lockroot');
-                $writer->writeElement('{DAV:}href', $writer->contextUri . $lock->uri);
+                $writer->writeElement('{DAV:}href', $writer->contextUri.$lock->uri);
                 $writer->endElement(); // {DAV:}lockroot
             }
-            $writer->writeElement('{DAV:}depth', ($lock->depth == DAV\Server::DEPTH_INFINITY ? 'infinity' : $lock->depth));
-            $writer->writeElement('{DAV:}timeout', 'Second-' . $lock->timeout);
+            $writer->writeElement('{DAV:}depth', (DAV\Server::DEPTH_INFINITY == $lock->depth ? 'infinity' : $lock->depth));
+            $writer->writeElement('{DAV:}timeout', (LockInfo::TIMEOUT_INFINITE === $lock->timeout ? 'Infinite' : 'Second-'.$lock->timeout));
 
-            $writer->startElement('{DAV:}locktoken');
-            $writer->writeElement('{DAV:}href', 'opaquelocktoken:' . $lock->token);
-            $writer->endElement(); // {DAV:}locktoken
+            // optional according to https://tools.ietf.org/html/rfc4918#section-6.5
+            if (null !== $lock->token && '' !== $lock->token) {
+                $writer->startElement('{DAV:}locktoken');
+                $writer->writeElement('{DAV:}href', 'opaquelocktoken:'.$lock->token);
+                $writer->endElement(); // {DAV:}locktoken
+            }
 
-            $writer->writeElement('{DAV:}owner', new XmlFragment($lock->owner));
+            if ($lock->owner) {
+                $writer->writeElement('{DAV:}owner', new XmlFragment($lock->owner));
+            }
             $writer->endElement(); // {DAV:}activelock
-
         }
-
     }
-
 }

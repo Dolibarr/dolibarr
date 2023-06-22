@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Locks\Backend;
 
 use Sabre\DAV\Locks;
@@ -12,10 +14,10 @@ use Sabre\DAV\Locks;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface BackendInterface {
-
+interface BackendInterface
+{
     /**
-     * Returns a list of Sabre\DAV\Locks\LockInfo objects
+     * Returns a list of Sabre\DAV\Locks\LockInfo objects.
      *
      * This method should return all the locks for a particular uri, including
      * locks that might be set on a parent uri.
@@ -24,27 +26,27 @@ interface BackendInterface {
      * any locks in the subtree of the uri for locks.
      *
      * @param string $uri
-     * @param bool $returnChildLocks
+     * @param bool   $returnChildLocks
+     *
      * @return array
      */
-    function getLocks($uri, $returnChildLocks);
+    public function getLocks($uri, $returnChildLocks);
 
     /**
-     * Locks a uri
+     * Locks a uri.
      *
      * @param string $uri
-     * @param Locks\LockInfo $lockInfo
+     *
      * @return bool
      */
-    function lock($uri, Locks\LockInfo $lockInfo);
+    public function lock($uri, Locks\LockInfo $lockInfo);
 
     /**
-     * Removes a lock from a uri
+     * Removes a lock from a uri.
      *
      * @param string $uri
-     * @param Locks\LockInfo $lockInfo
+     *
      * @return bool
      */
-    function unlock($uri, Locks\LockInfo $lockInfo);
-
+    public function unlock($uri, Locks\LockInfo $lockInfo);
 }

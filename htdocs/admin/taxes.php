@@ -59,7 +59,7 @@ $action = GETPOST('action', 'aZ09');
 // Product      On delivery             On delivery
 // Service      On invoice              On invoice
 
-$tax_mode = empty($conf->global->TAX_MODE) ? 0 : $conf->global->TAX_MODE;
+$tax_mode = getDolGlobalString('TAX_MODE') ? 0 : getDolGlobalInt('TAX_MODE');
 
 if ($action == 'update') {
 	$error = 0;
@@ -220,7 +220,7 @@ if (empty($mysoc->tva_assuj)) {
 	// Products
 	print '<tr class="oddeven"><td>'.$langs->trans("Product").'</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment') {
+	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -229,7 +229,7 @@ if (empty($mysoc->tva_assuj)) {
 	}
 	print '</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+	if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -241,7 +241,7 @@ if (empty($mysoc->tva_assuj)) {
 	// Services
 	print '<tr class="oddeven"><td>'.$langs->trans("Services").'</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_BUY_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -250,7 +250,7 @@ if (empty($mysoc->tva_assuj)) {
 	}
 	print '</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {

@@ -64,12 +64,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -369,6 +363,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				// Displays notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+
+				// Extrafields in note
+				if (!empty($conf->global->INVOICE_ADD_EXTRAFIELD_IN_NOTE)) {
+					$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+					if (!empty($extranote)) {
+						$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					}
+				}
 
 				if ($notetoshow) {
 					$tab_top -= 2;

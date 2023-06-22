@@ -66,7 +66,7 @@ class Tickets extends DolibarrApi
 	 * Return an array with ticket informations
 	 *
 	 * @param	int 			$id 		ID of ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @return  Object              		Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403

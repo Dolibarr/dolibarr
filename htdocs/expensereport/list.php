@@ -176,7 +176,7 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canedituser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer'));
 
 $objectuser = new User($db);
 

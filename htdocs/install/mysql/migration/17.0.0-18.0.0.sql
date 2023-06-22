@@ -404,22 +404,23 @@ CREATE TABLE llx_c_invoice_subtype (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   entity integer DEFAULT 1,
   fk_country integer NOT NULL,
-  code varchar(3) NOT NULL,
+  code varchar(4) NOT NULL,
   label varchar(100),
   active tinyint DEFAULT 1 NOT NULL
 ) ENGINE=innodb;
 
+ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN code varchar(4);
 ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
 
 ALTER TABLE llx_projet ADD COLUMN fk_project integer DEFAULT NULL;
 
 -- Upgrade default PDF models to the 'new' ones (eproved since 4 dolibarr versions from now)
---UPDATE llx_const SET value="eratosthene" WHERE name="COMMANDE_ADDON_PDF" and value="einstein";
---UPDATE llx_const SET value="sponge" WHERE name="FACTURE_ADDON_PDF" and value="crabe";
---UPDATE llx_const SET value="espadon" WHERE name="EXPEDITION_ADDON_PDF" and value="merou";
---UPDATE llx_const SET value="cyan" WHERE name="PROPALE_ADDON_PDF" and value="azur";
---UPDATE llx_const SET value="storm" WHERE name IN ("DELIVERY_ADDON_PDF","LIVRAISON_ADDON_PDF") and value="typhon";
---UPDATE llx_const SET value="cornas" WHERE name="COMMANDE_SUPPLIER_ADDON_PDF" and value="muscadet";
+--UPDATE llx_const SET value='eratosthene' WHERE name='COMMANDE_ADDON_PDF' and value='einstein';
+--UPDATE llx_const SET value='sponge' WHERE name='FACTURE_ADDON_PDF' and value='crabe';
+--UPDATE llx_const SET value='espadon' WHERE name='EXPEDITION_ADDON_PDF' and value='merou';
+--UPDATE llx_const SET value='cyan' WHERE name='PROPALE_ADDON_PDF' and value='azur';
+--UPDATE llx_const SET value='storm' WHERE name IN ('DELIVERY_ADDON_PDF','LIVRAISON_ADDON_PDF') and value='typhon';
+--UPDATE llx_const SET value='cornas' WHERE name='COMMANDE_SUPPLIER_ADDON_PDF' and value='muscadet';
 
 
 ALTER TABLE llx_c_propalst ADD COLUMN sortorder smallint DEFAULT 0;
@@ -428,3 +429,50 @@ ALTER TABLE llx_c_stcomm ADD COLUMN sortorder smallint DEFAULT 0;
 ALTER TABLE llx_element_time ADD COLUMN ref_ext varchar(32);
 
 ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);
+
+
+-- Email Collector
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN imap_encryption varchar(16) DEFAULT 'ssl' AFTER hostcharset;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN norsh integer DEFAULT 0 AFTER imap_encryption;
+
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.1', 'Τιμολόγιο Πώλησης', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.2', 'Τιμολόγιο Πώλησης / Ενδοκοινοτικές Παραδόσεις', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.3', 'Τιμολόγιο Πώλησης / Παραδόσεις Τρίτων Χωρών', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.4', 'Τιμολόγιο Πώλησης / Πώληση για Λογαριασμό Τρίτων', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.5', 'Τιμολόγιο Πώλησης / Εκκαθάριση Πωλήσεων Τρίτων - Αμοιβή από Πωλήσεις Τρίτων', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.6', 'Τιμολόγιο Πώλησης / Συμπληρωματικό Παραστατικό', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.1', 'Τιμολόγιο Παροχής', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.2', 'Τιμολόγιο Παροχής / Ενδοκοινοτική Παροχή Υπηρεσιών', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.3', 'Τιμολόγιο Παροχής / Παροχή Υπηρεσιών σε λήπτη Τρίτης Χώρας', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.4', 'Τιμολόγιο Παροχής / Συμπληρωματικό Παραστατικό', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '3.1', 'Τίτλος Κτήσης (μη υπόχρεος Εκδότης)', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '3.2', 'Τίτλος Κτήσης (άρνηση έκδοσης από υπόχρεο Εκδότη)', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '6.1', 'Στοιχείο Αυτοπαράδοσης', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '6.2', 'Στοιχείο Ιδιοχρησιμοποίησης', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '7.1', 'Συμβόλαιο - Έσοδο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '8.1', 'Ενοίκια - Έσοδο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '8.2', 'Ειδικό Στοιχείο – Απόδειξης Είσπραξης Φόρου Διαμονής', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.1', 'ΑΛΠ', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.2', 'ΑΠΥ', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.3', 'Απλοποιημένο Τιμολόγιο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.5', 'Απόδειξη Λιανικής Πώλησης για Λογ/σμό Τρίτων', 0);
+
+ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_member;
+
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
+
+-- Drop the composite unique index that exists on llx_commande_fournisseur to rebuild a new one without the fk_soc.
+-- The old design allowed for a duplicate reference as long as fk_soc was not the same.
+-- VMYSQL4.1 DROP INDEX uk_commande_fournisseur_ref on llx_commande_fournisseur;
+-- VPGSQL8.2 DROP INDEX uk_commande_fournisseur_ref;
+ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, entity);
+
+-- Drop the composite unique index that exists on llx_actioncomm to rebuild a new one without unique feature.
+-- The old design introduced a deadlock over traffic intense Dolibarr instance.
+-- VMYSQL4.1 DROP INDEX uk_actioncomm_ref on llx_actioncomm;
+-- VPGSQL8.2 DROP INDEX uk_actioncomm_ref;
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref (ref, entity);
+
+-- Bump llx_reception.ref_supplier to allow up to 255 characters to match llx_commande_fournisseur.ref_supplier.
+-- See: https://github.com/Dolibarr/dolibarr/pull/25034
+ALTER TABLE llx_reception MODIFY COLUMN ref_supplier varchar(255);

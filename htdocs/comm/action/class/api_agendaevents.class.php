@@ -57,8 +57,8 @@ class AgendaEvents extends DolibarrApi
 	 *
 	 * Return an array with Agenda Events informations
 	 *
-	 * @param       int         $id         ID of Agenda Events
-	 * @return 	    array|mixed             Data without useless information
+	 * @param   int         $id         ID of Agenda Events
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -289,7 +289,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'delete')) {
 			throw new RestException(401, "Insufficient rights to delete your Agenda Event");
 		}
 

@@ -934,6 +934,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
@@ -975,6 +979,9 @@ th .button {
 }
 .centpercentimp {
 	width: 100% !important;
+}
+.centpercentwithout1imp {
+	width: calc(100% - 1px) !important;
 }
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
@@ -4658,6 +4665,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		padding-left: 0 !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
+	}
+
+	td.tdwidgetstate {
+		text-align: center;
 	}
 
 	.boxstats, .boxstats130 {
