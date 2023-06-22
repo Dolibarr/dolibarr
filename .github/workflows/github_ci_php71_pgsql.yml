@@ -49,6 +49,7 @@ jobs:
     - name: Install packages for PHP 7.1
       run: |
         sudo composer self-update 2.2.18
+        sudo chmod -R a+rwx /home/runner
         composer -n config -g vendor-dir htdocs/includes
 
         sudo add-apt-repository -y ppa:ondrej/php

@@ -38,6 +38,10 @@ jobs:
 
     - name: Install packages for PHP 8.1
       run: |
+        sudo composer self-update 2.2.18
+        sudo chmod -R a+rwx /home/runner
+        composer -n config -g vendor-dir htdocs/includes
+        
         sudo add-apt-repository -y ppa:ondrej/php
         sudo apt-get update
         sudo apt-get install -y pgloader memcached
