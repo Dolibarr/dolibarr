@@ -2196,12 +2196,12 @@ class ActionComm extends CommonObject
 						$obj   = $this->db->fetch_object($resql);
 						$event = array();
 
-						if ($obj->halfday == -1) {
+						if ($obj->halfday == 1) {
 							$event['fulldayevent'] = false;
 
 							$timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
 							$timestampEnd   = dol_stringtotime($obj->date_end." 12:00:00", 0);
-						} elseif ($obj->halfday == 1) {
+						} elseif ($obj->halfday == -1) {
 							$event['fulldayevent'] = false;
 
 							$timestampStart = dol_stringtotime($obj->date_start." 12:00:00", 0);
