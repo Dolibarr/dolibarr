@@ -5292,7 +5292,7 @@ class Societe extends CommonObject
 	function liste_contact_societe($list = 0, $code = '', $element = '')
 	{
 		// phpcs:enable
-		global $langs, $db;
+		global $langs;
 
 		$tab = array();
 
@@ -5302,21 +5302,21 @@ class Societe extends CommonObject
 		
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
-		$sql .= " FROM ".$db->prefix()."c_type_contact tc";
-		$sql .= ", ".$db->prefix()."societe_contacts sc";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
+		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
 
 //			fk_soc ↓ =
 //	fk_c_type_contact	fk_socpeople	tms	import_key
 					
-		$sql .= " LEFT JOIN ".$db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
 		
 		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
 		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
 		if (!empty($element)) {
-			$sql .= " AND tc.element = '".$db->escape($element)."'";
+			$sql .= " AND tc.element = '".$this->db->escape($element)."'";
 		}
 		if ($code) {
-			$sql .= " AND tc.code = '".$db->escape($code)."'";
+			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
 		$sql .= " AND sc.entity = ".getEntity($this->element);
 		
@@ -5327,12 +5327,12 @@ class Societe extends CommonObject
 		$sql .= " ORDER BY t.lastname ASC";
 
 		dol_syslog(get_class($this)."::liste_contact_societe", LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
@@ -5365,8 +5365,8 @@ class Societe extends CommonObject
 
 			return $tab;
 		} else {
-			$error = $db->lasterror();
-			dol_print_error($db);
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
