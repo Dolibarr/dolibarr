@@ -73,7 +73,7 @@ function printDropdownBookmarksList()
 	}
 	$url .= ($tmpurl ? '?'.$tmpurl : '');
 	if (!empty($url_param)) {
-		$url .= '&'.implode('&', $url_param);
+		$url .= (strpos($url, '?') > 0 ? '&' : '?').implode('&', $url_param);
 	}
 
 	$searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
