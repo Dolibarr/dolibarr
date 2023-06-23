@@ -225,22 +225,24 @@ before_script:
     echo "Setting up database"
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
       # Ensure we stop on error with set -e
-      set +e
+      set -e
       echo "MySQL drop database"
       mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
       echo "MySQL create database"
       mysql -u root -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
       echo "MySQL list current users"
       mysql -u root -e 'use mysql; select * from user;'
-      #echo "MySQL create user"
-      #mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL force root password"
       mysql -u root -e "CREATE USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       mysql -u root -e "ALTER USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      mysql -u root -e "ALTER USER 'travis'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       echo "MySQL grant"
       mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       echo "MySQL grant and flush"
       mysql -u root -e 'GRANT ALL PRIVILEGES ON *.* TO root@127.0.0.1; FLUSH PRIVILEGES;'
+      sudo /etc/init.d/mysql restart
+      echo "MySQL list current users"
+      mysql -u root -e 'use mysql; select * from user;'
       set -e
       echo "MySQL load with pass"
       mysql -u root -ppassword -h 127.0.0.1 -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
