@@ -228,6 +228,8 @@ before_script:
       mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
       echo "MySQL create database"
       mysql -u root -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
+      echo "MySQL list current users"
+      mysql -u root -e 'use mysql; select * from user;'
       echo "MySQL create user"
       mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
