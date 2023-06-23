@@ -234,7 +234,8 @@ before_script:
       mysql -u root -e 'use mysql; select * from user;'
       #echo "MySQL create user"
       #mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
-      echo "MySQL foce root password"
+      echo "MySQL force root password"
+      mysql -u root -e "CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password';"
       mysql -u root -e "ALTER USER 'root'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
       mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
