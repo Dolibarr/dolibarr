@@ -5285,11 +5285,9 @@ class Societe extends CommonObject
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *	  @param    string      $element       Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
-	 * 
 	 *
-	 * 
 	 */
-	function liste_contact_societe($list = 0, $code = '', $element = '')
+	function getContacts($list = 0, $code = '', $element = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5305,9 +5303,6 @@ class Societe extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
 		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
 
-//			fk_soc ↓ =
-//	fk_c_type_contact	fk_socpeople	tms	import_key
-					
 		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
 		
 		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
@@ -5318,15 +5313,13 @@ class Societe extends CommonObject
 		if ($code) {
 			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
-		$sql .= " AND sc.entity = ".getEntity($this->element);
-		
-		$sql .= " AND tc.source = 'external'";
-		
+		$sql .= " AND sc.entity = ".getEntity($this->element);		
+		$sql .= " AND tc.source = 'external'";		
 		$sql .= " AND tc.active=1";
 		
 		$sql .= " ORDER BY t.lastname ASC";
 
-		dol_syslog(get_class($this)."::liste_contact_societe", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getContacts", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
