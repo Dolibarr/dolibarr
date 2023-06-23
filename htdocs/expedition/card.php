@@ -346,7 +346,7 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))) {
+						if (GETPOST($qty, 'int') > 0 || !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
 							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
