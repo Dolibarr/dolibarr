@@ -1583,7 +1583,10 @@ function dol_escape_json($stringtoescape)
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
- *  When we output string on pages, we use dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes, and use dol_escape_htmltag() for simple labels.
+ *  When we output string on pages, we use
+ *  - dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes,
+ *  - dol_escape_htmltag() for simple labels.
+ *  - htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
