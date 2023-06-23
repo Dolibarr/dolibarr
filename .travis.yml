@@ -239,10 +239,8 @@ before_script:
       mysql -u root -e "ALTER USER 'root'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
       mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
-      echo "MySQL grant"
-      mysql -u root -e 'GRANT ALL PRIVILEGES ON *.* TO root@127.0.0.1;'
-      echo "MySQL flush"
-      mysql -u root -h 127.0.0.1 -e 'FLUSH PRIVILEGES;'
+      echo "MySQL grant and flush"
+      mysql -u root -e 'GRANT ALL PRIVILEGES ON *.* TO root@127.0.0.1; FLUSH PRIVILEGES;'
       echo "MySQL load with pass"
       mysql -u root -ppassword -h 127.0.0.1 -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
