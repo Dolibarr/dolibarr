@@ -1471,6 +1471,8 @@ class AccountancyExport
 				}
 			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
@@ -1664,6 +1666,8 @@ class AccountancyExport
 				}
 			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
