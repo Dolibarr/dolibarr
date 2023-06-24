@@ -267,7 +267,8 @@ before_script:
       sudo systemctl stop mariadb.service
       echo "MySQL restart without pass"
       #sudo mysqld_safe --skip-grant-tables --socket=/tmp/aaa
-      sudo mysqld_safe --skip-grant-tables --socket=/tmp/aaa
+      sudo mysqld_safe --skip-grant-tables --socket=/tmp/aaa &
+      sleep 3
       sudo ps fauxww 
       echo "MySQL drop database"
       sudo mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
