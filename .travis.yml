@@ -91,6 +91,7 @@ before_install:
   sudo apt-get install -y pgloader memcached
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
   	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
+  	sudo apt install mariadb-server mariadb-client
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
   	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
@@ -285,11 +286,11 @@ before_script:
     echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
       echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
-      echo '$'dolibarr_main_db_port=\'3306\'';' >> $CONF_FILE
+      echo '$'dolibarr_main_db_port=3306';' >> $CONF_FILE
     fi
     if [ "$DB" = 'postgresql' ]; then
       echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
-      echo '$'dolibarr_main_db_port=\'5432\'';' >> $CONF_FILE
+      echo '$'dolibarr_main_db_port=5432';' >> $CONF_FILE
     fi
     echo '$'dolibarr_main_db_port=\'password\'';' >> $CONF_FILE
     echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
