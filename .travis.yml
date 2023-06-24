@@ -90,8 +90,9 @@ before_install:
   echo Install packages for PHP
   sudo apt-get install -y pgloader memcached
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
-  	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
+  	sudo apt remove mysql-client mysql-server
   	sudo apt install mariadb-server mariadb-client
+  	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
   	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
@@ -281,8 +282,8 @@ before_script:
     echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
     echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
     echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
-    echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
-    echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
+    echo '$'dolibarr_main_db_name=\'root\'';' >> $CONF_FILE
+    echo '$'dolibarr_main_db_user=\'password\'';' >> $CONF_FILE
     echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
       echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
@@ -322,7 +323,7 @@ script:
   set +e
   # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
   wget -O - --debug http://127.0.0.1 > test.html
-  head test.html
+  head -n 200 test.html
   sudo cat /var/log/apache2/travis_error_log
   set +e
   echo
