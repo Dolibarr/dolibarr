@@ -14,12 +14,12 @@ git:
 # Start on every boot
 services:
 - memcached
-- mysql
+#- mysql
 - postgresql
 
 
-#addons:
-  #mariadb: 10.4
+addons:
+  mariadb: 10.4
   # Force postgresql version
   #postgresql: '10'
   #apt:
@@ -269,8 +269,8 @@ before_script:
       mysql -u root -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
       echo "MySQL list current users"
       mysql -u root -e 'use mysql; select * from user;'
-      echo "MySQL create user"
-      mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
+      #echo "MySQL create user"
+      #mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
       mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       echo "MySQL flush"
