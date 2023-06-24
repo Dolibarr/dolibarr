@@ -284,6 +284,7 @@ before_script:
       echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
       echo '$'dolibarr_main_db_port=\'5432\'';' >> $CONF_FILE
     fi
+    echo '$'dolibarr_main_db_port=\'password\'';' >> $CONF_FILE
     echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
     cat $CONF_FILE
     echo
@@ -298,24 +299,7 @@ before_script:
 
 
   - echo "Setting up Apache"
-  # setup link for php legacy
-  #- sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
-  # install apache web server
-  #- sudo apt-get install apache2 php-fpm php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring libapache2-mod-php
-  # enable php-fpm
-  #- sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-  #- |
-  #  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-  #    # Copy the included pool
-  #    sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
-  #  fi
-  #- sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
-  #- echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
-  #- sudo chown -R travis:travis /var/lib/apache2/fastcgi
-  # start php-fpm
-  #- ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-  # configure apache virtual hosts
   - sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
   - sudo cat /etc/apache2/sites-available/000-default.conf
@@ -381,15 +365,16 @@ script:
   echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
   if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
     echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
+    echo '$'force_install_port=\'3306\'';' >> $INSTALL_FORCED_FILE
   fi
   if [ "$DB" = 'postgresql' ]; then
     echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
+    echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
   fi
   echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
   echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
   echo '$'force_install_databaselogin=\'travis\'';' >> $INSTALL_FORCED_FILE
   echo '$'force_install_databasepass=\'\'';' >> $INSTALL_FORCED_FILE
-  echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
   echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
   echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
   echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
