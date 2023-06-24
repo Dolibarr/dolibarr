@@ -271,17 +271,17 @@ before_script:
       sleep 3
       sudo ps fauxww 
       echo "MySQL drop database"
-      sudo mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
+      sudo mysql -u root -h 127.0.0.1 -e 'DROP DATABASE IF EXISTS travis;'
       echo "MySQL create database"
       sudo mysql -u root -h 127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
       echo "MySQL list current users"
-      sudo mysql -u root -h localhost -e 'use mysql; select * from user;'
+      sudo mysql -u root -h 127.0.0.1 -e 'use mysql; select * from user;'
       #echo "MySQL create user"
-      #mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
+      #mysql -u root -h 127.0.0.1 -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
-      sudo mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+      sudo mysql -u root -h 127.0.0.1 -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       echo "MySQL flush"
-      sudo mysql -u root -e 'FLUSH PRIVILEGES;'
+      sudo mysql -u root -h 127.0.0.1 -e 'FLUSH PRIVILEGES;'
       sudo mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
