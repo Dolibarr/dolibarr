@@ -19,7 +19,7 @@ services:
 
 
 addons:
-  mariadb: 10.4
+  mariadb: '10.4'
   # Force postgresql version
   #postgresql: '10'
   #apt:
@@ -228,7 +228,7 @@ before_script:
       # Ensure we stop on error with set -e
       set +e
       echo "MySQL drop database"
-      sudo mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
+      sudo mysql -u root -p -e 'DROP DATABASE IF EXISTS travis;'
       echo "MySQL create database"
       sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
       echo "MySQL list current users"
