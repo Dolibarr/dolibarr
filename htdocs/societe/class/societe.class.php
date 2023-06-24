@@ -3668,12 +3668,12 @@ class Societe extends CommonObject
 	 * @param   array       $parents        List of companies ID found
 	 * @return	array
 	 */
-	public function getParentsForCompany($company_id, $parents = [])
+	public function getParentsForCompany($company_id, $parents = array())
 	{
 		global $langs;
 
 		if ($company_id > 0) {
-			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = $company_id";
+			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = ".((int) $company_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($obj = $this->db->fetch_object($resql)) {
@@ -3691,8 +3691,7 @@ class Societe extends CommonObject
 			}
 		}
 		// Return a default value when $company_id is not greater than 0
-	return -1;
-		
+		return array();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
