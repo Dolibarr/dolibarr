@@ -234,13 +234,18 @@ before_script:
       mysql -u root -e 'use mysql; select * from user;'
       echo "MySQL force root password"
       mysql -u root -e "CREATE USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      echo "MySQL force root password 2"
       mysql -u root -e "ALTER USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      echo "MySQL force root password 3"
       mysql -u root -e "ALTER USER 'travis'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
-      mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
-      mysql -u root -e "ALTER USER 'travis'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      echo "MySQL force root password 4"
       mysql -u root -e "ALTER USER 'travis'@'%' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      echo "MySQL force root password 5"
+      mysql -u root -e "ALTER USER 'travis'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      echo "MySQL force root password 6"
+      mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       echo "MySQL grant"
-      mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+      mysql -u root -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       echo "MySQL grant and flush"
       mysql -u root -e 'GRANT ALL PRIVILEGES ON *.* TO root@127.0.0.1; FLUSH PRIVILEGES;'
       sudo sed -i -e 's/default-authentication-plugin=.*/default-authentication-plugin=mysql_native_password/g' /etc/mysql/mysql.conf.d/mysqld.conf
