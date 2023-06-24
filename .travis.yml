@@ -263,6 +263,10 @@ before_script:
     fi
     
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
+      echo "MySQL stop"
+      sudo systemctl stop mariadb.service
+      echo "MySQL restart without pass"
+      sudo mysqld_safe --skip-grant-tables --skip-networking &
       echo "MySQL drop database"
       mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
       echo "MySQL create database"
@@ -484,10 +488,13 @@ script:
   php upgrade.php 17.0.0 18.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade17001800.log
   php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
   php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
+
+- |
+  echo Result of migration scripts
   ls -alrt $TRAVIS_BUILD_DIR/
-  echo
-  #cat $TRAVIS_BUILD_DIR/upgrade17001800.log
-  #cat $TRAVIS_BUILD_DIR/upgrade17001800-2.log
+        
+  echo Show content of last file
+  cat "$(ls -rt $GITHUB_WORKSPACE/ | tail -n1)"
 
 - |
   echo "Enabling new modules"
