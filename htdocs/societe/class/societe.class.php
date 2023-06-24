@@ -2282,6 +2282,7 @@ class Societe extends CommonObject
 
 			return 1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3689,6 +3690,9 @@ class Societe extends CommonObject
 				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
 			}
 		}
+		// Return a default value when $company_id is not greater than 0
+	return -1;
+		
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
