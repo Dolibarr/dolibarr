@@ -14,11 +14,11 @@ git:
 # Start on every boot
 services:
 - memcached
-- mysql
 - postgresql
 
 
-#addons:
+addons:
+  mariadb: '10'
   # Force postgresql version
   #postgresql: '10'
   #apt:
@@ -90,8 +90,6 @@ before_install:
   echo Install packages for PHP
   sudo apt-get install -y pgloader memcached
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
-  	sudo apt remove mysql-client mysql-server
-  	sudo apt install mariadb-server mariadb-client
   	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
@@ -119,7 +117,8 @@ before_install:
 
     psql postgresql://postgres:postgres@127.0.0.1:5432 -l -A
   fi
- 
+
+
 install:
 - |
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
@@ -182,12 +181,11 @@ install:
   ls $TRAVIS_BUILD_DIR/htdocs/includes
   ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   echo
-
-
-
+ 
+ 
 before_script:
   - |
-    echo Start travis
+    echo Start before_script
     echo Current dir is `pwd`
     echo Home dir is `echo ~`
     echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
@@ -225,31 +223,31 @@ before_script:
 
   - |
     echo "Setting up database"
-    if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
+    if [ "$DB" = 'postgresql' ]; then
       # Ensure we stop on error with set -e
       set +e
       echo "MySQL drop database"
-      mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
+      sudo mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
       echo "MySQL create database"
-      mysql -u root -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
+      sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
       echo "MySQL list current users"
-      mysql -u root -e 'use mysql; select * from user;'
+      sudo mysql -u root -e 'use mysql; select * from user;'
       echo "MySQL force root password"
-      mysql -u root -e "CREATE USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      sudo mysql -u root -e "CREATE USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       echo "MySQL force root password 2"
-      mysql -u root -e "ALTER USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      sudo mysql -u root -e "ALTER USER 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       echo "MySQL force root password 3"
-      mysql -u root -e "ALTER USER 'travis'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      sudo mysql -u root -e "ALTER USER 'travis'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       echo "MySQL force root password 4"
-      mysql -u root -e "ALTER USER 'travis'@'%' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      sudo mysql -u root -e "ALTER USER 'travis'@'%' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       echo "MySQL force root password 5"
-      mysql -u root -e "ALTER USER 'travis'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      sudo mysql -u root -e "ALTER USER 'travis'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       echo "MySQL force root password 6"
-      mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+      sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
       echo "MySQL grant"
-      mysql -u root -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+      sudo mysql -u root -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       echo "MySQL grant and flush"
-      mysql -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO root@127.0.0.1; FLUSH PRIVILEGES;'
+      sudo mysql -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO root@127.0.0.1; FLUSH PRIVILEGES;'
       sudo sed -i -e 's/default-authentication-plugin=.*/default-authentication-plugin=mysql_native_password/g' /etc/mysql/mysql.conf.d/mysqld.cnf
       sudo chmod -R a+rwx /etc/mysql/mysql.conf.d/mysqld.cnf
       echo "default-authentication-plugin=mysql_native_password" >> /etc/mysql/mysql.conf.d/mysqld.cnf
@@ -257,11 +255,12 @@ before_script:
       sudo cat /etc/mysql/mysql.conf.d/mysqld.cnf
       sudo /etc/init.d/mysql restart
       echo "MySQL list current users"
-      mysql -u root -ppassword -e 'use mysql; select * from user;'
+      sudo mysql -u root -ppassword -e 'use mysql; select * from user;'
       set -e
       echo "MySQL load with pass"
-      mysql -u root -ppassword -h 127.0.0.1 -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+      sudo mysql -u root -ppassword -h 127.0.0.1 -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
+    
     if [ "$DB" = 'postgresql' ]; then
       echo "PGSQL"
       sudo mkdir -p /tmp/pgloader
@@ -313,8 +312,6 @@ before_script:
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
   - sudo cat /etc/apache2/sites-available/000-default.conf
   - sudo service apache2 restart
-
-
 
 script:
 - |
