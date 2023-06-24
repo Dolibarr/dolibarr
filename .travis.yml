@@ -251,7 +251,7 @@ before_script:
       sudo sed -i -e 's/default-authentication-plugin=.*/default-authentication-plugin=mysql_native_password/g' /etc/mysql/mysql.conf.d/mysqld.cnf
       sudo chmod -R a+rwx /etc/mysql/mysql.conf.d/mysqld.cnf
       echo "default-authentication-plugin=mysql_native_password" >> /etc/mysql/mysql.conf.d/mysqld.cnf
-      sudo chmod -R o+w /etc/mysql/mysql.conf.d/mysqld.cnf
+      sudo chmod -R o-w /etc/mysql/mysql.conf.d/mysqld.cnf
       sudo cat /etc/mysql/mysql.conf.d/mysqld.cnf
       sudo /etc/init.d/mysql restart
       echo "MySQL list current users"
