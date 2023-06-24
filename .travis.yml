@@ -186,7 +186,7 @@ install:
 
 before_script:
   - |
-    echo Start travis
+    echo Start before_script
     echo Current dir is `pwd`
     echo Home dir is `echo ~`
     echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
@@ -267,19 +267,20 @@ before_script:
       sudo systemctl stop mariadb.service
       echo "MySQL restart without pass"
       sudo mysqld_safe --skip-grant-tables --skip-networking &
+      sudo ps fauxww 
       echo "MySQL drop database"
-      mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
+      sudo mysql -u root -e 'DROP DATABASE IF EXISTS travis;'
       echo "MySQL create database"
-      mysql -u root -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
+      sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
       echo "MySQL list current users"
-      mysql -u root -e 'use mysql; select * from user;'
+      sudo mysql -u root -e 'use mysql; select * from user;'
       #echo "MySQL create user"
       #mysql -u root -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
-      mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+      sudo mysql -u root -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       echo "MySQL flush"
-      mysql -u root -e 'FLUSH PRIVILEGES;'
-      mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+      sudo mysql -u root -e 'FLUSH PRIVILEGES;'
+      sudo mysql -u root -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
       echo "PGSQL"
