@@ -54,7 +54,7 @@ AssetsTypes=Soort bezit
 MenuAssets = Bezittingen
 MenuNewAsset = Nieuw bezit
 MenuTypeAssets = Soort bezit
-MenuListAssets = Lijstoverzicht
+MenuListAssets = Overzicht
 MenuNewTypeAssets = Nieuw
 MenuListTypeAssets = Lijstoverzicht
 
