@@ -170,9 +170,17 @@ class Translate
 	 */
 	public function loadLangs($domains)
 	{
+		$loaded = 0;
 		foreach ($domains as $domain) {
-			$this->load($domain);
+			$result = $this->load($domain);
+			if( $result>0 ){
+				$loaded = $result;
+
+			}elseif ( $result<0 ) {
+				return $result;
+			}
 		}
+		return $loaded;
 	}
 
 	/**

@@ -417,7 +417,7 @@ class Skill extends CommonObject
 			$this->error = $skilldet->error;
 			return $this->lines;
 		}
-		return -1;
+		return [];
 	}
 
 

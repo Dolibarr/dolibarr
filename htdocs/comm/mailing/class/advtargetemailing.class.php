@@ -516,6 +516,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$this->create($user);
 			}
 		}
+		return -1;
 	}
 
 
