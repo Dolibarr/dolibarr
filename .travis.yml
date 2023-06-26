@@ -270,24 +270,27 @@ before_script:
       sudo mysqld_safe --skip-grant-tables --socket=/tmp/aaa &
       sleep 3
       sudo ps fauxww 
+      echo "MySQL flush"
+      sudo mysql -u root -h 127.0.0.1 -e 'FLUSH PRIVILEGES;'
       echo "MySQL drop database"
       sudo mysql -u root -h 127.0.0.1 -e 'DROP DATABASE IF EXISTS travis;'
       echo "MySQL create database"
       sudo mysql -u root -h 127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
       echo "MySQL set root password"
-      sudo mysql -u root -h 127.0.0.1 -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';"
+      sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';"
       echo "MySQL create root user for 127.0.0.1"
-      sudo mysql -u root -h 127.0.0.1 -e "CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password';"
+      sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL create travis user for 127.0.0.1"
-      sudo mysql -u root -h 127.0.0.1 -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
+      sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
-      sudo mysql -u root -h 127.0.0.1 -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+      sudo mysql -u root -h 127.0.0.1 -e 'FLUSH PRIVILEGES; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;'
       echo "MySQL flush"
       sudo mysql -u root -h 127.0.0.1 -e 'FLUSH PRIVILEGES;'
       echo "MySQL list current users"
       sudo mysql -u root -h 127.0.0.1 -e 'use mysql; select * from user;'
       
-      sudo kill `/var/run/mariadb/mariadb.pid`
+      sudo kill `cat /var/run/mysqld/mysqld.pid`
+      sudo kill `cat /var/run/mariadb/mariadb.pid`
       sudo systemctl start mariadb
 
       echo "MySQL grant"
