@@ -435,6 +435,10 @@ script:
   php upgrade.php 5.0.0 6.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade500600.log
   php upgrade2.php 5.0.0 6.0.0 > $TRAVIS_BUILD_DIR/upgrade500600-2.log
   php step5.php 5.0.0 6.0.0 > $TRAVIS_BUILD_DIR/upgrade500600-3.log
+  
+  echo '\d llx_bank_account' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+  cat $TRAVIS_BUILD_DIR/upgrade500600.log
+
   php upgrade.php 6.0.0 7.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade600700.log
   php upgrade2.php 6.0.0 7.0.0 > $TRAVIS_BUILD_DIR/upgrade600700-2.log
   php step5.php 6.0.0 7.0.0 > $TRAVIS_BUILD_DIR/upgrade600700-3.log
@@ -523,11 +527,11 @@ after_failure:
   echo Failure detected, so we show samples of log to help diagnose
   # This part of code is executed only if the command that fails are enclosed with set +e
   # Show upgrade log files
-  for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
-  do
+  #for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
+  #do
     #echo "Debugging informations for file $ficlog"
     #cat $ficlog
-  done
+  #done
   # Show Apache log file
   echo "Debugging informations for file apache error.log"
   sudo tail -n 200 /var/log/apache2/travis_error_log
