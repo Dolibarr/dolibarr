@@ -254,6 +254,7 @@ before_script:
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       echo "MySQL flush"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES;'
+      
       echo "MySQL load sql"
       sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
@@ -287,13 +288,13 @@ before_script:
       echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
       echo '$'dolibarr_main_db_port=3306';' >> $CONF_FILE
       echo '$'dolibarr_main_db_user=\'root\'';' >> $CONF_FILE
-      echo '$'dolibarr_main_db_port=\'password\'';' >> $CONF_FILE
+      echo '$'dolibarr_main_db_pass=\'password\'';' >> $CONF_FILE
     fi
     if [ "$DB" = 'postgresql' ]; then
       echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
       echo '$'dolibarr_main_db_port=5432';' >> $CONF_FILE
       echo '$'dolibarr_main_db_user=\'postgres\'';' >> $CONF_FILE
-      echo '$'dolibarr_main_db_port=\'postgres\'';' >> $CONF_FILE
+      echo '$'dolibarr_main_db_pass=\'postgres\'';' >> $CONF_FILE
     fi
     echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
     cat $CONF_FILE
