@@ -6302,7 +6302,6 @@ class Product extends CommonObject
 		} else {
 			return $user->rights->service;
 		}
-		
 	}
 
 	/**
