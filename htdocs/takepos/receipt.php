@@ -112,14 +112,14 @@ if (!empty($hookmanager->resPrint)) {
 <p class="left">
 <?php
 $constFreeText = 'TAKEPOS_HEADER'.$_SESSION['takeposterminal'];
-if (!empty($conf->global->TAKEPOS_HEADER) || !empty($conf->global->{$constFreeText})) {
+if (!empty($conf->global->TAKEPOS_HEADER) || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
 	if (!empty($conf->global->TAKEPOS_HEADER)) {
 		$newfreetext .= make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
 	}
-	if (!empty($conf->global->{$constFreeText})) {
-		$newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	if (getDolGlobalString($constFreeText)) {
+		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
 	print nl2br($newfreetext);
 }
@@ -137,12 +137,12 @@ if ($object->statut == Facture::STATUS_DRAFT) {
 	print $object->ref;
 }
 if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
-	if ($object->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}) {
+	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
 		if ($object->socid > 0) {
 			$soc->fetch($object->socid);
 		} else {
-			$soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
+			$soc->fetch(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]));
 		}
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
