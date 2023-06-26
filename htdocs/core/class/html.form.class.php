@@ -4252,9 +4252,10 @@ class Form
 	 * @param string $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                0 : use default deposit percentage from entry
 	 *                                > 0 : force deposit percentage (for example, from company object)
+	 * @param string $mode card or list
 	 * @return    string                        String for the HTML select component
 	 */
-	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
+	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1, $mode = 'card')
 	{
 		global $langs, $user, $conf;
 
@@ -4263,8 +4264,8 @@ class Form
 
 		$this->load_cache_conditions_paiements();
 
-		// Set default value if not already set by caller
-		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) {
+		// Set default value if not already set by caller only for cards
+		if (empty($selected) && $mode == 'card' && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) {
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 		}
 
