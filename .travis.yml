@@ -278,21 +278,13 @@ before_script:
       #sudo mysql -u root -h 127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
       echo "MySQL set root password"
       sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8'; ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password'; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON travis.* TO root@127.0.0.1; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;"
-      #echo "MySQL create root user for 127.0.0.1"
-      #sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password';"
-      #echo "MySQL create travis user for 127.0.0.1"
-      #sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;'
-      echo "MySQL flush"
-      sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES;'
       echo "MySQL list current users"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'use mysql; select * from user;'
       echo "List pid file"
-      sudo mysql -u root -h 127.0.0.1 -ppassword -e 'show variables like '%pid%';'
+      sudo mysql -u root -h 127.0.0.1 -ppassword -e "show variables like '%pid%';"
       
-      sudo cat /var/lib/mysql
-      sudo cat /var/lib/mariadb
       #sudo kill `cat /var/lib/mysqld/mysqld.pid`
       #sudo kill `cat /var/lib/mariadb/mariadb.pid`
       #sudo systemctl start mariadb
@@ -308,7 +300,7 @@ before_script:
       echo "PGSQL"
       sudo mkdir -p /tmp/pgloader
       sudo chmod -R a+rwx /tmp/pgloader/
-      sudo pgloader 'mysql://root@127.0.0.1/travis' 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+      sudo pgloader 'mysql://root:password@127.0.0.1/travis' 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
       # Create pgsql compatibility functions
