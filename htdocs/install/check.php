@@ -360,7 +360,7 @@ if (!file_exists($conffile)) {
 					$conf->db->name = $dolibarr_main_db_name;
 					$conf->db->user = $dolibarr_main_db_user;
 					$conf->db->pass = $dolibarr_main_db_pass;
-					$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+					$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 					if ($db->connected && $db->database_selected) {
 						$ok = true;
 					}

@@ -120,12 +120,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $cronjobs = array();
 
 	/**
-	 * @var array Module access rights
+	 * @var array 	Module access rights
 	 */
 	public $rights;
 
 	/**
-	 * @var string Module access rights family
+	 * @var int		1=Admin is always granted of permission of modules (even when module is disabled)
+	 */
+	public $rights_admin_allowed;
+
+	/**
+	 * @var string 	Module access rights family
 	 */
 	public $rights_class;
 

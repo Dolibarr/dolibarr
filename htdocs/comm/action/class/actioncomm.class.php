@@ -1407,7 +1407,7 @@ class ActionComm extends CommonObject
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".((int) $user->id);
 		}
 		$sql .= " WHERE 1 = 1";
@@ -1421,7 +1421,7 @@ class ActionComm extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND a.fk_soc = ".((int) $user->socid);
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
 			$sql .= " OR ar.fk_element = ".((int) $user->id);
 			$sql .= ")";
@@ -2196,12 +2196,12 @@ class ActionComm extends CommonObject
 						$obj   = $this->db->fetch_object($resql);
 						$event = array();
 
-						if ($obj->halfday == -1) {
+						if ($obj->halfday == 1) {
 							$event['fulldayevent'] = false;
 
 							$timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
 							$timestampEnd   = dol_stringtotime($obj->date_end." 12:00:00", 0);
-						} elseif ($obj->halfday == 1) {
+						} elseif ($obj->halfday == -1) {
 							$event['fulldayevent'] = false;
 
 							$timestampStart = dol_stringtotime($obj->date_start." 12:00:00", 0);

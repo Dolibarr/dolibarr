@@ -1041,12 +1041,12 @@ while ($i < $imaxinloop) {
 		// Login
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax150">';
-			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright"');
-			} elseif ($obj->admin) {
-				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright"');
-			}
 			print $li;
+			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
+				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+			} elseif ($obj->admin) {
+				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright paddingleft"');
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -113,7 +113,7 @@ class modECM extends DolibarrModules
 
 		// Menus
 		//------
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		// Top menu

@@ -5,7 +5,7 @@
  * Copyright (C) 2011		Juanjo Menent		  <jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2016		Charlie Benke         <charlie@patas-monkey.com>
+ * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
  * Copyright (C) 2019-2021  Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
@@ -134,6 +134,9 @@ class ProductFournisseur extends Product
 	public $supplier_fk_barcode_type;
 
 	public $packaging;
+
+	public $labelStatusShort;
+	public $labelStatus;
 
 	const STATUS_OPEN = 1;
 	const STATUS_CANCELED = 0;
@@ -1335,6 +1338,8 @@ class ProductFournisseur extends Product
 			//$langs->load("mymodule@mymodule");
 			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status4';

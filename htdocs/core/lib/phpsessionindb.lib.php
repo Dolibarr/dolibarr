@@ -51,7 +51,7 @@ function dolSessionOpen($save_path, $session_name)
 	if (empty($dolibarr_session_db_port)) {	$dolibarr_session_db_port = $dolibarr_main_db_port; }
 	//var_dump('open '.$database_name.' '.$table_name);
 
-	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_port);
+	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);
 
 	return true;
 }
