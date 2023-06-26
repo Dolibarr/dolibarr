@@ -421,11 +421,11 @@ if ($action == 'edit') {
 		print '</td><td>';
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="'.$mainsmtppw.'" autocomplete="off">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '" autocomplete="off">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW, $htmltext, 1, 'superadmin');
-			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$mainsmtppw.'">';
+			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '">';
 		}
 		print '</td></tr>';
 	}
