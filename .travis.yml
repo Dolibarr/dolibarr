@@ -434,8 +434,8 @@ script:
     php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
 
     #show table content and log
-    #echo '\d llx_bank_account' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-    #cat $TRAVIS_BUILD_DIR/upgrade500600.log
+    echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+    cat $TRAVIS_BUILD_DIR/upgrade500600.log
 
   - |
     echo Result of migration scripts

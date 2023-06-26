@@ -160,11 +160,11 @@ jobs:
         echo '$'dolibarr_main_data_root=\'/var/www/html/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_user=\'root\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_pass=\'password\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_user=\'postgres\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_pass=\'postgres\'';' >> $CONF_FILE
         echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_port=\'32574\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_port=\'5432\'';' >> $CONF_FILE
         echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
         cat $CONF_FILE
     - name: Generate install.forced.php file to test installation
@@ -179,9 +179,8 @@ jobs:
         echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_databaselogin=\'root\'';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_databasepass=\'password\'';' >> $INSTALL_FORCED_FILE
-        #echo '$'force_install_port=\'32574\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databaselogin=\'postgres\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databasepass=\'postgres\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
