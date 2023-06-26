@@ -19,7 +19,8 @@
 
 /**
  *       \file       htdocs/societe/ajax/company.php
- *       \brief      File to return Ajax response on thirdparty list request
+ *       \brief      File to return Ajax response on thirdparty list request. Used by the combo list of thirdparties.
+ *       			 Search done on name, name_alias, barcode, tva_intra, ...
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -37,10 +38,8 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
@@ -50,7 +49,8 @@ $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $excludeids = GETPOST('excludeids', 'intcomma');
-$showtype = GETPOST('showtype', 'int');
+$showtype = GETPOSTINT('showtype', 'alpha');
+$showcode = GETPOSTINT('showcode', 'alpha');
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -69,6 +69,8 @@ restrictedArea($user, 'societe', $object->id, '&societe');
 /*
  * View
  */
+
+top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 //print_r($_GET);
@@ -91,10 +93,6 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 } else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
-	$langs->load("companies");
-
-	top_httphead();
-
 	if (empty($htmlname)) {
 		return;
 	}
@@ -109,7 +107,6 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
-
 	if (!$searchkey) {
 		return;
 	}
@@ -124,11 +121,11 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		$excludeids = array();
 	}
 
-	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids);
-
-	$db->close();
+	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
 
 	if ($outjson) {
 		print json_encode($arrayresult);
 	}
 }
+
+$db->close();

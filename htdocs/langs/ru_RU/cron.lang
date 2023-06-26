@@ -26,7 +26,7 @@ CronCommand=Команда
 CronList=Запланированные задания
 CronDelete=Удалить запланированные задания
 CronConfirmDelete=Вы уверены, что хотите удалить эти запланированные задания?
-CronExecute=Запустить запланированное задание
+CronExecute=Launch now
 CronConfirmExecute=Вы уверены, что хотите выполнить эти запланированные задания сейчас?
 CronInfo=Модуль запланированных заданий позволяет планировать задания для их автоматического выполнения. Задания также можно запускать вручную.
 CronTask=Задание
@@ -58,7 +58,7 @@ CronNote=Комментарий
 CronFieldMandatory=Поле %s является обязательным
 CronErrEndDateStartDt=Дата окончания не может быть раньше даты начала
 StatusAtInstall=Статус при установке модуля
-CronStatusActiveBtn=Расписание
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=Выключать
 CronTaskInactive=Это задание отключено (не запланировано)
 CronId=ID
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Войдите в меню «<a href="%s">Гла
 JobDisabled=Работа отключена
 MakeLocalDatabaseDumpShort=Резервное копирование локальной базы данных
 MakeLocalDatabaseDump=Создайте дамп локальной базы данных. Параметры: сжатие ('gz' или 'bz' или 'none'), тип резервной копии ('mysql', 'pgsql', 'auto'), 1, 'auto' или имя файла для создания, количество файлов резервных копий для хранения
+MakeSendLocalDatabaseDumpShort=Отправить резервную копию локальной базы данных
+MakeSendLocalDatabaseDump=Отправить резервную копию локальной базы данных по электронной почте. Параметры: кому, от, тема, сообщение, имя файла (имя отправляемого файла), фильтр («sql» только для резервного копирования базы данных)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=Внимание, для повышения производительности, какой бы ни была следующая дата выполнения включенных заданий, ваши задания могут быть отложены максимум на %s часов перед запуском.
 DATAPOLICYJob=Очиститель и анонимайзер данных
 JobXMustBeEnabled=Должно быть включено задание %s
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Последнее выполненное запланированное задание
 NextScheduledJobExecute=Следующее запланированное задание для выполнения
 NumberScheduledJobError=Количество запланированных заданий с ошибкой
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

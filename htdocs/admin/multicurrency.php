@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 $langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
-if (!$user->admin || empty($conf->multicurrency->enabled)) {
+if (!$user->admin || !isModEnabled('multicurrency')) {
 	accessforbidden();
 }
 
@@ -76,10 +76,15 @@ if ($action == 'add_currency') {
 	$currency->code = $code;
 	$currency->name = !empty($langs->cache_currencies[$code]['label']) ? $langs->cache_currencies[$code]['label'].' ('.$langs->getCurrencySymbol($code).')' : $code;
 
+	if (empty($currency->code) || $currency->code == '-1') {
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Currency")), null, 'errors');
+		$error++;
+	}
 	if (empty($rate)) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 		$error++;
 	}
+
 	if (!$error) {
 		if ($currency->create($user) > 0) {
 			if ($currency->addRate($rate)) {
@@ -129,13 +134,23 @@ if ($action == 'add_currency') {
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
 		//dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
 	} else {
-		$result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
+		$multiurrency = new MultiCurrency($db);
+		$result = $multiurrency->syncRates(getDolGlobalString('MULTICURRENCY_APP_ID'));
 		if ($result > 0) {
 			setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
 		}
 	}
 }
 
+
+$TAvailableCurrency = array();
+$sql = "SELECT code_iso, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$resql = $db->query($sql);
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
+		$TAvailableCurrency[$obj->code_iso] = array('code'=>$obj->code_iso, 'active'=>$obj->active);
+	}
+}
 
 $TCurrency = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."multicurrency WHERE entity = ".((int) $conf->entity);
@@ -296,7 +311,7 @@ print '<table class="noborder centpercent nomarginbottom">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$form->textwithpicto($langs->trans("CurrenciesUsed"), $langs->transnoentitiesnoconv("CurrenciesUsed_help_to_add")).'</td>'."\n";
-print '<td class="center">'.$langs->trans("Rate").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Rate").' / '.$langs->getCurrencySymbol($conf->currency).'</td>'."\n";
 print '</tr>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -304,17 +319,24 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add_currency">';
 
 print '<tr class="oddeven">';
-print '<td>'.$form->selectCurrency('', 'code', 1).'</td>';
+print '<td>'.$form->selectCurrency('', 'code', 1, '1').'</td>';
 print '<td class="right">';
 print '<input type="text" name="rate" value="" class="width75 right" placeholder="'.$langs->trans('Rate').'" />&nbsp;';
-print '<input type="submit" class="button button-add small" value="'.$langs->trans("Add").'">';
+print '<input type="submit" class="button button-add smallpaddingimp" value="'.$langs->trans("Add").'">';
 print '</td>';
 print '</tr>';
 
 print '</form>';
 
+// Main currency
 print '<tr class="oddeven">';
-print '<td>'.$conf->currency.$form->textwithpicto(' ', $langs->trans("BaseCurrency")).'</td>';
+print '<td>'.$conf->currency;
+print ' ('.$langs->getCurrencySymbol($conf->currency).')';
+print $form->textwithpicto(' ', $langs->trans("BaseCurrency"));
+if (!empty($TAvailableCurrency[$conf->currency]) && empty($TAvailableCurrency[$conf->currency]['active'])) {
+	print img_warning('Warning: This code has been disabled into Home - Setup - Dictionaries - Currencies');
+}
+print '</td>';
 print '<td class="right">1</td>';
 print '</tr>';
 
@@ -324,7 +346,11 @@ foreach ($TCurrency as &$currency) {
 	}
 
 	print '<tr class="oddeven">';
-	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
+	print '<td>'.$currency->code.' - '.$currency->name;
+	if (!empty($TAvailableCurrency[$currency->code]) && empty($TAvailableCurrency[$currency->code]['active'])) {
+		print img_warning('Warning: The code '.$currency->code.' has been disabled into Home - Setup - Dictionaries - Currencies');
+	}
+	print '</td>';
 	print '<td class="right">';
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

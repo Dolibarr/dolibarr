@@ -155,8 +155,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 	// Define sql request
 	$sql = '';
-	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')) {
+	if (($direction == 'sell' && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+		|| ($direction == 'buy' && getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice')) {
 		// Count on delivery date (use invoice date as delivery is unknown)
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -168,16 +168,25 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
+		$sql .= " ,'' as datep";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
 		$sql .= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
+		if ($direction == 'buy') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
@@ -222,10 +231,18 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
+		if ($direction == 'buy') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
@@ -287,6 +304,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 					$list[$assoc['company_id']]['localtax1']      += $assoc['total_localtax1'];
 					$list[$assoc['company_id']]['localtax2']      += $assoc['total_localtax2'];
 				}
+
 				$list[$assoc['company_id']]['dtotal_ttc'][] = $assoc['total_ttc'];
 				$list[$assoc['company_id']]['dtype'][] = $assoc['dtype'];
 				$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
@@ -340,8 +358,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 	// Define sql request
 	$sql = '';
-	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')
-		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
+	if (($direction == 'sell' && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')
+		|| ($direction == 'buy' && getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice')) {
 		// Count on invoice date
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -359,10 +377,18 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
+		if ($direction == 'buy') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
@@ -407,10 +433,18 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
+		if ($direction == 'buy') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
@@ -711,8 +745,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 	// Define sql request
 	$sql = '';
-	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')) {
+	if (($direction == 'sell' && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+		|| ($direction == 'buy' && getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice')) {
 		// Count on delivery date (use invoice date as delivery is unknown)
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -723,17 +757,26 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
+		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount,";
+		$sql .= " '' as datep";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$invoicedettable." as d ON d.".$fk_facture."=f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
+		if ($direction == 'buy') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 		if ($y && $m) {
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
@@ -776,10 +819,18 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
+		if ($direction == 'buy') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 		if ($y && $m) {
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
@@ -896,8 +947,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 	// Define sql request
 	$sql = '';
-	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')
-		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
+	if (($direction == 'sell' && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')
+		|| ($direction == 'buy' && getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice')) {
 		// Count on invoice date
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -915,10 +966,18 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
+		if ($direction == 'buy') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 		if ($y && $m) {
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
@@ -961,10 +1020,18 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
+		if ($direction == 'buy') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 		if ($y && $m) {
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";

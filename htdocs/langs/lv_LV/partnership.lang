@@ -20,6 +20,7 @@ ModulePartnershipName=Partnerības vadība
 PartnershipDescription=Partnerības vadības modulis
 PartnershipDescriptionLong= Partnerības vadības modulis
 Partnership=Partnerība
+Partnerships=Partnerības
 AddPartnership=Pievienojiet partnerību
 CancelPartnershipForExpiredMembers=Partnerība: atceļ partnerību ar abonementiem, kuriem beidzies derīguma termiņš
 PartnershipCheckBacklink=Partnerība: pārbaudiet atsauces saiti
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerība: pārbaudiet atsauces saiti
 # Menu
 #
 NewPartnership=Jauna partnerība
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=Partnerības saraksts
 
 #
@@ -42,6 +44,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Atpakaļsaites, lai pārbaudītu
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb dienas pirms partnerības statusa atcelšanas, kad abonements ir beidzies
 ReferingWebsiteCheck=Vietnes atsauces pārbaude
 ReferingWebsiteCheckDesc=Varat iespējot funkciju, lai pārbaudītu, vai jūsu partneri ir pievienojuši atpakaļsaišu jūsu vietnes domēniem savā vietnē.
+PublicFormRegistrationPartnerDesc=Dolibarr var nodrošināt jums publisku URL/tīmekļa vietni, lai ārējie apmeklētāji varētu pieprasīt dalību partnerības programmā.
 
 #
 # Object
@@ -59,6 +62,12 @@ BacklinkNotFoundOnPartnerWebsite=Atpakaļsaite nav atrasta partnera vietnē
 ConfirmClosePartnershipAsk=Vai tiešām vēlaties atcelt šo partnerību?
 PartnershipType=Partnerības veids
 PartnershipRefApproved=Partnerība %s apstiprināta
+KeywordToCheckInWebsite=Ja vēlaties pārbaudīt, vai konkrētais atslēgvārds ir iekļauts katra partnera vietnē, definējiet šo atslēgvārdu šeit
+PartnershipDraft=Melnraksts
+PartnershipAccepted=Pieņemts
+PartnershipRefused=Atteikts
+PartnershipCanceled=Atcelts
+PartnershipManagedFor=Partneri ir
 
 #
 # Template Mail
@@ -82,11 +91,6 @@ CountLastUrlCheckError=Kļūdu skaits pēdējā URL pārbaudē
 LastCheckBacklink=Pēdējās URL pārbaudes datums
 ReasonDeclineOrCancel=Noraidīt iemeslu
 
-#
-# Status
-#
-PartnershipDraft=Melnraksts
-PartnershipAccepted=Pieņemts
-PartnershipRefused=Atteikts
-PartnershipCanceled=Atcelts
-PartnershipManagedFor=Partneri ir
+NewPartnershipRequest=Jauns partnerības pieprasījums
+NewPartnershipRequestDesc=Šī veidlapa ļauj jums pieprasīt dalību kādā no mūsu partnerības programmām. Ja jums nepieciešama palīdzība, lai aizpildītu šo veidlapu, lūdzu, sazinieties pa e-pastu <b> %s </b> .
+

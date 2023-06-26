@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=贝宝模块的设置
-PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
-PaypalDoPayment=Pay with PayPal
+PaypalDesc=该模块允许客户通过<a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>付款。这可用于临时付款或与 Dolibarr 对象相关的付款 (发票、订单……)
+PaypalOrCBDoPayment=使用 PayPal 付款 (信用卡或 PayPal)
+PaypalDoPayment=使用 PayPal 付款
 PAYPAL_API_SANDBOX=测试/沙箱模式
 PAYPAL_API_USER=API的用户名
 PAYPAL_API_PASSWORD=API密码
 PAYPAL_API_SIGNATURE=API签名
 PAYPAL_SSLVERSION=Curl SSL 版本
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=提供“整体”付款 (信用卡+ PayPal) 或仅提供“PayPal”付款
 PaypalModeIntegral=积分
 PaypalModeOnlyPaypal=支付宝
-ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
+ONLINE_PAYMENT_CSS_URL=在线付款页面 CSS 样式表的可选网址
 ThisIsTransactionId=这是交易编号<b>：%s</b>
-PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
+PAYPAL_ADD_PAYMENT_URL=当您通过电子邮件发送文档时，请包含 PayPal 付款网址
 NewOnlinePaymentReceived=收到新的在线支付
 NewOnlinePaymentFailed=新的在线支付尝试但失败了
-ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
+ONLINE_PAYMENT_SENDEMAIL=每次付款尝试 (成功和失败) 后通知的电子邮件地址
 ReturnURLAfterPayment=付款后返回网页地址
 ValidationOfOnlinePaymentFailed=验证在线支付失败
 PaymentSystemConfirmPaymentPageWasCalledButFailed=支付系统调用支付确认页面返回错误
@@ -27,10 +27,11 @@ ShortErrorMessage=简短错误信息
 ErrorCode=错误代码
 ErrorSeverityCode=错误严重性代码
 OnlinePaymentSystem=在线支付系统
-PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
-PaypalImportPayment=Import PayPal payments
+PaypalLiveEnabled=启用 PayPal “实时”模式 (否则是测试/沙盒模式)
+PaypalImportPayment=导入 PayPal 付款
 PostActionAfterPayment=付款后发布操作
 ARollbackWasPerformedOnPostActions=对所有Post操作执行了回滚。如果必要，您必须手动完成后期操作。
-ValidationOfPaymentFailed=Validation of payment has failed
-CardOwner=Card holder
-PayPalBalance=Paypal credit
+ValidationOfPaymentFailed=付款验证失败
+CardOwner=持卡人
+PayPalBalance=PayPal 信用
+OnlineSubscriptionPaymentLine=在线订阅记录在%s<br>通过%s缴付<br>原始 IP 地址：%s<br>交易 ID：%s

@@ -43,7 +43,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		$valsnb = array();
 		$valsamount = array();
 		$dataseries = array();
-		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for sale orders), 3=Closed (Sent/Received, billed or not)
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
@@ -87,7 +87,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 					$labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code).' ('.$langs->transnoentitiesnoconv("NotClosedYet").")";
 				}
 			}
-			if (empty($labelStatus)) {
+			if (empty($labelStatus) && isset($listofopplabel[$status])) {
 				$labelStatus = $listofopplabel[$status];
 			}
 			if (empty($labelStatus)) {

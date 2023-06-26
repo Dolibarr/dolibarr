@@ -24,6 +24,7 @@
  *		\brief      Tab for notifications of third party
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -183,7 +184,7 @@ if ($result > 0) {
 		print '</td></tr>';
 	}
 
-	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+	if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
@@ -201,7 +202,7 @@ if ($result > 0) {
 	$tmparray = $notify->getNotificationsArray('', $object->id, null, 0, array('thirdparty'));
 	foreach($tmparray as $tmpkey => $tmpval)
 	{
-		if (! empty($tmpkey)) $nbofrecipientemails++;
+		if (!empty($tmpkey)) $nbofrecipientemails++;
 	}
 	print $nbofrecipientemails;
 	print '</td></tr>';*/
@@ -305,7 +306,7 @@ if ($result > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			$contactstatic->id = $obj->contact_id;
+			$contactstatic->id = $obj->contactid;
 			$contactstatic->lastname = $obj->lastname;
 			$contactstatic->firstname = $obj->firstname;
 
@@ -409,7 +410,7 @@ if ($result > 0) {
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0

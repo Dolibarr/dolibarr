@@ -39,6 +39,8 @@ create table llx_societe_remise_except
   fk_invoice_supplier		integer,
   fk_invoice_supplier_source integer,
   description				text NOT NULL,
+  multicurrency_code		varchar(3) NULL,
+  multicurrency_tx			double(24,8) NULL,
   multicurrency_amount_ht	double(24,8) DEFAULT 0 NOT NULL,
   multicurrency_amount_tva	double(24,8) DEFAULT 0 NOT NULL,
   multicurrency_amount_ttc	double(24,8) DEFAULT 0 NOT NULL

@@ -22,6 +22,7 @@
  *	\brief      Fiche d'information sur un projet
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -49,14 +50,15 @@ $socid = 0;
 $hookmanager->initHooks(array('projetnote'));
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$permissionnote = $user->rights->projet->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('projet', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -69,7 +71,7 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans("Project").' - '.$langs->trans("Note").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans("Notes").' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Note");
 }
@@ -101,7 +103,7 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= $object->title;
 	// Thirdparty
 	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 

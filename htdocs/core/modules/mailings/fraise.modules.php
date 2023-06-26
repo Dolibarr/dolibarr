@@ -41,6 +41,8 @@ class mailing_fraise extends MailingTargets
 
 	public $require_module = array('adherent');
 
+	public $enabled = 'isModEnabled("adherent")';
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -91,17 +93,19 @@ class mailing_fraise extends MailingTargets
 	 *    For example if this selector is used to extract 500 different
 	 *    emails from a text file, this function must return 500.
 	 *
-	 *  @param    string    $sql        Requete sql de comptage
-	 *    @return        int            Nb of recipients
+	 *    @param      string    	$sql        Requete sql de comptage
+	 *    @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
 		$sql  = "SELECT count(distinct(a.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = a.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -200,11 +204,11 @@ class mailing_fraise extends MailingTargets
 		$s .= '</select>';
 
 
-		$s .= '<br>';
+		$s .= '<br><span class="opacitymedium">';
 		$s .= $langs->trans("DateEndSubscription").': &nbsp;';
-		$s .= $langs->trans("After").' > '.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
+		$s .= $langs->trans("After").' > </span>'.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
 		$s .= ' &nbsp; ';
-		$s .= $langs->trans("Before").' < '.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
+		$s .= '<span class="opacitymedium">'.$langs->trans("Before").' < </span>'.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
 
 		return $s;
 	}
@@ -276,6 +280,9 @@ class mailing_fraise extends MailingTargets
 		// Filter on type
 		if (GETPOST('filter_type', 'int') > 0) {
 			$sql .= " AND ta.rowid = ".((int) GETPOST('filter_type', 'int'));
+		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = a.email and mu.entity = ".((int) $conf->entity).")";
 		}
 		$sql .= " ORDER BY a.email";
 		//print $sql;

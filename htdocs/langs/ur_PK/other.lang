@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=یا اپنا پروفائل بنائیں <br> (دست�
 DemoFundation=فاؤنڈیشن کے ممبروں کا نظم کریں۔
 DemoFundation2=فاؤنڈیشن کے ممبران اور بینک اکاؤنٹ کا نظم کریں۔
 DemoCompanyServiceOnly=صرف کمپنی یا فری لانس سیلنگ سروس
-DemoCompanyShopWithCashDesk=کیش ڈیسک کے ساتھ دکان کا انتظام کریں۔
+DemoCompanyShopWithCashDesk=Manage a shop with a cash box
 DemoCompanyProductAndStocks=پوائنٹ آف سیلز کے ساتھ مصنوعات کی فروخت کی خریداری کریں۔
 DemoCompanyManufacturing=کمپنی کی تیاری کی مصنوعات
 DemoCompanyAll=متعدد سرگرمیوں والی کمپنی (تمام اہم ماڈیولز)
@@ -303,3 +303,4 @@ SelectTheTypeOfObjectToAnalyze=اس کے اعدادوشمار دیکھنے کے 
 ConfirmBtnCommonContent = کیا آپ واقعی "%s" کرنا چاہتے ہیں؟
 ConfirmBtnCommonTitle = اپنے عمل کی تصدیق کریں۔
 CloseDialog = بند کریں
+Autofill = Autofill

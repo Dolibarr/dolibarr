@@ -178,7 +178,7 @@ class ProductFournisseurPrice extends CommonObject
 		$this->db = $db;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -244,7 +244,8 @@ class ProductFournisseurPrice extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					//var_dump($key);
+					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}

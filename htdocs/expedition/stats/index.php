@@ -23,6 +23,7 @@
  *     \brief      Page with shipment statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
@@ -64,7 +65,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("StatisticsOfSendings"), '', 'dolly');
 
-
+$dir = (!empty($conf->expedition->multidir_temp[$conf->entity]) ? $conf->expedition->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
 
 $stats = new ExpeditionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
@@ -83,6 +84,7 @@ if (empty($user->rights->societe->client->voir) || $user->socid) {
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
+$fileurlnb = '';
 if (!$mesg) {
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
@@ -309,7 +311,7 @@ print '</td></tr></table>';
 
 
 print '</div></div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 

@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kod
+WebsiteName=Name of the website
 WebsiteSetupDesc=Bu erda siz foydalanmoqchi bo'lgan veb-saytlarni yarating. Keyin ularni tahrirlash uchun veb-saytlar menyusiga o'ting.
 DeleteWebsite=Veb-saytni o'chirish
 ConfirmDeleteWebsite=Ushbu veb-saytni o'chirishni xohlaysizmi? Uning barcha sahifalari va tarkibi ham o'chiriladi. Yuklangan fayllar (masalan, Medlar katalogiga, ECM moduliga, ...) qoladi.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=HTML sarlavhasi ostidagi qo'shimchalar (barcha sahifalar uch
 WEBSITE_ROBOT=Robot fayli (robots.txt)
 WEBSITE_HTACCESS=Veb-sayt .htaccess fayli
 WEBSITE_MANIFEST_JSON=Veb-sayt manifest.json fayli
-WEBSITE_README=README.md fayli
 WEBSITE_KEYWORDSDesc=Qiymatlarni ajratish uchun verguldan foydalaning
-EnterHereLicenseInformation=README.md faylini to'ldirish uchun bu erga meta ma'lumotlar yoki litsenziya ma'lumotlarini kiriting. agar siz veb-saytingizni shablon sifatida tarqatsangiz, fayl vasvasaga solingan paketga kiritiladi.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=HTML sarlavhasi (faqat ushbu sahifaga xos)
 PageNameAliasHelp=Sahifaning nomi yoki taxallusi. <br> Ushbu taxallus, shuningdek veb-serverning Virtual xostidan (Apacke, Nginx, ... kabi) veb-sayt ishga tushirilganda, SEO URL-ni yaratish uchun ishlatiladi. Ushbu taxallusni tahrirlash uchun "<strong> %s </strong>" tugmachasidan foydalaning.
 EditTheWebSiteForACommonHeader=Izoh: Agar siz barcha sahifalar uchun moslashtirilgan sarlavhani belgilamoqchi bo'lsangiz, sarlavhani sahifa / konteyner o'rniga sayt darajasida tahrirlang.
@@ -42,11 +43,13 @@ ViewPageInNewTab=Sahifani yangi varaqda ko'rish
 SetAsHomePage=Uy sahifasi sifatida o'rnating
 RealURL=Haqiqiy URL
 ViewWebsiteInProduction=Uy manzillaridan foydalangan holda veb-saytni ko'ring
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost= <u> Apache/NGinx/bilan ishlatish ... </u> <br> Veb -serveringizda (Apache, Nginx, ...) PHP yoqilgan maxsus Virtual Xost PHP bilan va Root direktoriyada <br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Apache virtual xostini o'rnatishda foydalanish uchun misol:
-YouCanAlsoTestWithPHPS=<u>Use with PHP embedded server</u><br>On develop environment, you may prefer to test the site with the PHP embedded web server (PHP 5.5 required) by running<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP= <u> Veb-saytingizni boshqa Dolibarr Hosting provayderi bilan boshqaring </u> <br> Agar Internetda mavjud bo'lgan Apache yoki NGinx kabi veb-serveringiz bo'lmasa, veb-saytingizni boshqa Dolibarr xost-provayderi tomonidan taqdim etilgan boshqa Dolibarr nusxasi orqali eksport qilishingiz va import qilishingiz mumkin. veb-sayt moduli bilan integratsiya. <a href="https://saas.dolibarr.org" target="_blank"> saytida ba'zi Dolibarr hosting provayderlari ro'yxatini topishingiz mumkin https://saas.dolibarr.org </a>
-CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
+YouCanAlsoTestWithPHPS= <u> Use with PHP embedded server </u>  <br> On develop environment, you may prefer to test the site with the PHP embedded web server (PHP 5.5 required) by running <br>  <strong> php -S 0.0.0.0:8080 -t %s </strong>
+YouCanAlsoDeployToAnotherWHP= <u> Veb-saytingizni boshqa Dolibarr Hosting provayderi bilan ishga tushiring </u> <br> Agar sizda Apache yoki NGinx kabi veb-serveringiz internetda mavjud bo'lmasa, veb-saytingizni boshqa Dolibarr hosting provayderi tomonidan taqdim etilgan boshqa to'liq hostingga eksport qilishingiz va import qilishingiz mumkin. Veb-sayt moduli bilan integratsiya. Ba'zi Dolibarr hosting provayderlari ro'yxatini <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a> da topishingiz mumkin.
+CheckVirtualHostPerms=Virtual xost foydalanuvchisi (masalan, www-data) <strong> %s </strong> fayllariga <br> a0e7843947c064az0c a0e7843947c064010c a0e7843947fz0 </strong> ruxsati borligini ham tekshiring.
 ReadPerm=O'qing
 WritePerm=Yozing
 TestDeployOnWeb=Internetda sinov / tarqatish
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=HTML manba kodini tahrirlashdagi "Manba" tugmasi yo
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> <strong> &lt;? php? &gt; a0a65d teglari yordamida ushbu manbaga PHP kodini qo'shishingiz mumkin. Quyidagi global o'zgaruvchilar mavjud: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Siz shuningdek boshqa sahifa / konteyner tarkibini quyidagi sintaksis bilan qo'shishingiz mumkin: <br> <strong> a_31c_to_of_0_0_b_0_b_0_b_b_0_b_b_0_b_0_b_0_0_b_0_0_06_c46c6c6c6c6c6cb6cbbc0bbc0cbbbc0f3cbbbc0fdbbc0cbbc0cbbbc9cbbbc9cbbc9cbbc0cbbnc ' ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> quyidagi sintaksisi rang bilan boshqa sahifa / konteyner uchun yo'naltirishni qilish mumkin (Eslatma: ishlab chiqarish yo'riq oldin, har qanday mazmun, albatta):? <br> <strong> &lt; php redirectToContainer ( 'alias_of_container_to_redirect_to'); ? <strong> hujjatlar ichiga saqlangan fayl </strong> yuklab uchun <strong> link o'z ichiga uchun <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span>: &gt; </strong> <br> <br> <span class="fa fa-link"> </span> sintaksisi foydalanishingiz, boshqa sahifaga bilan bog'lanish qo'shish uchun </strong> katalog, <strong> document.php </strong> jild foydalanish: hujjatlar / ECM'de bir fayl uchun, <br> misol (ehtiyoj identifikatsiyadan kerak), sintaksisi:? <br> <strong> &lt;a href = "/ document.php modulepart = ecm & fayl = [relative_dir / ] filename.ext "&gt; </strong> <br> Hujjatlar / mediyadagi fayl (umumiy foydalanish uchun ochiq katalog) uchun sintaksis: <br> <strong> a039zd7 "/document.php?modulepart=medias&file=(relative_dir/ assignedfilename.ext"&gt; </strong> <br> Sharing havolasi bilan birgalikda foydalaniladigan fayl uchun (ochiq fayl kirish h0904f097). /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> Direktoriyaning </strong> <strong> hujjatlar ichiga saqlangan bir <strong> tasvir </strong>, <strong> viewimage.php </strong> jild foydalanishni o'z ichiga oladi: ochiq hujjatlar / medias yuzasidan tasvir uchun, <br> misoli ( umumiy foydalanish uchun sintaksis: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = [relat_dir / ]00f07006"
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Almashish havolasi bilan birgalikda foydalaniladigan rasm uchun (faylning umumiy xesh tugmachasidan foydalangan holda ochiq kirish) sintaksis quyidagicha: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 12345679012 ..." a0012c7dff0a0z0z00090f0f08a0f09a0f09a09a09cb08a0a09a03c09a03c09c9c9c9c9c9c08f96f96f9f08f08f0f9fdf9fdfdfdfc7fd
-YouCanEditHtmlSourceMore= <br> <a href="%s" target="_blank">-da mavjud bo'lgan HTML yoki dinamik kodlarning boshqa misollari, </a> <br>.
+YouCanEditHtmlSourceMore= <br> HTML yoki dinamik kodning boshqa misollari <a href="%s" target="_blank" rel="noopener noreferrer external"> wiki hujjatlari </a> <br> da mavjud.
 ClonePage=Sahifani / konteynerni klonlash
 CloneSite=Klon sayti
 SiteAdded=Veb-sayt qo'shildi
@@ -137,7 +140,7 @@ PagesRegenerated=%s sahifa / lar / qayta tiklangan konteyner (lar)
 RegenerateWebsiteContent=Veb-sayt kesh fayllarini qayta yarating
 AllowedInFrames=Kadrlarda ruxsat berilgan
 DefineListOfAltLanguagesInWebsiteProperties=Barcha mavjud tillarning ro'yxatini veb-sayt xususiyatlariga aniqlang.
-GenerateSitemaps=Veb-sayt sayt xaritasi faylini yarating
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=Agar siz tasdiqlasangiz, mavjud sayt xaritasi faylini o'chirib tashlaysiz ...
 ConfirmSitemapsCreation=Sayt xaritasini yaratishni tasdiqlang
 SitemapGenerated=Sayt xaritasi fayli <b> %s </b>
@@ -145,3 +148,10 @@ ImportFavicon=Favikon
 ErrorFaviconType=Favicon png bo'lishi kerak
 ErrorFaviconSize=Favikon hajmi 16x16, 32x32 yoki 64x64 bo'lishi kerak
 FaviconTooltip=Png (16x16, 32x32 yoki 64x64) bo'lishi kerak bo'lgan rasmni yuklang
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation

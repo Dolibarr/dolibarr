@@ -20,6 +20,7 @@ ModulePartnershipName=Partnerskabsledelse
 PartnershipDescription=Ledelse af modulpartnerskab
 PartnershipDescriptionLong= Ledelse af modulpartnerskab
 Partnership=Partnerskab
+Partnerships=Partnerskaber
 AddPartnership=Tilføj partnerskab
 CancelPartnershipForExpiredMembers=Partnerskab: Annuller partnerskab med medlemmer med udløbne abonnementer
 PartnershipCheckBacklink=Partnerskab: Tjek henvisende backlink
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerskab: Tjek henvisende backlink
 # Menu
 #
 NewPartnership=Nyt partnerskab
+NewPartnershipbyWeb=Din partnerskabsanmodning er blevet tilføjet. Vi kontakter dig muligvis snart...
 ListOfPartnerships=Liste over partnerskab
 
 #
@@ -42,6 +44,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks til kontrol
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dage før annullering af status for et partnerskab, når et abonnement er udløbet
 ReferingWebsiteCheck=Kontrol af webstedets henvisning
 ReferingWebsiteCheckDesc=Du kan aktivere en funktion til at kontrollere, at dine partnere har tilføjet et backlink til dine webstedsdomæner på deres eget websted.
+PublicFormRegistrationPartnerDesc=Dolibarr kan give dig en offentlig URL/webside, så eksterne besøgende kan anmode om at blive en del af partnerskabsprogrammet.
 
 #
 # Object
@@ -59,6 +62,12 @@ BacklinkNotFoundOnPartnerWebsite=Backlink ikke fundet på partnerwebstedet
 ConfirmClosePartnershipAsk=Er du sikker på, at du vil annullere dette partnerskab?
 PartnershipType=Partnerskabstype
 PartnershipRefApproved=Partnerskab %s godkendt
+KeywordToCheckInWebsite=Hvis du vil kontrollere, at et givet søgeord er til stede på hver partners hjemmeside, skal du definere dette søgeord her
+PartnershipDraft=Udkast til
+PartnershipAccepted=Accepteret
+PartnershipRefused=Afvist
+PartnershipCanceled=Aflyst
+PartnershipManagedFor=Partnere er
 
 #
 # Template Mail
@@ -82,11 +91,6 @@ CountLastUrlCheckError=Antal fejl ved sidste URL -kontrol
 LastCheckBacklink=Dato for sidste URL -kontrol
 ReasonDeclineOrCancel=Afvis grund
 
-#
-# Status
-#
-PartnershipDraft=Udkast til
-PartnershipAccepted=Accepteret
-PartnershipRefused=Afvist
-PartnershipCanceled=Aflyst
-PartnershipManagedFor=Partnere er
+NewPartnershipRequest=Ny partnerskabsanmodning
+NewPartnershipRequestDesc=Denne formular giver dig mulighed for at anmode om at blive en del af et af vores partnerskabsprogram. Hvis du har brug for hjælp til at udfylde denne formular, bedes du kontakte via e-mail <b> %s </b> .
+

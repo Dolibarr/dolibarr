@@ -26,6 +26,7 @@
  *       			Mandatory fields are stored into $user->default_values[url]['mandatory']['querystring'|'_noquery_'][paramkey]=paramvalue
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -146,12 +147,12 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 			$object->value=$defaultvalue;
 			$object->entity=$conf->entity;
 			$result=$object->create($user);
-			if ($result<0) {
+			if ($result < 0) {
 				$action = '';
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				$action = "";
+				$action = '';
 				$defaulturl = '';
 				$defaultkey = '';
 				$defaultvalue = '';
@@ -225,7 +226,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -294,6 +295,7 @@ if ($mode != 'focus' && $mode != 'mandatory') {
 	if ($mode != 'sortorder') {
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount')); // Must match list into GETPOST
 		unset($substitutionarray['__USER_SIGNATURE__']);
+		unset($substitutionarray['__SENDEREMAIL_SIGNATURE__']);
 		$texthelp = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 		foreach ($substitutionarray as $key => $val) {
 			$texthelp .= $key.' -> '.$val.'<br>';
@@ -306,7 +308,7 @@ if ($mode != 'focus' && $mode != 'mandatory') {
 	print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'value', '', $param, '', $sortfield, $sortorder);
 }
 // Entity
-if (!empty($conf->multicompany->enabled) && !$user->entity) {
+if (isModEnabled('multicompany') && !$user->entity) {
 	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,page', '', $param, '', $sortfield, $sortorder);
 } else {
 	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
@@ -322,26 +324,26 @@ print "\n";
 print '<tr class="oddeven">';
 // Page
 print '<td>';
-print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="'.dol_escape_htmltag(GETPOST('defaulturl', 'alphanohtml')).'">';
+print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="'.dol_escape_htmltag($defaulturl).'">';
 print '</td>'."\n";
 // Field
 print '<td>';
-print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="'.dol_escape_htmltag(GETPOST('defaultkey', 'alphanohtml')).'">';
+print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="'.dol_escape_htmltag($defaultkey).'">';
 print '</td>';
 // Value
 if ($mode != 'focus' && $mode != 'mandatory') {
 	print '<td>';
-	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="">';
+	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
 	print '</td>';
 }
 // Limit to superadmin
-if (!empty($conf->multicompany->enabled) && !$user->entity) {
+if (isModEnabled('multicompany') && !$user->entity) {
 	print '<td>';
-	print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">'; // We see environment, but to change it we must switch on other entity
+	print '<input type="text" class="flat" size="1" disabled name="entity" value="' . $conf->entity . '">'; // We see environment, but to change it we must switch on other entity
 	print '</td>';
 } else {
 	print '<td class="center">';
-	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+	print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
 	print '</td>';
 }
 print '<td class="center">';
@@ -381,7 +383,12 @@ if (!is_array($result) && $result < 0) {
 			print '</td>';
 		}
 
-		print '<td></td>';
+		// Multicompany
+		print '<td>';
+		if (isModEnabled('multicompany')) {
+			print dol_escape_htmltag($defaultvalue->entity);
+		}
+		print '</td>';
 
 		// Actions
 		print '<td class="center">';

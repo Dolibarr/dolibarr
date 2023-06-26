@@ -22,6 +22,7 @@
  * 	\brief      Page list payment to validate. Visible in menu when option BILL_ADD_PAYMENT_VALIDATION is on.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Load translation files required by the page
@@ -52,7 +53,7 @@ if (!$sortfield) {
 }
 
 // Security check
-if (empty($user->rights->facture->lire)) {
+if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
@@ -86,7 +87,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0

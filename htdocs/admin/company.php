@@ -27,6 +27,7 @@
  *	\brief      Setup page to configure company/foundation
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -91,9 +92,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	$db->begin();
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency", 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -107,7 +108,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$dirforimage = $conf->mycompany->dir_output.'/logos/';
 
 	$arrayofimages = array('logo', 'logo_squarred');
-
+	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
 			$langs->load("errors");
@@ -115,82 +116,86 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 			break;
 		}
 
-		if ($_FILES[$varforimage]["tmp_name"]) {
-			$reg = array();
-			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
-				$original_file = $reg[1];
+		// Remove to check file size to large
+		/*if ($_FILES[$varforimage]["tmp_name"]) {*/
+		$reg = array();
+		if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
+			$original_file = $reg[1];
 
-				$isimage = image_format_supported($original_file);
-				if ($isimage >= 0) {
-					dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
-					if (!is_dir($dirforimage)) {
-						dol_mkdir($dirforimage);
+			$isimage = image_format_supported($original_file);
+			if ($isimage >= 0) {
+				dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
+				if (!is_dir($dirforimage)) {
+					dol_mkdir($dirforimage);
+				}
+				$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage.$original_file, 1, 0, $_FILES[$varforimage]['error']);
+				if ($result > 0) {
+					$constant = "MAIN_INFO_SOCIETE_LOGO";
+					if ($varforimage == 'logo_squarred') {
+						$constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
 					}
-					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage.$original_file, 1, 0, $_FILES[$varforimage]['error']);
-					if ($result > 0) {
-						$constant = "MAIN_INFO_SOCIETE_LOGO";
-						if ($varforimage == 'logo_squarred') {
-							$constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
-						}
 
-						dolibarr_set_const($db, $constant, $original_file, 'chaine', 0, '', $conf->entity);
+					dolibarr_set_const($db, $constant, $original_file, 'chaine', 0, '', $conf->entity);
 
-						// Create thumbs of logo (Note that PDF use original file and not thumbs)
-						if ($isimage > 0) {
-							// Create thumbs
-							//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
+					// Create thumbs of logo (Note that PDF use original file and not thumbs)
+					if ($isimage > 0) {
+						// Create thumbs
+						//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
-							// Create small thumb, Used on logon for example
-							$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-							if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
-								$imgThumbSmall = $reg[1]; // Save only basename
-								dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
-							} else {
-								dol_syslog($imgThumbSmall);
-							}
-
-							// Create mini thumb, Used on menu or for setup page for example
-							$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-							if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
-								$imgThumbMini = $reg[1]; // Save only basename
-								dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
-							} else {
-								dol_syslog($imgThumbMini);
-							}
+						// Create small thumb, Used on logon for example
+						$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+						if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
+							$imgThumbSmall = $reg[1]; // Save only basename
+							dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
 						} else {
-							dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
+							dol_syslog($imgThumbSmall);
 						}
-					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
-						$error++;
-						$langs->load("errors");
-						$tmparray = explode(':', $result);
-						setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+
+						// Create mini thumb, Used on menu or for setup page for example
+						$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
+						if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
+							$imgThumbMini = $reg[1]; // Save only basename
+							dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
+						} else {
+							dol_syslog($imgThumbMini);
+						}
 					} else {
-						$error++;
-						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+						dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
 					}
-				} else {
+				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
 					$error++;
 					$langs->load("errors");
-					setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+					$tmparray = explode(':', $result);
+					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+				} elseif (preg_match('/^ErrorFileSizeTooLarge/', $result)) {
+					$error++;
+					setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
+				} else {
+					$error++;
+					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 				}
+			} else {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			}
 		}
+		/*}*/
 	}
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE", GETPOST("forme_juridique_code", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SIREN", GETPOST("siren", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SIRET", GETPOST("siret", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_APE", GETPOST("ape", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_RCS", GETPOST("rcs", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE", GETPOST("forme_juridique_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SIREN", GETPOST("siren", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SIRET", GETPOST("siret", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_APE", GETPOST("ape", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_RCS", GETPOST("rcs", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("object", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START", 'int'), 'chaine', 0, '', $conf->entity);
 
@@ -227,6 +232,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
+
+	// Remove constant MAIN_INFO_SOCIETE_SETUP_TODO_WARNING
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_SETUP_TODO_WARNING", $conf->entity);
 
 	if (!$error) {
 		if (GETPOST('save')) {	// To avoid to show message when we juste switch the country that resubmit the form.
@@ -399,22 +407,22 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th></th></tr>'."\n";
 
 // Name
 print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmltag((GETPOSTISSET('nom') ? GETPOST('nom', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? $conf->global->MAIN_INFO_SOCIETE_NOM : ''))).'"'.(empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
+print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmltag((GETPOSTISSET('nom') ? GETPOST('nom', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? $conf->global->MAIN_INFO_SOCIETE_NOM : ''))).'"'.(empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
-print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('MAIN_INFO_SOCIETE_ADDRESS') ? GETPOST('MAIN_INFO_SOCIETE_ADDRESS', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS) ? $conf->global->MAIN_INFO_SOCIETE_ADDRESS : '')).'</textarea></td></tr>'."\n";
+print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('MAIN_INFO_SOCIETE_ADDRESS') ? GETPOST('MAIN_INFO_SOCIETE_ADDRESS', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS) ? $conf->global->MAIN_INFO_SOCIETE_ADDRESS : '')).'</textarea></td></tr>'."\n";
 
 // Zip
 print '<tr class="oddeven" id="trzipbeforecountry"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
-print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_ZIP') ? GETPOST('MAIN_INFO_SOCIETE_ZIP', 'alpha') : (!empty($conf->global->MAIN_INFO_SOCIETE_ZIP) ? $conf->global->MAIN_INFO_SOCIETE_ZIP : ''))).'"></td></tr>'."\n";
+print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_ZIP') ? GETPOST('MAIN_INFO_SOCIETE_ZIP', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_ZIP) ? $conf->global->MAIN_INFO_SOCIETE_ZIP : ''))).'"></td></tr>'."\n";
 
 print '<tr class="oddeven" id="trtownbeforecountry"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_TOWN) ? $conf->global->MAIN_INFO_SOCIETE_TOWN : ''))).'"></td></tr>'."\n";
+print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_TOWN) ? $conf->global->MAIN_INFO_SOCIETE_TOWN : ''))).'"></td></tr>'."\n";
 
 // Country
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td>';
@@ -466,7 +474,7 @@ print '<input class="maxwidth300 widthcentpercentminusx" name="web" id="web" val
 print '</td></tr>'."\n";
 
 // Barcode
-if (!empty($conf->barcode->enabled)) {
+if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
 	print '<span class="fa fa-barcode pictofixedwidth"></span>';
@@ -474,9 +482,18 @@ if (!empty($conf->barcode->enabled)) {
 	print '</td></tr>';
 }
 
+// Tooltip for both Logo and LogSquarred
+$tooltiplogo = $langs->trans('AvailableFormats').' : png, jpg, jpeg';
+$maxfilesizearray = getMaxFileSizeArray();
+$maxmin = $maxfilesizearray['maxmin'];
+$tooltiplogo .= ($maxmin > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxmin.' '.$langs->trans('Kb') : '';
+
 // Logo
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), 'png, jpg').'</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), $tooltiplogo).'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+if ($maxmin > 0) {
+	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+}
 print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="logo" id="logo" accept="image/*">';
 print '</div>';
 if (!empty($mysoc->logo_small)) {
@@ -512,8 +529,13 @@ print '</div>';
 print '</td></tr>';
 
 // Logo (squarred)
-print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), 'png, jpg').'</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), $tooltiplogo).'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
+$maxfilesizearray = getMaxFileSizeArray();
+$maxmin = $maxfilesizearray['maxmin'];
+if ($maxmin > 0) {
+	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+}
 print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="logo_squarred" id="logo_squarred" accept="image/*">';
 print '</div>';
 if (!empty($mysoc->logo_squarred_small)) {
@@ -553,28 +575,30 @@ print '</td></tr>';
 
 print '</table>';
 
+
 print '<br>';
+
 
 // IDs of the company (country-specific)
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><td class="titlefieldcreate wordbreak">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldcreate wordbreak">'.$langs->trans("CompanyIds").'</td><td></td></tr>';
 
 $langs->load("companies");
 
 // Managing Director(s)
 print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_MANAGERS') ? GETPOST('MAIN_INFO_SOCIETE_MANAGERS', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_MANAGERS) ? $conf->global->MAIN_INFO_SOCIETE_MANAGERS : ''))).'"></td></tr>';
+print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_MANAGERS') ? GETPOST('MAIN_INFO_SOCIETE_MANAGERS', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_MANAGERS) ? $conf->global->MAIN_INFO_SOCIETE_MANAGERS : ''))).'"></td></tr>';
 
 // GDPR contact
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
 print '</td><td>';
-print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'nohtml') : (!empty($conf->global->MAIN_INFO_GDPR) ? $conf->global->MAIN_INFO_GDPR : ''))).'"></td></tr>';
+print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'alphanohtml') : (!empty($conf->global->MAIN_INFO_GDPR) ? $conf->global->MAIN_INFO_GDPR : ''))).'"></td></tr>';
 
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
-print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escape_htmltag((GETPOSTISSET('capital') ? GETPOST('capital', 'nohtml') : (!empty($conf->global->MAIN_INFO_CAPITAL) ? $conf->global->MAIN_INFO_CAPITAL : ''))).'"></td></tr>';
+print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escape_htmltag((GETPOSTISSET('capital') ? GETPOST('capital', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_CAPITAL) ? $conf->global->MAIN_INFO_CAPITAL : ''))).'"></td></tr>';
 
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
@@ -657,8 +681,8 @@ print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dol_escape_
 print '</td></tr>';
 
 // Object of the company
-print '<tr class="oddeven"><td><label for="object">'.$langs->trans("CompanyObject").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="object" id="object" rows="'.ROWS_5.'">'.(!empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
+print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
+print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_5.'">'.(!empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';
@@ -669,7 +693,7 @@ print '</div>';
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</td><td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
@@ -684,7 +708,7 @@ print load_fiche_titre($langs->trans("TypeOfSaleTaxes"), '', 'object_payment');
 
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$langs->trans("VATManagement").'</td><td></td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
@@ -714,7 +738,7 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax1Management", $mysoc->country_code), $langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax1Management", $mysoc->country_code), $langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)).'</td><td></td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
@@ -734,7 +758,7 @@ if ($mysoc->useLocalTax(1)) {
 	$opcions = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
 
 	print '<br><label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
-	print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
+	print $form->selectarray("clt1", $opcions, getDolGlobalString('MAIN_INFO_LOCALTAX_CALC1'));
 	print "</div>";
 	print "</td></tr>\n";
 
@@ -758,7 +782,7 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax2Management", $mysoc->country_code), $langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax2Management", $mysoc->country_code), $langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)).'</td><td></td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
@@ -775,7 +799,7 @@ if ($mysoc->useLocalTax(2)) {
 		$formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
 	}
 	print '<br><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
-	print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
+	print $form->selectarray("clt2", $opcions, getDolGlobalString('MAIN_INFO_LOCALTAX_CALC2'));
 	print "</div>";
 	print "</td></tr>\n";
 
@@ -802,7 +826,7 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td>'.$form->textwithpicto($langs->trans("RevenueStamp"), $langs->trans("RevenueStampDesc")).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("RevenueStamp"), $langs->trans("RevenueStampDesc")).'</td><td></td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 if ($mysoc->useRevenueStamp()) {

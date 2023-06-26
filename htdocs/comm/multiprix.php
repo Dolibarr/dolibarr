@@ -23,6 +23,7 @@
  *	\brief      Tab to set the price level of a thirdparty
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -53,7 +54,7 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
  * Actions
  */
 
-if ($action == 'setpricelevel' && $user->rights->societe->creer) {
+if ($action == 'setpricelevel' && $user->hasRight('societe', 'creer')) {
 	$soc = new Societe($db);
 	$soc->fetch($id);
 	$soc->setPriceLevel(GETPOST("price_level"), $user);
@@ -75,7 +76,7 @@ if ($_socid > 0) {
 	// We load data of thirdparty
 	$objsoc = new Societe($db);
 	$objsoc->id = $_socid;
-	$objsoc->fetch($_socid, $to);
+	$objsoc->fetch($_socid);
 
 
 	$head = societe_prepare_head($objsoc);
@@ -141,7 +142,6 @@ if ($_socid > 0) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		print '<table class="noborder centpercent">';
-		$tag = !$tag;
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("PriceLevel").'</td>';

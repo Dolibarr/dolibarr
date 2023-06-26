@@ -82,7 +82,7 @@ class FormContract
 			if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
 				$sql .= " AND (c.fk_soc=".((int) $socid)." OR c.fk_soc IS NULL)";
 			} elseif ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {
-				$sql .= " AND (c.fk_soc IN (".$this->db->sanitize($socid.", ".$conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY).") ";
+				$sql .= " AND (c.fk_soc IN (".$this->db->sanitize(((int) $socid).",".((int) $conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)).")";
 				$sql .= " OR c.fk_soc IS NULL)";
 			}
 		}
@@ -104,7 +104,7 @@ class FormContract
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($user->rights->societe->lire)) {
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->hasRight('societe', 'lire')) {
 						// Do nothing
 					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
@@ -188,7 +188,7 @@ class FormContract
 		print '<input type="hidden" name="action" value="setcontract">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		$this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef);
-		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 }

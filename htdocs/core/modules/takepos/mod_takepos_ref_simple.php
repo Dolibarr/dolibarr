@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,6 +24,7 @@
  *  \ingroup    takepos
  *  \brief      File with Simple ref numbering module for takepos
  */
+
 dol_include_once('/core/modules/takepos/modules_takepos.php');
 
 /**
@@ -80,10 +81,10 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	}
 
 	/**
-	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Test if the numbers already in the database do not cause any conflicts that will prevent this
+	 *  of conflicts that will prevent this numbering from working.
 	 *
-	 * @return     boolean     false si conflit, true si ok
+	 * @return     boolean     false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated()
 	{

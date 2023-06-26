@@ -239,7 +239,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			}
 			$pdf->SetFont(pdf_getPDFFont($langs));
 
-			if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) {
+			if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 				$pdf->SetCompression(false);
 			}
 			//$pdf->SetCompression(false);
@@ -277,9 +277,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 
 			if (!$error && $pagecount) {
 				$pdf->Output($file, 'F');
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 			}
 
 			if ($usestdout) {

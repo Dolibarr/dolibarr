@@ -47,11 +47,11 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	?>
 <tr class="<?php echo $trclass; ?>" >
 	<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
-	<td class="linkedcol-name"><!-- nowraponall because ref is a label --><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td class="linkedcol-ref" align="center"></td>
 	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>
 	<td class="linkedcol-amount right"><?php
-	if ($user->rights->facture->lire) {
+	if ($user->hasRight('facture', 'lire')) {
 		$total = $total + $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}

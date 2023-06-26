@@ -38,6 +38,7 @@
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
 -- VMYSQL4.3 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL USING packaging::real;
+-- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price ALTER COLUMN packaging DROP DEFAULT;
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
 
@@ -546,6 +547,9 @@ CREATE TABLE llx_element_tag
     import_key    varchar(14)
 )ENGINE=innodb;
 
+ALTER TABLE llx_element_tag ADD COLUMN fk_categorie integer;
+ALTER TABLE llx_element_tag ADD COLUMN fk_element integer;
+
 ALTER TABLE llx_element_tag ADD UNIQUE INDEX idx_element_tag_uk (fk_categorie, fk_element);
 
 ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
@@ -554,3 +558,9 @@ ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIG
 -- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
 -- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
 ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+UPDATE llx_c_tva SET localtax2 = '-19:-15:-9' WHERE localtax2 = '-19' AND localtax2_type = '5' AND fk_pays = 4 AND taux = 21;
+

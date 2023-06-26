@@ -25,6 +25,7 @@
  *	\brief      Page to setup Withdrawals
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -163,6 +164,8 @@ print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToRece
 print '<td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1, '', 0, 'minwidth200', 1);
+// TODO Add plus to add a bank account
+print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&backtopage='.DOL_URL_ROOT.'/admin/prelevement.php"><span class="fa fa-plus-circle"></span></a>';
 print '</td></tr>';
 
 /* Moved to bank account data
@@ -392,7 +395,7 @@ print '<br>';
  */
 
 /* Disable this, there is no trigger with elementtype 'withdraw'
-if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
+if (!empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
 	$langs->load("mails");
 	print load_fiche_titre($langs->trans("Notifications"));

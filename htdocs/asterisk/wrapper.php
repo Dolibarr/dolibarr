@@ -34,9 +34,6 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -74,7 +71,6 @@ function llxFooter()
 {
 	print "\n".'</html>'."\n";
 }
-
 
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -192,7 +188,7 @@ if (!empty($number)) {
 		} else {
 			$txt = "Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
 			dol_syslog($txt);
-			print '<body onload="javascript:history.go(-1);">'."\n";
+			print '<body onload="history.go(-1);">'."\n";
 			print '<!-- '.$txt.' -->';
 			fputs($oSocket, "Action: login\r\n");
 			fputs($oSocket, "Events: off\r\n");

@@ -70,7 +70,7 @@ class modExpedition extends DolibarrModules
 							);
 
 		// Config pages
-		$this->config_page_url = array("confexped.php");
+		$this->config_page_url = array("expedition.php");
 
 		// Dependencies
 		$this->depends = array("modCommande");
@@ -84,7 +84,7 @@ class modExpedition extends DolibarrModules
 
 		$this->const[$r][0] = "EXPEDITION_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "rouget";
+		$this->const[$r][2] = "espadon";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons expeditions en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -105,7 +105,7 @@ class modExpedition extends DolibarrModules
 
 		$this->const[$r][0] = "DELIVERY_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "typhon";
+		$this->const[$r][2] = "storm";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de reception en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -255,7 +255,7 @@ class modExpedition extends DolibarrModules
 			$this->export_fields_array[$r] += array('sp.rowid'=>'IdContact', 'sp.lastname'=>'Lastname', 'sp.firstname'=>'Firstname', 'sp.note_public'=>'NotePublic');
 		}
 		//$this->export_TypeFields_array[$r]=array(
-		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
+		//	's.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
 		//	'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",
 		//	'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",
 		//	'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','ed.qty'=>"Text"
@@ -360,9 +360,11 @@ class modExpedition extends DolibarrModules
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'shipping' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','shipping',".((int) $conf->entity).")",
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'shipping', ".((int) $conf->entity).")",
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[3][2])."' AND type = 'delivery' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."','delivery',".((int) $conf->entity).")",
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."', 'delivery', ".((int) $conf->entity).")",
+			//"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name IN ('STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE') AND entity = ".((int) $conf->entity),
+			//"INSERT INTO ".MAIN_DB_PREFIX."const (name, value, entity) VALUES ('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', 1, ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

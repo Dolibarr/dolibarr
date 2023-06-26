@@ -57,7 +57,7 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
 
 
 /**
- * 	Save data into a memory area shared by all users, all sessions on server
+ * 	Save data into a memory area shared by all users, all sessions on server. Note: MAIN_CACHE_COUNT must be set.
  *
  *  @param	string      $memoryid		Memory id of shared area
  * 	@param	mixed		$data			Data to save. It must not be a null value.
@@ -68,6 +68,7 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
 function dol_setcache($memoryid, $data, $expire = 0)
 {
 	global $conf;
+
 	$result = 0;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
@@ -76,7 +77,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		}
 	}
 
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
+	if (isModEnabled('memcached') && class_exists('Memcached')) {
 		// Using a memcached server
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
@@ -97,7 +98,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (isModEnabled('memcached') && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using a memcache server
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
@@ -120,6 +121,10 @@ function dol_setcache($memoryid, $data, $expire = 0)
 	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data, $expire);
+	} else {
+		// No intersession cache system available, we use at least the perpage cache
+		$conf->cache['cachememory_'.$memoryid] = $data;
+		$result = is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
 	}
 
 	return $result;
@@ -143,7 +148,7 @@ function dol_getcache($memoryid)
 	}
 
 	// Using a memcached server
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
+	if (isModEnabled('memcached') && class_exists('Memcached')) {
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
@@ -168,7 +173,7 @@ function dol_getcache($memoryid)
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (isModEnabled('memcached') && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcache();
@@ -193,6 +198,11 @@ function dol_getcache($memoryid)
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
+	} else {
+		// No intersession cache system available, we use at least the perpage cache
+		if (isset($conf->cache['cachememory_'.$memoryid])) {
+			return $conf->cache['cachememory_'.$memoryid];
+		}
 	}
 
 	return null;

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal Moduleinstellungen
-PaypalDesc=Dieses Modul ermöglicht Zahlungen von Kunden über <a href="http://www.paypal.com" target="_blank">PayPal</a> zu tätigen. Es können ad-hoxc Zahlungen oder Zahlungen zu Vorgängen aus Dolibarr (Rechnungen, Bestellungen ...) erfolgen
+PaypalDesc=Dieses Modul ermöglicht die Zahlung durch Kunden über <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a>. Dies kann sowohl für eine allgemeine Zahlung als auch für eine Zahlung im Zusammenhang mit einem Dolibarr-Objekt (Rechnung, Bestellung, ...) verwendet werden.
 PaypalOrCBDoPayment=Bezahlen mit PayPal  (Kreditkarte oder PayPal)
 PaypalDoPayment=Zahlung mit PayPal 
 PAYPAL_API_SANDBOX=Testmodus/Sandbox
@@ -12,7 +12,7 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Integrierte Zahlung (Kreditkarte + PayPal) ode
 PaypalModeIntegral=Integriert
 PaypalModeOnlyPaypal=Nur PayPal
 ONLINE_PAYMENT_CSS_URL=Optionale URL des CSS-Stylesheet auf Zahlungsseite
-ThisIsTransactionId=Die Transaktions ID lautet: <b>%s</b>
+ThisIsTransactionId=Die Transaktions-ID lautet: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=URL für Paypal-Zahlungen beim Dokumentenversand per E-Mail hinzufügen.
 NewOnlinePaymentReceived=Neue Onlinezahlung erhalten
 NewOnlinePaymentFailed=Neue Onlinezahlung versucht, aber fehlgeschlagen

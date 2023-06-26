@@ -20,14 +20,16 @@ ModulePartnershipName=Håndtering av partnerskap
 PartnershipDescription=Modul for Partnerskapshåndtering
 PartnershipDescriptionLong= Modul for Partnerskapshåndtering
 Partnership=Partnerskap
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+Partnerships=Partnerskap
+AddPartnership=Legg til partnerskap
+CancelPartnershipForExpiredMembers=Partnerskap: Avbryt partnerskap for medlemmer med utløpt abonnement
+PartnershipCheckBacklink=Partnerskap: Sjekk refererende tilbakekobling
 
 #
 # Menu
 #
 NewPartnership=Nytt partnerskap
+NewPartnershipbyWeb=Din partnerskapsforespørsel er lagt til. Vi kan kontakte deg snart...
 ListOfPartnerships=Liste over partnerskap
 
 #
@@ -36,12 +38,13 @@ ListOfPartnerships=Liste over partnerskap
 PartnershipSetup=Oppsett av partnerskap
 PartnershipAbout=Om partnerskap
 PartnershipAboutPage=Om Partnerskap-side
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
+partnershipforthirdpartyormember=Partnerstatus må settes på en "tredjepart" eller et "medlem"
 PARTNERSHIP_IS_MANAGED_FOR=Partnerskap administrert for
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks å sjekke
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antall dager før kanselleringsstatus for et partnerskap når et abonnement har utløpt
+ReferingWebsiteCheck=Sjekk av refererende nettsted
+ReferingWebsiteCheckDesc=Du kan aktivere en funksjon for å sjekke at partnerne dine har lagt til en tilbakekobling til nettsteddomenene dine på deres eget nettsted.
+PublicFormRegistrationPartnerDesc=Dolibarr kan gi deg en offentlig URL/nettside slik at eksterne besøkende kan be om å bli en del av partnerskapsprogrammet.
 
 #
 # Object
@@ -54,11 +57,17 @@ DatePartnershipEnd=Sluttdato
 ReasonDecline=Årsak til avslag
 ReasonDeclineOrCancel=Avvis grunn
 PartnershipAlreadyExist=Partnerskap eksisterer allerede
-ManagePartnership=Manage partnership
+ManagePartnership=Administrer partnerskap
 BacklinkNotFoundOnPartnerWebsite=Backlink ble ikke funnet på partnerens nettsted
 ConfirmClosePartnershipAsk=Er du sikker på at du vil avbryte dette partnerskapet?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+PartnershipType=Partnerskapstype
+PartnershipRefApproved=Partnerskap %s godkjent
+KeywordToCheckInWebsite=Hvis du vil sjekke at et gitt søkeord er til stede på nettsiden til hver partner, definer dette søkeordet her
+PartnershipDraft=Kladd
+PartnershipAccepted=Akseptert
+PartnershipRefused=Avvist
+PartnershipCanceled=Kansellert
+PartnershipManagedFor=Partnere er
 
 #
 # Template Mail
@@ -78,15 +87,10 @@ YourPartnershipRefusedContent=Vi informerer deg om at partnerskapsforespørselen
 YourPartnershipAcceptedContent=Vi informerer deg om at din forespørsel om partnerskap er godtatt.
 YourPartnershipCanceledContent=Vi informerer deg om at partnerskapet ditt er kansellert.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
+CountLastUrlCheckError=Antall feil for siste URL-sjekk
+LastCheckBacklink=Dato for siste URL-sjekk
 ReasonDeclineOrCancel=Avvis grunn
 
-#
-# Status
-#
-PartnershipDraft=Kladd
-PartnershipAccepted=Akseptert
-PartnershipRefused=Avvist
-PartnershipCanceled=Kansellert
-PartnershipManagedFor=Partnere er
+NewPartnershipRequest=Ny forespørsel om partnerskap
+NewPartnershipRequestDesc=Dette skjemaet lar deg be om å bli en del av et av våre partnerskapsprogram. Hvis du trenger hjelp til å fylle ut dette skjemaet, vennligst kontakt via e-post <b> %s </b> .
+

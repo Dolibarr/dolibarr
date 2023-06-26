@@ -40,9 +40,9 @@ if (!isset($absolute_creditnote)) {
 }
 
 // Relative and absolute discounts
-$addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'&action=create&token='.newToken().'">'.$langs->trans("EditRelativeDiscount").'</a>';
-$addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'&action=create&token='.newToken().'">'.$langs->trans("EditGlobalDiscounts").'</a>';
-$viewabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("ViewAvailableGlobalDiscounts").'</a>';
+$addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.((int) $thirdparty->id).'&backtopage='.urlencode($backtopage).'&action=create&token='.newToken().'">'.$langs->trans("EditRelativeDiscount").'</a>';
+$addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.((int) $thirdparty->id).'&backtopage='.urlencode($backtopage).'&action=create&token='.newToken().'">'.$langs->trans("EditGlobalDiscounts").'</a>';
+$viewabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.((int) $thirdparty->id).'&backtopage='.urlencode($backtopage).'">'.$langs->trans("ViewAvailableGlobalDiscounts").'</a>';
 
 $fixedDiscount = $thirdparty->remise_percent;
 if (!empty($discount_type)) {
@@ -54,7 +54,7 @@ if ($fixedDiscount > 0) {
 	print $langs->trans($translationKey, $fixedDiscount).'.';
 } else {
 	$translationKey = (!empty($discount_type)) ? 'HasNoRelativeDiscountFromSupplier' : 'CompanyHasNoRelativeDiscount';
-	print '<span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
+	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans($translationKey).'.</span>';
 }
 if ($isNewObject) {
 	print ' ('.$addrelativediscount.')';
@@ -115,7 +115,7 @@ if ($absolute_creditnote > 0) {
 
 if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 	$translationKey = !empty($discount_type) ? 'HasNoAbsoluteDiscountFromSupplier' : 'CompanyHasNoAbsoluteDiscount';
-	print '<br><span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
+	print '<br class="hideonsmartphone"><span class="opacitymedium hideonsmartphone">'.$langs->trans($translationKey).'.</span>';
 
 	if ($isInvoice && $object->statut == $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 		print ' ('.$addabsolutediscount.')';

@@ -23,6 +23,7 @@
  *	\brief      Home page of suppliers area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -99,7 +100,7 @@ if ($resql) {
 
 
 // Draft orders
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+if (isModEnabled("supplier_order")) {
 	$langs->load("orders");
 
 	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc,";
@@ -157,7 +158,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 }
 
 // Draft invoices
-if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
+if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql .= ", s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";

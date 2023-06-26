@@ -26,17 +26,14 @@
  *      \brief      Home page of category area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->loadLangs(array("main"), "categories", "takepos", "printing");
-
-if (!$user->rights->categorie->lire) {
-	accessforbidden();
-}
+$langs->loadLangs(array("main", "categories", "takepos", "printing"));
 
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
@@ -50,9 +47,15 @@ if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
 
+if (!$user->hasRight('categorie', 'lire')) {
+	accessforbidden();
+}
+
+
 /*
  * Actions
  */
+
 if ($action == "SavePrinter1") {
 	$printedcategories = ";";
 	if (is_array($printer1)) {
@@ -157,14 +160,16 @@ foreach ($fulltree as $key => $val) {
 	$categstatic->ref = $val['label'];
 	$categstatic->color = $val['color'];
 	$categstatic->type = $type;
+
 	$li = $categstatic->getNomUrl(1, '', 60);
+
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
-	'rowid'=>$val['rowid'],
-	'fk_menu'=>$val['fk_menu'],
-	'fk_menu'=>$val['fk_parent'],
-	'label'=>$val['label']
+		'rowid'=>$val['rowid'],
+		'fk_menu'=>$val['fk_menu'],
+		'fk_parent'=>$val['fk_parent'],
+		'label'=>$val['label']
 	);
 }
 
@@ -174,6 +179,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter1">';
@@ -183,7 +189,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer1[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}
@@ -207,6 +213,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter2">';
@@ -216,7 +223,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer2[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}
@@ -240,6 +247,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 3</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter3">';
@@ -249,7 +257,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer3[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}

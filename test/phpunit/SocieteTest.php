@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SocieteTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -79,7 +81,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
@@ -87,7 +89,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(1);
 		}
 
-		if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
+		if (!empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
 			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die(1);
 		}
 
@@ -105,7 +107,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -118,7 +120,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -134,7 +136,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -152,7 +154,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Societe($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -179,7 +181,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Societe($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -237,7 +239,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
 
-		$newobject=new Societe($this->savdb);
+		$newobject=new Societe($db);
 		$result=$newobject->fetch($localobject->id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -395,7 +397,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Societe($db);
 		$localobject->fetch($id);
 
 		$result=$localobject->getOutstandingBills();
@@ -424,7 +426,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Societe($db);
 		$result=$localobject->fetch($id);
 
 		$result=$localobject->delete($id, $user);

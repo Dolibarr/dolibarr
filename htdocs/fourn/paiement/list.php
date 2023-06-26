@@ -33,6 +33,7 @@
  *	\brief		Payment list for supplier invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -103,7 +104,7 @@ $arrayfields = array(
 	's.nom'				=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
 	'c.libelle'			=>array('label'=>"Type", 'checked'=>1, 'position'=>40),
 	'p.num_paiement'	=>array('label'=>"Numero", 'checked'=>1, 'position'=>50, 'tooltip'=>"ChequeOrTransferNumber"),
-	'ba.label'			=>array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->banque->enabled))),
+	'ba.label'			=>array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled("banque"))),
 	'p.amount'			=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -123,8 +124,7 @@ if ($user->socid) {
 // require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // $object = new PaiementFourn($db);
 // restrictedArea($user, $object->element);
-if ((empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
-	|| (empty($conf->supplier_invoice->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
+if (!isModEnabled('supplier_invoice')) {
 	accessforbidden();
 }
 if ((empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
@@ -244,7 +244,7 @@ if (empty($user->rights->societe->client->voir)) {
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {		// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -271,7 +271,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER['PHP_SELF']) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -485,7 +485,7 @@ while ($i < min($num, $limit)) {
 
 	// No
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-		print '<td>'.(($offset * $limit) + $i).'</td>';
+		print '<td class="nowraponall">'.(($offset * $limit) + $i).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -493,7 +493,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="nowrap">'.$paymentfournstatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$paymentfournstatic->getNomUrl(1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -510,7 +510,7 @@ while ($i < min($num, $limit)) {
 
 	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		if ($objp->socid > 0) {
 			print $companystatic->getNomUrl(1, '', 24);
 		}
@@ -539,7 +539,7 @@ while ($i < min($num, $limit)) {
 
 	// Bank account
 	if (!empty($arrayfields['ba.label']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		if ($objp->bid) {
 			$accountstatic->id = $objp->bid;
 			$accountstatic->ref = $objp->bref;

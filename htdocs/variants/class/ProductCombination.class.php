@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2018	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
@@ -83,6 +82,16 @@ class ProductCombination
 	 * @var string
 	 */
 	public $variation_ref_ext = '';
+
+	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var string[] array of errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor
@@ -169,7 +178,6 @@ class ProductCombination
 		}
 
 		if (empty($combination_price_levels)) {
-
 			/**
 			 * for auto retrocompatibility with last behavior
 			 */
@@ -282,7 +290,9 @@ class ProductCombination
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".((int) $fk_product_parent)." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_ref_ext, variation_weight";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_attribute_combination";
+		$sql.= " WHERE fk_product_parent = ".((int) $fk_product_parent)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -490,10 +500,10 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
 		// Only when Parent Status are updated
-		if ($parent->oldcopy && ($parent->status != $parent->oldcopy->status)) {
+		if (!empty($parent->oldcopy) && ($parent->status != $parent->oldcopy->status)) {
 			$child->status = $parent->status;
 		}
-		if ($parent->oldcopy && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+		if (!empty($parent->oldcopy) && ($parent->status_buy != $parent->oldcopy->status_buy)) {
 			$child->status_buy = $parent->status_buy;
 		}
 
@@ -506,7 +516,7 @@ class ProductCombination
 		if ($child->label == $parent->label) {
 			// This will trigger only at variant creation time
 			$varlabel               = $this->getCombinationLabel($this->fk_product_child);
-			$child->label           = $parent->label.$varlabel; ;
+			$child->label           = $parent->label.$varlabel;
 		}
 
 
@@ -608,6 +618,10 @@ class ProductCombination
 
 		$prodcomb2val = new ProductCombination2ValuePair($this->db);
 		$prodcomb = new ProductCombination($this->db);
+
+		$features = array_filter($features, function ($v) {
+			return !empty($v);
+		});
 
 		foreach ($features as $attr => $attr_val) {
 			$actual_comp[$attr] = $attr_val;
@@ -1040,6 +1054,16 @@ class ProductCombinationLevel
 	public $variation_price_percentage = false;
 
 	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var string[] array of errors
+	 */
+	public $errors = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -1057,12 +1081,16 @@ class ProductCombinationLevel
 	 */
 	public function fetch($rowid)
 	{
-		$sql = "SELECT rowid, fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".(int) $rowid;
+		$sql = "SELECT rowid, fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE rowid = ".(int) $rowid;
 
-		$obj = $this->db->getRow($sql);
-
-		if ($obj) {
-			return $this->fetchFormObj($obj);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				return $this->fetchFormObj($obj);
+			}
 		}
 
 		return -1;
@@ -1106,7 +1134,7 @@ class ProductCombinationLevel
 	/**
 	 * Assign vars form an stdclass like sql obj
 	 *
-	 * @param 	int 	$obj		Object resultset
+	 * @param 	Object 	$obj		Object resultset
 	 * @return 	int 				<0 KO, >0 OK
 	 */
 	public function fetchFormObj($obj)
@@ -1141,11 +1169,14 @@ class ProductCombinationLevel
 			$sql = "SELECT rowid id";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " WHERE fk_product_attribute_combination = ".(int) $this->fk_product_attribute_combination;
-			$sql .= ' AND fk_price_level = '.intval($this->fk_price_level);
+			$sql .= ' AND fk_price_level = '.((int) $this->fk_price_level);
 
-			$existObj = $this->db->getRow($sql);
-			if ($existObj) {
-				$this->id = $existObj->id;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$this->id = $obj->id;
+				}
 			}
 		}
 

@@ -199,6 +199,14 @@ if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 	$main_url = substr($main_url, 0, dol_strlen($main_url) - 1);
 }
 
+if (!dol_is_dir($main_dir.'/core/db/')) {
+	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $main_dir, $langs->transnoentitiesnoconv("WebPagesDirectory")).'</div>';
+	print '<br>';
+	//print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	$error++;
+}
+
 // Test database connection
 if (!$error) {
 	$result = @include_once $main_dir."/core/db/".$db_type.'.class.php';
@@ -232,7 +240,7 @@ if (!$error) {
 				}
 			}
 
-			$db = getDoliDBInstance($db_type, $db_host, $userroot, $passroot, $databasefortest, $db_port);
+			$db = getDoliDBInstance($db_type, $db_host, $userroot, $passroot, $databasefortest, (int) $db_port);
 
 			dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
 			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
@@ -264,7 +272,7 @@ if (!$error) {
 
 		// If we need simple access
 		if (!$error && (empty($db_create_database) && empty($db_create_user))) {
-			$db = getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, $db_port);
+			$db = getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, (int) $db_port);
 
 			if ($db->error) {
 				print '<div class="error">'.$db->error.'</div>';
@@ -521,7 +529,7 @@ if (!$error && $db->connected && $action == "set") {
 
 			// Check database connection
 
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, $databasefortest, $conf->db->port);
+			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, $databasefortest, (int) $conf->db->port);
 
 			if ($db->error) {
 				print '<div class="error">'.$db->error.'</div>';
@@ -603,7 +611,7 @@ if (!$error && $db->connected && $action == "set") {
 		// If database creation was asked, we create it
 		if (!$error && (isset($db_create_database) && ($db_create_database == "1" || $db_create_database == "on"))) {
 			dolibarr_install_syslog("step1: create database: ".$dolibarr_main_db_name." ".$dolibarr_main_db_character_set." ".$dolibarr_main_db_collation." ".$dolibarr_main_db_user);
-			$newdb = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, '', $conf->db->port);
+			$newdb = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, '', (int) $conf->db->port);
 			//print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;
 
 			if ($newdb->connected) {
@@ -663,7 +671,7 @@ if (!$error && $db->connected && $action == "set") {
 			dolibarr_install_syslog("step1: connection type=".$conf->db->type." on host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name);
 			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 			if ($db->connected) {
 				dolibarr_install_syslog("step1: connection to server by user ".$conf->db->user." ok");
@@ -817,7 +825,7 @@ function write_conf_file($conffile)
 	global $dolibarr_main_distrib;
 	global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
 	global $conffile, $conffiletoshow, $conffiletoshowshort;
-	global $force_dolibarr_lib_ADODB_PATH, $force_dolibarr_lib_NUSOAP_PATH;
+	global $force_dolibarr_lib_NUSOAP_PATH;
 	global $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
 	global $force_dolibarr_lib_GEOIP_PATH;
 	global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
@@ -900,7 +908,7 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
 		fputs($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore\';');
+		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
@@ -910,6 +918,8 @@ function write_conf_file($conffile)
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+		fputs($fp, "\n");
+		fputs($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
 		fputs($fp, "\n");
 
 		// Write params to overwrites default lib path
@@ -933,11 +943,6 @@ function write_conf_file($conffile)
 			fputs($fp, '//'); $force_dolibarr_lib_TCPDI_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_TCPDI_PATH=\''.$force_dolibarr_lib_TCPDI_PATH.'\';');
-		fputs($fp, "\n");
-		if (empty($force_dolibarr_lib_ADODB_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_ADODB_PATH = '';
-		}
-		fputs($fp, '$dolibarr_lib_ADODB_PATH=\''.$force_dolibarr_lib_ADODB_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
 			fputs($fp, '//'); $force_dolibarr_lib_GEOIP_PATH = '';

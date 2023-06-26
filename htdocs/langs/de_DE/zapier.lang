@@ -18,4 +18,4 @@ ModuleZapierForDolibarrDesc = Modul: Zapier für Dolibarr
 ZapierForDolibarrSetup=Zapier für Dolibarr einrichten
 ZapierDescription=Schnittstelle mit Zapier
 ZapierAbout=Über das Modul Zapier
-ZapierSetupPage=Es ist kein Setup auf Dolibarr-Seite erforderlich, um Zapier zu verwenden. Sie müssen jedoch ein Paket auf Zapier generieren und veröffentlichen, um Zapier mit Dolibarr verwenden zu können. Siehe Dokumentation auf <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> dieser Wiki-Seite </a> .
+ZapierSetupPage=Es ist kein Setup auf Dolibarr-Seite erforderlich, um Zapier zu verwenden. Sie müssen jedoch ein Paket auf Zapier generieren und veröffentlichen, um Zapier mit Dolibarr verwenden zu können. Siehe Dokumentation auf <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">dieser Wiki-Seite</a> .

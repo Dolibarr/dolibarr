@@ -27,6 +27,7 @@
  *		\brief      Page d'administration/configuration du module Ldap
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -177,9 +178,9 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&toke
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 
-print dol_get_fiche_head($head, 'users', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'users', '', -1);
 
-print $langs->trans("LDAPDescUsers").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescUsers").'</span><br>';
 print '<br>';
 
 
@@ -500,9 +501,9 @@ if (function_exists("ldap_connect")) {
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
-			// Get from LDAP database an array of results
+			// Get from LDAP database an array of results by making a search on
+			// $filter = '('.ldap_escape(getDolGlobalString('LDAP_KEY_USERS'), '', LDAP_ESCAPE_FILTER).'=*)';
 			$ldapusers = $ldap->getRecords('*', getDolGlobalString('LDAP_USER_DN'), getDolGlobalString('LDAP_KEY_USERS'), $required_fields, 1);
-			//$ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, '', 1);
 
 			if (is_array($ldapusers)) {
 				$liste = array();
@@ -525,7 +526,7 @@ if (function_exists("ldap_connect")) {
 			print "search: *<br>\n";
 			print "userDN: ".getDolGlobalString('LDAP_USER_DN')."<br>\n";
 			print "useridentifier: ".getDolGlobalString('LDAP_KEY_USERS')."<br>\n";
-			print "required_fields: ".implode(',', $required_fields)."<br>\n";
+			print "requested fields: ".implode(',', $required_fields)."<br>\n";
 			print "=> ".count($liste)." records<br>\n";
 			print "\n<br>";
 		} else {

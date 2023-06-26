@@ -10,7 +10,7 @@ services:
     mariadb:
         image: mariadb:latest
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: rootpassfordev
             MYSQL_DATABASE: dolibarr
         ports:
             - "3306:3306"
@@ -34,6 +34,8 @@ services:
         build: .
         environment:
             HOST_USER_ID: $HOST_USER_ID
+            PHP_INI_DATE_TIMEZONE: $PHP_INI_DATE_TIMEZONE
+            PHP_INI_MEMORY_LIMIT: $PHP_INI_MEMORY_LIMIT
         volumes:
             - ../../htdocs:/var/www/html/
             - ../../documents:/var/documents

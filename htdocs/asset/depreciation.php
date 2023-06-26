@@ -22,6 +22,7 @@
  *  \brief      Card with depreciation on Asset
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
@@ -56,7 +57,7 @@ if ($id > 0 || !empty($ref)) {
 if ($user->socid > 0) accessforbidden();
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 if (!empty($object->not_depreciated)) accessforbidden();
 
 $object->asset_depreciation_options = &$assetdepreciationoptions;
@@ -74,7 +75,8 @@ if ($result < 0) {
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }

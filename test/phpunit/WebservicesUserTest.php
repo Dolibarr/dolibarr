@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,11 +60,12 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return DateLibTest
+	 * @param 	string	$name		Name
+	 * @return WebservicesUserTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -82,7 +84,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -95,7 +97,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -108,7 +110,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	*/
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -124,7 +126,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -176,7 +178,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! empty($result['faultstring'])) {
+		if (!empty($result['faultstring'])) {
 			print $result['faultstring']."\n";
 			$result=0;
 		}
@@ -203,7 +205,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $soapclient->error_str;
 			print "\n<br>\n";

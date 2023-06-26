@@ -1337,14 +1337,14 @@ class TCPDFBarcode {
 		// calculate check digit
 		$sum_a = 0;
 		for ($i = 1; $i < $data_len; $i+=2) {
-			$sum_a += $code[$i];
+			$sum_a += (int) $code[$i];
 		}
 		if ($len > 12) {
 			$sum_a *= 3;
 		}
 		$sum_b = 0;
 		for ($i = 0; $i < $data_len; $i+=2) {
-			$sum_b += ($code[$i]);
+			$sum_b += (int) ($code[$i]);
 		}
 		if ($len < 13) {
 			$sum_b *= 3;
@@ -2171,7 +2171,7 @@ class TCPDFBarcode {
 
 	/**
 	 * IMB - Intelligent Mail Barcode - Onecode - USPS-B-3200
-	 * 
+	 *
 	 * @param $code (string) pre-formatted IMB barcode (65 chars "FADT")
 	 * @return array barcode representation.
 	 * @protected

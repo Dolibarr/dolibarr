@@ -41,6 +41,9 @@ class Translate
 	public $cache_labels = array(); // Cache for labels return by getLabelFromKey method
 	public $cache_currencies = array(); // Cache to store currency symbols
 	private $cache_currencies_all_loaded = false;
+	public $origlang;
+	public $error;
+	public $errors = array();
 
 
 	/**
@@ -266,7 +269,7 @@ class Translate
 				// Enable caching of lang file in memory (not by default)
 				$usecachekey = '';
 				// Using a memcached server
-				if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
+				if (isModEnabled('memcached') && !empty($conf->global->MEMCACHED_SERVER)) {
 					$usecachekey = $newdomain.'_'.$langofdir.'_'.md5($file_lang); // Should not contains special chars
 				} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 					// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
@@ -416,7 +419,7 @@ class Translate
 	 *
 	 *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 *
-	 *  @param  Database    $db             Database handler
+	 *  @param  DoliDB    $db             Database handler
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadFromDatabase($db)
@@ -456,7 +459,7 @@ class Translate
 		// Enable caching of lang file in memory (not by default)
 		$usecachekey = '';
 		// Using a memcached server
-		if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
+		if (isModEnabled('memcached') && !empty($conf->global->MEMCACHED_SERVER)) {
 			$usecachekey = $newdomain.'_'.$langofdir; // Should not contains special chars
 		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
@@ -637,7 +640,11 @@ class Translate
 			);
 
 			if (strpos($key, 'Format') !== 0) {
-				$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+				try {
+					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+				} catch (Exception $e) {
+					// No exception managed
+				}
 			}
 
 			// Crypt string into HTML
@@ -721,9 +728,9 @@ class Translate
 
 			return $str;
 		} else {
-			if ($key[0] == '$') {
+			/*if ($key[0] == '$') {
 				return dol_eval($key, 1, 1, '1');
-			}
+			}*/
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -830,7 +837,6 @@ class Translate
 						'ja'=>'ja_JP',
 						'lo'=>'lo_LA',
 						'nb'=>'nb_NO',
-						'fa'=>'fa_IR',
 						'sq'=>'sq_AL',
 						'sr'=>'sr_RS',
 						'sv'=>'sv_SE',
@@ -904,11 +910,11 @@ class Translate
 	 *      This function need module "numberwords" to be installed. If not it will return
 	 *      same number (this module is not provided by default as it use non GPL source code).
 	 *
-	 *		@param	int		$number		Number to encode in full text
-	 *      @param  string	$isamount	''=it's just a number, '1'=It's an amount (default currency), 'currencycode'=It's an amount (foreign currency)
-	 *      @return string				Label translated in UTF8 (but without entities)
-	 * 									10 if setDefaultLang was en_US => ten
-	 * 									123 if setDefaultLang was fr_FR => cent vingt trois
+	 *		@param	int|string	$number		Number to encode in full text
+	 *      @param  string		$isamount	''=it's just a number, '1'=It's an amount (default currency), 'currencycode'=It's an amount (foreign currency)
+	 *      @return string					Label translated in UTF8 (but without entities)
+	 * 										10 if setDefaultLang was en_US => ten
+	 * 										123 if setDefaultLang was fr_FR => cent vingt trois
 	 */
 	public function getLabelFromNumber($number, $isamount = '')
 	{
@@ -929,8 +935,10 @@ class Translate
 			$fonc = 'numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php')) {
 				include_once $newdir.'/functions_'.$fonc.'.lib.php';
-				$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
-				break;
+				if (function_exists('numberwords_getLabelFromNumber')) {
+					$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
+					break;
+				}
 			}
 		}
 
@@ -1041,7 +1049,7 @@ class Translate
 
 			if (isset($this->cache_currencies[$currency_code]) && !empty($this->cache_currencies[$currency_code]['unicode']) && is_array($this->cache_currencies[$currency_code]['unicode'])) {
 				foreach ($this->cache_currencies[$currency_code]['unicode'] as $unicode) {
-					$currency_sign .= mb_convert_encoding("&#{$unicode};", "UTF-8", 'HTML-ENTITIES');
+					$currency_sign .= mb_convert_encoding("&#".$unicode.";", "UTF-8", 'HTML-ENTITIES');
 				}
 			}
 		}
@@ -1092,7 +1100,7 @@ class Translate
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
 					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso) != "Currency".$obj->code_iso ? $this->trans("Currency".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
+					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
 				$i++;

@@ -23,6 +23,7 @@
  *	\brief      Show list of customers to add an new invoice
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -35,7 +36,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-if (!$user->rights->facture->lire) {
+if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
@@ -132,7 +133,7 @@ if ($resql) {
 
 	$langs->load('commercial');
 
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 

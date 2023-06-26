@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
-if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT)) {
+if (!empty($conf->global->MAIN_ROUNDING_RULE_TOT)) {
 	print "Parameter MAIN_ROUNDING_RULE_TOT must be set to 0 or not set.\n";
 	exit(1);
 }
@@ -61,11 +62,12 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CoreTest
+	 * @param 	string	$name		Name
+	 * @return PriceTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -84,7 +86,7 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -97,7 +99,7 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->rollback();
@@ -110,7 +112,7 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -126,7 +128,7 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -148,11 +150,6 @@ class PricesTest extends PHPUnit\Framework\TestCase
 
 		global $mysoc;
 		$mysoc=new Societe($db);
-
-		// To force status that say module multicompany is on
-		//$conf->multicurrency=new stdClass();
-		//$conf->multicurrency->enabled = 0;
-
 
 		/*
 		 *  Country France
@@ -329,14 +326,14 @@ class PricesTest extends PHPUnit\Framework\TestCase
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
 		// Two lines of 1.24 give 2.48 HT and 2.72 TTC with standard vat rounding mode
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$localobject->initAsSpecimen('nolines');
 		$invoiceid=$localobject->create($user);
 
 		$localobject->addline('Desc', 1.24, 1, 10, 0, 0, 0, 0, '', '', 0, 0, 0, 'HT');
 		$localobject->addline('Desc', 1.24, 1, 10, 0, 0, 0, 0, '', '', 0, 0, 0, 'HT');
 
-		$newlocalobject=new Facture($this->savdb);
+		$newlocalobject=new Facture($db);
 		$newlocalobject->fetch($invoiceid);
 
 		$this->assertEquals(2.48, $newlocalobject->total_ht, "testUpdatePrice test1");
@@ -345,14 +342,14 @@ class PricesTest extends PHPUnit\Framework\TestCase
 
 
 		// Two lines of 1.24 give 2.48 HT and 2.73 TTC with global vat rounding mode
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$localobject->initAsSpecimen('nolines');
 		$invoiceid=$localobject->create($user);
 
 		$localobject->addline('Desc', 1.24, 1, 10, 0, 0, 0, 0, '', '', 0, 0, 0, 'HT');
 		$localobject->addline('Desc', 1.24, 1, 10, 0, 0, 0, 0, '', '', 0, 0, 0, 'HT');
 
-		$newlocalobject=new Facture($this->savdb);
+		$newlocalobject=new Facture($db);
 		$newlocalobject->fetch($invoiceid);
 
 		$this->assertEquals(2.48, $newlocalobject->total_ht, "testUpdatePrice test4");

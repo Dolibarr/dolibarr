@@ -67,7 +67,7 @@ class FormBarCode
 		$disable = '';
 
 		if (!empty($conf->use_javascript_ajax)) {
-			print "\n".'<script type="text/javascript">';
+			print "\n".'<script nonce="'.getNonce().'" type="text/javascript">';
 			print 'jQuery(document).ready(function () {
                         jQuery("#select'.$idForm.'").change(function() {
                             var formName = document.getElementById("form'.$idForm.'");
@@ -80,8 +80,8 @@ class FormBarCode
 		}
 
 		// We check if barcode is already selected by default
-		if (((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
-		(!empty($conf->societe->enabled) && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id)) {
+		if (((isModEnabled("product") || isModEnabled("service")) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
+		(isModEnabled("societe") && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id)) {
 			$disable = 'disabled';
 		}
 

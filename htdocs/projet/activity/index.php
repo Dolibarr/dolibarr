@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,11 @@ if ($search_project_user == $user->id) {
 	$mine = 1;
 }
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('activityindex'));
+
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
@@ -45,11 +51,6 @@ if ($user->socid > 0) {
 if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
-
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('activityindex'));
 
 // Load translation files required by the page
 $langs->load("projects");
@@ -66,7 +67,6 @@ $month = $tmp['mon'];
 $year = $tmp['year'];
 
 $projectstatic = new Project($db);
-$taskstatic = new Task($db);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1); // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
 $taskstatic = new Task($db);
 $tasktmp = new Task($db);
@@ -97,7 +97,7 @@ $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyTasksDesc");
 } else {
-	if ($user->rights->projet->all->lire && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$tooltiphelp = $langs->trans("TasksDesc");
 	} else {
 		$tooltiphelp = $langs->trans("TasksPublicDesc");
@@ -117,15 +117,16 @@ print '<td width="50%">'.$langs->trans('ActivityOnProjectToday').'</td>';
 print '<td width="50%" class="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
+$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.element_duration) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql .= ", ".MAIN_DB_PREFIX."element_time as tt";
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity = ".((int) $conf->entity);
-$sql .= " AND tt.fk_task = t.rowid";
+$sql .= " AND tt.fk_element = t.rowid";
+$sql .= " AND tt.elementtype = 'task'";
 $sql .= " AND tt.fk_user = ".((int) $user->id);
-$sql .= " AND task_date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+$sql .= " AND element_date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
 $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
@@ -170,15 +171,16 @@ print '<td>'.$langs->trans('ActivityOnProjectYesterday').'</td>';
 print '<td class="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
+$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.element_duration) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql .= ", ".MAIN_DB_PREFIX."element_time as tt";
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity = ".((int) $conf->entity);
-$sql .= " AND tt.fk_task = t.rowid";
+$sql .= " AND tt.fk_element = t.rowid";
+$sql .= " AND tt.elementtype = 'task'";
 $sql .= " AND tt.fk_user = ".((int) $user->id);
-$sql .= " AND task_date BETWEEN '".$db->idate(dol_time_plus_duree(dol_mktime(0, 0, 0, $month, $day, $year), -1, 'd'))."' AND '".$db->idate(dol_time_plus_duree(dol_mktime(23, 59, 59, $month, $day, $year), -1, 'd'))."'";
+$sql .= " AND element_date BETWEEN '".$db->idate(dol_time_plus_duree(dol_mktime(0, 0, 0, $month, $day, $year), -1, 'd'))."' AND '".$db->idate(dol_time_plus_duree(dol_mktime(23, 59, 59, $month, $day, $year), -1, 'd'))."'";
 $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
@@ -229,7 +231,7 @@ if ($db->type != 'pgsql')
 	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
-	$sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+	$sql.= " , ".MAIN_DB_PREFIX."element_time as tt";
 	$sql.= " WHERE t.fk_projet = p.rowid";
 	$sql.= " AND p.entity = ".((int) $conf->entity);
 	$sql.= " AND tt.fk_task = t.rowid";
@@ -282,15 +284,16 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH)) {
 	print '<td class="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
+	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.element_duration) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
-	$sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
+	$sql .= ", ".MAIN_DB_PREFIX."element_time as tt";
 	$sql .= " WHERE t.fk_projet = p.rowid";
 	$sql .= " AND p.entity = ".((int) $conf->entity);
-	$sql .= " AND tt.fk_task = t.rowid";
+	$sql .= " AND tt.fk_element = t.rowid";
+	$sql .= " AND tt.elementtype = 'task'";
 	$sql .= " AND tt.fk_user = ".((int) $user->id);
-	$sql .= " AND task_date BETWEEN '".$db->idate(dol_get_first_day($year, $month))."' AND '".$db->idate(dol_get_last_day($year, $month))."'";
+	$sql .= " AND element_date BETWEEN '".$db->idate(dol_get_first_day($year, $month))."' AND '".$db->idate(dol_get_last_day($year, $month))."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
@@ -328,15 +331,16 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
 	print '<td class="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
+	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.element_duration) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
-	$sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
+	$sql .= ", ".MAIN_DB_PREFIX."element_time as tt";
 	$sql .= " WHERE t.fk_projet = p.rowid";
 	$sql .= " AND p.entity = ".((int) $conf->entity);
-	$sql .= " AND tt.fk_task = t.rowid";
+	$sql .= " AND tt.fk_element = t.rowid";
+	$sql .= " AND tt.elementtype = 'task'";
 	$sql .= " AND tt.fk_user = ".((int) $user->id);
-	$sql .= " AND YEAR(task_date) = '".strftime("%Y", $now)."'";
+	$sql .= " AND YEAR(element_date) = '".strftime("%Y", $now)."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
@@ -408,11 +412,11 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 	$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA) ? 1000 : $conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
 
 	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, p.dateo as projdateo, p.datee as projdatee,";
-	$sql .= " t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
+	$sql .= " t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.element_duration) as timespent";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tasktime on tasktime.fk_task = t.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tasktime on (tasktime.fk_element = t.rowid AND tasktime.elementtype = 'task')";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on tasktime.fk_user = u.rowid";
 	if ($mine) {
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ect";

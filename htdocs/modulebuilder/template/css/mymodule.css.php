@@ -21,15 +21,13 @@
  * \brief   CSS file for module MyModule.
  */
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled. Language code is found on url.
+//if (!defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
+//if (!defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled. Language code is found on url.
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
+//if (!defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
+//if (!defined('NOCSRFCHECK'))   define('NOCSRFCHECK', 1);		// Should be disable only for special situation
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
@@ -80,7 +78,7 @@ if (!$res) {
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done by default here because of NOLOGIN constant defined) and load permission if we need to use them in CSS
-/*if (empty($user->id) && ! empty($_SESSION['dol_login'])) {
+/*if (empty($user->id) && !empty($_SESSION['dol_login'])) {
 	$user->fetch('',$_SESSION['dol_login']);
 	$user->getrights();
 }*/
