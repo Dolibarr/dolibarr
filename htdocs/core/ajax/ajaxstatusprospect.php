@@ -35,6 +35,7 @@ require '../../main.inc.php';
 $idstatus = GETPOST('id', 'int');
 $idprospect = GETPOST('prospectid', 'int');
 $action = GETPOST('action', 'aZ09');
+$prospectstatic = GETPOST('prospectstatic');
 
 // Security check
 if ($user->socid > 0) {
@@ -68,7 +69,7 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 		dol_print_error($db);
 	} else {
 		$num = $db->affected_rows($resql);
-		$response = http_response_code(200);
+		$response = img_action('', $prospectstatic[$idstatus]['code'], $prospectstatic[$idstatus]['picto'], 'class="inline-block valignmiddle paddingright"');
 	}
 
 	$response =json_encode($response);
