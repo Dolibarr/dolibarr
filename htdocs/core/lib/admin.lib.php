@@ -156,7 +156,7 @@ function versiondolibarrarray()
  * 	@param		int			$silent						1=Do not output anything, 0=Output line for update page
  * 	@param		int			$entity						Entity targeted for multicompany module
  *	@param		int			$usesavepoint				1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
- *	@param		string		$handler					Handler targeted for menu (replace __HANDLER__ with this value)
+ *	@param		string		$handler					Handler targeted for menu (replace __HANDLER__ with this value between quotes)
  *	@param 		string		$okerror					Family of errors we accept ('default', 'none')
  *  @param		int			$linelengthlimit			Limit for length of each line (Use 0 if unknown, may be faster if defined)
  *  @param		int			$nocommentremoval			Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
@@ -391,7 +391,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 			}
 
 			if (!empty($database)) {
-				$sql = preg_replace('/__DATABASE__/i', "'".$db->escape($database)."'", $sql);
+				$sql = preg_replace('/__DATABASE__/i', $db->escape($database), $sql);
 			}
 
 			$newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? $entity : $conf->entity), $sql);
