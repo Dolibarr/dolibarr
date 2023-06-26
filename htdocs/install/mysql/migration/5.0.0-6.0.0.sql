@@ -139,6 +139,7 @@ ALTER TABLE llx_bank ADD COLUMN numero_compte varchar(32) NULL;
 -- VPGSQL8.2 ALTER TABLE llx_bank_account ALTER COLUMN state_id SET DEFAULT NULL;
  
 -- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_adherent ALTER COLUMN state_id DROP DEFAULT;
 -- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer USING state_id::integer;
 -- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN country integer DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_adherent ALTER COLUMN country DROP DEFAULT;
