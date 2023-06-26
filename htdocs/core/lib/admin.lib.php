@@ -491,7 +491,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				if (!in_array($errno, $okerrors)) {
 					if (!$silent) {
 						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
-						print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div>";
+						print '<div class="error">'.$langs->trans("Error")." ".$db->errno()." (Req ".($i + 1)."): ".$newsql."<br>".$db->error()."</div>";
 						print '</td></tr>'."\n";
 					}
 					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);

@@ -175,7 +175,6 @@ jobs:
         set +e
         echo '<?php' > $INSTALL_FORCED_FILE
         echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
-        #echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
@@ -259,6 +258,7 @@ jobs:
         sudo chmod -R a+rwx /var/www
         ls -l /var/www
         cd /var/www/html/install
+
         echo Execute upgrade, upgrade2 and step5 for each major version
         php upgrade.php 3.5.0 3.6.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade350360.log
         php upgrade2.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-2.log
@@ -284,6 +284,10 @@ jobs:
         php upgrade.php 6.0.0 7.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade600700.log
         php upgrade2.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-2.log
         php step5.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-3.log
+        
+        echo "\dt llx_c_paiement" | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+        echo "\dt llx_c_payment_term" | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+
         php upgrade.php 7.0.0 8.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade700800.log
         php upgrade2.php 7.0.0 8.0.0 > $GITHUB_WORKSPACE/upgrade700800-2.log
         php step5.php 7.0.0 8.0.0 > $GITHUB_WORKSPACE/upgrade700800-3.log
