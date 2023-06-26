@@ -327,6 +327,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
 	} elseif ($type === 'clear') {
 		return '{CLEAR}' . $password;  // Just for test, plain text password is not secured !
 	}
+	return "";
 }
 
 /**

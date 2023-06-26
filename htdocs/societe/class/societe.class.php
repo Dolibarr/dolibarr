@@ -3691,7 +3691,7 @@ class Societe extends CommonObject
 			}
 		}
 		// Return a default value when $company_id is not greater than 0
-	return -1;
+	return [];
 		
 	}
 
