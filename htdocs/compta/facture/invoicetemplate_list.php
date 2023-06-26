@@ -633,7 +633,7 @@ if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 	// Payment mode
 	print '<td class="liste_titre right">';
-	print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100', 1);
+	print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100', 1, 'list');
 	print '</td>';
 }
 if (!empty($arrayfields['recurring']['checked'])) {

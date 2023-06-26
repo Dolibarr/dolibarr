@@ -4346,9 +4346,10 @@ class Form
 	 * @param int $active Active or not, -1 = all
 	 * @param string $morecss Add more CSS on select tag
 	 * @param int $nooutput 1=Return string, do not send to output
+	 * @param string $mode card or list
 	 * @return    string|void                String for the HTML select component
 	 */
-	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
+	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0, $mode = 'card')
 	{
 		// phpcs:enable
 		global $langs, $user, $conf;
@@ -4369,7 +4370,7 @@ class Form
 		$this->load_cache_types_paiements();
 
 		// Set default value if not already set by caller
-		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) {
+		if (empty($selected) && $mode == 'card' && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) {
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
 		}
 
