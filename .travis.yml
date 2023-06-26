@@ -283,12 +283,15 @@ before_script:
       #echo "MySQL create travis user for 127.0.0.1"
       #sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
       echo "MySQL grant"
-      sudo mysql -u root -h 127.0.0.1 -e 'FLUSH PRIVILEGES; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;'
+      sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;'
       echo "MySQL flush"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES;'
       echo "MySQL list current users"
-      sudo mysql -u root -h 127.0.0.1 -e 'use mysql; select * from user;'
+      sudo mysql -u root -h 127.0.0.1 -ppassword -e 'use mysql; select * from user;'
       
+      sudo cat /var/run/mysql
+      sudo cat /var/run/mariadb
+
       sudo kill `cat /var/run/mysqld/mysqld.pid`
       sudo kill `cat /var/run/mariadb/mariadb.pid`
       sudo systemctl start mariadb
