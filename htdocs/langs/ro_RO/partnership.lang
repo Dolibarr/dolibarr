@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Parteneriat: Verificare backlink de referinţă
 # Menu
 #
 NewPartnership=Parteneriat nou
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnershipbyWeb=Solicitarea ta de parteneriat a fost adăugată cu succes. Te vom contacta în curând...
 ListOfPartnerships=Listă parteneriate
 
 #
@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Motiv respingere
 
 NewPartnershipRequest=Solicitare nouă de parteneriat
 NewPartnershipRequestDesc=Acest formular îţi permite să soliciţi un parteneriat. Dacă ai nevoie de ajutor pentru a completa acest formular, contactează-ne pe email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Această pagină trebuie să conțină cel puțin un link către unul dintre următoarele domenii: %s
 

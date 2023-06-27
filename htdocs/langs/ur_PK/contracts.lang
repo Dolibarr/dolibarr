@@ -2,7 +2,7 @@
 ContractsArea=معاہدوں کا علاقہ
 ListOfContracts=معاہدوں کی فہرست
 AllContracts=تمام معاہدے
-ContractCard=معاہدہ کارڈ
+ContractCard=Contract
 ContractStatusNotRunning=نہیں چل رہا ہے۔
 ContractStatusDraft=مسودہ
 ContractStatusValidated=تصدیق شدہ

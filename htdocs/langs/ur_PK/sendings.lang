@@ -48,7 +48,7 @@ DateDeliveryPlanned=ترسیل کی منصوبہ بند تاریخ
 RefDeliveryReceipt=حوالگی کی رسید
 StatusReceipt=حیثیت کی ترسیل کی رسید
 DateReceived=موصول ہونے کی تاریخ
-ClassifyReception=استقبالیہ کی درجہ بندی کریں۔
+ClassifyReception=Classify Received
 SendShippingByEMail=ای میل کے ذریعے کھیپ بھیجیں۔
 SendShippingRef=کھیپ جمع کروانا %s
 ActionsOnShipping=شپمنٹ پر واقعات
@@ -74,3 +74,8 @@ SumOfProductWeights=مصنوعات کے وزن کا مجموعہ
 # warehouse details
 DetailWarehouseNumber= گودام کی تفصیلات
 DetailWarehouseFormat= W:%s (Qty: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

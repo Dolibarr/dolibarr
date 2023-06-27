@@ -94,7 +94,7 @@ ErrorModuleRequireJavascript=Javascript nedrīkst tikt izslēgti, ka šī funkci
 ErrorPasswordsMustMatch=Abām ievadītām parolēm jāsakrīt
 ErrorContactEMail=Radās tehniska kļūda. Lūdzu, sazinieties ar administratoru uz šādu e-pastu <b> %s </b> un savā ziņojumā uzrakstiet kļūdas kodu <b> %s </b> vai pievienojiet šīs lapas ekrāna kopiju.
 ErrorWrongValueForField=Lauks <b> %s </b>: “<b> %s </b>” neatbilst regex noteikumam <b> %s </b>
-ErrorHtmlInjectionForField=Lauks <b> %s </b> : Vērtība ' <b> %s a09a4b739f17f satur mazlicious data'nav atļauts
+ErrorHtmlInjectionForField=Lauka <b>%s</b>: Vērtība '<b>%s</b>' satur datus, kuri nav atļauti
 ErrorFieldValueNotIn=Lauks <b> %s </b>: “<b> %s </b>” nav vērtība, kas norādīta laukā <b> %s </b> no <b> %s </b>
 ErrorFieldRefNotIn=Lauks <b> %s </b>: “<b> %s </b>” nav esošais ref. <b> %s </b>
 ErrorMultipleRecordFoundFromRef=Vairāki ieraksti tika atrasti, veicot meklēšanu no ref <b> %s </b> . Nevar zināt, kuru ID izmantot.
@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Kļūda, parametram <b> %s </b> j�
 ErrorLoginDateValidity=Kļūda, šī pieteikšanās ir ārpus derīguma datumu diapazona
 ErrorValueLength=Lauka '<b> %s </b>' garumam jābūt lielākam par '<b> %s </b>'
 ErrorReservedKeyword=Vārds “<b> %s </b>” ir rezervēts atslēgvārds
+ErrorFilenameReserved=Faila nosaukumu <b>%s</b> nevar izmantot, jo tā ir rezervēta un aizsargāta komanda.
 ErrorNotAvailableWithThisDistribution=Nav pieejams ar šo izplatīšanu
 ErrorPublicInterfaceNotEnabled=Publiskā saskarne netika iespējota
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Jaunās lapas valoda ir jādefinē, ja tā ir iestatīta kā citas lapas tulkojums
@@ -304,6 +305,18 @@ ErrorValueCantBeNull=<b> %s </b> vērtība nevar būt nulle
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Bankas darījuma datums nedrīkst būt mazāks par faila pārsūtīšanas datumu
 ErrorTooMuchFileInForm=Pārāk daudz failu formā, maksimālais skaits ir %s fails(-i)
 ErrorSessionInvalidatedAfterPasswordChange=Sesija tika anulēta pēc paroles, statusa vai derīguma datuma maiņas. Lūdzu, piesakieties atkārtoti.
+ErrorExistingPermission = Atļauja <b> %s </b> objektam <b> %s </b> jau pastāv
+ErrorFieldExist=<b> %s </b> vērtība jau pastāv
+ErrorEqualModule=Modulis nav derīgs <b> %s </b>
+ErrorFieldValue=<b> %s </b> vērtība ir nepareiza
+ErrorCoherenceMenu= <b>%s</b> ir nepieciešams, ja <b>%s</b> ir 'left'
+ErrorUploadFileDragDrop=Faila(-u) augšupielādes laikā radās kļūda
+ErrorUploadFileDragDropPermissionDenied=Faila(-u) augšupielādes laikā radās kļūda: atļauja liegta
+ErrorFixThisHere= <a href="%s"> Labojiet šeit </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
+ErrorMenuExistValue=A Menu already exist with this Title or URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Jūsu PHP parametrs upload_max_filesize (%s) ir augstāks nekā PHP parametrs post_max_size (%s). Šī nav konsekventa iestatīšana.
@@ -342,6 +355,15 @@ WarningPaypalPaymentNotCompatibleWithStrict=Vērtība “Stingrs” neļauj tie�
 WarningThemeForcedTo=Brīdinājums! Motīvs ir spiests uz <b> %s </b>, izmantojot slēpto konstanti MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Brīdinājums, tādējādi tiks dzēstas arī visas esošās vietnes lapas/konteineri. Jums vajadzētu iepriekš eksportēt savu vietni, lai jums būtu dublējums, lai to vēlāk atkārtoti importētu.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automātiskā validācija ir atspējota, ja opcijai "Rēķina apstiprināšana" ir iestatīta iespēja samazināt krājumus.
+WarningModuleNeedRefrech = Modulis <b> %s </b> ir atspējots. Neaizmirstiet to iespējot
+WarningPermissionAlreadyExist=Esošās atļaujas šim objektam
+
+SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
+SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
+SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
+SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
+SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
 
 # Validate
 RequireValidValue = Vērtība nav derīga

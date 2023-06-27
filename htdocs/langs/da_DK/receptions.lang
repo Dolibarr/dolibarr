@@ -52,3 +52,6 @@ ReceptionExist=Der findes en reception
 ReceptionBackToDraftInDolibarr=Modtagelse %s tilbage til udkast
 ReceptionClassifyClosedInDolibarr=Reception %s klassificeret Lukket
 ReceptionUnClassifyCloseddInDolibarr=Receptionen %s genåbner
+RestoreWithCurrentQtySaved=Fyld mængder med senest gemte værdier
+ReceptionUpdated=Receptionen er blevet opdateret
+ReceptionDistribution=Receptionsfordeling

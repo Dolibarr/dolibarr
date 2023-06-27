@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - mails
+MailTo=A
+MailMessage=Cuerpo del email
+MailingStatusValidated=Validada

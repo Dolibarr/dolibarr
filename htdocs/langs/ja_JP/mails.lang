@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=ユーザが入力したメール
 MailingModuleDescDolibarrUsers=メールを持っているユーザ
 MailingModuleDescThirdPartiesByCategories=取引先
 SendingFromWebInterfaceIsNotAllowed=Webインターフェイスからの送信は許可されていない。
-EmailCollectorFilterDesc=メールを取得するには、全フィルタが適合している必要がある
+EmailCollectorFilterDesc=電子メールを収集するには、すべてのフィルターが一致する必要がある。 <br> 文字「!」が使用できる。陰性テストが必要な場合は、検索文字列値の前に
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=ファイル内の行%s
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=新しい連絡先を作成するときのフィ�
 DefaultStatusEmptyMandatory=空だが必須
 WarningLimitSendByDay=警告：インスタンスのセットアップまたはコントラクトにより、1日あたりのメール数が<b>%s</b>に制限される。さらに送信しようとすると、インスタンスの速度が低下したり、停止したりする可能性があります。より高い割り当てが必要な場合は、サポートに連絡すること。
 NoMoreRecipientToSendTo=メールを送信する受信者がもういない
+EmailOptedOut=電子メールの所有者は、この電子メールで今後連絡を取らないように要求した
+EvenUnsubscribe=オプトアウトメールを含める
+EvenUnsubscribeDesc=電子メールをターゲットとして選択するときに、オプトアウト電子メールを含めます。たとえば、必須のサービス電子メールに役立つ。
+XEmailsDoneYActionsDone=%s 件のメールが事前に認定され、%s 件のメールが正常に処理された (%s のレコード/アクションが完了した場合)

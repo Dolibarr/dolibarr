@@ -51,6 +51,8 @@ ClientSortingCharset=ترتيب العميل
 WarningModuleNotActive=يجب أن يكون النموذج <b>%s</b> مفعل
 WarningOnlyPermissionOfActivatedModules=فقط التصاريح المتعلقة بالنماذج المنشطة تظهر هنا. يمكنك تفعيل نماذج أخرى في الصفحة الرئيسية-> لإعداد ت-> صفحة النماذج
 DolibarrSetup=تركيب أو تحديث دوليبار
+DolibarrUpgrade=Dolibarr upgrade
+DolibarrAddonInstall=Installation of Addon/External modules (uploaded or generated)
 InternalUsers=مستخدمين داخليين
 ExternalUsers=مستخدمين خارجيين
 UserInterface=الواجهة العامة
@@ -299,6 +301,7 @@ MAIN_MAIL_AUTOCOPY_TO= نسخ (نسخة كربونية) كل رسائل البر
 MAIN_DISABLE_ALL_MAILS=تعطيل جميع عمليات إرسال البريد الإلكتروني (لأغراض الاختبار أو العروض التوضيحية)
 MAIN_MAIL_FORCE_SENDTO=إرسال جميع رسائل البريد الإلكترونية الى (بدلا عن المستلم الحقيقي لاغراض التطوير والتجربة)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=اقتراح عناوين بريد الموظفين الإلكتروني (إذا كان موجودا) في حقل المستلمين عند ارنشاء رسالة بريد جديدة
+MAIN_MAIL_NO_WITH_TO_SELECTED=Do not select a default recipient even if single choice
 MAIN_MAIL_SENDMODE=طريقة إرسال البريد الإلكتروني
 MAIN_MAIL_SMTPS_ID=معرف SMTP (إذا كان خادم الإرسال يتطلب مصادقة)
 MAIN_MAIL_SMTPS_PW=كلمة مرور SMTP (إذا كان خادم الإرسال يتطلب مصادقة)
@@ -512,7 +515,7 @@ ClickToShowDescription=انقر لإظهار الوصف
 DependsOn=تحتاج هذه الوحدة إلى الوحدة (الوحدات)
 RequiredBy=هذه الوحدة مطلوبة من قبل الوحدة (الوحدات)
 TheKeyIsTheNameOfHtmlField=هذا هو اسم حقل HTML. المعرفة التقنية مطلوبة لقراءة محتوى صفحة HTML للحصول على اسم المفتاح للحقل.
-PageUrlForDefaultValues=يجب عليك إدخال المسار النسبي لعنوان URL للصفحة. إذا قمت بتضمين معلمات في عنوان URL ، فستكون القيم الافتراضية فعالة إذا تم تعيين جميع المعلمات على نفس القيمة.
+PageUrlForDefaultValues=You must enter the relative path of the page URL. If you include parameters in URL, it will be effective if all parameters in browsed URL have the value defined here.
 PageUrlForDefaultValuesCreate= <br> مثال: <br> لكي يقوم النموذج بإنشاء طرف ثالث جديد ، يكون <strong> %s </strong>. <br> بالنسبة لعنوان URL للوحدات الخارجية المثبتة في الدليل المخصص ، لا تقم بتضمين "custom /" ، لذا استخدم المسار مثل <strong> mymodule / mypage.php </strong> وليس custom / mymodule / mypage.php. <br> إذا كنت تريد القيمة الافتراضية فقط إذا كان عنوان url يحتوي على بعض المعلمات ، فيمكنك استخدام <strong> %s </strong>
 PageUrlForDefaultValuesList= <br> مثال: <br> بالنسبة للصفحة التي تسرد جهات خارجية ، فهي <strong> %s </strong>. <br> بالنسبة لعنوان URL للوحدات الخارجية المثبتة في الدليل المخصص ، لا تقم بتضمين "custom /" لذا استخدم مسارًا مثل <strong> mymodule / mypagelist.php </strong> وليس custom / mymodule / mypagelist.php. <br> إذا كنت تريد القيمة الافتراضية فقط إذا كان عنوان url يحتوي على بعض المعلمات ، فيمكنك استخدام <strong> %s </strong>
 AlsoDefaultValuesAreEffectiveForActionCreate=لاحظ أيضًا أن الكتابة فوق القيم الافتراضية لإنشاء النموذج تعمل فقط للصفحات التي تم تصميمها بشكل صحيح (لذلك مع إجراء المعلمة = إنشاء أو تقديم ...)
@@ -522,12 +525,13 @@ GoIntoTranslationMenuToChangeThis=تم العثور على ترجمة للمفت
 WarningSettingSortOrder=تحذير ، قد يؤدي تعيين ترتيب فرز افتراضي إلى حدوث خطأ تقني عند الانتقال إلى صفحة القائمة إذا كان الحقل حقلاً غير معروف. إذا واجهت مثل هذا الخطأ ، فارجع إلى هذه الصفحة لإزالة ترتيب الفرز الافتراضي واستعادة السلوك الافتراضي.
 Field=حقل
 ProductDocumentTemplates=قوالب المستندات لإنشاء مستند المنتج
+ProductBatchDocumentTemplates=Document templates to generate product lots document
 FreeLegalTextOnExpenseReports=نص قانوني مجاني على تقارير النفقات
 WatermarkOnDraftExpenseReports=علامة مائية على مسودة تقارير المصروفات
 ProjectIsRequiredOnExpenseReports=المشروع إلزامي لإدخال تقرير المصاريف
 PrefillExpenseReportDatesWithCurrentMonth=قم بملء تاريخي البدء والانتهاء لتقرير المصاريف الجديد مسبقًا بتواريخ البدء والانتهاء للشهر الحالي
 ForceExpenseReportsLineAmountsIncludingTaxesOnly=فرض إدخال مبالغ تقرير المصاريف دائمًا مع الضرائب
-AttachMainDocByDefault=اضبط هذا على 1 إذا كنت تريد إرفاق المستند الأساسي بالبريد الإلكتروني افتراضيًا (إن أمكن)
+AttachMainDocByDefault=Set this to <b>Yes</b> if you want to attach by default the main document to the email (if applicable)
 FilesAttachedToEmail=أرفق ملف
 SendEmailsReminders=إرسال تذكير جدول الأعمال عن طريق رسائل البريد الإلكتروني
 davDescription=قم بإعداد خادم WebDAV
@@ -570,7 +574,7 @@ Module50Desc=إدارة المنتجات
 Module51Name=الرسائل الجماعية
 Module51Desc=الدمار ورقة الرسائل الإدارية
 Module52Name=الاسهم
-Module52Desc=إدارة المخزون
+Module52Desc=Stock management (stock movement tracking and inventory)
 Module53Name=الخدمات
 Module53Desc=إدارة الخدمات
 Module54Name=Contracts/Subscriptions
@@ -705,7 +709,7 @@ Module62000Name=شروط التجارة الدولية
 Module62000Desc=إضافة ميزات لإدارة Incoterms
 Module63000Name=مصادر
 Module63000Desc=إدارة الموارد (طابعات ، سيارات ، غرف ، ...) لتخصيصها للمناسبات
-Module66000Name=Enable OAuth2 authentication
+Module66000Name=OAuth2 token management
 Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
 Module94160Name=Receptions
 Permission11=Read customer invoices (and payments)
@@ -974,6 +978,7 @@ Permission2501=قراءة وثائق
 Permission2502=تقديم وثائق أو حذف
 Permission2503=تقديم وثائق أو حذف
 Permission2515=إعداد وثائق وأدلة
+Permission2610=Generate/modify users API key
 Permission2801=استخدام عميل FTP في وضع القراءة (تصفح وتحميل فقط)
 Permission2802=العميل استخدام بروتوكول نقل الملفات في وضع الكتابة (حذف أو تحميل الملفات)
 Permission3200=قراءة الأحداث المؤرشفة وبصمات الأصابع
@@ -1004,6 +1009,9 @@ Permission23001=قراءة مهمة مجدولة
 Permission23002=إنشاء / تحديث المجدولة وظيفة
 Permission23003=حذف مهمة مجدولة
 Permission23004=تنفيذ مهمة مجدولة
+Permission40001=Read currencies and their rates
+Permission40002=Create/Update currencies and their rates
+Permission40003=Delete currencies and their rates
 Permission50101=استخدام نقطة البيع (SimplePOS)
 Permission50151=استخدام نقطة البيع (TakePOS)
 Permission50152=تحرير بنود المبيعات
@@ -2079,6 +2087,7 @@ EnterCalculationRuleIfPreviousFieldIsYes=أدخل قاعدة الحساب إذا
 SeveralLangugeVariatFound=تم العثور على العديد من المتغيرات اللغوية
 RemoveSpecialChars=إزالة الأحرف الخاصة
 COMPANY_AQUARIUM_CLEAN_REGEX=مرشح Regex لتنظيف القيمة (COMPANY_AQUARIUM_CLEAN_REGEX)
+COMPANY_AQUARIUM_NO_PREFIX=Do not use prefix, only copy customer or supplier code
 COMPANY_DIGITARIA_CLEAN_REGEX=مرشح Regex لتنظيف القيمة (COMPANY_DIGITARIA_CLEAN_REGEX)
 COMPANY_DIGITARIA_UNIQUE_CODE=مكرر غير مسموح به
 RemoveSpecialWords=Clean certain words when generating sub-accounts for customers or suppliers
@@ -2105,6 +2114,10 @@ oauthToken=Oauth2 token
 accessType=Acces type
 oauthService=Oauth service
 TokenMustHaveBeenCreated=Module OAuth2 must be enabled and an oauth2 token must have been created with the correct permissions (for example scope "gmail_full" with OAuth for Gmail).
+ImapEncryption = IMAP encryption method
+ImapEncryptionHelp = Example: none, ssl, tls, notls
+NoRSH = Use the NoRSH configuration
+NoRSHHelp = Do not use RSH or SSH protocols to establish an IMAP pre-identification session
 MailboxSourceDirectory=دليل مصدر صندوق البريد
 MailboxTargetDirectory=دليل الهدف صندوق البريد
 EmailcollectorOperations=العمليات التي يقوم بها المجمع
@@ -2132,7 +2145,6 @@ EmailCollectorExampleToCollectJobCandidaturesDesc=اجمع رسائل البري
 EmailCollectorExampleToCollectJobCandidatures=مثال على جمع ترشيحات الوظائف الواردة عن طريق البريد الإلكتروني
 NoNewEmailToProcess=لا يوجد بريد إلكتروني جديد (فلاتر مطابقة) للمعالجة
 NothingProcessed=لم يتم عمل شيء
-XEmailsDoneYActionsDone=رسائل البريد الإلكتروني %s المؤهلة مسبقًا ، تمت معالجة رسائل البريد الإلكتروني %s بنجاح (لسجل / إجراءات %s)
 RecordEvent=تسجيل حدث في جدول الأعمال (مع نوع البريد الإلكتروني المرسل أو المستلم)
 CreateLeadAndThirdParty=قم بإنشاء عميل محتمل (وطرف ثالث إذا لزم الأمر)
 CreateTicketAndThirdParty=إنشاء تذكرة (مرتبطة بطرف ثالث إذا تم تحميل الطرف الثالث من خلال عملية سابقة أو تم تخمينه من متعقب في رأس البريد الإلكتروني ، دون طرف ثالث بخلاف ذلك)
@@ -2150,7 +2162,7 @@ CreateCandidature=إنشاء طلب وظيفة
 FormatZip=الرمز البريدي
 MainMenuCode=رمز دخول القائمة (mainmenu)
 ECMAutoTree=عرض شجرة ECM التلقائية
-OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=ساعات الافتتاح
 OpeningHoursDesc=ادخل هنا ساعات الافتتاح لشركتك
 ResourceSetup=تكوين وحدة الموارد
@@ -2196,7 +2208,8 @@ LargerThan=أكبر من
 IfTrackingIDFoundEventWillBeLinked=لاحظ أنه إذا تم العثور على معرف تتبع لعنصر ما في البريد الإلكتروني ، أو إذا كان البريد الإلكتروني عبارة عن إجابة على بريد إلكتروني تم تجميعه مسبقًا ومرتبط بكائن ، فسيتم ربط الحدث الذي تم إنشاؤه تلقائيًا بالعنصر ذي الصلة المعروف.
 WithGMailYouCanCreateADedicatedPassword=باستخدام حساب GMail ، إذا قمت بتمكين التحقق بخطوتين ، فمن المستحسن إنشاء كلمة مرور ثانية مخصصة للتطبيق بدلاً من استخدام رمز مرور حسابك من https://myaccount.google.com/.
 EmailCollectorTargetDir=قد يكون من السلوك المرغوب فيه نقل البريد الإلكتروني إلى علامة / دليل آخر عند معالجته بنجاح. ما عليك سوى تعيين اسم الدليل هنا لاستخدام هذه الميزة (لا تستخدم أحرفًا خاصة في الاسم). لاحظ أنه يجب عليك أيضًا استخدام حساب تسجيل دخول للقراءة / الكتابة.
-EmailCollectorLoadThirdPartyHelp=يمكنك استخدام هذا الإجراء لاستخدام محتوى البريد الإلكتروني للعثور على طرف ثالث موجود وتحميله في قاعدة البيانات الخاصة بك. سيتم استخدام الطرف الثالث الذي تم العثور عليه (أو الذي تم إنشاؤه) في الإجراءات التالية التي تحتاج إليه. <br> على سبيل المثال ، إذا كنت تريد إنشاء طرف ثالث باسم مستخرج من سلسلة 'Name: name to find' موجودة في النص ، استخدم البريد الإلكتروني للمرسل كبريد إلكتروني ، يمكنك تعيين حقل المعلمة مثل هذا: <br> 'email = HEADER: ^ From: (. *)؛ name = EXTRACT: BODY: Name: \\ s ([^ \\ s] *)؛ client = SET: 2؛ ' <br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database (search will be done on the defined property among 'id','name','name_alias','email'). The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+FilterSearchImapHelp=Warning: a lot of email servers (like Gmail) are doing full word searches when searching on a string and will not return a result if the string is only found partially into a word. For this reason too, use special characters into a search criteria will be ignored are they are not part of existing words.<br>To make an exclude search on a word (return email if word is not found), you can use the ! character before the word (may not work on some mail servers).
 EndPointFor=نقطة النهاية لـ %s: %s
 DeleteEmailCollector=حذف مُجمع البريد الإلكتروني
 ConfirmDeleteEmailCollector=هل أنت متأكد أنك تريد حذف جامع البريد الإلكتروني هذا؟
@@ -2215,7 +2228,7 @@ ShowProjectLabel=تسمية المشروع
 PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=تضمين الاسم المستعار في اسم الطرف الثالث
 THIRDPARTY_ALIAS=اسم الطرف الثالث - الاسم المستعار الطرف الثالث
 ALIAS_THIRDPARTY=الاسم المستعار للطرف الثالث - اسم الطرف الثالث
-PDFIn2Languages=عرض الملصق في البي دي اف بلغتين 
+PDFIn2Languages=Show labels in the PDF in 2 different languages (this feature may not work for some couple of languages)
 PDF_USE_ALSO_LANGUAGE_CODE=اذا كنت ترغب في تكرار بعض النصوص بلغتين مختلفتين  في ملفاتك المولدة بصيغة المستندات المتنقلة . يجب عليك ان ان تحدد اللغة الثانية هنا حتى يتسنى للملفات المولدة ان تحتوي على لغتين في نفس الصفحة . اللغة المختارة اثناء توليد المستند واللغة المختارة هنا (فقط بعض قوالب صيغة المستندات المتنقلة تدعم هذه الميزة) . ابق الخيار فارغاً للتوليد بلغة واحدة 
 PDF_USE_A=إنشاء مستندات PDF بتنسيق PDF / A بدلاً من تنسيق PDF الافتراضي
 FafaIconSocialNetworksDesc=أدخل هنا رمز رمز FontAwesome. إذا كنت لا تعرف ما هو FontAwesome ، فيمكنك استخدام القيمة العامة fa-address-book.
@@ -2263,6 +2276,8 @@ DatabasePasswordNotObfuscated=لم يتم إخفاء كلمة مرور قاعد�
 APIsAreNotEnabled=لم يتم تمكين الوحدات النمطية لواجهات برمجة التطبيقات
 YouShouldSetThisToOff=يجب عليك ضبط هذا على 0 أو إيقاف تشغيله
 InstallAndUpgradeLockedBy=التثبيت والترقيات مقفلة بالملف <b> %s </b>
+InstallLockedBy=Install/Reinstall is locked by the file <b>%s</b>
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=التنفيذ القديم
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=إذا تم تمكين بعض وحدات الدفع عبر الإنترنت (Paypal ، Stripe ، ...) ، فأضف رابطًا في ملف PDF لإجراء الدفع عبر الإنترنت
 DashboardDisableGlobal=قم بتعطيل جميع إبهام الكائنات المفتوحة بشكل عام
@@ -2315,12 +2330,13 @@ DefaultOpportunityStatus=حالة الفرصة الافتراضية (الحال�
 
 IconAndText=الرمز والنص
 TextOnly=نص فقط
-IconOnlyAllTextsOnHover=رمز فقط - تظهر جميع النصوص أسفل رمز في شريط قوائم التمرير بالماوس
-IconOnlyTextOnHover=رمز فقط - يظهر نص الرمز أسفل رمز على الماوس ، قم بتمرير الماوس فوق الرمز
+IconOnlyAllTextsOnHover=Icon only - All texts appears under icon on mouse over menu bar
+IconOnlyTextOnHover=Icon only - Text of icon appears under icon on mouse over the icon
 IconOnly=رمز فقط - نص على تلميح الأداة فقط
 INVOICE_ADD_ZATCA_QR_CODE=إظهار رمز الاستجابة السريعة ZATCA على الفواتير
 INVOICE_ADD_ZATCA_QR_CODEMore=تحتاج بعض الدول العربية إلى رمز الاستجابة السريعة هذا على فواتيرها
 INVOICE_ADD_SWISS_QR_CODE=أظهر رمز QR-Bill السويسري على الفواتير
+INVOICE_ADD_SWISS_QR_CODEMore=Switzerland's standard for invoices; make sure ZIP&City are filled and that the accounts have valid Swiss/Liechtenstein IBANs.
 INVOICE_SHOW_SHIPPING_ADDRESS=عرض عنوان الشحن
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Compulsory mention for France
 UrlSocialNetworksDesc=رابط URL للشبكة الاجتماعية. استخدم {socialid} للجزء المتغير الذي يحتوي على معرف الشبكة الاجتماعية.
@@ -2352,7 +2368,7 @@ TriggerCodeInfo=Enter here the trigger code(s) that must generate a post of a we
 EditableWhenDraftOnly=If unchecked, the value can only be modified when object has a draft status
 CssOnEdit=Css on edit pages
 CssOnView=Css on view pages
-CssOnList=Css on list pages
+CssOnList=Css on lists
 HelpCssOnEditDesc=The Css used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
 HelpCssOnViewDesc=The Css used when viewing the field.
 HelpCssOnListDesc=The Css used when field is inside a list table.<br>Example: "tdoverflowmax200"
@@ -2374,5 +2390,10 @@ WarningModuleHasChangedSecurityCsrfParameter=Warning: the module %s has disabled
 EMailsInGoingDesc=Incoming emails are managed by the module %s. You must enable and configure it if you need to support ingoing emails.
 MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IMAP. This also allows the use of an OAuth2 connection for IMAP (module OAuth must also be activated).
 MAIN_CHECKBOX_LEFT_COLUMN=Show the column for field and line selection on the left (on the right by default)
-
+NotAvailableByDefaultEnabledOnModuleActivation=Not created by default. Created on module activation only.
 CSSPage=CSS Style
+Defaultfortype=افتراضي
+DefaultForTypeDesc=Template used by default when creating a new email for the template type
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
+AtBottomOfPage=At bottom of page

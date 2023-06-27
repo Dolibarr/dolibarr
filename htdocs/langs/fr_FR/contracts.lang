@@ -2,7 +2,7 @@
 ContractsArea=Espace contrats
 ListOfContracts=Liste des contrats
 AllContracts=Tous les contrats
-ContractCard=Fiche contrat
+ContractCard=Contrat
 ContractStatusNotRunning=Hors service
 ContractStatusDraft=Brouillon
 ContractStatusValidated=Validé
