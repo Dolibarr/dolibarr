@@ -8,6 +8,8 @@ dist: focal
 
 language: generic
 
+scan_logs: false
+
 git:
   depth: 1
 
