@@ -141,6 +141,16 @@ class Task extends CommonObjectLine
 	public $budget_amount;
 
 	/**
+	 * @var array
+	 */
+	public $statuts;
+
+	/**
+	 * @var array
+	 */
+	public $statuts_short;
+
+	/**
 	 * @var float project_budget_amount
 	 */
 	public $project_budget_amount;
@@ -845,7 +855,7 @@ class Task extends CommonObjectLine
 	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
 	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
-	 * @param	array	$extrafields	    Show additional column from project or task
+	 * @param	Extrafields	$extrafields	    Show additional column from project or task
 	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
