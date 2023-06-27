@@ -661,7 +661,7 @@ if (empty($reshook)) {
 								}
 
 								$line->detail_batch->fk_origin_stock = $batch_id;
-								$line->detail_batch->batch = $lotStock->batch;a
+								$line->detail_batch->batch = $lotStock->batch;
 								$line->detail_batch->id = $detail_batch->id;
 								$line->detail_batch->entrepot_id = $lotStock->warehouseid;
 								$line->detail_batch->qty = $batch_qty;
