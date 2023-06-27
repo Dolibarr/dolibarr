@@ -182,7 +182,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('don')) {
 				$nbElements += $project->getElementCount('donation', 'don');
 			}
-			if (!empty($conf->loan->enabled)) {
+			if (isModEnabled('loan')) {
 				$nbElements += $project->getElementCount('loan', 'loan');
 			}
 			if (isModEnabled('tax')) {
@@ -194,7 +194,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock_mouvement', 'stock');
 			}
-			if (!empty($conf->salaries->enabled)) {
+			if (isModEnabled('salaries')) {
 				$nbElements += $project->getElementCount('salaries', 'payment_salary');
 			}
 			if (isModEnabled("banque")) {

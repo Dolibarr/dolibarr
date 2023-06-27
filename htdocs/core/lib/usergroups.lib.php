@@ -141,7 +141,7 @@ function user_prepare_head(User $object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'user');
 
-	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
+	if ((isModEnabled('salaries') && !empty($user->rights->salaries->read))
 		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))
 		|| (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall))
 		|| (isModEnabled('holiday') && !empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->readall))
