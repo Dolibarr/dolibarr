@@ -187,7 +187,8 @@ $ldap = new Ldap();
 $result = $ldap->connect_bind();
 if ($result >= 0) {
 	$justthese = array();
-
+	$pricefirst = 0;
+	$pricelast = 0;
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE = 0;
 

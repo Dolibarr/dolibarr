@@ -67,12 +67,6 @@ class pdf_cyan extends ModelePDFPropales
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -1662,7 +1656,8 @@ class pdf_cyan extends ModelePDFPropales
 			$displaydate = "day";
 		}
 
-		$posy += 4;
+		//$posy += 4;
+		$posy = $pdf->getY();
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, $displaydate, false, $outputlangs, true), '', 'R');

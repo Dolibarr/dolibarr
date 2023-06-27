@@ -219,8 +219,9 @@ if ($result > 0) {
 
 	// Amount
 	print '<tr><td>'.$langs->trans('Amount').'</td>';
-	print '<td>'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
+	print '<td><span class="amount">'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</span></td></tr>';
 
+	// Status of validation of payment
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 		print '<tr><td>'.$langs->trans('Status').'</td>';
 		print '<td>'.$object->getLibStatut(4).'</td></tr>';
@@ -256,9 +257,9 @@ if ($result > 0) {
 	}
 
 	// Note
-	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note, $object, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)).'</td>';
+	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)).'</td>';
 	print '<td>';
-	print $form->editfieldval("Note", 'note', $object->note, $object, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer), 'textarea');
+	print $form->editfieldval("Note", 'note', $object->note_private, $object, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer), 'textarea');
 	print '</td></tr>';
 
 	print '</table>';
@@ -372,7 +373,7 @@ if ($result > 0) {
 
 	// Delete payment
 	if ($user->socid == 0 && $action == '') {
-		if ($user->rights->fournisseur->facture->supprimer) {
+		if ($user->hasRight('fournisseur', 'facture', 'supprimer')) {
 			if ($allow_delete) {
 				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 			} else {

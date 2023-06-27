@@ -382,7 +382,7 @@ abstract class ActionsCardCommon
 	 *  Assign POST values into object
 	 *
 	 *	@param		string		$action		Action string
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post($action)
 	{

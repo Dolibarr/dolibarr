@@ -86,7 +86,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
-		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire) {
+		if (($user->rights->produit->lire || $user->hasRight('service', 'lire')) && $user->rights->stock->lire) {
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
 			$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";

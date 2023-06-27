@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=断りの理由
 
 NewPartnershipRequest=新しいパートナーシップリクエスト
 NewPartnershipRequestDesc=このフォームでは、パートナーシッププログラムへの参加をリクエストできる。このフォームへの記入についてサポートが必要な場合は、メール<b>%s</b>までご連絡ください。
+ThisUrlMustContainsAtLeastOneLinkToWebsite=このページには、次のドメインのいずれかへのリンクが少なくとも 1 つ含まれている必要がある: %s
 

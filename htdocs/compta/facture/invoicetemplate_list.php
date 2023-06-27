@@ -854,7 +854,7 @@ while ($i < $imaxinloop) {
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
-		if ($user->rights->facture->creer && empty($invoicerectmp->suspended)) {
+		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
 				print $langs->trans("MaxNumberOfGenerationReached");
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
@@ -1044,7 +1044,7 @@ while ($i < $imaxinloop) {
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center tdoverflowmax125">';
-		if ($user->rights->facture->creer && empty($invoicerectmp->suspended)) {
+		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
 				print $langs->trans("MaxNumberOfGenerationReached");
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {

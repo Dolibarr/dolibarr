@@ -32,15 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-// Defini si peux lire/modifier utilisateurs et permisssions
+// Define if user can read permissions
 $canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 $candisableperms = ($user->admin || $user->hasRight("user", "user", "delete"));
 $feature2 = 'user';
 
 // Advanced permissions
+$advancedpermsactive = false;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadperms = ($user->admin || $user->hasRight("user", "group_advance", "read"));
+	$advancedpermsactive = true;
+	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
 	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 	$candisableperms = ($user->admin || $user->hasRight("user", "group_advance", "delete"));
 	$feature2 = 'group_advance';

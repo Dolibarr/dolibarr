@@ -257,7 +257,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$out = '';
 		$newcardbutton = '';
 		if (isModEnabled('agenda')) {
-			$permok = $user->rights->agenda->myactions->create;
+			$permok = $user->hasRight('agenda', 'myactions', 'create');
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
 					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
@@ -266,12 +266,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
 			}
 
-			if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
+			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 				$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 			}
 		}
 
-		if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			print '<br>';
 
 			$param = '&id='.$id;

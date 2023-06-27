@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV;
 
 /**
@@ -15,8 +17,8 @@ namespace Sabre\CalDAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ICalendarObjectContainer extends \Sabre\DAV\ICollection {
-
+interface ICalendarObjectContainer extends \Sabre\DAV\ICollection
+{
     /**
      * Performs a calendar-query on the contents of this calendar.
      *
@@ -31,9 +33,7 @@ interface ICalendarObjectContainer extends \Sabre\DAV\ICollection {
      * The list of filters are specified as an array. The exact array is
      * documented by \Sabre\CalDAV\CalendarQueryParser.
      *
-     * @param array $filters
      * @return array
      */
-    function calendarQuery(array $filters);
-
+    public function calendarQuery(array $filters);
 }

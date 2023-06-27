@@ -11,49 +11,53 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
+--
+-- Do not place a comment at the end of the line, as this file is parsed 
+-- during installation and all '--' symbols are removed.
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
+-- Description of Austrian standard charts of accounts
 -- Descriptif des plans comptables autrichiens standard
 -- ADD 4100000 to rowid # Do no remove this comment --
 
 
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1, 'AT-BASE','GROUP0','110','0','Patentrechte', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 2, 'AT-BASE','GROUP0','120','0','Software', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 3, 'AT-BASE','GROUP0','121','0','ERP System', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4, 'AT-BASE','GROUP0','122','0','Homepage', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5, 'AT-BASE','GROUP0','125','0','Software Fremdentwicklung_noch nicht aktivieren', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 6, 'AT-BASE','GROUP0','160','0','Umgründungsmehrwert', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 7, 'AT-BASE','GROUP0','250','0','Mieterinvestitionen', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 8, 'AT-BASE','GROUP0','400','0','Maschinen', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 9, 'AT-BASE','GROUP0','600','0','Betriebs u. Geschäftsausstattung', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 10, 'AT-BASE','GROUP0','601','0','Ausstellungsstücke', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 11, 'AT-BASE','GROUP0','602','0','Leihstellungsstücke', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 12, 'AT-BASE','GROUP0','603','0','Getriebeprüfstand_hinten', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 13, 'AT-BASE','GROUP0','604','0','Wuchtstand_links_AQ', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 14, 'AT-BASE','GROUP0','605','0','Messlabor(Messraum)', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 15, 'AT-BASE','GROUP0','606','0','PAK-System', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 16, 'AT-BASE','GROUP0','607','0','Server', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 17, 'AT-BASE','GROUP0','608','0','EDV-Ausstattung (Hardware)', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 18, 'AT-BASE','GROUP0','609','0','Werkstattausstattung (Werkzeug)', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 19, 'AT-BASE','GROUP0','610','0','Wuchtprüfstand neu_noch nicht in Betrieb genommen', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 20, 'AT-BASE','GROUP0','611','0','Messequipment/Ausstattung', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 21, 'AT-BASE','GROUP0','630','0','PKW', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 22, 'AT-BASE','GROUP0','640','0','LKW', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 23, 'AT-BASE','GROUP0','680','0','GWG-Geschäftsausstattung', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 24, 'AT-BASE','GROUP0','710','0','Anlagen in Bau', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  1, 'AT-BASE','GROUP0', '110','0','Patentrechte', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  2, 'AT-BASE','GROUP0', '120','0','Software', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  3, 'AT-BASE','GROUP0', '121','0','ERP System', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  4, 'AT-BASE','GROUP0', '122','0','Homepage', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  5, 'AT-BASE','GROUP0', '125','0','Software Fremdentwicklung, noch nicht aktivieren', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  6, 'AT-BASE','GROUP0', '160','0','Umgründungsmehrwert', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  7, 'AT-BASE','GROUP0', '250','0','Mieterinvestitionen', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  8, 'AT-BASE','GROUP0', '400','0','Maschinen', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,  9, 'AT-BASE','GROUP0', '600','0','Betriebs u. Geschäftsausstattung', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 10, 'AT-BASE','GROUP0', '601','0','Ausstellungsstücke', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 11, 'AT-BASE','GROUP0', '602','0','Leihstellungsstücke', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 12, 'AT-BASE','GROUP0', '603','0','Getriebeprüfstand hinten', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 13, 'AT-BASE','GROUP0', '604','0','Wuchtstand_links_AQ', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 14, 'AT-BASE','GROUP0', '605','0','Messlabor(Messraum)', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 15, 'AT-BASE','GROUP0', '606','0','PAK-System', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 16, 'AT-BASE','GROUP0', '607','0','Server', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 17, 'AT-BASE','GROUP0', '608','0','EDV-Ausstattung (Hardware)', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 18, 'AT-BASE','GROUP0', '609','0','Werkstattausstattung (Werkzeug)', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 19, 'AT-BASE','GROUP0', '610','0','Wuchtprüfstand neu_noch nicht in Betrieb genommen', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 20, 'AT-BASE','GROUP0', '611','0','Messequipment/Ausstattung', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 21, 'AT-BASE','GROUP0', '630','0','PKW', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 22, 'AT-BASE','GROUP0', '640','0','LKW', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 23, 'AT-BASE','GROUP0', '680','0','GWG-Geschäftsausstattung', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 24, 'AT-BASE','GROUP0', '710','0','Anlagen in Bau', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 25, 'AT-BASE','GROUP1','1100','0','Rohstoffe', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 26, 'AT-BASE','GROUP1','1200','0','Bezogenen Teile', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 27, 'AT-BASE','GROUP1','1300','0','Hilfsstoffe und Betriebsstoffe', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 28, 'AT-BASE','GROUP1','1400','0','fertige Erzeugnisse', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 29, 'AT-BASE','GROUP1','1500','0','unfertige Erzeugnisse', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 30, 'AT-BASE','GROUP1','1600','0','Waren', 1);
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 31, 'AT-BASE','GROUP1','1700','0','Noch nicht abrechenbare Leist.', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 31, 'AT-BASE','GROUP1','1700','0','Noch nicht abrechenbare Leistungen', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 32, 'AT-BASE','GROUP1','1701','0','Bestandsveränderung laufend', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 33, 'AT-BASE','GROUP1','1800','0','Vorrat Verpackungsmaterial', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 34, 'AT-BASE','GROUP1','1810','0','Vorrat Werbematerial', 1);

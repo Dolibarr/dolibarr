@@ -185,7 +185,7 @@ if ($id > 0 || !empty($ref)) {
 			$head = project_prepare_head($projectstatic);
 			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
-			$param = ($mode == 'mine' ? '&mode=mine' : '');
+			$param = (!empty($mode) && $mode == 'mine' ? '&mode=mine' : '');
 
 			// Project card
 
@@ -195,7 +195,7 @@ if ($id > 0 || !empty($ref)) {
 			// Title
 			$morehtmlref .= $projectstatic->title;
 			// Thirdparty
-			if ($projectstatic->thirdparty->id > 0) {
+			if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 				$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 			}
 			$morehtmlref .= '</div>';
@@ -381,7 +381,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<table class="noborder centpercent">';
 
-		if ($action != 'editline' && $user->rights->projet->creer) {
+		if ($action != 'editline' && $user->hasRight('projet', 'creer')) {
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("NatureOfContact").'</td>';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
@@ -411,7 +411,7 @@ if ($id > 0 || !empty($ref)) {
 			print $form->select_dolusers((GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
+			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'position');
 			print '</td>';
 			print '<td class="right" colspan="3" ><input type="submit" class="button button-add" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
 			print '</tr>';
@@ -436,7 +436,7 @@ if ($id > 0 || !empty($ref)) {
 				$nbofcontacts = $form->num;
 				print '</td>';
 				print '<td>';
-				$formcompany->selectTypeContact($object, '', 'typecontact', 'external', 'rowid');
+				$formcompany->selectTypeContact($object, '', 'typecontact', 'external', 'position');
 				print '</td>';
 				print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" name="addsourceexternal" value="'.$langs->trans("Add").'"';
 				if (!$nbofcontacts) {
@@ -532,7 +532,7 @@ if ($id > 0 || !empty($ref)) {
 
 				// Icon update et delete
 				print '<td class="center nowrap">';
-				if ($user->rights->projet->creer) {
+				if ($user->hasRight('projet', 'creer')) {
 					print '&nbsp;';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
 					print img_picto($langs->trans('Unlink'), 'unlink');

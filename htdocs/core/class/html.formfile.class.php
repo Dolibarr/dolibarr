@@ -1207,7 +1207,7 @@ class FormFile
 			if ($permtoeditline < 0) {  // Old behaviour for backward compatibility. New feature should call method with value 0 or 1
 				$permtoeditline = 0;
 				if (in_array($modulepart, array('product', 'produit', 'service'))) {
-					if ($user->rights->produit->creer && $object->type == Product::TYPE_PRODUCT) {
+					if ($user->hasRight('produit', 'creer') && $object->type == Product::TYPE_PRODUCT) {
 						$permtoeditline = 1;
 					}
 					if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) {
@@ -1986,7 +1986,7 @@ class FormFile
 		} elseif ($sortfield == "date") {
 			$sortfield = "datea";
 		} else {
-			$sortfield = null;
+			$sortfield = '';
 		}
 		$res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
 		$param .= (isset($object->id) ? '&id='.$object->id : '');

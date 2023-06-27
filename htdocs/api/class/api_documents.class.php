@@ -349,7 +349,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->propal->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -377,7 +377,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->commande->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -403,7 +403,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Purchase order not found');
 			}
 
-			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->fournisseur->dir_output."/commande/".dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -421,7 +421,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->facture->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 				throw new RestException(401);
 			}
 

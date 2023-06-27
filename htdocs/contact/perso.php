@@ -50,7 +50,7 @@ $errors = array();
  * Action
  */
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'contact', 'creer')) {
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.

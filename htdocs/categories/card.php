@@ -38,7 +38,7 @@ $langs->load("categories");
 
 // Security check
 $socid = (int) GETPOST('socid', 'int');
-if (!$user->rights->categorie->lire) {
+if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
 

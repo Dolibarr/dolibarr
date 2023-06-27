@@ -134,6 +134,10 @@ if ($action == 'delete') {
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
+	if (empty($backtourl)) {
+		$backtourl = DOL_URL_ROOT.'/';
+	}
+
 	header('Location: '.$backtourl);
 	exit();
 }

@@ -386,22 +386,6 @@ class Loan extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Tag loan as paid completely
-	 *
-	 *	@deprecated
-	 *  @see setPaid()
-	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
-	 */
-	public function set_paid($user)
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
-		return $this->setPaid($user);
-	}
-
 	/**
 	 *  Tag loan as paid completely
 	 *
@@ -413,8 +397,11 @@ class Loan extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_PAID;
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paid = $this::STATUS_PAID;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -449,28 +436,16 @@ class Loan extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_STARTED;
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paid = $this::STATUS_STARTED;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Tag loan as payment as unpaid
-	 *	@deprecated
-	 *  @see setUnpaid()
-	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
-	 */
-	public function set_unpaid($user)
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
-		return $this->setUnpaid($user);
 	}
 
 	/**
@@ -484,8 +459,11 @@ class Loan extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_UNPAID;
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paid = $this::STATUS_UNPAID;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();

@@ -112,7 +112,7 @@ $fieldstosearchall = array(
 	'u.note_public'=>"NotePublic",
 	'u.note_private'=>"NotePrivate"
 );
-if (!empty($conf->api->enabled)) {
+if (isModEnabled('api')) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
 }
 
@@ -132,7 +132,7 @@ $arrayfields = array(
 	'u.office_phone'=>array('label'=>"PhonePro", 'checked'=>1, 'position'=>31),
 	'u.user_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1, 'position'=>32),
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
-	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
+	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(isModEnabled('api') && $user->admin)),
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
 	'u.ref_employee'=>array('label'=>"RefEmployee", 'checked'=>-1, 'position'=>60, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
 	'u.national_registration_number'=>array('label'=>"NationalRegistrationNumber", 'checked'=>-1, 'position'=>61, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
@@ -1041,12 +1041,12 @@ while ($i < $imaxinloop) {
 		// Login
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax150">';
-			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright"');
-			} elseif ($obj->admin) {
-				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright"');
-			}
 			print $li;
+			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
+				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+			} elseif ($obj->admin) {
+				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright paddingleft"');
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

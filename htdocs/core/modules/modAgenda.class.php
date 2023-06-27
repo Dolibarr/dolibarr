@@ -466,12 +466,12 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM  '.MAIN_DB_PREFIX.'actioncomm as ac';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields as extra ON ac.id = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_actioncomm as cac on ac.fk_action = cac.id';
-		if (!empty($user) && empty($user->rights->agenda->allactions->read)) {
+		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_resources acr on ac.id = acr.fk_actioncomm';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp on ac.fk_contact = sp.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
-		if (!empty($user) && empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
@@ -480,7 +480,7 @@ class modAgenda extends DolibarrModules
 		if (empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
 			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
 		}
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';

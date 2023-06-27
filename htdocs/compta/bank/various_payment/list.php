@@ -47,6 +47,7 @@ if ($user->socid) {
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode      = GETPOST('mode', 'alpha');
+$massaction = GETPOST('massaction', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
@@ -679,7 +680,7 @@ while ($i < $imaxinloop) {
 
 		// Date payment
 		if ($arrayfields['datep']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datep, 'day')."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -688,7 +689,7 @@ while ($i < $imaxinloop) {
 
 		// Date value
 		if ($arrayfields['datev']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datev, 'day')."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

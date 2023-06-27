@@ -76,7 +76,7 @@ class Recruitment extends DolibarrApi
 	 */
 	public function getJobPosition($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->read) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -107,7 +107,7 @@ class Recruitment extends DolibarrApi
 	 */
 	public function getCandidature($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->read) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -147,7 +147,7 @@ class Recruitment extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new RecruitmentJobPosition($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->read) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -254,7 +254,7 @@ class Recruitment extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new RecruitmentCandidature($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->read) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -350,7 +350,7 @@ class Recruitment extends DolibarrApi
 	 */
 	public function postJobPosition($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->write) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'write')) {
 			throw new RestException(401);
 		}
 
@@ -382,7 +382,7 @@ class Recruitment extends DolibarrApi
 	*/
 	public function postCandidature($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->write) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'write')) {
 			throw new RestException(401);
 		}
 
@@ -415,7 +415,7 @@ class Recruitment extends DolibarrApi
 	 */
 	public function putJobPosition($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->write) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'write')) {
 			throw new RestException(401);
 		}
 
@@ -458,7 +458,7 @@ class Recruitment extends DolibarrApi
 	 */
 	public function putCandidature($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->write) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'write')) {
 			throw new RestException(401);
 		}
 
@@ -501,7 +501,7 @@ class Recruitment extends DolibarrApi
 	 */
 	public function deleteJobPosition($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'delete')) {
 			throw new RestException(401);
 		}
 		$result = $this->jobposition->fetch($id);
@@ -537,7 +537,7 @@ class Recruitment extends DolibarrApi
 	 */
 	public function deleteCandidature($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'delete')) {
 			throw new RestException(401);
 		}
 		$result = $this->candidature->fetch($id);

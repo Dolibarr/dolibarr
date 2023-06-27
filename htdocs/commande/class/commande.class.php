@@ -1980,7 +1980,7 @@ class Commande extends CommonOrder
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->lines = array();
 
@@ -3753,7 +3753,7 @@ class Commande extends CommonOrder
 		if ($user->hasRight('commande', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
 			if (isset($this->statut)) {
-				$datas[] = ' '.$this->getLibStatut(5);
+				$datas['status'] = ' '.$this->getLibStatut(5);
 			}
 			$datas['Ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			if (!$nofetch) {
@@ -4181,7 +4181,7 @@ class Commande extends CommonOrder
 
 		$now = dol_now();
 
-		return max($this->date, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+		return max($this->date, $this->delivery_date) < ($now - $conf->commande->client->warning_delay);
 	}
 
 	/**
@@ -4193,7 +4193,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $langs;
 
-		if (empty($this->date_livraison)) {
+		if (empty($this->delivery_date)) {
 			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		} else {
 			$text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->date_livraison, 'day');

@@ -58,7 +58,7 @@ class box_factures extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->facture->lire);
+		$this->hidden = !$user->hasRight('facture', 'lire');
 	}
 
 	/**
@@ -87,7 +87,7 @@ class box_factures extends ModeleBoxes
 			'limit'=> dol_strlen($text)
 		);
 
-		if ($user->rights->facture->lire) {
+		if ($user->hasRight('facture', 'lire')) {
 			$sql = "SELECT f.rowid as facid";
 			$sql .= ", f.ref, f.type, f.total_ht";
 			$sql .= ", f.total_tva";

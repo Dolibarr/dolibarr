@@ -182,7 +182,7 @@ if (ismodEnabled('productbatch') &&
 print '<tr>';
 print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
 print '<td colspan="'.(!empty($conf->project->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
 	print img_picto('', 'project');

@@ -928,6 +928,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
 
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+
 	if (!empty($arrayfields['t.ref']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input class="flat searchstring maxwidth50" type="text" name="search_taskref" value="'.dol_escape_htmltag($search_taskref).'">';
@@ -1035,13 +1043,20 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
 
 	// Action column
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+
 	print "</tr>\n";
 
 	print '<tr class="liste_titre nodrag nodrop">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
 	// print '<td>'.$langs->trans("Project").'</td>';
 	if (!empty($arrayfields['t.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], 't.ref', '', $param, '', $sortfield, $sortorder, '');
@@ -1103,7 +1118,10 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '<td></td>';
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
 	print "</tr>\n";
 
 	$nboftaskshown = 0;

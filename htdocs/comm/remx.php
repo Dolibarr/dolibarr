@@ -68,7 +68,7 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 
 if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
+	//if ($user->hasRight('facture', 'creer'))
 
 	$amount_ttc_1 = GETPOST('amount_ttc_1', 'alpha');
 	$amount_ttc_1 = price2num($amount_ttc_1);
@@ -159,7 +159,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 
 if ($action == 'setremise' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
+	//if ($user->hasRight('facture', 'creer'))
 
 	$amount = price2num(GETPOST('amount', 'alpha'), '', 2);
 	$desc = GETPOST('desc', 'alpha');
@@ -199,7 +199,7 @@ if ($action == 'setremise' && $permissiontocreate) {
 
 if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
+	//if ($user->hasRight('facture', 'creer'))
 
 	$db->begin();
 

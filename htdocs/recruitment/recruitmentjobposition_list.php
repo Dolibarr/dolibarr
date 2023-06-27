@@ -124,9 +124,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields['nbapplications'] = array('type'=>'integer', 'label'=>'Applications', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->recruitment->recruitmentjobposition->read;
-$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write;
-$permissiontodelete = $user->rights->recruitment->recruitmentjobposition->delete;
+$permissiontoread = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
+$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write');
+$permissiontodelete = $user->hasRight('recruitment', 'recruitmentjobposition', 'delete');
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();

@@ -57,8 +57,8 @@ class Boms extends DolibarrApi
 	 *
 	 * Return an array with bom informations
 	 *
-	 * @param 	int 	$id ID of bom
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of bom
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url	GET {id}
 	 * @throws 	RestException
