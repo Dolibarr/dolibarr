@@ -138,16 +138,16 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	array	$selectedIds	Preselected journal code array
-	 * @param	string	$htmlname	Name of field in html form
-	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
-	 * @param	int		$showempty	Add an empty field
-	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
-	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
-	 * @param	string	$morecss	More css non HTML object
-	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param   int     $disabledajaxcombo Disable ajax combo box.
-	 * @return	string				String with HTML select
+	 * @param	array	$selectedIds		Preselected journal code array
+	 * @param	string	$htmlname			Name of field in html form
+	 * @param	int		$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int		$showempty			Add an empty field
+	 * @param	int		$select_in			0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int		$select_out			Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string	$morecss			More css non HTML object
+	 * @param	string	$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param   int     $disabledajaxcombo 	Disable ajax combo box.
+	 * @return	string						String with HTML select
 	 */
 	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
 	{

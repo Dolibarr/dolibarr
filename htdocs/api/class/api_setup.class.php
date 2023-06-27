@@ -68,7 +68,7 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -120,10 +120,9 @@ class Setup extends DolibarrApi
 	 * @param int       $page       Page number {@min 0}
 	 * @param int       $active     Payment type is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'OrderByWWW')"
+	 * @return array [List of ordering reasons]
 	 *
 	 * @url     GET dictionary/ordering_origins
-	 *
-	 * @return array [List of ordering reasons]
 	 *
 	 * @throws RestException 400
 	 */
@@ -131,7 +130,7 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -194,7 +193,7 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->propal->lire && !DolibarrApiAccess::$user->rights->commande->lire && !DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire') && !DolibarrApiAccess::$user->hasRight('commande', 'lire') && !DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -311,8 +310,8 @@ class Setup extends DolibarrApi
 	/**
 	 * Get region by ID.
 	 *
-	 * @param int       $id        ID of region
-	 * @return array    		   Array of cleaned object properties
+	 * @param 	int       $id       ID of region
+	 * @return 	Object 				Object with cleaned properties
 	 *
 	 * @url     GET dictionary/regions/{id}
 	 *
@@ -326,8 +325,8 @@ class Setup extends DolibarrApi
 	/**
 	 * Get region by Code.
 	 *
-	 * @param string    $code      Code of region
-	 * @return array 			   Array of cleaned object properties
+	 * @param 	string    $code     Code of region
+	 * @return 	Object 				Object with cleaned properties
 	 *
 	 * @url     GET dictionary/regions/byCode/{code}
 	 *
@@ -569,9 +568,9 @@ class Setup extends DolibarrApi
 	/**
 	 * Get region.
 	 *
-	 * @param int       $id        ID of region
-	 * @param string    $code      Code of region
-	 * @return array 			   Array of cleaned object properties
+	 * @param 	int       $id       ID of region
+	 * @param 	string    $code     Code of region
+	 * @return 	Object 				Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -660,7 +659,7 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -1250,7 +1249,7 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->rights->propal->lire && !DolibarrApiAccess::$user->rights->commande->lire && !DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire') && !DolibarrApiAccess::$user->hasRight('commande', 'lire') && !DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 

@@ -2,7 +2,7 @@
 ContractsArea=ພື້ນທີ່ສັນຍາ
 ListOfContracts=ລາຍຊື່ສັນຍາ
 AllContracts=ສັນຍາທັງົດ
-ContractCard=ບັດສັນຍາ
+ContractCard=Contract
 ContractStatusNotRunning=ບໍ່ແລ່ນ
 ContractStatusDraft=ຮ່າງ
 ContractStatusValidated=ກວດສອບແລ້ວ

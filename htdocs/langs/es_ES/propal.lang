@@ -55,6 +55,7 @@ CopyPropalFrom=Crear presupuesto por copia de uno existente
 CreateEmptyPropal=Crear propuesta comercial vacía o desde lista de productos/servicios.
 DefaultProposalDurationValidity=Plazo de validez por defecto (en días)
 DefaultPuttingPricesUpToDate=De forma predeterminada, actualizar los precios con los precios actuales al copiar un pedido
+DefaultPuttingDescUpToDate=De forma predeterminada, actualice las descripciones con descripciones conocidas actuales al clonar un presupuesto
 UseCustomerContactAsPropalRecipientIfExist=Utilizar dirección del contacto de seguimiento de cliente definido, en vez de la dirección del tercero como destinatario de los presupuestos
 ConfirmClonePropal=¿Está seguro de querer clonar el presupuesto <b>%s</b>?
 ConfirmReOpenProp=¿Está seguro de querer reabrir el presupuesto <b>%s</b>?

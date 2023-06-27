@@ -60,9 +60,8 @@ class Contracts extends DolibarrApi
 	 *
 	 * Return an array with contract informations
 	 *
-	 * @param       int         $id         ID of contract
-	 * @return 	array|mixed data without useless information
-	 *
+	 * @param   int         $id         ID of contract
+	 * @return  Object              	Object with cleaned properties
 	 * @throws 	RestException
 	 */
 	public function get($id)
@@ -529,7 +528,7 @@ class Contracts extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->contrat->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('contrat', 'supprimer')) {
 			throw new RestException(401);
 		}
 		$result = $this->contract->fetch($id);
@@ -660,11 +659,6 @@ class Contracts extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		unset($object->address);
-
-		unset($object->date_start);
-		unset($object->date_start_real);
-		unset($object->date_end);
-		unset($object->date_end_real);
 		unset($object->civility_id);
 
 		return $object;

@@ -78,6 +78,12 @@ $filter = array();
 $regenerate = ''; // Ask regenerate (contains name of model to use)
 $option = '';
 $fileprefix = 'mergedpdf';
+$dateafterdate = '';
+$datebeforedate = '';
+$paymentdateafter = '';
+$paymentdatebefore = '';
+$paymentonbankid = 0;
+$thirdpartiesid = 0;
 
 foreach ($argv as $key => $value) {
 	$found = false;

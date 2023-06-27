@@ -48,7 +48,7 @@ DateDeliveryPlanned=ວັນທີຂອງການຈັດສົ່ງທີ
 RefDeliveryReceipt=ໃບຮັບເງິນການສົ່ງຄືນ
 StatusReceipt=ໃບຮັບເງິນການຈັດສົ່ງ
 DateReceived=ໄດ້ຮັບການຈັດສົ່ງວັນທີ
-ClassifyReception=ຈັດປະເພດການຮັບ
+ClassifyReception=Classify Received
 SendShippingByEMail=ສົ່ງການຂົນສົ່ງທາງອີເມລ
 SendShippingRef=ການສົ່ງການຂົນສົ່ງ %s
 ActionsOnShipping=ເຫດການກ່ຽວກັບການຂົນສົ່ງ
@@ -74,3 +74,8 @@ SumOfProductWeights=ຜົນລວມຂອງນໍ້າ ໜັກ ຜະລ�
 # warehouse details
 DetailWarehouseNumber= ລາຍລະອຽດສາງ
 DetailWarehouseFormat= W: %s (ຈໍານວນ: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

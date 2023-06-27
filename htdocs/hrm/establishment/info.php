@@ -78,7 +78,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 $permissiontoread = $user->admin;
-$permissiontoadd = $user->rights->hrm->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('hrm', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user

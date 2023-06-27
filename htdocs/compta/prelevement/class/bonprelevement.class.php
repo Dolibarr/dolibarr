@@ -1061,7 +1061,12 @@ class BonPrelevement extends CommonObject
 						dol_mkdir($dir);
 					}
 
-					$this->filename = $dir.'/'.$ref.'.xml';
+					if (isModEnabled('multicompany')) {
+						$labelentity = $conf->entity;
+						$this->filename = $dir.'/'.$ref.'-'.$labelentity.'.xml';
+					} else {
+						$this->filename = $dir.'/'.$ref.'.xml';
+					}
 
 					// Create withdraw order in database
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
@@ -1170,7 +1175,7 @@ class BonPrelevement extends CommonObject
 					$this->factures = $factures_prev_id;
 					$this->context['factures_prev'] = $factures_prev;
 
-					// Generation of direct debit or credti transfer file $this->filename (May be a SEPA file for european countries)
+					// Generation of direct debit or credit transfer file $this->filename (May be a SEPA file for european countries)
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {

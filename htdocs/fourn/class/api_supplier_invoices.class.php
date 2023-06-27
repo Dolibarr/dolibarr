@@ -58,8 +58,8 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Return an array with supplier invoice information
 	 *
-	 * @param 	int 	$id ID of supplier invoice
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of supplier invoice
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */

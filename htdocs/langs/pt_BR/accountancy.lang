@@ -170,7 +170,6 @@ Modelcsv_Sage50_Swiss=Exportação para Sage 50 Suíça
 ChartofaccountsId=ID do gráfico de contas
 InitAccountancy=Contabilidade Inicial
 InitAccountancyDesc=Esta página pode ser usado para inicializar um código de barras em objetos que não têm código de barras definidas. Verifique  que o módulo de código de barras tenha sido instalado antes.
-DefaultBindingDesc=Esta página pode ser usada para definir a conta padrão a ser usada para conectar o registro das transações sobre o pagamento de salários, doações, taxas e o ICMS quando nenhuma conta da Contabilidade específica tiver sido definida.
 DefaultClosureDesc=Esta página pode ser usada para definir parâmetros usados ​​para fechamentos contábeis.
 OptionModeProductSell=Modo vendas
 OptionModeProductSellIntra=Vendas de modo exportadas na CEE

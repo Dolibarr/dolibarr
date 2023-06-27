@@ -26,7 +26,7 @@ ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job posi
 # Admin page
 #
 RecruitmentSetup = Recruitment setup
-Settings = Settings
+Settings = Postavke tiketa
 RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
 RecruitmentArea=Recruitement area
 PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
@@ -45,7 +45,7 @@ DateExpected=Expected date
 FutureManager=Future manager
 ResponsibleOfRecruitement=Responsible of recruitment
 IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
+PositionToBeFilled=Poslovna funkcija
 PositionsToBeFilled=Job positions
 ListOfPositionsToBeFilled=List of job positions
 NewPositionToBeFilled=New job positions

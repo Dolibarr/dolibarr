@@ -2,7 +2,7 @@
 ContractsArea=Τομέας συμβάσεων
 ListOfContracts=Λίστα συμβάσεων
 AllContracts=Όλες οι συμβάσεις
-ContractCard=Καρτέλα  Σύμβασης
+ContractCard=Σύμβαση
 ContractStatusNotRunning=Ανενεργή
 ContractStatusDraft=Προσχέδιο
 ContractStatusValidated=Επικυρώθηκε

@@ -1,2 +1,0 @@
-# Dolibarr language file - Source file is en_US - install
-WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.

@@ -116,7 +116,7 @@ class ActionsDatapolicy
 				$object->state_id = '';
 				$object->socialnetworks = '';
 				$object->country_id = '';
-				$object->note_private = $object->note_private.'<br>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
+				$object->note_private = dol_concatdesc($object->note_private, $langs->trans('ANONYMISER_AT', dol_print_date(dol_now())));
 
 				if ($object->update($object->id, $user, 0)) {
 					// On supprime les contacts associé
@@ -366,7 +366,7 @@ class ActionsDatapolicy
 			}
 		}
 
-		$this->resprint = $jsscript;
+		$this->resprints = $jsscript;
 
 		return 0;
 	}

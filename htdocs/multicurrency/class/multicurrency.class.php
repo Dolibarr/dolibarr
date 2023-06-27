@@ -488,6 +488,8 @@ class MultiCurrency extends CommonObject
 			$this->rate = new CurrencyRate($this->db);
 			return $this->rate->fetch($obj->rowid);
 		}
+
+		return -1;
 	}
 
 	 /**
@@ -559,15 +561,20 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get the conversion of amount with invoice rate
 	 *
-	 * @param	int				$fk_facture				id of facture
+	 * @param	int				$fk_facture				Id of invoice
 	 * @param	double			$amount					amount to convert
 	 * @param	string			$way					'dolibarr' mean the amount is in dolibarr currency
-	 * @param	string			$table					facture or facture_fourn
+	 * @param	string			$table					'facture' or 'facture_fourn'
+	 * @param	float|null		$invoice_rate			Invoice rate if known (to avoid to make the getInvoiceRate call)
 	 * @return	double|boolean 							amount converted or false if conversion fails
 	 */
-	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
+	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture', $invoice_rate = null)
 	{
-		$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+		if (!is_null($invoice_rate)) {
+			$multicurrency_tx = $invoice_rate;
+		} else {
+			$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+		}
 
 		if ($multicurrency_tx) {
 			if ($way == 'dolibarr') {
@@ -677,6 +684,8 @@ class MultiCurrency extends CommonObject
 
 				return -1;
 			}
+		} else {
+			return -1;
 		}
 	}
 

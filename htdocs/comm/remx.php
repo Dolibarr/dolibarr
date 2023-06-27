@@ -68,7 +68,7 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 
 if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
+	//if ($user->hasRight('facture', 'creer'))
 
 	$amount_ttc_1 = GETPOST('amount_ttc_1', 'alpha');
 	$amount_ttc_1 = price2num($amount_ttc_1);
@@ -159,7 +159,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 
 if ($action == 'setremise' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
+	//if ($user->hasRight('facture', 'creer'))
 
 	$amount = price2num(GETPOST('amount', 'alpha'), '', 2);
 	$desc = GETPOST('desc', 'alpha');
@@ -199,7 +199,7 @@ if ($action == 'setremise' && $permissiontocreate) {
 
 if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
+	//if ($user->hasRight('facture', 'creer'))
 
 	$db->begin();
 
@@ -246,7 +246,9 @@ if ($socid > 0) {
 
 	print dol_get_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), -1, 'company');
 
-	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
 	print '<div class="fichecenter">';
 
@@ -280,21 +282,20 @@ if ($socid > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			$remise_all += $obj->amount;
-			if ($obj->fk_user == $user->id) {
-				$remise_user += $obj->amount;
+			$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
+			if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
+				$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
 			}
 		} else {
 			dol_print_error($db);
 		}
 
-		print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
-		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
-
-		if (!empty($user->fk_soc)) {    // No need to show this for external users
-			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-			print '<td class="amount">'.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
+		print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
+		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT");
+		if (empty($user->fk_soc)) {    // No need to show this for external users
+			print $form->textwithpicto('', $langs->trans("CustomerAbsoluteDiscountMy").': '.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT"));
 		}
+		print '</td></tr>';
 	}
 
 	if ($isSupplier) {
@@ -310,21 +311,20 @@ if ($socid > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			$remise_all += $obj->amount;
-			if ($obj->fk_user == $user->id) {
-				$remise_user += $obj->amount;
+			$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
+			if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
+				$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
 			}
 		} else {
 			dol_print_error($db);
 		}
 
-		print '<tr><td class="titlefield">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
-		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
-
-		if (!empty($user->fk_soc)) {    // No need to show this for external users
-			print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountMy").'</td>';
-			print '<td class="amount">'.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
+		print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
+		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT");
+		if (empty($user->fk_soc)) {    // No need to show this for external users
+			print $form->textwithpicto('', $langs->trans("SupplierAbsoluteDiscountMy").' : '.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT"));
 		}
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -335,65 +335,71 @@ if ($socid > 0) {
 	print dol_get_fiche_end();
 
 
-	if ($user->rights->societe->creer) {
-		print '<br>';
+	if ($action == 'create_remise') {
+		if ($user->rights->societe->creer) {
+			print '<br>';
 
-		print load_fiche_titre($langs->trans("NewGlobalDiscount"), '', '');
+			$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
+			if ($isCustomer && $isSupplier) {
+				$discounttypelabel = $discount_type == 1 ? 'NewSupplierGlobalDiscount' : 'NewClientGlobalDiscount';
+			} else {
+				$discounttypelabel = 'NewGlobalDiscount';
+			}
+
+			print load_fiche_titre($langs->trans($discounttypelabel), '', '');
+
+			if ($isSupplier && $discount_type == 1) {
+				print '<input type="hidden" name="discount_type" value="1" />';
+			} else {
+				print '<input type="hidden" name="discount_type" value="0" />';
+			}
+
+			print dol_get_fiche_head();
 
 
-		if ($isCustomer && !$isSupplier) {
-			print '<input type="hidden" name="discount_type" value="0" />';
-		}
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="border centpercent">';
+			/*if ($isCustomer && $isSupplier) {
+				print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
+				print '<td><input type="radio" name="discount_type" id="discount_type_0" '.($discount_type != 1 ? 'checked="checked" ' : '').'value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+				print ' &nbsp; <input type="radio" name="discount_type" id="discount_type_1" '.($discount_type == 1 ? 'checked="checked" ' : '').'value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+				print '</td></tr>';
+			}*/
 
-		if (!$isCustomer && $isSupplier) {
-			print '<input type="hidden" name="discount_type" value="1" />';
-		}
+			// Amount
+			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Amount").'</td>';
+			print '<td><input type="text" size="5" name="amount" value="'.price2num(GETPOST("amount")).'" autofocus>';
+			print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 
-		print dol_get_fiche_head();
-
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="border centpercent">';
-		if ($isCustomer && $isSupplier) {
-			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
-			print '<td><input type="radio" name="discount_type" id="discount_type_0" checked="checked" value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
-			print ' &nbsp; <input type="radio" name="discount_type" id="discount_type_1" value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+			// Price base (HT / TTC)
+			print '<tr><td class="titlefield">'.$langs->trans("PriceBase").'</td>';
+			print '<td>';
+			print $form->selectPriceBaseType(GETPOST("price_base_type"), "price_base_type");
 			print '</td></tr>';
+
+			// VAT
+			print '<tr><td>'.$langs->trans("VAT").'</td>';
+			print '<td>';
+			print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
+			print '</td></tr>';
+			print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
+			print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
+
+			print "</table>";
+			print '</div>';
+
+			print dol_get_fiche_end();
 		}
 
-		// Amount
-		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Amount").'</td>';
-		print '<td><input type="text" size="5" name="amount" value="'.price2num(GETPOST("amount")).'" autofocus>';
-		print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-
-		// Price base (HT / TTC)
-		print '<tr><td class="titlefield">'.$langs->trans("PriceBase").'</td>';
-		print '<td>';
-		print $form->selectPriceBaseType(GETPOST("price_base_type"), "price_base_type");
-		print '</td></tr>';
-
-		// VAT
-		print '<tr><td>'.$langs->trans("VAT").'</td>';
-		print '<td>';
-		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
-		print '</td></tr>';
-		print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
-		print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
-
-		print "</table>";
-		print '</div>';
-
-		print dol_get_fiche_end();
-	}
-
-	if ($user->rights->societe->creer) {
-		print '<div class="center">';
-		print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
-		if (!empty($backtopage)) {
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		if ($user->rights->societe->creer) {
+			print '<div class="center">';
+			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
+			if (!empty($backtopage)) {
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			}
+			print '</div>';
 		}
-		print '</div>';
 	}
 
 	print '</form>';
@@ -410,13 +416,22 @@ if ($socid > 0) {
 	 * List not consumed available credits (= linked to no invoice and no invoice line)
 	 */
 
-	print load_fiche_titre($langs->trans("DiscountStillRemaining"));
+	if ($isCustomer && !$isSupplier) {
+		$newcardbutton = dolGetButtonTitle($langs->trans("NewGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=0&backtopage='.$_SERVER["PHP_SELF"].'?id='.$id.'&token='.newToken());
+	} elseif (!$isCustomer && $isSupplier) {
+		$newcardbutton = dolGetButtonTitle($langs->trans("NewGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=1&backtopage='.$_SERVER["PHP_SELF"].'?id='.$id.'&token='.newToken());
+	} else {
+		$newcardbutton = '';
+	}
+
+	print load_fiche_titre($langs->trans("DiscountStillRemaining"), $newcardbutton);
 
 	if ($isCustomer) {
+		$newcardbutton = dolGetButtonTitle($langs->trans("NewClientGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=0&backtopage='.$_SERVER["PHP_SELF"].'?id='.$id.'&token='.newToken());
 		if ($isSupplier) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft fichehalfleft-lg">';
-			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
+			print load_fiche_titre($langs->trans("CustomerDiscounts"), $newcardbutton, '');
 		}
 
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
@@ -437,7 +452,7 @@ if ($socid > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			print '<div class="div-table-responsive-no-min">';
-			print '<table width="100%" class="noborder">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>'; // Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
@@ -464,42 +479,47 @@ if ($socid > 0) {
 					$obj = $db->fetch_object($resql);
 
 					print '<tr class="oddeven">';
+
 					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
+
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
 						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
 						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
 						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).' '.$facturestatic->getNomURl(1);
 						print '</td>';
 					} else {
-						print '<td class="minwidth100">';
-						print $obj->description;
+						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
+						print dol_escape_htmltag($obj->description);
 						print '</td>';
 					}
+
 					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
-					print '<td class="right amount">'.price($obj->amount_ht).'</td>';
+
+					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
+
 					if (isModEnabled('multicompany')) {
-						print '<td class="right amount">'.price($obj->multicurrency_amount_ht).'</td>';
+						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
-					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right amount">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right nowraponall">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
 					if (isModEnabled('multicompany')) {
-						print '<td class="right amount">'.price($obj->multicurrency_amount_ttc).'</td>';
+						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -514,7 +534,7 @@ if ($socid > 0) {
 					}
 					print '</tr>';
 
-					if ($_GET["action"] == 'split' && GETPOST('remid') == $obj->rowid) {
+					if ($action == 'split' && GETPOST('remid') == $obj->rowid) {
 						$showconfirminfo['rowid'] = $obj->rowid;
 						$showconfirminfo['amount_ttc'] = $obj->amount_ttc;
 					}
@@ -525,7 +545,7 @@ if ($socid > 0) {
 				if (isModEnabled('multicompany')) {
 					$colspan += 2;
 				}
-				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
@@ -549,9 +569,10 @@ if ($socid > 0) {
 
 	if ($isSupplier) {
 		if ($isCustomer) {
+			$newcardbutton = dolGetButtonTitle($langs->trans("NewSupplierGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=1&backtopage='.$_SERVER["PHP_SELF"].'?id='.$id.'&token='.newToken());
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
+			print load_fiche_titre($langs->trans("SupplierDiscounts"), $newcardbutton, '');
 		}
 
 		/*
@@ -575,7 +596,7 @@ if ($socid > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			print '<div class="div-table-responsive-no-min">';
-			print '<table width="100%" class="noborder">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>'; // Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
@@ -604,40 +625,40 @@ if ($socid > 0) {
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
 						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
 						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
 						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} else {
-						print '<td class="minwidth100">';
-						print $obj->description;
+						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
+						print dol_escape_htmltag($obj->description);
 						print '</td>';
 					}
 					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
-					print '<td class="right amount">'.price($obj->amount_ht).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
 					if (isModEnabled('multicompany')) {
-						print '<td class="right amount">'.price($obj->multicurrency_amount_ht).'</td>';
+						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right amount">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
 					if (isModEnabled('multicompany')) {
-						print '<td class="right amount">'.price($obj->multicurrency_amount_ttc).'</td>';
+						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -652,7 +673,7 @@ if ($socid > 0) {
 					}
 					print '</tr>';
 
-					if ($_GET["action"] == 'split' && GETPOST('remid') == $obj->rowid) {
+					if ($action == 'split' && GETPOST('remid') == $obj->rowid) {
 						$showconfirminfo['rowid'] = $obj->rowid;
 						$showconfirminfo['amount_ttc'] = $obj->amount_ttc;
 					}
@@ -663,7 +684,7 @@ if ($socid > 0) {
 				if (isModEnabled('multicompany')) {
 					$colspan += 2;
 				}
-				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
@@ -690,7 +711,7 @@ if ($socid > 0) {
 		}
 	}
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	/*
 	 * List discount consumed (=liees a une ligne de facture ou facture)
@@ -796,29 +817,29 @@ if ($socid > 0) {
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
 						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
 						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
 						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).' '.$facturestatic->getNomURl(1);
 						print '</td>';
 					} else {
-						print '<td class="minwidth100">';
-						print $obj->description;
+						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
+						print dol_escape_htmltag($obj->description);
 						print '</td>';
 					}
 					print '<td class="left nowrap">';
@@ -826,12 +847,12 @@ if ($socid > 0) {
 						print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->invoiceid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a>';
 					}
 					print '</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
 					if (isModEnabled('multicompany')) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
-					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right nowraponall">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
 					if (isModEnabled('multicompany')) {
 						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
@@ -847,7 +868,7 @@ if ($socid > 0) {
 				if (isModEnabled('multicompany')) {
 					$colspan += 2;
 				}
-				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print "</table>";
@@ -957,29 +978,29 @@ if ($socid > 0) {
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
 						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
 						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description)) {
-						print '<td class="minwidth100">';
+						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
 						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} else {
-						print '<td class="minwidth100">';
-						print $obj->description;
+						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
+						print dol_escape_htmltag($obj->description);
 						print '</td>';
 					}
 					print '<td class="left nowrap">';
@@ -987,14 +1008,14 @@ if ($socid > 0) {
 						print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->invoiceid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a>';
 					}
 					print '</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
 					if (isModEnabled('multicompany')) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
 					if (isModEnabled('multicompany')) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -1008,7 +1029,7 @@ if ($socid > 0) {
 				if (isModEnabled('multicompany')) {
 					$colspan += 2;
 				}
-				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print "</table>";

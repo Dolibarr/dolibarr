@@ -188,10 +188,10 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		$error = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
-		$soc_origin = new Societe($db);
+		$soc_origin = new Societe($db);		// The thirdparty that we will delete
 
 		if ($soc_origin_id <= 0) {
 			$langs->load('errors');
@@ -241,6 +241,11 @@ if (empty($reshook)) {
 					}
 				}
 
+				// If alias name is not defined on target thirdparty, we can store in it the old name of company.
+				if (empty($object->name_bis) && $object->name != $soc_origin->name) {
+					$object->name_bis = $soc_origin->name;
+				}
+
 				// Merge categories
 				$static_cat = new Categorie($db);
 
@@ -279,7 +284,7 @@ if (empty($reshook)) {
 					// TODO Mutualise the list into object societe.class.php
 					$objects = array(
 						'Adherent' => '/adherents/class/adherent.class.php',
-						'Don' => '/don/class/don.class.php',
+						'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
 						'Societe' => '/societe/class/societe.class.php',
 						//'Categorie' => '/categories/class/categorie.class.php',
 						'ActionComm' => '/comm/action/class/actioncomm.class.php',
@@ -300,7 +305,7 @@ if (empty($reshook)) {
 						'Delivery' => '/delivery/class/delivery.class.php',
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
-						'Ticket' => '/ticket/class/ticket.class.php',
+						'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
 						'User' => '/user/class/user.class.php',
 						'Account' => '/compta/bank/class/account.class.php',
 						'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
@@ -308,6 +313,13 @@ if (empty($reshook)) {
 
 					//First, all core objects must update their tables
 					foreach ($objects as $object_name => $object_file) {
+						if (is_array($object_file)) {
+							if (empty($object_file['enabled'])) {
+								continue;
+							}
+							$object_file = $object_file['file'];
+						}
+
 						require_once DOL_DOCUMENT_ROOT.$object_file;
 
 						if (!$error && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {
@@ -320,10 +332,8 @@ if (empty($reshook)) {
 
 				// External modules should update their ones too
 				if (!$error) {
-					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
-						'soc_origin' => $soc_origin->id,
-						'soc_dest' => $object->id
-					), $object, $action);
+					$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $object->id);
+					$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $object, $action);
 
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -333,7 +343,7 @@ if (empty($reshook)) {
 
 
 				if (!$error) {
-					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id, 'mergefromname'=>$soc_origin->name);
 
 					// Call trigger
 					$result = $object->call_trigger('COMPANY_MODIFY', $user);
@@ -345,7 +355,7 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					//We finally remove the old thirdparty
+					// We finally remove the old thirdparty
 					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
 						setEventMessages($soc_origin->error, $soc_origin->errors, 'errors');
 						$error++;
@@ -415,7 +425,7 @@ if (empty($reshook)) {
 
 	// Add new or update third party
 	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode'))
-	&& ($action == 'add' || $action == 'update') && $user->rights->societe->creer) {
+	&& ($action == 'add' || $action == 'update') && $user->hasRight('societe', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (!GETPOST('name')) {
@@ -618,10 +628,10 @@ if (empty($reshook)) {
 
 				$result = $object->create($user);
 
-				if (empty($error) && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
+				if ($result >= 0 && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
 					// Add mass emailing flag into table mailing_unsubscribe
-					$result = $object->setNoEmail($object->no_email);
-					if ($result < 0) {
+					$resultnoemail = $object->setNoEmail($object->no_email);
+					if ($resultnoemail < 0) {
 						$error++;
 						$errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
 						$action = 'create';
@@ -813,7 +823,7 @@ if (empty($reshook)) {
 				}
 
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
-				if (!$error && !empty($user->rights->categorie->lire)) {
+				if (!$error && $user->hasRight('categorie', 'lire')) {
 					// Customer categories association
 					$categories = GETPOST('custcats', 'array');
 					$result = $object->setCategories($categories, 'customer');
@@ -935,31 +945,31 @@ if (empty($reshook)) {
 	}
 
 	// Set third-party type
-	if ($action == 'set_thirdpartytype' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdpartytype' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setThirdpartyType(GETPOST('typent_id', 'int'));
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && $user->rights->societe->creer && isModEnabled('incoterm')) {
+	if ($action == 'set_incoterms' && $user->hasRight('societe', 'creer') && isModEnabled('incoterm')) {
 		$object->fetch($socid);
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdparty' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setParent(GETPOST('parent_id', 'int'));
 	}
 
 	// Set sales representatives
-	if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer) {
+	if ($action == 'set_salesrepresentatives' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->rights->societe->creer) {
+	if ($action == 'setwarehouse' && $user->hasRight('societe', 'creer')) {
 		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
 	}
 
@@ -1818,7 +1828,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Customer
@@ -2558,7 +2568,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-			if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 				// Customer
 				print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
@@ -3004,7 +3014,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Tags / categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			// Customer
 			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
@@ -3194,7 +3204,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $dolibarr_user->getLoginUrl(-1);
 		} else {
 			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
-			if (!$object->user_id && $user->rights->user->user->creer) {
+			if (!$object->user_id && $user->hasRight('user', 'user', 'creer')) {
 				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 		}

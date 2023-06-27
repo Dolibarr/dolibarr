@@ -13,7 +13,6 @@ CronCommand=Commander
 CronList=Emplois programmés
 CronDelete=Supprimer les tâches planifiées
 CronConfirmDelete=Êtes-vous sûr de vouloir supprimer ces emplois planifiés?
-CronExecute=Lancer un travail planifié
 CronConfirmExecute=Êtes-vous sûr de vouloir exécuter ces tâches planifiées maintenant?
 CronInfo=Le module de travail planifié permet de programmer des tâches pour les exécuter automatiquement. Les travaux peuvent également être démarrés manuellement.
 CronTask=Emploi

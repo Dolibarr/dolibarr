@@ -120,6 +120,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
 			}
 			$object->actionmsg = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+			// For merge event, we add a mention
+			if (!empty($object->context['mergefromname'])) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->trans("DataFromWasMerged", $object->context['mergefromname']));
+			}
 
 			$object->sendtoid = 0;
 			$object->socid = $object->id;
@@ -1077,8 +1081,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm = new ActionComm($this->db);
 		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
-		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note_private = $object->actionmsg;
+		$actioncomm->label       = $object->actionmsg2;		// Label of event
+		$actioncomm->note_private = $object->actionmsg;		// Description
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;

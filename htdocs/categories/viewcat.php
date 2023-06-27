@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
@@ -105,16 +107,16 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
 if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
-	if ($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpobject = new Product($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'product';
-	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) {
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'supplier';
-	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) {
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'customer';
@@ -123,7 +125,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
-	} elseif ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -138,7 +140,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Project($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'project';
-	} elseif ($type == Categorie::TYPE_USER && $user->rights->user->user->creer) {
+	} elseif ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$tmpobject = new User($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -171,14 +173,14 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 }
 
 if ($elemid && $action == 'addintocategory' &&
-	(($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) ||
-	 ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) ||
-	 ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) ||
+	(($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) ||
+	 ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) ||
+	 ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
 	 ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) ||
 	 ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) ||
-	 ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) ||
-	 ($type == Categorie::TYPE_USER && $user->rights->user->user->creer) ||
+	 ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) ||
+	 ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) ||
 	 ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
    )) {
 	if ($type == Categorie::TYPE_PRODUCT) {
@@ -215,12 +217,14 @@ if ($elemid && $action == 'addintocategory' &&
 		$elementtype = 'user';
 	} elseif ($type == Categorie::TYPE_ACCOUNT) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-		$newobject = new User($db);
+		$newobject = new Account($db);
 		$elementtype = 'bank_account';
+	} else {
+		dol_print_error("Not supported value of type = ".$type);
 	}
 	$result = $newobject->fetch($elemid);
 
-	// TODO Add into categ
+	// Add into categ
 	$result = $object->add_type($newobject, $elementtype);
 	if ($result >= 0) {
 		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
@@ -489,7 +493,7 @@ $typeid = $type;
 // List of products or services (type is type of category)
 if ($type == Categorie::TYPE_PRODUCT) {
 	if ($user->hasRight("product", "read")) {
-		$permission = ($user->rights->produit->creer || $user->rights->service->creer);
+		$permission = ($user->rights->produit->creer || $user->hasRight('service', 'creer'));
 
 		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($prods < 0) {
@@ -907,7 +911,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 	if ($user->hasRight("banque", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$permission = $user->rights->banque->creer;
+		$permission = $user->hasRight('banque', 'creer');
 
 		$accounts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($accounts < 0) {
@@ -925,8 +929,8 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 				print '<input type="hidden" name="action" value="addintocategory">';
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-					print $langs->trans("AddAccountIntoCategory").' &nbsp;';
-				$form->select_comptes('', 'elemid');
+				print $langs->trans("AddObjectIntoCategory").' &nbsp;';
+				print $form->select_comptes('', 'elemid', 0, '', 0, '', 0, '', 1);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
@@ -1123,7 +1127,7 @@ if ($type == Categorie::TYPE_USER) {
 
 					// Link to delete from category
 					print '<td class="right">';
-					if ($user->rights->user->user->creer) {
+					if ($user->hasRight('user', 'user', 'creer')) {
 						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$type."&action=unlink&token=".newToken()."&removeelem=".$userentry->id."'>";
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');

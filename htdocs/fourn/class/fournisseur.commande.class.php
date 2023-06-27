@@ -487,7 +487,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 			$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
-			$this->extraparams = (array) json_decode($obj->extraparams, true);
+			$this->extraparams = isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 			$this->db->free($resql);
 
@@ -3616,7 +3616,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 		$sql .= ' cfd.fk_commandefourndet = cd.rowid';
 		$sql .= ' AND cd.fk_commande ='.((int) $this->id);
-		if ($this->fk_product > 0) {
+		if (isset($this->fk_product) && !empty($this->fk_product) > 0) {
 			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);
 		}
 		if ($filtre_statut >= 0) {

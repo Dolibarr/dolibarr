@@ -268,21 +268,26 @@ class modMyModule extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
+		/*$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->read)
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'read'))
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->write)
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'write'))
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
+
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->delete)
-		$r++;
+		$r++;*/
+
+
+
+
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -306,8 +311,8 @@ class modMyModule extends DolibarrModules
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT
-		$this->menu[$r++]=array(
+		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */
+		/*$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Left menu entry
 			'titre'=>'MyObject',
@@ -349,7 +354,7 @@ class modMyModule extends DolibarrModules
 			'perms'=>'$user->hasRight("mymodule", "myobject", "write")'
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
+		);*/
 		/* END MODULEBUILDER LEFTMENU MYOBJECT */
 		// Exports profiles provided by this module
 		$r = 1;
@@ -405,8 +410,8 @@ class modMyModule extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			't.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->MYMODULE_MYOBJECT_ADDON) ? 'mod_myobject_standard' : $conf->global->MYMODULE_MYOBJECT_ADDON),
-				'path'=>"/core/modules/commande/".(empty($conf->global->MYMODULE_MYOBJECT_ADDON) ? 'mod_myobject_standard' : $conf->global->MYMODULE_MYOBJECT_ADDON).'.php'
+				'class'=>(empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')),
+				'path'=>"/core/modules/commande/".(empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')).'.php'
 				'classobject'=>'MyObject',
 				'pathobject'=>'/mymodule/class/myobject.class.php',
 			),

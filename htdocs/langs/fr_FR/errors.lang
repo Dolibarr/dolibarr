@@ -311,6 +311,9 @@ ErrorFieldExist=La valeur pour <b>%s</b> existe déjà
 ErrorEqualModule=Module invalide dans <b>%s</b>.
 ErrorFieldValue=La valeur pour <b>%s</b> est incorrecte
 ErrorCoherenceMenu=Le champ <b>%s</b> est requis lorsque <b>%s</b> vaut 'left'
+ErrorMenuExistValue=Un menu existe déjà avec ce titre ou cette URL
+ErrorTypeMenu=Impossible de rajouter un autre menu sur la navbar pour le même module ,pas encore traité
+
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

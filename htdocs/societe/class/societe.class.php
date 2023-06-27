@@ -132,6 +132,11 @@ class Societe extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -194,8 +199,8 @@ class Societe extends CommonObject
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>45),
 		'code_client' =>array('type'=>'varchar(24)', 'label'=>'CustomerCode', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'code_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'SupplierCode', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'CodeCompta', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'code_compta_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'CodeComptaSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'CustomerAccountancyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'code_compta_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'SupplierAccountancyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
@@ -2277,6 +2282,7 @@ class Societe extends CommonObject
 
 			return 1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3662,12 +3668,12 @@ class Societe extends CommonObject
 	 * @param   array       $parents        List of companies ID found
 	 * @return	array
 	 */
-	public function getParentsForCompany($company_id, $parents = [])
+	public function getParentsForCompany($company_id, $parents = array())
 	{
 		global $langs;
 
 		if ($company_id > 0) {
-			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = $company_id";
+			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = ".((int) $company_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($obj = $this->db->fetch_object($resql)) {
@@ -3684,6 +3690,8 @@ class Societe extends CommonObject
 				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
 			}
 		}
+		// Return a default value when $company_id is not greater than 0
+		return array();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -5270,6 +5278,93 @@ class Societe extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
+	}
+
+	/**
+	 *    Get array of all contacts for a society (stored in societe_contacts instead of element_contacts for all other objects)
+	 *
+	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
+	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
+	 *	  @param    string      $element    Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
+	 *    @return	array|int		        Array of contacts, -1 if error
+	 *
+	 */
+	public function getContacts($list = 0, $code = '', $element = '')
+	{
+		// phpcs:enable
+		global $langs;
+
+		$tab = array();
+
+		$sql = "SELECT sc.rowid, sc.fk_socpeople as id, sc.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
+
+		$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
+
+		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
+		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
+		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
+
+		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
+
+		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
+		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
+		if (!empty($element)) {
+			$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		}
+		if ($code) {
+			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
+		}
+		$sql .= " AND sc.entity = ".getEntity($this->element);
+		$sql .= " AND tc.source = 'external'";
+		$sql .= " AND tc.active=1";
+
+		$sql .= " ORDER BY t.lastname ASC";
+
+		dol_syslog(get_class($this)."::getContacts", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				if (!$list) {
+					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+					$tab[$i] = array(
+						'source' => $obj->source,
+						'socid' => $obj->socid,
+						'id' => $obj->id,
+						'nom' => $obj->lastname, // For backward compatibility
+						'civility' => $obj->civility,
+						'lastname' => $obj->lastname,
+						'firstname' => $obj->firstname,
+						'email'=>$obj->email,
+						'login'=> (empty($obj->login) ? '' : $obj->login),
+						'photo' => (empty($obj->photo) ? '' : $obj->photo),
+						'statuscontact' => $obj->statuscontact,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'element' => $obj->element,
+						'libelle' => $libelle_type,
+						'status' => $obj->statuslink,
+						'fk_c_type_contact' => $obj->fk_c_type_contact
+					);
+				} else {
+					$tab[$i] = $obj->id;
+				}
+
+				$i++;
+			}
+
+			return $tab;
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 }

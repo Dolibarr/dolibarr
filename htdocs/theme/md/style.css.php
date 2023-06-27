@@ -934,6 +934,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
@@ -975,6 +979,9 @@ th .button {
 }
 .centpercentimp {
 	width: 100% !important;
+}
+.centpercentwithout1imp {
+	width: calc(100% - 1px) !important;
 }
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
@@ -2448,6 +2455,23 @@ div.fichehalfright {
 	<?php if ($conf->browser->layout == 'phone') {
 		print "margin-top: 10px;\n";
 	} ?>
+}
+
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 1499px)
+{
+	div.fichehalfleft-lg {
+		float: none;
+		width: auto;
+	}
+	div.fichehalfright-lg {
+		float: none;
+		width: auto;
+	}
+
+	.fichehalfright-lg .fichehalfright {
+		padding-left:0;
+	}
 }
 
 /*div.firstcolumn div.box {
@@ -4641,6 +4665,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		padding-left: 0 !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
+	}
+
+	td.tdwidgetstate {
+		text-align: center;
 	}
 
 	.boxstats, .boxstats130 {

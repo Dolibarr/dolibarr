@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Notifications;
 
 use Sabre\CalDAV;
@@ -18,55 +20,51 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Node extends DAV\File implements INode, DAVACL\IACL {
-
+class Node extends DAV\File implements INode, DAVACL\IACL
+{
     use DAVACL\ACLTrait;
 
     /**
-     * The notification backend
+     * The notification backend.
      *
      * @var CalDAV\Backend\NotificationSupport
      */
     protected $caldavBackend;
 
     /**
-     * The actual notification
+     * The actual notification.
      *
      * @var NotificationInterface
      */
     protected $notification;
 
     /**
-     * Owner principal of the notification
+     * Owner principal of the notification.
      *
      * @var string
      */
     protected $principalUri;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param CalDAV\Backend\NotificationSupport $caldavBackend
      * @param string $principalUri
-     * @param NotificationInterface $notification
      */
-    function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri, NotificationInterface $notification) {
-
+    public function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri, NotificationInterface $notification)
+    {
         $this->caldavBackend = $caldavBackend;
         $this->principalUri = $principalUri;
         $this->notification = $notification;
-
     }
 
     /**
-     * Returns the path name for this notification
+     * Returns the path name for this notification.
      *
      * @return string
      */
-    function getName() {
-
-        return $this->notification->getId() . '.xml';
-
+    public function getName()
+    {
+        return $this->notification->getId().'.xml';
     }
 
     /**
@@ -76,10 +74,9 @@ class Node extends DAV\File implements INode, DAVACL\IACL {
      *
      * @return string
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return $this->notification->getETag();
-
     }
 
     /**
@@ -88,34 +85,28 @@ class Node extends DAV\File implements INode, DAVACL\IACL {
      *
      * @return NotificationInterface
      */
-    function getNotificationType() {
-
+    public function getNotificationType()
+    {
         return $this->notification;
-
     }
 
     /**
-     * Deletes this notification
-     *
-     * @return void
+     * Deletes this notification.
      */
-    function delete() {
-
+    public function delete()
+    {
         $this->caldavBackend->deleteNotification($this->getOwner(), $this->notification);
-
     }
 
     /**
-     * Returns the owner principal
+     * Returns the owner principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->principalUri;
-
     }
-
 }

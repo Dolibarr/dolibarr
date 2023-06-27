@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\Exception;
 
 use Sabre\DAV;
@@ -12,24 +14,18 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class NotSupportedPrivilege extends DAV\Exception\PreconditionFailed {
-
+class NotSupportedPrivilege extends DAV\Exception\PreconditionFailed
+{
     /**
      * Adds in extra information in the xml response.
      *
      * This method adds the {DAV:}not-supported-privilege element as defined in rfc3744
-     *
-     * @param DAV\Server $server
-     * @param \DOMElement $errorNode
-     * @return void
      */
-    function serialize(DAV\Server $server, \DOMElement $errorNode) {
-
+    public function serialize(DAV\Server $server, \DOMElement $errorNode)
+    {
         $doc = $errorNode->ownerDocument;
 
         $np = $doc->createElementNS('DAV:', 'd:not-supported-privilege');
         $errorNode->appendChild($np);
-
     }
-
 }

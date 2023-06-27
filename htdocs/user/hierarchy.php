@@ -70,7 +70,7 @@ $userstatic = new User($db);
 $canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 
 // Permission to list
-if ($contextpage == 'employeelist' && $search_employee == 1) {
+if (isModEnabled('salaries') && $contextpage == 'employeelist' && $search_employee == 1) {
 	if (!$user->hasRight("salaries", "read")) {
 		accessforbidden();
 	}
@@ -151,9 +151,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
 		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-			$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+			$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($userstatic->admin) {
-			$li .= img_picto($langs->trans("Administrator"), 'star');
+			$li .= img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 

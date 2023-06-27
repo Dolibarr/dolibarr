@@ -52,3 +52,6 @@ ReceptionExist=Et mottak finnes
 ReceptionBackToDraftInDolibarr=Mottak %s tilbake til utkast
 ReceptionClassifyClosedInDolibarr=Mottak %s klassifisert Stengt
 ReceptionUnClassifyCloseddInDolibarr=Mottak %s gjenåpne
+RestoreWithCurrentQtySaved=Fyll mengder med siste lagrede verdier
+ReceptionUpdated=Mottaket er oppdatert
+ReceptionDistribution=Mottaksfordeling

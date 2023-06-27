@@ -7,7 +7,6 @@ WEBSITE_ALIASALTDesc=Utilice aquí la lista de otros nombres/alias para que tamb
 WEBSITE_CSS_URL=URL del archivo CSS externo
 WEBSITE_HTML_HEADER=Adición en la parte inferior del encabezado HTML (común en todas las páginas)
 WEBSITE_HTACCESS=Sitio web .htaccess archivo
-EnterHereLicenseInformation=Ingrese aquí metadatos o información de licencia para llenar un archivo README.md. si distribuye su sitio web como plantilla, el archivo se incluirá en el paquete temptate.
 PageNameAliasHelp=Nombre o alias de la página. <br> Este alias también se utiliza para forjar una URL SEO cuando el sitio web se ejecuta desde un host virtual de un servidor Web (como Apacke, Nginx, ...). Utilice el botón "<strong>%s</ strong>" para editar este alias.
 MediaFiles=Mediateca
 EditCss=Editar propiedades web
@@ -25,7 +24,6 @@ RealURL=URL real
 ViewWebsiteInProduction=Ver sitio web utilizando las URL de inicio
 SetHereVirtualHost=<u>uso con Apache/NGinx/...</u><br>Crea en su servidor web (Apache, Nginx, ...) de un host virtual dedicado con PHP habilitado y un directorio raíz en<br><strong>%s</strong>
 YouCanAlsoTestWithPHPS=<u>Para usar con el servidor PHP incorporado</u><br> en el entorno de desarrollo, es posible que prefiera probar el sitio con el servidor web PHP incorporado (se requiere PHP 5.5) ejecutando<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP= <u> Ejecute su sitio web con otro proveedor de alojamiento Dolibarr </u> <br> Si no tiene un servidor web como Apache o NGinx disponible en Internet, puede exportar e importar su sitio web a otra instancia de Dolibarr proporcionada por otro proveedor de alojamiento Dolibarr que proporcione el servicio completo integración con el módulo del sitio web. Puede encontrar una lista de algunos proveedores de hosting Dolibarr en <a href="https://saas.dolibarr.org" target="_blank"> https://saas.dolibarr.org </a>
 ReadPerm=Leer
 TestDeployOnWeb=Probar / implementar en la web
 PreviewSiteServedByWebServer=<u>Vista previa %s en una nueva pestaña. </u> <br><br>La %s servirá un servidor web externo (como Apache, Nginx, IIS). Debe instalar y configurar este servidor antes de apuntar al directorio:<br><strong>%s</strong><br> URL servida por un servidor externo:<br><strong>%s</strong>

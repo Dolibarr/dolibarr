@@ -715,7 +715,7 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['t.libelle']['checked'])) {
-			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note).'">';
+			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note_private).'">';
 			print dol_escape_htmltag(dolGetFirstLineOfText($obj->note_private));
 			print '</td>';
 			if (!$i) {
