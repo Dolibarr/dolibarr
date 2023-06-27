@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Yn y ffurf i greu / ychwanegu mynychwr,
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Cynhadledd Neu Booth
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Rheoli trefniadaeth digwyddiad
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Cyswllt i drydydd parti (cwsmer, cyflenwr neu 
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Cais am fwth
-NewSuggestionOfConference=Cais am gynhadledd
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Mae sawl cwmni sydd â'r e-bost hwn wedi
 ErrorSeveralCompaniesWithNameContactUs=Mae sawl cwmni gyda'r enw hwn wedi'u canfod felly ni allwn ddilysu eich cofrestriad yn awtomatig. Cysylltwch â ni yn %s i gael dilysiad â llaw
 NoPublicActionsAllowedForThisEvent=Nid oes unrhyw gamau gweithredu cyhoeddus yn agored i'r cyhoedd ar gyfer y digwyddiad hwn
 MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date

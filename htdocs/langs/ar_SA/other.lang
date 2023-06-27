@@ -5,6 +5,7 @@ Tools=أدوات
 TMenuTools=أدوات
 ToolsDesc=جميع الأدوات غير المدرجة في إدخالات القائمة الأخرى مجمعة هنا. <br> يمكن الوصول إلى جميع الأدوات عبر القائمة اليسرى.
 Birthday=عيد ميلاد
+BirthdayAlert=Birthday alert
 BirthdayAlertOn=عيد ميلاد النشطة في حالة تأهب
 BirthdayAlertOff=عيد الميلاد فى حالة تأهب الخاملة
 TransKey=ترجمة المفتاح TransKey
@@ -40,6 +41,7 @@ notiftofixedemail=إلى البريد الثابت
 notiftouserandtofixedemail=للمستخدم والبريد الثابت
 Notify_ORDER_VALIDATE=تم التحقق من صحة أمر المبيعات
 Notify_ORDER_SENTBYMAIL=تم إرسال أمر المبيعات بالبريد
+Notify_ORDER_CLOSE=Sales order delivered
 Notify_ORDER_SUPPLIER_SENTBYMAIL=تم إرسال طلب الشراء عن طريق البريد الإلكتروني
 Notify_ORDER_SUPPLIER_VALIDATE=تم تسجيل أمر الشراء
 Notify_ORDER_SUPPLIER_APPROVE=تمت الموافقة على أمر الشراء
@@ -52,7 +54,7 @@ Notify_WITHDRAW_TRANSMIT=انتقال انسحاب
 Notify_WITHDRAW_CREDIT=انسحاب الائتمان
 Notify_WITHDRAW_EMIT=Isue انسحاب
 Notify_COMPANY_CREATE=طرف ثالث إنشاء
-Notify_COMPANY_SENTBYMAIL=الرسائل المرسلة من بطاقة طرف ثالث
+Notify_COMPANY_SENTBYMAIL=Mails sent from the page of third party
 Notify_BILL_VALIDATE=فاتورة مصادق
 Notify_BILL_UNVALIDATE=فاتورة العميل unvalidated
 Notify_BILL_PAYED=فاتورة العميل مدفوعة
@@ -181,28 +183,18 @@ SizeUnitfoot=قدم
 SizeUnitpoint=نقطة
 BugTracker=علة تعقب
 SendNewPasswordDesc=يتيح لك هذا النموذج طلب كلمة مرور جديدة. سيتم إرسالها إلى عنوان بريدك الإلكتروني. <br> سيصبح التغيير ساريًا بمجرد النقر فوق ارتباط التأكيد في البريد الإلكتروني. <br> تحقق من صندوق الوارد الخاص بك.
+EnterNewPasswordHere=Enter your new password here
 BackToLoginPage=عودة إلى صفحة تسجيل الدخول
 AuthenticationDoesNotAllowSendNewPassword=طريقة التوثيق <b>٪ ق.</b> <br> في هذا الوضع ، لا يمكن معرفة Dolibarr أو تغيير كلمة السر الخاصة بك. <br> اتصل بمسؤول النظام إذا كنت تريد تغيير كلمة السر الخاصة بك.
 EnableGDLibraryDesc=قم بتثبيت أو تمكين مكتبة GD على تثبيت PHP الخاص بك لاستخدام هذا الخيار.
 ProfIdShortDesc=<b>الأستاذ عيد ٪ ق</b> هي المعلومات التي تعتمد على طرف ثالث. <br> على سبيل المثال ، لبلد <b>ق ٪</b> انها رمز <b>٪ ق.</b>
 DolibarrDemo=Dolibarr تخطيط موارد المؤسسات وإدارة علاقات العملاء التجريبي
+StatsByAmount=Statistics on amount of products/services
 StatsByNumberOfUnits=إحصائيات لمجموع كمية المنتجات / الخدمات
 StatsByNumberOfEntities=إحصائيات لعدد الكيانات المحيلة (عدد الفواتير أو الطلبات ...)
-NumberOfProposals=عدد العروض
-NumberOfCustomerOrders=عدد أوامر المبيعات
-NumberOfCustomerInvoices=عدد فواتير العميل
-NumberOfSupplierProposals=عدد عروض البائعين
-NumberOfSupplierOrders=عدد أوامر الشراء
-NumberOfSupplierInvoices=عدد فواتير البائعين
-NumberOfContracts=عدد العقود
-NumberOfMos=عدد أوامر التصنيع
-NumberOfUnitsProposals=عدد الوحدات في المقترحات
-NumberOfUnitsCustomerOrders=عدد الوحدات في أوامر المبيعات
-NumberOfUnitsCustomerInvoices=عدد الوحدات في فواتير العميل
-NumberOfUnitsSupplierProposals=عدد الوحدات في عروض البائعين
-NumberOfUnitsSupplierOrders=عدد الوحدات في أوامر الشراء
-NumberOfUnitsSupplierInvoices=عدد الوحدات في فواتير البائعين
-NumberOfUnitsContracts=عدد الوحدات في العقود
+NumberOf=Number of %s
+NumberOfUnits=Number of units on %s
+AmountIn=Amount in %s
 NumberOfUnitsMos=عدد الوحدات المطلوب إنتاجها في أوامر التصنيع
 EMailTextInterventionAddedContact=تم تعيين تدخل جديد لك %s.
 EMailTextInterventionValidated=التدخل ٪ ق المصادق
@@ -210,7 +202,11 @@ EMailTextInvoiceValidated=تم التحقق من صحة الفاتورة %s.
 EMailTextInvoicePayed=تم دفع الفاتورة %s.
 EMailTextProposalValidated=تم التحقق من صحة الاقتراح %s.
 EMailTextProposalClosedSigned=تم إغلاق الاقتراح %s وتوقيعه.
+EMailTextProposalClosedSignedWeb=Proposal %s has been closed signed on portal page.
+EMailTextProposalClosedRefused=Proposal %s has been closed refused.
+EMailTextProposalClosedRefusedWeb=Proposal %s has been closed refuse on portal page.
 EMailTextOrderValidated=تم التحقق من صحة الطلب %s.
+EMailTextOrderClose=Order %s has been delivered.
 EMailTextOrderApproved=تمت الموافقة على الطلب %s.
 EMailTextOrderValidatedBy=تم تسجيل الطلب %s بواسطة %s.
 EMailTextOrderApprovedBy=تمت الموافقة على الطلب %s بواسطة %s.
@@ -311,10 +307,10 @@ ExternalSiteURL=رابط موقع خارجي لمحتوى إطار داخلي ف
 ExternalSiteModuleNotComplete=لم يتم تهيئة نموذج الموقع الخارجي بصورة صحيحة.
 ExampleMyMenuEntry=مُدخل قائمتي
 
-# FTP
+# ftp
 FTPClientSetup=إعداد وحدة FTP أو SFTP Client
-NewFTPClient=New FTP/FTPS connection setup
-FTPArea=FTP/FTPS Area
+NewFTPClient=New FTP/SFTP connection setup
+FTPArea=FTP/SFTP Area
 FTPAreaDesc=تعرض هذه الشاشة طريقة عرض لخادم FTP و SFTP.
 SetupOfFTPClientModuleNotComplete=يبدو أن إعداد وحدة عميل FTP أو SFTP غير مكتمل
 FTPFeatureNotSupportedByYourPHP=PHP لا يدعم وظائف FTP أو SFTP
@@ -325,3 +321,9 @@ FTPFailedToRemoveDir=فشل إزالة الدليل <b> %s </b>: تحقق من �
 FTPPassiveMode=الوضع السلبي
 ChooseAFTPEntryIntoMenu=اختر موقع FTP / SFTP من القائمة ...
 FailedToGetFile=فشل في الحصول على الملفات %s
+ErrorFTPNodisconnect=Error to disconnect FTP/SFTP server
+FileWasUpload=File <b>%s</b> was uploaded
+FTPFailedToUploadFile=Failed to upload the file <b>%s</b>.
+AddFolder=Create folder
+FileWasCreateFolder=Folder <b>%s</b> has been created
+FTPFailedToCreateFolder=Failed to create folder <b>%s</b>.

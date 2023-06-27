@@ -461,6 +461,9 @@ ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_me
 
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
 
+ALTER TABLE fk_product_price_product DROP FOREIGN KEY fk_product_price_product;
+ 
+
 -- Drop the composite unique index that exists on llx_commande_fournisseur to rebuild a new one without the fk_soc.
 -- The old design allowed for a duplicate reference as long as fk_soc was not the same.
 -- VMYSQL4.1 DROP INDEX uk_commande_fournisseur_ref on llx_commande_fournisseur;

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
 DeliveryRef=Доставка №
-DeliveryCard=Карта на разписка
+DeliveryCard=Stock receipt
 DeliveryOrder=Разписка за доставка
 DeliveryDate=Дата на доставка
 CreateDeliveryOrder=Генериране на разписка за доставка

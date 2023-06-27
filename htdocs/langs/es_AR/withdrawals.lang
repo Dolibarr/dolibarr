@@ -24,7 +24,6 @@ ClassCredited=Clasificar como acreditado
 ClassCreditedConfirm=¿Estás seguro que quieres clasificar este comprobante de extracción como acreditado en tu cuenta bancaria?
 TransData=Fecha de transmisión
 TransMetod=Método de transmisión
-StandingOrderReject=Cargar un rechazo
 WithdrawsRefused=Débito automático rechazado
 WithdrawalRefused=Extracción rechazada
 WithdrawalRefusedConfirm=¿Estás seguro que quieres ingresar un rechazo en la extracción para la empresa?

@@ -24,4 +24,4 @@ SalariesStatistics=Bérstatisztika
 SalariesAndPayments=Bérek és kifizetések
 ConfirmDeleteSalaryPayment=Törölni szeretné ezt a fizetési kifizetést?
 FillFieldFirst=Először töltse ki az alkalmazott mezőt
-UpdateAmountWithLastSalary=Állítsa be az összeget az utolsó fizetéssel
+UpdateAmountWithLastSalary=Set amount of last salary

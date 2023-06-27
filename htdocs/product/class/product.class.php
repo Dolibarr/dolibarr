@@ -5524,6 +5524,7 @@ class Product extends CommonObject
 				return -1;
 			}
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

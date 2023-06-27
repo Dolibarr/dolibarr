@@ -1823,7 +1823,7 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 * Get Contact roles for a thirdparty
+	 * Get thirdparty contact roles of a given contact
 	 *
 	 * @param  string 	$element 	Element type
 	 * @return array|int			Array of contact roles or -1

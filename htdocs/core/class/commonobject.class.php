@@ -641,6 +641,11 @@ abstract class CommonObject
 	public $output;
 
 	/**
+	 * @var array extraparams
+	 */
+	public $extraparams = array();
+
+	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();

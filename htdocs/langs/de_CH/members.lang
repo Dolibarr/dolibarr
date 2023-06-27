@@ -28,7 +28,6 @@ SendingEmailOnAutoSubscription=E-Mail bei automatischer Registrierung senden
 CardContent=Inhalt Ihrer Mitgliederkarte
 ThisIsContentOfYourMembershipRequestWasReceived=Wir möchten Sie darüber informieren, dass Ihre Mitgliedschaftsanfrage eingegangen ist. <br><br>
 ThisIsContentOfYourMembershipWasValidated=Wir möchten Sie darüber informieren, dass Ihre Mitgliedschaft mit den folgenden Informationen bestätigt wurde: <br><br>
-ThisIsContentOfYourSubscriptionWasRecorded=Wir möchten Sie darüber informieren, dass Ihr neues Abonnement erfasst wurde. <br><br>
 ThisIsContentOfSubscriptionReminderEmail=Wir möchten Sie darüber informieren, dass Ihr Abonnement in Kürze abläuft oder bereits abgelaufen ist (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). Wir hoffen, dass Sie es erneuern. <br><br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Betreff der Benachrichtigungs-E-Mail bei automatischer Anmeldung eines Gastes
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL=Inhalt der Benachrichtigungs-E-Mail, bei automatischer Anmeldung eines Gastes

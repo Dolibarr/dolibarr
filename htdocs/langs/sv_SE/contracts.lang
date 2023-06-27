@@ -2,7 +2,7 @@
 ContractsArea=Kontraktsområde
 ListOfContracts=Lista med kontrakt
 AllContracts=Alla kontrakt
-ContractCard=Kontraktkort
+ContractCard=Kontrakt
 ContractStatusNotRunning=Inte igång
 ContractStatusDraft=Utkast
 ContractStatusValidated=Bekräftat

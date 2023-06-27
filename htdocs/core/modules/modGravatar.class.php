@@ -116,7 +116,7 @@ class modGravatar extends DolibarrModules
 
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		// Add here entries to declare new menus
