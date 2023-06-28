@@ -1316,8 +1316,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<input class="maxwidth200 maxwidth150onsmartphone" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
-	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($id, $childids))
-		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+	if ((isModEnabled('salaries') && $user->hasRight("salaries", "read") && in_array($id, $childids))
+		|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
 		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 		$langs->load("salaries");
 
@@ -1622,7 +1622,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+				|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
 				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 				$langs->load("salaries");
 
@@ -2815,7 +2815,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+				|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
 				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 					$langs->load("salaries");
 
