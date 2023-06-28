@@ -1641,10 +1641,12 @@ while ($i < min($num, $limit)) {
 	// Staff
 	if (!empty($arrayfields['staff.code']['checked'])) {
 		print '<td class="center">';
-		if (!is_array($staffArray) || count($staffArray) == 0) {
-			$staffArray = $formcompany->effectif_array(1);
+		if (!empty($obj->staff_code)) {
+			if (empty($conf->cache['staffArray'])) {
+				$conf->cache['staffArray'] = $formcompany->effectif_array(1);
+			}
+			print $conf->cache['staffArray'][$obj->staff_code];
 		}
-		print $staffArray[$obj->staff_code];
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
