@@ -568,6 +568,7 @@ print "</tr>\n";
 
 
 $totalarray = array();
+$savnbfield = $totalarray['nbfield'];
 $totalarray['nbfield'] = 0;
 $totalarray['val'] = array('balance'=>0);
 $total = array();
@@ -596,7 +597,7 @@ foreach ($accounts as $key => $type) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban

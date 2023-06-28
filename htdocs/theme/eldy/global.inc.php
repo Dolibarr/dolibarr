@@ -3943,6 +3943,9 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
 }
+table.liste tr.trkanban td {
+	padding: 10px 12px 10px 12px;			/* t r b l */
+}
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
 }

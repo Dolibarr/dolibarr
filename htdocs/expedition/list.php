@@ -884,6 +884,7 @@ print "</tr>\n";
 
 $typenArray = $formcompany->typent_array(1);
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
@@ -902,7 +903,7 @@ while ($i < min($num, $limit)) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		$object->date_delivery = $obj->delivery_date;
