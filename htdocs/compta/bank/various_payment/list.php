@@ -614,6 +614,7 @@ print '</tr>';
 
 
 $totalarray = array();
+$savnbfield = $totalarray['nbfield'];
 $totalarray['nbfield'] = 0;
 $totalarray['val']['total_cred'] = 0;
 $totalarray['val']['total_deb'] = 0;
@@ -636,7 +637,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban

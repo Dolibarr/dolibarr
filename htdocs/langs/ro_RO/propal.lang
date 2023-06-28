@@ -55,6 +55,7 @@ CopyPropalFrom=Creare ofertă comercială prin copierea uneia existente
 CreateEmptyPropal=Creare propunere comercială goală sau dintr-o listă de produse/servicii
 DefaultProposalDurationValidity=Durata valabilităţii implicite a ofertei (în zile)
 DefaultPuttingPricesUpToDate=Actualizare prețuri cu prețurile actuale cunoscute la clonarea unei oferte comerciale, în mod implicit
+DefaultPuttingDescUpToDate=În mod implicit, actualizează descrierile cu descrierile curente cunoscute la clonarea unei oferte comerciale
 UseCustomerContactAsPropalRecipientIfExist=Utilizați contactul/adresa cu tipul de "Contact urmărire ofertă" dacă este definit în locul adresei terțului ca adresă destinatar a ofertei
 ConfirmClonePropal=Sigur doriți să clonați oferta comercială <b>%s</b>?
 ConfirmReOpenProp=Sigur doriți să redeschideți oferta comercială <b>%s</b>?

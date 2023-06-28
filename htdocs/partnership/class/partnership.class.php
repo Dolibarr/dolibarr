@@ -62,6 +62,9 @@ class Partnership extends CommonObject
 	 */
 	public $picto = 'partnership';
 
+	public $type_code;
+	public $type_label;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;		// Validate (no more draft)
@@ -139,13 +142,14 @@ class Partnership extends CommonObject
 	public $model_pdf;
 	public $date_partnership_start;
 	public $date_partnership_end;
-	public $status;
 	public $url_to_check;
 	public $count_last_url_check_error;
 	public $last_check_backlink;
 	public $reason_decline_or_cancel;
 	public $fk_soc;
 	public $fk_member;
+	public $ip;
+	public $status;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -516,7 +520,7 @@ class Partnership extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		print $sql;
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

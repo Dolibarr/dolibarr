@@ -31,6 +31,6 @@ descWORKFLOW_TICKET_CLOSE_INTERVENTION=Закройте все вмешател�
 AutomaticCreation=Автоматическое создание
 AutomaticClassification=Автоматическая классификация
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Классифицировать отгрузку из связанного источника как закрытую, когда счет клиента подтвержден (и если сумма счета-фактуры совпадает с общей суммой связанных отгрузок)
 AutomaticClosing=Автоматическое закрытие
 AutomaticLinking=Автоматическое связывание

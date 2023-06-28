@@ -62,7 +62,8 @@ if ($action == 'editsalesrepresentatives') {
 			$userstatic->statut = $val['statut'];
 			$userstatic->photo = $val['photo'];
 			$userstatic->email = $val['email'];
-			$userstatic->phone = $val['phone'];
+			$userstatic->office_phone = $val['office_phone'];
+			$userstatic->user_mobile = $val['user_mobile'];
 			$userstatic->job = $val['job'];
 			$userstatic->entity = $val['entity'];
 			$userstatic->gender = $val['gender'];

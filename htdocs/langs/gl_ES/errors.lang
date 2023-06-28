@@ -310,6 +310,13 @@ ErrorFieldExist=O valor de <b> %s </b> xa existe
 ErrorEqualModule=Módulo non válido en <b> %s </b>
 ErrorFieldValue=O valor para <b> %s </b> é incorrecto
 ErrorCoherenceMenu= <b> %s </b> é preciso cando <b> %s </b> é 'esquerda'
+ErrorUploadFileDragDrop=Produciuse un erro ao cargar o(s) ficheiro(s).
+ErrorUploadFileDragDropPermissionDenied=Produciuse un erro ao cargar o(s) ficheiro(s): Permiso denegado
+ErrorFixThisHere= <a href="%s"> Corrixa isto aquí </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
+ErrorMenuExistValue=A Menu already exist with this Title or URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.
@@ -349,6 +356,14 @@ WarningThemeForcedTo=Aviso, o tema foi forzado a <b> %s </b> pola constante ocul
 WarningPagesWillBeDeleted=Aviso, isto tamén eliminará todas as páxinas/contedores existentes do sitio web. Debería exportar o seu sitio web antes, para ter unha copia de seguridade e poder  importalo de novo máis tarde.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=A validación automática está desactivada cando a opción para diminuír o stock está definida en "Validación de facturas".
 WarningModuleNeedRefrech = Desactivouse o módulo <b> %s </b>. Non esqueza activalo
+WarningPermissionAlreadyExist=Permisos existentes para este obxecto
+
+SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
+SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
+SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
+SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
+SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
 
 # Validate
 RequireValidValue = Valor non válido

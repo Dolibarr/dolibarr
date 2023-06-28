@@ -36,3 +36,7 @@ Codemulticurrency=Código moeda
 UpdateRate=Cambiar a taxa
 CancelUpdate=Cancelar
 NoEmptyRate=O campo de taxa non debe estar baleiro
+CurrencyCodeId=ID de moeda
+CurrencyCode=Código de moeda
+CurrencyUnitPrice=Prezo unitario en moeda estranxeira
+CurrencyPrice=Prezo en moeda estranxeira

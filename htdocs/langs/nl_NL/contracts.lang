@@ -2,7 +2,7 @@
 ContractsArea=Contractenoverzicht
 ListOfContracts=Contractenlijst
 AllContracts=Alle contracten
-ContractCard=Contractendetails
+ContractCard=Contract
 ContractStatusNotRunning=Niet actief
 ContractStatusDraft=Concept
 ContractStatusValidated=Gevalideerd
@@ -80,7 +80,7 @@ ConfirmDeleteContractLine=Weet u zeker dat u deze contract regel wilt verwijdere
 MoveToAnotherContract=Verplaats dienst naar een ander contract.
 ConfirmMoveToAnotherContract=Weet u zeker dat u deze dienst wilt verplaatsen naar dit contract?
 ConfirmMoveToAnotherContractQuestion=Kies naar welk bestaand contract (van dezelfde derde partij), u deze dienst wilt verplaatsen
-PaymentRenewContractId=Renew contract %s (service %s)
+PaymentRenewContractId=Contract verlengen %s (service %s)
 ExpiredSince=Verlopen sinds
 NoExpiredServices=Geen verlopen actieve diensten
 ListOfServicesToExpireWithDuration=Lijst van Diensten te vervallen in %s dagen
