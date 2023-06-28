@@ -304,41 +304,10 @@ class Societe extends CommonObject
 	public $particulier;
 
 	/**
-	 * @var string Address
-	 */
-	public $address;
-
-	/**
-	 * @var string Zip code of thirdparty
-	 */
-	public $zip;
-
-	/**
-	 * @var string Town of thirdparty
-	 */
-	public $town;
-
-	/**
 	 * Thirdparty status : 0=activity ceased, 1= in activity
 	 * @var int
 	 */
 	public $status = 1;
-
-	/**
-	 * Id of department
-	 * @var int
-	 */
-	public $state_id;
-
-	/**
-	 * @var string State code
-	 */
-	public $state_code;
-
-	/**
-	 * @var string State name
-	 */
-	public $state;
 
 	/**
 	 * Id of region
@@ -2490,10 +2459,10 @@ class Societe extends CommonObject
 					$reparray[$i]['firstname'] = $obj->firstname;
 					$reparray[$i]['email'] = $obj->email;
 					$reparray[$i]['phone'] = $obj->office_phone;
-					$reparray[$i]['office_phone'] = $obj->office_phone;
+					$reparray[$i]['office_phone'] = $obj->office_phone;			// Pro phone
 					$reparray[$i]['office_fax'] = $obj->office_fax;
-					$reparray[$i]['user_mobile'] = $obj->user_mobile;
-					$reparray[$i]['personal_mobile'] = $obj->personal_mobile;
+					$reparray[$i]['user_mobile'] = $obj->user_mobile;			// Pro mobile
+					$reparray[$i]['personal_mobile'] = $obj->personal_mobile;	// Personal mobile
 					$reparray[$i]['job'] = $obj->job;
 					$reparray[$i]['statut'] = $obj->status; // deprecated
 					$reparray[$i]['status'] = $obj->status;
@@ -5277,20 +5246,20 @@ class Societe extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
-	
+
 	/**
 	 *    Get array of all contacts for a society (stored in societe_contacts instead of element_contacts for all other objects)
 	 *
-	 *    @param	int			socid		id of societe
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
-	 *	  @param    string      $element       Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
+	 *	  @param    string      $element    Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
 	 *
 	 */
-	function getContacts($list = 0, $code = '', $element = '')
+	public function getContacts($list = 0, $code = '', $element = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5298,16 +5267,16 @@ class Societe extends CommonObject
 		$tab = array();
 
 		$sql = "SELECT sc.rowid, sc.fk_socpeople as id, sc.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
-		
+
 		$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
-		
+
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
 		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
 
 		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
-		
+
 		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
 		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
 		if (!empty($element)) {
@@ -5316,10 +5285,10 @@ class Societe extends CommonObject
 		if ($code) {
 			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
-		$sql .= " AND sc.entity = ".getEntity($this->element);		
-		$sql .= " AND tc.source = 'external'";		
+		$sql .= " AND sc.entity = ".getEntity($this->element);
+		$sql .= " AND tc.source = 'external'";
 		$sql .= " AND tc.active=1";
-		
+
 		$sql .= " ORDER BY t.lastname ASC";
 
 		dol_syslog(get_class($this)."::getContacts", LOG_DEBUG);

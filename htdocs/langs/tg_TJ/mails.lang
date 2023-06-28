@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=Вуруди почтаи электронӣ а�
 MailingModuleDescDolibarrUsers=Истифодабарандагон бо почтаи электронӣ
 MailingModuleDescThirdPartiesByCategories=Third parties
 SendingFromWebInterfaceIsNotAllowed=Фиристодан аз интерфейси веб манъ аст.
-EmailCollectorFilterDesc=Ҳама филтрҳо бояд мувофиқат кунанд, то почтаи электронӣ ҷамъоварӣ карда шавад
+EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Хати %s дар файл
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=Default value for field '%s' when creating a new c
 DefaultStatusEmptyMandatory=Холӣ, аммо ҳатмӣ
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
 NoMoreRecipientToSendTo=No more recipient to send the email to
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)

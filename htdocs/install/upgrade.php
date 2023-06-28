@@ -355,7 +355,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td class="right">'.$file.'</td></tr>'."\n";
 
 				// Run sql script
-				$ok = run_sql($dir.$file, 0, '', 1, '', 'default', 32768, 0, 0, 2);
+				$ok = run_sql($dir.$file, 0, '', 1, '', 'default', 32768, 0, 0, 2, 0, $db->database_name);
 				$listoffileprocessed[$dir.$file] = $dir.$file;
 
 

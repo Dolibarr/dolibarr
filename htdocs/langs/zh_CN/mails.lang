@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=用户输入的电子邮件
 MailingModuleDescDolibarrUsers=用户使用电子邮件
 MailingModuleDescThirdPartiesByCategories=合作方
 SendingFromWebInterfaceIsNotAllowed=不允许从Web界面发送。
-EmailCollectorFilterDesc=All filters must match to have an email being collected
+EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=在文件%s的线
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=Default value for field '%s' when creating a new c
 DefaultStatusEmptyMandatory=Empty but mandatory
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
 NoMoreRecipientToSendTo=No more recipient to send the email to
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s 个电子邮件已通过预审，%s 个电子邮件已成功处理（对于 %s 记录/已完成的操作）

@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Απόθεμα προς χρήση για μείωση αποθεμάτων όταν πραγματοποιείται η ηλεκτρονική πληρωμή <br> (TODO Όταν η επιλογή μείωσης αποθεμάτων γίνεται σε μια ενέργεια στο τιμολόγιο και η ηλεκτρονική πληρωμή δημιουργεί από μόνη της το τιμολόγιο;)
 StripeLiveEnabled=Η λειτουργία Stripe live είναι ενεργοποιημένη (διαφορετικά η λειτουργία test / sandbox)
 StripeImportPayment=Εισαγωγή πληρωμών Stripe
-ExampleOfTestCreditCard=Παράδειγμα πιστωτικής κάρτας για δοκιμή SEPA: %s => έγκυρο, %s => σφάλμα CVC, %s => έληξε, %s => η χρέωση αποτυγχάνει
+ExampleOfTestCreditCard=Παράδειγμα πιστωτικής κάρτας για δοκιμαστική πληρωμή: %s => έγκυρο, %s => σφάλμα CVC, %s => ληγμένη, %s => η χρέωση αποτυγχάνει
 ExampleOfTestBankAcountForSEPA=Παράδειγμα BAN τραπεζικού λογαριασμού για δοκιμή πάγιας εντολής: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Το αναγνωριστικό πελάτη Stripe Connect (ca _...)

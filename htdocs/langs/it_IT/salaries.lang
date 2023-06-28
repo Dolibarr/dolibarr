@@ -24,4 +24,4 @@ SalariesStatistics=Statistiche stipendi
 SalariesAndPayments=Stipendi e pagamenti
 ConfirmDeleteSalaryPayment=Vuoi eliminare questo pagamento di stipendio?
 FillFieldFirst=Compila prima il campo dipendente
-UpdateAmountWithLastSalary=Imposta importo con ultimo stipendio
+UpdateAmountWithLastSalary=Set amount of last salary

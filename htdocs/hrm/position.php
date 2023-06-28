@@ -637,7 +637,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	$needToFetchEachLine = 0;
 	if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 		foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-			if (preg_match('/\$object/', $val)) {
+			if (!is_null($val) && preg_match('/\$object/', $val)) {
 				$needToFetchEachLine++; // There is at least one compute field that use $object
 			}
 		}
@@ -1199,7 +1199,7 @@ function DisplayPositionList()
 	$needToFetchEachLine = 0;
 	if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 		foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-			if (preg_match('/\$object/', $val)) {
+			if (!is_null($val) && preg_match('/\$object/', $val)) {
 				$needToFetchEachLine++; // There is at least one compute field that use $object
 			}
 		}

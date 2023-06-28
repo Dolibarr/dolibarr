@@ -67,6 +67,8 @@ class Form
 	 */
 	public $errors = array();
 
+	// Some properties used to return data by some methods
+	public $result;
 	public $num;
 
 	// Cache arrays

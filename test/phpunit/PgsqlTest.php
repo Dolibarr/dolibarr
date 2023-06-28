@@ -142,6 +142,18 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		/*
+		$sql = "CREATE SEQUENCE __DATABASE__.llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;";
+		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "CREATE SEQUENCE __DATABASE__.llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;");
+		*/
+
+		$sql = "ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;";
+		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "-- ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer; replaced by --\nALTER TABLE llx_bank_account ALTER COLUMN state_id TYPE integer USING state_id::integer;");
+
 		$sql="ALTER TABLE llx_table RENAME TO llx_table_new;";
 		$result=DoliDBPgsql::convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";

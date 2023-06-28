@@ -24,4 +24,4 @@ SalariesStatistics=สถิติเงินเดือน
 SalariesAndPayments=เงินเดือนและการจ่ายเงิน
 ConfirmDeleteSalaryPayment=คุณต้องการลบการจ่ายเงินเดือนนี้หรือไม่ ?
 FillFieldFirst=กรอกช่องพนักงานก่อน
-UpdateAmountWithLastSalary=กำหนดจำนวนเงินด้วยเงินเดือนล่าสุด
+UpdateAmountWithLastSalary=Set amount of last salary

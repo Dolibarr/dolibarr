@@ -247,20 +247,31 @@ if ($resql) {
 	}
 	print '</tr>';
 
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+
 	// Fields title label
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "l.rowid", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "l.label", "", $param, '', $sortfield, $sortorder, 'left ');
+	$totalarray['nbfield']++;
 	print_liste_field_titre("LoanCapital", $_SERVER["PHP_SELF"], "l.capital", "", $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
 	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	print "</tr>\n";
 
@@ -269,6 +280,7 @@ if ($resql) {
 	// Loop on record
 	// --------------------------------------------------------------------
 	$i = 0;
+	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array();
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
@@ -285,7 +297,7 @@ if ($resql) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban

@@ -82,8 +82,10 @@ if ($result) {
 	print "<td>".$langs->trans("Label")."</td>";
 	print "<td>".$langs->trans("PeriodEndDate")."</td>";
 	print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
-	print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
+	print '<td class="right">'.$langs->trans("PayedByThisPayment").'</td>';
 	print "</tr>\n";
+
+	$savnbfield = 5;
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
@@ -100,7 +102,7 @@ if ($result) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban

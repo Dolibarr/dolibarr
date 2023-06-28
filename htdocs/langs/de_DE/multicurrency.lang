@@ -36,3 +36,7 @@ Codemulticurrency=Währungscode
 UpdateRate=Ändern Sie den Kurs
 CancelUpdate=stornieren
 NoEmptyRate=Das Kursfeld darf nicht leer sein
+CurrencyCodeId=Währungs-ID
+CurrencyCode=Währungscode
+CurrencyUnitPrice=Stückpreis in Fremdwährung
+CurrencyPrice=Preis in Fremdwährung

@@ -240,6 +240,8 @@ if ($resql) {
 	print "</tr>\n";
 
 	if ($num > 0) {
+		$savnbfield = 8;
+
 		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < $imaxinloop) {
 			$objp = $db->fetch_object($resql);
@@ -258,7 +260,7 @@ if ($resql) {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban

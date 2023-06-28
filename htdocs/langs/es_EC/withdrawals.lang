@@ -24,7 +24,6 @@ ClassCredited=Clasificar acreditado
 ClassCreditedConfirm=¿Seguro que desea clasificar este recibo de retiro como acreditado en su cuenta bancaria?
 TransData=Fecha de transmisión
 TransMetod=Método de transmisión
-StandingOrderReject=Emitir un rechazo
 WithdrawsRefused=Deposito directo rechazado
 WithdrawalRefused=Retiro rechazado
 WithdrawalRefusedConfirm=¿Está seguro de que desea introducir un rechazo de retiro para la sociedad

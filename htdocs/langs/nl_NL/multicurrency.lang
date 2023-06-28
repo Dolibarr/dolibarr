@@ -36,3 +36,7 @@ Codemulticurrency=valuta code
 UpdateRate=wijzig de koers
 CancelUpdate=annuleren
 NoEmptyRate=Het koersveld mag niet leeg zijn
+CurrencyCodeId=Valuta-ID
+CurrencyCode=Valuta code
+CurrencyUnitPrice=Eenheidsprijs in vreemde valuta
+CurrencyPrice=Prijs in vreemde valuta

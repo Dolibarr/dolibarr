@@ -20,7 +20,7 @@ ModulePartnershipName=Partnerschap beheer
 PartnershipDescription=Module Partnerschap beheer
 PartnershipDescriptionLong= Module Partnerschap beheer
 Partnership=Vennootschap
-Partnerships=Partnerships
+Partnerships=partnerschappen
 AddPartnership=Partnerschap toevoegen
 CancelPartnershipForExpiredMembers=Partnerschap: annuleer partnerschap van leden met verlopen abonnementen
 PartnershipCheckBacklink=Partnerschap: controleer verwijzende backlink
@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Partnerschap: controleer verwijzende backlink
 # Menu
 #
 NewPartnership=Nieuw partnerschap
-NewPartnershipbyWeb= Your partnership was added successfully.
+NewPartnershipbyWeb=Uw partnerschapsverzoek is succesvol toegevoegd. Wellicht nemen we binnenkort contact met je op...
 ListOfPartnerships=Overzicht van partnerschappen
 
 #
@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Reden afwijzing
 
 NewPartnershipRequest=Nieuw partnerschapsverzoek
 NewPartnershipRequestDesc=Met dit formulier kunt u een aanvraag indienen om deel uit te maken van een van onze partnerprogramma's. Als je hulp nodig hebt bij het invullen van dit formulier, neem dan contact op via e-mail <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Deze pagina moet ten minste één link naar een van de volgende domeinen bevatten: %s
 

@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Ishtirokchini yaratish/qo'shish shaklid
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Konferentsiya yoki stend
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Tadbirni tashkil qilishni boshqaring
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Uchinchi shaxsga havola (mijoz, yetkazib beruv
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Stend uchun ariza
-NewSuggestionOfConference=Konferentsiya uchun ariza
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Bu elektron pochtaga ega bo'lgan bir nec
 ErrorSeveralCompaniesWithNameContactUs=Bu nomdagi bir nechta kompaniyalar topilgan, shuning uchun biz sizning ro'yxatdan o'tishingizni avtomatik tarzda tasdiqlay olmaymiz. Iltimos, qo'lda tekshirish uchun %s biz bilan bog'laning
 NoPublicActionsAllowedForThisEvent=Ushbu tadbir uchun ochiq aksiyalar ochiq emas
 MaxNbOfAttendees=Maksimal ishtirokchilar soni
+DateStartEvent=Event start date
+DateEndEvent=Event end date

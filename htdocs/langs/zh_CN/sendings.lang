@@ -48,7 +48,7 @@ DateDeliveryPlanned=计划运输日期
 RefDeliveryReceipt=参考送货收据
 StatusReceipt=状态交货收据
 DateReceived=交货日期收到
-ClassifyReception=分类接收
+ClassifyReception=Classify Received
 SendShippingByEMail=通过电子邮件发送
 SendShippingRef=提交运输 %s
 ActionsOnShipping=运输活动
@@ -74,3 +74,8 @@ SumOfProductWeights=产品总重
 # warehouse details
 DetailWarehouseNumber= 仓库明细
 DetailWarehouseFormat= W：%s(数量：%d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
