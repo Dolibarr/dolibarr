@@ -9071,45 +9071,45 @@ abstract class CommonObject
 
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (is_null($obj->{$field}) || $obj->{$field} === '' || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') {
-					$this->{$field} = '';
+				if (is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
+					$this->$field = '';
 				} else {
-					$this->{$field} = $db->jdate($obj->{$field});
+					$this->$field = $db->jdate($obj->$field);
 				}
 			} elseif ($this->isInt($info)) {
 				if ($field == 'rowid') {
-					$this->id = (int) $obj->{$field};
+					$this->id = (int) $obj->$field;
 				} else {
 					if ($this->isForcedToNullIfZero($info)) {
-						if (empty($obj->{$field})) {
-							$this->{$field} = null;
+						if (empty($obj->$field)) {
+							$this->$field = null;
 						} else {
-							$this->{$field} = (double) $obj->{$field};
+							$this->$field = (double) $obj->$field;
 						}
 					} else {
-						if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-							$this->{$field} = (int) $obj->{$field};
+						if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+							$this->$field = (int) $obj->$field;
 						} else {
-							$this->{$field} = null;
+							$this->$field = null;
 						}
 					}
 				}
 			} elseif ($this->isFloat($info)) {
 				if ($this->isForcedToNullIfZero($info)) {
-					if (empty($obj->{$field})) {
-						$this->{$field} = null;
+					if (empty($obj->$field)) {
+						$this->$field = null;
 					} else {
-						$this->{$field} = (double) $obj->{$field};
+						$this->$field = (double) $obj->$field;
 					}
 				} else {
-					if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-						$this->{$field} = (double) $obj->{$field};
+					if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						$this->$field = (double) $obj->$field;
 					} else {
-						$this->{$field} = null;
+						$this->$field = null;
 					}
 				}
 			} else {
-				$this->{$field} = isset($obj->{$field}) ? $obj->{$field} : null;
+				$this->$field = isset($obj->$field) ? $obj->$field : null;
 			}
 		}
 
