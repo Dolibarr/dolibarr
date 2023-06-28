@@ -734,12 +734,12 @@ foreach ($listofreferent as $key => $value) {
 	}
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
-	$margin = empty($value['margin']) ? 0 : $value['margin'];
+	$margin = empty($value['margin']) ? '' : $value['margin'];
 	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
-		if ($margin == 'add') {
+		if ($margin === 'add') {
 			$tooltiponprofitplus .= ' &gt; '.$name." (+)<br>\n";
 		}
-		if ($margin == 'minus') {
+		if ($margin === 'minus') {
 			$tooltiponprofitminus .= ' &gt; '.$name." (-)<br>\n";
 		}
 	}
