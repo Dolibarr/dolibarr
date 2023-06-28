@@ -564,8 +564,8 @@ if (empty($reshook)) {
 			$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
-			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
-			$object->fk_default_workstation	 = GETPOST('fk_default_workstation');
+			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse', 'int');
+			$object->fk_default_workstation	 = GETPOST('fk_default_workstation', 'int');
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ?GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
@@ -730,8 +730,8 @@ if (empty($reshook)) {
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
-				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
-				$object->fk_default_workstation   = GETPOST('fk_default_workstation');
+				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse', 'int');
+				$object->fk_default_workstation   = GETPOST('fk_default_workstation', 'int');
 				// removed from update view so GETPOST always empty
 				/*
 				$object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
@@ -1488,7 +1488,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		if ($type == 1  && isModEnabled("workstation")) {
+		if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
 				// Default workstation
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
