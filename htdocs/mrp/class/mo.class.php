@@ -149,8 +149,16 @@ class Mo extends CommonObject
 	 */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_validation
+	 */
+	public $date_valid;
 
+	/**
+	 * @var integer|string date_validation
+	 */
 	public $tms;
+
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;

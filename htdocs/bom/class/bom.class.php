@@ -154,6 +154,10 @@ class BOM extends CommonObject
 	 */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_valid
+	 */
+	public $date_valid;
 
 	public $tms;
 
@@ -166,6 +170,16 @@ class BOM extends CommonObject
 	 * @var int Id User modifying
 	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_user_valid;
+
+	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_warehouse;
 
 	/**
 	 * @var string import key
@@ -182,6 +196,7 @@ class BOM extends CommonObject
 	 */
 	public $fk_product;
 	public $qty;
+	public $duration;
 	public $efficiency;
 	// END MODULEBUILDER PROPERTIES
 

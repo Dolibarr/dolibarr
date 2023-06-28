@@ -193,8 +193,14 @@ class Product extends CommonObject
 	//! Default VAT rate of product
 	public $tva_tx;
 
-	//! French VAT NPR (0 or 1)
+	/**
+	 * int	French VAT NPR (0 or 1)
+	 */
 	public $tva_npr = 0;
+	/**
+	 * @deprecated
+	 */
+	public $recuperableonly;
 
 	//! Default discount percent
 	public $remise_percent;
@@ -258,20 +264,23 @@ class Product extends CommonObject
 	 */
 	public $desiredstock = 0;
 
-	/*
+	/**
 	 * Service expiration
 	 */
 	public $duration_value;
+	/**
+	 * Serivce expiration unit
+	 */
+	public $duration_unit;
+	/**
+	 * Service expiration label (value + unit)
+	 */
+	public $duration;
 
-	/*
+	/**
 	 * Service Workstation
 	 */
 	public $fk_default_workstation;
-
-	/**
-	 * Exoiration unit
-	 */
-	public $duration_unit;
 
 	/**
 	 * Status indicates whether the product is on sale '1' or not '0'

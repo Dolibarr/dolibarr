@@ -304,41 +304,10 @@ class Societe extends CommonObject
 	public $particulier;
 
 	/**
-	 * @var string Address
-	 */
-	public $address;
-
-	/**
-	 * @var string Zip code of thirdparty
-	 */
-	public $zip;
-
-	/**
-	 * @var string Town of thirdparty
-	 */
-	public $town;
-
-	/**
 	 * Thirdparty status : 0=activity ceased, 1= in activity
 	 * @var int
 	 */
 	public $status = 1;
-
-	/**
-	 * Id of department
-	 * @var int
-	 */
-	public $state_id;
-
-	/**
-	 * @var string State code
-	 */
-	public $state_code;
-
-	/**
-	 * @var string State name
-	 */
-	public $state;
 
 	/**
 	 * Id of region
