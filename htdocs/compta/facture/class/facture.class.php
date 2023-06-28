@@ -1952,12 +1952,19 @@ class Facture extends CommonInvoice
 
 		if ($user->hasRight("facture", "read")) {
 			$datas['picto'] = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
+
+			$datas['picto'] .= '&nbsp;'.$this->getLibType(1);
+
+			// Complete datas
+			if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
+				// Load the alreadypaid field
+				$this->alreadypaid = $this->getSommePaiement(0);
+			}
 			if (isset($this->statut) && isset($this->alreadypaid)) {
 				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
 			}
-			$datas['picto'] .= '&nbsp;'.$this->getLibType(1);
 			if ($moretitle) {
-				$datas['picto'] = ' - '.$moretitle;
+				$datas['picto'] .= ' - '.$moretitle;
 			}
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
