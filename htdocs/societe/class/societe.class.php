@@ -2490,10 +2490,10 @@ class Societe extends CommonObject
 					$reparray[$i]['firstname'] = $obj->firstname;
 					$reparray[$i]['email'] = $obj->email;
 					$reparray[$i]['phone'] = $obj->office_phone;
-					$reparray[$i]['office_phone'] = $obj->office_phone;
+					$reparray[$i]['office_phone'] = $obj->office_phone;			// Pro phone
 					$reparray[$i]['office_fax'] = $obj->office_fax;
-					$reparray[$i]['user_mobile'] = $obj->user_mobile;
-					$reparray[$i]['personal_mobile'] = $obj->personal_mobile;
+					$reparray[$i]['user_mobile'] = $obj->user_mobile;			// Pro mobile
+					$reparray[$i]['personal_mobile'] = $obj->personal_mobile;	// Personal mobile
 					$reparray[$i]['job'] = $obj->job;
 					$reparray[$i]['statut'] = $obj->status; // deprecated
 					$reparray[$i]['status'] = $obj->status;
