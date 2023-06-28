@@ -1317,6 +1317,7 @@ class AccountancyExport
 		$tab[] = "Idevise";
 		$tab[] = "DateLimitReglmt";
 		$tab[] = "NumFacture";
+		$tab[] = "FichierFacture";
 
 		$output = implode($separator, $tab).$end_line;
 		if ($exportFile) {
@@ -1421,6 +1422,7 @@ class AccountancyExport
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
+				// FEC_suppl:FichierFacture
 				// get document file
 				$attachmentFileName = '';
 				if ($withAttachment == 1) {
@@ -1512,6 +1514,7 @@ class AccountancyExport
 		$tab[] = "Idevise";
 		$tab[] = "DateLimitReglmt";
 		$tab[] = "NumFacture";
+		$tab[] = "FichierFacture";
 
 		$output = implode($separator, $tab).$end_line;
 		if ($exportFile) {
@@ -1616,6 +1619,7 @@ class AccountancyExport
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
+				// FEC_suppl:FichierFacture
 				// get document file
 				$attachmentFileName = '';
 				if ($withAttachment == 1) {
