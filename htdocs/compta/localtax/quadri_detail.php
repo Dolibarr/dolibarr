@@ -102,8 +102,8 @@ if (empty($min)) {
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 //$modetax = $conf->global->TAX_MODE;
-$calc = $conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
-$modetax = $conf->global->$calc;
+$calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
+$modetax = getDolGlobalInt('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
 }
@@ -169,6 +169,7 @@ $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToMod
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $year_start;
+$q=0;
 $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -184,13 +185,13 @@ if ($nextquarter < 4) {
 	$nextquarter = 1;
 	$nextyear++;
 }
-$description .= $fsearch;
+$description = $fsearch;
 $builddate = dol_now();
 
-/*if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description.=$langs->trans("RulesVATInProducts");
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description.='<br>'.$langs->trans("RulesVATDueServices");
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') $description.='<br>'.$langs->trans("RulesVATInServices");
+/*if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') $description.=$langs->trans("RulesVATInProducts");
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') $description.='<br>'.$langs->trans("RulesVATDueServices");
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') $description.='<br>'.$langs->trans("RulesVATInServices");
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 }
@@ -222,6 +223,8 @@ if ($mysoc->tva_assuj) {
 	$vatsup .= ' ('.$langs->trans("ToGetBack").')';
 }
 
+$periodlink = '';
+$exportlink = '';
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 

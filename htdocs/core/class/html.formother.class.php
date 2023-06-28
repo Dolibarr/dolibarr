@@ -412,12 +412,6 @@ class FormOther
 		$tab_categs = $static_categs->get_full_arbo($type);
 
 		$moreforfilter = '';
-		// Enhance with select2
-		if ($conf->use_javascript_ajax) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$comboenhancement = ajax_combobox('select_categ_'.$htmlname);
-			$moreforfilter .= $comboenhancement;
-		}
 
 		// Print a select with each of them
 		$moreforfilter .= '<select class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
@@ -449,6 +443,13 @@ class FormOther
 			$moreforfilter .= '<option value="-2"'.($selected == -2 ? ' selected' : '').'>- '.$langs->trans("NotCategorized").' -</option>';
 		}
 		$moreforfilter .= '</select>';
+
+		// Enhance with select2
+		if ($conf->use_javascript_ajax) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$comboenhancement = ajax_combobox('select_categ_'.$htmlname);
+			$moreforfilter .= $comboenhancement;
+		}
 
 		return $moreforfilter;
 	}

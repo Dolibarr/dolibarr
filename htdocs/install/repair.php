@@ -128,7 +128,7 @@ $conf->db->pass = $dolibarr_main_db_pass;
 $conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : '';
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
-$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
@@ -1508,6 +1508,57 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
 	echo '<tr><td><h3>SQL queries with errors:</h3></tr></td>';
 	echo '<tr><td>'.join('</td></tr><tr><td>', $errors).'</td></tr>';
+}
+
+// Repair llx_commande_fournisseur to eleminate duplicate reference
+if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
+	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+	$db->begin();
+
+	$err = 0;
+
+	// Query to find all duplicate supplier orders
+	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "commande_fournisseur";
+	$sql .= " WHERE ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf GROUP BY cf.ref, cf.entity HAVING COUNT(cf.rowid) > 1)";
+
+	// Build a list of ref => []CommandeFournisseur
+	$duplicateSupplierOrders = [];
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($rawSupplierOrder = $db->fetch_object($resql)) {
+			$supplierOrder = new CommandeFournisseur($db);
+			$supplierOrder->setVarsFromFetchObj($rawSupplierOrder);
+
+			$duplicateSupplierOrders[$rawSupplierOrder->ref] [] = $supplierOrder;
+		}
+	} else {
+		$err++;
+	}
+
+	// Process all duplicate supplier order and regenerate the reference for all except the first one
+	foreach ($duplicateSupplierOrders as $ref => $supplierOrders) {
+		/** @var CommandeFournisseur $supplierOrder */
+		foreach (array_slice($supplierOrders, 1) as $supplierOrder) {
+			// Definition of supplier order numbering model name
+			$soc = new Societe($db);
+			$soc->fetch($supplierOrder->fourn_id);
+
+			$newRef = $supplierOrder->getNextNumRef($soc);
+
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "commande_fournisseur cf SET cf.ref = '" . $db->escape($newRef) . "' WHERE cf.rowid = " . (int) $supplierOrder->id;
+			if (!$db->query($sql)) {
+				$err++;
+			}
+		}
+	}
+
+	if ($err == 0) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
 }
 
 print '</table>';

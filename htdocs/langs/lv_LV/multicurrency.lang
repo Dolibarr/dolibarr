@@ -36,3 +36,7 @@ Codemulticurrency=valūtas kods
 UpdateRate=mainīt likmi
 CancelUpdate=atcelt
 NoEmptyRate=Likmes lauks nedrīkst būt tukšs
+CurrencyCodeId=Valūtas ID
+CurrencyCode=Valūtas kods
+CurrencyUnitPrice=Vienības cena ārvalstu valūtā
+CurrencyPrice=Cena ārvalstu valūtā

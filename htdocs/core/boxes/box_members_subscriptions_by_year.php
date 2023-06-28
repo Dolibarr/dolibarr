@@ -90,7 +90,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersSubscriptionsByYear", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$num = 0;
 			$line = 0;
 			// List of subscription by year

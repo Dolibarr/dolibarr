@@ -1,4 +1,4 @@
-<?php
+<?php declare (strict_types=1);
 
 namespace Sabre\Event\Loop;
 
@@ -11,7 +11,7 @@ namespace Sabre\Event\Loop;
  *   * setInterval for repeating functions
  *   * stream events using stream_select
  *
- * @copyright Copyright (C) 2007-2015 fruux GmbH. (https://fruux.com/)
+ * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
@@ -20,11 +20,9 @@ class Loop {
     /**
      * Executes a function after x seconds.
      *
-     * @param callable $cb
-     * @param float $timeout timeout in seconds
      * @return void
      */
-    function setTimeout(callable $cb, $timeout) {
+    function setTimeout(callable $cb, float $timeout) {
 
         $triggerTime = microtime(true) + ($timeout);
 
@@ -63,12 +61,8 @@ class Loop {
      *
      * The value this function returns can be used to stop the interval with
      * clearInterval.
-     *
-     * @param callable $cb
-     * @param float $timeout
-     * @return array
      */
-    function setInterval(callable $cb, $timeout) {
+    function setInterval(callable $cb, float $timeout) : array {
 
         $keepGoing = true;
         $f = null;
@@ -92,12 +86,11 @@ class Loop {
     }
 
     /**
-     * Stops a running internval.
+     * Stops a running interval.
      *
-     * @param array $intervalId
      * @return void
      */
-    function clearInterval($intervalId) {
+    function clearInterval(array $intervalId) {
 
         $intervalId[1] = false;
 
@@ -106,7 +99,6 @@ class Loop {
     /**
      * Runs a function immediately at the next iteration of the loop.
      *
-     * @param callable $cb
      * @return void
      */
     function nextTick(callable $cb) {
@@ -126,7 +118,6 @@ class Loop {
      * prevent the eventloop from never stopping.
      *
      * @param resource $stream
-     * @param callable $cb
      * @return void
      */
     function addReadStream($stream, callable $cb) {
@@ -146,7 +137,6 @@ class Loop {
      * prevent the eventloop from never stopping.
      *
      * @param resource $stream
-     * @param callable $cb
      * @return void
      */
     function addWriteStream($stream, callable $cb) {
@@ -219,11 +209,8 @@ class Loop {
      *
      * This function will return true if there are _any_ events left in the
      * loop after the tick.
-     *
-     * @param bool $block
-     * @return bool
      */
-    function tick($block = false) {
+    function tick(bool $block = false) : bool {
 
         $this->runNextTicks();
         $nextTimeout = $this->runTimers();
@@ -284,7 +271,7 @@ class Loop {
      *
      * If there's no more pending timers, this function returns null.
      *
-     * @return float
+     * @return float|null
      */
     protected function runTimers() {
 
@@ -295,7 +282,7 @@ class Loop {
         // Add the last timer back to the array.
         if ($timer) {
             $this->timers[] = $timer;
-            return $timer[0] - microtime(true);
+            return max(0, $timer[0] - microtime(true));
         }
 
     }
@@ -303,7 +290,10 @@ class Loop {
     /**
      * Runs all pending stream events.
      *
-     * @param float $timeout
+     * If $timeout is 0, it will return immediately. If $timeout is null, it
+     * will wait indefinitely.
+     *
+     * @param float|null timeout
      */
     protected function runStreams($timeout) {
 
@@ -312,7 +302,7 @@ class Loop {
             $read = $this->readStreams;
             $write = $this->writeStreams;
             $except = null;
-            if (stream_select($read, $write, $except, null, $timeout)) {
+            if (stream_select($read, $write, $except, ($timeout === null) ? null : 0, $timeout ? (int)($timeout * 1000000) : 0)) {
 
                 // See PHP Bug https://bugs.php.net/bug.php?id=62452
                 // Fixed in PHP7
@@ -328,7 +318,7 @@ class Loop {
             }
 
         } elseif ($this->running && ($this->nextTick || $this->timers)) {
-            usleep($timeout !== null ? $timeout * 1000000 : 200000);
+            usleep($timeout !== null ? intval($timeout * 1000000) : 200000);
         }
 
     }

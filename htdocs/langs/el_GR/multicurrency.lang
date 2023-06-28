@@ -36,3 +36,7 @@ Codemulticurrency=κωδικός νομίσματος
 UpdateRate=Ενημέρωση ισοτιμίας
 CancelUpdate=Ακύρωση
 NoEmptyRate=Το πεδίο ισοτιμίας δεν πρέπει να είναι κενό
+CurrencyCodeId=ID νομίσματος
+CurrencyCode=κωδικός νομίσματος
+CurrencyUnitPrice=Τιμή μονάδας σε άλλο νομισμα
+CurrencyPrice=Τιμή σε ξένο νόμισμα

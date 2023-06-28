@@ -120,12 +120,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $cronjobs = array();
 
 	/**
-	 * @var array Module access rights
+	 * @var array 	Module access rights
 	 */
 	public $rights;
 
 	/**
-	 * @var string Module access rights family
+	 * @var int		1=Admin is always granted of permission of modules (even when module is disabled)
+	 */
+	public $rights_admin_allowed;
+
+	/**
+	 * @var string 	Module access rights family
 	 */
 	public $rights_class;
 
@@ -287,7 +292,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $import_regex_array;
 	public $import_examplevalues_array;
 	public $import_updatekeys_array;
-
+	public $import_TypeFields_array;
+	public $import_help_array;
 
 	/**
 	 * @var string Module constant name
@@ -363,6 +369,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $warnings_activation_ext;
 
+	/**
+	 * @var array<string,string> Array of warnings to show when we disable the module
+	 *
+	 * array('always'='text') or array('FR'='text')
+	 */
+	public $warnings_unactivation;
 
 	/**
 	 * @var array Minimum version of PHP required by module.

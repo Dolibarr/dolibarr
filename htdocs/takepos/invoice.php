@@ -274,7 +274,7 @@ if (empty($reshook)) {
 
 				// If user has not used change control, add total invoice payment
 				// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay
-				if ($amountofpayment == 0 || $amountofpayment > $remaintopay) {
+				if ($amountofpayment <= 0 || $amountofpayment > $remaintopay) {
 					$payment->amounts[$invoice->id] = $remaintopay;
 				}
 

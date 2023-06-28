@@ -2,7 +2,7 @@
 ContractsArea=Área de contratos
 ListOfContracts=Lista de contratos
 AllContracts=Todos os contratos
-ContractCard=Ficha do contrato
+ContractCard=Contrato
 ContractStatusNotRunning=Inativo
 ContractStatusDraft=Rascunho
 ContractStatusValidated=Validado

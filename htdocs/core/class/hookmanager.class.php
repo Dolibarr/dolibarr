@@ -158,6 +158,10 @@ class HookManager
 		if (!is_array($this->hooks) || empty($this->hooks)) {
 			return 0; // No hook available, do nothing.
 		}
+		if (!is_array($parameters)) {
+			dol_syslog('executeHooks was called with a non array $parameters. Surely a bug.', LOG_WARNING);
+			$parameters = array();
+		}
 
 		$parameters['context'] = join(':', $this->contextarray);
 		//dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
