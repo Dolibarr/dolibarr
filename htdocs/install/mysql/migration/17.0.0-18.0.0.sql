@@ -42,6 +42,8 @@ ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer;
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
 
+ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
+
 
 -- v18
 
