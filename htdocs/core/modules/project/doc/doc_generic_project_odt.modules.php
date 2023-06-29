@@ -192,7 +192,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			'task_projectlabel'=>$task->projectlabel,
 			'task_label'=>$task->label,
 			'task_description'=>$task->description,
-			'task_fk_parent'=>$task->fk_parent,
+			'task_fk_parent'=>$task->fk_task_parent,
 			'task_duration'=>$task->duration,
 			'task_duration_hour'=>convertSecondToTime($task->duration, 'all'),
 			'task_planned_workload'=>$task->planned_workload,

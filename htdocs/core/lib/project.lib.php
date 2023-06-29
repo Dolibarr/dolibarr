@@ -581,7 +581,7 @@ function project_admin_prepare_head()
  * Show task lines with a particular parent
  *
  * @param	string	   	$inc				    Line number (start to 0, then increased by recursive call)
- * @param   string		$parent				    Id of parent project to show (0 to show all)
+ * @param   string		$parent				    Id of parent task to show (0 to show all)
  * @param   Task[]		$lines				    Array of lines
  * @param   int			$level				    Level (start to 0, then increased/decrease by recursive call), or -1 to show all level in order of $lines without the recursive groupment feature.
  * @param 	string		$var				    Color
@@ -629,8 +629,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 		// Process line
 		// print "i:".$i."-".$lines[$i]->fk_project.'<br>';
-
-		if ($lines[$i]->fk_parent == $parent || $level < 0) {       // if $level = -1, we dont' use sublevel recursion, we show all lines
+		if ($lines[$i]->fk_task_parent == $parent || $level < 0) {       // if $level = -1, we dont' use sublevel recursion, we show all lines
 			// Show task line.
 			$showline = 1;
 			$showlineingray = 0;
@@ -638,7 +637,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			// If there is filters to use
 			if (is_array($taskrole)) {
 				// If task not legitimate to show, search if a legitimate task exists later in tree
-				if (!isset($taskrole[$lines[$i]->id]) && $lines[$i]->id != $lines[$i]->fk_parent) {
+				if (!isset($taskrole[$lines[$i]->id]) && $lines[$i]->id != $lines[$i]->fk_task_parent) {
 					// So search if task has a subtask legitimate to show
 					$foundtaskforuserdeeper = 0;
 					searchTaskInChild($foundtaskforuserdeeper, $lines[$i]->id, $lines, $taskrole);
@@ -2447,7 +2446,7 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 	$numlines = count($lines);
 	for ($i = 0; $i < $numlines; $i++) {
 		// Process line $lines[$i]
-		if ($lines[$i]->fk_parent == $parent && $lines[$i]->id != $lines[$i]->fk_parent) {
+		if ($lines[$i]->fk_task_parent == $parent && $lines[$i]->id != $lines[$i]->fk_task_parent) {
 			// If task is legitimate to show, no more need to search deeper
 			if (isset($taskrole[$lines[$i]->id])) {
 				//print 'Found a legitimate task id='.$lines[$i]->id.'<br>';
