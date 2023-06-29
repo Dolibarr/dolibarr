@@ -1384,7 +1384,7 @@ abstract class CommonDocGenerator
 		global $hookmanager;
 
 		if (empty($object->table_element)) {
-			return;
+			return "";
 		}
 
 		// Load extrafields if not allready done

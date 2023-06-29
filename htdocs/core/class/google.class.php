@@ -86,5 +86,7 @@ class GoogleAPI
 		//echo "Longitude: $longitude ',' Latitude: $latitude";
 
 		$i++;
+		return "Longitude: $longitude, Latitude: $latitude";
+
 	}
 }
