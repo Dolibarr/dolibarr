@@ -223,11 +223,11 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $error = 0;
 
-$permissiontoread = ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
-$permissiontoadd = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
-$permissiontodelete = ($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer);
+$permissiontoread = ($user->hasRight("fournisseur", "commande", "lire") || $user->hasRight("supplier_order", "lire"));
+$permissiontoadd = ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
+$permissiontodelete = ($user->hasRight("fournisseur", "commande", "supprimer") || $user->hasRight("supplier_order", "supprimer"));
 $permissiontovalidate = $permissiontoadd;
-$permissiontoapprove = ($user->rights->fournisseur->commande->approuver || $user->rights->supplier_order->approuver);
+$permissiontoapprove = ($user->hasRight("fournisseur", "commande", "approuver") || $user->hasRight("supplier_order", "approuver"));
 
 
 /*
@@ -565,7 +565,7 @@ if (empty($reshook)) {
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->fournisseur->facture->dir_output;
-				$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+				$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 				//include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
 
@@ -807,7 +807,7 @@ if ($sall) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cf.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+if ($search_sale > 0 || (!$user->hasRight("societe", "client", "voir") && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $parameters = array();
@@ -818,7 +818,7 @@ $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -1184,7 +1184,7 @@ if ($resql) {
 		}
 	}
 
-	if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->rights->supplier_invoice->creer) {
+	if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
 	if ($permissiontodelete) {
@@ -1280,7 +1280,7 @@ if ($resql) {
 	$moreforfilter = '';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight("user", "user", "lire")) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -1288,7 +1288,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view other users
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight("user", "user", "lire")) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
