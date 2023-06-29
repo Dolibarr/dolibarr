@@ -214,8 +214,10 @@ class AccountingAccount extends CommonObject
 					$this->id = $obj->rowid;
 					$this->rowid = $obj->rowid;
 					$this->ref = $obj->account_number;
-					$this->datec = $obj->datec;
-					$this->tms = $obj->tms;
+					$this->datec = $this->db->jdate($obj->datec);
+					$this->date_creation = $this->db->jdate($obj->datec);
+					$this->date_modification = $this->db->jdate($obj->tms);
+					//$this->tms = $this->datem;
 					$this->fk_pcg_version = $obj->fk_pcg_version;
 					$this->pcg_type = $obj->pcg_type;
 					$this->account_number = $obj->account_number;
@@ -587,7 +589,7 @@ class AccountingAccount extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
+		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms as date_modification';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accounting_account as a';
 		$sql .= ' WHERE a.rowid = ' . ((int) $id);
 
@@ -602,7 +604,7 @@ class AccountingAccount extends CommonObject
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}
 			$this->db->free($resql);
 		} else {

@@ -476,12 +476,12 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			continue;
 		}
 
-		if ($feature == 'societe' && !in_array('contact', $feature2)) {
+		if ($feature == 'societe' && (empty($feature2) || !in_array('contact', $feature2))) {
 			if (!$user->hasRight('societe', 'lire') && !$user->hasRight('fournisseur', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
-		} elseif (($feature == 'societe' && in_array('contact', $feature2)) || $feature == 'contact') {
+		} elseif (($feature == 'societe' && (!empty($feature2) && in_array('contact', $feature2))) || $feature == 'contact') {
 			if (empty($user->rights->societe->contact->lire)) {
 				$readok = 0;
 				$nbko++;
@@ -845,7 +845,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		//var_dump($feature);exit;
 
 		// For backward compatibility
-		if ($feature == 'societe' && in_array('contact', $feature2)) {
+		if ($feature == 'societe' && !empty($feature2) && is_array($feature2) && in_array('contact', $feature2)) {
 			$feature = 'contact';
 			$feature2 = '';
 		}

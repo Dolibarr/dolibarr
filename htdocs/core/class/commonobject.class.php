@@ -553,6 +553,11 @@ abstract class CommonObject
 	 * @var integer|string $date_modification;
 	 */
 	public $date_modification; // Date last change (tms field)
+	/**
+	 * @var integer|string $date_modification;
+	 * @deprecated Use date_modification
+	 */
+	public $date_update;
 
 	/**
 	 * @var integer|string $date_cloture;
