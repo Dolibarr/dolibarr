@@ -5611,7 +5611,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 			do {
 				if ($pagenavastextinput) {
 					if ($cpt == $page) {
-						$pagelist .= '<li class="pagination"><input type="text" class="width25 center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
+						$pagelist .= '<li class="pagination"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
 						$pagelist .= '/';
 					}
 				} else {
