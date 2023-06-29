@@ -611,19 +611,19 @@ if ($action == 'new') {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefield">';
 
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('Date');
 	print '</td>';
 	if ($action != 'editdate') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td colspan="2">';
+
+	print '</td><td>';
 	if ($action == 'editdate') {
 		print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -638,50 +638,42 @@ if ($action == 'new') {
 	print '</td>';
 	print '</tr>';
 
-	// External ref
-	/* Ext ref are not visible field on standard usage
-	print '<tr><td>';
-
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('RefExt');
-	print '</td>';
-	if ($action != 'editrefext') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrefext&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="2">';
-	if ($action == 'editrefext')
-	{
-		print '<form name="setrefext" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="setrefext">';
-		print '<input type="text" name="ref_ext" value="'.$object->ref_ext.'">';
-		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-		print '</form>';
+	// External ref - Ext ref are not visible field on standard usage
+	if (getDolGlobalString('MAIN_SHOW_EXTREF')) {
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('RefExt');
+		print '</td>';
+		if ($action != 'editrefext') {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrefext&token='.newToken().'&id='.((int) $object->id).'">'.img_edit($langs->trans('SetRefExt'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editrefext') {
+			print '<form name="setrefext" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="setrefext">';
+			print '<input type="text" name="ref_ext" value="'.$object->ref_ext.'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+			print '</form>';
+		} else {
+			print $object->ref_ext;
+		}
+		print '</td></tr>';
 	}
-	else
-	{
-		print $object->ref_ext;
-	}
 
-	print '</td>';
-	print '</tr>';
-	*/
-
-	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans('Account').'</td><td>';
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
 
 	// Number of bank checks
-	print '<tr><td>'.$langs->trans('NbOfCheques').'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans('NbOfCheques').'</td><td>';
 	print $object->nbcheque;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Total').'</td><td colspan="2">';
-	print price($object->amount);
+	print '<tr><td>'.$langs->trans('Total').'</td><td>';
+	print '<span class="amount">'.price($object->amount).'</span>';
 	print '</td></tr>';
-
-	/*print '<tr><td>'.$langs->trans('Status').'</td><td colspan="2">';
-	print $object->getLibStatut(4);
-	print '</td></tr>';*/
 
 	print '</table><br>';
 

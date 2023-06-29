@@ -372,7 +372,7 @@ class Tasks extends DolibarrApi
 	*/
 
 	// /**
-	//  * Update a task to given project
+	//  * Update a task of a given project
 	//  *
 	//  * @param int   $id             Id of project to update
 	//  * @param int   $taskid         Id of task to update

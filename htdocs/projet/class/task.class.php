@@ -136,11 +136,6 @@ class Task extends CommonObjectLine
 	public $comments = array();
 
 	/**
-	 * @var float budget_amount
-	 */
-	public $budget_amount;
-
-	/**
 	 * @var array
 	 */
 	public $statuts;
@@ -150,12 +145,34 @@ class Task extends CommonObjectLine
 	 */
 	public $statuts_short;
 
+
+	// Properties to store project informations
+	public $projectref;
+	public $projectstatus;
+	public $projectlabel;
+	public $opp_amount;
+	public $opp_percent;
+	public $fk_opp_status;
+	public $usage_bill_time;
+	public $public;
+
+	// Properties to store thirdparty of project information
+	public $socid;
+	public $thirdparty_id;
+	public $thirdparty_name;
+	public $thirdparty_email;
+
+
+	/**
+	 * @var float budget_amount
+	 */
+	public $budget_amount;
+
 	/**
 	 * @var float project_budget_amount
 	 */
 	public $project_budget_amount;
 
-	public $oldcopy;
 
 
 	/**
@@ -845,24 +862,24 @@ class Task extends CommonObjectLine
 	 * Return list of tasks for all projects or for one particular project
 	 * Sort order is on project, then on position of task, and last on start date of first level task
 	 *
-	 * @param	User	$usert				Object user to limit tasks affected to a particular user
-	 * @param	User	$userp				Object user to limit projects of a particular user and public projects
-	 * @param	int		$projectid			Project id
-	 * @param	int		$socid				Third party id
-	 * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-	 * @param	string	$filteronproj    	Filter on project ref or label
-	 * @param	string	$filteronprojstatus	Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
-	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
-	 * @param	string	$filterontaskuser	Filter on user assigned to task
+	 * @param	User	$usert					Object user to limit tasks affected to a particular user
+	 * @param	User	$userp					Object user to limit projects of a particular user and public projects
+	 * @param	int		$projectid				Project id
+	 * @param	int		$socid					Third party id
+	 * @param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 * @param	string	$filteronproj    		Filter on project ref or label
+	 * @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
+	 * @param	string	$morewherefilter		Add more filter into where SQL request (must start with ' AND ...')
+	 * @param	string	$filteronprojuser		Filter on user that is a contact of project
+	 * @param	string	$filterontaskuser		Filter on user assigned to task
 	 * @param	Extrafields	$extrafields	    Show additional column from project or task
-	 * @param   int     $includebilltime    Calculate also the time to bill and billed
-	 * @param   array   $search_array_options Array of search
-	 * @param   int     $loadextras         Fetch all Extrafields on each task
-	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * @param	string	$sortfield			Sort field
-	 * @param	string	$sortorder			Sort order
-	 * @return 	array|string				Array of tasks
+	 * @param   int     $includebilltime    	Calculate also the time to bill and billed
+	 * @param   array   $search_array_options 	Array of search filters. Not Used yet.
+	 * @param   int     $loadextras         	Fetch all Extrafields on each task
+	 * @param	int		$loadRoleMode			1= will test Roles on task;  0 used in delete project action
+	 * @param	string	$sortfield				Sort field
+	 * @param	string	$sortorder				Sort order
+	 * @return 	array|string					Array of tasks
 	 */
 	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
@@ -1039,8 +1056,8 @@ class Task extends CommonObjectLine
 					$tasks[$i] = new Task($this->db);
 					$tasks[$i]->id = $obj->taskid;
 					$tasks[$i]->ref = $obj->taskref;
-					$tasks[$i]->fk_project		= $obj->projectid;
-					$tasks[$i]->projectref		= $obj->ref;
+					$tasks[$i]->fk_project = $obj->projectid;
+					$tasks[$i]->projectref = $obj->ref;
 					$tasks[$i]->projectlabel = $obj->plabel;
 					$tasks[$i]->projectstatus = $obj->projectstatus;
 
@@ -1053,9 +1070,8 @@ class Task extends CommonObjectLine
 
 					$tasks[$i]->label = $obj->label;
 					$tasks[$i]->description = $obj->description;
-					$tasks[$i]->fk_parent = $obj->fk_task_parent; // deprecated
 					$tasks[$i]->fk_task_parent = $obj->fk_task_parent;
-					$tasks[$i]->duration		= $obj->duration_effective;
+					$tasks[$i]->duration_effective = $obj->duration_effective;
 					$tasks[$i]->planned_workload = $obj->planned_workload;
 
 					if ($includebilltime) {
