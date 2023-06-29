@@ -797,7 +797,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseur as cf on cf.fk_soc = s.rowid";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cf.rowid = ef.fk_object)";
 }
@@ -808,18 +808,17 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cf.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc on sc.fk_soc = s.rowid";
 }
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= ' WHERE cf.fk_soc = s.rowid';
-$sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
+$sql .= ' WHERE cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
 	$sql .= natural_search('cf.ref', $search_ref);
