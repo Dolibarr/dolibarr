@@ -1024,7 +1024,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		// Stock control
-		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
+		if (isModEnabled('stock') && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");

@@ -997,8 +997,8 @@ while ($i < $imaxinloop) {
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
 	$canreadhrmdata = 0;
-	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($obj->rowid, $childids))
-		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+	if ((isModEnabled('salaries') && $user->hasRight("salaries", "read") && in_array($obj->rowid, $childids))
+		|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
 		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 			$canreadhrmdata = 1;
 	}

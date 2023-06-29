@@ -288,19 +288,17 @@ if (!empty($search_timespend)) {
 	$morewherefilterarray[] = natural_search('t.duration_effective', $search_timespend, 1, 1);
 }
 
-if (!empty($search_progresscalc)) {
-	$filterprogresscalc = 'if '.natural_search('round(100 * $line->duration / $line->planned_workload,2)', $search_progresscalc, 1, 1).'{return 1;} else {return 0;}';
-} else {
-	$filterprogresscalc = '';
-}
-
 if (!empty($search_progressdeclare)) {
 	$morewherefilterarray[] = natural_search('t.progress', $search_progressdeclare, 1, 1);
 }
-
+if (!empty($search_progresscalc)) {
+	$morewherefilterarray[] = '(planned_workload IS NULL OR planned_workload = 0 OR '.natural_search('ROUND(100 * duration_effective / planned_workload, 2)', $search_progresscalc, 1, 1).')';
+	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
+}
 if ($search_task_budget_amount) {
 	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
+//var_dump($morewherefilterarray);
 
 $morewherefilter = '';
 if (count($morewherefilterarray) > 0) {
@@ -556,7 +554,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$arrayofmassactions = array();
 	if ($user->hasRight('projet', 'creer')) {
-		$arrayofmassactions['preclonetasks'] = img_picto('', 'rightarrow', 'class="pictofixedwidth"').$langs->trans("Clone");
+		$arrayofmassactions['preclonetasks'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -903,14 +901,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
-	// Filter on categories
+	// Filter on assigned users
 	$moreforfilter = '';
-	if (count($tasksarray) > 0) {
-		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
-		$moreforfilter .= '</div>';
-	}
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
+	$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
+	$moreforfilter .= '</div>';
 	if ($moreforfilter) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
@@ -1128,7 +1124,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	if (count($tasksarray) > 0) {
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0; $level = 0;
-		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
+		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
 	} else {
 		$colspan = count($arrayfields);
 		if ($object->usage_bill_time) {

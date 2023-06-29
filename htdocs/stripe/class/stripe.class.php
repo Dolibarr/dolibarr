@@ -114,8 +114,10 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$tokenstring = $obj->tokenstring;
 
-				$tmparray = json_decode($tokenstring);
-				$key = empty($tmparray->stripe_user_id) ? '' : $tmparray->stripe_user_id;
+				if ($tokenstring) {
+					$tmparray = json_decode($tokenstring);
+					$key = empty($tmparray->stripe_user_id) ? '' : $tmparray->stripe_user_id;
+				}
 			} else {
 				$tokenstring = '';
 			}
@@ -124,6 +126,7 @@ class Stripe extends CommonObject
 		}
 
 		dol_syslog("No dedicated Stripe Connect account available for entity ".$conf->entity);
+
 		return $key;
 	}
 

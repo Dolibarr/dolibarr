@@ -1800,7 +1800,7 @@ class Project extends CommonObject
 
 				// Loop on each task, to clone it
 				foreach ($tasksarray as $tasktoclone) {
-					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
+					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_task_parent, $move_date, true, false, $clone_task_file, true, false);
 					if ($result_clone <= 0) {
 						$this->error .= $taskstatic->error;
 						$error++;

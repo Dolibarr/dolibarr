@@ -168,14 +168,17 @@ if (isModEnabled('facture')) {
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), $langs->trans("INVOICE_ADD_SWISS_QR_CODEMore"));
+	if (getDolGlobalString('INVOICE_ADD_ZATCA_QR_CODE') == 'bottom') {
+		print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), $langs->trans("INVOICE_ADD_SWISS_QR_CODEMore"));
+	} else {
+		print $langs->trans("INVOICE_ADD_SWISS_QR_CODE");
+	}
 	print '</td><td>';
-	//if ($conf->use_javascript_ajax) {
-	//	print ajax_constantonoff('INVOICE_ADD_SWISS_QR_CODE');
-	//} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"), 'bottom' => $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").' - Need PHP 8.1+)');
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	if (getDolGlobalString('MAIN_FEATURE_LEVEL') >= 1) {
+		$arrval['bottom'] = $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").' - Need PHP 8.1+)';
+	}
 	print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
-	//}
 	print '</td></tr>';
 
 	// Mention category of operations

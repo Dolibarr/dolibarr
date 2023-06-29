@@ -42,7 +42,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 $id = GETPOST('id', 'aZ09');
 $objecttype = GETPOST('objecttype', 'aZ09arobase');	// 'module' or 'myobject@mymodule', 'mymodule_myobject'
 
-$params = array();
+$params = array('fromajaxtooltip' => 1);
 if (GETPOSTISSET('infologin')) {
 	$params['infologin'] = GETPOST('infologin', 'int');
 }
@@ -53,7 +53,7 @@ if (GETPOSTISSET('option')) {
 // Load object according to $element
 $object = fetchObjectByElement($id, $objecttype);
 if (empty($object->element)) {
-	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objectype='.$objecttype.')');
+	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objecttype='.$objecttype.')');
 }
 
 $module = $object->module;

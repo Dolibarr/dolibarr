@@ -216,7 +216,7 @@ if (empty($action)) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', 1);
 		} else {
-			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', 1);
+			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans('Delete'), '', $_SERVER["PHP_SELF"].'?id='.$object->id.'#', '', 1, [ 'attr' => ['classOverride' => 'butActionRefused']]);
 		}
 	}
 }

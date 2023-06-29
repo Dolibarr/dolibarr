@@ -648,7 +648,7 @@ if (empty($reshook)) {
 						$qty = "qtyl".$detail_batch->fk_expeditiondet.'_'.$detail_batch->id;
 						$batch_id = GETPOST($batch, 'int');
 						$batch_qty = GETPOST($qty, 'int');
-						if (!empty($batch_id) && ($batch_id != $detail_batch->fk_origin_stock || $batch_qty != $detail_batch->qty)) {
+						if (!empty($batch_id)) {
 							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_expeditiondet) > 0) {	// $line is ExpeditionLine
 								if ($lines[$i]->entrepot_id != 0) {
 									// allow update line entrepot_id if not multi warehouse shipping
