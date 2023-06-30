@@ -480,10 +480,10 @@ class AccountancyExport
 				$this->exportGestimumV5($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_FEC:
-				$this->exportFEC($TData, $exportFile);
+				$archiveFileList = $this->exportFEC($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
 			case self::$EXPORT_TYPE_FEC2:
-				$this->exportFEC2($TData, $exportFile);
+				$archiveFileList = $this->exportFEC2($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
 			case self::$EXPORT_TYPE_ISUITEEXPERT :
 				$this->exportiSuiteExpert($TData, $exportFile);
@@ -1285,11 +1285,13 @@ class AccountancyExport
 	 *
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
-	 * @return	void
+	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportFEC($objectLines, $exportFile = null)
+	public function exportFEC($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$separator = "\t";
 		$end_line = "\r\n";
@@ -1315,6 +1317,7 @@ class AccountancyExport
 		$tab[] = "Idevise";
 		$tab[] = "DateLimitReglmt";
 		$tab[] = "NumFacture";
+		$tab[] = "FichierFacture";
 
 		$output = implode($separator, $tab).$end_line;
 		if ($exportFile) {
@@ -1419,6 +1422,49 @@ class AccountancyExport
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
+				// FEC_suppl:FichierFacture
+				// get document file
+				$attachmentFileName = '';
+				if ($withAttachment == 1) {
+					$attachmentFileKey = trim($line->piece_num);
+
+					if (!isset($archiveFileList[$attachmentFileKey])) {
+						$objectDirPath = '';
+						$objectFileName = dol_sanitizeFileName($line->doc_ref);
+						if ($line->doc_type == 'customer_invoice') {
+							$objectDirPath = !empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->multidir_output[$conf->entity] : $conf->facture->dir_output;
+						} elseif ($line->doc_type == 'expense_report') {
+							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->factureexpensereport->dir_output;
+						} elseif ($line->doc_type == 'supplier_invoice') {
+							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+						}
+						$arrayofinclusion = array();
+						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').'\.pdf$';
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+						if (!empty($fileFoundList)) {
+							$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
+							foreach ($fileFoundList as $fileFound) {
+								if (strstr($fileFound['name'], $objectFileName)) {
+									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+									if (file_exists($fileFoundPath)) {
+										$archiveFileList[$attachmentFileKey] = array(
+											'path' => $fileFoundPath,
+											'name' => $attachmentFileNameTrunc.'.pdf',
+										);
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (isset($archiveFileList[$attachmentFileKey])) {
+						$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
+					}
+				}
+
+				$tab[] = $attachmentFileName;
+
 				$output = implode($separator, $tab).$end_line;
 				if ($exportFile) {
 					fwrite($exportFile, $output);
@@ -1427,6 +1473,8 @@ class AccountancyExport
 				}
 			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
@@ -1434,11 +1482,13 @@ class AccountancyExport
 	 *
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
-	 * @return 	void
+	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportFEC2($objectLines, $exportFile = null)
+	public function exportFEC2($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$separator = "\t";
 		$end_line = "\r\n";
@@ -1464,6 +1514,7 @@ class AccountancyExport
 		$tab[] = "Idevise";
 		$tab[] = "DateLimitReglmt";
 		$tab[] = "NumFacture";
+		$tab[] = "FichierFacture";
 
 		$output = implode($separator, $tab).$end_line;
 		if ($exportFile) {
@@ -1568,6 +1619,49 @@ class AccountancyExport
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
+				// FEC_suppl:FichierFacture
+				// get document file
+				$attachmentFileName = '';
+				if ($withAttachment == 1) {
+					$attachmentFileKey = trim($line->piece_num);
+
+					if (!isset($archiveFileList[$attachmentFileKey])) {
+						$objectDirPath = '';
+						$objectFileName = dol_sanitizeFileName($line->doc_ref);
+						if ($line->doc_type == 'customer_invoice') {
+							$objectDirPath = !empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->multidir_output[$conf->entity] : $conf->facture->dir_output;
+						} elseif ($line->doc_type == 'expense_report') {
+							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->factureexpensereport->dir_output;
+						} elseif ($line->doc_type == 'supplier_invoice') {
+							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+						}
+						$arrayofinclusion = array();
+						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').'\.pdf$';
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+						if (!empty($fileFoundList)) {
+							$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
+							foreach ($fileFoundList as $fileFound) {
+								if (strstr($fileFound['name'], $objectFileName)) {
+									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+									if (file_exists($fileFoundPath)) {
+										$archiveFileList[$attachmentFileKey] = array(
+											'path' => $fileFoundPath,
+											'name' => $attachmentFileNameTrunc.'.pdf',
+										);
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (isset($archiveFileList[$attachmentFileKey])) {
+						$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
+					}
+				}
+
+				$tab[] = $attachmentFileName;
+
 				$output = implode($separator, $tab).$end_line;
 				if ($exportFile) {
 					fwrite($exportFile, $output);
@@ -1576,6 +1670,8 @@ class AccountancyExport
 				}
 			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
