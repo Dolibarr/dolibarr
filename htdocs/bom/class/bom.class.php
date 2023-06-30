@@ -37,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class BOM extends CommonObject
 {
+
+	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'bom';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
