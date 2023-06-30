@@ -3943,6 +3943,9 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
 }
+table.liste tr.trkanban td {
+	padding: 10px 12px 10px 12px;			/* t r b l */
+}
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
 }
@@ -6802,7 +6805,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
-	border-radius: 2px;
+	border-radius: 4px;
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
@@ -7652,6 +7655,14 @@ div.clipboardCPValue.hidewithsize {
 	transform: translate(-50%, -50%);
 	text-align:center;
 	font-size: 2em;
+}
+
+/* ============================================================================== */
+/* CSS style used for color jPicker                                               */
+/* ============================================================================== */
+
+table.jPicker {
+	border: 1px solid #bbb !important;
 }
 
 /* ============================================================================== */

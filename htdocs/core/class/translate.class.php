@@ -786,6 +786,7 @@ class Translate
 		}
 		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1') {
 			$str = utf8_decode(str_replace('€', chr(128), $str));
+			// TODO Replace with iconv("UTF-8", "ISO-8859-1", str_replace('€', chr(128), $str)); ?
 		}
 		return $str;
 	}

@@ -210,7 +210,7 @@ class modStock extends DolibarrModules
 			'e.phone'=>'Text', 'e.fax'=>'Text', 'e.statut'=>'Text', 'pe.rowid'=>'List:entrepot:ref:rowid:stock', 'pe.ref'=>'Text'
 		);
 		$this->export_entities_array[$r] = array();	// We define here only fields that use another icon that the one defined into export_icon
-		$this->export_aggregate_array[$r] = array();
+		$this->export_aggregate_array[$r] = array();	// TODO Not used yet
 		$keyforselect = 'warehouse';
 		$keyforelement = 'warehouse';
 		$keyforaliasextra = 'extra';

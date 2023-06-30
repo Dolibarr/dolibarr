@@ -5,7 +5,7 @@
  * Copyright (C) 2011		Juanjo Menent		  <jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2016		Charlie Benke         <charlie@patas-monkey.com>
+ * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
  * Copyright (C) 2019-2021  Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
@@ -71,12 +71,15 @@ class ProductFournisseur extends Product
 	public $product_ref;
 
 	public $fourn_id; //supplier id
+	public $fourn_name;	// supplier name
 	public $fourn_qty; // quantity for price (can be set by get_buyprice)
 	public $fourn_pu; // unit price for quantity (can be set by get_buyprice)
 
 	public $fourn_price; // price for quantity
 	public $fourn_remise_percent; // discount for quantity (percent)
 	public $fourn_remise; // discount for quantity (amount)
+
+	public $fourn_charges;	// when getDolGlobalString('PRODUCT_CHARGES') is set
 
 	public $product_fourn_id; // product-supplier id
 	public $product_fourn_entity;
@@ -134,6 +137,9 @@ class ProductFournisseur extends Product
 	public $supplier_fk_barcode_type;
 
 	public $packaging;
+
+	public $labelStatusShort;
+	public $labelStatus;
 
 	const STATUS_OPEN = 1;
 	const STATUS_CANCELED = 0;
@@ -612,7 +618,7 @@ class ProductFournisseur extends Product
 				$this->ref_supplier             = $obj->ref_fourn;
 				$this->desc_supplier            = $obj->desc_fourn;
 				$this->fourn_price = $obj->price;
-				$this->fourn_charges            = $obj->charges; // deprecated
+				$this->fourn_charges            = $obj->charges; // when getDolGlobalString('PRODUCT_CHARGES') is set
 				$this->fourn_qty                = $obj->quantity;
 				$this->fourn_remise_percent     = $obj->remise_percent;
 				$this->fourn_remise             = $obj->remise;
@@ -725,7 +731,7 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_remise_percent = $record["remise_percent"];
 				$prodfourn->fourn_remise = $record["remise"];
 				$prodfourn->fourn_unitprice = $record["unitprice"];
-				$prodfourn->fourn_charges = $record["charges"]; // deprecated
+				$prodfourn->fourn_charges = $record["charges"]; // when getDolGlobalString('PRODUCT_CHARGES') is set
 				$prodfourn->fourn_tva_tx = $record["tva_tx"];
 				$prodfourn->fourn_id = $record["fourn_id"];
 				$prodfourn->fourn_name = $record["supplier_name"];
@@ -892,7 +898,7 @@ class ProductFournisseur extends Product
 						$this->fourn_remise             = $record["remise"];
 						$this->fourn_unitprice          = $fourn_unitprice;
 						$this->fourn_unitprice_with_discount = $fourn_unitprice_with_discount;
-						$this->fourn_charges            = $record["charges"]; // deprecated
+						$this->fourn_charges            = $record["charges"]; // when getDolGlobalString('PRODUCT_CHARGES') is set
 						$this->fourn_tva_tx             = $record["tva_tx"];
 						$this->fourn_id                 = $record["fourn_id"];
 						$this->fourn_name               = $record["supplier_name"];
@@ -1335,6 +1341,8 @@ class ProductFournisseur extends Product
 			//$langs->load("mymodule@mymodule");
 			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status4';

@@ -90,6 +90,8 @@ class ExpenseReport extends CommonObject
 	public $fk_statut;
 
 	public $fk_c_paiement;
+	public $modepaymentid;
+
 	public $paid;
 
 	public $user_author_infos;
