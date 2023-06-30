@@ -1,0 +1,19 @@
+name: GitHub CI PHPCS and PHPCBF
+
+on: push
+
+jobs:
+  linter_name:
+    name: Run & fix PHP Code Sniffer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shalior/wordpress-phpcs-action@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          use_default_configuration_file: false
+          phpcs_standard: 'dev/setup/codesniffer/ruleset.xml'
+          phpcs_args: '-n' # ignore warnings
+      #- uses: stefanzweifel/git-auto-commit-action@v4 # auto commit the fixes action for GitHub
+      #  with:
+      #    commit_message: Fix PHPCS errors
