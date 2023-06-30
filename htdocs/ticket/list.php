@@ -84,9 +84,9 @@ $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->ticket->dir_output.'/temp/massgeneration/'.$user->id;
 if ($socid > 0) {
-	$hookmanager->initHooks(array('thirdpartyticket'));
+	$hookmanager->initHooks(array('thirdpartyticket', 'globalcard'));
 } elseif ($projectid > 0) {
-	$hookmanager->initHooks(array('projectticket'));
+	$hookmanager->initHooks(array('projectticket', 'globalcard'));
 } else {
 	$hookmanager->initHooks(array('ticketlist'));
 }
