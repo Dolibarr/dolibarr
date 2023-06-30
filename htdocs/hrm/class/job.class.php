@@ -116,6 +116,7 @@ class Job extends CommonObject
 	);
 	public $rowid;
 	public $ref;
+	public $label;
 	public $description;
 	public $date_creation;
 	public $tms;
@@ -844,6 +845,9 @@ class Job extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		return '';		// There is no status on job profile for the moment
+
+		/*
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
@@ -862,6 +866,7 @@ class Job extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		*/
 	}
 
 	/**

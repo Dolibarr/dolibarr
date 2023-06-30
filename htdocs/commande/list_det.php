@@ -200,7 +200,7 @@ $arrayfields = array(
 	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>100),
 	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
-	'c.fk_warehouse'=>array('label'=>'Warehouse', 'checked'=>0, 'enabled'=>(empty($conf->stock->enabled) && empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER) ? 0 : 1), 'position'=>110),
+	'c.fk_warehouse'=>array('label'=>'Warehouse', 'checked'=>0, 'enabled'=>(!isModEnabled('stock') && empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER) ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
 	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),

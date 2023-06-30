@@ -293,6 +293,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $import_regex_array;
 	public $import_examplevalues_array;
 	public $import_updatekeys_array;
+	public $import_run_sql_after_array;
 	public $import_TypeFields_array;
 	public $import_help_array;
 

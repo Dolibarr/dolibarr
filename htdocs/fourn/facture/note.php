@@ -53,9 +53,9 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $object = new FactureFournisseur($db);
 $object->fetch($id, $ref);
 
-$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+$usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 $permissiontoadd = $usercancreate;
-$permissionnote = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
+$permissionnote = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -71,7 +71,7 @@ if (empty($reshook)) {
 }
 
 // Set label
-if ($action == 'setlabel' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
+if ($action == 'setlabel' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 	$object->label = GETPOST('label');
 	$result = $object->update($user);
 	if ($result < 0) {
