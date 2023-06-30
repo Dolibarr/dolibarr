@@ -115,7 +115,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
-		$inj += preg_match('/update.+set.+=/i', $val);
+		$inj += preg_match('/update[^&=\w].*set.+=/i', $val);	// the [^&=\w] test is to avoid error when request is like action=update&...set... or &updatemodule=...set...
 		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
