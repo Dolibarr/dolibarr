@@ -46,6 +46,8 @@ jobs:
         if: github.event_name=='pull_request'
         id: files_changed_on_pr
         run: |
+          echo github.head_ref=${{github.head_ref}}
+          echo github.base_ref=${{github.base_ref}}
           git symbolic-ref refs/remotes/origin/HEAD origin/${{github.base_ref}}
           all_changed_files=$(git --no-pager diff --name-only origin/${{github.head_ref}} origin/${{github.base_ref}})
           echo "::set-output name=all_changed_files::$all_changed_files"
