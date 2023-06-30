@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: eldy/dolibarr-phpcs-action@master
+      - uses: eldy/phpcsfixer-action@master
         with:
           github_token: ${{ secrets.github_token }}
           use_default_configuration_file: false
