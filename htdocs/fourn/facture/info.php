@@ -49,7 +49,7 @@ $hookmanager->initHooks(array('invoicesuppliercardinfo'));
 
 $object = new FactureFournisseur($db);
 
-$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+$usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 $permissiontoadd = $usercancreate;
 
 

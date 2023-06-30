@@ -86,11 +86,11 @@ if ($id > 0 || !empty($ref)) {
 }
 
 if (empty($conf->reception->enabled)) {
-	$permissiontoreceive = $user->rights->fournisseur->commande->receptionner;
-	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->receptionner)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande_advance->check)));
+	$permissiontoreceive = $user->hasRight("fournisseur", "commande", "receptionner");
+	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "commande", "receptionner")) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "commande_advance", "check")));
 } else {
-	$permissiontoreceive = $user->rights->reception->creer;
-	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
+	$permissiontoreceive = $user->hasRight("reception", "creer");
+	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("reception", "creer")) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("reception", "reception_advance", "validate")));
 }
 
 // $id is id of a purchase order.
@@ -100,7 +100,7 @@ if (!isModEnabled('stock')) {
 	accessforbidden();
 }
 
-$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
