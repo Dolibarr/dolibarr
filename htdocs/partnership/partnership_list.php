@@ -72,9 +72,9 @@ $extrafields = new ExtraFields($db);
 $adherent = new Adherent($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
 if ($socid > 0) {
-	$hookmanager->initHooks(array('thirdpartypartnership'));
+	$hookmanager->initHooks(array('thirdpartypartnership', 'globalcard'));
 } elseif ($memberid > 0) {
-	$hookmanager->initHooks(array('memberpartnership'));
+	$hookmanager->initHooks(array('memberpartnership', 'globalcard'));
 } else {
 	$hookmanager->initHooks(array('partnershiplist')); // Note that conf->hooks_modules contains array
 }
