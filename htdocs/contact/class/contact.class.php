@@ -433,10 +433,10 @@ class Contact extends CommonObject
 	 *  Add a contact into database
 	 *
 	 *  @param      User	$user           Object user that create
-     *  @param      int     $call_trigger   0=no, 1=yes
+     *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
 	 *  @return     int      			    <0 if KO, >0 if OK
 	 */
-	public function create($user, $call_trigger = 1)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -514,7 +514,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error && $call_trigger) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CONTACT_CREATE', $user);
 				if ($result < 0) {
