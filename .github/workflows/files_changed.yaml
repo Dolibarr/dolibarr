@@ -30,11 +30,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # fetch all history of all branches
+          fetch-depth: 50 # fetch all history of all branches
 
       - name: Get files changed on push
-        # if push on dev or master or main then get diff between current and previous commit
-        if: github.event_name=='push' && contains(fromJson('["dev", "master","main"]'), github.ref_name)
+        # if push on develop or master or main then get diff between current and previous commit
+        if: github.event_name=='push' && contains(fromJson('["develop", "master", "main"]'), github.ref_name)
         id: files_changed_on_push
         run: |
           all_changed_files=$(git --no-pager diff --name-only HEAD^ HEAD)
