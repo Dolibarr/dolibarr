@@ -1,15 +1,29 @@
 name: GitHub CI PHPCS and PHPCBF
 
 on: push
+#on: 
+#  push:
+#    paths:
+#    - '**.php'
 
 jobs:
+  filesChanged:
+    uses: ./.github/workflows/files_changed.yaml
+    with:
+      folder_path: .*
+      
   linter_name:
     name: Run & fix PHP Code Sniffer
     runs-on: ubuntu-latest
+    needs: filesChanged
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 10
+      - name: echo all changed files
+        run: |
+          echo ${{ needs.filesChanged.outputs.all_changed_files }} 
+          echo boolean_output=${{ needs.filesChanged.outputs.boolean_output }} 
       - uses: eldy/phpcsfixer-action@master
         with:
           github_token: ${{ secrets.github_token }}
