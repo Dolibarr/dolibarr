@@ -198,6 +198,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 			return $this->prefix.$pos_source.'-'.$yymm.'-'.$num;
 		} else {
 			dol_print_error('', 'Bad parameter for getNextValue');
+			return -1;
 		}
 	}
 

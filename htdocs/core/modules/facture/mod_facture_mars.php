@@ -233,6 +233,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			return $prefix.$yymm."-".$num;
 		} else {
 			dol_print_error('', 'Bad parameter for getNextValue');
+			return -1;
 		}
 	}
 
