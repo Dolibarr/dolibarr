@@ -486,7 +486,7 @@ function getBrowserInfo($user_agent)
  */
 function dol_shutdown()
 {
-	global $conf, $user, $langs, $db;
+	global $user, $langs, $db;
 	$disconnectdone = false;
 	$depth = 0;
 	if (is_object($db) && !empty($db->connected)) {
