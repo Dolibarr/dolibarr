@@ -23,12 +23,18 @@ jobs:
       - name: echo Get list of all changed files
         run: |
           echo ${{ needs.filesChanged.outputs.all_changed_files }} 
-          echo boolean_output=${{ needs.filesChanged.outputs.boolean_output }} 
+          echo boolean_output=${{ needs.filesChanged.outputs.boolean_output }}
+          echo github.head_ref=${{github.head_ref}}
+          echo github.base_ref=${{github.base_ref}}
       - uses: eldy/phpcsfixer-action@master
         with:
           github_token: ${{ secrets.github_token }}
           use_default_configuration_file: false
           phpcs_standard: 'dev/setup/codesniffer/ruleset.xml'
+          phpcs_head_ref: ${{github.head_ref}}
+          phpcs_base_ref: ${{github.base_ref}}
+          phpcs_files: ${{ needs.filesChanged.outputs.all_changed_files }}
+          phpcs_args: '-n -s --extensions=php --colors --tab-width=4 --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .'
       #- uses: stefanzweifel/git-auto-commit-action@v4 # auto commit the fixes action for GitHub
       #  with:
       #    commit_message: Fix PHPCS errors
