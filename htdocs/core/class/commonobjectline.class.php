@@ -105,6 +105,8 @@ abstract class CommonObjectLine extends CommonObject
 	public $remise_percent;
 	public $info_bits;
 	public $special_code;
+	public $subprice;
+	public $tva_tx;
 
 
 
