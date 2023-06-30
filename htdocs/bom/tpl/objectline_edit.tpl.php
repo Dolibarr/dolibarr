@@ -150,7 +150,17 @@ if ($filtertype != 1) {
 } else {
 	$coldisplay++;
 	print '<td class="bordertop nobottom linecolqty right">';
-	$durationtouse=$line->qty * 3600;
+	$durationtouse=$line->qty;
+	if ($line->fk_product > 0) {
+		$prodDurationHours = $tmpproduct->getProductDurationHours();
+		if ($prodDurationHours < 0) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages(null, $tmpproduct->errors, 'errors');
+		}
+		$prodDurationSecond = $prodDurationHours*3600;
+		$durationtouse=$line->qty*$prodDurationSecond;
+	}
 	print $form->select_duration('timetospent_duration', $durationtouse, 0, 'text');
 	print '</td>';
 

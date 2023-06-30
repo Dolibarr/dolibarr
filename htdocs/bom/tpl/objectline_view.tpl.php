@@ -152,7 +152,17 @@ if ($filtertype != 1) {
 	// Duration
 	print '<td class="linecolqty nowrap right">';
 	$coldisplay++;
-	print convertSecondToTime($line->qty, 'allhourmin');
+	if ($line->fk_product > 0) {
+		$prodDurationHours = $tmpproduct->getProductDurationHours();
+		if ($prodDurationHours < 0) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages(null, $tmpproduct->errors, 'errors');
+		}
+		$prodDurationSecond = $prodDurationHours*3600;
+		print convertSecondToTime($line->qty*$prodDurationSecond, 'allhourmin');
+	}
+
 	print '</td>';
 
 	// Qty
