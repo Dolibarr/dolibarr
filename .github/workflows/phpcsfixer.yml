@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 10
-      - name: echo all changed files
+      - name: echo Get list of all changed files
         run: |
           echo ${{ needs.filesChanged.outputs.all_changed_files }} 
           echo boolean_output=${{ needs.filesChanged.outputs.boolean_output }} 
