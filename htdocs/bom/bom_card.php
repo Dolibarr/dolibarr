@@ -148,7 +148,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Add line
-	if ($action == 'addline' && $user->rights->bom->write) {
+	if ($action == 'addline' && $permissiontoadd) {
 		$langs->load('errors');
 		$error = 0;
 		$predef = '';
@@ -165,7 +165,28 @@ if (empty($reshook)) {
 			$idprod = (!empty(GETPOST('idprodservice', 'int')) ? GETPOST('idprodservice', 'int') : (int) GETPOST('idprod', 'int'));
 		}
 
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		if (GETPOSTISSET('timetospent_durationhour') || GETPOSTISSET('timetospent_durationmin')) {
+			$qtyMinutes = GETPOSTINT("timetospent_durationhour") * 60 * 60;
+			$qtyMinutes += (GETPOSTINT('timetospent_durationmin') ? GETPOSTINT('timetospent_durationmin') : 0) * 60;
+
+			$tmpproduct = new Product($db);
+			$result = $tmpproduct->fetch($idprod);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($tmpproduct->error, $tmpproduct->errors, 'errors');
+			}
+			$prodDurationHours = $tmpproduct->getProductDurationHours();
+			if ($prodDurationHours < 0) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages(null, $tmpproduct->errors, 'errors');
+			}
+			if (empty($prodDurationHours)) $prodDurationHours = 1;
+			if (empty($qtyMinutes)) $qtyMinutes = 1;
+			$qty = round($qtyMinutes / $prodDurationHours, 2);
+		} else {
+			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		}
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));

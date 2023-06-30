@@ -113,19 +113,19 @@ print '</td>';
 <?php
 */
 
-$coldisplay++;
-
-print '<td class="nobottom linecolqty right">';
-if (($line->info_bits & 2) != 2) {
-	// I comment this because it shows info even when not required
-	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
-	// must also not be output for most entities (proposal, intervention, ...)
-	//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
-}
-print '</td>';
 
 if ($filtertype != 1) {
+	$coldisplay++;
+	print '<td class="nobottom linecolqty right">';
+	if (($line->info_bits & 2) != 2) {
+		// I comment this because it shows info even when not required
+		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
+		// must also not be output for most entities (proposal, intervention, ...)
+		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
+		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
+	}
+	print '</td>';
+
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
@@ -149,9 +149,19 @@ if ($filtertype != 1) {
 	print '</td>';
 } else {
 	$coldisplay++;
+	print '<td class="bordertop nobottom linecolqty right">';
+	$durationtouse=$line->qty * 3600;
+	print $form->select_duration('timetospent_duration', $durationtouse, 0, 'text');
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="nobottom linecolqty right">';
+	print '</td>';
+
+	/*$coldisplay++;
 	print '<td class="nobottom nowrap linecolunit right">';
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
-	print '</td>';
+	print '</td>';*/
 
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolworkstation right">';

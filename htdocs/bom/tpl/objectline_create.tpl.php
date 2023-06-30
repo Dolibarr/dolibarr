@@ -70,9 +70,10 @@ if ($nolinesbefore) {
 	print '<td class="linecoldescription minwidth500imp">';
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
 	print '</td>';
-	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
 	if ($filtertype != 1) {
+		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
+
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
@@ -83,6 +84,12 @@ if ($nolinesbefore) {
 		print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
 		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
 	} else {
+		// Duration
+		print '<td class="linecolduration right">'.$form->textwithpicto($langs->trans('Duration'), '').'</td>';
+
+		// Qty
+		print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), '').'</td>';
+
 		print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
 		if (isModEnabled('workstation')) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
 		print '<td class="linecoltotalcost right">' .  $form->textwithpicto($langs->trans('TotalCost'), '') . '</td>';
@@ -141,11 +148,11 @@ if (is_object($objectline)) {
 print '</td>';
 
 
-$coldisplay++;
-print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
-print '</td>';
-
 if ($filtertype != 1) {
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
+	print '</td>';
+
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
@@ -172,11 +179,12 @@ if ($filtertype != 1) {
 	print '</td>';
 } else {
 	$coldisplay++;
-	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-	$cUnit = new CUnits($this->db);
-	$fk_unit_default = $cUnit->getUnitFromCode('h', 'short_label', 'time');
-	print '<td class="bordertop nobottom nowrap linecolunit right">';
-	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
+	print '<td class="bordertop nobottom linecolqty right">';
+	$durationtouse=(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 0);
+	if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin')) {
+			$durationtouse = ((int) GETPOST('timespent_durationhour') * 3600 + (int) GETPOST('timespent_durationmin') * 60);
+	}
+	print $form->select_duration('timetospent_duration', $durationtouse, 0, 'text');
 	print '</td>';
 
 	$coldisplay++;
