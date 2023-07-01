@@ -224,7 +224,7 @@ if ($elemid && $action == 'addintocategory' &&
 	}
 	$result = $newobject->fetch($elemid);
 
-	// Add into categ
+	// Add into category
 	$result = $object->add_type($newobject, $elementtype);
 	if ($result >= 0) {
 		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
@@ -355,7 +355,7 @@ print '<div class="fichecenter">';
 print load_fiche_titre($langs->trans("SubCats"), $newcardbutton, 'object_category');
 
 
-print '<table class="liste nohover" width="100%">';
+print '<table class="liste nohover centpercent borderbottom">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("SubCats").'</td>';
@@ -465,7 +465,7 @@ if ($cats < 0) {
 
 		print '<tr class="nobordernopadding">';
 		print '<td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-		print '<td class="valignmiddle">'.$langs->trans("NoCategoryYet").'</td>';
+		print '<td class="valignmiddle"><span class="opacitymedium">'.$langs->trans("NoCategoryYet").'</span></td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 
@@ -499,7 +499,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 		if ($prods < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
-			// Form to add record into a category
+			// Form to add record into the category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
 				print '<br>';
@@ -512,7 +512,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddProductServiceIntoCategory").' &nbsp;';
-				$form->select_produits('', 'elemid', '', 0, 0, -1, 2, '', 1);
+				$form->select_produits('', 'elemid', '', 0, 0, -1, 2, '', 1, array(), 0, 1, 0, '', 0, '', null);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
@@ -527,8 +527,11 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			print '<input type="hidden" name="action" value="list">';
 
 			print '<br>';
-			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = '';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($prods);
+			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddProduct"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&categories[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+
 			print_barre_liste($langs->trans("ProductsAndServices"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
 
 
@@ -560,7 +563,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -610,8 +613,11 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			print '<input type="hidden" name="action" value="list">';
 
 			print '<br>';
-			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = '';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($socs);
+			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&client=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+
 			print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpercent">'."\n";
@@ -626,7 +632,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 					}
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
+					print '<td class="nowrap tdtop">';
 					print $soc->getNomUrl(1);
 					print "</td>\n";
 					// Link to delete from category
@@ -641,7 +647,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -691,8 +697,11 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			print '<input type="hidden" name="action" value="list">';
 
 			print '<br>';
-			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = '';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($socs);
+			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddSupplier"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&fournisseur=1&suppcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+
 			print_barre_liste($langs->trans("Suppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpercent">'."\n";
@@ -707,7 +716,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 					}
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
+					print '<td class="nowrap tdtop">';
 					print $soc->getNomUrl(1);
 					print "</td>\n";
 					// Link to delete from category
@@ -723,7 +732,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -774,11 +783,14 @@ if ($type == Categorie::TYPE_MEMBER) {
 			print '<input type="hidden" name="action" value="list">';
 
 			print '<br>';
-			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = '';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($prods);
+			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddMember"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create&memcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('adherent', 'creer'));
+
 			print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
-			print "<table class='noborder' width='100%'>\n";
+			print '<table class="noborder centpecent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Name").'</td></tr>'."\n";
 
 			if (count($prods) > 0) {
@@ -790,7 +802,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 					}
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
+					print '<td class="nowrap tdtop">';
 					$member->ref = $member->login;
 					print $member->getNomUrl(1, 0);
 					print "</td>\n";
@@ -804,10 +816,11 @@ if ($type == Categorie::TYPE_MEMBER) {
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
+					print '</td>';
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -859,8 +872,10 @@ if ($type == Categorie::TYPE_CONTACT) {
 			$num = count($contacts);
 			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddContact"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create&contcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
-			$objsoc = new Societe($db);
+
 			print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contact', 0, $newcardbutton, '', $limit);
+
+			$objsoc = new Societe($db);
 
 			print '<table class="noborder centpercent">'."\n";
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Ref").'</td></tr>'."\n";
@@ -874,7 +889,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 					}
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
+					print '<td class="nowrap tdtop">';
 					print $contact->getNomUrl(1, 'category');
 					if ($contact->socid > 0) {
 						$objsoc->fetch($contact->socid);
@@ -894,7 +909,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -945,10 +960,14 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			print '<input type="hidden" name="action" value="list">';
 
 			print '<br>';
-			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($accounts); $nbtotalofrecords = ''; $newcardbutton = '';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($accounts);
+			$nbtotalofrecords = '';
+			$newcardbutton = '';
+
 			print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
-			print "<table class='noborder' width='100%'>\n";
+			print '<table class="noborder centpecent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($accounts) > 0) {
@@ -960,7 +979,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 					}
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
+					print '<td class="nowrap tdtop">';
 					print $account->getNomUrl(1, 0);
 					print "</td>\n";
 					print '<td class="tdtop">'.$account->bank."</td>\n";
@@ -973,10 +992,11 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
+					print '</td>';
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -1027,11 +1047,14 @@ if ($type == Categorie::TYPE_PROJECT) {
 			print '<input type="hidden" name="action" value="list">';
 
 			print '<br>';
-			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($objects);
+			$nbtotalofrecords = '';
+			$newcardbutton = '';
 
 			print_barre_liste($langs->trans("Project"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
 
-			print "<table class='noborder' width='100%'>\n";
+			print '<table class="noborder centpecent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($objects) > 0) {
@@ -1043,7 +1066,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 					}
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
+					print '<td class="nowrap tdtop">';
 					print $project->getNomUrl(1);
 					print "</td>\n";
 					print '<td class="tdtop">'.$project->ref."</td>\n";
@@ -1056,10 +1079,11 @@ if ($type == Categorie::TYPE_PROJECT) {
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
+					print '</td>';
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -1093,7 +1117,8 @@ if ($type == Categorie::TYPE_USER) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddObjectIntoCategory").' &nbsp;';
-				print $form->select_dolusers('', 'elemid');
+				$force_entity = getEntity($object->element);	// So we will get same filter than the getObjectsInCateg()
+				print $form->select_dolusers('', 'elemid', 0, null, 0, '', '', $force_entity);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
@@ -1110,33 +1135,36 @@ if ($type == Categorie::TYPE_USER) {
 
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 			$num = count($users);
+			$nbtotalofrecords = '';
+			$newcardbutton = '';
 
-			print_barre_liste($langs->trans("Users"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, '', 'user', 0, '', '', $limit);
+			print_barre_liste($langs->trans("Users"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'user', 0, '', '', $limit);
 
-			print "<table class='noborder' width='100%'>\n";
-			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Users").' <span class="badge">'.$num.'</span></td></tr>'."\n";
+			print '<table class="noborder centpecent">'."\n";
+			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Users").' <span class="badge">'.$num.'</span></td></tr>'."\n";
 
 			if (count($users) > 0) {
 				// Use "$userentry" here, because "$user" is the current user
 				foreach ($users as $key => $userentry) {
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
-					print $userentry->getNomUrl(1);
+					print '<td class="nowrap tdtop">';
+					print $userentry->getNomUrl(-1);
 					print "</td>\n";
 					print '<td class="tdtop">'.$userentry->job."</td>\n";
 
 					// Link to delete from category
 					print '<td class="right">';
 					if ($user->hasRight('user', 'user', 'creer')) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$type."&action=unlink&token=".newToken()."&removeelem=".$userentry->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$userentry->id."'>";
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
+					print '</td>';
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="3"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -1168,11 +1196,14 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			print '<input type="hidden" name="action" value="list">';
 
 			print '<br>';
-			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($objects);
+			$nbtotalofrecords = '';
+			$newcardbutton = '';
 
 			print_barre_liste($langs->trans("Warehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, $newcardbutton, '', $limit);
 
-			print "<table class='noborder' width='100%'>\n";
+			print '<table class="noborder centpecent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($objects) > 0) {
@@ -1184,7 +1215,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 					}
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
+					print '<td class="nowrap tdtop">';
 					print $project->getNomUrl(1);
 					print "</td>\n";
 					print '<td class="tdtop">'.$project->ref."</td>\n";
@@ -1197,10 +1228,11 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
 					}
+					print '</td>';
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 
@@ -1249,7 +1281,11 @@ if ($type == Categorie::TYPE_TICKET) {
 			print '<input type="hidden" name="action" value="list">';
 
 			print '<br>';
-			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($tickets); $nbtotalofrecords = ''; $newcardbutton = '';
+			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+			$num = count($tickets);
+			$nbtotalofrecords = '';
+			$newcardbutton = '';
+
 			print_barre_liste($langs->trans("Ticket"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'ticket', 0, $newcardbutton, '', $limit);
 
 
@@ -1263,7 +1299,7 @@ if ($type == Categorie::TYPE_TICKET) {
 					if ($i > $limit) break;
 
 					print "\t".'<tr class="oddeven">'."\n";
-					print '<td class="nowrap" valign="top">';
+					print '<td class="nowrap tdtop">';
 					print $ticket->getNomUrl(1);
 					print "</td>\n";
 					print '<td class="tdtop">'.$ticket->label."</td>\n";
@@ -1279,7 +1315,7 @@ if ($type == Categorie::TYPE_TICKET) {
 					print "</tr>\n";
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
 

@@ -1985,11 +1985,11 @@ class Form
 	 * @param string 		$selected 		User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
 	 * @param string 		$htmlname 		Field name in form
 	 * @param int|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
-	 * @param array 		$exclude 		Array list of users id to exclude
+	 * @param array|null	$exclude 		Array list of users id to exclude
 	 * @param int 			$disabled 		If select list must be disabled
 	 * @param array|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param array|string	$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
-	 * @param string 		$force_entity 	'0' or Ids of environment to force
+	 * @param string 		$force_entity 	'0' or list of Ids of environment to force separated by a coma
 	 * @param int 			$maxlength 		Maximum length of string into list (0=no limit)
 	 * @param int 			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 		$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
@@ -2023,11 +2023,11 @@ class Form
 		$excludeUsers = null;
 		$includeUsers = null;
 
-		// Permettre l'exclusion d'utilisateurs
+		// Exclude some users
 		if (is_array($exclude)) {
 			$excludeUsers = implode(",", $exclude);
 		}
-		// Permettre l'inclusion d'utilisateurs
+		// Include some uses
 		if (is_array($include)) {
 			$includeUsers = implode(",", $include);
 		} elseif ($include == 'hierarchy') {
@@ -2059,9 +2059,9 @@ class Form
 			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " LEFT JOIN " . $this->db->prefix() . "usergroup_user as ug";
 				$sql .= " ON ug.fk_user = u.rowid";
-				$sql .= " WHERE ug.entity = " . $conf->entity;
+				$sql .= " WHERE ug.entity = " . (int) $conf->entity;
 			} else {
-				$sql .= " WHERE u.entity IN (0, " . $conf->entity . ")";
+				$sql .= " WHERE u.entity IN (0, " . ((int) $conf->entity) . ")";
 			}
 		}
 		if (!empty($user->socid)) {
