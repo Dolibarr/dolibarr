@@ -873,7 +873,7 @@ class Societe extends CommonObject
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
 	 *
 	 *    @param	User	$user           Object of user that ask creation
-     *    @param    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *    @param    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
 	 *    @return   int         		    >=0 if OK, <0 if KO
 	 */
 	public function create(User $user, $notrigger = 0)
@@ -1056,7 +1056,7 @@ class Societe extends CommonObject
 	 * @param 	User	$user		    Object user
 	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to recieve mailling
 	 * @param 	array	$tags		    Array of tag to affect to contact
-     * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
 	 * @return 	int					    <0 if KO, >0 if OK
 	 */
 	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
