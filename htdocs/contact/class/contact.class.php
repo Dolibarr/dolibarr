@@ -433,12 +433,12 @@ class Contact extends CommonObject
 	 *  Add a contact into database
 	 *
 	 *  @param      User	$user           Object user that create
-     *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
 	 *  @return     int      			    <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 		$now = dol_now();
