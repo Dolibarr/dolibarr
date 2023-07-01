@@ -249,7 +249,7 @@ if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $li
 	}
 }
 
-if (isModEnabled('accounting') && $line->fk_accounting_account > 0) {
+if (isModEnabled('accounting') && !empty($line->fk_accounting_account) && $line->fk_accounting_account > 0) {
 	$accountingaccount = new AccountingAccount($this->db);
 	$accountingaccount->fetch($line->fk_accounting_account);
 	print '<div class="clearboth"></div><br><span class="opacitymedium">'.$langs->trans('AccountingAffectation').' : </span>'.$accountingaccount->getNomUrl(0, 1, 1);

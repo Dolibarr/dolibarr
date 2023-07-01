@@ -1259,7 +1259,6 @@ class SupplierProposal extends CommonObject
 				$this->note_public          = $obj->note_public;
 				$this->statut               = (int) $obj->fk_statut;
 				$this->status               = (int) $obj->fk_statut;
-				$this->statut_libelle       = $obj->statut_label;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date

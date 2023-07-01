@@ -45,6 +45,12 @@
 abstract class CommonObject
 {
 	const TRIGGER_PREFIX = ''; // to be overriden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+
+	/**
+	 * @var string ID of module.
+	 */
+	public $module;
+
 	/**
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */

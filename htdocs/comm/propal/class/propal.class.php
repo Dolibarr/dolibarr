@@ -1641,7 +1641,6 @@ class Propal extends CommonObject
 
 				$this->status               = (int) $obj->fk_statut;
 				$this->statut               = $this->status; // deprecated
-				$this->statut_libelle       = $obj->statut_label;
 
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
