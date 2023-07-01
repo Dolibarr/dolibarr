@@ -56,8 +56,6 @@ class AdherentStats extends Stats
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
 	{
-		global $conf;
-
 		$this->db = $db;
 		$this->socid = $socid;
 		$this->userid = $userid;
