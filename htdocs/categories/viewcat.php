@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
@@ -1116,9 +1114,9 @@ if ($type == Categorie::TYPE_USER) {
 				print '<input type="hidden" name="action" value="addintocategory">';
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-				print $langs->trans("AddObjectIntoCategory").' &nbsp;';
 				$force_entity = getEntity($object->element);	// So we will get same filter than the getObjectsInCateg()
-				print $form->select_dolusers('', 'elemid', 0, null, 0, '', '', $force_entity);
+				print img_picto('', $type, 'class="pictofixedwidth"');
+				print $form->select_dolusers('', 'elemid', 1, null, 0, '', '', $force_entity);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
