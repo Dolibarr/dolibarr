@@ -34,4 +34,4 @@
 
 
 - V19
-ALTER TABLE llx_ticket_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
+ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
