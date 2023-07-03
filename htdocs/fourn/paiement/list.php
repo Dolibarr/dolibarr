@@ -390,7 +390,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 // Filter: Payment type
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_types_paiements($search_payment_type, 'search_payment_type', '', 2, 1, 1, 0, 1, '', 0, 'list');
+	$form->select_types_paiements($search_payment_type, 'search_payment_type', '', 2, 1, 1);
 	print '</td>';
 }
 
