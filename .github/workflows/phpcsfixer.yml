@@ -39,6 +39,6 @@ jobs:
           phpcs_ref_name: ${{github.ref_name}}
           phpcs_github_event_name: ${{github.event_name}}
           phpcs_files: ${{ needs.filesChanged.outputs.all_changed_files }}
-      #- uses: stefanzweifel/git-auto-commit-action@v4 # auto commit the fixes action for GitHub
-      #  with:
-      #    commit_message: Fix PHPCS errors
+      - uses: stefanzweifel/git-auto-commit-action@v4 # auto commit the fixes action for GitHub
+        with:
+          commit_message: Fix PHPCS errors by GitHub PHPCSfixer action

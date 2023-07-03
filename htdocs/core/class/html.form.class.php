@@ -4218,7 +4218,7 @@ class Form
 
 	/**
 	 *    print list of payment modes.
-	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can be used to set default value but scope is all application, probably not what you want.
 	 *    See instead to force the default value by the caller.
 	 *
 	 * @param int $selected Id of payment term to preselect by default
@@ -4242,7 +4242,7 @@ class Form
 
 	/**
 	 *    Return list of payment modes.
-	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can be used to set default value but scope is all application, probably not what you want.
 	 *    See instead to force the default value by the caller.
 	 *
 	 * @param int $selected Id of payment term to preselect by default
