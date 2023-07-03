@@ -104,7 +104,7 @@ class tcpdi_parser {
 	 * XREF data.
 	 * @protected
 	 */
-	public $xref = array();
+	protected $xref = array();
 
 	/**
 	 * Object streams.
@@ -147,7 +147,7 @@ class tcpdi_parser {
      *
      * @private array
      */
-    public $pages;
+    private $pages;
 
     /**
      * Page count
