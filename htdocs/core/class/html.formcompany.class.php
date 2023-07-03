@@ -1159,16 +1159,22 @@ class FormCompany extends Form
 		} elseif ($mode === "js") {
 			print '<script>
 				jQuery(document).ready(function() {
+					var prospectstatic = '.json_encode($prospectstatic->cacheprospectstatus) .';
 					$(".selectprospectstatus").on("change", function() {
 						console.log("We change a value into a field selectprospectstatus");
 						var statusid = $(this).val();
 						var prospectid = $(this).attr("data-socid");
+						var image = $(this).prev("img");
 						$.ajax({
 							type: "POST",
 							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
-							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\'},
+							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\', prospectstatic: prospectstatic},
 							success: function(response) {
-						}
+								image.replaceWith(response);
+							},
+							error: function() {
+								console.error("Error on status prospect");
+							},
 					});
 				});
 			});
