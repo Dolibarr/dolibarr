@@ -1139,7 +1139,7 @@ class FormCompany extends Form
 			$actionpicto = empty($prospectstatic->cacheprospectstatus[$statusprospect]['picto']) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['picto'];
 
 			//print $prospectstatic->LibProspCommStatut($statusprospect, 2, $prospectstatic->cacheprospectstatus[$statusprospect]['label'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto']);
-			print img_action('', $actioncode, $actionpicto, 'class="inline-block valignmiddle paddingright"');
+			print img_action('', $actioncode, $actionpicto, 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
 			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'">';
 			foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
 				$titlealt = (empty($val['label']) ? 'default' : $val['label']);
@@ -1163,7 +1163,7 @@ class FormCompany extends Form
 						console.log("We change a value into a field selectprospectstatus");
 						var statusid = $(this).val();
 						var prospectid = $(this).attr("data-socid");
-						var image = $(this).prev("img");
+						var image = $(this).prev(".pictoprospectstatus");
 						$.ajax({
 							type: "POST",
 							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',

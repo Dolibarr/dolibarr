@@ -76,7 +76,7 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 		dol_print_error($db);
 	} else {
 		$num = $db->affected_rows($resql);
-		$response = img_action('', $prospectstatic->cacheprospectstatus[$idstatus]['code'], $prospectstatic->cacheprospectstatus[$idstatus]['picto'], 'class="inline-block valignmiddle paddingright"');
+		$response = img_action('', $prospectstatic->cacheprospectstatus[$idstatus]['code'], $prospectstatic->cacheprospectstatus[$idstatus]['picto'], 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
 	}
 
 	echo json_encode(array('img' => $response));
