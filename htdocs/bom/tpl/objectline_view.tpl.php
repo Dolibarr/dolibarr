@@ -150,7 +150,7 @@ if ($filtertype != 1) {
 	print '</td>';
 } else {
 	// Duration
-	print '<td class="linecolqty nowrap right">';
+	print '<td class="linecolduration nowrap right">';
 	$coldisplay++;
 	if ($line->fk_product > 0) {
 		$prodDurationHours = $tmpproduct->getProductDurationHours();
@@ -166,7 +166,7 @@ if ($filtertype != 1) {
 	print '</td>';
 
 	// Qty
-	print '<td class="linecolduration nowrap right">';
+	print '<td class="linecolqty nowrap right">';
 	$coldisplay++;
 	echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 	print '</td>';
