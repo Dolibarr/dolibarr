@@ -447,7 +447,6 @@ class Fiscalyear extends CommonObject
 			}
 		}
 		return "";
-
 	}
 
 	/**
