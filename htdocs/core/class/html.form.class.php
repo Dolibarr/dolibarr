@@ -4252,10 +4252,9 @@ class Form
 	 * @param string $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                0 : use default deposit percentage from entry
 	 *                                > 0 : force deposit percentage (for example, from company object)
-	 * @param string $mode card or list
 	 * @return    string                        String for the HTML select component
 	 */
-	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1, $mode = 'card')
+	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
 		global $langs, $user, $conf;
 
@@ -4265,7 +4264,8 @@ class Form
 		$this->load_cache_conditions_paiements();
 
 		// Set default value if not already set by caller only for cards
-		if (empty($selected) && $mode == 'card' && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) {
+		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) {
+			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 		}
 
@@ -4346,10 +4346,9 @@ class Form
 	 * @param int $active Active or not, -1 = all
 	 * @param string $morecss Add more CSS on select tag
 	 * @param int $nooutput 1=Return string, do not send to output
-	 * @param string $mode card or list
 	 * @return    string|void                String for the HTML select component
 	 */
-	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0, $mode = 'card')
+	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $user, $conf;
@@ -4370,7 +4369,8 @@ class Form
 		$this->load_cache_types_paiements();
 
 		// Set default value if not already set by caller
-		if (empty($selected) && $mode == 'card' && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) {
+		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) {
+			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
 		}
 
