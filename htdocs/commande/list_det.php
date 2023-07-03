@@ -1052,7 +1052,7 @@ if ($resql) {
 	// Payment mode
 	if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1, '', 0, 'list');
+		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1);
 		print '</td>';
 	}
 	// Channel

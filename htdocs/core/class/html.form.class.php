@@ -4263,7 +4263,7 @@ class Form
 
 		$this->load_cache_conditions_paiements();
 
-		// Set default value if not already set by caller only for cards
+		// Set default value if not already set by caller
 		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;

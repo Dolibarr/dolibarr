@@ -1324,7 +1324,7 @@ if ($resql) {
 	// Payment mode
 	if (!empty($arrayfields['p.fk_mode_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		print $form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1, '', 1, 'list');
+		print $form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1, '', 1);
 		print '</td>';
 	}
 	if (!empty($arrayfields['p.total_ht']['checked'])) {

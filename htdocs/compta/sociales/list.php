@@ -519,7 +519,7 @@ if (!empty($arrayfields['cs.fk_user']['checked'])) {
 // Filter: Type
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150', 1, 'list');
+	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150', 1);
 	print '</td>';
 }
 

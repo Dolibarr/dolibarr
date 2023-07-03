@@ -627,13 +627,13 @@ if (!empty($arrayfields['f.total_ttc']['checked'])) {
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	// Payment term
 	print '<td class="liste_titre right">';
-	print $form->getSelectConditionsPaiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100', -1, 'list');
+	print $form->getSelectConditionsPaiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
 	print "</td>";
 }
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 	// Payment mode
 	print '<td class="liste_titre right">';
-	print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100', 1, 'list');
+	print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['recurring']['checked'])) {
