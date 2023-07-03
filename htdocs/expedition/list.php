@@ -884,6 +884,7 @@ print "</tr>\n";
 
 $typenArray = $formcompany->typent_array(1);
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
@@ -902,7 +903,7 @@ while ($i < min($num, $limit)) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		$object->date_delivery = $obj->delivery_date;
@@ -1023,6 +1024,9 @@ while ($i < min($num, $limit)) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 			// Get code using getLabelFromKey
@@ -1030,6 +1034,9 @@ while ($i < min($num, $limit)) {
 			print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
 			if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Tracking number
 		if (!empty($arrayfields['e.tracking_number']['checked'])) {

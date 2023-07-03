@@ -206,10 +206,11 @@ class AdherentStats extends Stats
 		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
+		$MembersCountArray = array();
+
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			$MembersCountArray = [];
 			$totalstatus = array(
 				'label' => 'Total',
 				'members_draft' => 0,
@@ -244,6 +245,7 @@ class AdherentStats extends Stats
 			$MembersCountArray['total'] = $totalstatus;
 			$MembersCountArray['total']['all'] = array_sum($totalstatus);
 		}
+
 		return $MembersCountArray;
 	}
 

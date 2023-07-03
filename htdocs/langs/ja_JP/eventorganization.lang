@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = 出席者を作成/追加するフォ�
 #
 # Object
 #
+OrganizedEvent=主催イベント
 EventOrganizationConfOrBooth= 会議またはブース
 EventOrganizationConfOrBoothes=会議またはブース
 ManageOrganizeEvent = イベントの構成を管理する
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=サードパーティ（顧客、サプライ�
 OrganizationEvenLabelName=会議またはブースの公開名
 
 NewSuggestionOfBooth=ブース申請
-NewSuggestionOfConference=会議申請
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page

@@ -117,6 +117,7 @@ class Workstation extends CommonObject
 	public $rowid;
 	public $ref;
 	public $label;
+	public $type;	// HUMAN, MACHINE, ...
 
 	public $date_creation;
 	public $tms;

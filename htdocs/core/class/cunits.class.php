@@ -53,6 +53,7 @@ class CUnits // extends CommonObject
 
 	public $code;
 	public $label;
+	public $sortorder;
 	public $short_label;
 	public $unit_type;
 	public $scale;
@@ -289,6 +290,7 @@ class CUnits // extends CommonObject
 					$record->unit_type = $obj->unit_type;
 					$record->scale = $obj->scale;
 					$record->active = $obj->active;
+
 					$this->records[$record->id] = $record;
 				}
 			}

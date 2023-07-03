@@ -46,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -362,52 +364,61 @@ if (empty($reshook)) {
 
 				$description = trim(GETPOST('description', 'restricthtml'));
 
-				// If no start date
-				if (!GETPOST('date_debut_')) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatedebut');
-					exit;
-				}
-
 				// If no end date
 				if (!GETPOST('date_fin_')) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatefin');
-					exit;
+					setEventMessages($langs->trans('NoDateFin'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If start date after end date
 				if ($date_debut > $date_fin) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=datefin');
-					exit;
+					setEventMessages($langs->trans('ErrorEndDateCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If no validator designated
 				if ($approverid < 1) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=Valideur');
-					exit;
+					setEventMessages($langs->trans('InvalidValidatorCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If there is no Business Days within request
 				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 				if ($nbopenedday < 0.5) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=DureeHoliday');
-					exit;
+					setEventMessages($langs->trans('ErrorDureeCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
-				$object->description = $description;
-				$object->date_debut = $date_debut;
-				$object->date_fin = $date_fin;
-				$object->fk_validator = $approverid;
-				$object->halfday = $halfday;
+				$db->begin();
 
-				// Update
-				$verif = $object->update($user);
+				if (!$error) {
+					$object->description = $description;
+					$object->date_debut = $date_debut;
+					$object->date_fin = $date_fin;
+					$object->fk_validator = $approverid;
+					$object->halfday = $halfday;
 
-				if ($verif <= 0) {
-					setEventMessages($object->error, $object->errors, 'warnings');
-					$action = 'edit';
-				} else {
+					// Update
+					$verif = $object->update($user);
+
+					if ($verif <= 0) {
+						setEventMessages($object->error, $object->errors, 'warnings');
+						$error++;
+						$action = 'edit';
+					}
+				}
+
+				if (!$error) {
+					$db->commit();
+
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 					exit;
+				} else {
+					$db->rollback();
 				}
 			} else {
 				setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
@@ -1090,8 +1101,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
 		print '</td>';
 		print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');
-		// Si la demande ne vient pas de l'agenda
-		if (!GETPOST('date_debut_')) {
+		if (!GETPOST('date_debut_')) {	// If visitor does not come from agenda
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
 		} else {
 			$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
@@ -1167,13 +1177,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '</from>'."\n";
 	}
 } else {
-	if ($error) {
+	if ($error && $action != 'edit') {
 		print '<div class="tabBar">';
 		print $error;
 		print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
 		print '</div>';
 	} else {
-		// Affichage de la fiche d'une demande de congés payés
+		// Show page in view or edit mode
 		if (($id > 0) || $ref) {
 			$result = $object->fetch($id, $ref);
 
@@ -1285,7 +1295,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
 					print '</td>';
 					print '<td>';
-					print $form->selectDate($object->date_debut, 'date_debut_');
+					$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
+					print $form->selectDate($tmpdate ? $tmpdate : $object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
 					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ?GETPOST('starthalfday') : $starthalfday));
 					print '</td>';
