@@ -401,7 +401,7 @@ class Skill extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return array         <0 if KO, array of skill level found
+	 * @return array|int        <0 if KO, array of skill level found
 	 */
 	public function fetchLines()
 	{
@@ -417,7 +417,7 @@ class Skill extends CommonObject
 			$this->error = $skilldet->error;
 			return $this->lines;
 		}
-		return [];
+		return -1;
 	}
 
 

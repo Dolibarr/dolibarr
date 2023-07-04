@@ -74,15 +74,15 @@ class FormContract
 		// Search all contacts
 		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut,";
 		$sql .= " c.ref_customer, c.ref_supplier";
-		$sql .= " FROM ".$this->db->prefix()."contrat as c";
-		$sql .= " WHERE c.entity = ".$conf->entity;
+		$sql .= " FROM " . $this->db->prefix() . "contrat as c";
+		$sql .= " WHERE c.entity = " . $conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$this->db->sanitize($contratListId).")";
 		if ($socid > 0) {
 			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 			if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
-				$sql .= " AND (c.fk_soc=".((int) $socid)." OR c.fk_soc IS NULL)";
+				$sql .= " AND (c.fk_soc=" . ((int) $socid) . " OR c.fk_soc IS NULL)";
 			} elseif ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {
-				$sql .= " AND (c.fk_soc IN (".$this->db->sanitize(((int) $socid).",".((int) $conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)).")";
+				$sql .= " AND (c.fk_soc IN (" . $this->db->sanitize(((int) $socid) . "," . ((int) $conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) . ")";
 				$sql .= " OR c.fk_soc IS NULL)";
 			}
 		}
@@ -91,10 +91,10 @@ class FormContract
 		}
 		$sql .= " ORDER BY c.ref ";
 
-		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::select_contract", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			print '<select class="flat" name="'.$htmlname.'">';
+			print '<select class="flat" name="' . $htmlname . '">';
 			if ($showempty) {
 				print '<option value="0">&nbsp;</option>';
 			}
@@ -111,38 +111,38 @@ class FormContract
 
 						if ($showRef) {
 							if ($obj->ref_customer) {
-								$labeltoshow = $labeltoshow." - ".$obj->ref_customer;
+								$labeltoshow = $labeltoshow . " - " . $obj->ref_customer;
 							}
 							if ($obj->ref_supplier) {
-								$labeltoshow = $labeltoshow." - ".$obj->ref_supplier;
+								$labeltoshow = $labeltoshow . " - " . $obj->ref_supplier;
 							}
 						}
 
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0) {
-							print '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
+							print '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
 						} else {
 							$disabled = 0;
 							if ($obj->statut == 0) {
 								$disabled = 1;
-								$labeltoshow .= ' ('.$langs->trans("Draft").')';
+								$labeltoshow .= ' (' . $langs->trans("Draft") . ')';
 							}
 							if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) && $socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
 								$disabled = 1;
-								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
+								$labeltoshow .= ' - ' . $langs->trans("LinkedToAnotherCompany");
 							}
 
 							if ($hideunselectables && $disabled) {
 								$resultat = '';
 							} else {
-								$resultat = '<option value="'.$obj->rowid.'"';
+								$resultat = '<option value="' . $obj->rowid . '"';
 								if ($disabled) {
 									$resultat .= ' disabled';
 								}
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
-								$resultat .= '>'.$labeltoshow;
+								$resultat .= '>' . $labeltoshow;
 								$resultat .= '</option>';
 							}
 							print $resultat;
@@ -156,7 +156,7 @@ class FormContract
 
 			if (!empty($conf->use_javascript_ajax)) {
 				// Make select dynamic
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				print ajax_combobox($htmlname);
 			}
 
@@ -182,14 +182,14 @@ class FormContract
 	public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0)
 	{
 		global $langs;
-
+		$result = $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef);
 		print "\n";
-		print '<form method="post" action="'.$page.'">';
+		print '<form method="post" action="' . $page . '">';
 		print '<input type="hidden" name="action" value="setcontract">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="hidden" name="token" value="' . newToken() . '">';
+		print $result;
+		print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 		print '</form>';
-		return $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef);
-
+		return $result;
 	}
 }
