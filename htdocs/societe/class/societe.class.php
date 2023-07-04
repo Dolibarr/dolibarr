@@ -38,11 +38,11 @@
  *	\ingroup    societe
  *	\brief      File for third party class
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonincoterm.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonsocialnetworks.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonpeople.class.php';
+require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 
 
 /**
@@ -189,89 +189,89 @@ class Societe extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'parent' =>array('type'=>'integer', 'label'=>'Parent', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'nom' =>array('type'=>'varchar(128)', 'label'=>'Nom', 'enabled'=>1, 'visible'=>-1, 'position'=>35, 'showoncombobox'=>1),
-		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>2),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
-		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>45),
-		'code_client' =>array('type'=>'varchar(24)', 'label'=>'CustomerCode', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'code_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'SupplierCode', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'CustomerAccountancyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'code_compta_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'SupplierAccountancyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
-		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'fk_departement' =>array('type'=>'integer', 'label'=>'State', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'fk_pays' =>array('type'=>'integer:Ccountry:core/class/ccountry.class.php', 'label'=>'Country', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
-		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-		'fax' =>array('type'=>'varchar(20)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'email' =>array('type'=>'varchar(128)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
-		'fk_effectif' =>array('type'=>'integer', 'label'=>'Workforce', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-		'fk_typent' =>array('type'=>'integer', 'label'=>'TypeOfCompany', 'enabled'=>1, 'visible'=>-1, 'position'=>175, 'csslist'=>'minwidth200'),
-		'fk_forme_juridique' =>array('type'=>'integer', 'label'=>'JuridicalStatus', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
-		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
-		'siren' =>array('type'=>'varchar(128)', 'label'=>'Idprof1', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
-		'siret' =>array('type'=>'varchar(128)', 'label'=>'Idprof2', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'ape' =>array('type'=>'varchar(128)', 'label'=>'Idprof3', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
-		'idprof4' =>array('type'=>'varchar(128)', 'label'=>'Idprof4', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
-		'idprof5' =>array('type'=>'varchar(128)', 'label'=>'Idprof5', 'enabled'=>1, 'visible'=>-1, 'position'=>206),
-		'idprof6' =>array('type'=>'varchar(128)', 'label'=>'Idprof6', 'enabled'=>1, 'visible'=>-1, 'position'=>207),
-		'tva_intra' =>array('type'=>'varchar(20)', 'label'=>'Tva intra', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
-		'capital' =>array('type'=>'double(24,8)', 'label'=>'Capital', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
-		'fk_stcomm' =>array('type'=>'integer', 'label'=>'CommercialStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
-		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>225),
-		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>230),
-		'prefix_comm' =>array('type'=>'varchar(5)', 'label'=>'Prefix comm', 'enabled'=>"getDolGlobalInt('SOCIETE_USEPREFIX')", 'visible'=>-1, 'position'=>235),
-		'client' =>array('type'=>'tinyint(4)', 'label'=>'Client', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
-		'fournisseur' =>array('type'=>'tinyint(4)', 'label'=>'Fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
-		'supplier_account' =>array('type'=>'varchar(32)', 'label'=>'Supplier account', 'enabled'=>1, 'visible'=>-1, 'position'=>250),
-		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
-		'customer_bad' =>array('type'=>'tinyint(4)', 'label'=>'Customer bad', 'enabled'=>1, 'visible'=>-1, 'position'=>260),
-		'customer_rate' =>array('type'=>'double', 'label'=>'Customer rate', 'enabled'=>1, 'visible'=>-1, 'position'=>265),
-		'supplier_rate' =>array('type'=>'double', 'label'=>'Supplier rate', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
-		'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>275),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>280),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'parent' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'nom' => array('type' => 'varchar(128)', 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1),
+		'name_alias' => array('type' => 'varchar(128)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 36, 'showoncombobox' => 2),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
+		'code_client' => array('type' => 'varchar(24)', 'label' => 'CustomerCode', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'code_fournisseur' => array('type' => 'varchar(24)', 'label' => 'SupplierCode', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'code_compta' => array('type' => 'varchar(24)', 'label' => 'CustomerAccountancyCode', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'code_compta_fournisseur' => array('type' => 'varchar(24)', 'label' => 'SupplierAccountancyCode', 'enabled' => 1, 'visible' => -1, 'position' => 70),
+		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'zip' => array('type' => 'varchar(25)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'fk_departement' => array('type' => 'integer', 'label' => 'State', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_pays' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'phone' => array('type' => 'varchar(20)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'fax' => array('type' => 'varchar(20)', 'label' => 'Fax', 'enabled' => 1, 'visible' => -1, 'position' => 105),
+		'url' => array('type' => 'varchar(255)', 'label' => 'Url', 'enabled' => 1, 'visible' => -1, 'position' => 110),
+		'email' => array('type' => 'varchar(128)', 'label' => 'Email', 'enabled' => 1, 'visible' => -1, 'position' => 115),
+		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 120),
+		'fk_effectif' => array('type' => 'integer', 'label' => 'Workforce', 'enabled' => 1, 'visible' => -1, 'position' => 170),
+		'fk_typent' => array('type' => 'integer', 'label' => 'TypeOfCompany', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
+		'fk_forme_juridique' => array('type' => 'integer', 'label' => 'JuridicalStatus', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
+		'siren' => array('type' => 'varchar(128)', 'label' => 'Idprof1', 'enabled' => 1, 'visible' => -1, 'position' => 190),
+		'siret' => array('type' => 'varchar(128)', 'label' => 'Idprof2', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'ape' => array('type' => 'varchar(128)', 'label' => 'Idprof3', 'enabled' => 1, 'visible' => -1, 'position' => 200),
+		'idprof4' => array('type' => 'varchar(128)', 'label' => 'Idprof4', 'enabled' => 1, 'visible' => -1, 'position' => 205),
+		'idprof5' => array('type' => 'varchar(128)', 'label' => 'Idprof5', 'enabled' => 1, 'visible' => -1, 'position' => 206),
+		'idprof6' => array('type' => 'varchar(128)', 'label' => 'Idprof6', 'enabled' => 1, 'visible' => -1, 'position' => 207),
+		'tva_intra' => array('type' => 'varchar(20)', 'label' => 'Tva intra', 'enabled' => 1, 'visible' => -1, 'position' => 210),
+		'capital' => array('type' => 'double(24,8)', 'label' => 'Capital', 'enabled' => 1, 'visible' => -1, 'position' => 215),
+		'fk_stcomm' => array('type' => 'integer', 'label' => 'CommercialStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230),
+		'prefix_comm' => array('type' => 'varchar(5)', 'label' => 'Prefix comm', 'enabled' => "getDolGlobalInt('SOCIETE_USEPREFIX')", 'visible' => -1, 'position' => 235),
+		'client' => array('type' => 'tinyint(4)', 'label' => 'Client', 'enabled' => 1, 'visible' => -1, 'position' => 240),
+		'fournisseur' => array('type' => 'tinyint(4)', 'label' => 'Fournisseur', 'enabled' => 1, 'visible' => -1, 'position' => 245),
+		'supplier_account' => array('type' => 'varchar(32)', 'label' => 'Supplier account', 'enabled' => 1, 'visible' => -1, 'position' => 250),
+		'fk_prospectlevel' => array('type' => 'varchar(12)', 'label' => 'ProspectLevel', 'enabled' => 1, 'visible' => -1, 'position' => 255),
+		'customer_bad' => array('type' => 'tinyint(4)', 'label' => 'Customer bad', 'enabled' => 1, 'visible' => -1, 'position' => 260),
+		'customer_rate' => array('type' => 'double', 'label' => 'Customer rate', 'enabled' => 1, 'visible' => -1, 'position' => 265),
+		'supplier_rate' => array('type' => 'double', 'label' => 'Supplier rate', 'enabled' => 1, 'visible' => -1, 'position' => 270),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 275),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 280),
 		//'remise_client' =>array('type'=>'double', 'label'=>'CustomerDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>285, 'isameasure'=>1),
 		//'remise_supplier' =>array('type'=>'double', 'label'=>'SupplierDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>290, 'isameasure'=>1),
-		'mode_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>295),
-		'cond_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
-		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>301),
-		'mode_reglement_supplier' =>array('type'=>'integer', 'label'=>'Mode reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>305),
-		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>308),
-		'outstanding_limit' =>array('type'=>'double(24,8)', 'label'=>'OutstandingBill', 'enabled'=>1, 'visible'=>-1, 'position'=>310, 'isameasure'=>1),
-		'order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Order min amount', 'enabled'=>'isModEnabled("commande") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>315, 'isameasure'=>1),
-		'supplier_order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Supplier order min amount', 'enabled'=>'isModEnabled("commande") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>320, 'isameasure'=>1),
-		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'Fk shipping method', 'enabled'=>1, 'visible'=>-1, 'position'=>330),
-		'tva_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Tva assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
-		'localtax1_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax1 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>340),
-		'localtax1_value' =>array('type'=>'double(6,3)', 'label'=>'Localtax1 value', 'enabled'=>1, 'visible'=>-1, 'position'=>345),
-		'localtax2_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax2 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>350),
-		'localtax2_value' =>array('type'=>'double(6,3)', 'label'=>'Localtax2 value', 'enabled'=>1, 'visible'=>-1, 'position'=>355),
-		'vat_reverse_charge' =>array('type'=>'tinyint(4)', 'label'=>'Vat reverse charge', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
-		'barcode' =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>1, 'visible'=>-1, 'position'=>360),
-		'price_level' =>array('type'=>'integer', 'label'=>'Price level', 'enabled'=>'$conf->global->PRODUIT_MULTIPRICES || $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES', 'visible'=>-1, 'position'=>365),
-		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=>370),
-		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>-1, 'position'=>375),
-		'fk_barcode_type' =>array('type'=>'integer', 'label'=>'Fk barcode type', 'enabled'=>1, 'visible'=>-1, 'position'=>405),
-		'webservices_url' =>array('type'=>'varchar(255)', 'label'=>'Webservices url', 'enabled'=>1, 'visible'=>-1, 'position'=>410),
-		'webservices_key' =>array('type'=>'varchar(128)', 'label'=>'Webservices key', 'enabled'=>1, 'visible'=>-1, 'position'=>415),
-		'fk_incoterms' =>array('type'=>'integer', 'label'=>'Fk incoterms', 'enabled'=>1, 'visible'=>-1, 'position'=>425),
-		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'Location incoterms', 'enabled'=>1, 'visible'=>-1, 'position'=>430),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>435),
-		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
-		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>440),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>445),
-		'fk_account' =>array('type'=>'integer', 'label'=>'PaymentBankAccount', 'enabled'=>1, 'visible'=>-1, 'position'=>450),
-		'fk_warehouse' =>array('type'=>'integer', 'label'=>'Warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>455),
-		'logo' =>array('type'=>'varchar(255)', 'label'=>'Logo', 'enabled'=>1, 'visible'=>-1, 'position'=>400),
-		'logo_squarred' =>array('type'=>'varchar(255)', 'label'=>'Logo squarred', 'enabled'=>1, 'visible'=>-1, 'position'=>401),
-		'status' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
+		'mode_reglement' => array('type' => 'tinyint(4)', 'label' => 'Mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 295),
+		'cond_reglement' => array('type' => 'tinyint(4)', 'label' => 'Cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 300),
+		'deposit_percent' => array('type' => 'varchar(63)', 'label' => 'DepositPercent', 'enabled' => 1, 'visible' => -1, 'position' => 301),
+		'mode_reglement_supplier' => array('type' => 'integer', 'label' => 'Mode reglement supplier', 'enabled' => 1, 'visible' => -1, 'position' => 305),
+		'cond_reglement_supplier' => array('type' => 'integer', 'label' => 'Cond reglement supplier', 'enabled' => 1, 'visible' => -1, 'position' => 308),
+		'outstanding_limit' => array('type' => 'double(24,8)', 'label' => 'OutstandingBill', 'enabled' => 1, 'visible' => -1, 'position' => 310, 'isameasure' => 1),
+		'order_min_amount' => array('type' => 'double(24,8)', 'label' => 'Order min amount', 'enabled' => 'isModEnabled("commande") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible' => -1, 'position' => 315, 'isameasure' => 1),
+		'supplier_order_min_amount' => array('type' => 'double(24,8)', 'label' => 'Supplier order min amount', 'enabled' => 'isModEnabled("commande") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible' => -1, 'position' => 320, 'isameasure' => 1),
+		'fk_shipping_method' => array('type' => 'integer', 'label' => 'Fk shipping method', 'enabled' => 1, 'visible' => -1, 'position' => 330),
+		'tva_assuj' => array('type' => 'tinyint(4)', 'label' => 'Tva assuj', 'enabled' => 1, 'visible' => -1, 'position' => 335),
+		'localtax1_assuj' => array('type' => 'tinyint(4)', 'label' => 'Localtax1 assuj', 'enabled' => 1, 'visible' => -1, 'position' => 340),
+		'localtax1_value' => array('type' => 'double(6,3)', 'label' => 'Localtax1 value', 'enabled' => 1, 'visible' => -1, 'position' => 345),
+		'localtax2_assuj' => array('type' => 'tinyint(4)', 'label' => 'Localtax2 assuj', 'enabled' => 1, 'visible' => -1, 'position' => 350),
+		'localtax2_value' => array('type' => 'double(6,3)', 'label' => 'Localtax2 value', 'enabled' => 1, 'visible' => -1, 'position' => 355),
+		'vat_reverse_charge' => array('type' => 'tinyint(4)', 'label' => 'Vat reverse charge', 'enabled' => 1, 'visible' => -1, 'position' => 335),
+		'barcode' => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 1, 'visible' => -1, 'position' => 360),
+		'price_level' => array('type' => 'integer', 'label' => 'Price level', 'enabled' => '$conf->global->PRODUIT_MULTIPRICES || $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES', 'visible' => -1, 'position' => 365),
+		'default_lang' => array('type' => 'varchar(6)', 'label' => 'Default lang', 'enabled' => 1, 'visible' => -1, 'position' => 370),
+		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => -1, 'position' => 375),
+		'fk_barcode_type' => array('type' => 'integer', 'label' => 'Fk barcode type', 'enabled' => 1, 'visible' => -1, 'position' => 405),
+		'webservices_url' => array('type' => 'varchar(255)', 'label' => 'Webservices url', 'enabled' => 1, 'visible' => -1, 'position' => 410),
+		'webservices_key' => array('type' => 'varchar(128)', 'label' => 'Webservices key', 'enabled' => 1, 'visible' => -1, 'position' => 415),
+		'fk_incoterms' => array('type' => 'integer', 'label' => 'Fk incoterms', 'enabled' => 1, 'visible' => -1, 'position' => 425),
+		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'Location incoterms', 'enabled' => 1, 'visible' => -1, 'position' => 430),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 435),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -1, 'position' => 270),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 440),
+		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrency code', 'enabled' => 1, 'visible' => -1, 'position' => 445),
+		'fk_account' => array('type' => 'integer', 'label' => 'PaymentBankAccount', 'enabled' => 1, 'visible' => -1, 'position' => 450),
+		'fk_warehouse' => array('type' => 'integer', 'label' => 'Warehouse', 'enabled' => 1, 'visible' => -1, 'position' => 455),
+		'logo' => array('type' => 'varchar(255)', 'label' => 'Logo', 'enabled' => 1, 'visible' => -1, 'position' => 400),
+		'logo_squarred' => array('type' => 'varchar(255)', 'label' => 'Logo squarred', 'enabled' => 1, 'visible' => -1, 'position' => 401),
+		'status' => array('type' => 'tinyint(4)', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'position' => 500),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000),
 	);
 
 	/**
@@ -888,7 +888,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
-		$this->name = $this->name ?trim($this->name) : trim($this->nom);
+		$this->name = $this->name ? trim($this->name) : trim($this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client)) {
@@ -912,7 +912,7 @@ class Societe extends CommonObject
 			$this->fk_multicurrency = 0;
 		}
 
-		dol_syslog(get_class($this)."::create ".$this->name);
+		dol_syslog(get_class($this) . "::create " . $this->name);
 
 		$now = dol_now();
 
@@ -933,7 +933,7 @@ class Societe extends CommonObject
 		if ($result >= 0) {
 			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (";
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe (";
 			$sql .= "nom";
 			$sql .= ", name_alias";
 			$sql .= ", entity";
@@ -954,37 +954,37 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_buy";
 				$sql .= ", accountancy_code_sell";
 			}
-			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
-			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
-			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
-			$sql .= ", ".((int) $this->status);
-			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
+			$sql .= ") VALUES ('" . $this->db->escape($this->name) . "', '" . $this->db->escape($this->name_alias) . "', " . ((int) $this->entity) . ", '" . $this->db->idate($now) . "'";
+			$sql .= ", " . (!empty($user->id) ? ((int) $user->id) : "null");
+			$sql .= ", " . (!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
+			$sql .= ", " . (!empty($this->canvas) ? "'" . $this->db->escape($this->canvas) . "'" : "null");
+			$sql .= ", " . ((int) $this->status);
+			$sql .= ", " . (!empty($this->ref_ext) ? "'" . $this->db->escape($this->ref_ext) . "'" : "null");
 			$sql .= ", 0";
-			$sql .= ", ".(int) $this->fk_incoterms;
-			$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
-			$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
-			$sql .= ", ".(int) $this->fk_multicurrency;
-			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
+			$sql .= ", " . (int) $this->fk_incoterms;
+			$sql .= ", '" . $this->db->escape($this->location_incoterms) . "'";
+			$sql .= ", " . (!empty($this->import_key) ? "'" . $this->db->escape($this->import_key) . "'" : "null");
+			$sql .= ", " . (int) $this->fk_multicurrency;
+			$sql .= ", '" . $this->db->escape($this->multicurrency_code) . "'";
 			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
+				$sql .= ", " . (empty($this->vat_reverse_charge) ? '0' : '1');
 				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
 				$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
 			}
 			$sql .= ")";
 
-			dol_syslog(get_class($this)."::create", LOG_DEBUG);
+			dol_syslog(get_class($this) . "::create", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "societe");
 
 				$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
 
 				// update accountancy for this entity
 				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . ((int) $this->id) . " AND entity = " . ((int) $conf->entity));
 
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
 					$sql .= " fk_soc";
 					$sql .= ", entity";
 					$sql .= ", vat_reverse_charge";
@@ -994,12 +994,12 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
-					$sql .= ", ".((int) $conf->entity);
-					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
-					$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+					$sql .= ", " . ((int) $conf->entity);
+					$sql .= ", " . (empty($this->vat_reverse_charge) ? '0' : '1');
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_customer) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_supplier) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
 					$sql .= ")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1028,11 +1028,11 @@ class Societe extends CommonObject
 				}
 
 				if (!$error) {
-					dol_syslog(get_class($this)."::Create success id=".$this->id);
+					dol_syslog(get_class($this) . "::Create success id=" . $this->id);
 					$this->db->commit();
 					return $this->id;
 				} else {
-					dol_syslog(get_class($this)."::Create echec update ".$this->error.(empty($this->errors) ? '' : ' '.join(',', $this->errors)), LOG_ERR);
+					dol_syslog(get_class($this) . "::Create echec update " . $this->error . (empty($this->errors) ? '' : ' ' . join(',', $this->errors)), LOG_ERR);
 					$this->db->rollback();
 					return -4;
 				}
@@ -1049,7 +1049,7 @@ class Societe extends CommonObject
 			}
 		} else {
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
+			dol_syslog(get_class($this) . "::Create fails verify " . join(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
 	}
@@ -1073,7 +1073,7 @@ class Societe extends CommonObject
 		$this->db->begin();
 
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 		$contact = new Contact($this->db);
 
 		$contact->name              = $this->name_bis;
@@ -1097,7 +1097,7 @@ class Societe extends CommonObject
 			$error++;
 			$this->error = $contact->error;
 			$this->errors = $contact->errors;
-			dol_syslog(get_class($this)."::create_individual ERROR:".$this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::create_individual ERROR:" . $this->error, LOG_ERR);
 		}
 
 		if (empty($error) && is_array($tags) && !empty($tags)) {
@@ -1106,7 +1106,7 @@ class Societe extends CommonObject
 				$error++;
 				$this->error = $contact->error;
 				$this->errors = array_merge($this->errors, $contact->errors);
-				dol_syslog(get_class($this)."::create_individual Affect Tag ERROR:".$this->error, LOG_ERR);
+				dol_syslog(get_class($this) . "::create_individual Affect Tag ERROR:" . $this->error, LOG_ERR);
 				$contactId = $result;
 			}
 		}
@@ -1116,13 +1116,13 @@ class Societe extends CommonObject
 			if ($result < 0) {
 				$this->error = $contact->error;
 				$this->errors = array_merge($this->errors, $contact->errors);
-				dol_syslog(get_class($this)."::create_individual set mailing status ERROR:".$this->error, LOG_ERR);
+				dol_syslog(get_class($this) . "::create_individual set mailing status ERROR:" . $this->error, LOG_ERR);
 				$contactId = $result;
 			}
 		}
 
 		if (empty($error)) {
-			dol_syslog(get_class($this)."::create_individual success");
+			dol_syslog(get_class($this) . "::create_individual success");
 			$this->db->commit();
 		} else {
 			$this->db->rollback();
@@ -1201,11 +1201,11 @@ class Societe extends CommonObject
 				if ($this->isACompany()) {
 					// Check for mandatory prof id (but only if country is same than ours)
 					if ($mysoc->country_id > 0 && $this->country_id == $mysoc->country_id) {
-						$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
+						$idprof_mandatory = 'SOCIETE_' . $key . '_MANDATORY';
 						if (!$vallabel && !empty($conf->global->$idprof_mandatory)) {
 							$langs->load("errors");
 							$error++;
-							$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $this->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").')';
+							$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId' . $i, $this->country_code)) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';
 						}
 					}
 				}
@@ -1215,7 +1215,7 @@ class Societe extends CommonObject
 					if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 						$langs->load("errors");
 						$error++;
-						$this->errors[] = $langs->transcountry('ProfId'.$i, $this->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+						$this->errors[] = $langs->transcountry('ProfId' . $i, $this->country_code) . " " . $langs->trans("ErrorProdIdAlreadyExist", $vallabel) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';
 					}
 				}
 			} else {
@@ -1226,14 +1226,15 @@ class Societe extends CommonObject
 					if (!empty($conf->global->SOCIETE_EMAIL_MANDATORY) && !isValidEMail($this->email)) {
 						$langs->load("errors");
 						$error++;
-						$this->errors[] = $langs->trans("ErrorBadEMail", $this->email).' ('.$langs->trans("ForbiddenBySetupRules").')';
+						$this->errors[] = $langs->trans("ErrorBadEMail", $this->email) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';
 					}
 
 					// Check for unicity
 					if (!$error && $vallabel && !empty($conf->global->SOCIETE_EMAIL_UNIQUE)) {
 						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->load("errors");
-							$error++; $this->errors[] = $langs->trans('Email')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+							$error++;
+							$this->errors[] = $langs->trans('Email') . " " . $langs->trans("ErrorProdIdAlreadyExist", $vallabel) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';
 						}
 					}
 				} elseif ($key == 'TVA_INTRA') {
@@ -1241,7 +1242,8 @@ class Societe extends CommonObject
 					if ($vallabel && !empty($conf->global->SOCIETE_VAT_INTRA_UNIQUE)) {
 						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->load("errors");
-							$error++; $this->errors[] = $langs->trans('VATIntra')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+							$error++;
+							$this->errors[] = $langs->trans('VATIntra') . " " . $langs->trans("ErrorProdIdAlreadyExist", $vallabel) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';
 						}
 					}
 				}
@@ -1271,7 +1273,7 @@ class Societe extends CommonObject
 	{
 		global $langs, $conf, $hookmanager;
 
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 
 		if (empty($id)) {
 			$id = $this->id;
@@ -1279,7 +1281,7 @@ class Societe extends CommonObject
 
 		$error = 0;
 
-		dol_syslog(get_class($this)."::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
+		dol_syslog(get_class($this) . "::Update id=" . $id . " call_trigger=" . $call_trigger . " allowmodcodeclient=" . $allowmodcodeclient . " allowmodcodefournisseur=" . $allowmodcodefournisseur);
 
 		$now = dol_now();
 
@@ -1290,9 +1292,9 @@ class Societe extends CommonObject
 		$this->nom = $this->name; // For backward compatibility
 		$this->name_alias = trim($this->name_alias);
 		$this->ref_ext		= trim($this->ref_ext);
-		$this->address		= $this->address ?trim($this->address) : trim($this->address);
-		$this->zip = $this->zip ?trim($this->zip) : trim($this->zip);
-		$this->town = $this->town ?trim($this->town) : trim($this->town);
+		$this->address		= $this->address ? trim($this->address) : trim($this->address);
+		$this->zip = $this->zip ? trim($this->zip) : trim($this->zip);
+		$this->town = $this->town ? trim($this->town) : trim($this->town);
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim($this->phone);
@@ -1302,15 +1304,15 @@ class Societe extends CommonObject
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
 		$this->email		= trim($this->email);
-		$this->url			= $this->url ?clean_url($this->url, 0) : '';
+		$this->url			= $this->url ? clean_url($this->url, 0) : '';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
 		$this->idprof1		= trim($this->idprof1);
 		$this->idprof2		= trim($this->idprof2);
 		$this->idprof3		= trim($this->idprof3);
 		$this->idprof4		= trim($this->idprof4);
-		$this->idprof5		= (!empty($this->idprof5) ?trim($this->idprof5) : '');
-		$this->idprof6		= (!empty($this->idprof6) ?trim($this->idprof6) : '');
+		$this->idprof5		= (!empty($this->idprof5) ? trim($this->idprof5) : '');
+		$this->idprof6		= (!empty($this->idprof6) ? trim($this->idprof6) : '');
 		$this->prefix_comm = trim($this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
 		$this->order_min_amount = price2num($this->order_min_amount);
@@ -1397,7 +1399,7 @@ class Societe extends CommonObject
 		}
 
 		//Web services
-		$this->webservices_url = $this->webservices_url ?clean_url($this->webservices_url, 0) : '';
+		$this->webservices_url = $this->webservices_url ? clean_url($this->webservices_url, 0) : '';
 		$this->webservices_key = trim($this->webservices_key);
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -1437,52 +1439,52 @@ class Societe extends CommonObject
 		}
 		$this->setUpperOrLowerCase();
 		if ($result >= 0) {
-			dol_syslog(get_class($this)."::update verify ok or not done");
+			dol_syslog(get_class($this) . "::update verify ok or not done");
 
-			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql .= "entity = ".$this->db->escape($this->entity);
-			$sql .= ",nom = '".$this->db->escape($this->name)."'"; // Required
-			$sql .= ",name_alias = '".$this->db->escape($this->name_alias)."'";
-			$sql .= ",ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
-			$sql .= ",address = '".$this->db->escape($this->address)."'";
+			$sql  = "UPDATE " . MAIN_DB_PREFIX . "societe SET ";
+			$sql .= "entity = " . $this->db->escape($this->entity);
+			$sql .= ",nom = '" . $this->db->escape($this->name) . "'"; // Required
+			$sql .= ",name_alias = '" . $this->db->escape($this->name_alias) . "'";
+			$sql .= ",ref_ext = " . (!empty($this->ref_ext) ? "'" . $this->db->escape($this->ref_ext) . "'" : "null");
+			$sql .= ",address = '" . $this->db->escape($this->address) . "'";
 
-			$sql .= ",zip = ".(!empty($this->zip) ? "'".$this->db->escape($this->zip)."'" : "null");
-			$sql .= ",town = ".(!empty($this->town) ? "'".$this->db->escape($this->town)."'" : "null");
+			$sql .= ",zip = " . (!empty($this->zip) ? "'" . $this->db->escape($this->zip) . "'" : "null");
+			$sql .= ",town = " . (!empty($this->town) ? "'" . $this->db->escape($this->town) . "'" : "null");
 
-			$sql .= ",fk_departement = ".((!empty($this->state_id) && $this->state_id > 0) ? ((int) $this->state_id) : 'null');
-			$sql .= ",fk_pays = ".((!empty($this->country_id) && $this->country_id > 0) ? ((int) $this->country_id) : 'null');
+			$sql .= ",fk_departement = " . ((!empty($this->state_id) && $this->state_id > 0) ? ((int) $this->state_id) : 'null');
+			$sql .= ",fk_pays = " . ((!empty($this->country_id) && $this->country_id > 0) ? ((int) $this->country_id) : 'null');
 
-			$sql .= ",phone = ".(!empty($this->phone) ? "'".$this->db->escape($this->phone)."'" : "null");
-			$sql .= ",fax = ".(!empty($this->fax) ? "'".$this->db->escape($this->fax)."'" : "null");
-			$sql .= ",email = ".(!empty($this->email) ? "'".$this->db->escape($this->email)."'" : "null");
-			$sql .= ",socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
-			$sql .= ",url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
+			$sql .= ",phone = " . (!empty($this->phone) ? "'" . $this->db->escape($this->phone) . "'" : "null");
+			$sql .= ",fax = " . (!empty($this->fax) ? "'" . $this->db->escape($this->fax) . "'" : "null");
+			$sql .= ",email = " . (!empty($this->email) ? "'" . $this->db->escape($this->email) . "'" : "null");
+			$sql .= ",socialnetworks = '" . $this->db->escape(json_encode($this->socialnetworks)) . "'";
+			$sql .= ",url = " . (!empty($this->url) ? "'" . $this->db->escape($this->url) . "'" : "null");
 
-			$sql .= ",parent = ".($this->parent > 0 ? $this->parent : "null");
+			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
 
-			$sql .= ",note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
-			$sql .= ",note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
+			$sql .= ",note_private = " . (!empty($this->note_private) ? "'" . $this->db->escape($this->note_private) . "'" : "null");
+			$sql .= ",note_public = " . (!empty($this->note_public) ? "'" . $this->db->escape($this->note_public) . "'" : "null");
 
-			$sql .= ",siren   = '".$this->db->escape($this->idprof1)."'";
-			$sql .= ",siret   = '".$this->db->escape($this->idprof2)."'";
-			$sql .= ",ape     = '".$this->db->escape($this->idprof3)."'";
-			$sql .= ",idprof4 = '".$this->db->escape($this->idprof4)."'";
-			$sql .= ",idprof5 = '".$this->db->escape($this->idprof5)."'";
-			$sql .= ",idprof6 = '".$this->db->escape($this->idprof6)."'";
+			$sql .= ",siren   = '" . $this->db->escape($this->idprof1) . "'";
+			$sql .= ",siret   = '" . $this->db->escape($this->idprof2) . "'";
+			$sql .= ",ape     = '" . $this->db->escape($this->idprof3) . "'";
+			$sql .= ",idprof4 = '" . $this->db->escape($this->idprof4) . "'";
+			$sql .= ",idprof5 = '" . $this->db->escape($this->idprof5) . "'";
+			$sql .= ",idprof6 = '" . $this->db->escape($this->idprof6) . "'";
 
-			$sql .= ",tva_assuj = ".($this->tva_assuj != '' ? "'".$this->db->escape($this->tva_assuj)."'" : "null");
-			$sql .= ",tva_intra = '".$this->db->escape($this->tva_intra)."'";
+			$sql .= ",tva_assuj = " . ($this->tva_assuj != '' ? "'" . $this->db->escape($this->tva_assuj) . "'" : "null");
+			$sql .= ",tva_intra = '" . $this->db->escape($this->tva_intra) . "'";
 			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 				$sql .= ",vat_reverse_charge = " . ($this->vat_reverse_charge != '' ? "'" . $this->db->escape($this->vat_reverse_charge) . "'" : 0);
 			}
-			$sql .= ",status = ".((int) $this->status);
+			$sql .= ",status = " . ((int) $this->status);
 
 			// Local taxes
-			$sql .= ",localtax1_assuj = ".($this->localtax1_assuj != '' ? "'".$this->db->escape($this->localtax1_assuj)."'" : "null");
-			$sql .= ",localtax2_assuj = ".($this->localtax2_assuj != '' ? "'".$this->db->escape($this->localtax2_assuj)."'" : "null");
+			$sql .= ",localtax1_assuj = " . ($this->localtax1_assuj != '' ? "'" . $this->db->escape($this->localtax1_assuj) . "'" : "null");
+			$sql .= ",localtax2_assuj = " . ($this->localtax2_assuj != '' ? "'" . $this->db->escape($this->localtax2_assuj) . "'" : "null");
 			if ($this->localtax1_assuj == 1) {
 				if ($this->localtax1_value != '') {
-					$sql .= ",localtax1_value =".$this->localtax1_value;
+					$sql .= ",localtax1_value =" . $this->localtax1_value;
 				} else {
 					$sql .= ",localtax1_value =0.000";
 				}
@@ -1492,7 +1494,7 @@ class Societe extends CommonObject
 
 			if ($this->localtax2_assuj == 1) {
 				if ($this->localtax2_value != '') {
-					$sql .= ",localtax2_value =".$this->localtax2_value;
+					$sql .= ",localtax2_value =" . $this->localtax2_value;
 				} else {
 					$sql .= ",localtax2_value =0.000";
 				}
@@ -1500,69 +1502,69 @@ class Societe extends CommonObject
 				$sql .= ",localtax2_value =0.000";
 			}
 
-			$sql .= ",capital = ".($this->capital == '' ? "null" : $this->capital);
+			$sql .= ",capital = " . ($this->capital == '' ? "null" : $this->capital);
 
-			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
+			$sql .= ",prefix_comm = " . (!empty($this->prefix_comm) ? "'" . $this->db->escape($this->prefix_comm) . "'" : "null");
 
-			$sql .= ",fk_effectif = ".($this->effectif_id > 0 ? ((int) $this->effectif_id) : "null");
+			$sql .= ",fk_effectif = " . ($this->effectif_id > 0 ? ((int) $this->effectif_id) : "null");
 			if (isset($this->stcomm_id)) {
-				$sql .= ",fk_stcomm=".(int) $this->stcomm_id;
+				$sql .= ",fk_stcomm=" . (int) $this->stcomm_id;
 			}
 			if (isset($this->typent_id)) {
-				$sql .= ",fk_typent = ".($this->typent_id > 0 ? ((int) $this->typent_id) : "0");
+				$sql .= ",fk_typent = " . ($this->typent_id > 0 ? ((int) $this->typent_id) : "0");
 			}
 
-			$sql .= ",fk_forme_juridique = ".(!empty($this->forme_juridique_code) ? "'".$this->db->escape($this->forme_juridique_code)."'" : "null");
+			$sql .= ",fk_forme_juridique = " . (!empty($this->forme_juridique_code) ? "'" . $this->db->escape($this->forme_juridique_code) . "'" : "null");
 
-			$sql .= ",mode_reglement = ".(!empty($this->mode_reglement_id) ? "'".$this->db->escape($this->mode_reglement_id)."'" : "null");
-			$sql .= ",cond_reglement = ".(!empty($this->cond_reglement_id) ? "'".$this->db->escape($this->cond_reglement_id)."'" : "null");
-			$sql .= ",deposit_percent = ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
-			$sql .= ",transport_mode = ".(!empty($this->transport_mode_id) ? "'".$this->db->escape($this->transport_mode_id)."'" : "null");
-			$sql .= ",mode_reglement_supplier = ".(!empty($this->mode_reglement_supplier_id) ? "'".$this->db->escape($this->mode_reglement_supplier_id)."'" : "null");
-			$sql .= ",cond_reglement_supplier = ".(!empty($this->cond_reglement_supplier_id) ? "'".$this->db->escape($this->cond_reglement_supplier_id)."'" : "null");
-			$sql .= ",transport_mode_supplier = ".(!empty($this->transport_mode_supplier_id) ? "'".$this->db->escape($this->transport_mode_supplier_id)."'" : "null");
-			$sql .= ",fk_shipping_method = ".(!empty($this->shipping_method_id) ? "'".$this->db->escape($this->shipping_method_id)."'" : "null");
+			$sql .= ",mode_reglement = " . (!empty($this->mode_reglement_id) ? "'" . $this->db->escape($this->mode_reglement_id) . "'" : "null");
+			$sql .= ",cond_reglement = " . (!empty($this->cond_reglement_id) ? "'" . $this->db->escape($this->cond_reglement_id) . "'" : "null");
+			$sql .= ",deposit_percent = " . (!empty($this->deposit_percent) ? "'" . $this->db->escape($this->deposit_percent) . "'" : "null");
+			$sql .= ",transport_mode = " . (!empty($this->transport_mode_id) ? "'" . $this->db->escape($this->transport_mode_id) . "'" : "null");
+			$sql .= ",mode_reglement_supplier = " . (!empty($this->mode_reglement_supplier_id) ? "'" . $this->db->escape($this->mode_reglement_supplier_id) . "'" : "null");
+			$sql .= ",cond_reglement_supplier = " . (!empty($this->cond_reglement_supplier_id) ? "'" . $this->db->escape($this->cond_reglement_supplier_id) . "'" : "null");
+			$sql .= ",transport_mode_supplier = " . (!empty($this->transport_mode_supplier_id) ? "'" . $this->db->escape($this->transport_mode_supplier_id) . "'" : "null");
+			$sql .= ",fk_shipping_method = " . (!empty($this->shipping_method_id) ? "'" . $this->db->escape($this->shipping_method_id) . "'" : "null");
 
-			$sql .= ",client = ".(!empty($this->client) ? $this->client : 0);
-			$sql .= ",fournisseur = ".(!empty($this->fournisseur) ? $this->fournisseur : 0);
-			$sql .= ",barcode = ".(!empty($this->barcode) ? "'".$this->db->escape($this->barcode)."'" : "null");
-			$sql .= ",default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
-			$sql .= ",logo = ".(!empty($this->logo) ? "'".$this->db->escape($this->logo)."'" : "null");
-			$sql .= ",logo_squarred = ".(!empty($this->logo_squarred) ? "'".$this->db->escape($this->logo_squarred)."'" : "null");
-			$sql .= ",outstanding_limit= ".($this->outstanding_limit != '' ? $this->outstanding_limit : 'null');
-			$sql .= ",order_min_amount= ".($this->order_min_amount != '' ? $this->order_min_amount : 'null');
-			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount != '' ? $this->supplier_order_min_amount : 'null');
-			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
+			$sql .= ",client = " . (!empty($this->client) ? $this->client : 0);
+			$sql .= ",fournisseur = " . (!empty($this->fournisseur) ? $this->fournisseur : 0);
+			$sql .= ",barcode = " . (!empty($this->barcode) ? "'" . $this->db->escape($this->barcode) . "'" : "null");
+			$sql .= ",default_lang = " . (!empty($this->default_lang) ? "'" . $this->db->escape($this->default_lang) . "'" : "null");
+			$sql .= ",logo = " . (!empty($this->logo) ? "'" . $this->db->escape($this->logo) . "'" : "null");
+			$sql .= ",logo_squarred = " . (!empty($this->logo_squarred) ? "'" . $this->db->escape($this->logo_squarred) . "'" : "null");
+			$sql .= ",outstanding_limit= " . ($this->outstanding_limit != '' ? $this->outstanding_limit : 'null');
+			$sql .= ",order_min_amount= " . ($this->order_min_amount != '' ? $this->order_min_amount : 'null');
+			$sql .= ",supplier_order_min_amount= " . ($this->supplier_order_min_amount != '' ? $this->supplier_order_min_amount : 'null');
+			$sql .= ",fk_prospectlevel='" . $this->db->escape($this->fk_prospectlevel) . "'";
 			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
 				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
 				if ($customer) {
-					$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
+					$sql .= ", code_compta = " . (!empty($this->code_compta_client) ? "'" . $this->db->escape($this->code_compta_client) . "'" : "null");
 				}
 
 				if ($supplier) {
-					$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "") ? "'".$this->db->escape($this->code_compta_fournisseur)."'" : "null");
+					$sql .= ", code_compta_fournisseur = " . (($this->code_compta_fournisseur != "") ? "'" . $this->db->escape($this->code_compta_fournisseur) . "'" : "null");
 				}
 			}
-			$sql .= ",webservices_url = ".(!empty($this->webservices_url) ? "'".$this->db->escape($this->webservices_url)."'" : "null");
-			$sql .= ",webservices_key = ".(!empty($this->webservices_key) ? "'".$this->db->escape($this->webservices_key)."'" : "null");
+			$sql .= ",webservices_url = " . (!empty($this->webservices_url) ? "'" . $this->db->escape($this->webservices_url) . "'" : "null");
+			$sql .= ",webservices_key = " . (!empty($this->webservices_key) ? "'" . $this->db->escape($this->webservices_key) . "'" : "null");
 
 			//Incoterms
-			$sql .= ", fk_incoterms = ".((int) $this->fk_incoterms);
-			$sql .= ", location_incoterms = ".(!empty($this->location_incoterms) ? "'".$this->db->escape($this->location_incoterms)."'" : "null");
+			$sql .= ", fk_incoterms = " . ((int) $this->fk_incoterms);
+			$sql .= ", location_incoterms = " . (!empty($this->location_incoterms) ? "'" . $this->db->escape($this->location_incoterms) . "'" : "null");
 
 			if ($customer) {
-				$sql .= ", code_client = ".(!empty($this->code_client) ? "'".$this->db->escape($this->code_client)."'" : "null");
+				$sql .= ", code_client = " . (!empty($this->code_client) ? "'" . $this->db->escape($this->code_client) . "'" : "null");
 			}
 
 			if ($supplier) {
-				$sql .= ", code_fournisseur = ".(!empty($this->code_fournisseur) ? "'".$this->db->escape($this->code_fournisseur)."'" : "null");
+				$sql .= ", code_fournisseur = " . (!empty($this->code_fournisseur) ? "'" . $this->db->escape($this->code_fournisseur) . "'" : "null");
 			}
-			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : "null");
-			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
-			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
-			$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
-			$sql .= " WHERE rowid = ".(int) $id;
+			$sql .= ", fk_user_modif = " . ($user->id > 0 ? $user->id : "null");
+			$sql .= ", fk_multicurrency = " . (int) $this->fk_multicurrency;
+			$sql .= ", multicurrency_code = '" . $this->db->escape($this->multicurrency_code) . "'";
+			$sql .= ", model_pdf = '" . $this->db->escape($this->model_pdf) . "'";
+			$sql .= " WHERE rowid = " . (int) $id;
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -1587,9 +1589,9 @@ class Societe extends CommonObject
 				if (!$error && $nbrowsaffected) {
 					// Update information on linked member if it is an update
 					if (!$nosyncmember && isModEnabled('adherent')) {
-						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+						require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 
-						dol_syslog(get_class($this)."::update update linked member");
+						dol_syslog(get_class($this) . "::update update linked member");
 
 						$lmember = new Adherent($this->db);
 						$result = $lmember->fetch(0, 0, $this->id);
@@ -1612,7 +1614,7 @@ class Societe extends CommonObject
 							if ($result < 0) {
 								$this->error = $lmember->error;
 								$this->errors = array_merge($this->errors, $lmember->errors);
-								dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+								dol_syslog(get_class($this) . "::update " . $this->error, LOG_ERR);
 								$error++;
 							}
 						} elseif ($result < 0) {
@@ -1626,9 +1628,9 @@ class Societe extends CommonObject
 
 				// update accountancy for this entity
 				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . ((int) $this->id) . " AND entity = " . ((int) $conf->entity));
 
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
 					$sql .= " fk_soc";
 					$sql .= ", entity";
 					$sql .= ", vat_reverse_charge";
@@ -1638,12 +1640,12 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
-					$sql .= ", ".$conf->entity;
-					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
-					$sql .= ", '".$this->db->escape($this->code_compta_client)."'";
-					$sql .= ", '".$this->db->escape($this->code_compta_fournisseur)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+					$sql .= ", " . $conf->entity;
+					$sql .= ", " . (empty($this->vat_reverse_charge) ? '0' : '1');
+					$sql .= ", '" . $this->db->escape($this->code_compta_client) . "'";
+					$sql .= ", '" . $this->db->escape($this->code_compta_fournisseur) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
 					$sql .= ")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1677,7 +1679,7 @@ class Societe extends CommonObject
 				}
 
 				if (!$error) {
-					dol_syslog(get_class($this)."::Update success");
+					dol_syslog(get_class($this) . "::Update success");
 					$this->db->commit();
 					return 1;
 				} else {
@@ -1698,7 +1700,7 @@ class Societe extends CommonObject
 			}
 		} else {
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::Update fails verify ".join(',', $this->errors), LOG_WARNING);
+			dol_syslog(get_class($this) . "::Update fails verify " . join(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
 	}
@@ -1771,60 +1773,60 @@ class Societe extends CommonObject
 		} else {
 			$sql .= ', sr.remise_client, sr2.remise_supplier';
 		}
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'societe as s';
 		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = ".((int) $conf->entity);
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 		}
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_regions as r ON d.fk_region = r.code_region ';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
+		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_effectif as e ON s.fk_effectif = e.id';
+		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_country as c ON s.fk_pays = c.rowid';
+		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_stcomm as st ON s.fk_stcomm = st.id';
+		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
+		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_departements as d ON s.fk_departement = d.rowid';
+		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_regions as r ON d.fk_region = r.code_region ';
+		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_typent as te ON s.fk_typent = te.id';
+		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_incoterms as i ON s.fk_incoterms = i.rowid';
 		// With default setup, llx_societe_remise is a history table in default setup and current value is in llx_societe.
 		// We use it for real value when multicompany is on. A better place would be into llx_societe_perentity.
 		if (isModEnabled('multicompany')) {
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise_supplier as sr2 ON sr2.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise_supplier WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
+			$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM ' . MAIN_DB_PREFIX . 'societe_remise WHERE fk_soc = s.rowid AND entity IN (' . getEntity('discount') . '))';
+			$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe_remise_supplier as sr2 ON sr2.rowid = (SELECT MAX(rowid) FROM ' . MAIN_DB_PREFIX . 'societe_remise_supplier WHERE fk_soc = s.rowid AND entity IN (' . getEntity('discount') . '))';
 		}
-		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
+		$sql .= ' WHERE s.entity IN (' . getEntity($this->element) . ')';
 		if ($rowid) {
-			$sql .= ' AND s.rowid = '.((int) $rowid);
+			$sql .= ' AND s.rowid = ' . ((int) $rowid);
 		}
 		if ($ref) {
-			$sql .= " AND s.nom = '".$this->db->escape($ref)."'";
+			$sql .= " AND s.nom = '" . $this->db->escape($ref) . "'";
 		}
 		if ($ref_alias) {
-			$sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
+			$sql .= " AND s.name_alias = '" . $this->db->escape($ref_alias) . "'";
 		}
 		if ($ref_ext) {
-			$sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
+			$sql .= " AND s.ref_ext = '" . $this->db->escape($ref_ext) . "'";
 		}
 		if ($barcode) {
-			$sql .= " AND s.barcode = '".$this->db->escape($barcode)."'";
+			$sql .= " AND s.barcode = '" . $this->db->escape($barcode) . "'";
 		}
 		if ($idprof1) {
-			$sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
+			$sql .= " AND s.siren = '" . $this->db->escape($idprof1) . "'";
 		}
 		if ($idprof2) {
-			$sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
+			$sql .= " AND s.siret = '" . $this->db->escape($idprof2) . "'";
 		}
 		if ($idprof3) {
-			$sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
+			$sql .= " AND s.ape = '" . $this->db->escape($idprof3) . "'";
 		}
 		if ($idprof4) {
-			$sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
+			$sql .= " AND s.idprof4 = '" . $this->db->escape($idprof4) . "'";
 		}
 		if ($idprof5) {
-			$sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
+			$sql .= " AND s.idprof5 = '" . $this->db->escape($idprof5) . "'";
 		}
 		if ($idprof6) {
-			$sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
+			$sql .= " AND s.idprof6 = '" . $this->db->escape($idprof6) . "'";
 		}
 		if ($email) {
-			$sql .= " AND s.email = '".$this->db->escape($email)."'";
+			$sql .= " AND s.email = '" . $this->db->escape($email) . "'";
 		}
 
 		$resql = $this->db->query($sql);
@@ -1858,7 +1860,7 @@ class Societe extends CommonObject
 
 				$this->country_id   = $obj->country_id;
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
-				$this->country = $obj->country_id ? (($langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				$this->country = $obj->country_id ? (($langs->transnoentities('Country' . $obj->country_code) != 'Country' . $obj->country_code) ? $langs->transnoentities('Country' . $obj->country_code) : $obj->country) : '';
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
@@ -1866,8 +1868,8 @@ class Societe extends CommonObject
 				$this->region_code = $obj->region_code;
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
-				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcomm);
-				$label = ($transcode != 'StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
+				$transcode = $langs->trans('StatusProspect' . $obj->fk_stcomm);
+				$label = ($transcode != 'StatusProspect' . $obj->fk_stcomm ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcomm; // id status prospect
 				$this->status_prospect_label = $label; // label status prospect
 				$this->stcomm_picto = $obj->stcomm_picto; // picto statut commercial
@@ -2027,11 +2029,11 @@ class Societe extends CommonObject
 			$fuser = $user;
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$entity = isset($this->entity) ? $this->entity : $conf->entity;
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
 		$error = 0;
 
 		// Test if child exists
@@ -2050,7 +2052,7 @@ class Societe extends CommonObject
 			}
 
 			if (!$error) {
-				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 				$static_cat = new Categorie($this->db);
 				$toute_categs = array();
 
@@ -2087,12 +2089,12 @@ class Societe extends CommonObject
 							}
 						} else {
 							$error++;
-							$this->errors[] = 'Cannot include child class file '.$filepath;
+							$this->errors[] = 'Cannot include child class file ' . $filepath;
 							break;
 						}
 					} else {
-						$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete;
-						$sql .= " WHERE fk_soc = ".((int) $id);
+						$sql = "DELETE FROM " . MAIN_DB_PREFIX . $tabletodelete;
+						$sql .= " WHERE fk_soc = " . ((int) $id);
 						if (!$this->db->query($sql)) {
 							$error++;
 							$this->errors[] = $this->db->lasterror();
@@ -2107,15 +2109,15 @@ class Societe extends CommonObject
 				$result = $this->deleteExtraFields();
 				if ($result < 0) {
 					$error++;
-					dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+					dol_syslog(get_class($this) . "::delete error -3 " . $this->error, LOG_ERR);
 				}
 			}
 
 			// Remove links to subsidiaries companies
 			if (!$error) {
-				$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "societe";
 				$sql .= " SET parent = NULL";
-				$sql .= " WHERE parent = ".((int) $id);
+				$sql .= " WHERE parent = " . ((int) $id);
 				if (!$this->db->query($sql)) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
@@ -2125,16 +2127,16 @@ class Societe extends CommonObject
 			// Remove third party
 			if (!$error) {
 				if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_perentity";
-					$sql .= " WHERE fk_soc = ".((int) $id);
+					$sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity";
+					$sql .= " WHERE fk_soc = " . ((int) $id);
 					if (!$this->db->query($sql)) {
 						$error++;
 						$this->errors[] = $this->db->lasterror();
 					}
 				}
 
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
-				$sql .= " WHERE rowid = ".((int) $id);
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe";
+				$sql .= " WHERE rowid = " . ((int) $id);
 				if (!$this->db->query($sql)) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
@@ -2146,7 +2148,7 @@ class Societe extends CommonObject
 
 				// Delete directory
 				if (!empty($conf->societe->multidir_output[$entity])) {
-					$docdir = $conf->societe->multidir_output[$entity]."/".$id;
+					$docdir = $conf->societe->multidir_output[$entity] . "/" . $id;
 					if (dol_is_dir($docdir)) {
 						dol_delete_dir_recursive($docdir);
 					}
@@ -2159,7 +2161,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 		} else {
-			dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." childs", LOG_WARNING);
+			dol_syslog("Can't remove thirdparty with id " . $id . ". There is " . $objectisused . " childs", LOG_WARNING);
 		}
 		return 0;
 	}
@@ -2178,9 +2180,9 @@ class Societe extends CommonObject
 			if ($this->client == 2 || $this->client == 3) {
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET client = ".((int) $newclient);
-			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "societe";
+			$sql .= " SET client = " . ((int) $newclient);
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2214,7 +2216,7 @@ class Societe extends CommonObject
 			return -2;
 		}
 
-		dol_syslog(get_class($this)."::set_remise_client ".$remise.", ".$note.", ".$user->id);
+		dol_syslog(get_class($this) . "::set_remise_client " . $remise . ", " . $note . ", " . $user->id);
 
 		if ($this->id) {
 			$this->db->begin();
@@ -2222,9 +2224,9 @@ class Societe extends CommonObject
 			$now = dol_now();
 
 			// Position current discount
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
-			$sql .= " SET remise_client = '".$this->db->escape($remise)."'";
-			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "societe ";
+			$sql .= " SET remise_client = '" . $this->db->escape($remise) . "'";
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->db->rollback();
@@ -2233,11 +2235,11 @@ class Societe extends CommonObject
 			}
 
 			// Writes trace in discount history
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_remise";
 			$sql .= " (entity, datec, fk_soc, remise_client, note, fk_user_author)";
-			$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".((int) $this->id).", '".$this->db->escape($remise)."',";
-			$sql .= " '".$this->db->escape($note)."',";
-			$sql .= " ".((int) $user->id);
+			$sql .= " VALUES (" . $conf->entity . ", '" . $this->db->idate($now) . "', " . ((int) $this->id) . ", '" . $this->db->escape($remise) . "',";
+			$sql .= " '" . $this->db->escape($note) . "',";
+			$sql .= " " . ((int) $user->id);
 			$sql .= ")";
 
 			$resql = $this->db->query($sql);
@@ -2275,7 +2277,7 @@ class Societe extends CommonObject
 			return -2;
 		}
 
-		dol_syslog(get_class($this)."::set_remise_supplier ".$remise.", ".$note.", ".$user->id);
+		dol_syslog(get_class($this) . "::set_remise_supplier " . $remise . ", " . $note . ", " . $user->id);
 
 		if ($this->id) {
 			$this->db->begin();
@@ -2283,9 +2285,9 @@ class Societe extends CommonObject
 			$now = dol_now();
 
 			// Position current discount
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
-			$sql .= " SET remise_supplier = '".$this->db->escape($remise)."'";
-			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "societe ";
+			$sql .= " SET remise_supplier = '" . $this->db->escape($remise) . "'";
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->db->rollback();
@@ -2294,11 +2296,11 @@ class Societe extends CommonObject
 			}
 
 			// Writes trace in discount history
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_supplier";
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_remise_supplier";
 			$sql .= " (entity, datec, fk_soc, remise_supplier, note, fk_user_author)";
-			$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".((int) $this->id).", '".$this->db->escape($remise)."',";
-			$sql .= " '".$this->db->escape($note)."',";
-			$sql .= " ".((int) $user->id);
+			$sql .= " VALUES (" . $conf->entity . ", '" . $this->db->idate($now) . "', " . ((int) $this->id) . ", '" . $this->db->escape($remise) . "',";
+			$sql .= " '" . $this->db->escape($note) . "',";
+			$sql .= " " . ((int) $user->id);
 			$sql .= ")";
 
 			$resql = $this->db->query($sql);
@@ -2355,7 +2357,7 @@ class Societe extends CommonObject
 				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
 			}
 
-			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc = $this->id;
@@ -2400,7 +2402,7 @@ class Societe extends CommonObject
 	 */
 	public function getAvailableDiscounts($user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getAvailableDiscounts($this, $user, $filter, $maxvalue, $discount_type);
@@ -2429,17 +2431,17 @@ class Societe extends CommonObject
 
 		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
 		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc, " . MAIN_DB_PREFIX . "user as u";
 		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql .= ", " . MAIN_DB_PREFIX . "usergroup_user as ug";
 			$sql .= " WHERE ((ug.fk_user = sc.fk_user";
-			$sql .= " AND ug.entity = ".$conf->entity.")";
+			$sql .= " AND ug.entity = " . $conf->entity . ")";
 			$sql .= " OR u.admin = 1)";
 		} else {
-			$sql .= " WHERE entity in (0, ".$conf->entity.")";
+			$sql .= " WHERE entity in (0, " . $conf->entity . ")";
 		}
 
-		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".((int) $this->id);
+		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = " . ((int) $this->id);
 		if (empty($sortfield) && empty($sortorder)) {
 			$sortfield = 'u.lastname,u.firstname';
 			$sortorder = 'ASC,ASC';
@@ -2494,18 +2496,18 @@ class Societe extends CommonObject
 		if ($this->id) {
 			$now = dol_now();
 
-			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET price_level = ".((int) $price_level);
-			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql  = "UPDATE " . MAIN_DB_PREFIX . "societe";
+			$sql .= " SET price_level = " . ((int) $price_level);
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				dol_print_error($this->db);
 				return -1;
 			}
 
-			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices";
+			$sql  = "INSERT INTO " . MAIN_DB_PREFIX . "societe_prices";
 			$sql .= " (datec, fk_soc, price_level, fk_user_author)";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $this->id).", ".((int) $price_level).", ".((int) $user->id).")";
+			$sql .= " VALUES ('" . $this->db->idate($now) . "', " . ((int) $this->id) . ", " . ((int) $price_level) . ", " . ((int) $user->id) . ")";
 
 			if (!$this->db->query($sql)) {
 				dol_print_error($this->db);
@@ -2533,24 +2535,24 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			if (!$error) {
-				$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
-				$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
+				$sql = "DELETE FROM  " . MAIN_DB_PREFIX . "societe_commerciaux";
+				$sql .= " WHERE fk_soc = " . ((int) $this->id) . " AND fk_user = " . ((int) $commid);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+					dol_syslog(get_class($this) . "::add_commercial Error " . $this->db->lasterror());
 					$error++;
 				}
 			}
 
 			if (!$error) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_commerciaux";
 				$sql .= " (fk_soc, fk_user)";
-				$sql .= " VALUES (".((int) $this->id).", ".((int) $commid).")";
+				$sql .= " VALUES (" . ((int) $this->id) . ", " . ((int) $commid) . ")";
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+					dol_syslog(get_class($this) . "::add_commercial Error " . $this->db->lasterror());
 					$error++;
 				}
 			}
@@ -2588,7 +2590,7 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		$error = 0;
-		$this->context = array('commercial_modified'=>$commid);
+		$this->context = array('commercial_modified' => $commid);
 
 		$result = $this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE', $user);
 		if ($result < 0) {
@@ -2596,11 +2598,11 @@ class Societe extends CommonObject
 		}
 
 		if ($this->id > 0 && $commid > 0) {
-			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
-			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
+			$sql  = "DELETE FROM  " . MAIN_DB_PREFIX . "societe_commerciaux ";
+			$sql .= " WHERE fk_soc = " . ((int) $this->id) . " AND fk_user = " . ((int) $commid);
 
 			if (!$this->db->query($sql)) {
-				dol_syslog(get_class($this)."::del_commercial Erreur");
+				dol_syslog(get_class($this) . "::del_commercial Erreur");
 			}
 		}
 	}
@@ -2627,7 +2629,7 @@ class Societe extends CommonObject
 		$noaliasinname = (empty($params['noaliasinname']) ? 0 : $params['noaliasinname']);
 
 		if (!empty($this->name_alias) && empty($noaliasinname)) {
-			$name .= ' ('.$this->name_alias.')';
+			$name .= ' (' . $this->name_alias . ')';
 		}
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowCompany")];
@@ -2647,42 +2649,42 @@ class Societe extends CommonObject
 		$datas['divopen'] = '<div class="centpercent">';
 
 		if ($option == 'customer' || $option == 'compta' || $option == 'category') {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Customer").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("Customer") . '</u>';
 		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Prospect").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("Prospect") . '</u>';
 		} elseif ($option == 'supplier' || $option == 'category_supplier') {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Supplier").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("Supplier") . '</u>';
 		} elseif ($option == 'agenda') {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("ThirdParty") . '</u>';
 		} elseif ($option == 'project') {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("ThirdParty") . '</u>';
 		} elseif ($option == 'margin') {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("ThirdParty") . '</u>';
 		} elseif ($option == 'contact') {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("ThirdParty") . '</u>';
 		} elseif ($option == 'ban') {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("ThirdParty") . '</u>';
 		}
 
 		// By default
 		if (empty($datas['picto'])) {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
+			$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("ThirdParty") . '</u>';
 		}
 		if (isset($this->status)) {
-			$datas['status'] = ' '.$this->getLibStatut(5);
+			$datas['status'] = ' ' . $this->getLibStatut(5);
 		}
 		if (isset($this->client) && isset($this->fournisseur)) {
 			$datas['type'] = ' &nbsp; ' . $this->getTypeUrl(1);
 		}
-		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
+		$datas['name'] = '<br><b>' . $langs->trans('Name') . ':</b> ' . dol_escape_htmltag($this->name);
 		if (!empty($this->name_alias)) {
-			$datas['namealias'] = ' ('.dol_escape_htmltag($this->name_alias).')';
+			$datas['namealias'] = ' (' . dol_escape_htmltag($this->name_alias) . ')';
 		}
 		if (!empty($this->email)) {
-			$datas['email'] = '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
+			$datas['email'] = '<br>' . img_picto('', 'email', 'class="pictofixedwidth"') . $this->email;
 		}
 		if (!empty($this->url)) {
-			$datas['url'] = '<br>'.img_picto('', 'globe', 'class="pictofixedwidth"').$this->url;
+			$datas['url'] = '<br>' . img_picto('', 'globe', 'class="pictofixedwidth"') . $this->url;
 		}
 		if (!empty($this->phone) || !empty($this->fax)) {
 			$phonelist = array();
@@ -2692,47 +2694,47 @@ class Societe extends CommonObject
 			if ($this->fax) {
 				$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
 			}
-			$datas['phonelist'] = '<br>'.implode('&nbsp;', $phonelist);
+			$datas['phonelist'] = '<br>' . implode('&nbsp;', $phonelist);
 		}
 
 		if (!empty($this->address)) {
-			$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
+			$datas['address'] = '<br><b>' . $langs->trans("Address") . ':</b> ' . dol_format_address($this, 1, ' ', $langs); // Address + country
 		} elseif (!empty($this->country_code)) {
-			$datas['address'] = '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
+			$datas['address'] = '<br><b>' . $langs->trans('Country') . ':</b> ' . $this->country_code;
 		}
 		if (!empty($this->tva_intra) || (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP) && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false)) {
-			$datas['vatintra'] = '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
+			$datas['vatintra'] = '<br><b>' . $langs->trans('VATIntra') . ':</b> ' . dol_escape_htmltag($this->tva_intra);
 		}
 
 		if (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP)) {
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid1') !== false && $langs->trans('ProfId1'.$this->country_code) != '-') {
-				$datas['profid1'] = '<br><b>'.$langs->trans('ProfId1'.$this->country_code).':</b> '.$this->idprof1;
+			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid1') !== false && $langs->trans('ProfId1' . $this->country_code) != '-') {
+				$datas['profid1'] = '<br><b>' . $langs->trans('ProfId1' . $this->country_code) . ':</b> ' . $this->idprof1;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid2') !== false && $langs->trans('ProfId2'.$this->country_code) != '-') {
-				$datas['profid2'] = '<br><b>'.$langs->trans('ProfId2'.$this->country_code).':</b> '.$this->idprof2;
+			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid2') !== false && $langs->trans('ProfId2' . $this->country_code) != '-') {
+				$datas['profid2'] = '<br><b>' . $langs->trans('ProfId2' . $this->country_code) . ':</b> ' . $this->idprof2;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid3') !== false && $langs->trans('ProfId3'.$this->country_code) != '-') {
-				$datas['profid3'] = '<br><b>'.$langs->trans('ProfId3'.$this->country_code).':</b> '.$this->idprof3;
+			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid3') !== false && $langs->trans('ProfId3' . $this->country_code) != '-') {
+				$datas['profid3'] = '<br><b>' . $langs->trans('ProfId3' . $this->country_code) . ':</b> ' . $this->idprof3;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid4') !== false && $langs->trans('ProfId4'.$this->country_code) != '-') {
-				$datas['profid4'] = '<br><b>'.$langs->trans('ProfId4'.$this->country_code).':</b> '.$this->idprof4;
+			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid4') !== false && $langs->trans('ProfId4' . $this->country_code) != '-') {
+				$datas['profid4'] = '<br><b>' . $langs->trans('ProfId4' . $this->country_code) . ':</b> ' . $this->idprof4;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid5') !== false && $langs->trans('ProfId5'.$this->country_code) != '-') {
-				$datas['profid5'] = '<br><b>'.$langs->trans('ProfId5'.$this->country_code).':</b> '.$this->idprof5;
+			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid5') !== false && $langs->trans('ProfId5' . $this->country_code) != '-') {
+				$datas['profid5'] = '<br><b>' . $langs->trans('ProfId5' . $this->country_code) . ':</b> ' . $this->idprof5;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid6') !== false && $langs->trans('ProfId6'.$this->country_code) != '-') {
-				$datas['profid6'] = '<br><b>'.$langs->trans('ProfId6'.$this->country_code).':</b> '.$this->idprof6;
+			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid6') !== false && $langs->trans('ProfId6' . $this->country_code) != '-') {
+				$datas['profid6'] = '<br><b>' . $langs->trans('ProfId6' . $this->country_code) . ':</b> ' . $this->idprof6;
 			}
 		}
 
 		$datas['separator'] = '<br>';
 
 		if (!empty($this->code_client) && ($this->client == 1 || $this->client == 3)) {
-			$datas['customercode'] = '<br><b>'.$langs->trans('CustomerCode').':</b> '.$this->code_client;
+			$datas['customercode'] = '<br><b>' . $langs->trans('CustomerCode') . ':</b> ' . $this->code_client;
 		}
 		if (isModEnabled('accounting') && ($this->client == 1 || $this->client == 3)) {
 			$langs->load('compta');
-			$datas['accountancycustomercode'] = '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
+			$datas['accountancycustomercode'] = '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> ' . ($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		}
 		// show categories for this record only in ajax to not overload lists
 		if (!$nofetch && isModEnabled('categorie') && $this->client) {
@@ -2741,11 +2743,11 @@ class Societe extends CommonObject
 			$datas['categories_customer'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_CUSTOMER, 1, 1);
 		}
 		if (!empty($this->code_fournisseur) && $this->fournisseur) {
-			$datas['suppliercode'] = '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
+			$datas['suppliercode'] = '<br><b>' . $langs->trans('SupplierCode') . ':</b> ' . $this->code_fournisseur;
 		}
 		if (isModEnabled('accounting') && $this->fournisseur) {
 			$langs->load('compta');
-			$datas['accountancysuppliercode'] = '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
+			$datas['accountancysuppliercode'] = '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> ' . $this->code_compta_fournisseur;
 		}
 		// show categories for this record only in ajax to not overload lists
 		if (!$nofetch && isModEnabled('categorie') && $this->fournisseur) {
@@ -2793,16 +2795,16 @@ class Societe extends CommonObject
 		if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto))) {
 			$code = '';
 			if (($this->client) && (!empty($this->code_client)) && ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 2)) {
-				$code = $this->code_client.' - ';
+				$code = $this->code_client . ' - ';
 			}
 
 			if (($this->fournisseur) && (!empty($this->code_fournisseur)) && ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 3)) {
-				$code .= $this->code_fournisseur.' - ';
+				$code .= $this->code_fournisseur . ' - ';
 			}
 
 			if ($code) {
 				if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1) {
-					$name = $code.' '.$name;
+					$name = $code . ' ' . $name;
 				} else {
 					$name = $code;
 				}
@@ -2810,7 +2812,7 @@ class Societe extends CommonObject
 		}
 
 		if (!empty($this->name_alias) && empty($noaliasinname)) {
-			$name .= ' ('.$this->name_alias.')';
+			$name .= ' (' . $this->name_alias . ')';
 		}
 
 		$result = '';
@@ -2824,7 +2826,7 @@ class Societe extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$dataparams = ' data-params="' . dol_escape_htmltag(json_encode($params)) . '"';
 			$label = '';
 		} else {
 			$label = implode($this->getTooltipContentArray($params));
@@ -2834,30 +2836,30 @@ class Societe extends CommonObject
 		$linkend = '';
 
 		if ($option == 'customer' || $option == 'compta' || $option == 'category') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/comm/card.php?socid=' . $this->id;
 		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/comm/card.php?socid=' . $this->id;
 		} elseif ($option == 'supplier' || $option == 'category_supplier') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/fourn/card.php?socid=' . $this->id;
 		} elseif ($option == 'agenda') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/societe/agenda.php?socid=' . $this->id;
 		} elseif ($option == 'project') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/societe/project.php?socid=' . $this->id;
 		} elseif ($option == 'margin') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/margin/tabs/thirdpartyMargins.php?socid=' . $this->id . '&type=1';
 		} elseif ($option == 'contact') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/societe/contact.php?socid=' . $this->id;
 		} elseif ($option == 'ban') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/societe/paymentmodes.php?socid=' . $this->id;
 		}
 
 		// By default
 		if (empty($linkstart)) {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
+			$linkstart = '<a href="' . DOL_URL_ROOT . '/societe/card.php?socid=' . $this->id;
 		}
 
 		// Add type of canvas
-		$linkstart .= (!empty($this->canvas) ? '&canvas='.$this->canvas : '');
+		$linkstart .= (!empty($this->canvas) ? '&canvas=' . $this->canvas : '');
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
@@ -2872,18 +2874,18 @@ class Societe extends CommonObject
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowCompany");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classfortooltip.' refurl valignmiddle"';
+			$linkclose .= ($label ? ' title="' . dol_escape_htmltag($label, 1) . '"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams . ' class="' . $classfortooltip . ' refurl valignmiddle"';
 			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
-				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
+				$linkclose .= ' target="' . dol_escape_htmltag($target) . '"';
 			}
 		} else {
 			$linkclose .= ' class="valignmiddle"';
 		}
-		$linkstart .= $linkclose.'>';
+		$linkstart .= $linkclose . '>';
 		$linkend = '</a>';
 
 		global $user;
@@ -2894,7 +2896,7 @@ class Societe extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (' class="'.(($withpicto != 2) ? 'paddingright' : '').'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (' class="' . (($withpicto != 2) ? 'paddingright' : '') . '"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= dol_escape_htmltag($maxlen ? dol_trunc($name, $maxlen) : $name);
@@ -2904,13 +2906,13 @@ class Societe extends CommonObject
 		global $action;
 		$hookmanager->initHooks(array('thirdpartydao'));
 		$parameters = array(
-			'id'=>$this->id,
+			'id' => $this->id,
 			'getnomurl' => &$result,
-			'withpicto '=> $withpicto,
-			'option'=> $option,
-			'maxlen'=> $maxlen,
-			'notooltip'=> $notooltip,
-			'save_lastsearch_value'=> $save_lastsearch_value
+			'withpicto ' => $withpicto,
+			'option' => $option,
+			'maxlen' => $maxlen,
+			'notooltip' => $notooltip,
+			'save_lastsearch_value' => $save_lastsearch_value
 		);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
@@ -2938,17 +2940,17 @@ class Societe extends CommonObject
 		$s = '';
 		if (empty($option) || preg_match('/prospect/', $option)) {
 			if (($this->client == 2 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
-				$s .= '<'.$tag.' class="customer-back opacitymedium" title="'.$langs->trans("Prospect").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Prospect"), 0, 1).'</'.$tag.'>';
+				$s .= '<' . $tag . ' class="customer-back opacitymedium" title="' . $langs->trans("Prospect") . '" href="' . DOL_URL_ROOT . '/comm/card.php?socid=' . $this->id . '">' . dol_substr($langs->trans("Prospect"), 0, 1) . '</' . $tag . '>';
 			}
 		}
 		if (empty($option) || preg_match('/customer/', $option)) {
 			if (($this->client == 1 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-				$s .= '<'.$tag.' class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</'.$tag.'>';
+				$s .= '<' . $tag . ' class="customer-back" title="' . $langs->trans("Customer") . '" href="' . DOL_URL_ROOT . '/comm/card.php?socid=' . $this->id . '">' . dol_substr($langs->trans("Customer"), 0, 1) . '</' . $tag . '>';
 			}
 		}
 		if (empty($option) || preg_match('/supplier/', $option)) {
 			if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $this->fournisseur) {
-				$s .= '<'.$tag.' class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</'.$tag.'>';
+				$s .= '<' . $tag . ' class="vendor-back" title="' . $langs->trans("Supplier") . '" href="' . DOL_URL_ROOT . '/fourn/card.php?socid=' . $this->id . '">' . dol_substr($langs->trans("Supplier"), 0, 1) . '</' . $tag . '>';
 			}
 		}
 		return $s;
@@ -3012,7 +3014,7 @@ class Societe extends CommonObject
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
-			$contact_emails['thirdparty'] = $langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name, 16)." <".$this->email.">";
+			$contact_emails['thirdparty'] = $langs->transnoentitiesnoconv("ThirdParty") . ': ' . dol_trunc($this->name, 16) . " <" . $this->email . ">";
 		}
 		//var_dump($contact_emails)
 		return $contact_emails;
@@ -3036,7 +3038,7 @@ class Societe extends CommonObject
 				$this->name = $this->nom;
 			}
 			// TODO: Tester si tel non deja present dans tableau contact
-			$contact_phone['thirdparty'] = $langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name, 16)." <".$this->phone.">";
+			$contact_phone['thirdparty'] = $langs->transnoentitiesnoconv("ThirdParty") . ': ' . dol_trunc($this->name, 16) . " <" . $this->phone . ">";
 		}
 		return $contact_phone;
 	}
@@ -3058,18 +3060,20 @@ class Societe extends CommonObject
 
 
 		$sql = "SELECT rowid, email, statut as status, phone_mobile, lastname, poste, firstname";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople";
+		$sql .= " WHERE fk_soc = " . ((int) $this->id);
 		$sql .= " ORDER BY lastname, firstname";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
 			if ($nump) {
-				$sepa = "("; $sepb = ")";
+				$sepa = "(";
+				$sepb = ")";
 				if ($mode == 'email') {
 					//$sepa="&lt;"; $sepb="&gt;";
-					$sepa = "<"; $sepb = ">";
+					$sepa = "<";
+					$sepb = ">";
 				}
 				$i = 0;
 				while ($i < $nump) {
@@ -3093,9 +3097,9 @@ class Societe extends CommonObject
 						}
 
 						if (!empty($obj->poste)) {
-							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname, $obj->lastname)).($obj->poste ? " - ".$obj->poste : "").(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname, $obj->lastname)) . ($obj->poste ? " - " . $obj->poste : "") . (($mode != 'poste' && $property) ? " " . $sepa . $property . $sepb : '');
 						} else {
-							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname, $obj->lastname)).(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname, $obj->lastname)) . (($mode != 'poste' && $property) ? " " . $sepa . $property . $sepb : '');
 						}
 					}
 					$i++;
@@ -3119,7 +3123,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		$contacts = array();
 
-		$sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $this->id);
+		$sql = "SELECT rowid, lastname, firstname FROM " . MAIN_DB_PREFIX . "socpeople WHERE fk_soc = " . ((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
@@ -3146,10 +3150,10 @@ class Societe extends CommonObject
 	public function contact_array_objects()
 	{
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 		$contacts = array();
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $this->id);
+		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "socpeople WHERE fk_soc = " . ((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
@@ -3187,8 +3191,8 @@ class Societe extends CommonObject
 		}
 
 		$sql = "SELECT rowid, email, phone_mobile, lastname, firstname";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople";
+		$sql .= " WHERE rowid = " . ((int) $rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3198,7 +3202,7 @@ class Societe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($mode == 'email') {
-					$contact_property = dol_string_nospecial(dolGetFirstLastname($obj->firstname, $obj->lastname), ' ', array(","))." <".$obj->email.">";
+					$contact_property = dol_string_nospecial(dolGetFirstLastname($obj->firstname, $obj->lastname), ' ', array(",")) . " <" . $obj->email . ">";
 				} elseif ($mode == 'mobile') {
 					$contact_property = $obj->phone_mobile;
 				}
@@ -3222,7 +3226,7 @@ class Societe extends CommonObject
 	public function display_rib($mode = 'label')
 	{
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 
 		$bac = new CompanyBankAccount($this->db);
 		$bac->fetch(0, $this->id);
@@ -3232,7 +3236,7 @@ class Societe extends CommonObject
 				return $bac->getRibLabel(true);
 			} elseif ($mode == 'rum') {
 				if (empty($bac->rum)) {
-					require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+					require_once DOL_DOCUMENT_ROOT . '/compta/prelevement/class/bonprelevement.class.php';
 					$prelevement = new BonPrelevement($this->db);
 					$bac->fetch_thirdparty();
 					$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
@@ -3257,8 +3261,8 @@ class Societe extends CommonObject
 	public function get_all_rib()
 	{
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type='ban' AND fk_soc = ".((int) $this->id);
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe_rib WHERE type='ban' AND fk_soc = " . ((int) $this->id);
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error++;
@@ -3296,7 +3300,7 @@ class Societe extends CommonObject
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
-				$res = dol_include_once($dirroot.$module.'.php');
+				$res = dol_include_once($dirroot . $module . '.php');
 				if ($res) {
 					break;
 				}
@@ -3306,7 +3310,7 @@ class Societe extends CommonObject
 			$this->code_client = $mod->getNextValue($objsoc, $type);
 			$this->prefixCustomerIsRequired = $mod->prefixIsRequired;
 
-			dol_syslog(get_class($this)."::get_codeclient code_client=".$this->code_client." module=".$module);
+			dol_syslog(get_class($this) . "::get_codeclient code_client=" . $this->code_client . " module=" . $module);
 		}
 	}
 
@@ -3328,7 +3332,7 @@ class Societe extends CommonObject
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
-				$res = dol_include_once($dirroot.$module.'.php');
+				$res = dol_include_once($dirroot . $module . '.php');
 				if ($res) {
 					break;
 				}
@@ -3337,7 +3341,7 @@ class Societe extends CommonObject
 
 			$this->code_fournisseur = $mod->getNextValue($objsoc, $type);
 
-			dol_syslog(get_class($this)."::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
+			dol_syslog(get_class($this) . "::get_codefournisseur code_fournisseur=" . $this->code_fournisseur . " module=" . $module);
 		}
 	}
 
@@ -3357,7 +3361,7 @@ class Societe extends CommonObject
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
-				$res = dol_include_once($dirroot.$module.'.php');
+				$res = dol_include_once($dirroot . $module . '.php');
 				if ($res) {
 					break;
 				}
@@ -3365,7 +3369,7 @@ class Societe extends CommonObject
 
 			$mod = new $module();
 
-			dol_syslog(get_class($this)."::codeclient_modifiable code_client=".$this->code_client." module=".$module);
+			dol_syslog(get_class($this) . "::codeclient_modifiable code_client=" . $this->code_client . " module=" . $module);
 			if ($mod->code_modifiable_null && !$this->code_client) {
 				return 1;
 			}
@@ -3397,7 +3401,7 @@ class Societe extends CommonObject
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
-				$res = dol_include_once($dirroot.$module.'.php');
+				$res = dol_include_once($dirroot . $module . '.php');
 				if ($res) {
 					break;
 				}
@@ -3405,7 +3409,7 @@ class Societe extends CommonObject
 
 			$mod = new $module();
 
-			dol_syslog(get_class($this)."::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$module);
+			dol_syslog(get_class($this) . "::codefournisseur_modifiable code_founisseur=" . $this->code_fournisseur . " module=" . $module);
 			if ($mod->code_modifiable_null && !$this->code_fournisseur) {
 				return 1;
 			}
@@ -3443,7 +3447,7 @@ class Societe extends CommonObject
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
-				$res = dol_include_once($dirroot.$module.'.php');
+				$res = dol_include_once($dirroot . $module . '.php');
 				if ($res) {
 					break;
 				}
@@ -3451,7 +3455,7 @@ class Societe extends CommonObject
 
 			$mod = new $module();
 
-			dol_syslog(get_class($this)."::check_codeclient code_client=".$this->code_client." module=".$module);
+			dol_syslog(get_class($this) . "::check_codeclient code_client=" . $this->code_client . " module=" . $module);
 			$result = $mod->verif($this->db, $this->code_client, $this, 0);
 			if ($result) {	// If error
 				$this->error = $mod->error;
@@ -3484,7 +3488,7 @@ class Societe extends CommonObject
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
-				$res = dol_include_once($dirroot.$module.'.php');
+				$res = dol_include_once($dirroot . $module . '.php');
 				if ($res) {
 					break;
 				}
@@ -3492,7 +3496,7 @@ class Societe extends CommonObject
 
 			$mod = new $module();
 
-			dol_syslog(get_class($this)."::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
+			dol_syslog(get_class($this) . "::check_codefournisseur code_fournisseur=" . $this->code_fournisseur . " module=" . $module);
 			$result = $mod->verif($this->db, $this->code_fournisseur, $this, 1);
 			if ($result) {	// If error
 				$this->error = $mod->error;
@@ -3522,7 +3526,7 @@ class Societe extends CommonObject
 			$res = false;
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
-				$res = dol_include_once($dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.'.php');
+				$res = dol_include_once($dirroot . $conf->global->SOCIETE_CODECOMPTA_ADDON . '.php');
 				if ($res) {
 					break;
 				}
@@ -3567,7 +3571,7 @@ class Societe extends CommonObject
 	 */
 	public function setParent($id)
 	{
-		dol_syslog(get_class($this).'::setParent', LOG_DEBUG);
+		dol_syslog(get_class($this) . '::setParent', LOG_DEBUG);
 
 		if ($this->id) {
 			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
@@ -3582,7 +3586,7 @@ class Societe extends CommonObject
 				}
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
+			$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'societe SET parent = ' . ($id > 0 ? $id : 'null') . ' WHERE rowid = ' . ((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -3611,8 +3615,8 @@ class Societe extends CommonObject
 		}
 
 		$sql = 'SELECT s.parent';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$sql .= ' WHERE rowid = '.((int) $idparent);
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'societe as s';
+		$sql .= ' WHERE rowid = ' . ((int) $idparent);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj	= $this->db->fetch_object($resql);
@@ -3642,7 +3646,7 @@ class Societe extends CommonObject
 		global $langs;
 
 		if ($company_id > 0) {
-			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = ".((int) $company_id);
+			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = " . ((int) $company_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($obj = $this->db->fetch_object($resql)) {
@@ -3741,10 +3745,10 @@ class Societe extends CommonObject
 				break;
 		}
 
-		 //Verify duplicate entries
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$this->db->escape($value)."' AND entity IN (".getEntity('societe').")";
+		//Verify duplicate entries
+		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "societe WHERE " . $field . " = '" . $this->db->escape($value) . "' AND entity IN (" . getEntity('societe') . ")";
 		if ($socid) {
-			$sql .= " AND rowid <> ".$socid;
+			$sql .= " AND rowid <> " . $socid;
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3971,7 +3975,7 @@ class Societe extends CommonObject
 		$action = '';
 
 		$hookmanager->initHooks(array('idprofurl'));
-		$parameters = array('idprof'=>$idprof, 'company'=>$thirdparty);
+		$parameters = array('idprof' => $idprof, 'company' => $thirdparty);
 		$reshook = $hookmanager->executeHooks('getIdProfUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook)) {
 			if (!empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
@@ -3981,26 +3985,26 @@ class Societe extends CommonObject
 			// TODO Move links to validate professional ID into a dictionary table "country" + "link"
 			$strippedIdProf1 = str_replace(' ', '', $thirdparty->idprof1);
 			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
-				$url = 'https://annuaire-entreprises.data.gouv.fr/entreprise/'.$strippedIdProf1; // See also http://avis-situation-sirene.insee.fr/
+				$url = 'https://annuaire-entreprises.data.gouv.fr/entreprise/' . $strippedIdProf1; // See also http://avis-situation-sirene.insee.fr/
 			}
 			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
-				$url = 'https://beta.companieshouse.gov.uk/company/'.$strippedIdProf1;
+				$url = 'https://beta.companieshouse.gov.uk/company/' . $strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'ES') {
-				$url = 'http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$strippedIdProf1;
+				$url = 'http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/' . $strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'IN') {
-				$url = 'http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$strippedIdProf1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+				$url = 'http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber=' . $strippedIdProf1 . ';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'DZ') {
-				$url = 'http://nif.mfdgi.gov.dz/nif.asp?Nif='.$strippedIdProf1;
+				$url = 'http://nif.mfdgi.gov.dz/nif.asp?Nif=' . $strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
-				$url = 'http://www.nif.pt/'.$strippedIdProf1;
+				$url = 'http://www.nif.pt/' . $strippedIdProf1;
 			}
 
 			if ($url) {
-				return '<a target="_blank" rel="noopener noreferrer" href="'.$url.'">'.$langs->trans("Check").'</a>';
+				return '<a target="_blank" rel="noopener noreferrer" href="' . $url . '">' . $langs->trans("Check") . '</a>';
 			}
 		} else {
 			return $hookmanager->resPrint;
@@ -4018,7 +4022,7 @@ class Societe extends CommonObject
 	public function has_projects()
 	{
 		// phpcs:enable
-		$sql = "SELECT COUNT(*) as numproj FROM ".MAIN_DB_PREFIX."projet WHERE fk_soc = ".((int) $this->id);
+		$sql = "SELECT COUNT(*) as numproj FROM " . MAIN_DB_PREFIX . "projet WHERE fk_soc = " . ((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -4042,8 +4046,8 @@ class Societe extends CommonObject
 	{
 		$sql = "SELECT s.rowid, s.nom as name, s.datec, tms as datem,";
 		$sql .= " fk_user_creat, fk_user_modif";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE s.rowid = ".((int) $id);
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+		$sql .= " WHERE s.rowid = " . ((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -4100,7 +4104,7 @@ class Societe extends CommonObject
 	 */
 	public function isInEEC()
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 		return isInEEC($this);
 	}
 
@@ -4115,8 +4119,8 @@ class Societe extends CommonObject
 		// phpcs:enable
 		$this->SupplierCategories = array();
 		$sql = "SELECT rowid, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE type = ".Categorie::TYPE_SUPPLIER;
+		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie";
+		$sql .= " WHERE type = " . Categorie::TYPE_SUPPLIER;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -4140,8 +4144,8 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		if ($categorie_id > 0 && $this->id > 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_soc) ";
-			$sql .= " VALUES (".((int) $categorie_id).", ".((int) $this->id).")";
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "categorie_fournisseur (fk_categorie, fk_soc) ";
+			$sql .= " VALUES (" . ((int) $categorie_id) . ", " . ((int) $this->id) . ")";
 
 			if ($resql = $this->db->query($sql)) {
 				return 0;
@@ -4160,9 +4164,9 @@ class Societe extends CommonObject
 	public function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
-		$sql .= " WHERE mc.fk_mailing=m.rowid AND mc.email = '".$this->db->escape($this->email)."' ";
-		$sql .= " AND m.entity IN (".getEntity($this->element).") AND mc.statut NOT IN (-1,0)"; // -1 error, 0 not sent, 1 sent with success
+		$sql .= " FROM " . MAIN_DB_PREFIX . "mailing_cibles as mc, " . MAIN_DB_PREFIX . "mailing as m";
+		$sql .= " WHERE mc.fk_mailing=m.rowid AND mc.email = '" . $this->db->escape($this->email) . "' ";
+		$sql .= " AND m.entity IN (" . getEntity($this->element) . ") AND mc.statut NOT IN (-1,0)"; // -1 error, 0 not sent, 1 sent with success
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -4192,13 +4196,13 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			if ($no_email) {
-				$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$this->db->escape($this->email)."'";
+				$sql = "SELECT COUNT(rowid) as nb FROM " . MAIN_DB_PREFIX . "mailing_unsubscribe WHERE entity IN (" . getEntity('mailing', 0) . ") AND email = '" . $this->db->escape($this->email) . "'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "mailing_unsubscribe(email, entity, date_creat) VALUES ('" . $this->db->escape($this->email) . "', " . getEntity('mailing', 0) . ", '" . $this->db->idate(dol_now()) . "')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;
@@ -4212,7 +4216,7 @@ class Societe extends CommonObject
 					$this->errors[] = $this->error;
 				}
 			} else {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$this->db->escape($this->email)."' AND entity IN (".getEntity('mailing', 0).")";
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "mailing_unsubscribe WHERE email = '" . $this->db->escape($this->email) . "' AND entity IN (" . getEntity('mailing', 0) . ")";
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -4243,7 +4247,7 @@ class Societe extends CommonObject
 	public function getNoEmail()
 	{
 		if ($this->email) {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($this->email)."'";
+			$sql = "SELECT COUNT(rowid) as nb FROM " . MAIN_DB_PREFIX . "mailing_unsubscribe WHERE entity IN (" . getEntity('mailing') . ") AND email = '" . $this->db->escape($this->email) . "'";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -4273,12 +4277,12 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf, $user, $langs;
 
-		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::create_from_member", LOG_DEBUG);
 		$fullname = $member->getFullName($langs);
 
 		if ($member->morphy == 'mor') {
 			if (empty($socname)) {
-				$socname = $member->company? $member->company : $member->societe;
+				$socname = $member->company ? $member->company : $member->societe;
 			}
 			if (!empty($fullname) && empty($socalias)) {
 				$socalias = $fullname;
@@ -4338,9 +4342,9 @@ class Societe extends CommonObject
 				}
 			}
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
-			$sql .= " SET fk_soc = ".((int) $this->id);
-			$sql .= " WHERE rowid = ".((int) $member->id);
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "adherent";
+			$sql .= " SET fk_soc = " . ((int) $this->id);
+			$sql .= " WHERE rowid = " . ((int) $member->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -4354,7 +4358,7 @@ class Societe extends CommonObject
 			}
 		} else {
 			// $this->error deja positionne
-			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error." - ".join(',', $this->errors), LOG_ERR);
+			dol_syslog(get_class($this) . "::create_from_member - 2 - " . $this->error . " - " . join(',', $this->errors), LOG_ERR);
 
 			$this->db->rollback();
 			return $result;
@@ -4395,7 +4399,7 @@ class Societe extends CommonObject
 			} else {
 				// For backward compatibility
 				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 				$country_code = getCountry($country_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 				$country_label = getCountry($country_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 			}
@@ -4404,12 +4408,13 @@ class Societe extends CommonObject
 		$this->country_code = $country_code;
 		$this->country = $country_label;
 		if (is_object($langs)) {
-			$this->country = ($langs->trans('Country'.$country_code) != 'Country'.$country_code) ? $langs->trans('Country'.$country_code) : $country_label;
+			$this->country = ($langs->trans('Country' . $country_code) != 'Country' . $country_code) ? $langs->trans('Country' . $country_code) : $country_label;
 		}
 
 		//TODO This could be replicated for region but function `getRegion` didn't exist, so I didn't added it.
 		// We define state_id, state_code and state
-		$state_id = 0; $state_code = $state_label = '';
+		$state_id = 0;
+		$state_code = $state_label = '';
 		if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
 			$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 			$state_id = $tmp[0];
@@ -4417,8 +4422,8 @@ class Societe extends CommonObject
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
 			} else { // For backward compatibility
-				dol_syslog("Your setup of State has an old syntax (entity=".$conf->entity."). Go in Home - Setup - Organization then Save should remove this error.", LOG_ERR);
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+				dol_syslog("Your setup of State has an old syntax (entity=" . $conf->entity . "). Go in Home - Setup - Organization then Save should remove this error.", LOG_ERR);
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 				$state_code = getState($state_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 				$state_label = getState($state_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 			}
@@ -4427,7 +4432,7 @@ class Societe extends CommonObject
 		$this->state_code = $state_code;
 		$this->state = $state_label;
 		if (is_object($langs)) {
-			$this->state = ($langs->trans('State'.$state_code) != 'State'.$state_code) ? $langs->trans('State'.$state_code) : $state_label;
+			$this->state = ($langs->trans('State' . $state_code) != 'State' . $state_code) ? $langs->trans('State' . $state_code) : $state_label;
 		}
 
 		$this->phone = getDolGlobalString('MAIN_INFO_SOCIETE_TEL');
@@ -4474,7 +4479,7 @@ class Societe extends CommonObject
 		$this->forme_juridique_code = getDolGlobalString('MAIN_INFO_SOCIETE_FORME_JURIDIQUE');
 		$this->email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 		$this->default_lang = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
-		$this->logo =getDolGlobalString('MAIN_INFO_SOCIETE_LOGO');
+		$this->logo = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO');
 		$this->logo_small = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SMALL');
 		$this->logo_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_MINI');
 		$this->logo_squarred = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED');
@@ -4503,7 +4508,7 @@ class Societe extends CommonObject
 		// Initialize parameters
 		$this->id = 0;
 		$this->entity = 1;
-		$this->name = 'THIRDPARTY SPECIMEN '.dol_print_date($now, 'dayhourlog');
+		$this->name = 'THIRDPARTY SPECIMEN ' . dol_print_date($now, 'dayhourlog');
 		$this->nom = $this->name; // For backward compatibility
 		$this->ref_ext = 'Ref ext';
 		$this->specimen = 1;
@@ -4527,8 +4532,8 @@ class Societe extends CommonObject
 		$this->phone = '0909090901';
 		$this->fax = '0909090909';
 
-		$this->code_client = 'CC-'.dol_print_date($now, 'dayhourlog');
-		$this->code_fournisseur = 'SC-'.dol_print_date($now, 'dayhourlog');
+		$this->code_client = 'CC-' . dol_print_date($now, 'dayhourlog');
+		$this->code_fournisseur = 'SC-' . dol_print_date($now, 'dayhourlog');
 		$this->capital = 10000;
 		$this->client = 1;
 		$this->prospect = 1;
@@ -4556,8 +4561,8 @@ class Societe extends CommonObject
 	public function useLocalTax($localTaxNum = 0)
 	{
 		$sql  = "SELECT t.localtax1, t.localtax2";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
+		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '" . $this->db->escape($this->country_code) . "'";
 		$sql .= " AND t.active = 1";
 		if (empty($localTaxNum)) {
 			$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
@@ -4583,8 +4588,8 @@ class Societe extends CommonObject
 	public function useNPR()
 	{
 		$sql  = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
+		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '" . $this->db->escape($this->country_code) . "'";
 		$sql .= " AND t.active = 1 AND t.recuperableonly = 1";
 
 		dol_syslog("useNPR", LOG_DEBUG);
@@ -4605,15 +4610,15 @@ class Societe extends CommonObject
 	public function useRevenueStamp()
 	{
 		$sql  = "SELECT COUNT(*) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_revenuestamp as r, " . MAIN_DB_PREFIX . "c_country as c";
+		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '" . $this->db->escape($this->country_code) . "'";
 		$sql .= " AND r.active = 1";
 
 		dol_syslog("useRevenueStamp", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			return (($obj->nb > 0) ?true:false);
+			return (($obj->nb > 0) ? true : false);
 		} else {
 			$this->error = $this->db->lasterror();
 			return false;
@@ -4642,9 +4647,9 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
+		$lib = $langs->trans("ProspectLevel" . $fk_prospectlevel);
 		// If lib not found in language file, we get label from cache/databse
-		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) {
+		if ($lib == $langs->trans("ProspectLevel" . $fk_prospectlevel)) {
 			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 		}
 		return $lib;
@@ -4685,17 +4690,17 @@ class Societe extends CommonObject
 
 		if ($mode == 2) {
 			if ($status == '-1' || $status == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect-1");
+				return img_action($langs->trans("StatusProspect-1"), -1, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect-1");
 			} elseif ($status == '0' || $status == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect0");
+				return img_action($langs->trans("StatusProspect0"), 0, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect0");
 			} elseif ($status == '1' || $status == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect1");
+				return img_action($langs->trans("StatusProspect1"), 1, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect1");
 			} elseif ($status == '2' || $status == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect2");
+				return img_action($langs->trans("StatusProspect2"), 2, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect2");
 			} elseif ($status == '3' || $status == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect3");
+				return img_action($langs->trans("StatusProspect3"), 3, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect3");
 			} else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto, 'class="inline-block valignmiddle"').' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
+				return img_action(($langs->trans("StatusProspect" . $status) != "StatusProspect" . $status) ? $langs->trans("StatusProspect" . $status) : $label, 0, $picto, 'class="inline-block valignmiddle"') . ' ' . (($langs->trans("StatusProspect" . $status) != "StatusProspect" . $status) ? $langs->trans("StatusProspect" . $status) : $label);
 			}
 		} elseif ($mode == 3) {
 			if ($status == '-1' || $status == 'ST_NO') {
@@ -4709,21 +4714,21 @@ class Societe extends CommonObject
 			} elseif ($status == '3' || $status == 'ST_DONE') {
 				return img_action($langs->trans("StatusProspect3"), 3, $picto, 'class="inline-block valignmiddle"');
 			} else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto, 'class="inline-block valignmiddle"');
+				return img_action(($langs->trans("StatusProspect" . $status) != "StatusProspect" . $status) ? $langs->trans("StatusProspect" . $status) : $label, 0, $picto, 'class="inline-block valignmiddle"');
 			}
 		} elseif ($mode == 4) {
 			if ($status == '-1' || $status == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect-1");
+				return img_action($langs->trans("StatusProspect-1"), -1, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect-1");
 			} elseif ($status == '0' || $status == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect0");
+				return img_action($langs->trans("StatusProspect0"), 0, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect0");
 			} elseif ($status == '1' || $status == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect1");
+				return img_action($langs->trans("StatusProspect1"), 1, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect1");
 			} elseif ($status == '2' || $status == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect2");
+				return img_action($langs->trans("StatusProspect2"), 2, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect2");
 			} elseif ($status == '3' || $status == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect3");
+				return img_action($langs->trans("StatusProspect3"), 3, $picto, 'class="inline-block valignmiddle"') . ' ' . $langs->trans("StatusProspect3");
 			} else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto, 'class="inline-block valignmiddle"').' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
+				return img_action(($langs->trans("StatusProspect" . $status) != "StatusProspect" . $status) ? $langs->trans("StatusProspect" . $status) : $label, 0, $picto, 'class="inline-block valignmiddle"') . ' ' . (($langs->trans("StatusProspect" . $status) != "StatusProspect" . $status) ? $langs->trans("StatusProspect" . $status) : $label);
 			}
 		}
 
@@ -4743,15 +4748,15 @@ class Societe extends CommonObject
 			$table = 'supplier_proposal';
 		}
 
-		$sql  = "SELECT rowid, ref, total_ht, total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
-		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		$sql  = "SELECT rowid, ref, total_ht, total_ttc, fk_statut as status FROM " . MAIN_DB_PREFIX . $table . " as f";
+		$sql .= " WHERE fk_soc = " . ((int) $this->id);
 		if ($mode == 'supplier') {
-			$sql .= " AND entity IN (".getEntity('supplier_proposal').")";
+			$sql .= " AND entity IN (" . getEntity('supplier_proposal') . ")";
 		} else {
-			$sql .= " AND entity IN (".getEntity('propal').")";
+			$sql .= " AND entity IN (" . getEntity('propal') . ")";
 		}
 
-		dol_syslog("getOutstandingProposals for fk_soc = ".((int) $this->id), LOG_DEBUG);
+		dol_syslog("getOutstandingProposals for fk_soc = " . ((int) $this->id), LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -4768,7 +4773,7 @@ class Societe extends CommonObject
 					$outstandingOpened += $obj->total_ttc;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax, 'refs'=>$arrayofref); // 'opened' is 'incl taxes'
+			return array('opened' => $outstandingOpened, 'total_ht' => $outstandingTotal, 'total_ttc' => $outstandingTotalIncTax, 'refs' => $arrayofref); // 'opened' is 'incl taxes'
 		} else {
 			return array();
 		}
@@ -4787,12 +4792,12 @@ class Societe extends CommonObject
 			$table = 'commande_fournisseur';
 		}
 
-		$sql  = "SELECT rowid, ref, total_ht, total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
-		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		$sql  = "SELECT rowid, ref, total_ht, total_ttc, fk_statut as status FROM " . MAIN_DB_PREFIX . $table . " as f";
+		$sql .= " WHERE fk_soc = " . ((int) $this->id);
 		if ($mode == 'supplier') {
-			$sql .= " AND entity IN (".getEntity('supplier_order').")";
+			$sql .= " AND entity IN (" . getEntity('supplier_order') . ")";
 		} else {
-			$sql .= " AND entity IN (".getEntity('commande').")";
+			$sql .= " AND entity IN (" . getEntity('commande') . ")";
 		}
 
 		dol_syslog("getOutstandingOrders", LOG_DEBUG);
@@ -4811,7 +4816,7 @@ class Societe extends CommonObject
 					$outstandingOpened += $obj->total_ttc;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax, 'refs'=>$arrayofref); // 'opened' is 'incl taxes'
+			return array('opened' => $outstandingOpened, 'total_ht' => $outstandingTotal, 'total_ttc' => $outstandingTotalIncTax, 'refs' => $arrayofref); // 'opened' is 'incl taxes'
 		} else {
 			return array();
 		}
@@ -4838,15 +4843,15 @@ class Societe extends CommonObject
 		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
-		$sql = "SELECT rowid, ref, total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
-		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		$sql = "SELECT rowid, ref, total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM " . MAIN_DB_PREFIX . $table . " as f";
+		$sql .= " WHERE fk_soc = " . ((int) $this->id);
 		if (!empty($late)) {
-			$sql .= " AND date_lim_reglement < '".$this->db->idate(dol_now())."'";
+			$sql .= " AND date_lim_reglement < '" . $this->db->idate(dol_now()) . "'";
 		}
 		if ($mode == 'supplier') {
-			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
+			$sql .= " AND entity IN (" . getEntity('facture_fourn') . ")";
 		} else {
-			$sql .= " AND entity IN (".getEntity('invoice').")";
+			$sql .= " AND entity IN (" . getEntity('invoice') . ")";
 		}
 
 		dol_syslog("getOutstandingBills", LOG_DEBUG);
@@ -4858,29 +4863,32 @@ class Societe extends CommonObject
 			$arrayofref = array();
 			$arrayofrefopened = array();
 			if ($mode == 'supplier') {
-				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 				$tmpobject = new FactureFournisseur($this->db);
 			} else {
-				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 				$tmpobject = new Facture($this->db);
 			}
 			while ($obj = $this->db->fetch_object($resql)) {
 				$arrayofref[$obj->rowid] = $obj->ref;
 				$tmpobject->id = $obj->rowid;
 
-				if ($obj->status != $tmpobject::STATUS_DRAFT                                           // Not a draft
+				if (
+					$obj->status != $tmpobject::STATUS_DRAFT                                           // Not a draft
 					&& !($obj->status == $tmpobject::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
-					) {
+				) {
 					$outstandingTotal += $obj->total_ht;
 					$outstandingTotalIncTax += $obj->total_ttc;
 				}
 
 				$remaintopay = 0;
 
-				if ($obj->paye == 0
+				if (
+					$obj->paye == 0
 					&& $obj->status != $tmpobject::STATUS_DRAFT    		// Not a draft
 					&& $obj->status != $tmpobject::STATUS_ABANDONED	    // Not abandonned
-					&& $obj->status != $tmpobject::STATUS_CLOSED) {		// Not classified as paid
+					&& $obj->status != $tmpobject::STATUS_CLOSED
+				) {		// Not classified as paid
 					//$sql .= " AND (status <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 					$paiement = $tmpobject->getSommePaiement();
 					$creditnotes = $tmpobject->getSumCreditNotesUsed();
@@ -4902,9 +4910,9 @@ class Societe extends CommonObject
 					$arrayofrefopened[$obj->rowid] = $obj->ref;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax, 'refs'=>$arrayofref, 'refsopened'=>$arrayofrefopened); // 'opened' is 'incl taxes'
+			return array('opened' => $outstandingOpened, 'total_ht' => $outstandingTotal, 'total_ttc' => $outstandingTotalIncTax, 'refs' => $arrayofref, 'refsopened' => $arrayofrefopened); // 'opened' is 'incl taxes'
 		} else {
-			dol_syslog("Sql error ".$this->db->lasterror, LOG_ERR);
+			dol_syslog("Sql error " . $this->db->lasterror, LOG_ERR);
 			return array();
 		}
 	}
@@ -4965,7 +4973,7 @@ class Societe extends CommonObject
 		if (!empty($moreparams) && !empty($moreparams['use_companybankid'])) {
 			$modelpath = "core/modules/bank/doc/";
 
-			include_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 			$companybankaccount = new CompanyBankAccount($this->db);
 			$result = $companybankaccount->fetch($moreparams['use_companybankid']);
 			if (!$result) {
@@ -4978,13 +4986,13 @@ class Societe extends CommonObject
 				if (!empty($conf->global->COMPANY_ADDON_PDF)) {
 					$modele = $conf->global->COMPANY_ADDON_PDF;
 				} else {
-					print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
+					print $langs->trans("Error") . " " . $langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
 					return 0;
 				}
 			}
 
 			if (!isset($this->bank_account)) {
-				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
 				$result = $bac->fetch(0, $this->id);
 				if ($result > 0) {
@@ -5016,11 +5024,11 @@ class Societe extends CommonObject
 	 */
 	public function setCategories($categories, $type_categ)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 		// Decode type
 		if (!in_array($type_categ, array(Categorie::TYPE_CUSTOMER, Categorie::TYPE_SUPPLIER))) {
-			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown company category type. Done nothing.', LOG_ERR);
+			dol_syslog(__METHOD__ . ': Type ' . $type_categ . 'is an unknown company category type. Done nothing.', LOG_ERR);
 			return -1;
 		}
 
@@ -5120,15 +5128,15 @@ class Societe extends CommonObject
 		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some to avoid duplicate.
 		 * Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
 		 */
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
-		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';
+		$sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'societe_commerciaux ';
+		$sql .= ' WHERE fk_soc = ' . (int) $dest_id . ' AND fk_user IN ( ';
 		$sql .= ' SELECT fk_user ';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
-		$sql .= ' WHERE fk_soc = '.(int) $origin_id.') ';
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'societe_commerciaux ';
+		$sql .= ' WHERE fk_soc = ' . (int) $origin_id . ') ';
 
 		$resql = $dbs->query($sql);
 		while ($obj = $dbs->fetch_object($resql)) {
-			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
+			$dbs->query('DELETE FROM ' . MAIN_DB_PREFIX . 'societe_commerciaux WHERE rowid = ' . ((int) $obj->rowid));
 		}
 
 		/**
@@ -5170,16 +5178,16 @@ class Societe extends CommonObject
 			return -1;
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ";
-		$sql .= $field." = '".$this->db->escape($value)."'";
-		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET ";
+		$sql .= $field . " = '" . $this->db->escape($value) . "'";
+		$sql .= " WHERE rowid = " . ((int) $this->id);
 
-		dol_syslog(get_class($this)."::".__FUNCTION__, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::" . __FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
 			// Call triggers
-			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface = new Interfaces($this->db);
 			$result = $interface->run_triggers('COMPANY_MODIFY', $this, $user, $langs, $conf);
 			if ($result < 0) {
@@ -5210,7 +5218,7 @@ class Societe extends CommonObject
 	{
 		global $langs;
 
-		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/partnership/class/partnership.class.php';
 
 
 		$this->partnerships[] = array();
@@ -5235,14 +5243,14 @@ class Societe extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . (method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref) . '</span>';
+		$return .= '<input id="cb' . $this->id . '" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="' . $this->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 		if (property_exists($this, 'code_client')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->code_client.'</span>';
+			$return .= '<br><span class="info-box-label opacitymedium">' . $this->code_client . '</span>';
 		}
 
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">' . $this->getLibStatut(3) . '</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -5273,26 +5281,26 @@ class Societe extends CommonObject
 
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
-		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
+		$sql .= " FROM " . $this->db->prefix() . "c_type_contact tc";
+		$sql .= ", " . $this->db->prefix() . "societe_contacts sc";
 
-		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . "socpeople t on sc.fk_socpeople = t.rowid";
 
-		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
+		$sql .= " WHERE sc.fk_soc = " . ((int) $this->id);
 		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
 		if (!empty($element)) {
-			$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+			$sql .= " AND tc.element = '" . $this->db->escape($element) . "'";
 		}
 		if ($code) {
-			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
+			$sql .= " AND tc.code = '" . $this->db->escape($code) . "'";
 		}
-		$sql .= " AND sc.entity = ".getEntity($this->element);
+		$sql .= " AND sc.entity = " . getEntity($this->element);
 		$sql .= " AND tc.source = 'external'";
 		$sql .= " AND tc.active=1";
 
 		$sql .= " ORDER BY t.lastname ASC";
 
-		dol_syslog(get_class($this)."::getContacts", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::getContacts", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -5301,7 +5309,7 @@ class Societe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if (!$list) {
-					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+					$transkey = "TypeContact_" . $obj->element . "_" . $obj->source . "_" . $obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
 					$tab[$i] = array(
 						'source' => $obj->source,
@@ -5311,8 +5319,8 @@ class Societe extends CommonObject
 						'civility' => $obj->civility,
 						'lastname' => $obj->lastname,
 						'firstname' => $obj->firstname,
-						'email'=>$obj->email,
-						'login'=> (empty($obj->login) ? '' : $obj->login),
+						'email' => $obj->email,
+						'login' => (empty($obj->login) ? '' : $obj->login),
 						'photo' => (empty($obj->photo) ? '' : $obj->photo),
 						'statuscontact' => $obj->statuscontact,
 						'rowid' => $obj->rowid,

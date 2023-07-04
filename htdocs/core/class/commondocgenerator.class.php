@@ -440,7 +440,6 @@ abstract class CommonDocGenerator
 			}
 			$array_other['__['.$key.']__'] = $newval;
 		}
-
 		return $array_other;
 	}
 
