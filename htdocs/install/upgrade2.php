@@ -3329,7 +3329,7 @@ function migrate_actioncomm_element($db, $langs, $conf)
  */
 function migrate_element_category($db, $langs, $conf)
 {
-	dolibarr_install_syslog("upgrade2::migrate_element_time");
+	dolibarr_install_syslog("upgrade2::migrate_element_category");
 
 	print '<tr><td colspan="4">';
 
@@ -3339,6 +3339,17 @@ function migrate_element_category($db, $langs, $conf)
 	$error = 0;
 
 	$db->begin();
+
+	// product
+	$sql = 'SELECT fk_categorie, fk_product, import_key FROM '.MAIN_DB_PREFIX."categorie_product";
+	$result = $db->query($sql);
+	if ($result) {
+		while ($obj = $db->fetch_object($result)) {
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_product.')');
+		}
+	} else {
+		$error++;
+	}
 
 	if ($error == 0) {
 		$db->commit();
