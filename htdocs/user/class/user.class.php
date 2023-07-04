@@ -367,7 +367,6 @@ class User extends CommonObject
 		$this->db = $db;
 
 		// User preference
-		$this->liste_limit = 0;
 		$this->clicktodial_loaded = 0;
 
 		// For cache usage

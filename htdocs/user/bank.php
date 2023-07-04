@@ -419,7 +419,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Sensitive salary/value information
 	if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
+		|| (isModEnabled('salaries') && !empty($user->rights->salaries->readall))
 		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))) {
 		$langs->load("salaries");
 
@@ -582,7 +582,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Latest payments of salaries
-	if (!empty($conf->salaries->enabled) &&
+	if (isModEnabled('salaries') &&
 		(($user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)) || (!empty($user->rights->salaries->readall)))
 		) {
 		$payment_salary = new PaymentSalary($db);

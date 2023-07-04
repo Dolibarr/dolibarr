@@ -112,15 +112,20 @@ if ($action == 'send' && !$cancel) {
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 
-		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
-		$result = $smsfile->sendfile(); // This send SMS
+		try {
+			$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
 
-		if ($result) {
-			setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
-			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("ResultKo"), null, 'errors');
-			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
+			$result = $smsfile->sendfile(); // This send SMS
+
+			if ($result) {
+				setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
+				setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
+			} else {
+				setEventMessages($langs->trans("ResultKo"), null, 'errors');
+				setEventMessages($smsfile->error, $smsfile->errors, 'errors');
+			}
+		} catch (Exception $e) {
+			setEventMessages($e->getMessage(), null, 'errors');
 		}
 
 		$action = '';

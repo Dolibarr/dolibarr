@@ -1958,7 +1958,10 @@ class FormFile
 		if (!empty($addfilterfields)) {
 			print '</form>';
 		}
+		return count($filearray);
 		// Fin de zone
+		
+
 	}
 
 	/**

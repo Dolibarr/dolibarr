@@ -3432,8 +3432,21 @@ function dragAndDropFileUpload($htmlname)
 	$out .= '
 		jQuery(document).ready(function() {
 			var enterTargetDragDrop = null;
+
 			$("#'.$htmlname.'").addClass("cssDragDropArea");
-			$(".cssDragDropArea").on("dragenter", function(ev) {
+
+			$(".cssDragDropArea").on("dragenter", function(ev, ui) {
+				var dataTransfer = ev.originalEvent.dataTransfer;
+				var dataTypes = dataTransfer.types;
+				//console.log(dataTransfer);
+				//console.log(dataTypes);
+
+				if (!dataTypes || ($.inArray(\'Files\', dataTypes) === -1)) {
+				    // The element dragged is not a file, so we avoid the "dragenter"
+				    ev.preventDefault();
+    				return false;
+  				}
+
 				// Entering drop area. Highlight area
 				console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
 				enterTargetDragDrop = ev.target;
@@ -3464,7 +3477,9 @@ function dragAndDropFileUpload($htmlname)
 				fd.append("element", "'.dol_escape_js($object->element).'");
 				fd.append("token", "'.currentToken().'");
 				fd.append("action", "linkit");
+
 				var dataTransfer = e.originalEvent.dataTransfer;
+
 				if (dataTransfer.files && dataTransfer.files.length){
 					var droppedFiles = e.originalEvent.dataTransfer.files;
 					$.each(droppedFiles, function(index,file){

@@ -262,7 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Eroare, parametrul <b>%s</b> trebu
 ErrorLoginDateValidity=Eroare, această conectare se află în afara intervalului temporal valabil
 ErrorValueLength=Lungimea câmpului '<b>%s</b>' trebuie să fie mai mare de '<b>%s</b>'
 ErrorReservedKeyword=Cuvântul '<b>%s</b>' este un cuvânt cheie rezervat
-ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command.
+ErrorFilenameReserved=Numele de fișier <b>%s</b>i nu poate fi folosit deoarece este o comandă rezervată și protejată.
 ErrorNotAvailableWithThisDistribution=Nu este disponibil cu această distribuție
 ErrorPublicInterfaceNotEnabled=Interfaţa publică nu a fost activată
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Limba noii pagini trebuie definită dacă este setată ca traducere a altei pagini
@@ -309,7 +309,14 @@ ErrorExistingPermission = Permisiunea <b>%s</b> pentru obiectul <b>%s</b> exist�
 ErrorFieldExist=Valoarea pentru <b>%s</b> există deja
 ErrorEqualModule=Modul invalid în <b>%s</b>
 ErrorFieldValue=Valoarea pentru <b>%s</b> este incorectă
-ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
+ErrorCoherenceMenu=<b>%s</b> este obligatoriu când <b>%s</b> este "lăsat" în stânga 
+ErrorUploadFileDragDrop=A apărut o eroare la încărcarea fișier(elor)
+ErrorUploadFileDragDropPermissionDenied=A apărut o eroare la încărcarea fișier(elor): Permisiune refuzată
+ErrorFixThisHere=<a href="%s">Remediază acest lucru aici</a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
+ErrorMenuExistValue=A Menu already exist with this Title or URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
@@ -349,6 +356,14 @@ WarningThemeForcedTo=Atenție, tema <b>%s</b> a fost forțată de constanta ascu
 WarningPagesWillBeDeleted=Atenție, acest lucru va șterge și toate paginile/containerele existente ale site-ului. Ar trebui să exporți site-ul înainte, astfel încât să ai o copie de rezervă pentru a-l reimporta mai târziu. 
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Validarea automată este dezactivată când opțiunea de scădere a stocului este setată pe "Validare factură".
 WarningModuleNeedRefrech = Modulul <b>%s</b> a fost dezavtivat. Nu uita să-l activezi
+WarningPermissionAlreadyExist=Permisiuni existente pentru acest obiect
+
+SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
+SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
+SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
+SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
+SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
 
 # Validate
 RequireValidValue = Valoare invalidă

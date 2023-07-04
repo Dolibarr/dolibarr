@@ -24,4 +24,4 @@ SalariesStatistics=சம்பள புள்ளிவிவரங்கள்
 SalariesAndPayments=சம்பளம் மற்றும் கொடுப்பனவுகள்
 ConfirmDeleteSalaryPayment=இந்த சம்பளத்தை நீக்க வேண்டுமா?
 FillFieldFirst=முதலில் பணியாளர் புலத்தை நிரப்பவும்
-UpdateAmountWithLastSalary=கடைசி சம்பளத்துடன் தொகையை அமைக்கவும்
+UpdateAmountWithLastSalary=Set amount of last salary

@@ -1135,8 +1135,11 @@ class FormCompany extends Form
 		global $langs;
 
 		if ($mode === "html") {
+			$actioncode = empty($prospectstatic->cacheprospectstatus[$statusprospect]) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['code'];
+			$actionpicto = empty($prospectstatic->cacheprospectstatus[$statusprospect]['picto']) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['picto'];
+
 			//print $prospectstatic->LibProspCommStatut($statusprospect, 2, $prospectstatic->cacheprospectstatus[$statusprospect]['label'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto']);
-			print img_action('', $prospectstatic->cacheprospectstatus[$statusprospect]['code'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto'], 'class="inline-block valignmiddle paddingright"');
+			print img_action('', $actioncode, $actionpicto, 'class="inline-block valignmiddle paddingright"');
 			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'">';
 			foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
 				$titlealt = (empty($val['label']) ? 'default' : $val['label']);
