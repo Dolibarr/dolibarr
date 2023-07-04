@@ -1229,4 +1229,4 @@ PublicVirtualCard=Virtuelt visittkort
 TreeView=Trevisning
 DropFileToAddItToObject=Slipp en fil for å legge den til dette objektet
 UploadFileDragDropSuccess=Filen(e) er lastet opp
-SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <= or >= before the value to filter using a mathematical comparison
+SearchSyntaxTooltipForStringOrNum=For å søke i tekstfelt kan du bruke tegnene ^ eller $ for å gjøre et "start eller slutt med"-søk eller bruke ! å lage en 'inneholder ikke'-test. Du kan bruke | mellom to strenger i stedet for et mellomrom for en 'OR'-betingelse i stedet for 'AND'. For numeriske verdier kan du bruke operatoren <, > , <=, > = eller != før verdien for å filtrere ved hjelp av en matematisk sammenligning

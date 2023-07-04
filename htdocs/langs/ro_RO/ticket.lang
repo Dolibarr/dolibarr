@@ -200,8 +200,8 @@ TicketAssigned=Tichetul este acum atribuit
 TicketChangeType=Modificare tip
 TicketChangeCategory=Modificare cod analitic
 TicketChangeSeverity=Modificare severitate
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Adăugare sau trimitere mesaj
+TicketAddPrivateMessage=Adăugare mesaj privat
 MessageSuccessfullyAdded=Tichet adăugat
 TicketMessageSuccessfullyAdded=Mesaj adăugat cu succes
 TicketMessagesList=Listă de mesaje
@@ -275,7 +275,7 @@ TicketsDelayForFirstResponseTooLong=A trecut prea mult timp de la deschiderea ti
 TicketsDelayFromLastResponseTooLong=A trecut prea mult timp de la ultimul răspuns pe acest tichet.
 TicketNoContractFoundToLink=Nu s-a găsit niciun contract asociat automat la acest tichet. Asociază manual un contract.
 TicketManyContractsLinked=Mai multe contracte au fost asociate automat la acest tichet. Asigură-te că verifici contractul care ar trebui să fie ales.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=Referința [%s] este deja utilizată, noua ta referință este [%s]
 
 #
 # Logs

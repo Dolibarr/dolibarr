@@ -320,4 +320,4 @@ StockTransferRightDelete=Ștergere transferuri de stocuri
 BatchNotFound=Lotul / seria nu a fost găsită pentru acest produs
 StockMovementWillBeRecorded=O mișcare de stoc va fi înregistrată
 StockMovementNotYetRecorded=Mișcarea de stoc nu va fi afectată de acest pas
-WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
+WarningThisWIllAlsoDeleteStock=Atenție, acest lucru va distruge și toate cantitățile din stoc din depozit

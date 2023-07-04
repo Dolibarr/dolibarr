@@ -75,7 +75,7 @@ SumOfProductWeights=Greutatea totală a produselor
 DetailWarehouseNumber= Detalii depozit
 DetailWarehouseFormat= Greutate: %s (Cantitate: %d)
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Expediere distribuție
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=Nicio expediere pentru linia %s , deoarece au fost găsite prea multe combinații de depozit, produs, lot (%s).
+ErrorNoCombinationBatchcode=Nicio expediere pentru linia %s, deoarece nu a fost găsită nicio combinație de depozit, produs, lot. 

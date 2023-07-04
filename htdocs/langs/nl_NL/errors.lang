@@ -313,10 +313,10 @@ ErrorCoherenceMenu= <b> %s </b> is vereist wanneer <b> %s </b> 'links' is
 ErrorUploadFileDragDrop=Er is een fout opgetreden tijdens het uploaden van de bestanden
 ErrorUploadFileDragDropPermissionDenied=Er is een fout opgetreden bij het uploaden van de bestanden: Toestemming geweigerd
 ErrorFixThisHere= <a href="%s"> Los dit hier op </a>
-ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
-ErrorMenuExistValue=A Menu already exist with this Title or URL
-ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s
-ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Fout: de URL van uw huidige exemplaar (%s) komt niet overeen met de URL die is gedefinieerd in uw OAuth2-aanmeldingsconfiguratie (%s). OAuth2 login doen in een dergelijke configuratie is niet toegestaan.
+ErrorMenuExistValue=Er bestaat al een menu met deze titel of URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
+ErrorTypeMenu=Het is niet mogelijk om nog een menu toe te voegen voor dezelfde module op de navigatiebalk, nog niet verwerkt
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Uw PHP-parameter upload_max_filesize (%s) is hoger dan PHP-parameter post_max_size (%s). Dit is geen consistente opstelling.
@@ -358,12 +358,12 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatische validatie
 WarningModuleNeedRefrech = Module <b> %s </b> is uitgeschakeld. Vergeet het niet in te schakelen
 WarningPermissionAlreadyExist=Bestaande machtigingen voor dit object
 
-SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
-SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
-SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
-SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
-SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
-SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
+SwissQrOnlyVIR = SwissQR-factuur kan alleen worden toegevoegd aan facturen die zijn ingesteld om te worden betaald met automatische incasso's.
+SwissQrCreditorAddressInvalid = Crediteur adres is ongeldig (zijn postcode en plaats ingesteld? (%s)
+SwissQrCreditorInformationInvalid = Crediteur gegevens zijn ongeldig voor IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN nog niet geïmplementeerd
+SwissQrPaymentInformationInvalid = Betalingsinformatie was ongeldig voor totaal %s : %s
+SwissQrDebitorAddressInvalid = Debiteurgegevens waren ongeldig (%s)
 
 # Validate
 RequireValidValue = Waarde niet geldig

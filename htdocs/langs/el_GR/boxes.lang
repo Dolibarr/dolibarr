@@ -113,7 +113,7 @@ NumberOfLinesInSuspenseAccount=Αριθμός γραμμών στον μεταβ
 SuspenseAccountNotDefined=Δεν έχει οριστεί μεταβατικός λογαριασμός
 BoxLastCustomerShipments=Τελευταίες αποστολές πελάτη
 BoxTitleLastCustomerShipments=Τελευταίες %s αποστολές πελάτη
-BoxTitleLastLeaveRequests=Τελευταία %sτροποποιημένα αιτήματα άδειας 
+BoxTitleLastLeaveRequests=Τελευταία %s τροποποιημένα αιτήματα άδειας 
 NoRecordedShipments=Καμία καταγεγραμμένη αποστολή πελάτη
 BoxCustomersOutstandingBillReached=Πελάτες που έχουν φτάσει το όριο μέγιστου οφειλόμενου
 # Pages

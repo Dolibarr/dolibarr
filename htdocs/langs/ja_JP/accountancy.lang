@@ -299,7 +299,7 @@ DescClosure=まだ検証されておらずロックされていない月ごと�
 OverviewOfMovementsNotValidated=検証およびロックされていない動きの概要
 AllMovementsWereRecordedAsValidated=全動きは検証され、ロックされたものとして記録された
 NotAllMovementsCouldBeRecordedAsValidated=全動きを検証済みおよびロック済みとして記録できるわけではない
-ValidateMovements=Validate and lock movements
+ValidateMovements=動きを検証してロックする
 DescValidateMovements=書き込み、レタリング、削除の変更または削除は禁止される。演習の全エントリが要検証済。検証済でないと、閉じることができない。
 
 ValidateHistory=自動的に結合
@@ -486,7 +486,7 @@ FECFormatMulticurrencyAmount=多通貨額 (Montantdevise)
 FECFormatMulticurrencyCode=他通貨 コード (Idevise)
 
 DateExport=日付のエクスポート
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=警告、このレポートは元帳に基づいていないため、元帳で手動で変更されたトランザクションは含まれない。仕訳が最新の場合、簿記ビューはより正確になる。
 ExpenseReportJournal=経費報告仕訳帳
 DocsAlreadyExportedAreIncluded=すでにエクスポートされたドキュメントが含まれる
 ClickToShowAlreadyExportedLines=クリックすると、すでにエクスポートされた行が表示される

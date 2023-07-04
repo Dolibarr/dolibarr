@@ -299,7 +299,7 @@ DescClosure=Δείτε εδώ τον αριθμό των κινήσεων ανά
 OverviewOfMovementsNotValidated=Επισκόπηση κινήσεων που δεν έχουν επικυρωθεί και κλειδωθεί
 AllMovementsWereRecordedAsValidated=Όλες οι κινήσεις καταγράφηκαν ως επικυρωμένες και κλειδωμένες
 NotAllMovementsCouldBeRecordedAsValidated=Δεν ήταν δυνατό να καταγραφούν όλες οι κινήσεις ως επικυρωμένες και κλειδωμένες
-ValidateMovements=Validate and lock movements
+ValidateMovements=Επικύρωση και κλείδωμα κινήσεων
 DescValidateMovements=Απαγορεύεται οποιαδήποτε τροποποίηση ή διαγραφή γραφής, συμφωνίας και διαγραφής. Όλες οι καταχωρήσεις πρέπει να επικυρωθούν, διαφορετικά το κλείσιμο δεν θα είναι δυνατό
 
 ValidateHistory=Δεσμεύστε αυτόματα
@@ -352,7 +352,7 @@ ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, o
 EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Ενεργοποιήστε την αυτόματη συμφωνία κατά τη μεταφορά στη λογιστική
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
-OptionsAdvanced=Advanced options
+OptionsAdvanced=Σύνθετες επιλογές
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
@@ -488,7 +488,7 @@ FECFormatMulticurrencyCode=Κωδικός πολλαπλών νομισμάτω�
 DateExport=Ημερομηνία εξαγωγής
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Ημερολόγιο Αναφοράς Εξόδων
-DocsAlreadyExportedAreIncluded=Docs already exported are included
-ClickToShowAlreadyExportedLines=Click to show already exported lines
+DocsAlreadyExportedAreIncluded=Περιλαμβάνονται τα έγγραφα που έχουν ήδη εξαχθεί
+ClickToShowAlreadyExportedLines=Κάντε κλικ για την εμφάνιση των ήδη εξαγομένων γραμμών
 
 NAccounts= %s  λογαριασμοί
