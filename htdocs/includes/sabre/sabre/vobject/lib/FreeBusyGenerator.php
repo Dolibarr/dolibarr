@@ -109,8 +109,6 @@ class FreeBusyGenerator
      * for setting things like the METHOD, CALSCALE, VERSION, etc..
      *
      * The VFREEBUSY object will be automatically added though.
-     *
-     * @param Document $vcalendar
      */
     public function setBaseObject(Document $vcalendar)
     {
@@ -119,8 +117,6 @@ class FreeBusyGenerator
 
     /**
      * Sets a VAVAILABILITY document.
-     *
-     * @param Document $vcalendar
      */
     public function setVAvailability(Document $vcalendar)
     {
@@ -130,7 +126,7 @@ class FreeBusyGenerator
     /**
      * Sets the input objects.
      *
-     * You must either specify a valendar object as a string, or as the parse
+     * You must either specify a vcalendar object as a string, or as the parse
      * Component.
      * It's also possible to specify multiple objects as an array.
      *
@@ -176,8 +172,6 @@ class FreeBusyGenerator
 
     /**
      * Sets the reference timezone for floating times.
-     *
-     * @param DateTimeZone $timeZone
      */
     public function setTimeZone(DateTimeZone $timeZone)
     {
@@ -208,9 +202,6 @@ class FreeBusyGenerator
     /**
      * This method takes a VAVAILABILITY component and figures out all the
      * available times.
-     *
-     * @param FreeBusyData $fbData
-     * @param VCalendar    $vavailability
      */
     protected function calculateAvailability(FreeBusyData $fbData, VCalendar $vavailability)
     {
@@ -363,8 +354,7 @@ class FreeBusyGenerator
      * This method takes an array of iCalendar objects and applies its busy
      * times on fbData.
      *
-     * @param FreeBusyData $fbData
-     * @param VCalendar[]  $objects
+     * @param VCalendar[] $objects
      */
     protected function calculateBusy(FreeBusyData $fbData, array $objects)
     {
@@ -372,7 +362,6 @@ class FreeBusyGenerator
             foreach ($object->getBaseComponents() as $component) {
                 switch ($component->name) {
                     case 'VEVENT':
-
                         $FBTYPE = 'BUSY';
                         if (isset($component->TRANSP) && ('TRANSPARENT' === strtoupper($component->TRANSP))) {
                             break;

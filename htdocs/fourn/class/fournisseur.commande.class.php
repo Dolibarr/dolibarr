@@ -487,7 +487,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 			$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
-			$this->extraparams = (array) json_decode($obj->extraparams, true);
+			$this->extraparams = isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 			$this->db->free($resql);
 
@@ -672,8 +672,8 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::valid");
 		$result = 0;
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->commande->creer) || !empty($user->rights->supplier_order->creer)))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate))) {
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer")))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_order_advance", "validate"))) {
 				$this->db->begin();
 
 				// Definition of supplier order numbering model name
@@ -1116,7 +1116,7 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::approve");
 
-		if ($user->rights->fournisseur->commande->approuver) {
+		if ($user->hasRight("fournisseur", "commande", "approuver")) {
 			$now = dol_now();
 
 			$this->db->begin();
@@ -1258,7 +1258,7 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::refuse");
 		$result = 0;
-		if ($user->rights->fournisseur->commande->approuver) {
+		if ($user->hasRight("fournisseur", "commande", "approuver")) {
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".self::STATUS_REFUSED;
@@ -1308,7 +1308,7 @@ class CommandeFournisseur extends CommonOrder
 
 		//dol_syslog("CommandeFournisseur::Cancel");
 		$result = 0;
-		if ($user->rights->fournisseur->commande->commander) {
+		if ($user->hasRight("fournisseur", "commande", "commander")) {
 			$statut = self::STATUS_CANCELED;
 
 			$this->db->begin();
@@ -1359,7 +1359,7 @@ class CommandeFournisseur extends CommonOrder
 		global $langs;
 		dol_syslog(get_class($this)."::commande");
 		$error = 0;
-		if ($user->rights->fournisseur->commande->commander) {
+		if ($user->hasRight("fournisseur", "commande", "commander")) {
 			$this->db->begin();
 
 			$newnoteprivate = $this->note_private;
@@ -2482,9 +2482,9 @@ class CommandeFournisseur extends CommonOrder
 
 		$usercanreceive = 0;
 		if (!isModEnabled('reception')) {
-			$usercanreceive = $user->rights->fournisseur->commande->receptionner;
+			$usercanreceive = $user->hasRight("fournisseur", "commande", "receptionner");
 		} else {
-			$usercanreceive = $user->rights->reception->creer;
+			$usercanreceive = $user->hasRight("reception", "creer");
 		}
 
 		if ($usercanreceive) {
@@ -2600,7 +2600,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
+		if ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer")) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2659,7 +2659,7 @@ class CommandeFournisseur extends CommonOrder
 	public function set_id_projet($user, $id_projet, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
+		if ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer")) {
 			$error = 0;
 
 			$this->db->begin();
@@ -3157,7 +3157,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as co";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3193,7 +3193,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date, c.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= " WHERE c.entity = ".$conf->entity;
@@ -3355,7 +3355,7 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $user;
 
-		return $user->rights->fournisseur->commande;
+		return $user->hasRight("fournisseur", "commande");
 	}
 
 
@@ -3616,7 +3616,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 		$sql .= ' cfd.fk_commandefourndet = cd.rowid';
 		$sql .= ' AND cd.fk_commande ='.((int) $this->id);
-		if ($this->fk_product > 0) {
+		if (isset($this->fk_product) && !empty($this->fk_product) > 0) {
 			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);
 		}
 		if ($filtre_statut >= 0) {

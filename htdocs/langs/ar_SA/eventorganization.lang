@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = في نموذج إنشاء / إضافة
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= مؤتمر أو كشك
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = إدارة تنظيم الحدث
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=رابط لطرف ثالث (عميل أو مو
 OrganizationEvenLabelName=الاسم العام للمؤتمر أو الكابينة
 
 NewSuggestionOfBooth=طلب كشك
-NewSuggestionOfConference=طلب لعقد مؤتمر
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=تم العثور على العديد م
 ErrorSeveralCompaniesWithNameContactUs=تم العثور على العديد من الشركات بهذا الاسم لذا لا يمكننا التحقق من صحة تسجيلك تلقائيًا. يرجى الاتصال بنا على %s للتحقق اليدوي
 NoPublicActionsAllowedForThisEvent=لا توجد إجراءات عامة مفتوحة للجمهور لهذا الحدث
 MaxNbOfAttendees=أقصى عدد من الحاضرين
+DateStartEvent=Event start date
+DateEndEvent=Event end date

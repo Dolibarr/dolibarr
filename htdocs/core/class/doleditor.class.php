@@ -90,7 +90,7 @@ class DolEditor
 		$this->readonly = $readonly;
 
 		// Check if extended editor is ok. If not we force textarea
-		if ((empty($conf->fckeditor->enabled) && $okforextendededitor != 'ace') || empty($okforextendededitor)) {
+		if ((!isModEnabled('fckeditor') && $okforextendededitor != 'ace') || empty($okforextendededitor)) {
 			$this->tool = 'textarea';
 		}
 		if ($okforextendededitor === 'ace') {

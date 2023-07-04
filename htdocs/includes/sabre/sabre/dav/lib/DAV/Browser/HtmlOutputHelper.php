@@ -42,7 +42,6 @@ class HtmlOutputHelper
      * that can be used to make output a lot shorter.
      *
      * @param string $baseUri
-     * @param array  $namespaceMap
      */
     public function __construct($baseUri, array $namespaceMap)
     {

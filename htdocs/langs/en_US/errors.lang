@@ -315,7 +315,8 @@ ErrorUploadFileDragDropPermissionDenied=There was an error while the file(s) upl
 ErrorFixThisHere=<a href="%s">Fix this here</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
 ErrorMenuExistValue=A Menu already exist with this Title or URL
-ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s 
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -357,7 +358,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation i
 WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to enable it 
 WarningPermissionAlreadyExist=Existing permissions for this object
 
-SwissQrOnlyVIR = SwissQR invoice can only get added on bank transfers.
+SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
 SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet

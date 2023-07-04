@@ -43,8 +43,7 @@ class CalendarHome implements DAV\IExtendedCollection, DAVACL\IACL
     /**
      * Constructor.
      *
-     * @param Backend\BackendInterface $caldavBackend
-     * @param array                    $principalInfo
+     * @param array $principalInfo
      */
     public function __construct(Backend\BackendInterface $caldavBackend, $principalInfo)
     {
@@ -216,7 +215,6 @@ class CalendarHome implements DAV\IExtendedCollection, DAVACL\IACL
      * Creates a new calendar or subscription.
      *
      * @param string $name
-     * @param MkCol  $mkCol
      *
      * @throws DAV\Exception\InvalidResourceType
      */

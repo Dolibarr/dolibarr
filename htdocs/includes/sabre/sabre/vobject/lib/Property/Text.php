@@ -136,16 +136,18 @@ class Text extends Property
             }
 
             foreach ($item as &$subItem) {
-                $subItem = strtr(
-                    $subItem,
-                    [
-                        '\\' => '\\\\',
-                        ';' => '\;',
-                        ',' => '\,',
-                        "\n" => '\n',
-                        "\r" => '',
-                    ]
-                );
+                if (!is_null($subItem)) {
+                    $subItem = strtr(
+                        $subItem,
+                        [
+                            '\\' => '\\\\',
+                            ';' => '\;',
+                            ',' => '\,',
+                            "\n" => '\n',
+                            "\r" => '',
+                        ]
+                    );
+                }
             }
             $item = implode(',', $item);
         }

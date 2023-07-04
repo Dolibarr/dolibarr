@@ -35,7 +35,5 @@ ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas de contabilidad general (si e
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de Gastos Diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social
 Codejournal=Periódico
-AccountingCategory=Custom group of accounts
-AccountingCategories=Custom groups of accounts
 FinanceJournal=Periodo Financiero
 TotalMarge=Margen total de ventas

@@ -82,7 +82,6 @@ class PropPatch
      * code associated with the operation.
      *
      * @param string|string[] $properties
-     * @param callable        $callback
      */
     public function handle($properties, callable $callback)
     {
@@ -112,8 +111,6 @@ class PropPatch
      * Call this function if you wish to handle _all_ properties that haven't
      * been handled by anything else yet. Note that you effectively claim with
      * this that you promise to process _all_ properties that are coming in.
-     *
-     * @param callable $callback
      */
     public function handleRemaining(callable $callback)
     {
@@ -250,8 +247,7 @@ class PropPatch
     /**
      * Executes a property callback with the single-property syntax.
      *
-     * @param string   $propertyName
-     * @param callable $callback
+     * @param string $propertyName
      */
     private function doCallBackSingleProp($propertyName, callable $callback)
     {
@@ -281,9 +277,6 @@ class PropPatch
 
     /**
      * Executes a property callback with the multi-property syntax.
-     *
-     * @param array    $propertyList
-     * @param callable $callback
      */
     private function doCallBackMultiProp(array $propertyList, callable $callback)
     {

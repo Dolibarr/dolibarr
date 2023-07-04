@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=Электронные письма, введе�
 MailingModuleDescDolibarrUsers=Пользователи с электронной почтой
 MailingModuleDescThirdPartiesByCategories=Контрагенты
 SendingFromWebInterfaceIsNotAllowed=Отправка из веб-интерфейса не разрешена.
-EmailCollectorFilterDesc=Все фильтры должны совпадать, чтобы электронная почта была собрана
+EmailCollectorFilterDesc=Все фильтры должны совпадать, чтобы электронная почта собиралась. <br> Вы можете использовать символ "!" перед значением строки поиска, если вам нужен отрицательный тест
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Строка %s в файле
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=Значение по умолчанию для п
 DefaultStatusEmptyMandatory=Пусто, но обязательно
 WarningLimitSendByDay=ВНИМАНИЕ: В соответствии с настройками или контрактом вашего экземпляра количество писем в день ограничено до <b>%s</b>. Попытка отправить больше может привести к замедлению или приостановке работы вашего экземпляра. Обратитесь в службу поддержки, если вам нужна более высокая квота.
 NoMoreRecipientToSendTo=No more recipient to send the email to
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)

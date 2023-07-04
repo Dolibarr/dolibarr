@@ -43,8 +43,7 @@ class Collection extends DAV\Collection implements ICollection, DAVACL\IACL
     /**
      * Constructor.
      *
-     * @param CalDAV\Backend\NotificationSupport $caldavBackend
-     * @param string                             $principalUri
+     * @param string $principalUri
      */
     public function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri)
     {

@@ -202,7 +202,7 @@ class RecruitmentJobPosition extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->recruitment->recruitmentjobposition->read) {
+		/*if ($user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/

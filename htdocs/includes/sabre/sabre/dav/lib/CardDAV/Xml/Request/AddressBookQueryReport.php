@@ -115,8 +115,6 @@ class AddressBookQueryReport implements XmlDeserializable
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
-     *
      * @return mixed
      */
     public static function xmlDeserialize(Reader $reader)
@@ -148,7 +146,6 @@ class AddressBookQueryReport implements XmlDeserializable
                     }
                     break;
                 case '{'.Plugin::NS_CARDDAV.'}filter':
-
                     if (!is_null($newProps['filters'])) {
                         throw new BadRequest('You can only include 1 {'.Plugin::NS_CARDDAV.'}filter element');
                     }

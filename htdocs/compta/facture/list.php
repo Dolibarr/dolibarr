@@ -392,7 +392,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)) {
+if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 	if (!empty($arrayofselected)) {
@@ -1180,7 +1180,7 @@ if ($resql) {
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 
-	if (!empty($user->rights->facture->paiement)) {
+	if ($user->hasRight('facture', 'paiement')) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
 	if (isModEnabled('prelevement') && !empty($user->rights->prelevement->bons->creer)) {
@@ -1931,7 +1931,7 @@ if ($resql) {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban

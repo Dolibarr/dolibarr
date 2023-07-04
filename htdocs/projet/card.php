@@ -777,7 +777,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 
 	// Budget
-	print '<tr class="classusetask classusebilltime"><td>'.$langs->trans("Budget").'</td>';
+	print '<tr><td>'.$langs->trans("Budget").'</td>';
 	print '<td><input class="width75 right" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'">';
 	print ' '.$langs->getCurrencySymbol($conf->currency);
 	print '</td>';
@@ -1148,7 +1148,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		}
 
 		// Budget
-		print '<tr class="classusetask classusebilltime"><td>'.$langs->trans("Budget").'</td>';
+		print '<tr><td>'.$langs->trans("Budget").'</td>';
 		print '<td><input class="width75 right" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
 		print $langs->getCurrencySymbol($conf->currency);
 		print '</td>';
@@ -1445,12 +1445,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(oldpercent); }
                         else { jQuery("#opp_percent").val(price2numjs(defaultpercent)); }
-                    }
-                    else
-                    {
+                    } else {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent);
-                    	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
-                        	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+                    	if (jQuery("#opp_percent").val() == \'\' || (parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
+                        	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
+								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+							}
                         	jQuery("#opp_percent").val(price2numjs(defaultpercent));
                     	}
                     }

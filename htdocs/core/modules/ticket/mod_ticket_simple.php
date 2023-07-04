@@ -147,7 +147,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 		$date = empty($ticket->datec) ? dol_now() : $ticket->datec;
 
 		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1;

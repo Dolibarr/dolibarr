@@ -537,9 +537,9 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		} else {
 			$permsToadd = array();
 			$perms = array(
-				'read' => 'Read objects of '.ucfirst($module),
-				'write' => 'Create/Update objects of '.ucfirst($module),
-				'delete' => 'Delete objects of '.ucfirst($module)
+				'read' => 'Read '.$objectname.' object of '.ucfirst($module),
+				'write' => 'Create/Update '.$objectname.' object of '.ucfirst($module),
+				'delete' => 'Delete '.$objectname.' object of '.ucfirst($module)
 			);
 			$i = 0;
 			foreach ($perms as $index => $value) {
@@ -648,7 +648,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// write the begin of table with specifics options
 	$table = "== DATA SPECIFICATIONS\n";
-	$table .= "== Table of fields and their properties for object *$objectname* : \n";
+	$table .= "=== Table of fields with properties for object *$objectname* : \n";
 	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
 	$table .= "|===\n";
 	$table .= "|code";
@@ -657,50 +657,34 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= "|".$attUnique;
 	}
 	$table .="\n";
-	$countKeys = count($keys);
-	for ($j=0;$j<$countKeys;$j++) {
-		$string = $keys[$j];
+	foreach ($keys as $string) {
 		$string = trim($string, "'");
 		$string = rtrim($string, ",");
-
-		$array = [];
-		eval("\$array = [$string];");
+		$array = eval("return [$string];");
 
 		// check if is array after cleaning string
 		if (!is_array($array)) {
 			return -1;
 		}
-		// name of field
-		$field = array_keys($array);
-		// all values of each property
-		$values = array_values($array);
 
+		$field = array_keys($array);
+		$values = array_values($array)[0];
 
 		// check each field has all properties and add it if missed
-		if (count($values[0]) <=22) {
-			foreach ($attributesUnique as $cle) {
-				if (!in_array($cle, array_keys($values[0]))) {
-					$values[0][$cle] = '';
-				}
+		foreach ($attributesUnique as $attUnique) {
+			if (!array_key_exists($attUnique, $values)) {
+				$values[$attUnique] = '';
 			}
 		}
 
-		//reorganize $values with order attributeUnique
-		$valuesRestructured = array();
-		foreach ($attributesUnique as $key) {
-			if (array_key_exists($key, $values[0])) {
-				$valuesRestructured[$key] = $values[0][$key];
-			}
-		}
-		// write all values of properties for each field
-		$table .= "|*".$field[0]."*|";
-		$table .= implode("|", array_values($valuesRestructured))."\n";
+		$table .= "|*" . $field[0] . "*|";
+		$table .= implode("|", $values) . "\n";
 	}
 	// end table
-	$table .= "|===";
-	$table .= "__ end table for object $objectname";
+	$table .= "|===\n";
+	$table .= "__ end table for object $objectname\n";
 	//write in file
-	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
+	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
@@ -780,8 +764,7 @@ function writePermsInAsciiDoc($file, $destfile)
 	$string .= "\n";
 	//content table
 	$array = explode(";", $content);
-	$indexIgnored = 15;
-	$permissions = array_slice($array, $indexIgnored, null, true);
+	$permissions = array_filter($array);
 	// delete  occurrences "$r++" and ID
 	$permissions = str_replace('$r++', 1, $permissions);
 
@@ -806,21 +789,12 @@ function writePermsInAsciiDoc($file, $destfile)
 	array_pop($permsN);
 
 	// Group permissions by Object and add it to string
-	$temp_array = [];
 	$final_array = [];
-	$countRights = count($permsN);
-	for ($i = 0; $i < $countRights ; $i++) {
-		// Add current element to temporary array
-		$temp_array[] = $permsN[$i];
-		//  add them to the final array and empty the temporary array
-		if (count($temp_array) == 2) {
-			$final_array[] = $temp_array;
-			$temp_array = [];
-		}
-	}
-	//  add it to the final array
-	if (count($temp_array) > 0) {
+	$index = 0;
+	while ($index < count($permsN)) {
+		$temp_array = [$permsN[$index], $permsN[$index + 1]];
 		$final_array[] = $temp_array;
+		$index += 2;
 	}
 
 	$result = array();
@@ -951,16 +925,6 @@ function removeObjectFromApiFile($file, $objectname, $modulename)
 	return 1;
 }
 
-/**
- * Compare menus by their object
- * @param  mixed  $a  first value
- * @param  mixed  $b  seconde value
- * @return int        1 if OK, -1 if KO
- */
-function compareMenus($a, $b)
-{
-	return strcmp($a['fk_menu'], $b['fk_menu']);
-}
 
 /**
  * @param    string         $file       path of filename
@@ -1020,9 +984,6 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		$endMenu = '/* END MODULEBUILDER LEFTMENU MYOBJECT */';
 		$allMenus = getFromFile($file, $beginMenu, $endMenu);
 		dolReplaceInFile($file, array($allMenus => ''));
-
-		// orders menu with other menus that have the same object
-		usort($menus, 'compareMenus');
 
 		//prepare each menu and stock them in string
 		$str_menu = "";

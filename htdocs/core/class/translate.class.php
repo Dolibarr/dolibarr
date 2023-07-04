@@ -269,7 +269,7 @@ class Translate
 				// Enable caching of lang file in memory (not by default)
 				$usecachekey = '';
 				// Using a memcached server
-				if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
+				if (isModEnabled('memcached') && !empty($conf->global->MEMCACHED_SERVER)) {
 					$usecachekey = $newdomain.'_'.$langofdir.'_'.md5($file_lang); // Should not contains special chars
 				} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 					// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
@@ -786,6 +786,7 @@ class Translate
 		}
 		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1') {
 			$str = utf8_decode(str_replace('€', chr(128), $str));
+			// TODO Replace with iconv("UTF-8", "ISO-8859-1", str_replace('€', chr(128), $str)); ?
 		}
 		return $str;
 	}

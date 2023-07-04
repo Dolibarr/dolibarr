@@ -82,8 +82,7 @@ class File extends AbstractBackend
     /**
      * Locks a uri.
      *
-     * @param string   $uri
-     * @param LockInfo $lockInfo
+     * @param string $uri
      *
      * @return bool
      */
@@ -113,8 +112,7 @@ class File extends AbstractBackend
     /**
      * Removes a lock from a uri.
      *
-     * @param string   $uri
-     * @param LockInfo $lockInfo
+     * @param string $uri
      *
      * @return bool
      */
@@ -166,8 +164,6 @@ class File extends AbstractBackend
 
     /**
      * Saves the lockdata.
-     *
-     * @param array $newData
      */
     protected function putData(array $newData)
     {

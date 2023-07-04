@@ -83,7 +83,7 @@ class EventIterator implements \Iterator
      * 2. You can pass an array of VEVENTs (all UIDS should match).
      * 3. You can pass a single VEVENT component.
      *
-     * Only the second method is recomended. The other 1 and 3 will be removed
+     * Only the second method is recommended. The other 1 and 3 will be removed
      * at some point in the future.
      *
      * The $uid parameter is only required for the first method.
@@ -198,6 +198,7 @@ class EventIterator implements \Iterator
      *
      * @return DateTimeImmutable
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if ($this->currentDate) {
@@ -229,9 +230,13 @@ class EventIterator implements \Iterator
         if (!$this->valid()) {
             return;
         }
-        $end = clone $this->currentDate;
+        if ($this->currentOverriddenEvent && $this->currentOverriddenEvent->DTEND) {
+            return $this->currentOverriddenEvent->DTEND->getDateTime($this->timeZone);
+        } else {
+            $end = clone $this->currentDate;
 
-        return $end->modify('+'.$this->eventDuration.' seconds');
+            return $end->modify('+'.$this->eventDuration.' seconds');
+        }
     }
 
     /**
@@ -281,6 +286,7 @@ class EventIterator implements \Iterator
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         // The counter is always 1 ahead.
@@ -293,6 +299,7 @@ class EventIterator implements \Iterator
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         if ($this->counter > Settings::$maxRecurrences && -1 !== Settings::$maxRecurrences) {
@@ -304,7 +311,10 @@ class EventIterator implements \Iterator
 
     /**
      * Sets the iterator back to the starting point.
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->recurIterator->rewind();
@@ -327,7 +337,10 @@ class EventIterator implements \Iterator
 
     /**
      * Advances the iterator with one step.
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->currentOverriddenEvent = null;
@@ -380,8 +393,6 @@ class EventIterator implements \Iterator
 
     /**
      * Quickly jump to a date in the future.
-     *
-     * @param DateTimeInterface $dateTime
      */
     public function fastForward(DateTimeInterface $dateTime)
     {

@@ -32,7 +32,7 @@ if ($argc > 2) {
 
 if (!isset($tasks[$currentTask])) {
     echo 'Task not found: ',  $currentTask, "\n";
-    die(1);
+    exit(1);
 }
 
 // Creating the dependency graph
@@ -43,7 +43,7 @@ while (count($oldTaskList) > 0) {
     foreach ($oldTaskList as $task => $foo) {
         if (!isset($tasks[$task])) {
             echo 'Dependency not found: '.$task, "\n";
-            die(1);
+            exit(1);
         }
         $dependencies = $tasks[$task];
 
@@ -107,7 +107,7 @@ function test()
     system(__DIR__.'/phpunit --configuration '.$baseDir.'/tests/phpunit.xml.dist --stop-on-failure', $code);
     if (0 != $code) {
         echo "PHPUnit reported error code $code\n";
-        die(1);
+        exit(1);
     }
 }
 
@@ -139,7 +139,7 @@ function buildzip()
     system('cd build/SabreDAV; composer install -n', $code);
     if (0 !== $code) {
         echo "Composer reported error code $code\n";
-        die(1);
+        exit(1);
     }
 
     echo "  Removing pointless files\n";
