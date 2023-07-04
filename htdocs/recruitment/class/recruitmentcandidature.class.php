@@ -203,6 +203,7 @@ class RecruitmentCandidature extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -1107,5 +1108,6 @@ class RecruitmentCandidatureLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 }

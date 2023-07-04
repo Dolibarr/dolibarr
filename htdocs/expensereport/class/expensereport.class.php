@@ -284,6 +284,7 @@ class ExpenseReport extends CommonObject
 		$this->statuts_short = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
 		$this->statuts = array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
 		$this->statuts_logo = array(0 => 'status0', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -2909,6 +2910,7 @@ class ExpenseReportLine extends CommonObjectLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**

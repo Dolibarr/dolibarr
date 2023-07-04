@@ -90,6 +90,7 @@ class ExpenseReportIk extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 

@@ -96,6 +96,7 @@ class CompanyBankAccount extends Account
 		$this->solde = 0;
 		$this->balance = 0;
 		$this->default_rib = 0;
+		parent::getConstructorHook();
 	}
 
 

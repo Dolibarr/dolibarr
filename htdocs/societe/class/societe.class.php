@@ -868,6 +868,7 @@ class Societe extends CommonObject
 			$this->fields['town']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 			//$this->fields['fk_pays']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 		}
+		parent::getConstructorHook();
 	}
 
 

@@ -103,6 +103,7 @@ class MultiCurrency extends CommonObject
 	{
 		$this->db = $db;
 
+		parent::getConstructorHook();
 		return 1;
 	}
 
@@ -757,6 +758,7 @@ class CurrencyRate extends CommonObjectLine
 	{
 		$this->db = $db;
 
+		parent::getConstructorHook();
 		return 1;
 	}
 

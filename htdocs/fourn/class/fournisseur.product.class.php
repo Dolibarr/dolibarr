@@ -157,6 +157,7 @@ class ProductFournisseur extends Product
 		$this->db = $db;
 		$langs->load("suppliers");
 		$this->reputations = array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'), 'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
+		parent::getConstructorHook();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

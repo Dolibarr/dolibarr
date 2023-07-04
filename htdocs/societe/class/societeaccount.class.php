@@ -175,6 +175,7 @@ class SocieteAccount extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

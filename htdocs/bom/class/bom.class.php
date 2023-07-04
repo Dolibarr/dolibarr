@@ -283,6 +283,7 @@ class BOM extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

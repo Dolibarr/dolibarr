@@ -181,6 +181,7 @@ class Workstation extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

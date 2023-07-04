@@ -223,6 +223,7 @@ class Booking extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

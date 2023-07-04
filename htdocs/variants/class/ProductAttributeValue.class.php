@@ -126,6 +126,7 @@ class ProductAttributeValue extends CommonObjectLine
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

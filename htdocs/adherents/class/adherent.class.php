@@ -430,6 +430,7 @@ class Adherent extends CommonObject
 		$this->public = 0;
 		// les champs optionnels sont vides
 		$this->array_options = array();
+		parent::getConstructorHook();
 	}
 
 

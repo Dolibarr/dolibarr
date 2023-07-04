@@ -224,6 +224,7 @@ class RecruitmentJobPosition extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

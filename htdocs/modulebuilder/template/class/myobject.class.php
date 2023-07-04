@@ -282,6 +282,7 @@ class MyObject extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -1214,5 +1215,6 @@ class MyObjectLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 }

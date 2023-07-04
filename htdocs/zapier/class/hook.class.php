@@ -282,6 +282,7 @@ class Hook extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

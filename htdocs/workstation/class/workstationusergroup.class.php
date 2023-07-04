@@ -80,6 +80,7 @@ class WorkstationUserGroup extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

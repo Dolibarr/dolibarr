@@ -186,6 +186,7 @@ class ProductFournisseurPrice extends CommonObject
 				unset($this->fields[$key]);
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

@@ -146,6 +146,7 @@ class EmailCollectorFilter extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

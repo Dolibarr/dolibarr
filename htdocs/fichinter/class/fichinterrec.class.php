@@ -111,6 +111,7 @@ class FichinterRec extends Fichinter
 
 		$this->statuts_logo[0] = 'statut0';
 		$this->statuts_logo[1] = 'statut1';
+		parent::getConstructorHook();
 	}
 
 	/**

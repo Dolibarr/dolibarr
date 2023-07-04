@@ -181,6 +181,7 @@ class AssetModel extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

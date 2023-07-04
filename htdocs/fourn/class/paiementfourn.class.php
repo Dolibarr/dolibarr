@@ -88,6 +88,7 @@ class PaiementFourn extends Paiement
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**

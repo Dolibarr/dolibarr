@@ -294,6 +294,7 @@ class EmailCollector extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

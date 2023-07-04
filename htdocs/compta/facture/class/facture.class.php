@@ -475,6 +475,7 @@ class Facture extends CommonInvoice
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -6089,6 +6090,7 @@ class FactureLigne extends CommonInvoiceLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**

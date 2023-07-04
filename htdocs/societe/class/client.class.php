@@ -46,6 +46,7 @@ class Client extends Societe
 
 		$this->client = 3;
 		$this->fournisseur = 0;
+		parent::getConstructorHook();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

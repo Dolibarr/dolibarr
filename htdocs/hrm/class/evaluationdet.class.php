@@ -205,6 +205,7 @@ class Evaluationline extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

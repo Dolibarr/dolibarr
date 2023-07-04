@@ -259,6 +259,7 @@ class Expedition extends CommonObject
 		$this->statuts_short[0]  = 'StatusSendingDraftShort';
 		$this->statuts_short[1]  = 'StatusSendingValidatedShort';
 		$this->statuts_short[2]  = 'StatusSendingProcessedShort';
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -2709,6 +2710,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		parent::getConstructorHook();
 	}
 
 	/**

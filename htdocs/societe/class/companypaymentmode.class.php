@@ -224,6 +224,7 @@ class CompanyPaymentMode extends CommonObject
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

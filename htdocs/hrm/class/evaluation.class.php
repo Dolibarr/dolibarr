@@ -216,6 +216,7 @@ class Evaluation extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

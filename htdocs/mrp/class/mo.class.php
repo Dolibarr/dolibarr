@@ -280,6 +280,7 @@ class Mo extends CommonObject
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**
@@ -1837,6 +1838,7 @@ class MoLine extends CommonObjectLine
 				}
 			}
 		}
+		parent::getConstructorHook();
 	}
 
 	/**

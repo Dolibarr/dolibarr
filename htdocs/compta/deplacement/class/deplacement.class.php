@@ -130,6 +130,7 @@ class Deplacement extends CommonObject
 		$this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
 		$this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
 		$this->statuts_logo = array(0 => 'status0', 1=>'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
+		parent::getConstructorHook();
 	}
 
 	/**
