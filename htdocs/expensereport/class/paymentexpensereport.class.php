@@ -646,7 +646,7 @@ class PaymentExpenseReport extends CommonObject
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
 		if (!empty($this->datep)) {
-			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->db->jdate($this->datep), 'dayhour');
+			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhour');
 		}
 
 		if (!empty($this->id)) {
