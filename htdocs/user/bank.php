@@ -211,6 +211,15 @@ if ($action == 'setpersonal_mobile' && $canadduser && !$cancel) {
 	}
 }
 
+// update accountancy_code
+if ($action == 'setaccountancy_code' && $canadduser && !$cancel) {
+	$object->accountancy_code = (string) GETPOST('accountancy_code', 'alphanohtml');
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
 // update ref_employee
 if ($action == 'setref_employee' && $canadduser && !$cancel) {
 	$object->ref_employee = (string) GETPOST('ref_employee', 'alphanohtml');
@@ -482,7 +491,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<td>';
 		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, 'dol_print_email');
+		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -493,7 +502,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<td>';
 		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'string', '', null, null, '', 0, 'dol_print_phone');
+		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'phone', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -548,8 +557,13 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Accountancy code
 	if (isModEnabled('accounting')) {
-		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-		print '<td>'.$object->accountancy_code.'</td></tr>';
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'));
+		print '</td><td>';
+		print $form->editfieldval("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'), 'string', '', null, null, '', 0, '');
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Employee Number
