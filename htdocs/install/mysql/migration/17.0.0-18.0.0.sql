@@ -465,6 +465,7 @@ ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
 
 ALTER TABLE fk_product_price_product DROP FOREIGN KEY fk_product_price_product;
  
+ALTER TABLE llx_societe_rib ADD COLUMN ext_payment_site varchar(128);
 
 -- Drop the composite unique index that exists on llx_commande_fournisseur to rebuild a new one without the fk_soc.
 -- The old design allowed for a duplicate reference as long as fk_soc was not the same.
