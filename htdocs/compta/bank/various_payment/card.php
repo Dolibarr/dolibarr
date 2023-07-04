@@ -498,7 +498,7 @@ if ($action == 'create') {
 
 	// Sens
 	print '<tr><td>';
-	$labelsens = $form->textwithpicto('Sens', $langs->trans("AccountingDirectionHelp"));
+	$labelsens = $form->textwithpicto($langs->trans('Sens'), $langs->trans("AccountingDirectionHelp"));
 	print $form->editfieldkey($labelsens, 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
 	$sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
 	print $form->selectarray('sens', $sensarray, $sens, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
