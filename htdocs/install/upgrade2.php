@@ -3331,44 +3331,85 @@ function migrate_element_category($db, $langs, $conf)
 {
 	dolibarr_install_syslog("upgrade2::migrate_element_category");
 
-	print '<tr><td colspan="4">';
-
-	print '<br>';
-	print '<b>'.$langs->trans('MigrationCategories')."</b><br>\n";
-
 	$error = 0;
 
 	$db->begin();
 
 	// product
+	print '<tr><td colspan="4">';
 	$sql = 'SELECT fk_categorie, fk_product, import_key FROM '.MAIN_DB_PREFIX."categorie_product";
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
 			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_product.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
+		print '<b>'.$langs->trans('MigrationCategories', 'Products')."</b><br>\n";
 	} else {
 		$error++;
 	}
+	print '</td></tr>';
 
 	// supplier
+	print '<tr><td colspan="4">';
 	$sql = 'SELECT fk_categorie, fk_soc, import_key FROM '.MAIN_DB_PREFIX."categorie_fournisseur";
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
 			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_soc.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
+		print '<b>'.$langs->trans('MigrationCategories', 'Suppliers')."</b><br>\n";
 	} else {
 		$error++;
 	}
+	print '</td></tr>';
+
+	// customer
+	print '<tr><td colspan="4">';
+	$sql = 'SELECT fk_categorie, fk_soc, import_key FROM '.MAIN_DB_PREFIX."categorie_societe";
+	$result = $db->query($sql);
+	if ($result) {
+		while ($obj = $db->fetch_object($result)) {
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_soc.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+		}
+		print '<b>'.$langs->trans('MigrationCategories', 'Customers')."</b><br>\n";
+	} else {
+		$error++;
+	}
+	print '</td></tr>';
+
+	// member
+	print '<tr><td colspan="4">';
+	$sql = 'SELECT fk_categorie, fk_member FROM '.MAIN_DB_PREFIX."categorie_member";
+	$result = $db->query($sql);
+	if ($result) {
+		while ($obj = $db->fetch_object($result)) {
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_member.')');
+		}
+		print '<b>'.$langs->trans('MigrationCategories', 'Members')."</b><br>\n";
+	} else {
+		$error++;
+	}
+	print '</td></tr>';
+
+	// contact
+	print '<tr><td colspan="4">';
+	$sql = 'SELECT fk_categorie, fk_socpeople, import_key FROM '.MAIN_DB_PREFIX."categorie_contact";
+	$result = $db->query($sql);
+	if ($result) {
+		while ($obj = $db->fetch_object($result)) {
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_socpeople.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+		}
+		print '<b>'.$langs->trans('MigrationCategories', 'Contacts')."</b><br>\n";
+	} else {
+		$error++;
+	}
+	print '</td></tr>';
 
 	if ($error == 0) {
 		$db->commit();
 	} else {
 		$db->rollback();
 	}
-
-	print '</td></tr>';
 }
 
 /**
