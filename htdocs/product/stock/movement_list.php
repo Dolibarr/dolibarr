@@ -1181,17 +1181,10 @@ if (!empty($arrayfields['origin']['checked'])) {
 	print '&nbsp; ';
 	print '</td>';
 }
-// if (!empty($arrayfields['p.ref']['checked'])) {
-// 	print '<td class="liste_titre">';
-// 	print '<input type="text" class="flat" name="search_project_ref" value="'.$search_project_ref.'" size="4">';
-// 	print '</td>';
-// }
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
 	// fk_project
 	print '<td class="liste_titre" align="left">';
-	// var_dump($val, $key, $search_fk_projet, $object->fields['fk_project']);
 	print $object->showInputField($object->fields['fk_project'], 'fk_project', '', '', '', 'search_', 'maxwidth125', 1);
-	// print '<input type="text" class="flat" name="search_fk_projet" value="'.($search_fk_projet).'" size="4">';
 	print '</td>';
 }
 if (!empty($arrayfields['m.type_mouvement']['checked'])) {
