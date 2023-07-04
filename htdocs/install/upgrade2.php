@@ -3345,7 +3345,18 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_product.')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_product.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+		}
+	} else {
+		$error++;
+	}
+
+	// supplier
+	$sql = 'SELECT fk_categorie, fk_soc, import_key FROM '.MAIN_DB_PREFIX."categorie_fournisseur";
+	$result = $db->query($sql);
+	if ($result) {
+		while ($obj = $db->fetch_object($result)) {
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_soc.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 	} else {
 		$error++;
