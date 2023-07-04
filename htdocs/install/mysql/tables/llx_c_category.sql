@@ -16,7 +16,7 @@
 --
 -- ========================================================================
 
-create table llx_c_category
+CREATE TABLE llx_c_category
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
   classname     varchar(32) NOT NULL,

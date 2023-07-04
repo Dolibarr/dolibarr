@@ -16,7 +16,7 @@
 --
 -- ============================================================================
 
-create table llx_element_category
+CREATE TABLE llx_element_category
 (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   fk_category  integer NOT NULL,
