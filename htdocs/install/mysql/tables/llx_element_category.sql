@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2022 Charlene Benke <charlene@patas-monkey.com>
+-- Copyright (C) 2022 charlene Benke       <charlene@patas-monkey.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +16,10 @@
 --
 -- ============================================================================
 
-
-ALTER TABLE llx_element_categorie ADD UNIQUE INDEX idx_element_categorie_idx (fk_element, fk_categorie);
-
-ALTER TABLE llx_element_categorie ADD CONSTRAINT fk_element_categorie_fk_categorie FOREIGN KEY (fk_categorie) REFERENCES llx_categorie(rowid);
+create table llx_element_category
+(
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  fk_category  integer NOT NULL,
+  fk_element  integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;

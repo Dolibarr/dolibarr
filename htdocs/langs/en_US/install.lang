@@ -190,6 +190,7 @@ MigrationProjectTaskActors=Data migration for table llx_projet_task_actors
 MigrationProjectUserResp=Data migration field fk_user_resp of llx_projet to llx_element_contact
 MigrationProjectTaskTime=Update time spent in seconds
 MigrationActioncommElement=Update data on actions
+MigrationCategories=Update data on categories
 MigrationPaymentMode=Data migration for payment type
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignment table

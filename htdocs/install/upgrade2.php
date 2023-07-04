@@ -499,6 +499,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_contractdet_rank();
 			}
+			// Scripts for 19.0
+			$afterversionarray = explode('.', '18.0.9');
+			$beforeversionarray = explode('.', '19.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				// migrate categories
+				migrate_element_category($db, $langs, $conf);
+			}
 		}
 
 
@@ -3307,6 +3314,36 @@ function migrate_actioncomm_element($db, $langs, $conf)
 		} else {
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
+	}
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate categories in one table
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
+ */
+function migrate_element_category($db, $langs, $conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_element_time");
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationCategories')."</b><br>\n";
+
+	$error = 0;
+
+	$db->begin();
+
+	if ($error == 0) {
+		$db->commit();
+	} else {
+		$db->rollback();
 	}
 
 	print '</td></tr>';
