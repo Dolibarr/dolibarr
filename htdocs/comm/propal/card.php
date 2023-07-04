@@ -1040,6 +1040,7 @@ if (empty($reshook)) {
 			$pu_ttc_devise = 0;
 			$price_min = 0;
 			$price_min_ttc = 0;
+			$tva_npr=0;
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			$db->begin();
