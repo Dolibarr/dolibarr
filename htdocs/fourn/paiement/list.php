@@ -475,7 +475,7 @@ while ($i < min($num, $limit)) {
 
 	$paymentfournstatic->id = $objp->rowid;
 	$paymentfournstatic->ref = $objp->ref;
-	$paymentfournstatic->datepaye = $objp->datep;
+	$paymentfournstatic->datepaye = $db->jdate($objp->datep);
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
