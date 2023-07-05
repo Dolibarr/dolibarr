@@ -2763,7 +2763,7 @@ class FactureFournisseur extends CommonInvoice
 			$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 		if (!empty($this->date)) {
-			$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->db->jdate($this->date), 'day');
+			$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 		}
 		if (!empty($this->date_echeance)) {
 			$datas['date_echeance'] = '<br><b>'.$langs->trans('DateDue').':</b> '.dol_print_date($this->date_echeance, 'day');

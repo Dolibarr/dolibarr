@@ -683,7 +683,7 @@ class PaiementFourn extends Paiement
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
 		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
 		if ($dateofpayment) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->db->jdate($dateofpayment), 'dayhour', 'tzuser');
+			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
 		}
 		if ($this->amount) {
 			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
