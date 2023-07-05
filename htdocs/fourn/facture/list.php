@@ -1488,7 +1488,7 @@ while ($i < $imaxinloop) {
 	$facturestatic->type = $obj->type;
 	$facturestatic->socid = $thirdparty->getNomUrl(1, 'supplier', 3);
 	$facturestatic->total_ht = $obj->total_ht;
-	$facturestatic->date = $obj->datef;
+	$facturestatic->date = $db->jdate($obj->datef);
 
 	$object = $facturestatic;
 
