@@ -3447,6 +3447,57 @@ function migrate_element_category($db, $langs, $conf)
 	}
 	print '</td></tr>';
 
+	// warehouse
+	print '<tr><td colspan="4">';
+	$sql = 'SELECT fk_categorie, fk_warehouse, import_key FROM '.MAIN_DB_PREFIX."categorie_warehouse";
+	$result = $db->query($sql);
+	if ($result) {
+		while ($obj = $db->fetch_object($result)) {
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_warehouse.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+		}
+		print '<b>'.$langs->trans('MigrationCategories', 'Warehouses')."</b><br>\n";
+	} else {
+		$error++;
+	}
+	print '</td></tr>';
+
+	// actioncomm
+	print '<tr><td colspan="4">';
+	$sql = 'SELECT fk_categorie, fk_actioncomm, import_key FROM '.MAIN_DB_PREFIX."categorie_actioncomm";
+	$result = $db->query($sql);
+	if ($result) {
+		while ($obj = $db->fetch_object($result)) {
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_actioncomm.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+		}
+		print '<b>'.$langs->trans('MigrationCategories', 'Actioncomms')."</b><br>\n";
+	} else {
+		$error++;
+	}
+	print '</td></tr>';
+
+	// website_page
+	print '<tr><td colspan="4">';
+	// if module website never enabled, table may not exist
+	if ($db->DDLDescTable(MAIN_DB_PREFIX."categorie_website_page")) {
+		$sql = 'SELECT fk_categorie, fk_website_page, import_key FROM '.MAIN_DB_PREFIX."categorie_website_page";
+		$result = $db->query($sql);
+		if ($result) {
+			while ($obj = $db->fetch_object($result)) {
+				$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_website_page.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			}
+			print '<b>'.$langs->trans('MigrationCategories', 'WebsitePages')."</b><br>\n";
+		} else {
+			$error++;
+		}
+	} else {
+		print '<b>'.$langs->trans('MigrationCategories', 'WebsitePages')." Table not found</b><br>\n";
+	}
+	print '</td></tr>';
+
+	// ticket
+
+	// knowledgemanagement
+
 	if ($error == 0) {
 		$db->commit();
 	} else {
