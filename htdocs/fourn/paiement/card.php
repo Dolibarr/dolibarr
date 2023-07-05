@@ -352,7 +352,7 @@ if ($result > 0) {
 	print '<div class="tabsAction">';
 
 	// Send by mail
-	if ($user->socid == 0 && $action == '') {
+	if ($user->socid == 0 && $action != 'presend') {
 		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "send")));
 		if ($usercansend) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
@@ -372,7 +372,7 @@ if ($result > 0) {
 	}
 
 	// Delete payment
-	if ($user->socid == 0 && $action == '') {
+	if ($user->socid == 0 && $action != 'presend') {
 		if ($user->hasRight('fournisseur', 'facture', 'supprimer')) {
 			if ($allow_delete) {
 				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
@@ -383,34 +383,35 @@ if ($result > 0) {
 	}
 	print '</div>';
 
+	if ($action != 'presend') {
+		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-	print '<div class="fichecenter"><div class="fichehalfleft">';
+		// Generated documents
+		include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+		$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
+		if (is_array($modellist)) {
+			$ref = dol_sanitizeFileName($object->ref);
+			$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
+			$genallowed = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
+			$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
-	// Generated documents
-	include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
-	$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
-	if (is_array($modellist)) {
-		$ref = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
-		$genallowed = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
-		$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
-		$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+			$somethingshown = $formfile->numoffiles;
+		}
 
-		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
-		$somethingshown = $formfile->numoffiles;
+		print '</div><div class="fichehalfright">';
+		//print '<br>';
+
+		// List of actions on element
+		/*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+		$formactions=new FormActions($db);
+		$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
+		*/
+
+		print '</div></div>';
 	}
-
-	print '</div><div class="fichehalfright">';
-	//print '<br>';
-
-	// List of actions on element
-	/*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	$formactions=new FormActions($db);
-	$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
-	*/
-
-	print '</div></div>';
 
 	// Presend form
 	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models

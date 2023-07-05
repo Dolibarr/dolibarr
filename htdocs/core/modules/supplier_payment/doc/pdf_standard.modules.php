@@ -523,17 +523,20 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord($object->amount, $outputlangs, $currency));
+		$translateinletter = strtoupper(dol_convertToWord(price2num($object->amount, 'MT'), $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
+		$pdf->SetFont('', '', $default_font_size - 3);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
+		$pdf->SetFont('', '', $default_font_size - 1);
 		$posy += 8;
 
 		// To
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
 
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(35, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
+		$LENGTHAMOUNT = 35;
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - $LENGTHAMOUNT, $posy);
+		$pdf->MultiCell($LENGTHAMOUNT, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
 		$posy += 10;
 
 		// City
