@@ -9645,7 +9645,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 									$function = $labeltemp[3];
 									if ($obj && $function && method_exists($obj, $function)) {
 										$nbrec = $obj->$function($object->id, $obj);
-										$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+										if (!empty($nbrec)) {
+											$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+										}
 									}
 								}
 							}
