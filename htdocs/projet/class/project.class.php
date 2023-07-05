@@ -1924,7 +1924,7 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE id=".((int) $elementSelectId);
-		} elseif ($tableName == "entrepot") {
+		} elseif (in_array($tableName, ["entrepot","mrp_mo"])) {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE rowid=".((int) $elementSelectId);
 		} else {
