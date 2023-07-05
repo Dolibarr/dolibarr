@@ -44,6 +44,8 @@ $id 		= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
 
+$socid = 0;
+
 // Initialize objects
 $object = new PaiementFourn($db);
 
@@ -397,7 +399,7 @@ if ($result > 0) {
 			$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
-			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
 			$somethingshown = $formfile->numoffiles;
 		}
 
