@@ -941,5 +941,6 @@ class AccountingAccount extends CommonObject
 				return $hookmanager->resArray;
 			}
 		}
+		return -1;
 	}
 }

@@ -1017,6 +1017,7 @@ class Expedition extends CommonObject
 			$this->lines[$num] = $line;
 			return 1;
 		}
+		return -1;
 	}
 
 	/**

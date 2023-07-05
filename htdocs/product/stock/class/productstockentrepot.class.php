@@ -592,6 +592,7 @@ class ProductStockEntrepot extends CommonObject
 				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 			}
 		}
+		return "";
 	}
 
 

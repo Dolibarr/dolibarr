@@ -1181,6 +1181,7 @@ class MouvementStock extends CommonObject
 		} elseif ($mode == 5) {
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
+		return "";
 	}
 
 	/**
