@@ -3495,6 +3495,23 @@ function migrate_element_category($db, $langs, $conf)
 	print '</td></tr>';
 
 	// ticket
+	print '<tr><td colspan="4">';
+	// if module ticket never enabled, table may not exist
+	if ($db->DDLDescTable(MAIN_DB_PREFIX."categorie_ticket")) {
+		$sql = 'SELECT fk_categorie, fk_ticket, import_key FROM '.MAIN_DB_PREFIX."categorie_ticket";
+		$result = $db->query($sql);
+		if ($result) {
+			while ($obj = $db->fetch_object($result)) {
+				$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_ticket.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			}
+			print '<b>'.$langs->trans('MigrationCategories', 'Tickets')."</b><br>\n";
+		} else {
+			$error++;
+		}
+	} else {
+		print '<b>'.$langs->trans('MigrationCategories', 'Tickets')." Table not found</b><br>\n";
+	}
+	print '</td></tr>';
 
 	// knowledgemanagement
 
