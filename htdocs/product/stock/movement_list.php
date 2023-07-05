@@ -690,7 +690,7 @@ if (!empty($search_batch)) {
 if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
-if (!empty($search_fk_project)) {
+if (!empty($search_fk_project) && $search_fk_project != '-1') {
 	$sql .= natural_search('m.fk_projet', $search_fk_project);
 }
 if ($search_qty != '') {
@@ -1008,7 +1008,7 @@ if ($search_user) {
 if ($idproduct > 0) {
 	$param .= '&idproduct='.urlencode($idproduct);
 }
-if ($search_fk_project != '') {
+if ($search_fk_project != '' && $search_fk_project != '-1') {
 	$param .= '&search_fk_project='.urlencode($search_fk_project);
 }
 // Add $param from extra fields
