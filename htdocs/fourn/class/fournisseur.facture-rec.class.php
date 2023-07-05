@@ -1185,6 +1185,7 @@ class FactureFournisseurRec extends CommonInvoice
 				return -1;
 			}
 		}
+		return -1;
 	}
 
 
