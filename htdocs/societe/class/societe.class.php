@@ -875,10 +875,11 @@ class Societe extends CommonObject
 	 *    Create third party in database.
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
 	 *
-	 *    @param	User	$user       Object of user that ask creation
-	 *    @return   int         		>=0 if OK, <0 if KO
+	 *    @param	User	$user           Object of user that ask creation
+	 *    @param    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *    @return   int         		    >=0 if OK, <0 if KO
 	 */
-	public function create(User $user)
+	public function create(User $user, $notrigger = 0)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -1016,7 +1017,7 @@ class Societe extends CommonObject
 					$this->add_commercial($user, $user->id);
 				}
 
-				if ($ret >= 0) {
+				if ($ret >= 0 && !$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('COMPANY_CREATE', $user);
 					if ($result < 0) {
@@ -1059,12 +1060,13 @@ class Societe extends CommonObject
 	/**
 	 * Create a contact/address from thirdparty
 	 *
-	 * @param 	User	$user		Object user
-	 * @param 	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
-	 * @param 	array	$tags		Array of tag to affect to contact
-	 * @return 	int					<0 if KO, >0 if OK
+	 * @param 	User	$user		    Object user
+	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to recieve mailling
+	 * @param 	array	$tags		    Array of tag to affect to contact
+	 * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 * @return 	int					    <0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user, $no_email = 0, $tags = array())
+	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
 		global $conf;
 
@@ -1092,7 +1094,7 @@ class Societe extends CommonObject
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
 
-		$contactId = $contact->create($user);
+		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
 			$error++;
 			$this->error = $contact->error;

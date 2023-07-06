@@ -1323,7 +1323,7 @@ class BOM extends CommonObject
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+			$modele = '';
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
@@ -1333,8 +1333,11 @@ class BOM extends CommonObject
 		}
 
 		$modelpath = "core/modules/bom/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if (!empty($modele)) {
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		} else {
+			return 0;
+		}
 	}
 
 	/**
