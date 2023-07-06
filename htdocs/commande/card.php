@@ -1727,9 +1727,9 @@ if ($action == 'create' && $usercancreate) {
 			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
 	} else {
-		$cond_reglement_id  = $soc->cond_reglement_id;
-		$deposit_percent    = $soc->deposit_percent;
-		$mode_reglement_id  = $soc->mode_reglement_id;
+		$cond_reglement_id  = empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
+		$deposit_percent    = empty($soc->deposit_percent) ? $deposit_percent : $soc->deposit_percent;
+		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = $soc->fk_account;
 		$availability_id    = 0;
 		$shipping_method_id = $soc->shipping_method_id;
