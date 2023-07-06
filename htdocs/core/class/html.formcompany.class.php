@@ -1169,7 +1169,7 @@ class FormCompany extends Form
 							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
 							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\' },
 							success: function(response) {
-console.log(response.img);
+								console.log(response.img);
 								image.replaceWith(response.img);
 							},
 							error: function() {

@@ -1,6 +1,8 @@
 name: GitHub CI PHPCS and PHPCBF
 
-on: push
+on: 
+  pull_request:
+    types: [opened]
 #on: 
 #  push:
 #    paths:
@@ -18,8 +20,8 @@ jobs:
     #needs: filesChanged
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 10
+        #with:
+        #  fetch-depth: 10
 
       - name: echo Get list of all changed files
         run: |
