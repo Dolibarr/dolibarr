@@ -636,7 +636,7 @@ $listofreferent = array(
 		'lang'=>'banks',
 		'buttonnew'=>'AddVariousPayment',
 		'testnew'=>$user->hasRight('banque', 'modifier'),
-		'test'=>isModEnabled("banque") && $user->hasRight('banque', 'lire') && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)
+		'test'=>isModEnabled("banque") && $user->hasRight('banque', 'lire') && empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)
 	),
 		/* No need for this, available on dedicated tab "Agenda/Events"
 		 'agenda'=>array(
