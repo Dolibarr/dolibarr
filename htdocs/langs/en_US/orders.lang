@@ -206,3 +206,5 @@ StatusSupplierOrderReceivedPartially=Partially received
 StatusSupplierOrderReceivedAll=All products received
 NeedAtLeastOneInvoice = There has to be at least one Invoice
 LineAlreadyDispatched = The order line is already received.
+ExistingDipatchLinesWillBeRemoved = There are dispatched lines. They will be deleted.
+SupplierOrderDeletion = Supplier order %s Deletion
