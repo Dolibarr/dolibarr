@@ -1040,6 +1040,7 @@ if (empty($reshook)) {
 			$pu_ttc_devise = 0;
 			$price_min = 0;
 			$price_min_ttc = 0;
+			$tva_npr=0;
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			$db->begin();
@@ -1698,14 +1699,13 @@ if ($action == 'create') {
 	$soc = new Societe($db);
 	if ($socid > 0) {
 		$res = $soc->fetch($socid);
-
-		if (GETPOSTINT('cond_reglement_id') == 0) {
-			$cond_reglement_id = $soc->cond_reglement_id;
-		}
-		if (GETPOSTINT('mode_reglement_id') == 0) {
-			$mode_reglement_id = $soc->mode_reglement_id;
-		}
 	}
+
+	$currency_code = $conf->currency;
+
+	$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+	$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
+	$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 
 	// Load objectsrc
 	if (!empty($origin) && !empty($originid)) {
@@ -1771,18 +1771,16 @@ if ($action == 'create') {
 			}
 		}
 	} else {
+		$cond_reglement_id  = !empty($soc->cond_reglement_id)?$soc->cond_reglement_id:$cond_reglement_id;
+		$deposit_percent    = !empty($soc->deposit_percent)?$soc->deposit_percent:$deposit_percent;
+		$mode_reglement_id  = !empty($soc->mode_reglement_id)?$soc->mode_reglement_id:$mode_reglement_id;
+		$shipping_method_id = $soc->shipping_method_id;
+		$warehouse_id       = $soc->fk_warehouse;
+		$remise_percent     = $soc->remise_percent;
+
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
 		}
-	}
-
-	// when payment term is empty (means not override by payment mode form a other object, like third-party), try to use default value
-	if (empty($cond_reglement_id)) {
-		$cond_reglement_id = GETPOST("cond_reglement_id", 'int');
-	}
-	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
-	if (empty($mode_reglement_id)) {
-		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
 
 	//Warehouse default if null
