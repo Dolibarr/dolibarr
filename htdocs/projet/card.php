@@ -191,7 +191,7 @@ if (empty($reshook)) {
 		}
 
 		// Create with status validated immediatly
-		if (!empty($conf->global->PROJECT_CREATE_NO_DRAFT)) {
+		if (!empty($conf->global->PROJECT_CREATE_NO_DRAFT) && !$error) {
 			$status = Project::STATUS_VALIDATED;
 		}
 
