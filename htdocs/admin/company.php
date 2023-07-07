@@ -194,6 +194,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FKSOC", GETPOST("MAIN_INFO_SOCIETE_FKSOC", 'int'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
@@ -412,6 +414,11 @@ print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->
 // Name
 print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
 print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmltag((GETPOSTISSET('nom') ? GETPOST('nom', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? $conf->global->MAIN_INFO_SOCIETE_NOM : ''))).'"'.(empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
+
+// Third party
+print '<tr class="oddeven"><td>'.$langs->trans('Customer').'</td><td>';
+print img_picto('', 'company').$form->select_company(dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_FKSOC') ? GETPOST('MAIN_INFO_SOCIETE_FKSOC', 'int') : (!empty($conf->global->MAIN_INFO_SOCIETE_FKSOC) ? $conf->global->MAIN_INFO_SOCIETE_FKSOC : ''))), 'MAIN_INFO_SOCIETE_FKSOC', '', 'SelectThirdParty');
+print '</td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
