@@ -92,9 +92,8 @@ class Categorie extends CommonObject
 	 * @var array Code mapping from ID
 	 *
 	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
-	 * @deprecated
 	 */
-	public static $MAP_ID_TO_CODE = array(
+	public $MAP_ID_TO_CODE = array(
 		// 0 => 'product',
 		// 1 => 'supplier',
 		// 2 => 'customer',
@@ -312,7 +311,6 @@ class Categorie extends CommonObject
 				$this->MAP_OBJ_CLASS[$obj->module] = $obj->classname;
 			}
 		}
-
 	}
 
 	/**
@@ -382,11 +380,11 @@ class Categorie extends CommonObject
 
 				$this->id = $res['rowid'];
 				//$this->ref = $res['rowid'];
-				$this->fk_parent	= (int) $res['fk_parent'];
-				$this->label		= $res['label'];
+				$this->fk_parent = (int) $res['fk_parent'];
+				$this->label = $res['label'];
 				$this->description = $res['description'];
-				$this->color    	= $res['color'];
-				$this->socid		= (int) $res['fk_soc'];
+				$this->color = $res['color'];
+				$this->socid = (int) $res['fk_soc'];
 				$this->visible = (int) $res['visible'];
 				$this->type = (int) $res['type'];
 				$this->ref_ext = $res['ref_ext'];
@@ -728,16 +726,12 @@ class Categorie extends CommonObject
 			return -2;
 		}
 
-		if (empty($type)) {
-			$type = $obj->element;
-		}
-
 		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
-		$sql .= " (fk_categorie, fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]).")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_category";
+		$sql .= " (fk_category, fk_element)";
 		$sql .= " VALUES (".((int) $this->id).", ".((int) $obj->id).")";
 
 		if ($this->db->query($sql)) {
@@ -817,20 +811,11 @@ class Categorie extends CommonObject
 
 		$error = 0;
 
-		// For backward compatibility
-		if ($type == 'societe') {
-			$type = 'customer';
-			dol_syslog(get_class($this)."::del_type(): type 'societe' is deprecated, please use 'customer' instead", LOG_WARNING);
-		} elseif ($type == 'fournisseur') {
-			$type = 'supplier';
-			dol_syslog(get_class($this)."::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
-		}
-
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
-		$sql .= " WHERE fk_categorie = ".((int) $this->id);
-		$sql .= " AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".((int) $obj->id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_category";
+		$sql .= " WHERE fk_category = ".((int) $this->id);
+		$sql .= " AND fk_element = ".((int) $obj->id);
 
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -879,16 +864,16 @@ class Categorie extends CommonObject
 		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
 		$obj = new $classnameforobj($this->db);
 
-		$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]);
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
+		$sql = "SELECT c.fk_element";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_category as c";
 		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
 		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
-		$sql .= " AND c.fk_categorie = ".((int) $this->id);
+		$sql .= " AND c.fk_category = ".((int) $this->id);
 		// Compatibility with actioncomm table which has id instead of rowid
 		if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
+			$sql .= " AND c.fk_element = o.id";
 		} else {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+			$sql .= " AND c.fk_element = o.rowid";
 		}
 		// Protection for external users
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
@@ -919,12 +904,12 @@ class Categorie extends CommonObject
 		if ($resql) {
 			while ($rec = $this->db->fetch_array($resql)) {
 				if ($onlyids) {
-					$objs[] = $rec['fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])];
+					$objs[] = $rec['fk_element'];
 				} else {
 					$classnameforobj = $this->MAP_OBJ_CLASS[$type];
 
 					$obj = new $classnameforobj($this->db);
-					$obj->fetch($rec['fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])]);
+					$obj->fetch($rec['fk_element']);
 
 					$objs[] = $obj;
 				}
@@ -946,8 +931,8 @@ class Categorie extends CommonObject
 	 */
 	public function containsObject($type, $object_id)
 	{
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
-		$sql .= " WHERE fk_categorie = ".((int) $this->id)." AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".((int) $object_id);
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."element_category";
+		$sql .= " WHERE fk_category = ".((int) $this->id)." AND fk_element = ".((int) $object_id);
 		dol_syslog(get_class($this)."::containsObject", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1032,11 +1017,11 @@ class Categorie extends CommonObject
 				$category_static = new Categorie($this->db);
 				if ($category_static->fetch($obj->rowid)) {
 					$categories[$i]['id'] = $category_static->id;
-					$categories[$i]['fk_parent']		= $category_static->fk_parent;
-					$categories[$i]['label']			= $category_static->label;
+					$categories[$i]['fk_parent'] = $category_static->fk_parent;
+					$categories[$i]['label'] = $category_static->label;
 					$categories[$i]['description'] = $category_static->description;
-					$categories[$i]['color']    		= $category_static->color;
-					$categories[$i]['socid']			= $category_static->socid;
+					$categories[$i]['color'] = $category_static->color;
+					$categories[$i]['socid'] = $category_static->socid;
 					$categories[$i]['ref_ext'] = $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
 					$categories[$i]['type'] = $category_static->type;
@@ -1549,9 +1534,9 @@ class Categorie extends CommonObject
 				return -1;
 			}
 		} else {
-			$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as ct, ".MAIN_DB_PREFIX."categorie as c";
-			$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".(int) $id;
+			$sql = "SELECT ct.fk_category, c.label, c.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."element_category as ct, ".MAIN_DB_PREFIX."categorie as c";
+			$sql .= " WHERE ct.fk_category = c.rowid AND ct.fk_element = ".(int) $id;
 			// This seems useless because the table already contains id of category of 1 unique type. So commented.
 			// So now it works also with external added categories.
 			//$sql .= " AND c.type = ".((int) $this->MAP_ID[$type]);
@@ -1566,7 +1551,7 @@ class Categorie extends CommonObject
 						$cats[] = $obj->label;
 					} else {
 						$cat = new Categorie($this->db);
-						$cat->fetch($obj->fk_categorie);
+						$cat->fetch($obj->fk_category);
 						$cats[] = $cat;
 					}
 				}
@@ -2058,16 +2043,6 @@ class Categorie extends CommonObject
 	 */
 	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
 	{
-		if ($type == 'bank_account') {
-			$type = 'account';
-		}
-		if ($type == 'customer') {
-			$type = 'societe';
-		}
-		if ($type == 'supplier') {
-			$type = 'fournisseur';
-		}
-
 		if (empty($searchList) && !is_array($searchList)) {
 			return "";
 		}
@@ -2075,9 +2050,9 @@ class Categorie extends CommonObject
 		$searchCategorySqlList = array();
 		foreach ($searchList as $searchCategory) {
 			if (intval($searchCategory) == -2) {
-				$searchCategorySqlList[] = " cp.fk_categorie IS NULL";
+				$searchCategorySqlList[] = " cp.fk_category IS NULL";
 			} elseif (intval($searchCategory) > 0) {
-				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_".$type." FROM ".MAIN_DB_PREFIX."categorie_".$type." WHERE fk_categorie = ".((int) $searchCategory).")";
+				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_element FROM ".MAIN_DB_PREFIX."element_category WHERE fk_category = ".((int) $searchCategory).")";
 			}
 		}
 
