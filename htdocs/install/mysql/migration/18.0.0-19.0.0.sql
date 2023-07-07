@@ -36,26 +36,28 @@
 CREATE TABLE llx_c_category
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  id          integer NOT NULL,
   classname   varchar(32) NOT NULL,
   module      varchar(32) NOT NULL
 )ENGINE=innodb;
 
 ALTER TABLE llx_c_category ADD UNIQUE INDEX uk_c_module(module);
+ALTER TABLE llx_c_category ADD UNIQUE INDEX idx_id_idx (id);
 
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (0, 'product', 'Product');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (1, 'supplier', 'Fournisseur');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (2, 'customer', 'Societe');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (3, 'member', 'Adherent');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (4, 'contact', 'Contact');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (5, 'bank_account', 'Account');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (6, 'project', 'Project');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (7, 'user', 'User');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (8, 'bank_line', 'AccountLine');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (9, 'warehouse', 'Entrepot');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (10, 'actioncomm', 'Actioncomm');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (11, 'website_page', 'WebsitePage');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (12, 'ticket', 'Ticket');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (13, 'knowledgemanagement', 'KnowledgeRecord');
+INSERT INTO llx_c_category (id,module,classname) VALUES (0, 'product', 'Product');
+INSERT INTO llx_c_category (id,module,classname) VALUES (1, 'supplier', 'Fournisseur');
+INSERT INTO llx_c_category (id,module,classname) VALUES (2, 'customer', 'Societe');
+INSERT INTO llx_c_category (id,module,classname) VALUES (3, 'member', 'Adherent');
+INSERT INTO llx_c_category (id,module,classname) VALUES (4, 'contact', 'Contact');
+INSERT INTO llx_c_category (id,module,classname) VALUES (5, 'bank_account', 'Account');
+INSERT INTO llx_c_category (id,module,classname) VALUES (6, 'project', 'Project');
+INSERT INTO llx_c_category (id,module,classname) VALUES (7, 'user', 'User');
+INSERT INTO llx_c_category (id,module,classname) VALUES (8, 'bank_line', 'AccountLine');
+INSERT INTO llx_c_category (id,module,classname) VALUES (9, 'warehouse', 'Entrepot');
+INSERT INTO llx_c_category (id,module,classname) VALUES (10, 'actioncomm', 'Actioncomm');
+INSERT INTO llx_c_category (id,module,classname) VALUES (11, 'website_page', 'WebsitePage');
+INSERT INTO llx_c_category (id,module,classname) VALUES (12, 'ticket', 'Ticket');
+INSERT INTO llx_c_category (id,module,classname) VALUES (13, 'knowledgemanagement', 'KnowledgeRecord');
 
 -- VMYSQL4.1 DROP INDEX idx_element_categorie_idx  on llx_element_categorie;
 -- VPGSQL8.2 DROP INDEX idx_element_categorie_idx;

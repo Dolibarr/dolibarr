@@ -72,42 +72,43 @@ class Categorie extends CommonObject
 	 * @var array Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
 	protected $MAP_ID = array(
-		'product'      => 0,
-		'supplier'     => 1,
-		'customer'     => 2,
-		'member'       => 3,
-		'contact'      => 4,
-		'bank_account' => 5,
-		'project'      => 6,
-		'user'         => 7,
-		'bank_line'    => 8,
-		'warehouse'    => 9,
-		'actioncomm'   => 10,
-		'website_page' => 11,
-		'ticket'       => 12,
-		'knowledgemanagement' => 13
+		// 'product'      => 0,
+		// 'supplier'     => 1,
+		// 'customer'     => 2,
+		// 'member'       => 3,
+		// 'contact'      => 4,
+		// 'bank_account' => 5,
+		// 'project'      => 6,
+		// 'user'         => 7,
+		// 'bank_line'    => 8,
+		// 'warehouse'    => 9,
+		// 'actioncomm'   => 10,
+		// 'website_page' => 11,
+		// 'ticket'       => 12,
+		// 'knowledgemanagement' => 13
 	);
 
 	/**
 	 * @var array Code mapping from ID
 	 *
 	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
+	 * @deprecated
 	 */
 	public static $MAP_ID_TO_CODE = array(
-		0 => 'product',
-		1 => 'supplier',
-		2 => 'customer',
-		3 => 'member',
-		4 => 'contact',
-		5 => 'bank_account',
-		6 => 'project',
-		7 => 'user',
-		8 => 'bank_line',
-		9 => 'warehouse',
-		10 => 'actioncomm',
-		11 => 'website_page',
-		12 => 'ticket',
-		13 => 'knowledgemanagement'
+		// 0 => 'product',
+		// 1 => 'supplier',
+		// 2 => 'customer',
+		// 3 => 'member',
+		// 4 => 'contact',
+		// 5 => 'bank_account',
+		// 6 => 'project',
+		// 7 => 'user',
+		// 8 => 'bank_line',
+		// 9 => 'warehouse',
+		// 10 => 'actioncomm',
+		// 11 => 'website_page',
+		// 12 => 'ticket',
+		// 13 => 'knowledgemanagement'
 	);
 
 	/**
@@ -139,20 +140,20 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
-		'product'  => 'Product',
-		'customer' => 'Societe',
-		'supplier' => 'Fournisseur',
-		'member'   => 'Adherent',
-		'contact'  => 'Contact',
-		'user'     => 'User',
-		'account'  => 'Account', // old for bank account
-		'bank_account'  => 'Account',
-		'project'  => 'Project',
-		'warehouse'=> 'Entrepot',
-		'actioncomm' => 'ActionComm',
-		'website_page' => 'WebsitePage',
-		'ticket' => 'Ticket',
-		'knowledgemanagement' => 'KnowledgeRecord'
+		// 'product'  => 'Product',
+		// 'customer' => 'Societe',
+		// 'supplier' => 'Fournisseur',
+		// 'member'   => 'Adherent',
+		// 'contact'  => 'Contact',
+		// 'user'     => 'User',
+		// 'account'  => 'Account', // old for bank account
+		// 'bank_account'  => 'Account',
+		// 'project'  => 'Project',
+		// 'warehouse'=> 'Entrepot',
+		// 'actioncomm' => 'ActionComm',
+		// 'website_page' => 'WebsitePage',
+		// 'ticket' => 'Ticket',
+		// 'knowledgemanagement' => 'KnowledgeRecord'
 	);
 
 	/**
@@ -276,6 +277,8 @@ class Categorie extends CommonObject
 
 		$this->db = $db;
 
+		$this->getMapId();
+
 		if (is_object($hookmanager)) {
 			$hookmanager->initHooks(array('category'));
 			$parameters = array();
@@ -293,6 +296,23 @@ class Categorie extends CommonObject
 				}
 			}
 		}
+	}
+
+	/**
+	 * getMapId from table llx_c_category
+	 * @return void
+	 */
+	private function getMapId()
+	{
+		$resql = $this->db->query('SELECT id, module, classname FROM '.$this->db->prefix().'c_category');
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->MAP_ID[$obj->module] = $obj->id;
+				$this->MAP_ID_TO_CODE[$obj->id] = $obj->module;
+				$this->MAP_OBJ_CLASS[$obj->module] = $obj->classname;
+			}
+		}
+
 	}
 
 	/**

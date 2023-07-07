@@ -19,7 +19,7 @@
 CREATE TABLE llx_c_category
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  id            integer NOT NULL,
   classname     varchar(32) NOT NULL,
   module        varchar(32) NULL
 )ENGINE=innodb;
-

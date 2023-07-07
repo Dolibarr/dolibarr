@@ -17,17 +17,17 @@
 -- Do not place a comment at the end of the line, this file is parsed during
 -- installation and all '--' symbols are removed.
 --
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (0, 'product', 'Product');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (1, 'supplier', 'Fournisseur');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (2, 'customer', 'Societe');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (3, 'member', 'Adherent');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (4, 'contact', 'Contact');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (5, 'bank_account', 'Account');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (6, 'project', 'Project');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (7, 'user', 'User');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (8, 'bank_line', 'AccountLine');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (9, 'warehouse', 'Entrepot');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (10, 'actioncomm', 'Actioncomm');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (11, 'website_page', 'WebsitePage');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (12, 'ticket', 'Ticket');
-INSERT INTO llx_c_category (rowid,module,classname) VALUES (13, 'knowledgemanagement', 'KnowledgeRecord');
+INSERT INTO llx_c_category (id,module,classname) VALUES (0, 'product', 'Product');
+INSERT INTO llx_c_category (id,module,classname) VALUES (1, 'supplier', 'Fournisseur');
+INSERT INTO llx_c_category (id,module,classname) VALUES (2, 'customer', 'Societe');
+INSERT INTO llx_c_category (id,module,classname) VALUES (3, 'member', 'Adherent');
+INSERT INTO llx_c_category (id,module,classname) VALUES (4, 'contact', 'Contact');
+INSERT INTO llx_c_category (id,module,classname) VALUES (5, 'bank_account', 'Account');
+INSERT INTO llx_c_category (id,module,classname) VALUES (6, 'project', 'Project');
+INSERT INTO llx_c_category (id,module,classname) VALUES (7, 'user', 'User');
+INSERT INTO llx_c_category (id,module,classname) VALUES (8, 'bank_line', 'AccountLine');
+INSERT INTO llx_c_category (id,module,classname) VALUES (9, 'warehouse', 'Entrepot');
+INSERT INTO llx_c_category (id,module,classname) VALUES (10, 'actioncomm', 'Actioncomm');
+INSERT INTO llx_c_category (id,module,classname) VALUES (11, 'website_page', 'WebsitePage');
+INSERT INTO llx_c_category (id,module,classname) VALUES (12, 'ticket', 'Ticket');
+INSERT INTO llx_c_category (id,module,classname) VALUES (13, 'knowledgemanagement', 'KnowledgeRecord');
