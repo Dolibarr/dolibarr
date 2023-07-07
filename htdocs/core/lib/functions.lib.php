@@ -1,23 +1,7 @@
 <?php
-/* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
- * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
- * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
- * Copyright (C) 2005-2019	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2021	Alexandre Spangaro			<aspangaro@open-dsi.fr>
- * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
- * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2021  Frédéric France             <frederic.france@netlogic.fr>
- * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
- * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
- * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
+/* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +19,29 @@
  */
 
 /**
- *	\file			htdocs/core/lib/functions.lib.php
- *	\brief			A set of functions for Dolibarr
- *					This file contains all frequently used functions.
+ *  \file		htdocs/core/lib/security.lib.php
+ *  \ingroup    core
+ *  \brief		Set of function used for dolibarr security (common function included into filefunc.inc.php)
+ *  			Warning, this file must not depends on other library files, except function.lib.php
+ *  			because it is used at low code level.
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+
+/**
+ * Return a string of random bytes (hexa string) with length = $length fro cryptographic purposes.
+ *
+ * @param 	int			$length		Length of random string
+ * @return	string					Random string
+ */
+function dolGetRandomBytes($length)
+{
+	if (function_exists('random_bytes')) {	// Available with PHP 7 only.
+		return bin2hex(random_bytes((int) floor($length / 2)));	// the bin2hex will double the number of bytes so we take length / 2
+	}
+
+	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
+}
 
 /**
  * Return dolibarr global constant string value
@@ -6350,6 +6351,25 @@ function dol_mkdir($dir, $dataroot = '', $newmask = null)
 
 
 /**
+ *	Change mod of a file
+ *
+ *  @param	string		$filepath		Full file path
+ *  @param	string		$newmask		Force new mask. For example '0644'
+ *	@return void
+ */
+function dolChmod($filepath, $newmask = '')
+{
+	global $conf;
+
+	if (!empty($newmask)) {
+		@chmod($filepath, octdec($newmask));
+	} elseif (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filepath, octdec($conf->global->MAIN_UMASK));
+	}
+}
+
+
+/**
  *	Return picto saying a field is required
  *
  *	@return  string		Chaine avec picto obligatoire
@@ -10282,12 +10302,30 @@ function newToken()
 
 /**
  * Return the value of token currently saved into session with name 'token'.
+ * For ajax call, you must use this token as a parameter of the call into the js calling script (the called ajax php page must also set constant NOTOKENRENEWAL).
  *
+ * @since Dolibarr v10.0.7
  * @return  string
  */
 function currentToken()
 {
-	return $_SESSION['token'];
+	return isset($_SESSION['token']) ? $_SESSION['token'] : '';
+}
+
+/**
+ * Return a random string to be used as a nonce value for js
+ *
+ * @return  string
+ */
+function getNonce()
+{
+	global $conf;
+
+	if (empty($conf->cache['nonce'])) {
+		$conf->cache['nonce'] = dolGetRandomBytes(8);
+	}
+
+	return $conf->cache['nonce'];
 }
 
 /**
@@ -10516,4 +10554,81 @@ function jsonOrUnserialize($stringtodecode)
 	}
 
 	return $result;
+}
+
+
+/**
+ * forgeSQLFromUniversalSearchCriteria
+ *
+ * @param 	string		$filter		String with universal search string. Must be '(aaa:bbb:...) OR (ccc:ddd:...) ...' with
+ * 									aaa is a field name (with alias or not) and
+ * 									bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
+ * 									Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+ * @param	string		$errorstr	Error message string
+ * @param	int			$noand		1=Do not add the AND before the condition string.
+ * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
+ * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
+ * @return	string					Return forged SQL string
+ */
+function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
+{
+	if (!preg_match('/^\(.*\)$/', $filter)) {    // If $filter does not start and end with ()
+		$filter = '(' . $filter . ')';
+	}
+
+	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
+
+	if (!dolCheckFilters($filter, $errorstr)) {
+		if ($noerror) {
+			return '1 = 2';
+		} else {
+			return 'Filter syntax error - '.$errorstr;		// Bad balance of parenthesis, we return an error message or force a SQL not found
+		}
+	}
+
+	// Test the filter syntax
+	$t = preg_replace_callback('/'.$regexstring.'/i', 'dolForgeDummyCriteriaCallback', $filter);
+	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
+	// If the string result contains something else than '()', the syntax was wrong
+	if (preg_match('/[^\(\)]/', $t)) {
+		$errorstr = 'Bad syntax of the search string';
+		if ($noerror) {
+			return '1 = 2';
+		} else {
+			return 'Filter syntax error - '.$errorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
+		}
+	}
+
+	return ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).($nopar ? "" : ')');
+}
+
+/**
+ * Return if a $sqlfilters parameter has a valid balance of parenthesis
+ *
+ * @param	string  		$sqlfilters     sqlfilter string
+ * @param	string			$error			Error message
+ * @return 	boolean			   				True if valid, False if not valid ($error is filled with the reason in such a case)
+ */
+function dolCheckFilters($sqlfilters, &$error = '')
+{
+	//$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+	//$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+	$tmp = $sqlfilters;
+	$i = 0; $nb = strlen($tmp);
+	$counter = 0;
+	while ($i < $nb) {
+		if ($tmp[$i] == '(') {
+			$counter++;
+		}
+		if ($tmp[$i] == ')') {
+			$counter--;
+		}
+		if ($counter < 0) {
+			$error = "Wrond balance of parenthesis in sqlfilters=".$sqlfilters;
+			dol_syslog($error, LOG_WARNING);
+			return false;
+		}
+		$i++;
+	}
+	return true;
 }

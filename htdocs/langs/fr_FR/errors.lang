@@ -274,6 +274,7 @@ ErrorIsNotADraft=%s n'est pas au statut brouillon
 ErrorAttributeIsUsedIntoProduct=Cet attribut est utilisé dans une ou plusieurs variantes de produits
 ErrorAttributeValueIsUsedIntoProduct=Cette valeur d'attribut est utilisée dans une ou plusieurs variantes de produits
 ErrorAjaxRequestFailed=La requête a échoué
+ErrorFailedToWriteInTempDirectory=Impossible d'écrire dans le répertoire temporaire
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

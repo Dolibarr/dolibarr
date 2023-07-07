@@ -779,3 +779,13 @@ ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DE
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_code varchar(3);
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
+
+-- Backport 14.0.0 -> 19.0.0
+ALTER TABLE llx_mrp_mo ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_mrp_mo ADD COLUMN mrptype integer DEFAULT 0;
+ALTER TABLE llx_mrp_mo ADD COLUMN fk_parent_line integer;
+ALTER TABLE llx_mrp_production ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_unit integer DEFAULT NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN fk_default_bom integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;

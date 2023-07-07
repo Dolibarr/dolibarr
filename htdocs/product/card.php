@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -70,6 +71,9 @@ if (!empty($conf->accounting->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+if (isModEnabled('bom')) {
+	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 }
 
 // Load translation files required by the page
@@ -348,6 +352,7 @@ if (empty($reshook)) {
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
+			$object->fk_default_workstation	 = GETPOST('fk_default_workstation', 'int');
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ?GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
@@ -368,6 +373,13 @@ if (empty($reshook)) {
 				$object->finished = $finished;
 			} else {
 				$object->finished = null;
+			}
+
+			$fk_default_bom = GETPOST('fk_default_bom', 'int');
+			if ($fk_default_bom >= 0) {
+				$object->fk_default_bom = $fk_default_bom;
+			} else {
+				$object->fk_default_bom = null;
 			}
 
 			$units = GETPOST('units', 'int');
@@ -494,6 +506,7 @@ if (empty($reshook)) {
 				$object->sell_or_eat_by_mandatory = GETPOST('sell_or_eat_by_mandatory', 'int');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
+				$object->fk_default_workstation   = GETPOST('fk_default_workstation', 'int');
 				// removed from update view so GETPOST always empty
 				/*
 				$object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
@@ -1241,6 +1254,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
+		if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
+			// Default workstation
+			print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+			print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
+			print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+			print '</td></tr>';
+		}
+
 		// Duration
 		if ($type == 1) {
 			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
@@ -1785,6 +1806,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 				*/
 			}
+
+			if ($object->isService() && $conf->workstation->enabled) {
+				// Default workstation
+				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
+				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+				print '</td></tr>';
+			}
+
 			/*
 			else
 			{
@@ -1805,7 +1835,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $formproduct->selectProductNature('finished', $object->finished);
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && isModEnabled('bom')) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				$bomkey = "Bom:bom/class/bom.class.php:0:(t.status:=:1) AND (t.fk_product:=:".((int) $object->id).')';
+				print $form->selectForForms($bomkey, 'fk_default_bom', (GETPOSTISSET('fk_default_bom') ? GETPOST('fk_default_bom') : $object->fk_default_bom), 1);
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					// Brut Weight
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -2254,6 +2293,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td>';
 			}
 
+			if ($object->isService() && isModEnabled('workstation')) {
+				$workstation = new Workstation($db);
+				$res = $workstation->fetch($object->fk_default_workstation);
+
+				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+				print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
+				print '</td>';
+			}
+
 			// Parent product.
 			if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
 				$combination = new ProductCombination($db);
@@ -2294,7 +2342,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $object->getLibFinished();
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && isModEnabled('bom') && $object->finished) {
+				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				if ($object->fk_default_bom) {
+					$bom_static = new BOM($db);
+					$bom_static->fetch($object->fk_default_bom);
+					print $bom_static->getNomUrl(1);
+				}
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				// Brut Weight
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
