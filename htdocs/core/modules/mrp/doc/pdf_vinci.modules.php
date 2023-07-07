@@ -1089,6 +1089,7 @@ class pdf_vinci extends ModelePDFMo
 
 		$posx = $this->page_largeur - $this->marge_droite - 100;
 		$posy = $this->marge_haute;
+		$w = 100;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 

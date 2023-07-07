@@ -122,3 +122,5 @@ BOMServicesList=BOM's services
 Manufacturing=Manufacturing
 Disassemble=Disassemble
 ProducedBy=Produced by
+QtyTot=Qty Total
+InProgress=In progress

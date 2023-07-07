@@ -182,7 +182,7 @@ if (empty($reshook)) {
 		$resultline = $moline->create($user, false); // Never use triggers here
 		if ($resultline <= 0) {
 			$error++;
-			setEventMessages($moline->error, $molines->errors, 'errors');
+			setEventMessages($moline->error, $moline->errors, 'errors');
 		}
 
 		$action = '';
@@ -490,7 +490,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$object->fetch_product();
-			$numref = $object->getNextNumRef($object->fk_product);
+			$numref = $object->getNextNumRef($object->product);
 		} else {
 			$numref = $object->ref;
 		}
