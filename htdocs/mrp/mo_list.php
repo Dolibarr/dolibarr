@@ -625,7 +625,7 @@ while ($i < $imaxinloop) {
 		$objectBom = $bom->fetch($obj->fk_bom);
 
 		// Output Kanban
-		print $object->getKanbanView('', array('bom'=>$objectBom->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
+		print $object->getKanbanView('', array('bom'=>$bom->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
