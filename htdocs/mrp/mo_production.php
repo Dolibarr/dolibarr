@@ -207,6 +207,7 @@ if (empty($reshook)) {
 							// Record stock movement
 							$id_product_batch = 0;
 							$stockmove->origin = $object;
+							$stockmove->context['mrp_role'] = 'toconsume';
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
 							} else {
@@ -279,6 +280,7 @@ if (empty($reshook)) {
 							// Record stock movement
 							$id_product_batch = 0;
 							$stockmove->origin = $object;
+							$stockmove->context['mrp_role'] = 'toproduce';
 							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
