@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=Email από τον χρήστη
 MailingModuleDescDolibarrUsers=Χρήστες με email
 MailingModuleDescThirdPartiesByCategories=Τρίτα μέρη
 SendingFromWebInterfaceIsNotAllowed=Η αποστολή από τη διεπαφή ιστού δεν επιτρέπεται.
-EmailCollectorFilterDesc=Όλα τα φίλτρα πρέπει να ταιριάζουν για να συλλεχθεί ένα email
+EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Γραμμή %s στο αρχείο
@@ -179,4 +179,8 @@ RecordCreatedByEmailCollector=Εγγραφή που δημιουργήθηκε �
 DefaultBlacklistMailingStatus=Προεπιλεγμένη τιμή για το πεδίο '%s' κατά τη δημιουργία μιας νέας επαφής
 DefaultStatusEmptyMandatory=Κενό αλλά υποχρεωτικό
 WarningLimitSendByDay=ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Η ρύθμιση ή η σύμβαση της εγκατάστασης σας περιορίζει τον αριθμό των email σας ανά ημέρα σε <b> %s </b> . Η προσπάθεια αποστολής περισσότερων ενδέχεται να έχει ως αποτέλεσμα την επιβράδυνση ή την αναστολή της εγκατάστασης σας. Επικοινωνήστε με την υποστήριξή σας εάν χρειάζεστε υψηλότερο όριο.
-NoMoreRecipientToSendTo=No more recipient to send the email to
+NoMoreRecipientToSendTo=Δεν υπάρχει άλλος παραλήπτης για να στείλετε το email
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s email που πληρούν τα κριτήρια, %s email επιτυχώς επεξεργασμένα  (για %s εγγραφες/ενέργειες που έχουν ολοκληρωθεί)

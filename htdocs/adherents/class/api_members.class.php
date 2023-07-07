@@ -55,10 +55,10 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param     int     $id ID of member
-	 * @return    array|mixed data without useless information
+	 * @param   int     $id 			ID of member
+	 * @return  Object              	Object with cleaned properties
 	 *
-	 * @throws    RestException
+	 * @throws  RestException
 	 */
 	public function get($id)
 	{

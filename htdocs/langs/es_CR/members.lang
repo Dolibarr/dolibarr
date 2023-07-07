@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - members
+MemberStatusDraft=Borrador (Necesita ser validado)
+MemberStatusActiveShort=Validada
+MemberStatusActiveLateShort=Expirado
+MemberStatusNoSubscriptionShort=Validada

@@ -81,7 +81,7 @@ if ($type == 'bank-transfer') {
 	}
 } else {
 	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
-	if (!$user->rights->facture->lire) {
+	if (!$user->hasRight('facture', 'lire')) {
 		accessforbidden();
 	}
 }

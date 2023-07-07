@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= کانفرنس یا بوتھ
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = ایونٹ کی تنظیم کا نظم کریں۔
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=فریق ثالث سے لنک کریں (کسٹ
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=بوتھ کے لیے درخواست
-NewSuggestionOfConference=کانفرنس کے لیے درخواست
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=اس ای میل کے ساتھ کئی ک
 ErrorSeveralCompaniesWithNameContactUs=اس نام کی کئی کمپنیاں ملی ہیں اس لیے ہم آپ کی رجسٹریشن کو خودکار طور پر درست نہیں کر سکتے۔ براہ کرم دستی توثیق کے لیے ہم سے %s پر رابطہ کریں۔
 NoPublicActionsAllowedForThisEvent=اس تقریب کے لیے عوام کے لیے کوئی عوامی کارروائی نہیں ہے۔
 MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date

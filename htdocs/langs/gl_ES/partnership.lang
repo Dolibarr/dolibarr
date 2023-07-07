@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Razón para declinar
 
 NewPartnershipRequest=Nova solicitude de colaboración
 NewPartnershipRequestDesc=Este formulario permíte solicitar formar parte dun dos nosos programas de colaboración. Se precisa axuda para cubrir este formulario, póñase en contacto por correo electrónico <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Esta páxina debe conter polo menos unha ligazón a un dos seguintes dominios: %s
 

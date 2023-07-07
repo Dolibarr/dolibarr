@@ -2,7 +2,7 @@
 ContractsArea=Шарттар аймағы
 ListOfContracts=Келісімдер тізімі
 AllContracts=Барлық келісімшарттар
-ContractCard=Келісімшарт картасы
+ContractCard=Contract
 ContractStatusNotRunning=Жүгірмейді
 ContractStatusDraft=Жоба
 ContractStatusValidated=Тексерілді

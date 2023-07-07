@@ -1,13 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-$windowsZonesUrl = 'http://unicode.org/repos/cldr/trunk/common/supplemental/windowsZones.xml';
+$windowsZonesUrl = 'https://raw.githubusercontent.com/unicode-org/cldr/master/common/supplemental/windowsZones.xml';
 $outputFile = __DIR__.'/../lib/timezonedata/windowszones.php';
 
 echo 'Fetching timezone map from: '.$windowsZonesUrl, "\n";
 
 $data = file_get_contents($windowsZonesUrl);
-
 $xml = simplexml_load_string($data);
 
 $map = [];
@@ -44,6 +43,6 @@ fclose($f);
 
 echo "Formatting\n";
 
-exec(__DIR__.'/sabre-cs-fixer fix '.escapeshellarg($outputFile));
+exec(__DIR__.'/../vendor/bin/php-cs-fixer fix '.escapeshellarg($outputFile));
 
 echo "Done\n";

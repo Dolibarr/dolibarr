@@ -160,7 +160,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : '';
 	$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -359,7 +359,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					//print '<br>';
 				}
 
-				// Now delete the flag to say install is complete
+				// Now delete the flag that say installation is not complete
 				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const');
 				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')." = 'MAIN_NOT_INSTALLED'");
 				if (!$resql) {
@@ -406,17 +406,25 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				$conf->global->MAIN_VERSION_LAST_UPGRADE = $targetversion;
 			} else {
 				dolibarr_install_syslog('step5: we run an upgrade to version '.$targetversion.' but database was already upgraded to '.$conf->global->MAIN_VERSION_LAST_UPGRADE.'. We keep MAIN_VERSION_LAST_UPGRADE as it is.');
+
+				// Force the delete of the flag that say installation is not complete
+				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const after upgrade process (should not exists but this is a security)');
+				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')." = 'MAIN_NOT_INSTALLED'");
+				if (!$resql) {
+					dol_print_error($db, 'Error in setup program');
+				}
 			}
+
+			// May fail if parameter already defined
+			dolibarr_install_syslog('step5: set the default language');
+			$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
+			//if (! $resql) dol_print_error($db,'Error in setup program');
 		} else {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
 	} else {
 		dol_print_error('', 'step5.php: unknown choice of action');
 	}
-
-	// May fail if parameter already defined
-	$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
-	//if (! $resql) dol_print_error($db,'Error in setup program');
 
 	$db->close();
 }

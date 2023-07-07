@@ -1562,13 +1562,13 @@ while ($i < $imaxinloop) {
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
-		$companystatic->fk_parent = $obj->fk_parent;
+		$companystatic->parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
 	}
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -1733,10 +1733,12 @@ while ($i < $imaxinloop) {
 		// Staff
 		if (!empty($arrayfields['staff.code']['checked'])) {
 			print '<td class="center">';
-			if (!is_array($staffArray) || count($staffArray) == 0) {
-				$staffArray = $formcompany->effectif_array(1);
+			if (!empty($obj->staff_code)) {
+				if (empty($conf->cache['staffArray'])) {
+					$conf->cache['staffArray'] = $formcompany->effectif_array(1);
+				}
+				print $conf->cache['staffArray'][$obj->staff_code];
 			}
-			print $staffArray[$obj->staff_code];
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

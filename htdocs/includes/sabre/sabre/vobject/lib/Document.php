@@ -160,7 +160,7 @@ abstract class Document extends Component
     public function createComponent($name, array $children = null, $defaults = true)
     {
         $name = strtoupper($name);
-        $class = 'Sabre\\VObject\\Component';
+        $class = Component::class;
 
         if (isset(static::$componentMap[$name])) {
             $class = static::$componentMap[$name];
@@ -258,7 +258,7 @@ abstract class Document extends Component
         if (isset(static::$propertyMap[$propertyName])) {
             return static::$propertyMap[$propertyName];
         } else {
-            return 'Sabre\\VObject\\Property\\Unknown';
+            return Property\Unknown::class;
         }
     }
 }

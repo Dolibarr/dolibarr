@@ -4054,6 +4054,10 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	padding: 4px 6px 4px 6px;			/* t r b l */
 	height: 22px;
 }
+table.liste tr.trkanban td {
+	padding: 10px 14px 10px 14px;			/* t r b l */
+}
+
 form.tagtable {
 	padding: unset !important;
 	border: unset !important;
@@ -7585,6 +7589,14 @@ div.clipboardCPValue.hidewithsize {
 	transform: translate(-50%, -50%);
 	text-align:center;
 	font-size: 2em;
+}
+
+/* ============================================================================== */
+/* CSS style used for color jPicker                                               */
+/* ============================================================================== */
+
+table.jPicker {
+	border: 1px solid #bbb !important;
 }
 
 /* ============================================================================== */

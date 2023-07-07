@@ -44,6 +44,7 @@ $rowid  = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $mode = GETPOST('mode', 'alopha');
@@ -245,6 +246,8 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 
 llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
@@ -319,6 +322,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$membertype = new AdherentType($db);
 
 		$i = 0;
+		$savnbfield = 9;
 		/*$savnbfield = $totalarray['nbfield'];
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;*/
@@ -337,7 +341,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				//output kanban

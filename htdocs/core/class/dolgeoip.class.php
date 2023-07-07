@@ -25,7 +25,7 @@
 
 /**
  * 		\class      DolGeoIP
- *      \brief      Classe to manage GeoIP
+ *      \brief      Class to manage GeoIP conversion
  *      			Usage:
  *					$geoip=new GeoIP('country',$datfile);
  *					$geoip->getCountryCodeFromIP($ip);
@@ -34,6 +34,9 @@
 class DolGeoIP
 {
 	public $gi;
+
+	public $error;
+	public $errorlabel;
 
 	/**
 	 * Constructor

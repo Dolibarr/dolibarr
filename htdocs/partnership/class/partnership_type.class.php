@@ -65,6 +65,8 @@ class PartnershipType extends CommonObject
 	 */
 	public $label;
 
+	public $active;
+
 
 	public $fields=array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),

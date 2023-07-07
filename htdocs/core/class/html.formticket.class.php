@@ -857,9 +857,9 @@ class FormTicket
 					}
 
 					// If selected is text, we compare with code, otherwise with id
-					if (preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
+					if (isset($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
 						print ' selected="selected"';
-					} elseif ($selected == $id) {
+					} elseif (isset($selected) && $selected == $id) {
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
 						print ' selected="selected"';
@@ -903,7 +903,8 @@ class FormTicket
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
-				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
+				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code";
+				$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -1194,9 +1195,9 @@ class FormTicket
 				}
 
 				// If text is selected, we compare with code, otherwise with id
-				if (preg_match('/[a-z]/i', $selected) && $selected == $arrayseverities['code']) {
+				if (isset($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arrayseverities['code']) {
 					print ' selected="selected"';
-				} elseif ($selected == $id) {
+				} elseif (isset($selected) && $selected == $id) {
 					print ' selected="selected"';
 				} elseif ($arrayseverities['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';

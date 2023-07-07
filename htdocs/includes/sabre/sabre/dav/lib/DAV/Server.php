@@ -14,6 +14,7 @@ use Sabre\HTTP;
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 use Sabre\Uri;
+use Sabre\Xml\Writer;
 
 /**
  * Main DAV server class.
@@ -24,8 +25,8 @@ use Sabre\Uri;
  */
 class Server implements LoggerAwareInterface, EmitterInterface
 {
-    use WildcardEmitterTrait;
     use LoggerAwareTrait;
+    use WildcardEmitterTrait;
 
     /**
      * Infinity is used for some request supporting the HTTP Depth header and indicates that the operation should traverse the entire tree.
@@ -185,6 +186,15 @@ class Server implements LoggerAwareInterface, EmitterInterface
     public static $exposeVersion = true;
 
     /**
+     * If this setting is turned on, any multi status response on any PROPFIND will be streamed to the output buffer.
+     * This will be beneficial for large result sets which will no longer consume a large amount of memory as well as
+     * send back data to the client earlier.
+     *
+     * @var bool
+     */
+    public static $streamMultiStatus = false;
+
+    /**
      * Sets up the server.
      *
      * If a Sabre\DAV\Tree object is passed as an argument, it will
@@ -198,8 +208,10 @@ class Server implements LoggerAwareInterface, EmitterInterface
      * the nodes in the array as top-level children.
      *
      * @param Tree|INode|array|null $treeOrNode The tree object
+     *
+     * @throws Exception
      */
-    public function __construct($treeOrNode = null)
+    public function __construct($treeOrNode = null, HTTP\Sapi $sapi = null)
     {
         if ($treeOrNode instanceof Tree) {
             $this->tree = $treeOrNode;
@@ -216,7 +228,7 @@ class Server implements LoggerAwareInterface, EmitterInterface
         }
 
         $this->xml = new Xml\Service();
-        $this->sapi = new HTTP\Sapi();
+        $this->sapi = $sapi ?? new HTTP\Sapi();
         $this->httpResponse = new HTTP\Response();
         $this->httpRequest = $this->sapi->getRequest();
         $this->addPlugin(new CorePlugin());
@@ -383,8 +395,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
      * Adds a plugin to the server.
      *
      * For more information, console the documentation of Sabre\DAV\ServerPlugin
-     *
-     * @param ServerPlugin $plugin
      */
     public function addPlugin(ServerPlugin $plugin)
     {
@@ -437,9 +447,7 @@ class Server implements LoggerAwareInterface, EmitterInterface
     /**
      * Handles a http request, and execute a method based on its name.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param bool              $sendResponse whether to send the HTTP response to the DAV client
+     * @param bool $sendResponse whether to send the HTTP response to the DAV client
      */
     public function invokeMethod(RequestInterface $request, ResponseInterface $response, $sendResponse = true)
     {
@@ -698,8 +706,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
      *   * destination - Destination path
      *   * destinationExists - Whether or not the destination is an existing url (and should therefore be overwritten)
      *
-     * @param RequestInterface $request
-     *
      * @throws Exception\BadRequest           upon missing or broken request headers
      * @throws Exception\UnsupportedMediaType when trying to copy into a
      *                                        non-collection
@@ -872,8 +878,7 @@ class Server implements LoggerAwareInterface, EmitterInterface
     /**
      * Small helper to support PROPFIND with DEPTH_INFINITY.
      *
-     * @param PropFind $propFind
-     * @param array    $yieldFirst
+     * @param array $yieldFirst
      *
      * @return \Traversable
      */
@@ -890,7 +895,7 @@ class Server implements LoggerAwareInterface, EmitterInterface
         }
 
         $propertyNames = $propFind->getRequestedProperties();
-        $propFindType = !empty($propertyNames) ? PropFind::NORMAL : PropFind::ALLPROPS;
+        $propFindType = !$propFind->isAllProps() ? PropFind::NORMAL : PropFind::ALLPROPS;
 
         foreach ($this->tree->getChildren($path) as $childNode) {
             if ('' !== $path) {
@@ -1004,9 +1009,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
      * The result is returned as an array, with paths for it's keys.
      * The result may be returned out of order.
      *
-     * @param array $paths
-     * @param array $propertyNames
-     *
      * @return array
      */
     public function getPropertiesForMultiplePaths(array $paths, array $propertyNames = [])
@@ -1043,9 +1045,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
      * target node and simply want to run through the system to get a correct
      * list of properties.
      *
-     * @param PropFind $propFind
-     * @param INode    $node
-     *
      * @return bool
      */
     public function getPropertiesByNode(PropFind $propFind, INode $node)
@@ -1076,7 +1075,12 @@ class Server implements LoggerAwareInterface, EmitterInterface
             return false;
         }
 
-        $parent = $this->tree->getNodeForPath($dir);
+        try {
+            $parent = $this->tree->getNodeForPath($dir);
+        } catch (Exception\NotFound $e) {
+            throw new Exception\Conflict('Files cannot be created in non-existent collections');
+        }
+
         if (!$parent instanceof ICollection) {
             throw new Exception\Conflict('Files can only be created as children of collections');
         }
@@ -1152,8 +1156,7 @@ class Server implements LoggerAwareInterface, EmitterInterface
     /**
      * Use this method to create a new collection.
      *
-     * @param string $uri   The new uri
-     * @param MkCol  $mkCol
+     * @param string $uri The new uri
      *
      * @return array|null
      */
@@ -1234,6 +1237,7 @@ class Server implements LoggerAwareInterface, EmitterInterface
 
         $this->tree->markDirty($parentUri);
         $this->emit('afterBind', [$uri]);
+        $this->emit('afterCreateCollection', [$uri]);
     }
 
     /**
@@ -1250,7 +1254,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
      * as their values.
      *
      * @param string $path
-     * @param array  $properties
      *
      * @return array
      */
@@ -1280,9 +1283,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
      * Normally this method will throw 412 Precondition Failed for failures
      * related to If-None-Match, If-Match and If-Unmodified Since. It will
      * set the status to 304 Not Modified for If-Modified_since.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -1554,8 +1554,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
      *    ],
      * ]
      *
-     * @param RequestInterface $request
-     *
      * @return array
      */
     public function getIfConditions(RequestInterface $request)
@@ -1608,8 +1606,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
     /**
      * Returns an array with resourcetypes for a node.
      *
-     * @param INode $node
-     *
      * @return array
      */
     public function getResourceTypeForNode(INode $node)
@@ -1628,19 +1624,36 @@ class Server implements LoggerAwareInterface, EmitterInterface
     // {{{ XML Readers & Writers
 
     /**
-     * Generates a WebDAV propfind response body based on a list of nodes.
+     * Returns a callback generating a WebDAV propfind response body based on a list of nodes.
      *
      * If 'strip404s' is set to true, all 404 responses will be removed.
      *
      * @param array|\Traversable $fileProperties The list with nodes
      * @param bool               $strip404s
      *
-     * @return string
+     * @return callable|string
      */
     public function generateMultiStatus($fileProperties, $strip404s = false)
     {
         $w = $this->xml->getWriter();
+        if (self::$streamMultiStatus) {
+            return function () use ($fileProperties, $strip404s, $w) {
+                $w->openUri('php://output');
+                $this->writeMultiStatus($w, $fileProperties, $strip404s);
+                $w->flush();
+            };
+        }
         $w->openMemory();
+        $this->writeMultiStatus($w, $fileProperties, $strip404s);
+
+        return $w->outputMemory();
+    }
+
+    /**
+     * @param $fileProperties
+     */
+    private function writeMultiStatus(Writer $w, $fileProperties, bool $strip404s)
+    {
         $w->contextUri = $this->baseUri;
         $w->startDocument();
 
@@ -1662,7 +1675,6 @@ class Server implements LoggerAwareInterface, EmitterInterface
             ]);
         }
         $w->endElement();
-
-        return $w->outputMemory();
+        $w->endDocument();
     }
 }

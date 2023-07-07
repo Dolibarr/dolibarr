@@ -60,8 +60,8 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * Return an array with knowledgerecord informations
 	 *
-	 * @param 	int 	$id ID of knowledgerecord
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of knowledgerecord
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url	GET knowledgerecords/{id}
 	 *

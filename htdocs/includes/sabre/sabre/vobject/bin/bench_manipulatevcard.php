@@ -10,7 +10,7 @@ if ($argc < 2) {
     echo 'system.';
     echo "\n";
     echo 'Usage: '.$argv[0]." inputfile.vcf\n";
-    die();
+    exit();
 }
 
 list(, $inputFile) = $argv;

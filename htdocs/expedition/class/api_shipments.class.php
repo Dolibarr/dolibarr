@@ -58,8 +58,8 @@ class Shipments extends DolibarrApi
 	 *
 	 * Return an array with shipment informations
 	 *
-	 * @param       int         $id         ID of shipment
-	 * @return 	array|mixed data without useless information
+	 * @param   int         $id         ID of shipment
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */

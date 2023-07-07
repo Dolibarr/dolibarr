@@ -24,4 +24,4 @@ SalariesStatistics=Статистика заробітної плати
 SalariesAndPayments=Заробітна плата та виплати
 ConfirmDeleteSalaryPayment=Ви хочете видалити цю виплату зарплати?
 FillFieldFirst=Спочатку заповніть поле співробітника
-UpdateAmountWithLastSalary=Встановити суму з останньою зарплатою
+UpdateAmountWithLastSalary=Set amount of last salary

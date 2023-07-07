@@ -409,8 +409,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
  */
 function dol_compare_file($a, $b)
 {
-	global $sortorder;
-	global $sortfield;
+	global $sortorder, $sortfield;
 
 	$sortorder = strtoupper($sortorder);
 
@@ -440,6 +439,8 @@ function dol_compare_file($a, $b)
 		}
 		return ($a->size < $b->size) ? $retup : $retdown;
 	}
+
+	return 0;
 }
 
 
@@ -3149,7 +3150,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
 		// Wrapping for recruitment module
-		$accessallowed = $user->rights->recruitment->recruitmentjobposition->read;
+		$accessallowed = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
 		$original_file = $conf->recruitment->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output)) {
 		// Wrapping for wysiwyg editor
@@ -3431,8 +3432,21 @@ function dragAndDropFileUpload($htmlname)
 	$out .= '
 		jQuery(document).ready(function() {
 			var enterTargetDragDrop = null;
+
 			$("#'.$htmlname.'").addClass("cssDragDropArea");
-			$(".cssDragDropArea").on("dragenter", function(ev) {
+
+			$(".cssDragDropArea").on("dragenter", function(ev, ui) {
+				var dataTransfer = ev.originalEvent.dataTransfer;
+				var dataTypes = dataTransfer.types;
+				//console.log(dataTransfer);
+				//console.log(dataTypes);
+
+				if (!dataTypes || ($.inArray(\'Files\', dataTypes) === -1)) {
+				    // The element dragged is not a file, so we avoid the "dragenter"
+				    ev.preventDefault();
+    				return false;
+  				}
+
 				// Entering drop area. Highlight area
 				console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
 				enterTargetDragDrop = ev.target;
@@ -3463,7 +3477,9 @@ function dragAndDropFileUpload($htmlname)
 				fd.append("element", "'.dol_escape_js($object->element).'");
 				fd.append("token", "'.currentToken().'");
 				fd.append("action", "linkit");
+
 				var dataTransfer = e.originalEvent.dataTransfer;
+
 				if (dataTransfer.files && dataTransfer.files.length){
 					var droppedFiles = e.originalEvent.dataTransfer.files;
 					$.each(droppedFiles, function(index,file){

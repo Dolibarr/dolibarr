@@ -89,8 +89,6 @@ class InviteReply implements NotificationInterface
      *   * hostUrl      - A url to the shared calendar.
      *   * summary      - Description of the share, can be the same as the
      *                    calendar, but may also be modified (optional).
-     *
-     * @param array $values
      */
     public function __construct(array $values)
     {
@@ -132,8 +130,6 @@ class InviteReply implements NotificationInterface
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
      */
     public function xmlSerialize(Writer $writer)
     {
@@ -143,8 +139,6 @@ class InviteReply implements NotificationInterface
     /**
      * This method serializes the entire notification, as it is used in the
      * response body.
-     *
-     * @param Writer $writer
      */
     public function xmlSerializeFull(Writer $writer)
     {

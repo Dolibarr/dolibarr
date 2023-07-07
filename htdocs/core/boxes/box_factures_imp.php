@@ -105,7 +105,7 @@ class box_factures_imp extends ModeleBoxes
 			$sql1 .= ", f.total_ttc";
 			$sql1 .= ", f.paye, f.fk_statut as status, f.rowid as facid";
 			$sql1 .= ", SUM(pf.amount) as am";
-			$sql2 .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql2 = " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 				$sql2 .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 			}
@@ -124,7 +124,7 @@ class box_factures_imp extends ModeleBoxes
 			if ($user->socid) {
 				$sql2 .= " AND s.rowid = ".((int) $user->socid);
 			}
-			$sql3 .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
+			$sql3 = " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 				$sql3 .= " spe.accountancy_code_customer as code_compta,";
 			} else {

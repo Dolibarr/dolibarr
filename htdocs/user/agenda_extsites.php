@@ -52,6 +52,11 @@ $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', '
 
 // Security check
 $id = GETPOST('id', 'int');
+
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->getrights();

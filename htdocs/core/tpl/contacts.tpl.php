@@ -59,7 +59,7 @@ if ($module == 'propal') {
 } elseif ($module == 'project') {
 	$permission = $user->rights->projet->creer;
 } elseif ($module == 'action') {
-	$permission = $user->rights->agenda->myactions->create;
+	$permission = $user->hasRight('agenda', 'myactions', 'create');
 } elseif ($module == 'shipping') {
 	$permission = $user->rights->expedition->creer;
 } elseif ($module == 'reception') {

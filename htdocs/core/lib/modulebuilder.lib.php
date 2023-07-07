@@ -537,9 +537,9 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		} else {
 			$permsToadd = array();
 			$perms = array(
-				'read' => 'Read objects of '.ucfirst($module),
-				'write' => 'Create/Update objects of '.ucfirst($module),
-				'delete' => 'Delete objects of '.ucfirst($module)
+				'read' => 'Read '.$objectname.' object of '.ucfirst($module),
+				'write' => 'Create/Update '.$objectname.' object of '.ucfirst($module),
+				'delete' => 'Delete '.$objectname.' object of '.ucfirst($module)
 			);
 			$i = 0;
 			foreach ($perms as $index => $value) {
@@ -648,7 +648,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// write the begin of table with specifics options
 	$table = "== DATA SPECIFICATIONS\n";
-	$table .= "== Table of fields and their properties for object *$objectname* : \n";
+	$table .= "=== Table of fields with properties for object *$objectname* : \n";
 	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
 	$table .= "|===\n";
 	$table .= "|code";
@@ -681,10 +681,10 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= implode("|", $values) . "\n";
 	}
 	// end table
-	$table .= "|===";
-	$table .= "__ end table for object $objectname";
+	$table .= "|===\n";
+	$table .= "__ end table for object $objectname\n";
 	//write in file
-	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
+	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
@@ -925,16 +925,6 @@ function removeObjectFromApiFile($file, $objectname, $modulename)
 	return 1;
 }
 
-/**
- * Compare menus by their object
- * @param  mixed  $a  first value
- * @param  mixed  $b  seconde value
- * @return int        1 if OK, -1 if KO
- */
-function compareMenus($a, $b)
-{
-	return strcmp($a['fk_menu'], $b['fk_menu']);
-}
 
 /**
  * @param    string         $file       path of filename
@@ -994,9 +984,6 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		$endMenu = '/* END MODULEBUILDER LEFTMENU MYOBJECT */';
 		$allMenus = getFromFile($file, $beginMenu, $endMenu);
 		dolReplaceInFile($file, array($allMenus => ''));
-
-		// orders menu with other menus that have the same object
-		usort($menus, 'compareMenus');
 
 		//prepare each menu and stock them in string
 		$str_menu = "";

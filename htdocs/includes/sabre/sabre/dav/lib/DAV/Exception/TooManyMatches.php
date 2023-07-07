@@ -25,9 +25,6 @@ class TooManyMatches extends Forbidden
 {
     /**
      * This method allows the exception to include additional information into the WebDAV error response.
-     *
-     * @param DAV\Server  $server
-     * @param \DOMElement $errorNode
      */
     public function serialize(DAV\Server $server, \DOMElement $errorNode)
     {

@@ -35,6 +35,10 @@ $langs->load("users");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);

@@ -47,6 +47,7 @@ if ($user->socid) {
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode      = GETPOST('mode', 'alpha');
+$massaction = GETPOST('massaction', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
@@ -613,6 +614,7 @@ print '</tr>';
 
 
 $totalarray = array();
+$savnbfield = $totalarray['nbfield'];
 $totalarray['nbfield'] = 0;
 $totalarray['val']['total_cred'] = 0;
 $totalarray['val']['total_deb'] = 0;
@@ -635,7 +637,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -679,7 +681,7 @@ while ($i < $imaxinloop) {
 
 		// Date payment
 		if ($arrayfields['datep']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datep, 'day')."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -688,7 +690,7 @@ while ($i < $imaxinloop) {
 
 		// Date value
 		if ($arrayfields['datev']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datev, 'day')."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

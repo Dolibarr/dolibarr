@@ -42,9 +42,6 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL
 
     /**
      * Creates the principal object.
-     *
-     * @param PrincipalBackend\BackendInterface $principalBackend
-     * @param array                             $principalProperties
      */
     public function __construct(PrincipalBackend\BackendInterface $principalBackend, array $principalProperties = [])
     {
@@ -119,8 +116,6 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL
      * The list of members is always overwritten, never appended to.
      *
      * This method should throw an exception if the members could not be set.
-     *
-     * @param array $groupMembers
      */
     public function setGroupMemberSet(array $groupMembers)
     {
@@ -181,8 +176,6 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL
      *
      * To update specific properties, call the 'handle' method on this object.
      * Read the PropPatch documentation for more information.
-     *
-     * @param DAV\PropPatch $propPatch
      */
     public function propPatch(DAV\PropPatch $propPatch)
     {
