@@ -2029,7 +2029,7 @@ class Categorie extends CommonObject
 			$type = 'account';
 		}
 
-		return " LEFT JOIN ".MAIN_DB_PREFIX."categorie_".$type." as cp ON ".$rowIdName." = cp.fk_".$type;
+		return " LEFT JOIN ".MAIN_DB_PREFIX."element_category as cp ON ".$rowIdName." = cp.fk_element";
 	}
 
 	/**
