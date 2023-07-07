@@ -44,7 +44,8 @@ $printer2 = GETPOST('printer2', 'alpha');
 $printer3 = GETPOST('printer3', 'alpha');
 
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$categorystatic = new Categorie($db);
+	$type = $categorystatic->MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
 
 if (!$user->hasRight('categorie', 'lire')) {

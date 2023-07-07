@@ -1519,7 +1519,7 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		if (is_numeric($type)) {
-			$type = Categorie::$MAP_ID_TO_CODE[$type];
+			$type = $this->MAP_ID_TO_CODE[$type];
 		}
 
 		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_bank_categ into llx_categorie
