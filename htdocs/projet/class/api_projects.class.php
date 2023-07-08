@@ -20,6 +20,8 @@
 
  require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+ require_once DOL_DOCUMENT_ROOT.'/user/class/api_users.class.php';
 
 /**
  * API class for projects
@@ -82,6 +84,64 @@ class Projects extends DolibarrApi
 		return $this->_cleanObjectDatas($this->project);
 	}
 
+	/**
+	 * Get contacts of a project.
+	 *
+	 * @param int   $id                     Id of project
+	 * @return  array                               Array of contacts objects
+	 *
+	 * @url	GET {id}/contacts
+	 * @throws 	RestException
+	 */
+	public function getContacts($id)
+	{
+		global $db, $conf;
+
+                // No need to check rights for the users when using User API because it is already in the get method
+		if ( (!DolibarrApiAccess::$user->rights->projet->lire) && (!DolibarrApiAccess::$user->rights->contact->lire) ){
+			throw new RestException(401);
+		}
+
+		$obj_ret = array();
+
+		$sql = "SELECT fk_socpeople, fk_c_type_contact";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_contact";
+		$sql .= " WHERE element_id=".$id;
+
+                // Add internal and external people for project type of contact
+                $sql .= ' AND (fk_c_type_contact=160 OR fk_c_type_contact=161 OR fk_c_type_contact=170 OR fk_c_type_contact=171)';
+
+		dol_syslog("API Rest request");
+		$result = $this->db->query($sql);
+
+		if ($result) {
+                        foreach ($result as $key => $value) {
+                            // fk_c_type_contact = 160, 161 we use users object because they are internal contacts
+                            // fk_c_type_contact = 170, 171 we use contacts object because they are external contacts
+                            if ($value["fk_c_type_contact"] == "160" || $value["fk_c_type_contact"] == "161") {
+                               $user_static = new Users();
+                               $obj = $user_static->get($value["fk_socpeople"]);
+                               // Add user_type
+                               $obj->user_type = "internal";
+                               $obj_ret[] = $obj;
+                            } else if ($value["fk_c_type_contact"] == "170" || $value["fk_c_type_contact"] == "171") {
+                                $contact_static = new Contact($this->db);
+                                if ($contact_static->fetch($value["fk_socpeople"])) {
+                                    $obj = $this->_cleanObjectDatasContacts($contact_static);
+                                    // Add user_type
+                                    $obj->user_type = "external";
+                                    $obj_ret[] = $obj;
+                                }
+                            }
+                        }
+		} else {
+			throw new RestException(503, 'Error when retrieve contacts from project: '.$this->db->lasterror());
+		}
+		if (!count($obj_ret)) {
+			throw new RestException(404, 'No contacts for project found');
+		}
+                return $obj_ret;
+	}
 
 
 	/**
@@ -601,6 +661,110 @@ class Projects extends DolibarrApi
 		unset($object->total_ttc);
 
 		unset($object->comments);
+
+		return $object;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas contacts
+	 *
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 */
+	protected function _cleanObjectDatasContacts($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+                unset($object->civility_id);
+                unset($object->civility_code);
+                unset($object->civility);
+                unset($object->address);
+                unset($object->zip);
+                unset($object->town);
+                unset($object->state_id);
+                //unset($object->poste);
+                unset($object->socid);
+                unset($object->fk_soc);
+                unset($object->statut);
+                unset($object->code);
+                //unset($object->email);
+                unset($object->no_email);
+                unset($object->socialnetworks);
+                unset($object->skype);
+                unset($object->twitter);
+                unset($object->facebook);
+                unset($object->linkedin);
+                unset($object->jabberid);
+                unset($object->photo);
+                unset($object->phone_pro);
+                unset($object->phone_perso);
+                unset($object->phone_mobile);
+                unset($object->fax);
+                unset($object->priv);
+                unset($object->birthday);
+                unset($object->default_lang);
+                unset($object->ref_facturation);
+                unset($object->ref_contrat);
+                unset($object->ref_commande);
+                unset($object->ref_propal);
+                unset($object->user_id);
+                unset($object->user_login);
+                unset($object->roles);
+                unset($object->cacheprospectstatus);
+                unset($object->fk_prospectlevel);
+                unset($object->stcomm_id);
+                unset($object->statut_commercial);
+                unset($object->stcomm_picto);
+                unset($object->id);
+                unset($object->entity);
+                unset($object->import_key);
+                unset($object->array_options);
+                unset($object->array_languages);
+                unset($object->linkedObjectsIds);
+                unset($object->canvas);
+                unset($object->fk_project);
+                unset($object->contact_id);
+                unset($object->user);
+                unset($object->origin);
+                unset($object->origin_id);
+                unset($object->ref);
+                unset($object->ref_ext);
+                unset($object->status);
+                unset($object->country_id);
+                unset($object->country_code);
+                unset($object->region_id);
+                unset($object->barcode_type);
+                unset($object->barcode_type_coder);
+                unset($object->mode_reglement_id);
+                unset($object->cond_reglement_id);
+                unset($object->demand_reason_id);
+                unset($object->transport_mode_id);
+                unset($object->shipping_method_id);
+                unset($object->model_pdf);
+                unset($object->last_main_doc);
+                unset($object->fk_bank);
+                unset($object->fk_account);
+                unset($object->note_public);
+                unset($object->note_private);
+                unset($object->total_ht);
+                unset($object->total_tva);
+                unset($object->total_localtax1);
+                unset($object->total_localtax2);
+                unset($object->total_ttc);
+                unset($object->lines);
+                unset($object->name);
+                //unset($object->lastname);
+                //unset($object->firstname);
+                unset($object->date_creation);
+                unset($object->date_validation);
+                unset($object->date_modification);
+                unset($object->specimen);
+                unset($object->field);
+                //unset($object->socname);
+                //unset($object->mail);
+                //unset($object->gender);
 
 		return $object;
 	}
