@@ -471,7 +471,7 @@ if (empty($reshook)) {
 			$action = 'edit_extras';
 		}
 	}
-	
+
 	// Add a product or service
 	if ($action == 'add' && $usercancreate) {
 		$error = 0;
