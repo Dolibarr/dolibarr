@@ -67,7 +67,6 @@ ExportDataset_ticket_1=Tickets
 # Status
 Read=Read
 Assigned=Assigned
-InProgress=In progress
 NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Answered
