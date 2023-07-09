@@ -20,8 +20,10 @@ jobs:
     #needs: filesChanged
     steps:
       - uses: actions/checkout@v3
-        #with:
-        #  fetch-depth: 10
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}      
+          #  fetch-depth: 10
 
       - name: echo Get list of all changed files
         run: |
