@@ -4270,6 +4270,7 @@ class Form
 
 		// Set default value if not already set by caller
 		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) {
+			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 		}
 
@@ -4374,6 +4375,7 @@ class Form
 
 		// Set default value if not already set by caller
 		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) {
+			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
 		}
 
