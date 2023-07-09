@@ -85,7 +85,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
-$search_fk_projet=GETPOST("search_fk_projet", 'int');
+$search_fk_project=GETPOST("search_fk_project");
 
 $type = GETPOST("type", "int");
 
@@ -226,10 +226,10 @@ if (empty($reshook)) {
 		$search_user = "";
 		$search_batch = "";
 		$search_qty = '';
-		$search_fk_projet=0;
 		$search_all = "";
 		$toselect = array();
 		$search_array_options = array();
+		$search_fk_project = "";
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -690,8 +690,8 @@ if (!empty($search_batch)) {
 if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
-if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
-	$sql .= natural_search('m.fk_projet', $search_fk_projet);
+if (!empty($search_fk_project) && $search_fk_project != '-1') {
+	$sql .= natural_search('m.fk_projet', $search_fk_project);
 }
 if ($search_qty != '') {
 	$sql .= natural_search('m.value', $search_qty, 1);
@@ -1008,6 +1008,9 @@ if ($search_user) {
 if ($idproduct > 0) {
 	$param .= '&idproduct='.urlencode($idproduct);
 }
+if ($search_fk_project != '' && $search_fk_project != '-1') {
+	$param .= '&search_fk_project='.urlencode($search_fk_project);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -1181,7 +1184,7 @@ if (!empty($arrayfields['origin']['checked'])) {
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
 	// fk_project
 	print '<td class="liste_titre" align="left">';
-	print '&nbsp; ';
+	print $object->showInputField($object->fields['fk_project'], 'fk_project', '', '', '', 'search_', 'maxwidth125', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['m.type_mouvement']['checked'])) {
