@@ -489,6 +489,19 @@ class Product extends CommonObject
 	public $supplierprices;
 
 	/**
+	 * Array with list of sub-products for Kits
+	 *
+	 * @var array
+	 */
+	public $sousprods;
+
+	/**
+	 * Path of subproducts. Build from ->sousprods with get_arbo_each_prod()
+	 */
+	public $res;
+
+
+	/**
 	 * Property set to save result of isObjectUsed(). Used for example by Product API.
 	 *
 	 * @var boolean
@@ -497,8 +510,6 @@ class Product extends CommonObject
 
 
 	/**
-	 *
-	 *
 	 *
 	 */
 	 public $mandatory_period;
@@ -4730,7 +4741,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
+	 *  Function recursive, used only by get_arbo_each_prod(), to build tree of subproducts into ->res
 	 *  Define value of this->res
 	 *
 	 * @param  array  $prod       			Products array
@@ -4808,16 +4819,16 @@ class Product extends CommonObject
 	public function get_arbo_each_prod($multiply = 1, $ignore_stock_load = 0)
 	{
 		// phpcs:enable
-		$res = array();
+		$this->res = array();
 		if (isset($this->sousprods) && is_array($this->sousprods)) {
 			foreach ($this->sousprods as $prod_name => $desc_product) {
 				if (is_array($desc_product)) {
-					$this->fetch_prod_arbo($desc_product, "", $multiply, 1, $this->id, $ignore_stock_load);
+					$this->fetch_prod_arbo($desc_product, "", $multiply, 1, $this->id, $ignore_stock_load);	// This set $this->res
 				}
 			}
 		}
 		//var_dump($res);
-		return $res;
+		return $this->res;
 	}
 
 	/**
