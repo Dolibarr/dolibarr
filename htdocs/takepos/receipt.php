@@ -256,14 +256,14 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 
 // Now show local taxes if company uses them
 
-if ($mysoc->useLocalTax(1) || price2num($object->total_localtax1, 'MU')) { ?>
+if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
 <?php } ?>
-<?php if ($mysoc->useLocalTax(2) || price2num($object->total_localtax2, 'MU')) { ?>
+<?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";
