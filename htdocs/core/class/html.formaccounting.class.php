@@ -376,7 +376,7 @@ class FormAccounting extends Form
 			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
 			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-			$sql .= " AND asy.rowid = 11111".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
+			$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 			if ($active === '1') {
 				$sql .= " AND aa.active = 1";
 			} elseif ($active === '0') {
