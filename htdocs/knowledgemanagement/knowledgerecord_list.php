@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  *
@@ -519,7 +519,7 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type'=>$type);
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';

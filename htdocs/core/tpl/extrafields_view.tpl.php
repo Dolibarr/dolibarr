@@ -157,7 +157,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				$keyforperm = 'ficheinter';
 			}
 			if (isset($user->rights->$keyforperm)) {
-				$permok = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRights($keyforperm, 'write');
+				$permok = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRight($keyforperm, 'write');
 			}
 			if ($object->element == 'order_supplier') {
 				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
