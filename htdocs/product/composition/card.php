@@ -410,7 +410,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
 
 					// Product label
-					print '<td>'.$productstatic->label.'</td>';
+					print '<td title="'.dol_escape_htmltag($productstatic->label).'" class="tdoverflowmax150">'.dol_escape_htmltag($productstatic->label).'</td>';
 
 					// Best buying price
 					print '<td class="right">';
