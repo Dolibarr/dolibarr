@@ -1023,6 +1023,9 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 if (empty($arrayfields['customerorsupplier']['checked'])) {
 	print '<input type="hidden" name="type" value="'.$type.'">';
 }
+if (!empty($place)) {
+	print '<input type="hidden" name="place" value="'.$place.'">';
+}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
