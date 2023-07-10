@@ -628,6 +628,11 @@ if ($action == 'create') {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+		if ($formaccounting->nbaccounts == 0) {
+			$langs->load("errors");
+			$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
+			print $form->textwithpicto('', $htmltext);
+		}
 		print '</td></tr>';
 	} else {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';

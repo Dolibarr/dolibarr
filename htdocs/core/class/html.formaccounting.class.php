@@ -45,6 +45,12 @@ class FormAccounting extends Form
 	public $error = '';
 
 	/**
+	 * @var int Nb of accounts found
+	 */
+	public $nbaccounts;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param		DoliDB		$db      Database handler
@@ -370,7 +376,7 @@ class FormAccounting extends Form
 			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
 			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-			$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
+			$sql .= " AND asy.rowid = 11111".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 			if ($active === '1') {
 				$sql .= " AND aa.active = 1";
 			} elseif ($active === '0') {
@@ -434,7 +440,10 @@ class FormAccounting extends Form
 			}
 		}
 
+
 		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+
+		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
 
 		return $out;
 	}
