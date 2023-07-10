@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
  *  \brief 		Balance of book keeping
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Class
@@ -40,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
+$optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST('type', 'alpha');
 if ($type == 'sub') {
 	$context_default = 'balancesubaccountlist';
@@ -159,11 +161,11 @@ if (empty($reshook)) {
 
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
-		$param .= '&amp;date_startmonth=' . GETPOST('date_startmonth', 'int') . '&amp;date_startday=' . GETPOST('date_startday', 'int') . '&amp;date_startyear=' . GETPOST('date_startyear', 'int');
+		$param .= '&date_startmonth=' . GETPOST('date_startmonth', 'int') . '&date_startday=' . GETPOST('date_startday', 'int') . '&date_startyear=' . GETPOST('date_startyear', 'int');
 	}
 	if (!empty($search_date_end)) {
 		$filter['t.doc_date<='] = $search_date_end;
-		$param .= '&amp;date_endmonth=' . GETPOST('date_endmonth', 'int') . '&amp;date_endday=' . GETPOST('date_endday', 'int') . '&amp;date_endyear=' . GETPOST('date_endyear', 'int');
+		$param .= '&date_endmonth=' . GETPOST('date_endmonth', 'int') . '&date_endday=' . GETPOST('date_endday', 'int') . '&date_endyear=' . GETPOST('date_endyear', 'int');
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
@@ -175,7 +177,7 @@ if (empty($reshook)) {
 		} else {
 			$filter['t.numero_compte>='] = $search_accountancy_code_start;
 		}
-		$param .= '&amp;search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
+		$param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
 	}
 	if (!empty($search_accountancy_code_end)) {
 		if ($type == 'sub') {
@@ -183,7 +185,7 @@ if (empty($reshook)) {
 		} else {
 			$filter['t.numero_compte<='] = $search_accountancy_code_end;
 		}
-		$param .= '&amp;search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
+		$param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
 	}
 	if (!empty($search_ledger_code)) {
 		$filter['t.code_journal'] = $search_ledger_code;
@@ -300,9 +302,9 @@ if ($action != 'export_csv') {
 	if (empty($reshook)) {
 		$newcardbutton = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			jQuery("#exportcsvbutton").click(function() {
+			jQuery("#exportcsvbutton").click(function(event) {
 				event.preventDefault();
 				console.log("Set action to export_csv");
 				jQuery("#action").val("export_csv");
@@ -325,12 +327,17 @@ if ($action != 'export_csv') {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$selectedfields = '';
+
+	// Warning to explain why list of record is not consistent with the other list view (missing a lot of lines)
+	if ($type == 'sub') {
+		print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
+	}
 
 	$moreforfilter = '';
 
@@ -347,7 +354,7 @@ if ($action != 'export_csv') {
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans("Journal");
+	$moreforfilter .= $langs->trans("Journals").': ';
 	$moreforfilter .= $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
 	$moreforfilter .= '</div>';
 
@@ -368,10 +375,12 @@ if ($action != 'export_csv') {
 	}
 	$moreforfilter .= '</div>';
 
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
-	$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
-	$moreforfilter .= '</div>';
+	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
+		$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
+		$moreforfilter .= '</div>';
+	}
 
 	if (!empty($moreforfilter)) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -383,7 +392,7 @@ if ($action != 'export_csv') {
 	}
 
 
-	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 6 : 5);
+	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 5 : 4);
 
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
@@ -405,9 +414,10 @@ if ($action != 'export_csv') {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
-	if ($type == 'sub') {
-		print_liste_field_titre("Type", $_SERVER['PHP_SELF'], "t.type", "", $param, "", $sortfield, $sortorder);
-	}
+	// TODO : Retrieve the type of third party: Customer / Supplier / Employee
+	//if ($type == 'sub') {
+	//	print_liste_field_titre("Type", $_SERVER['PHP_SELF'], "t.type", "", $param, "", $sortfield, $sortorder);
+	//}
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print_liste_field_titre("OpeningBalance", $_SERVER['PHP_SELF'], "", $param, "", 'class="right"', $sortfield, $sortorder);
 	}
@@ -459,7 +469,7 @@ if ($action != 'export_csv') {
 		if ($type != 'sub') {
 			$accountingaccountstatic->fetch(null, $line->numero_compte, true);
 			if (!empty($accountingaccountstatic->account_number)) {
-				$accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 0, '', 0, -1, 0, 'ledger');
+				$accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 1);
 			} else {
 				$accounting_account = length_accountg($line->numero_compte);
 			}
@@ -532,9 +542,10 @@ if ($action != 'export_csv') {
 		}
 
 		// Type
-		if ($type == 'sub') {
-			print '<td></td>';
-		}
+		// TODO Retrieve the type of third party: Customer / Supplier / Employee
+		//if ($type == 'sub') {
+		//	print '<td></td>';
+		//}
 
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance, 'MT')).'</td>';
