@@ -584,7 +584,7 @@ if ($action != 'export_csv') {
 	}
 
 	if (!empty($show_subgroup)) {
-		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td>';
+		print '<tr class="liste_total"><td class="right">'.$langs->trans("SubTotal").':</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance, 'MT')).'</td>';
 		}
@@ -599,7 +599,7 @@ if ($action != 'export_csv') {
 		print '</tr>';
 	}
 
-	print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("AccountBalance").':</td>';
+	print '<tr class="liste_total"><td class="right">'.$langs->trans("AccountBalance").':</td>';
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="nowrap right">'.price(price2num($total_opening_balance, 'MT')).'</td>';
 	}
