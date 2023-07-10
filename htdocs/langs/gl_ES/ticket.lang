@@ -200,8 +200,8 @@ TicketAssigned=O Ticket foi asignado
 TicketChangeType=Cambiar tipo
 TicketChangeCategory=Cambiar categoría
 TicketChangeSeverity=Cambiar gravidade
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Engadir ou envíar unha mensaxe
+TicketAddPrivateMessage=Engadir unha mensaxe privada
 MessageSuccessfullyAdded=Ticket engadido
 TicketMessageSuccessfullyAdded=Mensaxe engadida correctamente
 TicketMessagesList=Listaxe de mensaxes
@@ -275,7 +275,7 @@ TicketsDelayForFirstResponseTooLong=Pasou tempo de mais desde a apertura do tick
 TicketsDelayFromLastResponseTooLong=Pasou tempo de mais desde a última resposta neste ticket.
 TicketNoContractFoundToLink=Non se atopou ningún contrato ligado automaticamente a este ticket. Ligue un contrato manualmente.
 TicketManyContractsLinked=Moitos contratos ligáronse automaticamente a este ticket. Asegúrese de verificar cal se debe escoller.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=A referencia [%s] xa é usada, a súa nova referencia é [%s]
 
 #
 # Logs

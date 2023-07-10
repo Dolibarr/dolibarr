@@ -200,7 +200,7 @@ TicketAssigned=Το ticket έχει πλέον εκχωρηθεί
 TicketChangeType=Αλλαγή τύπου
 TicketChangeCategory=Αλλαγή αναλυτικού κώδικα
 TicketChangeSeverity=Αλλαγή κρισιμότητας
-TicketAddMessage=Add or send a message
+TicketAddMessage=Προσθήκη ή αποστολή μηνύματος
 TicketAddPrivateMessage=Add a private message
 MessageSuccessfullyAdded=Το ticket προστέθηκε
 TicketMessageSuccessfullyAdded=Το μήνυμα προστέθηκε με επιτυχία
@@ -275,7 +275,7 @@ TicketsDelayForFirstResponseTooLong=Έχει περάσει πάρα πολύς 
 TicketsDelayFromLastResponseTooLong=Έχει περάσει πάρα πολύς χρόνος από την τελευταία απάντηση σε αυτό το ticket.
 TicketNoContractFoundToLink=Δεν βρέθηκε σύμβαση που να συνδέεται αυτόματα με αυτό το ticket. Συνδέστε μια σύμβαση μη αυτόματα.
 TicketManyContractsLinked=Πολλές συμβάσεις έχουν συνδεθεί αυτόματα με αυτό το ticket. Βεβαιωθείτε ότι έχετε επαληθεύσει ποιο πρέπει να επιλεγεί.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=Η αναφορά [%s] χρησιμοποιείται ήδη, η νέα σας αναφορά είναι [%s]
 
 #
 # Logs

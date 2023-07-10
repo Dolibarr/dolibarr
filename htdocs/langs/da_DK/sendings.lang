@@ -75,7 +75,7 @@ SumOfProductWeights=Summen af ​​produktvægt
 DetailWarehouseNumber= Lager detaljer
 DetailWarehouseFormat= W: %s(Antal:%d)
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Forsendelsesfordeling
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=Ingen afsendelse for linje %s, da der blev fundet for mange kombinationslager, produkt, batchkode (%s).
+ErrorNoCombinationBatchcode=Ingen afsendelse for linje %s, da der ikke blev fundet noget kombinationslager, produkt, batchkode.

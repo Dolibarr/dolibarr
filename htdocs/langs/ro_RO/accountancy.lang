@@ -299,7 +299,7 @@ DescClosure=Consultă aici numărul de mișcări pe lună nevalidate și blocate
 OverviewOfMovementsNotValidated=Prezentare generală a mișcărilor nevalidate și blocate
 AllMovementsWereRecordedAsValidated=Toate mișcările au fost înregistrate ca validate și blocate
 NotAllMovementsCouldBeRecordedAsValidated=Nu toate mișcările au putut fi înregistrate ca validate și blocate
-ValidateMovements=Validate and lock movements
+ValidateMovements=Validare și blocare mișcări
 DescValidateMovements= Orice modificare sau ștergere a înregistrărilor va fi interzisă. Toate intrările pentru un exercițiu financiar trebuie validate, altfel închiderea nu va fi posibilă
 
 ValidateHistory=Asociază automat
@@ -486,7 +486,7 @@ FECFormatMulticurrencyAmount=Sumă multi-monedă (Montantdevise)
 FECFormatMulticurrencyCode=Cod multi-monedă (Idevise)
 
 DateExport=Dată export
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Atenție, acest raport nu se bazează pe Registrul jurnal, deci nu conține tranzacții modificate manual în Registrul jurnal. Dacă jurnalizarea ta este actualizată, vizualizarea contabilă este mai precisă. 
 ExpenseReportJournal=Jurnalul raportului de cheltuieli
 DocsAlreadyExportedAreIncluded=Documentele deja exportate sunt incluse
 ClickToShowAlreadyExportedLines=Fă clic pentru a afișa liniile deja exportate

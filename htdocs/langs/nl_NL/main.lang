@@ -1229,4 +1229,4 @@ PublicVirtualCard=Virtueel visitekaartje
 TreeView=Boom zicht
 DropFileToAddItToObject=Zet een bestand neer om het aan dit object toe te voegen
 UploadFileDragDropSuccess=De bestanden zijn succesvol geüpload
-SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <= or >= before the value to filter using a mathematical comparison
+SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <=, >= or != before the value to filter using a mathematical comparison

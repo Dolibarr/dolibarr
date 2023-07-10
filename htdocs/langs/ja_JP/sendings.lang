@@ -75,7 +75,7 @@ SumOfProductWeights=製品の重量の合計
 DetailWarehouseNumber= 倉庫の詳細
 DetailWarehouseFormat= W：%s(数量：%d)
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=出荷配信
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=ライン %s への繰出し無し、理由：倉庫、製品、バッチ コードの組み合わせが多すぎ (%s).
+ErrorNoCombinationBatchcode=ライン %s への繰出し無し、理由：倉庫、製品、バッチ コードの組合せが見つからず。

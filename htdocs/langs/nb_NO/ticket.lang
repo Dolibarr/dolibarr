@@ -200,8 +200,8 @@ TicketAssigned=Supportseddel er nå tildelt
 TicketChangeType=Endre type
 TicketChangeCategory=Endre analytisk kode
 TicketChangeSeverity=Endre alvorlighetsgrad
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Legg til eller send en melding
+TicketAddPrivateMessage=Legg til en privat melding
 MessageSuccessfullyAdded=Supportseddel lagt til
 TicketMessageSuccessfullyAdded=Melding lagt til
 TicketMessagesList=Meldingsliste
@@ -275,7 +275,7 @@ TicketsDelayForFirstResponseTooLong=Det har gått for lang tid siden billettåpn
 TicketsDelayFromLastResponseTooLong=Det har gått for lang tid siden siste svar på denne billetten.
 TicketNoContractFoundToLink=Det ble ikke funnet noen kontrakt som ble automatisk knyttet til denne billetten. Vennligst koble en kontrakt manuelt.
 TicketManyContractsLinked=Mange kontrakter er automatisk knyttet til denne billetten. Sørg for å bekrefte hvilken som skal velges.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=Referansen [%s] er allerede brukt, din nye referanse er [%s]
 
 #
 # Logs

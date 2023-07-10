@@ -299,7 +299,7 @@ DescClosure=Consultez ici le nombre de mouvements par mois non encore validés &
 OverviewOfMovementsNotValidated=Aperçu des mouvements non validés et verrouillés
 AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés comme validés et ont été verrouillés
 NotAllMovementsCouldBeRecordedAsValidated=Certains mouvements n'ont pas pu être enregistrés comme validés et n'ont pas été verrouillés
-ValidateMovements=Validate and lock movements
+ValidateMovements=Valider et verrouiller les mouvements
 DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
 
 ValidateHistory=Lier automatiquement
@@ -486,7 +486,7 @@ FECFormatMulticurrencyAmount=Montant multidevise (Montantdevise)
 FECFormatMulticurrencyCode=Code multidevise (Idevise)
 
 DateExport=Date d'export
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Attention : ce rapport n'est pas basé sur le grand livre et ne contient donc pas les écritures manuelles qui lui ont été ajoutées. Si votre journalisation est à jour, la vue depuis le grand livre sera plus précise.
 ExpenseReportJournal=Journal des notes de frais
 DocsAlreadyExportedAreIncluded=Les documents déjà exportés sont inclus
 ClickToShowAlreadyExportedLines=Cliquez pour afficher les lignes déjà exportées

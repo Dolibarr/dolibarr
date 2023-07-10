@@ -299,7 +299,7 @@ DescClosure=Raadpleeg hier het aantal bewegingen per maand nog niet gevalideerd 
 OverviewOfMovementsNotValidated=Overzicht van bewegingen niet gevalideerd en vergrendeld
 AllMovementsWereRecordedAsValidated=Alle bewegingen werden geregistreerd als gevalideerd en vergrendeld
 NotAllMovementsCouldBeRecordedAsValidated=Niet alle bewegingen konden als gevalideerd en vergrendeld worden geregistreerd
-ValidateMovements=Validate and lock movements
+ValidateMovements=Valideer en vergrendel wijzigingen
 DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
 
 ValidateHistory=Automatisch afstemmen
@@ -486,7 +486,7 @@ FECFormatMulticurrencyAmount=Bedrag in meerdere valuta (Montantdevise)
 FECFormatMulticurrencyCode=Multivalutacode (Idevise)
 
 DateExport=Exportdatum
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Waarschuwing, dit rapport is niet gebaseerd op het grootboek, dus bevat het niet de transactie die handmatig in het grootboek is gewijzigd. Als uw journalisatie up-to-date is, is de weergave van de boekhouding nauwkeuriger.
 ExpenseReportJournal=Kostenoverzicht
 DocsAlreadyExportedAreIncluded=Reeds geëxporteerde documenten zijn inbegrepen
 ClickToShowAlreadyExportedLines=Klik om reeds geëxporteerde regels weer te geven

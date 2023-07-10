@@ -310,8 +310,8 @@ UserValidation=Usuario validador
 UserCreationShort=U. Crea.
 UserModificationShort=U. Modif.
 UserValidationShort=Usuario valid.
-UserClosing=Closing user
-UserClosingShort=Closing user
+UserClosing=Usuario de cierre
+UserClosingShort=Usuario de cierre
 DurationYear=año
 DurationMonth=mes
 DurationWeek=semana
@@ -1229,4 +1229,4 @@ PublicVirtualCard=tarjeta de visita virtual
 TreeView=Vista de árbol
 DropFileToAddItToObject=Suelte un archivo para agregarlo a este objeto
 UploadFileDragDropSuccess=El/los archivo/s se han subido correctamente
-SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <= or >= before the value to filter using a mathematical comparison
+SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <=, >= or != before the value to filter using a mathematical comparison

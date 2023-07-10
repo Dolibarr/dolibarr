@@ -41,7 +41,7 @@ QCFrequency=Häufigkeit der Qualitätskontrolle (in Tagen)
 ShowAllLots=Alle Chargen/Seriennr. anzeigen
 HideLots=Chargen/Seriennr. ausblenden
 #Traceability - qc status
-OutOfOrder=Außer Betrieb
-InWorkingOrder=In betriebsfähigem Zustand
+OutOfOrder=Nicht in Ordnung
+InWorkingOrder=In Ordnung
 ToReplace=Ersetzen
 CantMoveNonExistantSerial=Fehler. Sie bitten um die Versendung für einen Datensatzes mit einer Seriennummer, die nicht mehr existiert. Möglicherweise verwenden Sie dieselbe Seriennummer mehrmals in derselben Sendung aus demselben Lager oder sie wurde von einer anderen Sendung verwendet. Entfernen Sie diese Sendung und bereiten Sie eine andere vor.

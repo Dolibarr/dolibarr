@@ -821,7 +821,7 @@ LinkToSupplierOrder=Link zur Bestellung
 LinkToSupplierProposal=Link zum Lieferantenangebot
 LinkToSupplierInvoice=Link zur Lieferantenrechnung
 LinkToContract=Link zum Vertrag
-LinkToIntervention=Link zu Arbeitseinsatz
+LinkToIntervention=Link zu Serviceauftrag
 LinkToTicket=Link zu Ticket
 LinkToMo=Verknüpfung mit Fertigungsauftrag (MO)
 CreateDraft=Entwurf erstellen
@@ -1196,7 +1196,7 @@ RecordAproved=Datensatz freigegeben
 RecordsApproved=%s Datensatz(e) freigegeben
 Properties=Eigenschaften
 hasBeenValidated=%s wurde freigegeben
-ClientTZ=Zeitzone Kunde (Benutzer)
+ClientTZ=Zeitzone Client (Benutzer)
 NotClosedYet=Noch nicht geschlossen
 ClearSignature=Unterschrift löschen
 CanceledHidden=Stornierte ausgeblendet
@@ -1229,4 +1229,4 @@ PublicVirtualCard=Virtuelle Visitenkarte
 TreeView=Baumansicht
 DropFileToAddItToObject=Legen Sie eine Datei ab, um sie diesem Objekt hinzuzufügen
 UploadFileDragDropSuccess=Die Datei(en) wurde(n) erfolgreich hochgeladen
-SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <= or >= before the value to filter using a mathematical comparison
+SearchSyntaxTooltipForStringOrNum=Für die Suche innerhalb von Textfeldern können Sie die Zeichen ^ oder $ verwenden, um eine Suche mit „beginnen oder enden mit“ durchzuführen, oder das Zeichen ! verwenden, um einen „Enthält nicht“-Test durchzuführen. Sie können das | verwenden zwischen zwei Zeichenfolgen anstelle eines Leerzeichens für eine „OR“-Bedingung anstelle von „AND“. Für numerische Werte können Sie den Operator <, > , <=, > = oder != vor dem Wert verwenden, um mithilfe eines mathematischen Vergleichs zu filtern
