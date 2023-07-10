@@ -1178,7 +1178,23 @@ if (!$variants) {
 							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
 						}
 						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
-						print '<td colspan="4"></td>';
+						$lignepmp = 0;
+						if ($usercancreadprice) {
+							$sql = "SELECT price FROM llx_stock_mouvement WHERE fk_product = $id AND batch = '$pdluo->batch' AND (type_mouvement = 3 OR (type_mouvement = 0 AND value > 0)) ORDER BY rowid DESC LIMIT 1";
+							$resql=$db->query($sql);
+							if ($resql)
+							{
+								$num = $db->num_rows($resql);
+								$obj = $db->fetch_object($resql);
+								if ($obj)
+									$lignepmp = $obj->price;
+							}
+						}
+						print "<td class='right nowraponall'>";
+						if($lignepmp != 0)
+							print price(price2num($lignepmp, 'MU'));
+						print "</td>";
+						print '<td colspan="3"></td>';
 						print '<td class="center">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
