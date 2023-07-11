@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Charlene Benke     		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -993,7 +994,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->contrat->multidir_output[$object->entity];
+	$upload_dir = $conf->contrat->multidir_output[!empty($object->entity)?$object->entity:$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
@@ -1086,6 +1087,7 @@ if ($result > 0) {
 
 // Create
 if ($action == 'create') {
+	$objectsrc = null;
 	print load_fiche_titre($langs->trans('AddContract'), '', 'contract');
 
 	$soc = new Societe($db);
