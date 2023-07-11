@@ -167,6 +167,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1; // For module retrocompatibility support durring PDF transition: TODO remove this at the end
 
+		$this->tabTitleHeight = 5; // default height
+
 		$this->tva = array();
 		$this->tva_array = array();
 		$this->localtax1 = array();
@@ -1189,26 +1191,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		// Output Rect
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
 
-		foreach ($this->cols as $colKey => $colDef) {
-			if (!$this->getColumnStatus($colKey)) {
-				continue;
-			}
-
-			// get title label
-			$colDef['title']['label'] = !empty($colDef['title']['label']) ? $colDef['title']['label'] : $outputlangs->transnoentities($colDef['title']['textkey']);
-
-			// Add column separator
-			if (!empty($colDef['border-left'])) {
-				$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
-			}
-
-			if (empty($hidetop)) {
-				$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
-
-				$textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
-				$pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
-			}
-		}
+		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 
 		if (empty($hidetop)) {
 			$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5); // line takes a position y in 2nd parameter and 4th parameter
@@ -1545,7 +1528,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
-				'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'content' => array(
 				'align' => 'L',
