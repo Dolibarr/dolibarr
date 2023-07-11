@@ -732,7 +732,9 @@ class ChargeSociales extends CommonObject
 			$this->db->free($result);
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
+		return -1;
 	}
 
 	/**
