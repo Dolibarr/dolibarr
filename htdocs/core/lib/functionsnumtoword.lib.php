@@ -247,6 +247,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 		}
 		return $entexto;
 	}
+	return -1;
 }
 
 /**
