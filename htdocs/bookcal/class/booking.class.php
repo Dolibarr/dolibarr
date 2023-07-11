@@ -116,7 +116,7 @@ class Booking extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Valid&eacute;', '9'=>'Annul&eacute;'), 'validate'=>'1',),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'), 'validate'=>'1',),
 		'firstname' => array('type'=>'varchar(128)', 'label'=>'firstname', 'enabled'=>'1', 'position'=>2, 'notnull'=>1, 'visible'=>-1,),
 		'lastname' => array('type'=>'varchar(128)', 'label'=>'lastname', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>-1,),
 		'email' => array('type'=>'varchar(128)', 'label'=>'email', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>-1,),
