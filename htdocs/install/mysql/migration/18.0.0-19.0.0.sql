@@ -35,3 +35,5 @@
 
 - V19
 ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
+ALTER TABLE llx_bookcal_availabilities ADD COLUMN fk_bookcal_booking integer NOT NULL;
+ALTER TABLE llx_bookcal_availabilities ADD CONSTRAINT llx_bookcal_availabilities_fk_bookcal_booking FOREIGN KEY (fk_bookcal_booking) REFERENCES llx_bookcal_booking(rowid);
