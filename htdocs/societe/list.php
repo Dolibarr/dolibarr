@@ -1562,7 +1562,7 @@ while ($i < $imaxinloop) {
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
-		$companystatic->parent = $obj->fk_parent;
+		$companystatic->fk_parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
 	}
 
