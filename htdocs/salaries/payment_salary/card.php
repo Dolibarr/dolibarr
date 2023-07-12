@@ -165,7 +165,7 @@ print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object-
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td>'.$langs->trans('Note').'</td><td>'.dol_nl2br($object->note_private).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private)).'</td></tr>';
 
 // Bank account
 if (isModEnabled("banque")) {

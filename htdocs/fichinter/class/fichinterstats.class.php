@@ -73,7 +73,7 @@ class FichinterStats extends Stats
 			//$this->where.= " AND c.fk_statut > 0";    // Not draft and not cancelled
 		}
 		if (empty($user->rights->societe->client->voir) && !$this->socid) {
-			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$this->where .= (!empty($this->where) ? ' AND ' : '')." c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$this->where .= ($this->where ? ' AND ' : '')."c.entity IN (".getEntity('fichinter').')';
 

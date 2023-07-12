@@ -306,6 +306,7 @@ class Paiement extends CommonObject
 
 		if (!empty($currencyofpayment)) {
 			// We must check that the currency of invoices is the same than the currency of the bank
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$bankaccount = new Account($this->db);
 			$bankaccount->fetch($this->fk_account);
 			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;

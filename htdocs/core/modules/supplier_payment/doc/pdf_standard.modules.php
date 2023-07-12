@@ -65,12 +65,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -131,7 +125,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->posxtva = 90;
 		$this->posxtotalttc = 180;
 
-		//if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxreffacturefourn -= 20;
 			$this->posxreffacture -= 20;
@@ -214,12 +207,12 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
+				//$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
 				$dir = $conf->fournisseur->payment->dir_output.'/'.$objectref;
 				$file = $dir."/".$objectref.".pdf";
-				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) {
-					$file = $dir."/".$objectref.($objectrefsupplier ? "_".$objectrefsupplier : "").".pdf";
-				}
+				//if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) {
+				//	$file = $dir."/".$objectref.($objectrefsupplier ? "_".$objectrefsupplier : "").".pdf";
+				//}
 			}
 
 			if (!file_exists($dir)) {
@@ -371,23 +364,23 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 					// ref fourn
 					$pdf->SetXY($this->posxreffacturefourn, $curY);
-					$pdf->MultiCell($this->posxreffacturefourn - $this->posxup - 0.8, 3, $object->lines[$i]->ref_supplier, 0, 'L', 0);
+					$pdf->MultiCell($this->posxreffacturefourn - 0.8, 3, $object->lines[$i]->ref_supplier, 0, 'L', 0);
 
 					// ref facture fourn
 					$pdf->SetXY($this->posxreffacture, $curY);
-					$pdf->MultiCell($this->posxreffacture - $this->posxup - 0.8, 3, $object->lines[$i]->ref, 0, 'L', 0);
+					$pdf->MultiCell($this->posxreffacture - 0.8, 3, $object->lines[$i]->ref, 0, 'L', 0);
 
 					// type
 					$pdf->SetXY($this->posxtype, $curY);
-					$pdf->MultiCell($this->posxtype - $this->posxup - 0.8, 3, $object->lines[$i]->type, 0, 'L', 0);
+					$pdf->MultiCell($this->posxtype - 0.8, 3, $object->lines[$i]->type, 0, 'L', 0);
 
 					// Total ht
 					$pdf->SetXY($this->posxtotalht, $curY);
-					$pdf->MultiCell($this->posxtotalht - $this->posxup - 0.8, 3, price($object->lines[$i]->total_ht), 0, 'R', 0);
+					$pdf->MultiCell($this->posxtotalht - 0.8, 3, price($object->lines[$i]->total_ht), 0, 'R', 0);
 
 					// Total tva
 					$pdf->SetXY($this->posxtva, $curY);
-					$pdf->MultiCell($this->posxtva - $this->posxup - 0.8, 3, price($object->lines[$i]->total_tva), 0, 'R', 0);
+					$pdf->MultiCell($this->posxtva - 0.8, 3, price($object->lines[$i]->total_tva), 0, 'R', 0);
 
 					// Total TTC line
 					$pdf->SetXY($this->posxtotalttc, $curY);
@@ -529,17 +522,20 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord($object->amount, $outputlangs, $currency));
+		$translateinletter = strtoupper(dol_convertToWord(price2num($object->amount, 'MT'), $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
+		$pdf->SetFont('', '', $default_font_size - 3);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
+		$pdf->SetFont('', '', $default_font_size - 1);
 		$posy += 8;
 
 		// To
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
 
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(35, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
+		$LENGTHAMOUNT = 35;
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - $LENGTHAMOUNT, $posy);
+		$pdf->MultiCell($LENGTHAMOUNT, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
 		$posy += 10;
 
 		// City
@@ -790,6 +786,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 
 			// Show default IBAN account
+			$iban = '';
 			$sql = "SELECT iban_prefix as iban";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as rib";
 			$sql .= " WHERE fk_soc = ".($object->thirdparty->id);
@@ -799,7 +796,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
-				$iban = $obj->iban;
+				if ($obj) {
+					$iban = $obj->iban;
+				}
 			}
 
 			if (!empty($iban)) {

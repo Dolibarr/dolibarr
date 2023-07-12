@@ -229,11 +229,6 @@ class Target extends CommonObject
 			return $resultcreate;
 		}
 
-		$resultvalidate = $this->validate($user, $notrigger);
-		if ($resultvalidate <= 0) {
-			return $resultvalidate;
-		}
-
 		return $this->id;
 	}
 

@@ -182,7 +182,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('don')) {
 				$nbElements += $project->getElementCount('donation', 'don');
 			}
-			if (!empty($conf->loan->enabled)) {
+			if (isModEnabled('loan')) {
 				$nbElements += $project->getElementCount('loan', 'loan');
 			}
 			if (isModEnabled('tax')) {
@@ -194,7 +194,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock_mouvement', 'stock');
 			}
-			if (!empty($conf->salaries->enabled)) {
+			if (isModEnabled('salaries')) {
 				$nbElements += $project->getElementCount('salaries', 'payment_salary');
 			}
 			if (isModEnabled("banque")) {
@@ -350,7 +350,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/messaging.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -581,7 +581,7 @@ function project_admin_prepare_head()
  * Show task lines with a particular parent
  *
  * @param	string	   	$inc				    Line number (start to 0, then increased by recursive call)
- * @param   string		$parent				    Id of parent project to show (0 to show all)
+ * @param   string		$parent				    Id of parent task to show (0 to show all)
  * @param   Task[]		$lines				    Array of lines
  * @param   int			$level				    Level (start to 0, then increased/decrease by recursive call), or -1 to show all level in order of $lines without the recursive groupment feature.
  * @param 	string		$var				    Color
@@ -590,13 +590,13 @@ function project_admin_prepare_head()
  * @param	int			$projectsListId		    List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		    Add a tick to move task
  * @param   int         $projectidfortotallink  0 or Id of project to use on total line (link to see all time consumed for project)
- * @param   string      $filterprogresscalc     filter text
+ * @param   string      $dummy					Not used.
  * @param   string      $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
  * @param   array       $arrayfields            Array with displayed coloumn information
  * @param   array       $arrayofselected        Array with selected fields
  * @return	int									Nb of tasks shown
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0, $arrayfields = array(), $arrayofselected = array())
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $dummy = '', $showbilltime = 0, $arrayfields = array(), $arrayofselected = array())
 {
 	global $user, $langs, $conf, $db, $hookmanager;
 	global $projectstatic, $taskstatic, $extrafields;
@@ -604,21 +604,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$lastprojectid = 0;
 
 	$projectsArrayId = explode(',', $projectsListId);
-	if ($filterprogresscalc !== '') {
-		foreach ($lines as $key => $line) {
-			if (!empty($line->planned_workload) && !empty($line->duration)) {
-				$filterprogresscalc = str_replace(' = ', ' == ', $filterprogresscalc);
-				if (!eval($filterprogresscalc)) {
-					unset($lines[$key]);
-				}
-			}
-		}
-		$lines = array_values($lines);
-	}
+
 	$numlines = count($lines);
 
 	// We declare counter as global because we want to edit them into recursive call
 	global $total_projectlinesa_spent, $total_projectlinesa_planned, $total_projectlinesa_spent_if_planned, $total_projectlinesa_declared_if_planned, $total_projectlinesa_tobill, $total_projectlinesa_billed, $total_budget_amount;
+	global $totalarray;
 
 	if ($level == 0) {
 		$total_projectlinesa_spent = 0;
@@ -628,6 +619,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		$total_projectlinesa_tobill = 0;
 		$total_projectlinesa_billed = 0;
 		$total_budget_amount = 0;
+		$totalarray = array();
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -637,8 +629,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 		// Process line
 		// print "i:".$i."-".$lines[$i]->fk_project.'<br>';
-
-		if ($lines[$i]->fk_parent == $parent || $level < 0) {       // if $level = -1, we dont' use sublevel recursion, we show all lines
+		if ($lines[$i]->fk_task_parent == $parent || $level < 0) {       // if $level = -1, we dont' use sublevel recursion, we show all lines
 			// Show task line.
 			$showline = 1;
 			$showlineingray = 0;
@@ -646,7 +637,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			// If there is filters to use
 			if (is_array($taskrole)) {
 				// If task not legitimate to show, search if a legitimate task exists later in tree
-				if (!isset($taskrole[$lines[$i]->id]) && $lines[$i]->id != $lines[$i]->fk_parent) {
+				if (!isset($taskrole[$lines[$i]->id]) && $lines[$i]->id != $lines[$i]->fk_task_parent) {
 					// So search if task has a subtask legitimate to show
 					$foundtaskforuserdeeper = 0;
 					searchTaskInChild($foundtaskforuserdeeper, $lines[$i]->id, $lines, $taskrole);
@@ -697,9 +688,19 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->date_end = $lines[$i]->date_end;
 				$taskstatic->datee = $lines[$i]->date_end; // deprecated
 				$taskstatic->planned_workload = $lines[$i]->planned_workload;
-				$taskstatic->duration_effective = $lines[$i]->duration;
+				$taskstatic->duration_effective = $lines[$i]->duration_effective;
 				$taskstatic->budget_amount = $lines[$i]->budget_amount;
 
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					$selected = 0;
+					if (in_array($lines[$i]->id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb' . $lines[$i]->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lines[$i]->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
+					print '</td>';
+				}
 
 				if ($showproject) {
 					// Project ref
@@ -807,8 +808,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					} else {
 						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject ? '' : '&withproject=1').'">';
 					}
-					if ($lines[$i]->duration) {
-						print convertSecondToTime($lines[$i]->duration, $timespentoutputformat);
+					if ($lines[$i]->duration_effective) {
+						print convertSecondToTime($lines[$i]->duration_effective, $timespentoutputformat);
 					} else {
 						print '--:--';
 					}
@@ -820,16 +821,20 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					print '</td>';
 				}
 
-				// Progress calculated (Note: ->duration is time spent)
+				// Progress calculated (Note: ->duration_effective is time spent)
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
-					print '<td class="right">';
-					if ($lines[$i]->planned_workload || $lines[$i]->duration) {
+					$s = ''; $shtml = '';
+					if ($lines[$i]->planned_workload || $lines[$i]->duration_effective) {
 						if ($lines[$i]->planned_workload) {
-							print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload, 2).' %';
+							$s = round(100 * $lines[$i]->duration_effective / $lines[$i]->planned_workload, 2).' %';
+							$shtml = $s;
 						} else {
-							print '<span class="opacitymedium">'.$langs->trans('WorkloadNotDefined').'</span>';
+							$s = $langs->trans('WorkloadNotDefined');
+							$shtml = '<span class="opacitymedium">'.$s.'</span>';
 						}
 					}
+					print '<td class="right tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+					print $shtml;
 					print '</td>';
 				}
 
@@ -845,7 +850,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// resume
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_summary']['checked'])) {
 					print '<td class="right">';
-					if ($lines[$i]->progress != '' && $lines[$i]->duration) {
+					if ($lines[$i]->progress != '' && $lines[$i]->duration_effective) {
 						print getTaskProgressView($taskstatic, false, false);
 					}
 					print '</td>';
@@ -892,7 +897,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					print '<td class="center">';
 					$ifisrt = 1;
 					foreach (array('internal', 'external') as $source) {
-						$tab = $lines[$i]->liste_contact(-1, $source);
+						//$tab = $lines[$i]->liste_contact(-1, $source);
+						$tab = $lines[$i]->liste_contact(-1, $source, 0, '', 1);
+
 						$numcontact = count($tab);
 						if (!empty($numcontact)) {
 							foreach ($tab as $contacttask) {
@@ -936,14 +943,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td class="tdlineupdown center"></td>';
 
 				// Action column
-				print '<td class="nowrap" align="center">';
-				$selected = 0;
-				if (in_array($lines[$i]->id, $arrayofselected)) {
-					$selected = 1;
-				}
-				print '<input id="cb' . $lines[$i]->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lines[$i]->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					$selected = 0;
+					if (in_array($lines[$i]->id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb' . $lines[$i]->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lines[$i]->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 
-				print '</td>';
+					print '</td>';
+				}
 
 				print "</tr>\n";
 
@@ -954,15 +963,15 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if ($level >= 0) {    // Call sublevels
 					$level++;
 					if ($lines[$i]->id) {
-						projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick, $projectidfortotallink, $filterprogresscalc, $showbilltime, $arrayfields);
+						projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick, $projectidfortotallink, '', $showbilltime, $arrayfields);
 					}
 					$level--;
 				}
 
-				$total_projectlinesa_spent += $lines[$i]->duration;
+				$total_projectlinesa_spent += $lines[$i]->duration_effective;
 				$total_projectlinesa_planned += $lines[$i]->planned_workload;
 				if ($lines[$i]->planned_workload) {
-					$total_projectlinesa_spent_if_planned += $lines[$i]->duration;
+					$total_projectlinesa_spent_if_planned += $lines[$i]->duration_effective;
 				}
 				if ($lines[$i]->planned_workload) {
 					$total_projectlinesa_declared_if_planned += $lines[$i]->planned_workload * $lines[$i]->progress / 100;
@@ -973,9 +982,15 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
+	// Total line
 	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0 || $total_budget_amount > 0)
 		&& $level <= 0) {
 		print '<tr class="liste_total nodrag nodrop">';
+
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class=""></td>';
+		}
+
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		if ($showproject) {
 			print '<td></td><td></td>';
@@ -1092,18 +1107,24 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			print '<td></td>';
 		}
 
-		//Check if Extrafields is totalizable
-		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key=>$value) {
-			if ($arrayfields['ef.'.$key]['checked'] == 1) {
-				print '<td align="right">';
+		// Check if Extrafields is totalizable
+		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
+			if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
+				print '<td class="right">';
 				if ($value == 1) {
-					print $totalarray['totalizable'][$key]['total'];
+					print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
 				}
 				print '</td>';
 			}
 		}
 
+		// Column for the drag and drop
 		print '<td class=""></td>';
+
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class=""></td>';
+		}
+
 		print '</tr>';
 	}
 
@@ -1595,10 +1616,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if (!empty($arrayfields['timeconsumed']['checked'])) {
 					// Time spent by everybody
 					print '<td class="right">';
-					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
-					if ($lines[$i]->duration) {
+					// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
+					if ($lines[$i]->duration_effective) {
 						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-						print convertSecondToTime($lines[$i]->duration, 'allhourmin');
+						print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
 						print '</a>';
 					} else {
 						print '--:--';
@@ -1994,10 +2015,10 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				if (!empty($arrayfields['timeconsumed']['checked'])) {
 					// Time spent by everybody
 					print '<td class="right">';
-					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
-					if ($lines[$i]->duration) {
+					// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
+					if ($lines[$i]->duration_effective) {
 						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-						print convertSecondToTime($lines[$i]->duration, 'allhourmin');
+						print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
 						print '</a>';
 					} else {
 						print '--:--';
@@ -2288,10 +2309,10 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 				// Time spent by everybody
 				print '<td class="right">';
-				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
-				if ($lines[$i]->duration) {
+				// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
+				if ($lines[$i]->duration_effective) {
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
+					print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
 					print '</a>';
 				} else {
 					print '--:--';
@@ -2425,7 +2446,7 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 	$numlines = count($lines);
 	for ($i = 0; $i < $numlines; $i++) {
 		// Process line $lines[$i]
-		if ($lines[$i]->fk_parent == $parent && $lines[$i]->id != $lines[$i]->fk_parent) {
+		if ($lines[$i]->fk_task_parent == $parent && $lines[$i]->id != $lines[$i]->fk_task_parent) {
 			// If task is legitimate to show, no more need to search deeper
 			if (isset($taskrole[$lines[$i]->id])) {
 				//print 'Found a legitimate task id='.$lines[$i]->id.'<br>';

@@ -57,7 +57,6 @@ OrEnterPageInfoManually=O crea una página desde cero o desde una plantilla de p
 FetchAndCreate=Obtener y crear
 Banner=Bandera
 WebsiteAccounts=Cuentas de sitios web
-BackToListForThirdParty=Volver a la lista para el tercero
 DisableSiteFirst=Deshabilitar el sitio web primero
 MyContainerTitle=El título de mi sitio web
 AnotherContainer=Así es como se incluye el contenido de otra página / contenedor (puede tener un error aquí si habilita el código dinámico porque es posible que el subcontenedor incrustado no exista)

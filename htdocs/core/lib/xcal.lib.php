@@ -203,9 +203,18 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				$startdatef = dol_print_date($startdate, "dayhourxcard", 'gmt');
 
 				if ($fulldayevent) {
-					// Local time
+					// For fullday event, date was stored with old version by using the user timezone instead of storing the date at UTC+0
+					// in the timezone of server (so for a PHP timezone of -3, we should store '2023-05-31 21:00:00.000'
+					// Using option MAIN_STORE_FULL_EVENT_IN_GMT=1 change the behaviour to store in GMT for full day event. This must become
+					// the default behaviour but there is no way to change keeping old saved date compatible.
+					$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+					// Local time should be used to prevent users in time zones earlier than GMT from being one day earlier
 					$prefix     = ";VALUE=DATE";
-					$startdatef = dol_print_date($startdate, "dayxcard", 'gmt');
+					if ($tzforfullday) {
+						$startdatef = dol_print_date($startdate, "dayxcard", 'gmt');
+					} else {
+						$startdatef = dol_print_date($startdate, "dayxcard", 'tzserver');
+					}
 				}
 
 				fwrite($calfileh, "DTSTART".$prefix.":".$startdatef."\n");
@@ -232,7 +241,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 					// We add 1 second so we reach the +1 day needed for full day event (DTEND must be next day after event)
 					// This is mention in https://datatracker.ietf.org/doc/html/rfc5545:
 					// "The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event."
-					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'gmt');
+					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'tzserver');
 				}
 
 				fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");

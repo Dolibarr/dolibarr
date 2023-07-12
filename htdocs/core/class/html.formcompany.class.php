@@ -1135,8 +1135,11 @@ class FormCompany extends Form
 		global $langs;
 
 		if ($mode === "html") {
+			$actioncode = empty($prospectstatic->cacheprospectstatus[$statusprospect]) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['code'];
+			$actionpicto = empty($prospectstatic->cacheprospectstatus[$statusprospect]['picto']) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['picto'];
+
 			//print $prospectstatic->LibProspCommStatut($statusprospect, 2, $prospectstatic->cacheprospectstatus[$statusprospect]['label'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto']);
-			print img_action('', $prospectstatic->cacheprospectstatus[$statusprospect]['code'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto'], 'class="inline-block valignmiddle paddingright"');
+			print img_action('', $actioncode, $actionpicto, 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
 			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'">';
 			foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
 				$titlealt = (empty($val['label']) ? 'default' : $val['label']);
@@ -1160,12 +1163,18 @@ class FormCompany extends Form
 						console.log("We change a value into a field selectprospectstatus");
 						var statusid = $(this).val();
 						var prospectid = $(this).attr("data-socid");
+						var image = $(this).prev(".pictoprospectstatus");
 						$.ajax({
 							type: "POST",
 							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
-							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\'},
+							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\' },
 							success: function(response) {
-						}
+								console.log(response.img);
+								image.replaceWith(response.img);
+							},
+							error: function() {
+								console.error("Error on status prospect");
+							},
 					});
 				});
 			});

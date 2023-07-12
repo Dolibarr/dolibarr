@@ -139,6 +139,10 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
 		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
+		if (empty($backtourl)) {
+			$backtourl = DOL_URL_ROOT.'/';
+		}
+
 		header('Location: '.$backtourl);
 		exit();
 	} catch (Exception $e) {

@@ -80,7 +80,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
 }
@@ -223,14 +223,14 @@ if ($localTaxType == 1) {
 	$LTPaid = 'LT1Paid';
 	$LTCustomer = 'LT1Customer';
 	$LTSupplier = 'LT1Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC1;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC1');
 } else {
 	$LT = 'LT2';
 	$LTSummary = 'LT2Summary';
 	$LTPaid = 'LT2Paid';
 	$LTCustomer = 'LT2Customer';
 	$LTSupplier = 'LT2Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC2;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC2');
 }
 
 $fsearch = '<!-- hidden fields for form -->';
@@ -471,8 +471,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -511,8 +511,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
