@@ -67,6 +67,8 @@ class Form
 	 */
 	public $errors = array();
 
+	// Some properties used to return data by some methods
+	public $result;
 	public $num;
 
 	// Cache arrays
@@ -197,7 +199,7 @@ class Form
 	 * @param string 	$value 			Value to show/edit
 	 * @param object 	$object 		Object (that we want to show)
 	 * @param boolean 	$perm 			Permission to allow button to edit parameter
-	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
+	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param string 	$editvalue 		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value, or a select combo). Use '' to use same than $value
 	 * @param object 	$extObject 		External object ???
 	 * @param mixed 	$custommsg 		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -255,7 +257,7 @@ class Form
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
 				}
-				if (preg_match('/^(string|safehtmlstring|email|url)/', $typeofdata)) {
+				if (preg_match('/^(string|safehtmlstring|email|phone|url)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="' . $htmlname . '" name="' . $htmlname . '" value="' . ($editvalue ? $editvalue : $value) . '"' . (empty($tmp[1]) ? '' : ' size="' . $tmp[1] . '"') . ' autofocus>';
 				} elseif (preg_match('/^(integer)/', $typeofdata)) {
@@ -337,13 +339,15 @@ class Form
 				}
 				$ret .= '</form>' . "\n";
 			} else {
-				if (preg_match('/^(email)/', $typeofdata)) {
+				if (preg_match('/^email/', $typeofdata)) {
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
+				} elseif (preg_match('/^phone/', $typeofdata)) {
+					$ret .= dol_print_phone($value, '_blank', 32, 1);
 				} elseif (preg_match('/^url/', $typeofdata)) {
 					$ret .= dol_print_url($value, '_blank', 32, 1);
 				} elseif (preg_match('/^(amount|numeric)/', $typeofdata)) {
 					$ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
-				} elseif (preg_match('/^(checkbox)/', $typeofdata)) {
+				} elseif (preg_match('/^checkbox/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="checkbox" disabled id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($value ? ' checked' : '') . ($tmp[1] ? $tmp[1] : '') . '/>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata)) {
@@ -389,6 +393,7 @@ class Form
 					}
 				}
 
+				// Custom format if parameter $formatfunc has been provided
 				if ($formatfunc && method_exists($object, $formatfunc)) {
 					$ret = $object->$formatfunc($ret);
 				}
@@ -1336,7 +1341,7 @@ class Form
 			// mode 1
 			$urloption = 'htmlname=' . urlencode(str_replace('.', '_', $htmlname)) . '&outjson=1&filter=' . urlencode($filter) . (empty($excludeids) ? '' : '&excludeids=' . join(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode($showtype) : '') . ($showcode ? '&showcode=' . urlencode($showcode) : '');
 
-			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
 				print $langs->trans("RefOrLabel") . ' : ';
 			} elseif ($hidelabel > 1) {
@@ -1706,22 +1711,22 @@ class Form
 	/**
 	 *  Return list of all contacts (for a third party or all)
 	 *
-	 * @param int $socid Id ot third party or 0 for all
-	 * @param string $selected Id contact pre-selectionne
-	 * @param string $htmlname Name of HTML field ('none' for a not editable field)
-	 * @param int $showempty 0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
-	 * @param string $exclude List of contacts id to exclude
-	 * @param string $limitto Disable answers that are not id in this array list
-	 * @param integer $showfunction Add function into label
-	 * @param string $morecss Add more class to class style
-	 * @param integer $showsoc Add company into label
-	 * @param int $forcecombo Force to use combo box
-	 * @param array $events Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param bool $options_only Return options only (for ajax treatment)
-	 * @param string $moreparam Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 * @param string $htmlid Html id to use instead of htmlname
-	 * @return    int                        <0 if KO, Nb of contact in list if OK
-	 * @deprecated                        You can use selectcontacts directly (warning order of param was changed)
+	 * @param int 		$socid 			Id ot third party or 0 for all
+	 * @param string 	$selected 		Id contact pre-selectionne
+	 * @param string 	$htmlname 		Name of HTML field ('none' for a not editable field)
+	 * @param int 		$showempty 		0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param string 	$exclude 		List of contacts id to exclude
+	 * @param string 	$limitto 		Disable answers that are not id in this array list
+	 * @param integer 	$showfunction 	Add function into label
+	 * @param string 	$morecss 		Add more class to class style
+	 * @param integer 	$showsoc 		Add company into label
+	 * @param int 		$forcecombo 	Force to use combo box
+	 * @param array 	$events 		Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param bool 		$options_only 	Return options only (for ajax treatment)
+	 * @param string 	$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param string 	$htmlid 		Html id to use instead of htmlname
+	 * @return    int                   <0 if KO, Nb of contact in list if OK
+	 * @deprecated You can use selectcontacts directly (warning order of param was changed)
 	 */
 	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
 	{
@@ -1731,28 +1736,28 @@ class Form
 	}
 
 	/**
-	 *    Return HTML code of the SELECT of list of all contacts (for a third party or all).
-	 *  This also set the number of contacts found into $this->num
+	 * Return HTML code of the SELECT of list of all contacts (for a third party or all).
+	 * This also set the number of contacts found into $this->num
 	 *
 	 * @since 9.0 Add afterSelectContactOptions hook
 	 *
-	 * @param int $socid Id ot third party or 0 for all or -1 for empty list
-	 * @param array|int $selected Array of ID of pre-selected contact id
-	 * @param string $htmlname Name of HTML field ('none' for a not editable field)
-	 * @param int|string $showempty 0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
-	 * @param string $exclude List of contacts id to exclude
-	 * @param string $limitto Disable answers that are not id in this array list
-	 * @param integer $showfunction Add function into label
-	 * @param string $morecss Add more class to class style
-	 * @param bool $options_only Return options only (for ajax treatment)
-	 * @param integer $showsoc Add company into label
-	 * @param int $forcecombo Force to use combo box (so no ajax beautify effect)
-	 * @param array $events Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param string $moreparam Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 * @param string $htmlid Html id to use instead of htmlname
-	 * @param bool $multiple add [] in the name of element and add 'multiple' attribut
-	 * @param integer $disableifempty Set tag 'disabled' on select if there is no choice
-	 * @return     int|string                    <0 if KO, HTML with select string if OK.
+	 * @param int 			$socid 				Id ot third party or 0 for all or -1 for empty list
+	 * @param array|int 	$selected 			Array of ID of pre-selected contact id
+	 * @param string 		$htmlname 			Name of HTML field ('none' for a not editable field)
+	 * @param int|string 	$showempty 			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param string 		$exclude 			List of contacts id to exclude
+	 * @param string 		$limitto 			Disable answers that are not id in this array list
+	 * @param integer 		$showfunction 		Add function into label
+	 * @param string 		$morecss 			Add more class to class style
+	 * @param bool 			$options_only 		Return options only (for ajax treatment)
+	 * @param integer 		$showsoc 			Add company into label
+	 * @param int 			$forcecombo 		Force to use combo box (so no ajax beautify effect)
+	 * @param array 		$events 			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param string 		$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param string 		$htmlid 			Html id to use instead of htmlname
+	 * @param bool 			$multiple 			add [] in the name of element and add 'multiple' attribut
+	 * @param integer 		$disableifempty 	Set tag 'disabled' on select if there is no choice
+	 * @return     int|string                   <0 if KO, HTML with select string if OK.
 	 */
 	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
 	{
@@ -1983,11 +1988,11 @@ class Form
 	 * @param string 		$selected 		User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
 	 * @param string 		$htmlname 		Field name in form
 	 * @param int|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
-	 * @param array 		$exclude 		Array list of users id to exclude
+	 * @param array|null	$exclude 		Array list of users id to exclude
 	 * @param int 			$disabled 		If select list must be disabled
 	 * @param array|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param array|string	$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
-	 * @param string 		$force_entity 	'0' or Ids of environment to force
+	 * @param string 		$force_entity 	'0' or list of Ids of environment to force separated by a coma
 	 * @param int 			$maxlength 		Maximum length of string into list (0=no limit)
 	 * @param int 			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 		$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
@@ -2021,11 +2026,11 @@ class Form
 		$excludeUsers = null;
 		$includeUsers = null;
 
-		// Permettre l'exclusion d'utilisateurs
+		// Exclude some users
 		if (is_array($exclude)) {
 			$excludeUsers = implode(",", $exclude);
 		}
-		// Permettre l'inclusion d'utilisateurs
+		// Include some uses
 		if (is_array($include)) {
 			$includeUsers = implode(",", $include);
 		} elseif ($include == 'hierarchy') {
@@ -2057,9 +2062,9 @@ class Form
 			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " LEFT JOIN " . $this->db->prefix() . "usergroup_user as ug";
 				$sql .= " ON ug.fk_user = u.rowid";
-				$sql .= " WHERE ug.entity = " . $conf->entity;
+				$sql .= " WHERE ug.entity = " . (int) $conf->entity;
 			} else {
-				$sql .= " WHERE u.entity IN (0, " . $conf->entity . ")";
+				$sql .= " WHERE u.entity IN (0, " . ((int) $conf->entity) . ")";
 			}
 		}
 		if (!empty($user->socid)) {
@@ -2211,7 +2216,9 @@ class Form
 					$outarray2[$userstatic->id] = array(
 						'id'=>$userstatic->id,
 						'label'=>$labeltoshow,
-						'labelhtml'=>$labeltoshowhtml
+						'labelhtml'=>$labeltoshowhtml,
+						'color'=>'',
+						'picto'=>''
 					);
 
 					$i++;
@@ -4214,7 +4221,7 @@ class Form
 
 	/**
 	 *    print list of payment modes.
-	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can be used to set default value but scope is all application, probably not what you want.
 	 *    See instead to force the default value by the caller.
 	 *
 	 * @param int $selected Id of payment term to preselect by default
@@ -4238,7 +4245,7 @@ class Form
 
 	/**
 	 *    Return list of payment modes.
-	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can be used to set default value but scope is all application, probably not what you want.
 	 *    See instead to force the default value by the caller.
 	 *
 	 * @param int $selected Id of payment term to preselect by default
@@ -4263,6 +4270,7 @@ class Form
 
 		// Set default value if not already set by caller
 		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) {
+			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 		}
 
@@ -4367,6 +4375,7 @@ class Form
 
 		// Set default value if not already set by caller
 		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID)) {
+			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
 		}
 
@@ -7944,7 +7953,7 @@ class Form
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdesc) . '&filter=' . urlencode($filter) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
-			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			$out .= '<input type="text" class="' . $morecss . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
 		} else {
 			// Immediate load of table record.
@@ -9350,22 +9359,22 @@ class Form
 	}
 
 	/**
-	 *    Return a HTML area with the reference of object and a navigation bar for a business object
-	 *    Note: To complete search with a particular filter on select, you can set $object->next_prev_filter set to define SQL criterias.
+	 * Return a HTML area with the reference of object and a navigation bar for a business object
+	 * Note: To complete search with a particular filter on select, you can set $object->next_prev_filter set to define SQL criterias.
 	 *
-	 * @param object $object Object to show.
-	 * @param string $paramid Name of parameter to use to name the id into the URL next/previous link.
-	 * @param string $morehtml More html content to output just before the nav bar.
-	 * @param int $shownav Show Condition (navigation is shown if value is 1).
-	 * @param string $fieldid Name of field id into database to use for select next and previous (we make the select max and min on this field compared to $object->ref). Use 'none' to disable next/prev.
-	 * @param string $fieldref Name of field ref of object (object->ref) to show or 'none' to not show ref.
-	 * @param string $morehtmlref More html to show after ref.
-	 * @param string $moreparam More param to add in nav link url. Must start with '&...'.
-	 * @param int $nodbprefix Do not include DB prefix to forge table name.
-	 * @param string $morehtmlleft More html code to show before ref.
-	 * @param string $morehtmlstatus More html code to show under navigation arrows (status place).
-	 * @param string $morehtmlright More html code to show after ref.
-	 * @return    string                    Portion HTML with ref + navigation buttons
+	 * @param object 	$object 		Object to show.
+	 * @param string 	$paramid 		Name of parameter to use to name the id into the URL next/previous link.
+	 * @param string 	$morehtml 		More html content to output just before the nav bar.
+	 * @param int 		$shownav 		Show Condition (navigation is shown if value is 1).
+	 * @param string 	$fieldid 		Name of field id into database to use for select next and previous (we make the select max and min on this field compared to $object->ref). Use 'none' to disable next/prev.
+	 * @param string 	$fieldref 		Name of field ref of object (object->ref) to show or 'none' to not show ref.
+	 * @param string 	$morehtmlref 	More html to show after ref.
+	 * @param string 	$moreparam 		More param to add in nav link url. Must start with '&...'.
+	 * @param int 		$nodbprefix 	Do not include DB prefix to forge table name.
+	 * @param string 	$morehtmlleft 	More html code to show before ref.
+	 * @param string 	$morehtmlstatus More html code to show under navigation arrows (status place).
+	 * @param string 	$morehtmlright 	More html code to show after ref.
+	 * @return string                   Portion HTML with ref + navigation buttons
 	 */
 	public function showrefnav($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $morehtmlright = '')
 	{
@@ -9536,8 +9545,10 @@ class Form
 			} else {
 				$ret .= dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities($object->societe) . ')' : '');
 			}
-		} elseif (in_array($object->element, array('contact', 'user', 'usergroup'))) {
+		} elseif (in_array($object->element, array('contact', 'user'))) {
 			$ret .= dol_htmlentities($object->getFullName($langs)) . $addgendertxt;
+		} elseif ($object->element == 'usergroup') {
+			$ret .= dol_htmlentities($object->name);
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
 			$ret .= $object->ref . '<br>' . $object->label;
 		} elseif (in_array($object->element, array('adherent_type'))) {
@@ -9547,7 +9558,6 @@ class Form
 		} elseif ($fieldref != 'none') {
 			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
 		}
-
 		if ($morehtmlref) {
 			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
 			if (substr($morehtmlref, 0, 4) != '<div') {
@@ -9754,7 +9764,7 @@ class Form
 				$nophoto = '/public/theme/common/nophoto.png';
 				$defaultimg = 'identicon';        // For gravatar
 				if (in_array($modulepart, array('societe', 'userphoto', 'contact', 'memberphoto'))) {    // For modules that need a special image when photo not found
-					if ($modulepart == 'societe' || ($modulepart == 'memberphoto' && strpos($object->morphy, 'mor')) !== false) {
+					if ($modulepart == 'societe' || ($modulepart == 'memberphoto' && !empty($object->morphy) && strpos($object->morphy, 'mor')) !== false) {
 						$nophoto = 'company';
 					} else {
 						$nophoto = '/public/theme/common/user_anonymous.png';

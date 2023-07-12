@@ -319,12 +319,12 @@ for ($i = 1 ; $i < $MAXLINES; $i++) {
 
 	print '<tr class="oddeven nowraponall '.$classi.'"><td>';
 	print img_picto('', 'bank_account', 'class="paddingright"');
-	$form->select_comptes(($error ? GETPOST($i.'_account_from', 'int') : ''), $i.'_account_from', 0, '', 1, ($i <= $maxtab ? 'view=view' : ''), isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
+	$form->select_comptes(($error ? GETPOST($i.'_account_from', 'int') : ''), $i.'_account_from', 0, '', 1, '', isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
 	print '</td>';
 
 	print '<td class="nowraponall">';
 	print img_picto('', 'bank_account', 'class="paddingright"');
-	$form->select_comptes(($error ? GETPOST($i.'_account_to', 'int') : ''), $i.'_account_to', 0, '', 1, ($i <= $maxtab ? 'view=view' : ''), isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
+	$form->select_comptes(($error ? GETPOST($i.'_account_to', 'int') : ''), $i.'_account_to', 0, '', 1, '', isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
 	print "</td>\n";
 
 	// Payment mode

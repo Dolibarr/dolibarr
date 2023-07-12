@@ -70,12 +70,6 @@ class pdf_crabe extends ModelePDFFactures
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -354,6 +348,15 @@ class pdf_crabe extends ModelePDFFactures
 					$heightforfooter += 6;
 				}
 
+				$heightforqrinvoice_firstpage = 0;
+				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
+					$heightforqrinvoice_firstpage = $this->getHeightForQRInvoice(1, $object, $langs);
+					if ($heightforqrinvoice_firstpage > 0) {
+						// Shrink infotot to a base 30
+						$heightforinfotot = 30 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+					}
+				}
+
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
 					$pdf->setPrintFooter(false);
@@ -487,9 +490,10 @@ class pdf_crabe extends ModelePDFFactures
 				$qrcodestring = '';
 				if (!empty($conf->global->INVOICE_ADD_ZATCA_QR_CODE)) {
 					$qrcodestring = $object->buildZATCAQRString();
-				} elseif (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
+				} elseif (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == '1') {
 					$qrcodestring = $object->buildSwitzerlandQRString();
 				}
+
 				if ($qrcodestring) {
 					$qrcodecolor = array('25', '25', '25');
 					// set style for QR-code
@@ -597,7 +601,8 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$page_bottom_margin = $heightforfooter + $heightforfreetext + $heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs);
+					$pdf->setPageOrientation('', 1, $page_bottom_margin);
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -605,7 +610,7 @@ class pdf_crabe extends ModelePDFFactures
 					$posYAfterDescription = 0;
 
 					// We start with Photo of product line
-					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
+					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - $page_bottom_margin)) {	// If photo too high, we moved completely on new page
 						$pdf->AddPage('', '', true);
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
@@ -648,7 +653,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
-						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
+						if ($posyafter > ($this->page_hauteur - $page_bottom_margin)) {	// There is no space left for total+free text
 							if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 								$pdf->AddPage('', '', true);
 								if (!empty($tplidx)) {
@@ -832,11 +837,11 @@ class pdf_crabe extends ModelePDFFactures
 					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
 						if ($pagenb == 1) {
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforqrinvoice_firstpage, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $langs));
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
@@ -850,11 +855,11 @@ class pdf_crabe extends ModelePDFFactures
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
 						if ($pagenb == 1) {
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforqrinvoice_firstpage, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $langs));
 						// New page
 						$pdf->AddPage();
 						if (!empty($tplidx)) {
@@ -870,8 +875,8 @@ class pdf_crabe extends ModelePDFFactures
 
 				// Show square
 				if ($pagenb == 1) {
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter - $heightforqrinvoice_firstpage, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter - $heightforqrinvoice_firstpage + 1;
 				} else {
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
@@ -890,7 +895,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Pagefoot
-				$this->_pagefoot($pdf, $object, $outputlangs);
+				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pageposbefore, $object, $langs));
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();
 				}
@@ -915,7 +920,13 @@ class pdf_crabe extends ModelePDFFactures
 						}
 					}
 				}
-
+				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
+					$result = $this->addBottomQRInvoice($pdf, $object, $outputlangs);
+					if (!$result) {
+						$pdf->Close();
+						return 0;
+					}
+				}
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
@@ -2211,11 +2222,12 @@ class pdf_crabe extends ModelePDFFactures
 	 * 		@param	Facture		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
+	 *      @param	int			$heightforqrinvoice	Height for QR invoices
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0, $heightforqrinvoice = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
-		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
+		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $heightforqrinvoice + $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 }

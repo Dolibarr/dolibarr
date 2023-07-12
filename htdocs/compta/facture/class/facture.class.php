@@ -237,9 +237,15 @@ class Facture extends CommonInvoice
 	 */
 	public $lines = array();
 
+	/**
+	 * @var FactureLigne
+	 */
 	public $line;
 	public $extraparams = array();
 
+	/**
+	 * @var int ID facture rec
+	 */
 	public $fac_rec;
 
 	public $date_pointoftax;
@@ -1946,12 +1952,19 @@ class Facture extends CommonInvoice
 
 		if ($user->hasRight("facture", "read")) {
 			$datas['picto'] = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
+
+			$datas['picto'] .= '&nbsp;'.$this->getLibType(1);
+
+			// Complete datas
+			if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
+				// Load the alreadypaid field
+				$this->alreadypaid = $this->getSommePaiement(0);
+			}
 			if (isset($this->statut) && isset($this->alreadypaid)) {
 				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
 			}
-			$datas['picto'] .= '&nbsp;'.$this->getLibType(1);
 			if ($moretitle) {
-				$datas['picto'] = ' - '.$moretitle;
+				$datas['picto'] .= ' - '.$moretitle;
 			}
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -2238,7 +2251,7 @@ class Facture extends CommonInvoice
 				$this->retained_warranty_date_limit         = $this->db->jdate($obj->retained_warranty_date_limit);
 				$this->retained_warranty_fk_cond_reglement  = $obj->retained_warranty_fk_cond_reglement;
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
@@ -2461,8 +2474,6 @@ class Facture extends CommonInvoice
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Clean parameters
@@ -4259,7 +4270,7 @@ class Facture extends CommonInvoice
 				}
 
 				// Mise a jour info denormalisees au niveau facture
-				$this->update_price(1);
+				$this->update_price(1, 'auto');
 				$this->db->commit();
 				return $result;
 			} else {
@@ -4436,7 +4447,7 @@ class Facture extends CommonInvoice
 			$remise = 0;
 		}
 
-		if ($user->rights->facture->creer) {
+		if ($user->hasRight('facture', 'creer')) {
 			$remise = price2num($remise, 2);
 
 			$error = 0;
@@ -4500,7 +4511,7 @@ class Facture extends CommonInvoice
 			$remise = 0;
 		}
 
-		if ($user->rights->facture->creer) {
+		if ($user->hasRight('facture', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -6010,6 +6021,9 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $table_element = 'facturedet';
 
+	/**
+	 * @var FactureLigne
+	 */
 	public $oldline;
 
 	//! From llx_facturedet
@@ -6066,6 +6080,16 @@ class FactureLigne extends CommonInvoiceLine
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+
+	/**
+	 *      Constructor
+	 *
+	 *      @param     DoliDB	$db      handler d'acces base de donnee
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 	/**
 	 *	Load invoice line from database
@@ -6152,6 +6176,8 @@ class FactureLigne extends CommonInvoiceLine
 			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
+
+			$this->fetch_optionals();
 
 			$this->db->free($result);
 

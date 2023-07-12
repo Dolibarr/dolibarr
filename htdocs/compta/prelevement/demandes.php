@@ -274,7 +274,9 @@ while ($i < min($num, $limit)) {
 	print '</td>';
 
 	print '<td class="right">';
+	print '<span class="amount">';
 	print price($obj->amount, 1, $langs, 1, -1, -1, $conf->currency).' / '.price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	print '</span>';
 	print '</td>';
 
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';

@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - margins
+MarginRate=tasa de margen
+MarkRate=Tasa de marca
+DisplayMarginRates=Mostrar tasas de margen
+DisplayMarkRates=Tasas de marcas de visualización
+InputPrice=Precio de entrada
+margin=Gestión de márgenes de beneficio
+margesSetup=Configuración de gestión de márgenes de beneficio
+MarginDetails=Detalles del margen
+ProductMargins=Márgenes de producto
+CustomerMargins=márgenes de clientes
+SalesRepresentativeMargins=Márgenes del representante de ventas
+ContactOfInvoice=contacto de factura
+UserMargins=Márgenes de usuario
+ChooseProduct/Service=Elige producto o servicio
+ForceBuyingPriceIfNull=Forzar el precio de compra/costo al precio de venta si no está definido
+ForceBuyingPriceIfNullDetails=Si no se proporciona el precio de compra/costo cuando agregamos una nueva línea, y esta opción está activada, el margen será 0%% en la nueva línea (precio de compra/costo = precio de venta). Si esta opción está "DESACTIVADA" (recomendada), el margen será igual al valor sugerido por defecto (y puede ser 100%% si no se encuentra ningún valor predeterminado).
+MARGIN_METHODE_FOR_DISCOUNT=Método de margen para descuentos globales
+UseDiscountAsProduct=como producto
+UseDiscountAsService=como un servicio
+UseDiscountOnTotal=en subtotal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define si un descuento global se trata como un producto, un servicio o solo como subtotal para el cálculo del margen.
+MARGIN_TYPE=Precio de compra/costo sugerido por defecto para el cálculo del margen
+MargeType1=Margen sobre el precio del mejor proveedor
+MargeType2=Margen sobre Precio Promedio Ponderado (WAP)
+MargeType3=Margen sobre precio de coste
+MarginTypeDesc=* Margen sobre el mejor precio de compra = Precio de venta - Mejor precio de proveedor definido en la tarjeta de producto <br> * Margen sobre el precio promedio ponderado (WAP) = Precio de venta - Precio promedio ponderado del producto (WAP) o mejor precio de proveedor si WAP aún no se ha definido <br> * Margen en Precio de costo = Precio de venta - Precio de costo definido en la ficha del producto o WAP si el precio de costo no está definido, o mejor precio de proveedor si WAP aún no está definido
+CostPrice=Precio de coste
+UnitCharges=Cargos unitarios
+Charges=Cargos
+AgentContactType=Tipo de contacto del agente comercial
+AgentContactTypeDetails=Defina qué tipo de contacto (vinculado en las facturas) se utilizará para el informe de margen por contacto/dirección. Tenga en cuenta que la lectura de estadísticas sobre un contacto no es confiable ya que, en la mayoría de los casos, es posible que el contacto no esté definido explícitamente en las facturas.
+rateMustBeNumeric=La tarifa debe ser un valor numérico
+markRateShouldBeLesserThan100=La tasa de marca debe ser inferior a 100
+ShowMarginInfos=Mostrar información de margen
+CheckMargins=Detalle de márgenes
+MarginPerSaleRepresentativeWarning=El informe de margen por usuario utiliza el vínculo entre terceros y representantes de ventas para calcular el margen de cada representante de ventas. Debido a que algunos terceros pueden no tener un representante de ventas dedicado y algunos terceros pueden estar vinculados a varios, es posible que algunos montos no se incluyan en este informe (si no hay un representante de ventas) y algunos pueden aparecer en líneas diferentes (para cada representante de ventas) .

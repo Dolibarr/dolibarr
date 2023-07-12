@@ -204,6 +204,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0c');
 
+		$test='/user/perms.php?id=1&action=addrights&entity=1&rights=123&confirm=yes&token=123456789&updatedmodulename=lmscoursetracking';
+		$result=testSqlAndScriptInject($test, 1);
+		print "test=".$test." result=".$result."\n";
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject with a valid url');
+
 		// Should detect attack
 		$expectedresult=1;
 
@@ -691,6 +696,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
 		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
 
+		$stringtotest = 'text <link href="aaa"> text';
+		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1, 0, array(), 0);
+		$this->assertEquals('text  text', $decodedstring, 'Function did not sanitize correclty with test 4a');
+
+		$stringtotest = 'text <link href="aaa"> text';
+		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1, 0, array(), 1);
+		$this->assertEquals('text <link href="aaa"> text', $decodedstring, 'Function did not sanitize correclty with test 4b');
+
 		return 0;
 	}
 
@@ -782,7 +795,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(301, $tmp['http_code'], 'Should GET url 301 without a follow -> 301');
+		$this->assertEquals(301, $tmp['http_code'], 'Should GET url 301 response and stop here');
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200

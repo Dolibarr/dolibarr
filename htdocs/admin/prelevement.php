@@ -164,6 +164,8 @@ print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToRece
 print '<td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1, '', 0, 'minwidth200', 1);
+// TODO Add plus to add a bank account
+print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&backtopage='.DOL_URL_ROOT.'/admin/prelevement.php"><span class="fa fa-plus-circle"></span></a>';
 print '</td></tr>';
 
 /* Moved to bank account data

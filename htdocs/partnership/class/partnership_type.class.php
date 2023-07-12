@@ -65,6 +65,8 @@ class PartnershipType extends CommonObject
 	 */
 	public $label;
 
+	public $active;
+
 
 	public $fields=array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
@@ -95,7 +97,7 @@ class PartnershipType extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->mymodule->myobject->read) {
+		/*if ($user->hasRight('mymodule', 'myobject', 'read')) {
 		 $this->fields['myfield']['visible'] = 1;
 		 $this->fields['myfield']['noteditable'] = 0;
 		 }*/

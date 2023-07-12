@@ -118,7 +118,7 @@ class Orders extends DolibarrApi
 	 */
 	private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -165,7 +165,7 @@ class Orders extends DolibarrApi
 	{
 		global $db, $conf;
 
-		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -301,7 +301,7 @@ class Orders extends DolibarrApi
 	 */
 	public function getLines($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -504,7 +504,7 @@ class Orders extends DolibarrApi
 	 */
 	public function getContacts($id, $type = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -943,7 +943,7 @@ class Orders extends DolibarrApi
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-		if (!DolibarrApiAccess::$user->rights->propal->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(401);
 		}
 		if (!DolibarrApiAccess::$user->rights->commande->creer) {

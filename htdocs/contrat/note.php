@@ -54,8 +54,8 @@ $result = restrictedArea($user, 'contrat', $id);
 $object = new Contrat($db);
 $object->fetch($id, $ref);
 
-$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('contrat', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*

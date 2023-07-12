@@ -88,7 +88,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
 
 	/**
-	 * 	Tests if the numbers already in force in the database do not cause conflicts that would prevent this numbering.
+	 * 	Tests if the numbers already in the database do not cause conflicts that would prevent this numbering.
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */
@@ -164,6 +164,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -172,7 +174,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 * @param	Societe		$objsoc     Object third party
 	 * @param  	Object		$object		Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return 	string      			Value if OK, 0 if KO
+	 * @return 	string      			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{
@@ -244,6 +246,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 			return $prefix.$yymm."-".$num;
 		} else {
 			dol_print_error('', 'Bad parameter for getNextValue');
+			return -1;
 		}
 	}
 

@@ -24,4 +24,4 @@ SalariesStatistics=إحصائيات الرواتب
 SalariesAndPayments=الرواتب والمدفوعات
 ConfirmDeleteSalaryPayment=هل تريد حذف هذا الراتب؟
 FillFieldFirst=املأ حقل الموظف أولاً
-UpdateAmountWithLastSalary=حدد المبلغ مع آخر راتب
+UpdateAmountWithLastSalary=Set amount of last salary

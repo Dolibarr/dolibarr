@@ -82,7 +82,8 @@ MenuNewSocialContribution=الضريبة الاجتماعية / مالية جد�
 NewSocialContribution=الضريبة الاجتماعية / مالية جديدة
 AddSocialContribution=Add social/fiscal tax
 ContributionsToPay=الضرائب الاجتماعية / المالية لدفع
-AccountancyTreasuryArea=منطقة الفواتير والدفع
+AccountancyTreasuryArea=منطقة المحاسبة
+InvoicesArea=Billing and payment area
 NewPayment=دفع جديدة
 PaymentCustomerInvoice=الزبون تسديد الفاتورة
 PaymentSupplierInvoice=دفع فاتورة البائع
@@ -130,14 +131,17 @@ SalesTurnoverMinimum=الحد الأدنى من معدل الدوران
 ByExpenseIncome=By expenses & incomes
 ByThirdParties=بو أطراف ثالثة
 ByUserAuthorOfInvoice=فاتورة من قبل المؤلف
-CheckReceipt=التحقق من إيداع
-CheckReceiptShort=التحقق من إيداع
-LastCheckReceiptShort=Latest %s check receipts
+CheckReceipt=قسيمة الإيداع
+CheckReceiptShort=قسيمة الإيداع
+LastCheckReceiptShort=Latest %s deposit slips
+LastPaymentForDepositShort=Latest %s %s deposit slips
 NewCheckReceipt=خصم جديد
-NewCheckDeposit=تأكد من ايداع جديدة
+NewCheckDeposit=New deposit slip
 NewCheckDepositOn=تهيئة لتلقي الودائع على حساب : ٪ ق
 NoWaitingChecks=No checks awaiting deposit.
+NoWaitingPaymentForDeposit=No %s payment awaiting deposit.
 DateChequeReceived=تحقق من تاريخ الاستلام
+DatePaymentReceived=Date of document reception
 NbOfCheques=عدد الشيكات
 PaySocialContribution=دفع ضريبة اجتماعية / مالية
 PayVAT=دفع إقرار ضريبة القيمة المضافة
@@ -156,9 +160,10 @@ ConfirmDeleteVariousPayment=هل أنت متأكد أنك تريد حذف هذه
 ExportDataset_tax_1=الضرائب والمدفوعات الاجتماعية والمالية
 CalcModeVATDebt=<b>الوضع٪ SVAT بشأن المحاسبة الالتزام٪ الصورة.</b>
 CalcModeVATEngagement=وضع <b>SVAT٪ على مداخيل مصاريف٪ الصورة.</b>
-CalcModeDebt=تحليل المستندات المسجلة المعروفة حتى لو لم يتم احتسابها بعد في دفتر الأستاذ.
-CalcModeEngagement=تحليل المدفوعات المسجلة المعروفة ، حتى لو لم يتم احتسابها بعد في دفتر الأستاذ.
+CalcModeDebt=Analysis of known recorded documents
+CalcModeEngagement=Analysis of known recorded payments
 CalcModeBookkeeping=تحليل البيانات المسجلة في دفتر دفتر الأستاذ.
+CalcModeNoBookKeeping=Even if they are not yet accounted in Ledger
 CalcModeLT1= <b>الوضع٪ زارة العلاقات الخارجية على فواتير العملاء - فواتير الموردين٪ الصورة</b>
 CalcModeLT1Debt=<b>الوضع٪ زارة العلاقات الخارجية على فواتير العملاء٪ الصورة</b>
 CalcModeLT1Rec= <b>الوضع٪ زارة العلاقات الخارجية على فواتير الموردين٪ الصورة</b>
@@ -249,6 +254,8 @@ AccountancyJournal=مجلة كود المحاسبة
 ACCOUNTING_VAT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for VAT on sales (used if not defined on VAT dictionary setup)
 ACCOUNTING_VAT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases (used if not defined on VAT dictionary setup)
 ACCOUNTING_VAT_PAY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for paying VAT
+ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases for reverse charges (Credit)
+ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases for reverse charges (Debit)
 ACCOUNTING_ACCOUNT_CUSTOMER=Account (from the Chart Of Account) used for "customer" third parties
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=سيتم استخدام حساب المحاسبة المخصص المحدد في بطاقة الطرف الثالث لمحاسبة Subledger فقط. سيتم استخدام هذا واحد لدفتر الأستاذ العام وكقيمة افتراضية لمحاسبة Subledger إذا لم يتم تحديد حساب محاسبة العميل المخصص على طرف ثالث.
 ACCOUNTING_ACCOUNT_SUPPLIER=Account (from the Chart of Account) used for the "vendor" third parties
