@@ -908,12 +908,12 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Title") . '</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="title" value="' . dol_escape_htmltag(GETPOST("title", 'alphanohtml')) . '">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="' . dol_escape_htmltag(GETPOST("title", 'alphanohtml')) . '" autofocus>';
 		print '</td></tr>';
 
 		// Ref supplier
-		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("SupplierRef") . '</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="ref_supplier" value="' . $object->ref_supplier . '">';
+		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("RefSupplier") . '</td><td>';
+		print '<input class="flat maxwidth500" type="text" name="ref_supplier" value="' . $object->ref_supplier . '">';
 		print '</td></tr>';
 
 		// Third party
