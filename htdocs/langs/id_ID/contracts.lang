@@ -2,7 +2,7 @@
 ContractsArea=Area kontrak
 ListOfContracts=Daftar kontrak
 AllContracts=Semua kontrak
-ContractCard=Kartu kontrak
+ContractCard=Contract
 ContractStatusNotRunning=Tidak berlari
 ContractStatusDraft=Konsep
 ContractStatusValidated=Divalidasi

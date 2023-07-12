@@ -62,7 +62,7 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $securekeyreceived = GETPOST("securekey", 'alpha');
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');

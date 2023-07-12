@@ -52,7 +52,6 @@ class Fichinter extends CommonObject
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>70),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
 		'dateo' =>array('type'=>'date', 'label'=>'Dateo', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'datee' =>array('type'=>'date', 'label'=>'Datee', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'datet' =>array('type'=>'date', 'label'=>'Datet', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
@@ -64,6 +63,7 @@ class Fichinter extends CommonObject
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>130),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
+		'fk_statut' =>array('type'=>'integer', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
 	);
 
 	/**
@@ -800,16 +800,22 @@ class Fichinter extends CommonObject
 	 *	@param		string	$option						Options
 	 *  @param	    int   	$notooltip					1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  	string  $morecss                    Add more css on link
 	 *	@return		string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '')
 	{
 		global $conf, $langs, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
+			'option' => $option,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -841,20 +847,32 @@ class Fichinter extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		$linkstart = '<a href="'.$url.'"';
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
 		$linkstart .= $linkclose.'>';
-		$linkend = '</a>';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
+
 		if ($withpicto != 2) {
 			$result .= $this->ref;
 		}
+
 		$result .= $linkend;
 
 		global $action;

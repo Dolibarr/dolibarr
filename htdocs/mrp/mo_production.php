@@ -182,7 +182,7 @@ if (empty($reshook)) {
 		$resultline = $moline->create($user, false); // Never use triggers here
 		if ($resultline <= 0) {
 			$error++;
-			setEventMessages($moline->error, $molines->errors, 'errors');
+			setEventMessages($moline->error, $moline->errors, 'errors');
 		}
 
 		$action = '';
@@ -229,6 +229,7 @@ if (empty($reshook)) {
 							// Record stock movement
 							$id_product_batch = 0;
 							$stockmove->setOrigin($object->element, $object->id);
+							$stockmove->context['mrp_role'] = 'toconsume';
 
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
@@ -304,6 +305,7 @@ if (empty($reshook)) {
 							$id_product_batch = 0;
 							$stockmove->origin_type = $object->element;
 							$stockmove->origin_id = $object->id;
+							$stockmove->context['mrp_role'] = 'toproduce';
 
 							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
@@ -486,7 +488,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$object->fetch_product();
-			$numref = $object->getNextNumRef($object->fk_product);
+			$numref = $object->getNextNumRef($object->product);
 		} else {
 			$numref = $object->ref;
 		}

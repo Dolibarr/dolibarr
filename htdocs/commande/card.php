@@ -281,22 +281,22 @@ if (empty($reshook)) {
 			$object->date_commande = $datecommande;
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
-			$object->source = GETPOST('source_id');
+			$object->source = GETPOST('source_id', 'int');
 			$object->fk_project = GETPOST('projectid', 'int');
 			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->model_pdf = GETPOST('model');
-			$object->cond_reglement_id = GETPOST('cond_reglement_id');
+			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
 			$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
-			$object->mode_reglement_id = GETPOST('mode_reglement_id');
+			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
-			$object->demand_reason_id = GETPOST('demand_reason_id');
+			$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
 			$object->date_livraison = $date_delivery; // deprecated
 			$object->delivery_date = $date_delivery;
 			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->warehouse_id = GETPOST('warehouse_id', 'int');
-			$object->fk_delivery_address = GETPOST('fk_address');
-			$object->contact_id = GETPOST('contactid');
+			$object->fk_delivery_address = GETPOST('fk_address', 'int');
+			$object->contact_id = GETPOST('contactid', 'int');
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1483,6 +1483,9 @@ if (empty($reshook)) {
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'PropaleLigne';
+			} elseif ($fromElement == 'facture') {
+				dol_include_once('/compta/'.$fromElement.'/class/'.$fromElement.'.class.php');
+				$lineClassName = 'FactureLigne';
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
@@ -1633,6 +1636,7 @@ if ($action == 'create' && $usercancreate) {
 	$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
 	$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
 	$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+	$fk_account = GETPOST('fk_account', 'int');
 
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
@@ -1691,7 +1695,7 @@ if ($action == 'create' && $usercancreate) {
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->thirdparty;
-			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0)); // TODO maybe add default value option
+			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 			$deposit_percent	= (!empty($objectsrc->deposit_percent) ? $objectsrc->deposit_percent : (!empty($soc->deposit_percent) ? $soc->deposit_percent : null));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 			$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
@@ -1724,10 +1728,10 @@ if ($action == 'create' && $usercancreate) {
 			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
 	} else {
-		$cond_reglement_id  = $soc->cond_reglement_id;
-		$deposit_percent    = $soc->deposit_percent;
-		$mode_reglement_id  = $soc->mode_reglement_id;
-		$fk_account         = $soc->fk_account;
+		$cond_reglement_id  = empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
+		$deposit_percent    = empty($soc->deposit_percent) ? $deposit_percent : $soc->deposit_percent;
+		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
+		$fk_account         = empty($soc->mode_reglement_id) ? $fk_account : $soc->fk_account;
 		$availability_id    = 0;
 		$shipping_method_id = $soc->shipping_method_id;
 		$warehouse_id       = $soc->fk_warehouse;
@@ -1744,7 +1748,23 @@ if ($action == 'create' && $usercancreate) {
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
 
-	//Warehouse default if null
+	// If form was posted (but error returned), we must reuse the value posted in priority (standard Dolibarr behaviour)
+	if (!GETPOST('changecompany')) {
+		if (GETPOSTISSET('cond_reglement_id')) {
+			$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+		}
+		if (GETPOSTISSET('deposit_percent')) {
+			$deposit_percent = price2num(GETPOST('deposit_percent', 'alpha'));
+		}
+		if (GETPOSTISSET('mode_reglement_id')) {
+			$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+		}
+		if (GETPOSTISSET('cond_reglement_id')) {
+			$fk_account = GETPOST('fk_account', 'int');
+		}
+	}
+
+	// Warehouse default if null
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;
 	}
@@ -1862,19 +1882,19 @@ if ($action == 'create' && $usercancreate) {
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements(((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id') : $cond_reglement_id), 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
+	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements(((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id', 'int') != 0) ? GETPOST('mode_reglement_id') : $mode_reglement_id), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
 	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && isModEnabled("banque")) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(((GETPOSTISSET('fk_account') && GETPOST('fk_account', 'int') != 0) ? GETPOST('fk_account') : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
@@ -1908,7 +1928,7 @@ if ($action == 'create' && $usercancreate) {
 		$langs->load("projects");
 		print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td><td>';
-		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), (GETPOSTISSET('projectid')?GETPOST('projectid'):$projectid), 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), (GETPOSTISSET('projectid')?GETPOST('projectid'):$projectid), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td>';
 		print '</tr>';
@@ -2049,6 +2069,8 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
 		}
 	}
+
+	print "\n";
 
 	print '</table>';
 
@@ -2742,9 +2764,9 @@ if ($action == 'create' && $usercancreate) {
 		print '<td class="valuefield nowrap right amountcard">' . price($object->total_ttc, 1, '', 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount TTC
-			print '<td class="valuefield nowrap right amountcard">' . price($object->total_ttc, 1, '', 1, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="valuefield nowrap right amountcard">' . price($object->multicurrency_total_ttc, 1, '', 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
-		print '</tr>';
+		print '</tr>'."\n";
 
 		print '</table>';
 
@@ -2989,7 +3011,7 @@ if ($action == 'create' && $usercancreate) {
 			$compatibleImportElementsList = false;
 			if ($usercancreate
 				&& $object->statut == Commande::STATUS_DRAFT) {
-				$compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
+				$compatibleImportElementsList = array('commande', 'propal', 'facture'); // import from linked elements
 			}
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env php
-<?php
+<?php declare (strict_types=1);
 
-use Sabre\Event\Promise;
 use Sabre\Event\Loop;
+use Sabre\Event\Promise;
 use function Sabre\Event\coroutine;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -54,7 +54,7 @@ $result = $promise
         echo "Step 4\n";
         // This is the final event handler.
         return $value . " you rock!";
-         
+
     })
     // Making all async calls synchronous by waiting for the final result.
     ->wait();

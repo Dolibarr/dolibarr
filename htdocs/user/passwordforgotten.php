@@ -84,7 +84,7 @@ $parameters = array('username' => $username);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	$message = $hookmanager->error;
-}
+} else $message = '';
 
 if (empty($reshook)) {
 	// Validate new password

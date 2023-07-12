@@ -540,7 +540,7 @@ class MouvementStock extends CommonObject
 			// Update stock quantity
 			if (!$error) {
 				if ($alreadyarecord > 0) {
-					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = reel + ".((float) $qty);
+					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = COALESCE(reel, 0) + ".((float) $qty);
 					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
 					$sql = "INSERT INTO ".$this->db->prefix()."product_stock";

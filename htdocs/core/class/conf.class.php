@@ -26,10 +26,10 @@
  *  				Config is stored into file conf.php
  */
 
-
 /**
  *  Class to stock current configuration
  */
+#[AllowDynamicProperties]
 class Conf
 {
 	/**
@@ -44,7 +44,7 @@ class Conf
 
 	//! To store properties found into database
 	public $global;
-	//! To store browser info
+	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	public $browser;
 
 	//! To store some setup of generic modules

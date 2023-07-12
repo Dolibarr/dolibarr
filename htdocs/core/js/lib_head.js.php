@@ -284,7 +284,7 @@ function formatDate(date,format)
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
-		substr="";
+		var substr = '';
 		j=i;
 		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
 		{
@@ -456,9 +456,9 @@ function getIntegerInString(str,i,minlength,maxlength)
  * ==================================================================
  */
 function urlencode(s) {
-	news=s;
-	news=news.replace(/\+/gi,'%2B');
-	news=news.replace(/&/gi,'%26');
+	var news = s;
+	news = news.replace(/\+/gi,'%2B');
+	news = news.replace(/&/gi,'%26');
 	return news;
 }
 
@@ -472,16 +472,16 @@ function urlencode(s) {
  */
 function htmlEntityDecodeJs(inp){
 	var replacements = {'&lt;':'<','&gt;':'>','&sol;':'/','&quot;':'"','&apos;':'\'','&amp;':'&','&nbsp;':' '};
-	if (inp)
-	{
+	if (inp) {
 	  for(var r in replacements){
 		inp = inp.replace(new RegExp(r,'g'),replacements[r]);
 	  }
 	  return inp.replace(/&#(\d+);/g, function(match, dec) {
 		return String.fromCharCode(dec);
 	  });
+	} else {
+		return '';
 	}
-	else { return ''; }
 }
 
 
@@ -509,7 +509,9 @@ function htmlEntityDecodeJs(inp){
  * ==================================================================
  */
 function cleanSerialize(expr) {
-	if (typeof(expr) != 'string') return '';
+	if (typeof(expr) != 'string') {
+		return '';
+	}
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");
@@ -962,12 +964,12 @@ function copyToClipboard(text,text2)
  * @param	url			Url
  * @param	title  		Title of popup
  * @return	boolean		False
- * @see document_preview
+ * @see document_preview()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
-	tmp=url;
+	var tmp = url;
 	console.log("newpopup "+argv[2]+" "+argv[3]);
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
@@ -987,7 +989,7 @@ function newpopup(url, title) {
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
  * @param 	title		Title of popup
  * @return	void
- * @see newpopup
+ * @see newpopup()
  */
 function document_preview(file, type, title)
 {
@@ -1320,14 +1322,21 @@ jQuery(document).ready(function() {
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
 
+<?php
+if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
 	const target = $(e.target);
 	if (target && target.length) {
-		const id = target[0].id || target[0].name;
+		let id = target[0].id || target[0].name;
+		if (id.substr(-2) == "[]") id = id.substr(0,id.length-2);
 		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });
+	<?php
+}
+?>
 
 
 // End of lib_head.js.php

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Backend;
 
 use Sabre\CalDAV;
@@ -31,24 +33,21 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SimplePDO extends AbstractBackend {
-
+class SimplePDO extends AbstractBackend
+{
     /**
-     * pdo
+     * pdo.
      *
      * @var \PDO
      */
     protected $pdo;
 
     /**
-     * Creates the backend
-     *
-     * @param \PDO $pdo
+     * Creates the backend.
      */
-    function __construct(\PDO $pdo) {
-
+    public function __construct(\PDO $pdo)
+    {
         $this->pdo = $pdo;
-
     }
 
     /**
@@ -73,27 +72,25 @@ class SimplePDO extends AbstractBackend {
      * ACL will automatically be put in read-only mode.
      *
      * @param string $principalUri
+     *
      * @return array
      */
-    function getCalendarsForUser($principalUri) {
-
+    public function getCalendarsForUser($principalUri)
+    {
         // Making fields a comma-delimited list
-        $stmt = $this->pdo->prepare("SELECT id, uri FROM simple_calendars WHERE principaluri = ? ORDER BY id ASC");
+        $stmt = $this->pdo->prepare('SELECT id, uri FROM simple_calendars WHERE principaluri = ? ORDER BY id ASC');
         $stmt->execute([$principalUri]);
 
         $calendars = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-
             $calendars[] = [
-                'id'           => $row['id'],
-                'uri'          => $row['uri'],
+                'id' => $row['id'],
+                'uri' => $row['uri'],
                 'principaluri' => $principalUri,
             ];
-
         }
 
         return $calendars;
-
     }
 
     /**
@@ -104,32 +101,29 @@ class SimplePDO extends AbstractBackend {
      *
      * @param string $principalUri
      * @param string $calendarUri
-     * @param array $properties
+     *
      * @return string
      */
-    function createCalendar($principalUri, $calendarUri, array $properties) {
-
-        $stmt = $this->pdo->prepare("INSERT INTO simple_calendars (principaluri, uri) VALUES (?, ?)");
+    public function createCalendar($principalUri, $calendarUri, array $properties)
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO simple_calendars (principaluri, uri) VALUES (?, ?)');
         $stmt->execute([$principalUri, $calendarUri]);
 
         return $this->pdo->lastInsertId();
-
     }
 
     /**
-     * Delete a calendar and all it's objects
+     * Delete a calendar and all it's objects.
      *
      * @param string $calendarId
-     * @return void
      */
-    function deleteCalendar($calendarId) {
-
+    public function deleteCalendar($calendarId)
+    {
         $stmt = $this->pdo->prepare('DELETE FROM simple_calendarobjects WHERE calendarid = ?');
         $stmt->execute([$calendarId]);
 
         $stmt = $this->pdo->prepare('DELETE FROM simple_calendars WHERE id = ?');
         $stmt->execute([$calendarId]);
-
     }
 
     /**
@@ -161,27 +155,27 @@ class SimplePDO extends AbstractBackend {
      * amount of times this is needed is reduced by a great degree.
      *
      * @param string $calendarId
+     *
      * @return array
      */
-    function getCalendarObjects($calendarId) {
-
+    public function getCalendarObjects($calendarId)
+    {
         $stmt = $this->pdo->prepare('SELECT id, uri, calendardata FROM simple_calendarobjects WHERE calendarid = ?');
         $stmt->execute([$calendarId]);
 
         $result = [];
         foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
             $result[] = [
-                'id'           => $row['id'],
-                'uri'          => $row['uri'],
-                'etag'         => '"' . md5($row['calendardata']) . '"',
-                'calendarid'   => $calendarId,
-                'size'         => strlen($row['calendardata']),
+                'id' => $row['id'],
+                'uri' => $row['uri'],
+                'etag' => '"'.md5($row['calendardata']).'"',
+                'calendarid' => $calendarId,
+                'size' => strlen($row['calendardata']),
                 'calendardata' => $row['calendardata'],
             ];
         }
 
         return $result;
-
     }
 
     /**
@@ -198,25 +192,27 @@ class SimplePDO extends AbstractBackend {
      *
      * @param string $calendarId
      * @param string $objectUri
+     *
      * @return array|null
      */
-    function getCalendarObject($calendarId, $objectUri) {
-
+    public function getCalendarObject($calendarId, $objectUri)
+    {
         $stmt = $this->pdo->prepare('SELECT id, uri, calendardata FROM simple_calendarobjects WHERE calendarid = ? AND uri = ?');
         $stmt->execute([$calendarId, $objectUri]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!$row) return null;
+        if (!$row) {
+            return null;
+        }
 
         return [
-            'id'           => $row['id'],
-            'uri'          => $row['uri'],
-            'etag'         => '"' . md5($row['calendardata']) . '"',
-            'calendarid'   => $calendarId,
-            'size'         => strlen($row['calendardata']),
+            'id' => $row['id'],
+            'uri' => $row['uri'],
+            'etag' => '"'.md5($row['calendardata']).'"',
+            'calendarid' => $calendarId,
+            'size' => strlen($row['calendardata']),
             'calendardata' => $row['calendardata'],
          ];
-
     }
 
     /**
@@ -232,22 +228,22 @@ class SimplePDO extends AbstractBackend {
      * calendar-data. If the result of a subsequent GET to this object is not
      * the exact same as this request body, you should omit the ETag.
      *
-     * @param mixed $calendarId
+     * @param mixed  $calendarId
      * @param string $objectUri
      * @param string $calendarData
+     *
      * @return string|null
      */
-    function createCalendarObject($calendarId, $objectUri, $calendarData) {
-
+    public function createCalendarObject($calendarId, $objectUri, $calendarData)
+    {
         $stmt = $this->pdo->prepare('INSERT INTO simple_calendarobjects (calendarid, uri, calendardata) VALUES (?,?,?)');
         $stmt->execute([
             $calendarId,
             $objectUri,
-            $calendarData
+            $calendarData,
         ]);
 
-        return '"' . md5($calendarData) . '"';
-
+        return '"'.md5($calendarData).'"';
     }
 
     /**
@@ -263,18 +259,18 @@ class SimplePDO extends AbstractBackend {
      * calendar-data. If the result of a subsequent GET to this object is not
      * the exact same as this request body, you should omit the ETag.
      *
-     * @param mixed $calendarId
+     * @param mixed  $calendarId
      * @param string $objectUri
      * @param string $calendarData
+     *
      * @return string|null
      */
-    function updateCalendarObject($calendarId, $objectUri, $calendarData) {
-
+    public function updateCalendarObject($calendarId, $objectUri, $calendarData)
+    {
         $stmt = $this->pdo->prepare('UPDATE simple_calendarobjects SET calendardata = ? WHERE calendarid = ? AND uri = ?');
         $stmt->execute([$calendarData, $calendarId, $objectUri]);
 
-        return '"' . md5($calendarData) . '"';
-
+        return '"'.md5($calendarData).'"';
     }
 
     /**
@@ -284,13 +280,10 @@ class SimplePDO extends AbstractBackend {
      *
      * @param string $calendarId
      * @param string $objectUri
-     * @return void
      */
-    function deleteCalendarObject($calendarId, $objectUri) {
-
+    public function deleteCalendarObject($calendarId, $objectUri)
+    {
         $stmt = $this->pdo->prepare('DELETE FROM simple_calendarobjects WHERE calendarid = ? AND uri = ?');
         $stmt->execute([$calendarId, $objectUri]);
-
     }
-
 }

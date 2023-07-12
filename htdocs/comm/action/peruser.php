@@ -85,13 +85,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (empty($user->rights->agenda->myactions->read)) {
+if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
-if (empty($user->rights->agenda->allactions->read)) {
+if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
-if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // If no permission to see all, we show only affected to me
+if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -1396,10 +1396,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$ids1 = '';
 		$ids2 = '';
 		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) {
-			$ids1 = join(',', array_keys($cases1[$h]));
+			$ids1 = join(', ', array_keys($cases1[$h]));
 		}
 		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) {
-			$ids2 = join(',', array_keys($cases2[$h]));
+			$ids2 = join(', ', array_keys($cases2[$h]));
 		}
 
 		if ($h == $begin_h) {

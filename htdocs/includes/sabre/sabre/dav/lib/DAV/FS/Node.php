@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\FS;
 
-use Sabre\DAV;
-use Sabre\HTTP\URLUtil;
+use Sabre\DAV\Exception\Forbidden;
+use Sabre\DAV\INode;
+use Sabre\Uri;
 
 /**
- * Base node-class
+ * Base node-class.
  *
  * The node class implements the method used by both the File and the Directory classes
  *
@@ -14,67 +17,80 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class Node implements DAV\INode {
-
+abstract class Node implements INode
+{
     /**
-     * The path to the current node
+     * The path to the current node.
      *
      * @var string
      */
     protected $path;
 
     /**
-     * Sets up the node, expects a full path name
+     * The overridden name of the node.
      *
-     * @param string $path
+     * @var string
      */
-    function __construct($path) {
-
-        $this->path = $path;
-
-    }
-
-
+    protected $overrideName;
 
     /**
-     * Returns the name of the node
+     * Sets up the node, expects a full path name.
+     *
+     * If $overrideName is set, this node shows up in the tree under a
+     * different name. In this case setName() will be disabled.
+     *
+     * @param string $path
+     * @param string $overrideName
+     */
+    public function __construct($path, $overrideName = null)
+    {
+        $this->path = $path;
+        $this->overrideName = $overrideName;
+    }
+
+    /**
+     * Returns the name of the node.
      *
      * @return string
      */
-    function getName() {
+    public function getName()
+    {
+        if ($this->overrideName) {
+            return $this->overrideName;
+        }
 
-        list(, $name) = URLUtil::splitPath($this->path);
+        list(, $name) = Uri\split($this->path);
+
         return $name;
-
     }
 
     /**
-     * Renames the node
+     * Renames the node.
      *
      * @param string $name The new name
-     * @return void
      */
-    function setName($name) {
+    public function setName($name)
+    {
+        if ($this->overrideName) {
+            throw new Forbidden('This node cannot be renamed');
+        }
 
-        list($parentPath, ) = URLUtil::splitPath($this->path);
-        list(, $newName) = URLUtil::splitPath($name);
+        list($parentPath) = Uri\split($this->path);
+        list(, $newName) = Uri\split($name);
 
-        $newPath = $parentPath . '/' . $newName;
+        $newPath = $parentPath.'/'.$newName;
         rename($this->path, $newPath);
 
         $this->path = $newPath;
-
     }
 
     /**
-     * Returns the last modification time, as a unix timestamp
+     * Returns the last modification time, as a unix timestamp.
      *
      * @return int
      */
-    function getLastModified() {
-
+    public function getLastModified()
+    {
         return filemtime($this->path);
-
     }
-
 }

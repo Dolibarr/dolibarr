@@ -67,8 +67,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param 	int 	$id Id of third party to load
-	 * @return 	array|mixed Cleaned Societe object
+	 * @param 	int 	$id 			Id of third party to load
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -475,10 +475,8 @@ class Thirdparties extends DolibarrApi
 
 		// External modules should update their ones too
 		if (!$error) {
-			$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
-				'soc_origin' => $soc_origin->id,
-				'soc_dest' => $object->id
-			), $soc_dest, $action);
+			$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $object->id);
+			$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $soc_dest, $action);
 
 			if ($reshook < 0) {
 				//setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -1086,7 +1084,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getInvoicesQualifiedForReplacement($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {
@@ -1129,7 +1127,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getInvoicesQualifiedForCreditNote($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {

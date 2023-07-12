@@ -101,8 +101,8 @@ function addDispatchLine(index, type, mode) {
 	if (qty <= 1) {
 		window.alert("Remain quantity to dispatch is too low to be split");
 	} else {
-		oldlineqty = qtyDispatched;
-		newlineqty = qtyOrdered - qtyDispatched;
+		var oldlineqty = qtyDispatched;
+		var newlineqty = qtyOrdered - qtyDispatched;
 		if (newlineqty <= 0) {
 			newlineqty = qty - 1;
 			oldlineqty = 1;

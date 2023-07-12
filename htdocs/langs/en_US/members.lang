@@ -240,4 +240,4 @@ CreateDolibarrThirdPartyDesc=A thirdparty is the legal entity that will be used 
 MemberFirstname=Member firstname
 MemberLastname=Member lastname
 MemberCodeDesc=Member Code, unique for all members
-NoRecordedMembers=No registered member
+NoRecordedMembers=No recorded members
