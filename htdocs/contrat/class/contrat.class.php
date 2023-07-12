@@ -753,6 +753,7 @@ class Contrat extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

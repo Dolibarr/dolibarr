@@ -427,6 +427,7 @@ class EmailCollectorFilter extends CommonObject
 				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
 			}
 		}
+		"";
 	}
 
 	/**
