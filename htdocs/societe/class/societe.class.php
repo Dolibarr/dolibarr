@@ -2690,9 +2690,9 @@ class Societe extends CommonObject
 			$label .= $this->getTypeUrl(1);
 		}
 
-		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag(dol_string_nohtmltag($this->name));
 		if (!empty($this->name_alias)) {
-			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
+			$label .= ' ('.dol_escape_htmltag(dol_string_nohtmltag($this->name_alias)).')';
 		}
 
 		if ($this->email) {
