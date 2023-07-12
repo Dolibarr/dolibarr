@@ -7172,6 +7172,14 @@ div.tabsElem a.tab {
 	color: #666;
 }
 
+@media only screen and (max-width: 767px)
+{
+	.publicnewmemberform div.tabBarWithBottom {
+		padding: 10px;
+	}
+}
+
+
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */

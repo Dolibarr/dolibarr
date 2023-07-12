@@ -613,7 +613,7 @@ if (!getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
 // Company
 print '<tr id="trcompany" class="trcompany"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Company").' <span class="star">*</span></td><td>';
 print img_picto('', 'company', 'class="pictofixedwidth"');
-print '<input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<input type="text" name="societe" class="minwidth150 maxwidth300 widthcentpercentminusxx" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Lastname
 print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
@@ -621,10 +621,10 @@ print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemanda
 // EMail
 print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").' <span class="star">*</span></td><td>';
 //print img_picto('', 'email', 'class="pictofixedwidth"');
-print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Url
-print '<tr><td>'.$langs->trans("Url").' <span style="color:red;">*</span></td><td>';
-print '<input type="text" name="url" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('url')).'">';
+print '<tr><td class="tdtop">'.$langs->trans("Url").' <span class="star">*</span></td><td>';
+print '<input type="text" name="url" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('url')).'">';
 if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
 	$listofkeytocheck = explode('|', getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK'));
 	$i = 0;
@@ -637,7 +637,7 @@ if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
 }
 print '</td></tr>'."\n";
 // Address
-print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
+print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
@@ -668,7 +668,7 @@ print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State
 if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-	print '<tr><td>'.$langs->trans('State').'</td><td>';
+	print '<tr><td class="wordbreak">'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
 		print $formcompany->select_state(GETPOST("state_id"), $country_code);
 	}
