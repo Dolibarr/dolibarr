@@ -446,6 +446,7 @@ class Fiscalyear extends CommonObject
 				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
 			}
 		}
+		return "";
 	}
 
 	/**
