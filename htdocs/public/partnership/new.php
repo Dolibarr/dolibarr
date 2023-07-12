@@ -682,7 +682,7 @@ $parameters['tpl_context']='public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
-print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
+print '<td class="tdtop wordbreak">'.$langs->trans("Comments").'</td>';
 print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1).'</textarea></td>';
 print '</tr>'."\n";
 
