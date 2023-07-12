@@ -453,8 +453,12 @@ class ChargeSociales extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paye = 1;
+
 			return 1;
 		} else {
 			return -1;
@@ -488,8 +492,12 @@ class ChargeSociales extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paye = 0;
+
 			return 1;
 		} else {
 			return -1;

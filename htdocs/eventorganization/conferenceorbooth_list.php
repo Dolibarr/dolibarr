@@ -223,6 +223,42 @@ if (empty($reshook)) {
 	$uploaddir = $conf->eventorganization->dir_output;
 	include DOL_DOCUMENT_ROOT.'/eventorganization/core/actions_massactions_mail.inc.php';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($permissiontoadd && (($action == 'setstatus' && $confirm == "yes") || $massaction == 'setstatus')) {
+		$db->begin();
+		$error = 0;$nbok = 0;
+		$objecttmp = new $objectclass($db);
+		foreach ($toselect as $key => $idselect) {
+			$result = $objecttmp->fetch($idselect);
+			if ($result > 0) {
+				$objecttmp->status = GETPOST("statusmassaction", 'int');
+				$result = $objecttmp->update($user);
+				if ($result <= 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else {
+					$nbok++;
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error ++;
+				break;
+			}
+		}
+		if (empty($error)) {
+			if ($nbok > 1) {
+				setEventMessages($langs->trans("RecordsUpdated", $nbok), null, 'mesgs');
+			} elseif ($nbok > 0) {
+				setEventMessages($langs->trans("RecordUpdated", $nbok), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans("NoRecordUpdated"), null, 'mesgs');
+			}
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
 }
 
 
@@ -680,6 +716,9 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
+if (!empty($permissiontoadd)) {
+	$arrayofmassactions['presetstatus'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyStatus");
+}
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
@@ -716,6 +755,20 @@ $trackid = 'conferenceorbooth_'.$object->id;
 $withmaindocfilemail = 0;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if ($massaction == 'presetstatus') {
+	$formquestion = array();
+	$statuslist[$objecttmp::STATUS_DRAFT] = $objecttmp->LibStatutEvent($objecttmp::STATUS_DRAFT);
+	$statuslist[$objecttmp::STATUS_SUGGESTED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_SUGGESTED);
+	$statuslist[$objecttmp::STATUS_CONFIRMED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_CONFIRMED);
+	$statuslist[$objecttmp::STATUS_NOT_QUALIFIED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_NOT_QUALIFIED);
+	$statuslist[$objecttmp::STATUS_DONE] = $objecttmp->LibStatutEvent($objecttmp::STATUS_DONE);
+	$statuslist[$objecttmp::STATUS_CANCELED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_CANCELED);
+	$formquestion[] = array('type' => 'other',
+			'name' => 'affectedcommercial',
+			'label' => $form->editfieldkey('ModifyStatus', 'status_id', '', $object, 0),
+			'value' => $form->selectarray('statusmassaction', $statuslist, GETPOST('statusmassaction')));
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmModifyStatus"), $langs->trans("ConfirmModifyStatusQuestion", count($toselect)), "setstatus", $formquestion, 1, 0, 200, 500, 1);
+}
 
 if ($search_all) {
 	$setupstring = '';
@@ -828,7 +881,6 @@ print '<tr class="liste_titre">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-	//print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
 foreach ($object->fields as $key => $val) {
@@ -866,7 +918,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if ($val && preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -891,7 +943,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban

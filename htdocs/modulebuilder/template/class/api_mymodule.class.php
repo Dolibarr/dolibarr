@@ -61,8 +61,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * Return an array with myobject informations
 	 *
-	 * @param 	int 	$id ID of myobject
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of myobject
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url	GET myobjects/{id}
 	 *

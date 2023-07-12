@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
-OrderExists=An order was already open linked to this proposal, so no other order was created automatically
+OrderExists=Er stond al een bestelling open gekoppeld aan dit voorstel, dus er werd geen andere bestelling automatisch aangemaakt
 OrdersArea=Klantenorders overzicht
 SuppliersOrdersArea=Inkooporders gebied
 OrderCard=Opdrachtenkaart
@@ -96,6 +96,10 @@ OrdersStatisticsSuppliers=Inkooporder statistieken
 NumberOfOrdersByMonth=Aantal opdrachten per maand
 AmountOfOrdersByMonthHT=Totaalbedrag bestellingen per maand (excl. BTW)
 ListOfOrders=Opdrachtenlijst
+ListOrderLigne=Lijnen van bestellingen
+productobuy=Producten om alleen te kopen
+productonly=Alleen producten
+disablelinefree=Geen gratis regels
 CloseOrder=Opdracht sluiten
 ConfirmCloseOrder=Weet u zeker dat u deze bestelling wilt instellen op afgeleverd? Zodra een bestelling is afgeleverd, kan deze worden ingesteld op gefactureerd.
 ConfirmDeleteOrder=Weet u zeker dat u deze order wilt verwijderen?
@@ -131,6 +135,7 @@ SupplierOrderClassifiedBilled=Bestelling %s gemerkt gefactureerd
 OtherOrders=Andere opdrachten
 SupplierOrderValidatedAndApproved=De bestelling van de leverancier is gevalideerd en goedgekeurd: %s
 SupplierOrderValidated=Leveranciersorder is gevalideerd: %s
+OrderShowDetail=Besteldetail tonen
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Vertegenwoordiger opvolgingsorder
 TypeContact_commande_internal_SHIPPING=Vertegenwoordiger die follow-up van verzending doet
@@ -199,3 +204,5 @@ StatusSupplierOrderApproved=Goedgekeurd
 StatusSupplierOrderRefused=Geweigerd
 StatusSupplierOrderReceivedPartially=Gedeeltelijk ontvangen
 StatusSupplierOrderReceivedAll=Alle producten ontvangen
+NeedAtLeastOneInvoice = Er moet minimaal één factuur zijn
+LineAlreadyDispatched = De orderregel is al ontvangen.

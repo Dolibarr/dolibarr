@@ -98,7 +98,7 @@ print '<br>';
 // Module debugbar
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
+$test = !isModEnabled('debugbar');
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {
@@ -110,7 +110,7 @@ print '<br>';
 // Applicative cache
 print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
-$test = !empty($conf->memcached->enabled);
+$test = isModEnabled('memcached');
 if ($test) {
 	if (!empty($conf->global->MEMCACHED_SERVER)) {
 		print $langs->trans("MemcachedAvailableAndSetup");

@@ -171,7 +171,7 @@ print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ActivateCheckReadKey").'</td><td>';
-print '<input class="minwidth100 maxwdith250 widthcentpercentminusx" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAILING_EMAIL_UNSUBSCRIBE_KEY" value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
+print '<input class="minwidth100 maxwdith250 widthcentpercentminusx" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAILING_EMAIL_UNSUBSCRIBE_KEY" value="'.getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY').'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }

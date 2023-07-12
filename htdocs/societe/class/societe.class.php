@@ -304,41 +304,10 @@ class Societe extends CommonObject
 	public $particulier;
 
 	/**
-	 * @var string Address
-	 */
-	public $address;
-
-	/**
-	 * @var string Zip code of thirdparty
-	 */
-	public $zip;
-
-	/**
-	 * @var string Town of thirdparty
-	 */
-	public $town;
-
-	/**
 	 * Thirdparty status : 0=activity ceased, 1= in activity
 	 * @var int
 	 */
 	public $status = 1;
-
-	/**
-	 * Id of department
-	 * @var int
-	 */
-	public $state_id;
-
-	/**
-	 * @var string State code
-	 */
-	public $state_code;
-
-	/**
-	 * @var string State name
-	 */
-	public $state;
 
 	/**
 	 * Id of region
@@ -906,10 +875,11 @@ class Societe extends CommonObject
 	 *    Create third party in database.
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
 	 *
-	 *    @param	User	$user       Object of user that ask creation
-	 *    @return   int         		>=0 if OK, <0 if KO
+	 *    @param	User	$user           Object of user that ask creation
+	 *    @param    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *    @return   int         		    >=0 if OK, <0 if KO
 	 */
-	public function create(User $user)
+	public function create(User $user, $notrigger = 0)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -1047,7 +1017,7 @@ class Societe extends CommonObject
 					$this->add_commercial($user, $user->id);
 				}
 
-				if ($ret >= 0) {
+				if ($ret >= 0 && !$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('COMPANY_CREATE', $user);
 					if ($result < 0) {
@@ -1090,12 +1060,13 @@ class Societe extends CommonObject
 	/**
 	 * Create a contact/address from thirdparty
 	 *
-	 * @param 	User	$user		Object user
-	 * @param 	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
-	 * @param 	array	$tags		Array of tag to affect to contact
-	 * @return 	int					<0 if KO, >0 if OK
+	 * @param 	User	$user		    Object user
+	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to recieve mailling
+	 * @param 	array	$tags		    Array of tag to affect to contact
+	 * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 * @return 	int					    <0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user, $no_email = 0, $tags = array())
+	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
 		global $conf;
 
@@ -1123,7 +1094,7 @@ class Societe extends CommonObject
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
 
-		$contactId = $contact->create($user);
+		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
 			$error++;
 			$this->error = $contact->error;
@@ -2282,6 +2253,7 @@ class Societe extends CommonObject
 
 			return 1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2489,10 +2461,10 @@ class Societe extends CommonObject
 					$reparray[$i]['firstname'] = $obj->firstname;
 					$reparray[$i]['email'] = $obj->email;
 					$reparray[$i]['phone'] = $obj->office_phone;
-					$reparray[$i]['office_phone'] = $obj->office_phone;
+					$reparray[$i]['office_phone'] = $obj->office_phone;			// Pro phone
 					$reparray[$i]['office_fax'] = $obj->office_fax;
-					$reparray[$i]['user_mobile'] = $obj->user_mobile;
-					$reparray[$i]['personal_mobile'] = $obj->personal_mobile;
+					$reparray[$i]['user_mobile'] = $obj->user_mobile;			// Pro mobile
+					$reparray[$i]['personal_mobile'] = $obj->personal_mobile;	// Personal mobile
 					$reparray[$i]['job'] = $obj->job;
 					$reparray[$i]['statut'] = $obj->status; // deprecated
 					$reparray[$i]['status'] = $obj->status;
@@ -3667,12 +3639,12 @@ class Societe extends CommonObject
 	 * @param   array       $parents        List of companies ID found
 	 * @return	array
 	 */
-	public function getParentsForCompany($company_id, $parents = [])
+	public function getParentsForCompany($company_id, $parents = array())
 	{
 		global $langs;
 
 		if ($company_id > 0) {
-			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = $company_id";
+			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = ".((int) $company_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($obj = $this->db->fetch_object($resql)) {
@@ -3689,6 +3661,8 @@ class Societe extends CommonObject
 				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
 			}
 		}
+		// Return a default value when $company_id is not greater than 0
+		return array();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -5274,6 +5248,93 @@ class Societe extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
+	}
+
+	/**
+	 *    Get array of all contacts for a society (stored in societe_contacts instead of element_contacts for all other objects)
+	 *
+	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
+	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
+	 *	  @param    string      $element    Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
+	 *    @return	array|int		        Array of contacts, -1 if error
+	 *
+	 */
+	public function getContacts($list = 0, $code = '', $element = '')
+	{
+		// phpcs:enable
+		global $langs;
+
+		$tab = array();
+
+		$sql = "SELECT sc.rowid, sc.fk_socpeople as id, sc.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
+
+		$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
+
+		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
+		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
+		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
+
+		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
+
+		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
+		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
+		if (!empty($element)) {
+			$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		}
+		if ($code) {
+			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
+		}
+		$sql .= " AND sc.entity = ".getEntity($this->element);
+		$sql .= " AND tc.source = 'external'";
+		$sql .= " AND tc.active=1";
+
+		$sql .= " ORDER BY t.lastname ASC";
+
+		dol_syslog(get_class($this)."::getContacts", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				if (!$list) {
+					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+					$tab[$i] = array(
+						'source' => $obj->source,
+						'socid' => $obj->socid,
+						'id' => $obj->id,
+						'nom' => $obj->lastname, // For backward compatibility
+						'civility' => $obj->civility,
+						'lastname' => $obj->lastname,
+						'firstname' => $obj->firstname,
+						'email'=>$obj->email,
+						'login'=> (empty($obj->login) ? '' : $obj->login),
+						'photo' => (empty($obj->photo) ? '' : $obj->photo),
+						'statuscontact' => $obj->statuscontact,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'element' => $obj->element,
+						'libelle' => $libelle_type,
+						'status' => $obj->statuslink,
+						'fk_c_type_contact' => $obj->fk_c_type_contact
+					);
+				} else {
+					$tab[$i] = $obj->id;
+				}
+
+				$i++;
+			}
+
+			return $tab;
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 }

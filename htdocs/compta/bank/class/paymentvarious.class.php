@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class PaymentVarious extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'variouspayment';
+	public $element = 'payment_various';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -184,8 +184,6 @@ class PaymentVarious extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-		$this->element = 'payment_various';
-		$this->table_element = 'payment_various';
 	}
 
 	/**

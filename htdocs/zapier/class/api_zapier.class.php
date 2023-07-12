@@ -354,13 +354,6 @@ class Zapier extends DolibarrApi
 		// phpcs:disable
 		$object = parent::_cleanObjectDatas($object);
 
-		/*unset($object->note);
-        unset($object->address);
-        unset($object->barcode_type);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_coder);*/
-
 		return $object;
 	}
 

@@ -606,7 +606,7 @@ if ($object->id > 0) {
 	}
 
 	// Categories
-	if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 		$langs->load("categories");
 		print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 		print '<td>';
@@ -1458,6 +1458,7 @@ if ($object->id > 0) {
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;
+				$facturestatic->alreadypaid = $objp->am;
 				$facturestatic->date = $db->jdate($objp->df);
 				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
 

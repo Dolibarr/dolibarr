@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '18.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '19.0.0-dev'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -295,8 +295,8 @@ if (!empty($dolibarr_main_force_https)) {
 define('DOL_MAIN_URL_ROOT', $tmp); // URL absolute root (https://sss/dolibarr, ...)
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
 $suburi = strstr($uri, '/'); // $suburi contains url without domain:port
-if ($suburi == '/') {
-	$suburi = ''; // If $suburi is /, it is now ''
+if (empty($suburi) || $suburi === '/') {
+	$suburi = ''; // If $suburi is null or /, it is now ''
 }
 if (!defined('DOL_URL_ROOT')) {
 	define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)

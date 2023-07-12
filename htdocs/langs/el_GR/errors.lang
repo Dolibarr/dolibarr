@@ -310,6 +310,13 @@ ErrorFieldExist=Η τιμή για <b> %s </b> υπάρχει ήδη
 ErrorEqualModule=Μη έγκυρη ενότητα στο <b> %s </b>
 ErrorFieldValue=Η τιμή για <b> %s </b> είναι λανθασμένη
 ErrorCoherenceMenu= <b> %s </b> απαιτείται όταν το <b> %s </b> είναι 'αριστερά'
+ErrorUploadFileDragDrop=Παρουσιάστηκε σφάλμα κατά τη μεταφόρτωση των αρχείων
+ErrorUploadFileDragDropPermissionDenied=There was an error while the file(s) upload : Permission denied
+ErrorFixThisHere= <a href="%s"> Διορθώστε το εδώ </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
+ErrorMenuExistValue=A Menu already exist with this Title or URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτή δεν είναι μια συνεπής ρύθμιση.
@@ -349,6 +356,14 @@ WarningThemeForcedTo=Προειδοποίηση, έχει γίνει επιβο�
 WarningPagesWillBeDeleted=Προειδοποίηση, αυτό θα διαγράψει επίσης όλες τις υπάρχουσες σελίδες/container του ιστότοπου. Θα πρέπει να εξάγετε τον ιστότοπό σας νωρίτερα, ώστε να έχετε ένα αντίγραφο ασφαλείας για να μπορείτε να τον εισάγετε ξανά αργότερα αν χρειαστει.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Η αυτόματη επικύρωση είναι απενεργοποιημένη όταν η επιλογή μείωσης του αποθέματος έχει οριστεί στην "Επικύρωση τιμολογίου".
 WarningModuleNeedRefrech = Η ενότητα <b> %s </b> έχει απενεργοποιηθεί. Μην ξεχάσετε να την ενεργοποιήσετε
+WarningPermissionAlreadyExist=Υπάρχοντα δικαιώματα για αυτό το αντικείμενο
+
+SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
+SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
+SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
+SwissQrPaymentInformationInvalid = Τα στοιχεία πληρωμής δεν ήταν έγκυρα για το σύνολο %s : %s
+SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
 
 # Validate
 RequireValidValue = Η τιμή δεν είναι έγκυρη

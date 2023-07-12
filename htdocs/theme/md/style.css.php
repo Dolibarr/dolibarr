@@ -934,6 +934,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
@@ -975,6 +979,9 @@ th .button {
 }
 .centpercentimp {
 	width: 100% !important;
+}
+.centpercentwithout1imp {
+	width: calc(100% - 1px) !important;
 }
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
@@ -4047,6 +4054,10 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	padding: 4px 6px 4px 6px;			/* t r b l */
 	height: 22px;
 }
+table.liste tr.trkanban td {
+	padding: 10px 14px 10px 14px;			/* t r b l */
+}
+
 form.tagtable {
 	padding: unset !important;
 	border: unset !important;
@@ -4658,6 +4669,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		padding-left: 0 !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
+	}
+
+	td.tdwidgetstate {
+		text-align: center;
 	}
 
 	.boxstats, .boxstats130 {
@@ -7574,6 +7589,14 @@ div.clipboardCPValue.hidewithsize {
 	transform: translate(-50%, -50%);
 	text-align:center;
 	font-size: 2em;
+}
+
+/* ============================================================================== */
+/* CSS style used for color jPicker                                               */
+/* ============================================================================== */
+
+table.jPicker {
+	border: 1px solid #bbb !important;
 }
 
 /* ============================================================================== */

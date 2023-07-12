@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = En el formulario para crear/agregar un 
 #
 # Object
 #
+OrganizedEvent=Evento organizado
 EventOrganizationConfOrBooth= Conferencia o cabina
 EventOrganizationConfOrBoothes=Conferencias o Stands
 ManageOrganizeEvent = Gestionar la organización de eventos
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Enlace a un tercero (cliente, proveedor o soci
 OrganizationEvenLabelName=Nombre público de la conferencia o stand
 
 NewSuggestionOfBooth=Solicitud de stand
-NewSuggestionOfConference=Solicitud de conferencia
+NewSuggestionOfConference=Aplicación para realizar una conferencia
 
 #
 # Vote page
