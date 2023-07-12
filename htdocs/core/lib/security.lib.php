@@ -1061,7 +1061,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		//print $sql;
 
 		// For events, check on users assigned to event
 		if ($feature === 'agenda' && $objectid > 0) {

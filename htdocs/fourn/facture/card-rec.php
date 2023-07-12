@@ -71,7 +71,7 @@ $month_date_when = GETPOST('month_date_when');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$objecttype = 'facturefournisseur_rec';
+$objecttype = 'facture_fourn_rec';
 if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
@@ -126,6 +126,7 @@ $now = dol_now();
 $error = 0;
 
 $result = restrictedArea($user, 'facture', $object->id, $objecttype);
+
 
 /*
  * Actions
@@ -218,6 +219,7 @@ if (empty($reshook)) {
 			$object->mode_reglement_code = $oldinvoice->mode_reglement_code;
 
 			$result = $object->create($user, $oldinvoice->id);
+
 			if ($result > 0) {
 				$result = $oldinvoice->delete($user, 1);
 				if ($result < 0) {
