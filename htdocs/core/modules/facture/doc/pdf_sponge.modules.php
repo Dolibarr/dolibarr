@@ -1069,9 +1069,11 @@ class pdf_sponge extends ModelePDFFactures
 						}
 					}
 				}
+
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 					$this->addBottomQRInvoice($pdf, $object, $outputlangs);
 				}
+
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
