@@ -172,16 +172,18 @@ $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
 $csslist = $extrafields->attributes[$elementtype]['csslist'][$attrname];
 
-if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param)) {
-	$param_chain = '';
-	foreach ($param['options'] as $key => $value) {
-		if (strlen($key)) {
-			$param_chain .= $key.','.$value."\n";
+if (is_array($param)) {
+	if (($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) {
+		$param_chain = '';
+		foreach ($param['options'] as $key => $value) {
+			if (strlen($key)) {
+				$param_chain .= $key.','.$value."\n";
+			}
 		}
+	} elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate')) {
+		$paramlist = array_keys($param['options']);
+		$param_chain = $paramlist[0];
 	}
-} elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate')) {
-	$paramlist = array_keys($param['options']);
-	$param_chain = $paramlist[0];
 }
 ?>
 <!-- Label -->

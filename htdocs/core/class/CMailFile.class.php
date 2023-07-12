@@ -1007,6 +1007,7 @@ class CMailFile
 						$this->dump_mail();
 					}
 
+					$smtperrorcode = 0;
 					if (! $result) {
 						$smtperrorcode = $this->smtps->lastretval;	// SMTP error code
 						dol_syslog("CMailFile::sendfile: mail SMTP error code ".$smtperrorcode, LOG_WARNING);

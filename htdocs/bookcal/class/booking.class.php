@@ -122,6 +122,7 @@ class Booking extends CommonObject
 		'email' => array('type'=>'varchar(128)', 'label'=>'email', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>-1,),
 		'start' => array('type'=>'datetime', 'label'=>'Start Hour', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>-1,),
 		'duration' => array('type'=>'integer', 'label'=>'Duration', 'enabled'=>'1', 'position'=>6, 'notnull'=>1, 'visible'=>-1,),
+		'fk_bookcal_availability' => array('type'=>'integer:Availabilities:bookcal/class/availabilities.class.php', 'label'=>'AvailabilityId', 'enabled'=>'1', 'position'=>49, 'notnull'=>1, 'visible'=>-1,),
 	);
 	public $rowid;
 	public $ref;
@@ -143,6 +144,7 @@ class Booking extends CommonObject
 	public $email;
 	public $start;
 	public $duration;
+	public $fk_bookcal_availability;
 	// END MODULEBUILDER PROPERTIES
 
 

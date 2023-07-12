@@ -128,6 +128,8 @@ $dolibarr_main_db_user='';
 // dolibarr_main_db_pass
 // =====================
 // This parameter contains password used to read and write into Dolibarr database.
+// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.  
+// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.  
 //
 // Examples:
 // $dolibarr_main_db_pass='myadminpass';

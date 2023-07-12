@@ -210,16 +210,16 @@ $builddate = dol_now();
 if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueProducts");
 }
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInProducts");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueServices");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInServices");
 }
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {

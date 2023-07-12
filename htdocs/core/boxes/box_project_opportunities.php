@@ -74,13 +74,9 @@ class box_project_opportunities extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$this->max = $max;
-
-		$totalMnt = 0;
-		$totalnb = 0;
-		$totalnbTask = 0;
 
 		$textHead = $langs->trans("OpenedProjectsOpportunities");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
@@ -158,9 +154,9 @@ class box_project_opportunities extends ModeleBoxes
 						'asis' => 1
 					);
 
-					$this->info_box_contents[$i][] = array('td' => 'class="amount right"', 'text' => ($projectstatic->opp_amount ? price($projectstatic->opp_amount) : ''));
+					$this->info_box_contents[$i][] = array('td' => 'class="amount right nowraponall"', 'text' => ($projectstatic->opp_amount ? price($projectstatic->opp_amount) : ''));
 
-					$this->info_box_contents[$i][] = array('td' => 'class=""', 'asis'=>1, 'text' => ($projectstatic->opp_status_code ? $langs->trans("OppStatus".$projectstatic->opp_status_code).' ' : '').'<span class="opacitymedium small">('.round($projectstatic->opp_percent).'%)</span>');
+					$this->info_box_contents[$i][] = array('td' => 'class="nowraponall"', 'asis'=>1, 'text' => ($projectstatic->opp_status_code ? $langs->trans("OppStatus".$projectstatic->opp_status_code).' ' : '').'<span class="opacitymedium small">('.round($projectstatic->opp_percent).'%)</span>');
 
 					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => $projectstatic->getLibStatut(3));
 

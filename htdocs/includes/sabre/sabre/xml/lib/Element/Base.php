@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\Xml\Element;
 
 use Sabre\Xml;
@@ -15,8 +17,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Base implements Xml\Element {
-
+class Base implements Xml\Element
+{
     /**
      * PHP value to serialize.
      *
@@ -25,18 +27,15 @@ class Base implements Xml\Element {
     protected $value;
 
     /**
-     * Constructor
-     *
-     * @param mixed $value
+     * Constructor.
      */
-    function __construct($value = null) {
-
+    public function __construct($value = null)
+    {
         $this->value = $value;
-
     }
 
     /**
-     * The xmlSerialize metod is called during xml writing.
+     * The xmlSerialize method is called during xml writing.
      *
      * Use the $writer argument to write its own xml serialization.
      *
@@ -50,20 +49,16 @@ class Base implements Xml\Element {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         $writer->write($this->value);
-
     }
 
     /**
      * The deserialize method is called during xml parsing.
      *
-     * This method is called statictly, this is because in theory this method
+     * This method is called statically, this is because in theory this method
      * may be used as a type of constructor, or factory method.
      *
      * Often you want to return an instance of the current class, but you are
@@ -78,14 +73,12 @@ class Base implements Xml\Element {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Xml\Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Xml\Reader $reader) {
-
+    public static function xmlDeserialize(Xml\Reader $reader)
+    {
         $subTree = $reader->parseInnerTree();
+
         return $subTree;
-
     }
-
 }

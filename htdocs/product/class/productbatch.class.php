@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,8 +45,7 @@ class Productbatch extends CommonObject
 
 	public $tms = '';
 	public $fk_product_stock;
-	public $sellby = '';	// dlc
-	public $eatby = '';		// dmd/dluo
+
 	public $batch = '';
 	public $qty;
 	public $warehouseid;
@@ -56,6 +55,10 @@ class Productbatch extends CommonObject
 	 */
 	public $fk_product;
 
+	// Properties of the lot
+	public $lotid;			// ID in table of the details of properties of each lots
+	public $sellby = '';	// dlc
+	public $eatby = '';		// dmd/dluo
 
 
 	/**
@@ -454,7 +457,7 @@ class Productbatch extends CommonObject
 			// TODO May add extrafields to ?
 		}
 		$sql .= " FROM ".$dbs->prefix()."product_batch as t";
-		if ($fk_product > 0) {
+		if ($fk_product > 0) {	// Add link to the table of details of a lot
 			$sql .= " LEFT JOIN ".$dbs->prefix()."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
@@ -467,9 +470,10 @@ class Productbatch extends CommonObject
 		// TODO : use product lifo and fifo when product will implement it
 		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
 		$sql .= "t.eatby ASC, t.sellby ASC ";
-		$sql .= ", t.qty ".(!empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'DESC':'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
+		$sql .= ", t.qty ".(empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'ASC':'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
+
 		$resql = $dbs->query($sql);
 		if ($resql) {
 			$num = $dbs->num_rows($resql);
@@ -479,14 +483,15 @@ class Productbatch extends CommonObject
 
 				$tmp = new Productbatch($dbs);
 				$tmp->id    = $obj->rowid;
-				$tmp->lotid = $obj->lotid;
 				$tmp->tms = $dbs->jdate($obj->tms);
 				$tmp->fk_product_stock = $obj->fk_product_stock;
-				$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
-				$tmp->eatby = $dbs->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
 				$tmp->batch = $obj->batch;
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
+				// Some properties of the lot
+				$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
+				$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+				$tmp->eatby = $dbs->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
 
 				$ret[$tmp->batch] = $tmp; // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
 				$i++;
