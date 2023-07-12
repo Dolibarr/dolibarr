@@ -2,6 +2,17 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 19.0.0 compared to 18.0.0 *****
+
+For uses:
+---------
+
+NEW: Add option MAIN_MAIL_WITH_TO_SELECTED_CONTACT_CUSTOMER utomatic selection of external assigned contact of an object as recipients of new emails
+
+
+
+For developers or integrators:
+------------------------------
 
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
