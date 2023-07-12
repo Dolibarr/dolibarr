@@ -198,7 +198,7 @@ if (empty($reshook)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->fk_project = GETPOST('projectid');
-			$object->description = GETPOST("desc");
+			$object->description = GETPOST("desc", 'restricthtml');
 			$object->statut      = GETPOST("statut");
 			$object->lieu        = GETPOST("lieu");
 			$object->address     = GETPOST("address");

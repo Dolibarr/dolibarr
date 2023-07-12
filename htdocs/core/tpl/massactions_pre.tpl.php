@@ -224,6 +224,10 @@ if ($massaction == 'edit_extrafields') {
 	if (!empty($extrafields_list)) {
 		$myParamExtra = $object->showOptionals($extrafields, 'create');
 
+		foreach ($extrafields_list as $extraKey => $extraLabel) {
+			$extrafields_list[$extraKey] = $langs->trans($extraLabel);
+		}
+
 		$formquestion[] = array(
 			'type' => 'other',
 			'value' => $form->selectarray('extrafield-key-to-update', $extrafields_list, GETPOST('extrafield-key-to-update'), 1)

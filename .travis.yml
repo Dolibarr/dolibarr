@@ -9,6 +9,8 @@ dist: xenial
 
 language: php
 
+scan_logs: false
+
 git:
   depth: 1
 

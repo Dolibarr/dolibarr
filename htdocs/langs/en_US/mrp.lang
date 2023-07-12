@@ -113,3 +113,4 @@ MoChildGenerate=Generate Child Mo
 ParentMo=MO Parent
 MOChild=MO Child
 BomCantAddChildBom=The nomenclature %s is already present in the tree leading to the nomenclature %s
+BOMNetNeeds = BOM Net Needs
