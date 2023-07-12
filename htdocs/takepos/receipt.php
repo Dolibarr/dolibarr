@@ -135,7 +135,7 @@ if ($object->statut == Facture::STATUS_DRAFT) {
 } else {
 	print $object->ref;
 }
-if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
+if (!empty($conf->global->TAKEPOS_SHOW_CUSTOMER)) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
 		if ($object->socid > 0) {
@@ -145,6 +145,9 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 		}
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
+}
+if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
+	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 ?>
 </p>
