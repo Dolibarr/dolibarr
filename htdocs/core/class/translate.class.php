@@ -172,7 +172,6 @@ class Translate
 	{
 		$loaded = 0;
 		foreach ($domains as $domain) {
-			$this->load($domain);
 			$result = $this->load($domain);
 			if ($result > 0) {
 				$loaded = $result;
