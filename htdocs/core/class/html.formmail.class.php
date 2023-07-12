@@ -808,7 +808,7 @@ class FormMail extends Form
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
 
 							if ($conf->entity > 1) {
-								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
+								$relativepathtofile = str_replace('/'.$conf->entity.'/', '/', $relativepathtofile);
 							}
 							// Try to extract data from full path
 							$formfile_params = array();
