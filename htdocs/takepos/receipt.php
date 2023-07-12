@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
- * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2023 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
- * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
+ * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,6 +233,7 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 		}
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
+	// Loop on each VAT group
 	foreach ($vat_groups as $key => $val) {
 		?>
 	<tr>
@@ -249,6 +250,23 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></td>
+</tr>
+<?php }
+
+// Now show local taxes if company uses them
+
+if ($mysoc->useLocalTax(1) || price2num($object->total_localtax1, 'MU')) { ?>
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></td>
+</tr>
+<?php } ?>
+<?php if ($mysoc->useLocalTax(2) || price2num($object->total_localtax2, 'MU')) { ?>
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
 <?php } ?>
