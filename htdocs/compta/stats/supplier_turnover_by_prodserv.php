@@ -377,7 +377,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '</td></tr>';
 
 	// Array header
-	print "<tr class=\"liste_titre\">";
+	print '<tr class="liste_titre">';
 	print_liste_field_titre(
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],

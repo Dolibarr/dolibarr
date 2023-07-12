@@ -77,7 +77,6 @@ class ActionsCardProduct
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
@@ -112,7 +111,7 @@ class ActionsCardProduct
 		$this->tpl['status'] = $this->object->getLibStatut(2);
 
 		// Note
-		$this->tpl['note'] = nl2br($this->object->note_private);
+		$this->tpl['note'] = $this->object->note_private;
 
 		if ($action == 'create') {
 			// Price
@@ -169,7 +168,7 @@ class ActionsCardProduct
 			$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
 			$this->tpl['description'] = $this->object->description;
-			$this->tpl['note'] = $this->object->note;
+			$this->tpl['note'] = $this->object->note_private;
 
 			// Finished
 			$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));

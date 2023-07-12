@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -130,7 +130,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 		$origin_id = $object->$typeobject->id;
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -735,12 +735,14 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('Reception'), 'Reception');
+$title = $object->ref.' - '.$langs->trans('Reception');
+
+llxHeader('', $title, 'Reception');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -800,7 +802,7 @@ if ($action == 'create') {
 
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">';
-			if ($origin == 'supplierorder' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order"))) {
+			if ($origin == 'supplierorder' && isModEnabled("supplier_order")) {
 				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectsrc->id.'">'.img_object($langs->trans("ShowOrder"), 'order').' '.$objectsrc->ref;
 			}
 			if ($origin == 'propal' && isModEnabled("propal")) {
@@ -827,7 +829,7 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($objectsrc->fk_project)) {
 					$projectid = $objectsrc->fk_project;
@@ -1060,10 +1062,10 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
-				if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+				if (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 					print '<td>'.$langs->trans("BuyingPrice").'</td>';
 				}
-				if (empty($conf->productbatch->enabled)) {
+				if (isModEnabled('productbatch')) {
 					print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
 					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
 				}
@@ -1073,10 +1075,10 @@ if ($action == 'create') {
 				}
 				if (isModEnabled('productbatch')) {
 					print '<td class="left">'.$langs->trans("batch_number").'</td>';
-					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+					if (!getDolGlobalInt('PRODUCT_DISABLE_SELLBY')) {
 						print '<td class="left">'.$langs->trans("SellByDate").'</td>';
 					}
-					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+					if (!getDolGlobalInt('PRODUCT_DISABLE_EATBY')) {
 						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
 					}
 				}
@@ -1206,10 +1208,12 @@ if ($action == 'create') {
 
 
 				$warehouseObject = null;
-				if (isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+				if (isModEnabled('stock')) {
+					// If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 					print '<!-- Case warehouse already known or product not a predefined product -->';
-
-					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
+					if (array_key_exists($dispatchLines[$indiceAsked]['ent'], $product->stock_warehouse)) {
+						$stock = +$product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
+					}
 					$deliverableQty = $dispatchLines[$indiceAsked]['qty'];
 					$cost_price = $dispatchLines[$indiceAsked]['pu'];
 
@@ -1405,7 +1409,7 @@ if ($action == 'create') {
 			$objectsrc = new Propal($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
-		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order"))) {
+		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 			$objectsrc = new CommandeFournisseur($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
@@ -1420,7 +1424,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
 			if (0) {    // Do not change on reception
@@ -1689,7 +1693,7 @@ if ($action == 'create') {
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">';
 		}
-		print '<br>';
+		print '<br><br>';
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder centpercent">';
@@ -1787,13 +1791,13 @@ if ($action == 'create') {
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
 			$sql .= ", ed.rowid as receptionline_id, ed.qty, ed.fk_reception as reception_id,  ed.fk_entrepot";
 			$sql .= ", e.rowid as reception_id, e.ref as reception_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_reception";
-			//if ($conf->delivery_note->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
+			//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
 			$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."reception as e";
 			$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-			//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
+			//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
@@ -1895,6 +1899,8 @@ if ($action == 'create') {
 			// Qty in other receptions (with reception and warehouse used)
 			if ($origin && $origin_id > 0) {
 				print '<td class="center nowrap linecolqtyinotherreceptions">';
+				$htmltooltip = '';
+				$qtyalreadyreceived = 0;
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					foreach ($alreadysent as $key => $val) {
 						if ($lines[$i]->fk_commandefourndet == $key) {
@@ -1906,24 +1912,30 @@ if ($action == 'create') {
 
 								$j++;
 								if ($j > 1) {
-									print '<br>';
+									$htmltooltip .= '<br>';
 								}
 								$reception_static->fetch($receptionline_var['reception_id']);
-								print $reception_static->getNomUrl(1);
-								print ' - '.$receptionline_var['qty'];
+								$htmltooltip .= $reception_static->getNomUrl(1, 0, 0, 0, 1);
+								$htmltooltip .= ' - '.$receptionline_var['qty'];
 
 								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
 								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
 									$warehousestatic->fetch($receptionline_var['warehouse']);
 									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 								}
-								print ' '.$form->textwithpicto('', $htmltext, 1);
+								$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);
+
+								$qtyalreadyreceived += $receptionline_var['qty'];
+							}
+							if ($j) {
+								$htmltooltip = $langs->trans("QtyInOtherReceptions").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
 							}
 						}
 					}
 				}
+				print $form->textwithpicto($qtyalreadyreceived, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
+				print '</td>';
 			}
-			print '</td>';
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
 				// edit mode
@@ -1938,7 +1950,7 @@ if ($action == 'create') {
 						print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 						// Batch number managment
 						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
-							print '<td class="nowraponall"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
+							print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print $langs->trans('SellByDate').' : ';
 								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
@@ -2004,16 +2016,8 @@ if ($action == 'create') {
 								}
 								$detail = $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $batchinfo);
 							}
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-								$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
-							}
-							$detail .= '<br>';
-
-							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $detail);
-						} else {
-							print $langs->trans("NA");
 						}
-						print '</td>';
+						print $detail . '</td>';
 					} else {
 						print '<td></td>';
 					}
@@ -2040,9 +2044,10 @@ if ($action == 'create') {
 
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print '<td class="center" colspan="2" valign="middle">';
-				print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
-				print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
+				print '<td class="center valignmiddle" colspan="2">';
+				print '<input type="submit" class="button small button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
+				print '<input type="submit" class="button small button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
+				print '</td>';
 			} elseif ($object->statut == Reception::STATUS_DRAFT) {
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
@@ -2066,7 +2071,10 @@ if ($action == 'create') {
 			// Display lines extrafields
 			$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
 			if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
-				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
+				$colspan = 8;
+				if (isModEnabled('stock')) { $colspan++; }
+				if (isModEnabled('productbatch')) { $colspan++; }
+
 				$line = new CommandeFournisseurDispatch($db);
 				$line->id = $lines[$i]->id;
 				$line->fetch_optionals();
@@ -2138,8 +2146,8 @@ if ($action == 'create') {
 			}
 
 			// Create bill
-			if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED)) {
-				if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
+			if (isModEnabled("supplier_invoice") && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED)) {
+				if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {
 					// TODO show button only   if (!empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
 					// If we do that, we must also make this option official.
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
@@ -2152,7 +2160,7 @@ if ($action == 'create') {
 				if ($user->rights->reception->creer && $object->statut > 0 && !$object->billed) {
 					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on receptions instead of orders
-					if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					if (isModEnabled("supplier_order") && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}

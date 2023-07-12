@@ -123,10 +123,10 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
 	padding-right: 5px;
 }
-div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	display: none;
 }
 
@@ -290,7 +290,7 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -396,15 +396,15 @@ a.dropdown-item {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover span::before, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover span::before, .dropdown-item:focus, .dropdown-item:focus span::before {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
 /*
-* SEARCH
-*/
+ * SEARCH
+ */
 
 .dropdown-search-input {
 	width: 100%;
@@ -436,9 +436,30 @@ a.dropdown-item {
 	display: none !important;
 }
 
+.search-dropdown-body {
+	padding: unset;
+}
+
+.global-search-item {
+	font-size: 1em;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.global-search-item:before {
+	content: none;
+}
+
+.global-search-header {
+	color: #444 !important;
+}
+
+
+
 /*
  * QUICK ADD
  */
+
 #topmenu-quickadd-dropdown .dropdown-menu {
 	width: 310px !important;
 	color: #444;
@@ -449,6 +470,7 @@ a.dropdown-item {
 }
 
 .quickadd-item {
+	font-size: 1em;
 	padding-top: 6px;
 	padding-bottom: 6px;
 }
@@ -500,6 +522,43 @@ div.quickaddblock:active,
 div.quickaddblock:focus {
 	background: <?php print $colorbacklinepair1; ?>;
 }
+
+
+/* for the dropdown on action buttons */
+dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:10px;	/* will be set with js */
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>
+}
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #000 !important;
+}
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	text-decoration: underline;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
+
 
 /* smartphone */
 @media only screen and (max-width: 767px)

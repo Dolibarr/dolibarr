@@ -206,7 +206,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 $triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
-if (!empty($object->id)) $trackid = 'tic'.$object->id;
+if (!empty($object->dao->id)) $trackid = 'tic'.$object->dao->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -217,6 +217,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 $form = new Form($db);
 $formticket = new FormTicket($db);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ticketpublicview', 'globalcard'));
 
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
 	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
@@ -229,7 +232,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div class="ticketpublicarea">';
+print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
 	if ($display_ticket) {
@@ -328,9 +331,14 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</td></tr>';
 
 		// Progression
-		print '<tr><td>'.$langs->trans("Progression").'</td><td>';
-		print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
-		print '</td></tr>';
+		if (!empty($conf->global->TICKET_SHOW_PROGRESSION)) {
+			print '<tr><td>'.$langs->trans("Progression").'</td><td>';
+			print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
+			print '</td></tr>';
+		}
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 
@@ -345,7 +353,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			$formticket->action = "add_message";
 			$formticket->track_id = $object->dao->track_id;
-			$formticket->id = $object->dao->id;
+			$formticket->trackid = 'tic'.$object->dao->id;
 
 			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1',
 									   'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
@@ -390,10 +398,11 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
-	print '<div class="center opacitymedium margintoponly marginbottomonly">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
+	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
 	print '<div id="form_view_ticket">';
 	print '<form method="post" name="form_view_ticket" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
+
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticket">';
 
@@ -418,7 +427,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 print "</div>";
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
 
 llxFooter('', 'public');
 

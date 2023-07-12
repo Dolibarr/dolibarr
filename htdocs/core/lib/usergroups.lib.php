@@ -40,7 +40,7 @@ function user_prepare_head(User $object)
 
 	$canreadperms = true;
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-		$canreadperms = ($user->admin || ($user->id != $object->id && $user->rights->user->user_advance->readperms) || ($user->id == $object->id && $user->rights->user->self_advance->readperms));
+		$canreadperms = ($user->admin || ($user->id != $object->id && $user->hasRight('user', 'user_advance', 'readperms')) || ($user->id == $object->id && $user->hasRight('user', 'self_advance', 'readperms')));
 	}
 
 	$h = 0;
@@ -141,7 +141,7 @@ function user_prepare_head(User $object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'user');
 
-	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
+	if ((isModEnabled('salaries') && !empty($user->rights->salaries->read))
 		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))
 		|| (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall))
 		|| (isModEnabled('holiday') && !empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->readall))
@@ -394,7 +394,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print $langs->trans("WarningThemeForcedTo", $conf->global->MAIN_FORCETHEME);
 	}
 
-	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
+	print '<table class="nobordernopadding centpercent"><tr><td><div class="center">';
 
 	$i = 0;
 	foreach ($dirthemes as $dir) {
@@ -409,10 +409,10 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 					if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
 							&& substr($subdir, 0, 3) <> 'CVS' && !preg_match('/common|phones/i', $subdir)) {
 						// Disable not stable themes (dir ends with _exp or _dev)
-						if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) {
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
 							continue;
 						}
-						if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) {
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdir)) {
 							continue;
 						}
 
@@ -470,7 +470,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	}
 
-	//Dark mode
+	// Dark mode
 	if ($foruserprofile) {
 		//Nothing
 	} else {
@@ -527,7 +527,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
 			//print ajax_constantonoff('THEME_TOPMENU_DISABLE_IMAGE', array(), null, 0, 0, 1);
-			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, isset($conf->global->THEME_TOPMENU_DISABLE_IMAGE)?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:0);
+			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, isset($conf->global->THEME_TOPMENU_DISABLE_IMAGE)?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:0, 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth500');
 		} else {
 			$listoftopmenumodes[$conf->global->THEME_TOPMENU_DISABLE_IMAGE];
 			//print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);

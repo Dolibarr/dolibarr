@@ -40,6 +40,18 @@ if ($massaction == 'predelete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
 
+if ($massaction == 'preclonetasks') {
+	$selected = '';
+	foreach (GETPOST('toselect') as $tmpselected) {
+		$selected .= '&selected[]=' . $tmpselected;
+	}
+
+	$formquestion = array(
+		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects('', 'projectid', '', '', '', '', '', '', '', 1, 1)),
+	);
+	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected, $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
+}
+
 if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$categ = new Categorie($db);
@@ -171,8 +183,9 @@ if ($massaction == 'presend') {
 				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);	// For proposal, order, invoice, conferenceorbooth, ...
 				if (in_array($objecttmp->element, array('societe', 'conferenceorboothattendee'))) {
 					$thirdpartyid = $objecttmp->id;
-				}
-				if ($objecttmp->element == 'expensereport') {
+				} elseif ($objecttmp->element == 'contact') {
+					$thirdpartyid = $objecttmp->id;
+				} elseif ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
 				}
 				if (empty($thirdpartyid)) {
@@ -209,6 +222,10 @@ if ($massaction == 'presend') {
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+		} elseif ($objecttmp->element == 'contact') {
+			$fcontact = new Contact($db);
+			$fcontact->fetch($thirdpartyid);
+			$liste['contact'] = $fcontact->getFullName($langs)." &lt;".$fcontact->email."&gt;";
 		} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$fadherent = new Adherent($db);
 			$fadherent->fetch($objecttmp->fk_member);
@@ -240,17 +257,23 @@ if ($massaction == 'presend') {
 	} else {
 		$formmail->withtopic = 1;
 	}
-	$formmail->withfile = 1;	// $formmail->withfile = 2 to allow to upload files is not yet supported in mass action
-	// Add a checkbox "Attach also main document"
-	if (isset($withmaindocfilemail)) {
-		$formmail->withmaindocfile = $withmaindocfilemail;
-	} else {	// Do an automatic definition of $formmail->withmaindocfile
-		$formmail->withmaindocfile = 1;
-		if ($objecttmp->element != 'societe') {
-			$formmail->withfile = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
-			$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
+	if ($objecttmp->element == 'contact') {
+		$formmail->withfile = 0;
+		$formmail->withmaindocfile = 0; // Add a checkbox "Attach also main document"
+	} else {
+		$formmail->withfile = 1;    // $formmail->withfile = 2 to allow to upload files is not yet supported in mass action
+		// Add a checkbox "Attach also main document"
+		if (isset($withmaindocfilemail)) {
+			$formmail->withmaindocfile = $withmaindocfilemail;
+		} else {    // Do an automatic definition of $formmail->withmaindocfile
+			$formmail->withmaindocfile = 1;
+			if ($objecttmp->element != 'societe') {
+				$formmail->withfile = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("OnlyPDFattachmentSupported") . '</span>';
+				$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
+			}
 		}
 	}
+
 	$formmail->withbody = 1;
 	$formmail->withdeliveryreceipt = 1;
 	$formmail->withcancel = 1;
@@ -259,7 +282,7 @@ if ($massaction == 'presend') {
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 
 	$substitutionarray['__EMAIL__'] = $sendto;
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+	$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 

@@ -57,8 +57,8 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement informations
 	 *
-	 * @param 	int 	$id ID of movement
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of movement
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -104,7 +104,8 @@ class StockMovements extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".$this->db->prefix()."stock_mouvement as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement AS t LEFT JOIN ".MAIN_DB_PREFIX."stock_mouvement_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+
 		//$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
 		$sql .= ' WHERE 1 = 1';
 		// Add sql filters
@@ -161,8 +162,8 @@ class StockMovements extends DolibarrApi
 	 * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
 	 * @param int $type Optionally specify the type of movement. 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase). {@from body} {@type int}
 	 * @param string $lot Lot {@from body}
-	 * @param string $movementcode Movement code {@example INV123} {@from body}
-	 * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
+	 * @param string $movementcode Movement code {@from body}
+	 * @param string $movementlabel Movement label {@from body}
 	 * @param string $price To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
 	 * @param string $datem Date of movement {@from body} {@type date}
 	 * @param string $dlc Eat-by date. {@from body} {@type date}

@@ -379,6 +379,20 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</td>';
 	print '</tr>';
 
+	// Show progression
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowProgression").'</td>';
+	print '<td class="left">';
+	if (empty(getDolGlobalInt('TICKET_SHOW_PROGRESSION'))) {
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_SHOW_PROGRESSION">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+	} else {
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_SHOW_PROGRESSION">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+	}
+	print '</td>';
+	print '<td class="center width75">';
+	print $form->textwithpicto('', $langs->trans("TicketsShowProgressionHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
 	// Also send to main email address
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';

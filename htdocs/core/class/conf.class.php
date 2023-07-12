@@ -26,10 +26,10 @@
  *  				Config is stored into file conf.php
  */
 
-
 /**
  *  Class to stock current configuration
  */
+#[AllowDynamicProperties]
 class Conf
 {
 	/**
@@ -44,8 +44,20 @@ class Conf
 
 	//! To store properties found into database
 	public $global;
-	//! To store browser info
+	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	public $browser;
+
+	//! To store some setup of generic modules
+	public $mycompany;
+	public $admin;
+	public $medias;
+	//! To store properties of multi-company
+	public $multicompany;
+
+	//! To store module status of special module names
+	public $expedition_bon;
+	public $delivery_note;
+
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
@@ -67,6 +79,10 @@ class Conf
 	// An array to store cache results ->cache['nameofcache']=...
 	public $cache;
 
+	/**
+	 * @var int To tell header was output
+	 */
+	public $headerdone;
 
 	/**
 	 * @var string[]
@@ -78,8 +94,6 @@ class Conf
 	 */
 	public $loghandlers = array();
 
-	//! To store properties of multi-company
-	public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
 	public $entity = 1;
 	//! Used to store list of entities to use for each element
@@ -94,6 +108,24 @@ class Conf
 	public $liste_limit;
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
+
+	// TODO Remove this part.
+	public $fournisseur;
+	public $product;
+	public $service;
+	public $contrat;
+	public $actions;
+	public $agenda;
+	public $commande;
+	public $propal;
+	public $facture;
+	public $user;
+	public $adherent;
+	public $bank;
+	public $notification;
+	public $expensereport;
+	public $productbatch;
+
 
 
 	/**
@@ -133,6 +165,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array()
@@ -140,27 +173,22 @@ class Conf
 
 		// First level object that are modules.
 		// TODO Remove this part.
-		$this->syslog = new stdClass();
 		$this->multicompany = new stdClass();
-		$this->expedition_bon = new stdClass();
-		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
-		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->notification = new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 	}
 
 	/**
@@ -211,30 +239,26 @@ class Conf
 
 		// First level object
 		// TODO Remove this part.
-		$this->syslog = new stdClass();
-		$this->expedition_bon = new stdClass();
-		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
-		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->notification = new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 
 		// Common arrays
 		$this->cache = array();
-		$this->modules = array();;
+		$this->modules = array();
 		$this->modules_parts = array(
 			'css' => array(),
 			'js' => array(),
@@ -249,6 +273,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
@@ -333,11 +358,12 @@ class Conf
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+								// deprecated in php 8.2
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
 									$this->$modulename = new stdClass();
 								}
 								$this->$modulename->enabled = true;
-								$this->modules[] = $modulename; // Add this module in list of enabled modules
 							}
 						}
 					}
@@ -496,11 +522,6 @@ class Conf
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
-			// Sous module bons d'expedition
-			$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
-			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_DELIVERY) ? $this->global->MAIN_SUBMODULE_DELIVERY : 0);
-
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {
 				$this->fournisseur->commande = new stdClass();
@@ -598,7 +619,18 @@ class Conf
 				$this->global->USER_PASSWORD_GENERATED = 'standard'; // Default password generator
 			}
 			if (empty($this->global->MAIN_UMASK)) {
-				$this->global->MAIN_UMASK = '0664'; // Default mask
+				$this->global->MAIN_UMASK = '0660'; // Default mask
+			} else {
+				// We remove the execute bits on the file umask
+				$tmpumask = (octdec($this->global->MAIN_UMASK) & 0666);
+				$tmpumask = decoct($tmpumask);
+				if (!preg_match('/^0/', $tmpumask)) {
+					$tmpumask = '0'.$tmpumask;
+				}
+				if (empty($tmpumask) || $tmpumask === '0') {
+					$tmpumask = '0664';
+				}
+				$this->global->MAIN_UMASK = $tmpumask;
 			}
 
 			// conf->use_javascript_ajax
@@ -614,18 +646,19 @@ class Conf
 				unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
 			}
 
-			if (!empty($this->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
+				// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
 				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
-				if (empty($this->reception->enabled)) {
+				if (!isModEnabled('reception')) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 				}
 			}
 
@@ -688,22 +721,18 @@ class Conf
 			$this->theme = $this->global->MAIN_THEME;
 			$this->css = "/theme/".$this->theme."/style.css.php";
 
-			// conf->email_from = email pour envoi par dolibarr des mails automatiques
+			// conf->email_from = email by default to send Dolibarr automatic emails
 			$this->email_from = "robot@example.com";
 			if (!empty($this->global->MAIN_MAIL_EMAIL_FROM)) {
 				$this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
 			}
 
-			// conf->notification->email_from = email pour envoi par Dolibarr des notifications
-			$this->notification->email_from = $this->email_from;
-			if (!empty($this->global->NOTIFICATION_EMAIL_FROM)) {
-				$this->notification->email_from = $this->global->NOTIFICATION_EMAIL_FROM;
-			}
-
-			// conf->mailing->email_from = email pour envoi par Dolibarr des mailings
-			$this->mailing->email_from = $this->email_from;
-			if (!empty($this->global->MAILING_EMAIL_FROM)) {
-				$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
+			// conf->notification->email_from = email by default to send Dolibarr notifications
+			if (isModEnabled('notification')) {
+				$this->notification->email_from = $this->email_from;
+				if (!empty($this->global->NOTIFICATION_EMAIL_FROM)) {
+					$this->notification->email_from = $this->global->NOTIFICATION_EMAIL_FROM;
+				}
 			}
 
 			if (!isset($this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
@@ -783,11 +812,6 @@ class Conf
 				$this->global->USE_STRICT_CSV_RULES = 2;
 			}
 
-			// By default, option is on. Once set by user, this code is useless
-			if (!isset($this->global->ACCOUNTING_REEXPORT)) {
-				$this->global->ACCOUNTING_REEXPORT = 1;
-			}
-
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -834,57 +858,57 @@ class Conf
 			// Avoid strict errors. TODO: Replace xxx->warning_delay with a property ->warning_delay_xxx
 			if (isset($this->agenda)) {
 				$this->adherent->subscription = new stdClass();
-				$this->adherent->subscription->warning_delay = (isset($this->global->MAIN_DELAY_MEMBERS) ? $this->global->MAIN_DELAY_MEMBERS : 0) * 86400;
+				$this->adherent->subscription->warning_delay = (isset($this->global->MAIN_DELAY_MEMBERS) ? (int) $this->global->MAIN_DELAY_MEMBERS : 0) * 86400;
 			}
 			if (isset($this->agenda)) {
-				$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
+				$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? (int) $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
 			}
 			if (isset($this->projet)) {
-				$this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 86400;
+				$this->projet->warning_delay = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
 				$this->projet->task = new StdClass();
-				$this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? $this->global->MAIN_DELAY_TASKS_TODO : 7) * 86400;
+				$this->projet->task->warning_delay = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 			}
 
 			if (isset($this->commande)) {
 				$this->commande->client = new stdClass();
 				$this->commande->fournisseur = new stdClass();
-				$this->commande->client->warning_delay = (isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS) ? $this->global->MAIN_DELAY_ORDERS_TO_PROCESS : 2) * 86400;
-				$this->commande->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS) ? $this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS : 7) * 86400;
+				$this->commande->client->warning_delay = (isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS) ? (int) $this->global->MAIN_DELAY_ORDERS_TO_PROCESS : 2) * 86400;
+				$this->commande->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS) ? (int) $this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS : 7) * 86400;
 			}
 			if (isset($this->propal)) {
 				$this->propal->cloture = new stdClass();
 				$this->propal->facturation = new stdClass();
-				$this->propal->cloture->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE) ? $this->global->MAIN_DELAY_PROPALS_TO_CLOSE : 0) * 86400;
-				$this->propal->facturation->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_BILL) ? $this->global->MAIN_DELAY_PROPALS_TO_BILL : 0) * 86400;
+				$this->propal->cloture->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE) ? (int) $this->global->MAIN_DELAY_PROPALS_TO_CLOSE : 0) * 86400;
+				$this->propal->facturation->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_BILL) ? (int) $this->global->MAIN_DELAY_PROPALS_TO_BILL : 0) * 86400;
 			}
 			if (isset($this->facture)) {
 				$this->facture->client = new stdClass();
 				$this->facture->fournisseur = new stdClass();
-				$this->facture->client->warning_delay = (isset($this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED) ? $this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED : 0) * 86400;
-				$this->facture->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY) ? $this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY : 0) * 86400;
+				$this->facture->client->warning_delay = (isset($this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED) ? (int) $this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED : 0) * 86400;
+				$this->facture->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY) ? (int) $this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY : 0) * 86400;
 			}
 			if (isset($this->contrat)) {
 				$this->contrat->services = new stdClass();
 				$this->contrat->services->inactifs = new stdClass();
 				$this->contrat->services->expires = new stdClass();
-				$this->contrat->services->inactifs->warning_delay = (isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES) ? $this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES : 0) * 86400;
-				$this->contrat->services->expires->warning_delay = (isset($this->global->MAIN_DELAY_RUNNING_SERVICES) ? $this->global->MAIN_DELAY_RUNNING_SERVICES : 0) * 86400;
+				$this->contrat->services->inactifs->warning_delay = (isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES) ? (int) $this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES : 0) * 86400;
+				$this->contrat->services->expires->warning_delay = (isset($this->global->MAIN_DELAY_RUNNING_SERVICES) ? (int) $this->global->MAIN_DELAY_RUNNING_SERVICES : 0) * 86400;
 			}
 			if (isset($this->commande)) {
 				$this->bank->rappro	= new stdClass();
 				$this->bank->cheque	= new stdClass();
-				$this->bank->rappro->warning_delay = (isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE) ? $this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE : 0) * 86400;
-				$this->bank->cheque->warning_delay = (isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT) ? $this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT : 0) * 86400;
+				$this->bank->rappro->warning_delay = (isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE) ? (int) $this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE : 0) * 86400;
+				$this->bank->cheque->warning_delay = (isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT) ? (int) $this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT : 0) * 86400;
 			}
 			if (isset($this->expensereport)) {
 				$this->expensereport->approve = new stdClass();
-				$this->expensereport->approve->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS) ? $this->global->MAIN_DELAY_EXPENSEREPORTS : 0) * 86400;
+				$this->expensereport->approve->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS) ? (int) $this->global->MAIN_DELAY_EXPENSEREPORTS : 0) * 86400;
 				$this->expensereport->payment = new stdClass();
-				$this->expensereport->payment->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY) ? $this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY : 0) * 86400;
+				$this->expensereport->payment->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY) ? (int) $this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY : 0) * 86400;
 			}
 			if (isset($this->holiday)) {
 				$this->holiday->approve = new stdClass();
-				$this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? $this->global->MAIN_DELAY_HOLIDAYS : 0) * 86400;
+				$this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? (int) $this->global->MAIN_DELAY_HOLIDAYS : 0) * 86400;
 			}
 
 			if (!empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT)) {
@@ -923,13 +947,17 @@ class Conf
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some sensitive values)
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
 			if (!isset($this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
 				$this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
+			}
+
+			if (!isset($this->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
@@ -1005,7 +1033,7 @@ class Conf
 				}
 			}
 
-			if (!empty($this->syslog->enabled)) {
+			if (isModEnabled('syslog')) {
 				// We init log handlers
 				if (!empty($this->global->SYSLOG_HANDLERS)) {
 					$handlers = json_decode($this->global->SYSLOG_HANDLERS);

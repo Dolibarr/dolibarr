@@ -481,7 +481,7 @@ if ($action == 'edit') {
 print '</td></tr>';
 
 // Description
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
@@ -526,7 +526,7 @@ print '</td></tr>';
 print '<tr><td>';
 print $langs->trans("Author").'</td><td>';
 if ($object->fk_user_creat) {
-	print $userstatic->getLoginUrl(1);
+	print $userstatic->getLoginUrl(-1);
 } else {
 	print dol_htmlentities($object->nom_admin);
 }

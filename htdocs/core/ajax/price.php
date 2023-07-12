@@ -40,6 +40,10 @@ $output		= GETPOST('output', 'alpha');
 $amount		= price2num(GETPOST('amount', 'alpha'));
 $tva_tx		= str_replace('*', '', GETPOST('tva_tx', 'alpha'));
 
+// Security check
+// None. This is a formatting only component.
+
+
 /*
  * View
  */

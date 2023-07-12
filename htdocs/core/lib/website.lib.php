@@ -122,7 +122,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')', LOG_DEBUG);
 	//if ($contenttype == 'html') { print $content;exit; }
 
-	// Replace php code. Note $content may come from database and does not contains body tags.
+	// Replace php code. Note $content may come from database and does not contain body tags.
 	$replacewith = '...php...';
 	if ($removephppart) {
 		$replacewith = '';
@@ -427,6 +427,40 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	print $content;
 }
 
+/**
+ * Increase the website counter of page access.
+ *
+ * @param   int		$websiteid			ID of website
+ * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
+ * @param	int		$websitepageid		ID of page
+ * @return  int							<0 if KO, >0 if OK
+ */
+function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
+{
+	if (!getDolGlobalInt('WEBSITE_PERF_DISABLE_COUNTERS')) {
+		//dol_syslog("dolWebsiteIncrementCounter websiteid=".$websiteid." websitepagetype=".$websitepagetype." websitepageid=".$websitepageid);
+		if (in_array($websitepagetype, array('blogpost', 'page'))) {
+			global $db;
+
+			$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
+
+			$sql = "UPDATE ".$db->prefix()."website SET ";
+			$sql .= " pageviews_total = pageviews_total + 1,";
+			$sql .= " pageviews_month = pageviews_month + 1,";
+			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
+			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
+			$sql .= " WHERE rowid = ".((int) $websiteid);
+			$resql = $db->query($sql);
+			if (! $resql) {
+				return -1;
+			}
+		}
+	}
+
+	return 1;
+}
+
 
 /**
  * Format img tags to introduce viewimage on img src.
@@ -602,7 +636,7 @@ function getStructuredData($type, $data = array())
 
 	if ($type == 'software') {
 		$ret = '<!-- Add structured data for entry in a software annuary -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
@@ -630,7 +664,7 @@ function getStructuredData($type, $data = array())
 		$url = $mysoc->url;
 
 		$ret = '<!-- Add structured data for organization -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
@@ -682,7 +716,7 @@ function getStructuredData($type, $data = array())
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
 			$ret = '<!-- Add structured data for blog post -->'."\n";
-			$ret .= '<script type="application/ld+json">'."\n";
+			$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 			$ret .= '{
 				  "@context": "https://schema.org",
 				  "@type": "NewsArticle",
@@ -730,7 +764,7 @@ function getStructuredData($type, $data = array())
 		}
 	} elseif ($type == 'product') {
 		$ret = '<!-- Add structured data for product -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "Product",
@@ -765,7 +799,7 @@ function getStructuredData($type, $data = array())
 		$ret .= '</script>'."\n";
 	} elseif ($type == 'qa') {
 		$ret = '<!-- Add structured data for QA -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "QAPage",
@@ -888,7 +922,7 @@ function getSocialNetworkSharingLinks()
 		// Twitter
 		$out .= '<div class="dol-social-share-tw">'."\n";
 		$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-		$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+		$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
 		$out .= '</div>'."\n";
 
 		// Reddit
@@ -901,7 +935,7 @@ function getSocialNetworkSharingLinks()
 		// Facebook
 		$out .= '<div class="dol-social-share-fbl">'."\n";
 		$out .= '<div id="fb-root"></div>'."\n";
-		$out .= '<script>(function(d, s, id) {
+		$out .= '<script nonce="'.getNonce().'">(function(d, s, id) {
 				  var js, fjs = d.getElementsByTagName(s)[0];
 				  if (d.getElementById(id)) return;
 				  js = d.createElement(s); js.id = id;
@@ -1180,9 +1214,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$fp = fopen($filetosave, "w");
 					fputs($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
-					}
+					dolChmod($filetosave);
 				}
 			}
 		}
@@ -1251,9 +1283,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$fp = fopen($filetosave, "w");
 					fputs($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
-					}
+					dolChmod($filetosave);
 				}
 			}
 		}

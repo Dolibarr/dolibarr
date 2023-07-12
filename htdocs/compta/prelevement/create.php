@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,6 +75,8 @@ if ($type == 'bank-transfer') {
 
 $error = 0;
 $option = "";
+$mesg = '';
+
 
 /*
  * Actions
@@ -94,7 +96,7 @@ if (empty($reshook)) {
 	// Change customer bank information to withdraw
 	if ($action == 'modify') {
 		for ($i = 1; $i < 9; $i++) {
-			dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, GETPOST("nom".$i), GETPOST("value".$i), 'chaine', 0, '', $conf->entity);
 		}
 	}
 	if ($action == 'create') {
@@ -102,7 +104,7 @@ if (empty($reshook)) {
 
 		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
 
-		if ($id_bankaccount != $conf->global->$default_account) {
+		if ($id_bankaccount != getDolGlobalInt($default_account)) {
 			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
 		}
 
@@ -124,8 +126,8 @@ if (empty($reshook)) {
 		$bprev = new BonPrelevement($db);
 
 		if (!$error) {
-			// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
-			$result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
+			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
+			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type);
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
@@ -217,13 +219,13 @@ if ($type == 'bank-transfer') {
 }
 
 print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
-print '<td>';
-print $nb;
+print '<td class="nowraponall">';
+print dol_escape_htmltag($nb);
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountTotal").'</td>';
-print '<td class="amount">';
-print price($pricetowithdraw);
+print '<td class="amount nowraponall">';
+print price($pricetowithdraw, 0, $langs, 1, -1, -1, $conf->currency);
 print '</td>';
 print '</tr>';
 
@@ -245,20 +247,20 @@ if ($nb) {
 		if ($type == 'bank-transfer') {
 			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
-		print $title;
+		print '<span class="hideonsmartphone">'.$title.'</span>';
 		print img_picto('', 'bank_account');
 
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
-		print $form->select_comptes($conf->global->$default_account, 'id_bankaccount', 0, "courant=1", 0, '', 0, '', 1);
-		print ' - ';
+		print $form->select_comptes(getDolGlobalInt($default_account), 'id_bankaccount', 0, "courant=1", 0, '', 0, 'widthcentpercentminusx maxwidth300', 1);
+		print ' &nbsp; &nbsp; ';
 
 		if (empty($executiondate)) {
 			$delayindays = 0;
 			if ($type != 'bank-transfer') {
-				$delayindays = $conf->global->PRELEVEMENT_ADDDAYS;
+				$delayindays = getDolGlobalInt('PRELEVEMENT_ADDDAYS');
 			} else {
-				$delayindays = $conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
+				$delayindays = getDolGlobalInt('PAYMENTBYBANKTRANSFER_ADDDAYS');
 			}
 
 			$executiondate = dol_time_plus_duree(dol_now(), $delayindays, 'd');
@@ -281,14 +283,14 @@ if ($nb) {
 				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
-			print '<input type="submit" class="butAction" value="'.$title.'"/>';
+			print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'"/>';
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
 			print '<input type="hidden" name="format" value="ALL">'."\n";
-			print '<input type="submit" class="butAction" value="'.$title.'">'."\n";
+			print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'">'."\n";
 		}
 	} else {
 		if ($mysoc->isInEEC()) {
@@ -296,18 +298,18 @@ if ($nb) {
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
 			}
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
 
 			if ($type != 'bank-transfer') {
 				$title = $langs->trans("CreateForSepaRCUR");
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+				print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
 			}
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
-			print '<a class="butActionRefused classfortooltip" href="#">'.$title."</a>\n";
+			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#">'.$title."</a>\n";
 		}
 	}
 } else {
@@ -317,7 +319,9 @@ if ($nb) {
 		$titlefortab = $langs->transnoentitiesnoconv("PaymentByBankTransfers");
 		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 	}
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">'.$title."</a>\n";
+	print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">';
+	print $title;
+	print "</a>\n";
 }
 
 print "</form>\n";
@@ -332,6 +336,9 @@ print '<br>';
  */
 
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
+if ($type == 'bank-transfer') {
+	$sql .= " f.ref_supplier,";
+}
 $sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount";
 if ($type == 'bank-transfer') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
@@ -359,7 +366,7 @@ if ($socid > 0) {
 }
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {
@@ -378,7 +385,7 @@ if ($resql) {
 
 	$param = '';
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($socid) {
 		$param .= '&socid='.urlencode($socid);
@@ -408,9 +415,13 @@ if ($resql) {
 		$tradinvoice = "SupplierInvoice";
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
+	if ($type == 'bank-transfer') {
+		print '<td>'.$langs->trans("RefSupplier").'</td>';
+	}
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td>'.$langs->trans("RIB").'</td>';
 	print '<td>'.$langs->trans("RUM").'</td>';
@@ -427,20 +438,28 @@ if ($resql) {
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
 
-			$bac = new CompanyBankAccount($db);
+			$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
 			$bac->fetch(0, $obj->socid);
+
+			$invoicestatic->id = $obj->rowid;
+			$invoicestatic->ref = $obj->ref;
+			$invoicestatic->ref_supplier = $obj->ref_supplier;
 
 			print '<tr class="oddeven">';
 
 			// Ref invoice
-			print '<td>';
-			$invoicestatic->id = $obj->rowid;
-			$invoicestatic->ref = $obj->ref;
+			print '<td class="tdoverflowmax150">';
 			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
 
+			if ($type == 'bank-transfer') {
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($invoicestatic->ref_supplier).'">';
+				print dol_escape_htmltag($invoicestatic->ref_supplier);
+				print '</td>';
+			}
+
 			// Thirdparty
-			print '<td>';
+			print '<td class="tdoverflowmax100">';
 			$thirdpartystatic->fetch($obj->socid);
 			print $thirdpartystatic->getNomUrl(1, 'ban');
 			print '</td>';
@@ -501,6 +520,8 @@ if ($resql) {
 		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
+	print "</div>";
+
 	print "</form>";
 	print "<br>\n";
 } else {

@@ -90,8 +90,8 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
@@ -305,12 +305,37 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		}
 	}
 
-	if ($prodcomb->update($user) > 0) {
+	$error = 0;
+	$db->begin();
+
+	// Update product variant ref
+	$product_child = new Product($db);
+	$product_child->fetch($prodcomb->fk_product_child);
+	$product_child->oldcopy = clone $product_child;
+	$product_child->ref = $reference;
+
+	$result = $product_child->update($product_child->id, $user);
+	if ($result < 0) {
+		setEventMessages($product_child->error, $product_child->errors, 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		// Update product variant infos
+		$result = $prodcomb->update($user);
+		if ($result < 0) {
+			setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		$db->commit();
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+		header('Location: ' . dol_buildpath('/variants/combinations.php?id=' . $id, 2));
 		exit();
 	} else {
-		setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+		$db->rollback();
 	}
 }
 
@@ -339,6 +364,9 @@ if ($action === 'confirm_deletecombination') {
 		exit();
 	}
 
+	$product_child = new Product($db);
+	$product_child->fetch($prodcomb->fk_product_child);
+	$reference = $product_child->ref;
 	$weight_impact = $prodcomb->variation_weight;
 	$price_impact = $prodcomb->variation_price;
 	$price_impact_percent = $prodcomb->variation_price_percentage;
@@ -377,7 +405,7 @@ llxHeader("", $title);
 
 
 if (!empty($id) || !empty($ref)) {
-	$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+	$showbarcode = isModEnabled('barcode');
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 		$showbarcode = 0;
 	}
@@ -463,7 +491,7 @@ if (!empty($id) || !empty($ref)) {
 	print "</table>\n";
 
 	print '</div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -511,7 +539,7 @@ if (!empty($id) || !empty($ref)) {
 
 		<script type="text/javascript">
 
-			variants_available = <?php echo json_encode($prodattr_alljson); ?>;
+			variants_available = <?php echo json_encode($prodattr_alljson, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
 			variants_selected = {
 				index: [],
 				info: []

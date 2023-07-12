@@ -54,7 +54,7 @@ abstract class ModeleNumRefChequeReceipts
 	/**
 	 *	Return the default description of numbering module
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -146,8 +146,6 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'chequereceipt';
 		$list = array();
 

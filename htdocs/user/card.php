@@ -13,7 +13,7 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
 if (isModEnabled('adherent')) {
@@ -73,6 +73,10 @@ $confirm	= GETPOST('confirm', 'alpha');
 $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
+
+if (empty($id)) {
+	$id = $user->id;
+}
 
 $dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 $dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
@@ -352,7 +356,7 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = "create"; // Go back to create page
 				} else {
-					if (!empty($conf->categorie->enabled)) {
+					if (isModEnabled("categorie")) {
 						// Categories association
 						$usercats = GETPOST('usercats', 'array');
 						$object->setCategories($usercats);
@@ -379,6 +383,7 @@ if (empty($reshook)) {
 			$editgroup->oldcopy = clone $editgroup;
 
 			$object->fetch($id);
+
 			if ($action == 'addgroup') {
 				$result = $object->SetInGroup($group, $editgroup->entity);
 			}
@@ -534,6 +539,13 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
+					$passwordismodified = 0;
+					if (!empty($object->pass)) {
+						if ($object->pass != $object->pass_indatabase && !dol_verifyHash($object->pass, $object->pass_indatabase_crypted)) {
+							$passwordismodified = 1;
+						}
+					}
+
 					$ret = $object->update($user);		// This may include call to setPassword if password has changed
 					if ($ret < 0) {
 						$error++;
@@ -561,7 +573,7 @@ if (empty($reshook)) {
 							$sql .= ", fk_soc=".((int) $contact->socid);
 						} elseif ($socid > 0) {
 							$sql .= ", fk_soc = null";
-							setEventMessages($langs->trans("WarningUserDifferentContactSocid"), '', 'warnings'); // Add message if post socid != $contact->socid
+							setEventMessages($langs->trans("WarningUserDifferentContactSocid"), null, 'warnings'); // Add message if post socid != $contact->socid
 						}
 						$sql .= " WHERE rowid = ".((int) $object->id);
 					} elseif ($socid > 0) {
@@ -627,6 +639,13 @@ if (empty($reshook)) {
 						$error++;
 						$langs->load("errors");
 						setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
+					}
+					if ($passwordismodified && $object->login == $user->login) {    // Current user has changed its password
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->transnoentitiesnoconv("WarningYourPasswordWasModifiedPleaseLogin"), null, 'warnings');
+						header("Location: ".DOL_URL_ROOT.'/user/card.php?id='.$object->id);
+						exit;
 					}
 				} else {
 					$db->rollback();
@@ -774,7 +793,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "<br>";
 
 
-	if (!empty($conf->ldap->enabled) && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR)) {
+	if (isModEnabled('ldap') && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR)) {
 		// Show form to add an account from LDAP if sync LDAP -> Dolibarr is set
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
@@ -877,7 +896,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<input type="hidden" id="lastname" name="lastname" value="'.dol_escape_htmltag($ldap_lastname).'">';
 		print $ldap_lastname;
 	} else {
-		print '<input class="minwidth100 maxwidth150onsmartphone" type="text" id="lastname" name="lastname" value="'.dol_escape_htmltag(GETPOST('lastname', 'alphanohtml')).'">';
+		print '<input class="minwidth100 maxwidth150onsmartphone createloginauto" type="text" id="lastname" name="lastname" value="'.dol_escape_htmltag(GETPOST('lastname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -888,7 +907,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<input type="hidden" name="firstname" value="'.dol_escape_htmltag($ldap_firstname).'">';
 		print $ldap_firstname;
 	} else {
-		print '<input class="minwidth100 maxwidth150onsmartphone" type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST('firstname', 'alphanohtml')).'">';
+		print '<input id="firstname" class="minwidth100 maxwidth150onsmartphone createloginauto" type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST('firstname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -902,9 +921,27 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<input type="hidden" name="login" value="'.dol_escape_htmltag($ldap_loginsmb).'">';
 		print $ldap_loginsmb;
 	} else {
-		print '<input class="maxwidth200 maxwidth150onsmartphone" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alphanohtml')).'">';
+		print '<input id="login" class="maxwidth200 maxwidth150onsmartphone" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
+
+	if (!empty($conf->use_javascript_ajax)) {
+		print '<script>
+			jQuery(document).ready(function() {
+				$(".createloginauto").on("change", function(){
+					lastname = $("#lastname").val();
+					firstname = $("#firstname").val();
+					if($(this).attr("id") == "firstname"){
+						firstname = firstname.toLowerCase();
+						firstname = firstname[0];
+					}
+					lastname = lastname.toLowerCase();
+					console.log("We create a login from firstname and lastname");
+					$("#login").val(firstname+lastname);
+				})
+			});
+		</script>';
+	}
 
 	$generated_password = '';
 	if (empty($ldap_sid)) {    // ldap_sid is for activedirectory
@@ -1030,13 +1067,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (preg_match('/http/', $dolibarr_main_authentication)) {
 		$valuetoshow .= ($valuetoshow ? ' + ' : '').$langs->trans("HTTPBasicPassword");
 	}
-	if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
+	if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
 		if (!empty($ldap_pass)) {	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
 			$valuetoshow .= ($valuetoshow ? ' + ' : '').'<input type="hidden" name="password" value="'.dol_escape_htmltag($ldap_pass).'">'; // Dolibarr password is preffiled with LDAP known password
 			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
 		} else {
 			// We do not use a field password but a field text to show new password to use.
-			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxsize="32" type="text" id="password" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password">';
+			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="password" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password">';
 			if (!empty($conf->use_javascript_ajax)) {
 				$valuetoshow .= '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_password" class="linkobject"');
 			}
@@ -1055,12 +1092,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $valuetoshow;
 	print '</td></tr>';
 
-	if (!empty($conf->api->enabled)) {
+	if (isModEnabled('api')) {
 		// API key
 		//$generated_password = getRandomPassword(false);
 		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 		print '<td>';
-		print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxsize="32" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
+		print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
 		if (!empty($conf->use_javascript_ajax)) {
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
 		}
@@ -1279,8 +1316,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<input class="maxwidth200 maxwidth150onsmartphone" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
-	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($id, $childids))
-		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+	if ((isModEnabled('salaries') && $user->hasRight("salaries", "read") && in_array($id, $childids))
+		|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
 		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 		$langs->load("salaries");
 
@@ -1364,7 +1401,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
-		if (!empty($conf->ldap->enabled) && !empty($object->ldap_sid)) {
+		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 			$ldap = new Ldap();
 			$result = $ldap->connect_bind();
 			if ($result > 0) {
@@ -1454,9 +1491,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
-			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
-			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener" rel="noopener">';
+			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
+
+			$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+			$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 			dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -1528,7 +1568,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$huser = new User($db);
 				if ($object->fk_user > 0) {
 					$huser->fetch($object->fk_user);
-					print $huser->getNomUrl(1);
+					print $huser->getNomUrl(-1);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 				}
@@ -1546,7 +1586,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (!empty($object->fk_user_expense_validator)) {
 					$evuser = new User($db);
 					$evuser->fetch($object->fk_user_expense_validator);
-					print $evuser->getNomUrl(1);
+					print $evuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -1562,7 +1602,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (!empty($object->fk_user_holiday_validator)) {
 					$hvuser = new User($db);
 					$hvuser->fetch($object->fk_user_holiday_validator);
-					print $hvuser->getNomUrl(1);
+					print $hvuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -1582,7 +1622,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+				|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
 				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 				$langs->load("salaries");
 
@@ -1850,7 +1890,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
+			if (isModEnabled('api') && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {
@@ -1878,7 +1918,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</div>';
 
 			print '</div>';
-			print '<div style="clear:both"></div>';
+			print '<div class="clearboth"></div>';
 
 
 			print dol_get_fiche_end();
@@ -2049,11 +2089,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 							print '<input type="hidden" name="page_y" value="" />';
 						}
 
+						print '<!-- List of groups of the user -->'."\n";
 						print '<table class="noborder centpercent">'."\n";
 						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
 						print '<th class="liste_titre right">';
 						if ($caneditgroup) {
-							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
+							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity, false, 'maxwidth150');
 							print ' &nbsp; ';
 							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 							print '<input type="submit" class="button buttongen button-add reposition" value="'.$langs->trans("Add").'" />';
@@ -2064,7 +2105,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						if (!empty($groupslist)) {
 							foreach ($groupslist as $group) {
 								print '<tr class="oddeven">';
-								print '<td>';
+								print '<td class="tdoverflowmax150">';
 								if ($caneditgroup) {
 									print $group->getNomUrl(1);
 								} else {
@@ -2272,12 +2313,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
 			print '<td>';
 			if ($caneditfield) {
-				print img_picto('', 'user').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+				print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 			} else {
 				print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
 				$huser = new User($db);
 				$huser->fetch($object->fk_user);
-				print $huser->getNomUrl(1);
+				print $huser->getNomUrl(-1);
 			}
 			print '</td>';
 			print "</tr>\n";
@@ -2290,12 +2331,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print '<td>';
 				if ($caneditfield) {
-					print img_picto('', 'user').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
 					print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
 					$evuser = new User($db);
 					$evuser->fetch($object->fk_user_expense_validator);
-					print $evuser->getNomUrl(1);
+					print $evuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2309,12 +2350,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print '<td>';
 				if ($caneditfield) {
-					print img_picto('', 'user').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
 					print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
 					$hvuser = new User($db);
 					$hvuser->fetch($object->fk_user_holiday_validator);
-					print $hvuser->getNomUrl(1);
+					print $hvuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2404,14 +2445,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (preg_match('/http/', $dolibarr_main_authentication)) {
 				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$form->textwithpicto($text, $langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless", $dolibarr_main_authentication), 1, 'warning');
 			}
-			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
+			if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
 				if ($caneditpassword) {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
+					if (!empty($conf->use_javascript_ajax)) {
+						$valuetoshow .= '&nbsp;'.img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->trans('NoPasswordGenerationRuleConfigured') : $langs->trans('Generate')), 'refresh', 'id="generate_password" class="'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' opacitymedium' : ' linkobject').'"');
+					}
 				} else {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
 				}
 			}
-
 			// Other form for user password
 			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpassword' => $caneditpassword);
 			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2485,6 +2528,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td>';
+			print img_picto('', 'country', 'class="pictofixedwidth"');
 			if ($caneditfield) {
 				print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id), 'country_id');
 				if ($user->admin) {
@@ -2503,7 +2547,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
 				} else {
-					print $object->state_label;
+					print $object->state;
 				}
 				print '</td></tr>';
 			}
@@ -2771,7 +2815,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+				|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
 				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 					$langs->load("salaries");
 
@@ -2883,7 +2927,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</div></div>';
 		}
 
-		if (!empty($conf->ldap->enabled) && !empty($object->ldap_sid)) {
+		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 			$ldap->unbind();
 		}
 	}

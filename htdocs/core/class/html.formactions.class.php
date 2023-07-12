@@ -79,7 +79,8 @@ class FormActions
 
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n";
-			print "<script type=\"text/javascript\">
+			print '<script nonce="'.getNonce().'" type="text/javascript">';
+			print "
                 var htmlname = '".$htmlname."';
 
                 $(document).ready(function () {
@@ -115,7 +116,7 @@ class FormActions
                         $('.hideifna').show();
                     }
                     else {
-                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50) };
+                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50); }
                     	percentage.removeAttr('disabled');
                         $('.hideifna').show();
                     }
@@ -189,28 +190,14 @@ class FormActions
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
-			if ($typeelement == 'invoice') {
+			if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
 				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'propal') {
-				$title = $langs->trans('ActionsOnPropal');
 			} elseif ($typeelement == 'supplier_proposal') {
 				$title = $langs->trans('ActionsOnSupplierProposal');
-			} elseif ($typeelement == 'order') {
-				$title = $langs->trans('ActionsOnOrder');
 			} elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order') {
 				$title = $langs->trans('ActionsOnOrder');
 			} elseif ($typeelement == 'shipping') {
 				$title = $langs->trans('ActionsOnShipping');
-			} elseif ($typeelement == 'fichinter') {
-				$title = $langs->trans('ActionsOnFicheInter');
-			} elseif ($typeelement == 'project') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'task') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'member') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
 			} else {
 				$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
 			}

@@ -1,4 +1,25 @@
 <?php
+/* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/debugbar/class/DataCollector/TraceableDB.php
+ *	\brief      Class for debugbar DB
+ *	\ingroup    debugbar
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 
@@ -185,6 +206,18 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
+	 *  List tables into a database with table info
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '')
+	{
+		return $this->db->DDLListTablesFull($database, $table);
+	}
+
+	/**
 	 * Return last request executed with query()
 	 *
 	 * @return	string                    Last query
@@ -249,18 +282,6 @@ class TraceableDB extends DoliDB
 	public function escape($stringtoencode)
 	{
 		return $this->db->escape($stringtoencode);
-	}
-
-	/**
-	 * Escape a string to insert data
-	 *
-	 * @param   string $stringtoencode String to escape
-	 * @return  string                        String escaped
-	 * @deprecated
-	 */
-	public function escapeunderscore($stringtoencode)
-	{
-		return $this->db->escapeunderscore($stringtoencode);
 	}
 
 	/**

@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - withdrawals
+StandingOrderPayment=Orden de pago por débito automático
+WithdrawalsReceipts=Órdenes de domiciliación bancaria
+WithdrawalReceipt=Pedido de domiciliación bancaria
+CreditTransfer=Transferencia de crédito
+StatusPaid=Pagado

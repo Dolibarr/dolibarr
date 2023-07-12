@@ -99,7 +99,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //Parameters Page
 $param = '&id='.$object->id;
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 $paramwithsearch = $param;
 
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
 						$resultupdate = $inventoryline->update($user);
 					}
-				} else {
+				} elseif (GETPOSTISSET('id_' . $lineid)) {
 					// Delete record
 					$result = $inventoryline->fetch($lineid);
 					if ($result > 0) {
@@ -415,7 +415,6 @@ if (empty($reshook)) {
 
 
 
-
 /*
  * View
  */
@@ -494,7 +493,7 @@ $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $
 // Thirdparty
 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 // Project
-if (!empty($conf->project->enabled))
+if (isModEnabled('project'))
 {
 	$langs->load("projects");
 	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';

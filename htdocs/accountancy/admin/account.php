@@ -33,7 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('accountancy', 'admin', 'bills', 'compta', 'salaries'));
 
-$mesg = '';
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $id = GETPOST('id', 'int');
@@ -95,7 +94,7 @@ $arrayfields = array(
 	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1)
 );
 
-if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 	unset($arrayfields['categories']);
 	unset($arrayfields['aa.reconcilable']);
 }
@@ -146,7 +145,7 @@ if (empty($reshook)) {
 		$search_array_options = array();
 	}
 	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
-		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS)) {	// a submit of form is done and chartofaccounts combo has been modified
+		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
 		if ($chartofaccounts > 0 && $permissiontoadd) {
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
@@ -228,7 +227,7 @@ if ($action == 'delete') {
 	print $formconfirm;
 }
 
-$pcgver = $conf->global->CHARTOFACCOUNTS;
+$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
 $sql .= " aa.reconcilable, aa.active, aa.import_key,";
@@ -240,8 +239,8 @@ $sql .= " WHERE asy.rowid = ".((int) $pcgver);
 //print $sql;
 if (strlen(trim($search_account))) {
 	$lengthpaddingaccount = 0;
-	if ($conf->global->ACCOUNTING_LENGTH_GACCOUNT || $conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
-		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_GACCOUNT, $conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	if (getDolGlobalInt('ACCOUNTING_LENGTH_GACCOUNT') || getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')) {
+		$lengthpaddingaccount = max(getDolGlobalInt('ACCOUNTING_LENGTH_GACCOUNT'), getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT'));
 	}
 	$search_account_tmp = $search_account;
 	$weremovedsomezero = 0;
@@ -289,7 +288,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -321,7 +320,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($search_account) {
 		$param .= '&search_account='.urlencode($search_account);

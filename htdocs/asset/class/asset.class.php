@@ -157,20 +157,11 @@ class Asset extends CommonObject
 	public $status;
 	public $user_cloture_id;
 
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_asset';
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('asset_assetdet');
+	/**
+	 * @var Asset object oldcopy
+	 */
+	public $oldcopy;
+
 
 	/**
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.

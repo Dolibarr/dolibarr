@@ -125,7 +125,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			}
 		}
 
-		return $suffixinfilename ?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
+		return $suffixinfilename ? preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
 	}
 
 	/**
@@ -180,7 +180,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ?str_pad('', $this->ident, ' ') : '').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
-			@chmod($logfile, octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));
+			dolChmod($logfile);
 		}
 	}
 }

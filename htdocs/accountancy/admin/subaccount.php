@@ -19,17 +19,18 @@
 
 /**
  * \file 		htdocs/accountancy/admin/subaccount.php
- * \ingroup     Accountancy (Double entries)
- * \brief		List of accounting sub-account (auxiliary accounts)
+ * \ingroup 	Accountancy (Double entries)
+ * \brief 		List of accounting sub-account (auxiliary accounts)
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "hrm", "errors"));
+$langs->loadLangs(array("accountancy", "admin", "bills", "compta", "errors", "hrm", "salaries"));
 
 $mesg = '';
 $action = GETPOST('action', 'aZ09');
@@ -77,9 +78,10 @@ $arrayfields = array(
 	'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
 );
 
-if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 	unset($arrayfields['reconcilable']);
 }
+
 
 /*
  * Actions
@@ -120,21 +122,23 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$help_url = '';
-$title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
 
+// Page Header
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup';
+$title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
 llxHeader('', $title, $help_url);
 
+
 // Customer
-$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity";
+$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity, sa.client as nature";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
-	if ($conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
-		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	if (getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')) {
+		$lengthpaddingaccount = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	}
 	$search_subaccount_tmp = $search_subaccount;
 	$weremovedsomezero = 0;
@@ -174,14 +178,14 @@ if (!empty($search_type) && $search_type >= 0) {
 
 // Supplier
 $sql .= " UNION ";
-$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
+$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity, '0' as nature FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta_fournisseur <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
-	if ($conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
-		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	if (getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')) {
+		$lengthpaddingaccount = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	}
 	$search_subaccount_tmp = $search_subaccount;
 	$weremovedsomezero = 0;
@@ -219,16 +223,16 @@ if (!empty($search_type) && $search_type >= 0) {
 	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
 }
 
-// User
+// User - Employee
 $sql .= " UNION ";
-$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
+$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity, '0' as nature FROM ".MAIN_DB_PREFIX."user u";
 $sql .= " WHERE u.entity IN (".getEntity('user').")";
 $sql .= " AND u.accountancy_code <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
-	if ($conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
-		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	if (getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')) {
+		$lengthpaddingaccount = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	}
 	$search_subaccount_tmp = $search_subaccount;
 	$weremovedsomezero = 0;
@@ -270,7 +274,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -292,7 +296,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($search_subaccount) {
 		$param .= '&search_subaccount='.urlencode($search_subaccount);
@@ -389,7 +393,7 @@ if ($resql) {
 		// Subaccount label
 		if (!empty($arrayfields['label']['checked'])) {
 			print "<td>";
-			print $obj->label;
+			print $obj->nature == 2 ? '<span style = "color: red;"><b>'.$obj->label.' ('.$langs->trans("Prospect").')</b></span>' : $obj->label;
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -400,6 +404,7 @@ if ($resql) {
 		if (!empty($arrayfields['type']['checked'])) {
 			print '<td class="center">';
 			$s = '';
+
 			// Customer
 			if ($obj->type == 1) {
 				$s .= '<a class="customer-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">'.$langs->trans("Customer").'</a>';
@@ -407,7 +412,7 @@ if ($resql) {
 				// Supplier
 				$s .= '<a class="vendor-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 			} elseif ($obj->type == 3) {
-				// User
+				// User - Employee
 				$s .= '<a class="user-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">'.$langs->trans("Employee").'</a>';
 			}
 			print $s;
@@ -440,6 +445,7 @@ if ($resql) {
 		// Action
 		print '<td class="center">';
 		$e = '';
+
 		// Customer
 		if ($obj->type == 1) {
 			$e .= '<a class="editfielda" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&token='.newToken().'&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
@@ -447,7 +453,7 @@ if ($resql) {
 			// Supplier
 			$e .= '<a class="editfielda" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&token='.newToken().'&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		} elseif ($obj->type == 3) {
-			// User
+			// User - Employee
 			$e .= '<a class="editfielda" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		}
 		print $e;

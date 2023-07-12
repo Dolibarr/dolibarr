@@ -57,7 +57,7 @@ class mod_task_universal extends ModeleNumRefTask
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -83,7 +83,7 @@ class mod_task_universal extends ModeleNumRefTask
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masktask" value="'.$conf->global->PROJECT_TASK_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masktask" value="'.getDolGlobalString('PROJECT_TASK_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -128,7 +128,7 @@ class mod_task_universal extends ModeleNumRefTask
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$mask = !empty($conf->global->PROJECT_TASK_UNIVERSAL_MASK) ? $conf->global->PROJECT_TASK_UNIVERSAL_MASK : '';
+		$mask = getDolGlobalString('PROJECT_TASK_UNIVERSAL_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

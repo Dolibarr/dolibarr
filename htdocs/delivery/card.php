@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (!empty($conf->expedition_bon->enabled)) {
+if (isModEnabled('expedition')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('stock')) {
@@ -104,9 +104,10 @@ if ($action == 'add') {
 	$object->commande_id   = GETPOST("commande_id", 'int');
 	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
 
-	if (!$conf->expedition_bon->enabled && isModEnabled('stock')) {
-		$expedition->entrepot_id = GETPOST('entrepot_id', 'int');
-	}
+	/* ->entrepot_id seems to not exists
+	if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
+		$object->entrepot_id = GETPOST('entrepot_id', 'int');
+	}*/
 
 	// We loop on each line of order to complete object delivery with qty to delivery
 	$commande = new Commande($db);
@@ -441,7 +442,7 @@ if ($action == 'create') {
 			// Incoterms
 			if (isModEnabled('incoterm')) {
 				print '<tr><td>';
-				print '<table width="100%" class="nobordernopadding"><tr><td>';
+				print '<table class="centpercent nobordernopadding"><tr><td>';
 				print $langs->trans('IncotermLabel');
 				print '<td><td class="right">';
 				if ($user->rights->expedition->delivery->creer) {
@@ -464,13 +465,13 @@ if ($action == 'create') {
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			print nl2br($object->note_public);
+			print dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_public));
 			print "</td></tr>";
 
 			// Note Private
 			print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 			print '<td colspan="3">';
-			print nl2br($object->note_private);
+			print dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private));
 			print "</td></tr>";
 			*/
 
@@ -479,10 +480,11 @@ if ($action == 'create') {
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
 			print '</tr>';*/
 
-			if (!$conf->expedition_bon->enabled && isModEnabled('stock')) {
+
+			if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
 				// Entrepot
 				$entrepot = new Entrepot($db);
-				$entrepot->fetch($object->entrepot_id);
+				$entrepot->fetch($expedition->entrepot_id);
 				print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
 				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->label.'</a></td>';
 				print '</tr>';
@@ -647,7 +649,7 @@ if ($action == 'create') {
 				}
 
 				if ($user->rights->expedition->delivery->supprimer) {
-					if ($conf->expedition_bon->enabled) {
+					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
 					} else {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id, '');

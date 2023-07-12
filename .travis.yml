@@ -36,10 +36,10 @@ jobs:
   include:
     - stage: PHP 7.0-8.1
       if: type = push
-      php: '7.0'
+      php: '7.1'
       env: 
       - DB=postgresql
-      - TRAVIS_PHP_VERSION=7.0
+      - TRAVIS_PHP_VERSION=7.1
     - stage: PHP 7.0-8.1
       if: type = pull_request OR type = push
       php: '8.1'
@@ -75,8 +75,8 @@ before_install:
 - |
   echo Install packages for PHP
   sudo apt-get install -y pgloader memcached
-  if [ "$TRAVIS_PHP_VERSION" = '7.0' ]; then
-  	sudo apt install unzip apache2 php7.0 php7.0-cli php7.0-curl php7.0-mysql php7.0-pgsql php7.0-gd php7.0-imap php7.0-intl php7.0-ldap php7.0-xml php7.0-mbstring php7.0-xml php7.0-zip libapache2-mod-php7.0
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
+  	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
   	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
@@ -106,8 +106,8 @@ before_install:
 
 install:
 - |
-  if [ "$TRAVIS_PHP_VERSION" = '7.0' ]; then
-    sudo update-alternatives --set php /usr/bin/php7.0
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
+    sudo update-alternatives --set php /usr/bin/php7.1
   fi 
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
     sudo update-alternatives --set php /usr/bin/php8.1
@@ -129,7 +129,7 @@ install:
 - |
   echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
   echo "(composer version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
-  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
     sudo composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7.5 \
                         php-parallel-lint/php-parallel-lint ^1 \
@@ -245,8 +245,8 @@ before_script:
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
 
-      echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-      echo '\d llx_c_country' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+      #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+      #echo '\d llx_c_country' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
 
       # Create pgsql compatibility functions
       psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis' < htdocs/install/pgsql/functions/functions.sql
@@ -431,6 +431,9 @@ script:
     php upgrade.php 16.0.0 17.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade16001700.log
     php upgrade2.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-2.log
     php step5.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-3.log
+    php upgrade.php 17.0.0 18.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade17001800.log
+    php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
+    php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
 
     #show table content and log
     #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
@@ -451,6 +454,7 @@ script:
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
+    php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector >> $TRAVIS_BUILD_DIR/enablemodule.log
     echo $?
     cd -
     set +e

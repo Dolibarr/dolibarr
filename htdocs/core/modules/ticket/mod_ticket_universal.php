@@ -55,7 +55,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return string      Texte descripif
+	 *  @return string      Descriptive text
 	 */
 	public function info()
 	{

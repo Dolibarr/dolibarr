@@ -6,8 +6,8 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 | Version    | Supported              |
 | ---------- | ---------------------- |
-| <= 16.0.2  | :x:                    |
-| >= 16.0.3  | :white_check_mark:     |
+| <= 17.0.0  | :x:                    |
+| >= 17.0.1  | :white_check_mark:     |
 | >= develop | :white_check_mark:     |
 
 ## Reporting a Vulnerability
@@ -53,32 +53,33 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
 * The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 into backoffice menu Home - Setup - Other (this protection should be set to 3 soon by default)
-* The module DebugBar and ModuleBuilder must NOT be enabled (by default, these modules are not enabled. They are developer tools)
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles into "experimental", "developement" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so that only the documents directory is in write mode. The root directory called htdocs must be read-only.
 * CSRF attacks are accepted but double check that you have set MAIN_SECURITY_CSRF_WITH_TOKEN to value 3.
+* The modules DebugBar and ModuleBuilder must NOT be enabled. (by default, these modules are not enabled. They are developer tools)
 * Ability for a high level user to edit web site pages into the CMS by including HTML or Javascript is an expected feature. Vulnerabilities into the website module are validated only if HTML or Javascript injection can be done by a non allowed user.
+* Fail2ban rules for rate limit on the login page,password forgotten page and all public pages (/public/*) must be installed as recommendend into the section "About - Admin tools - Section Access limits and mitigation".
 
 Scope is the web application (back office) and the APIs.
 
-## Qualifying vulnerabilities for reporting
+## Examples of vulnerabilities that are Qualified for reporting.
 
 * Remote code execution (RCE)
 * Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
-* Code injections (HTML, JS, SQL, PHP, ...)
+* Code injections (JS, SQL, PHP). HTML are covered only for fields that are not description, notes or comments fields (where rich content is allowed on purpose).
 * Cross-Site Scripting (XSS), except from setup page of module "External web site" (allowing any content here, editable by admin user only, is accepted on purpose) and except into module "Web site" when permission to edit website content is allowed (injecting any data in this case is allowed too).
 * Cross-Site Requests Forgery (CSRF) with real security impact (when using GET URLs, CSRF are qualified only for creating, updating or deleting data from pages restricted to admin users)
 * Open redirect
 * Broken authentication & session management
-* Insecure direct object references
-* CORS with real security impact
+* Insecure direct object references (IDOR)
+* Cross-Origin Resource Sharing (CORS) with real security impact
 * Horizontal and vertical privilege escalation
 * "HTTP Host Header" XSS
 * Software version disclosure (for non admin users only)
 * Stack traces or path disclosure (for non admin users only)
 
-## Non-qualifying vulnerabilities for reporting
+## Examples of vulnerabilities that are Non-qualified for reporting.
 
 * "Self" XSS
 * SSL/TLS best practices
@@ -92,6 +93,7 @@ Scope is the web application (back office) and the APIs.
 * Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Reports on features flagged as "experimental" or "development"
-* Software version or private IP disclosure when logged user is admin
-* Stack traces or path disclosure when logged user is admin
+* Software version or private IP disclosure when logged-in user is admin
+* Stack traces or path disclosure when logged-in user is admin
 * Any vulnerabilities due to a configuration different than the one defined into chapter "Scope for qualified vulnerabilities".
+* Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the fail2ban recommended fail2ban rules were not installed.  

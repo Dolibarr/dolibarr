@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,7 @@ if (! defined("NOSESSION")) {
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/website.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/website2.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/website/class/website.class.php';
 
 
@@ -61,6 +63,10 @@ if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
+
+	if (empty($user->rights->website)) {
+		$user->rights->website = new stdClass();
+	}
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -83,11 +89,12 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return SecurityTest
+	 * @param 	string	$name		Name
+	 * @return WebsiteTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -167,10 +174,10 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 
 		$s = "123') OR 1=1-- \' xxx";
 		/*
-		var_dump($s);
-		var_dump($db->escapeforlike($s));
-		var_dump($db->escape($db->escapeforlike($s)));
-		*/
+		 var_dump($s);
+		 var_dump($db->escapeforlike($s));
+		 var_dump($db->escape($db->escapeforlike($s)));
+		 */
 
 		$res = getPagesFromSearchCriterias('page,blogpost', 'meta,content', $s, 2, 'date_creation', 'DESC', 'en');
 		//var_dump($res);
@@ -195,5 +202,28 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 		$s = "abc\n<?PHP echo 'def'\n// comment\n ?>ghi";
 		$result = dolStripPhpCode($s);
 		$this->assertEquals("abc\n<span phptag></span>ghi", $result);
+	}
+
+	/**
+	 * testCheckPHPCode
+	 *
+	 * @return	void
+	 */
+	public function testCheckPHPCode()
+	{
+		global $user;
+
+		// Force permission so this is not the permission that will affect result of checkPHPCode
+		$user->rights->website->writephp = 1;
+
+		$s = '<?php exec("eee"); ?>';
+		$result = checkPHPCode('', $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$s = '<?php $_="{"; $_=($_^"<").($_^">;").($_^"/"); ?><?=${\'_\'.$_}["_"](${\'_\'.$_}["__"]);?>';
+		$result = checkPHPCode('', $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 	}
 }

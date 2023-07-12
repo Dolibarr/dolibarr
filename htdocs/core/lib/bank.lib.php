@@ -360,7 +360,7 @@ function checkBanForAccount($account)
 
 		for ($i = 0, $s = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
-			$s += (0 + (int) $code) * $coef[$i];
+			$s += ((int) $code) * $coef[$i];
 		}
 		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
 		$cle_rib = 97 - ($s % 97);

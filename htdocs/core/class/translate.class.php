@@ -41,6 +41,9 @@ class Translate
 	public $cache_labels = array(); // Cache for labels return by getLabelFromKey method
 	public $cache_currencies = array(); // Cache to store currency symbols
 	private $cache_currencies_all_loaded = false;
+	public $origlang;
+	public $error;
+	public $errors = array();
 
 
 	/**
@@ -266,7 +269,7 @@ class Translate
 				// Enable caching of lang file in memory (not by default)
 				$usecachekey = '';
 				// Using a memcached server
-				if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
+				if (isModEnabled('memcached') && !empty($conf->global->MEMCACHED_SERVER)) {
 					$usecachekey = $newdomain.'_'.$langofdir.'_'.md5($file_lang); // Should not contains special chars
 				} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 					// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
@@ -416,7 +419,7 @@ class Translate
 	 *
 	 *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 *
-	 *  @param  Database    $db             Database handler
+	 *  @param  DoliDB    $db             Database handler
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadFromDatabase($db)
@@ -456,7 +459,7 @@ class Translate
 		// Enable caching of lang file in memory (not by default)
 		$usecachekey = '';
 		// Using a memcached server
-		if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
+		if (isModEnabled('memcached') && !empty($conf->global->MEMCACHED_SERVER)) {
 			$usecachekey = $newdomain.'_'.$langofdir; // Should not contains special chars
 		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
@@ -783,6 +786,7 @@ class Translate
 		}
 		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1') {
 			$str = utf8_decode(str_replace('€', chr(128), $str));
+			// TODO Replace with iconv("UTF-8", "ISO-8859-1", str_replace('€', chr(128), $str)); ?
 		}
 		return $str;
 	}
@@ -932,8 +936,10 @@ class Translate
 			$fonc = 'numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php')) {
 				include_once $newdir.'/functions_'.$fonc.'.lib.php';
-				$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
-				break;
+				if (function_exists('numberwords_getLabelFromNumber')) {
+					$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
+					break;
+				}
 			}
 		}
 
@@ -1044,7 +1050,7 @@ class Translate
 
 			if (isset($this->cache_currencies[$currency_code]) && !empty($this->cache_currencies[$currency_code]['unicode']) && is_array($this->cache_currencies[$currency_code]['unicode'])) {
 				foreach ($this->cache_currencies[$currency_code]['unicode'] as $unicode) {
-					$currency_sign .= mb_convert_encoding("&#{$unicode};", "UTF-8", 'HTML-ENTITIES');
+					$currency_sign .= mb_convert_encoding("&#".$unicode.";", "UTF-8", 'HTML-ENTITIES');
 				}
 			}
 		}

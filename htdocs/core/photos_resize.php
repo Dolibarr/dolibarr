@@ -51,7 +51,7 @@ if (empty($modulepart)) {
 $accessallowed = 0;
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	$result = restrictedArea($user, 'produit|service', $id, 'product&product');
-	if ($modulepart == 'produit|service' && (!$user->rights->produit->lire && !$user->rights->service->lire)) {
+	if ($modulepart == 'produit|service' && (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire'))) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -600,7 +600,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 /* Check that mandatory fields are filled */
-print '<script type="text/javascript">
+print '<script nonce="'.getNonce().'" type="text/javascript">
 jQuery(document).ready(function() {
 	$("#submitcrop").click(function(e) {
         console.log("We click on submitcrop");

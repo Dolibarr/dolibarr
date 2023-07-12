@@ -26,6 +26,7 @@
  *	\brief      Page to show a receipt.
  */
 
+// Includes
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
@@ -57,7 +58,7 @@ $facid = GETPOST('facid', 'int');
 $action = GETPOST('action', 'aZ09');
 $gift = GETPOST('gift', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -287,42 +288,57 @@ if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" 
 	echo '</td></tr>';
 }
 
-if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
-	$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
-	$sql .= " cp.code";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-	$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
-	$sql .= " ORDER BY p.datep";
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num) {
-			$row = $db->fetch_object($resql);
-			echo '<tr>';
-			echo '<td class="right">';
-			echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
-			echo '</td>';
-			echo '<td class="right">';
-			$amount_payment = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
-			if ($row->code == "LIQ") {
-				$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
-			}
-			echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
-			echo '</td>';
-			echo '</tr>';
-			if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
+if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
+	if (empty($facid)) {
+		// Case of specimen
+		echo '<tr>';
+		echo '<td class="right">';
+		echo $langs->transnoentitiesnoconv("PaymentTypeShortLIQ");
+		echo '</td>';
+		echo '<td class="right">';
+		$amount_payment = 0;
+		echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
+		echo '</td>';
+		echo '</tr>';
+	} else {
+		$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+		$sql .= " cp.code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+		$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
+		$sql .= " ORDER BY p.datep";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num) {
+				$row = $db->fetch_object($resql);
 				echo '<tr>';
 				echo '<td class="right">';
-				echo $langs->trans("Change");
+				echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 				echo '</td>';
 				echo '<td class="right">';
-				echo price($row->pos_change, 1, '', 1, - 1, - 1, $conf->currency);
+				$amount_payment = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+				if ($row->code == "LIQ") {
+					$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+				}
+				echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
 				echo '</td>';
 				echo '</tr>';
+				if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
+					echo '<tr>';
+					echo '<td class="right">';
+					echo $langs->trans("Change");
+					echo '</td>';
+					echo '<td class="right">';
+					echo price($row->pos_change, 1, '', 1, - 1, - 1, $conf->currency);
+					echo '</td>';
+					echo '</tr>';
+				}
+				$i++;
 			}
-			$i++;
 		}
 	}
 }

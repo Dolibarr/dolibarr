@@ -118,23 +118,30 @@ if ($resql) {
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
 
+		print '<td>';
 		print $ligne->LibStatut($row[2], 1);
 		//print $st[$row[2]];
-		print '</td><td align="center">';
+		print '</td>';
+
+		print '<td align="center">';
 		print $row[1];
+		print '</td>';
 
-		print '</td><td class="right">';
+		print '<td class="right">';
 		print round($row[1] / $nbtotal * 100, 2)." %";
+		print '</td>';
 
-		print '</td><td class="right">';
-
+		print '<td class="right amount">';
 		print price($row[0]);
+		print '</td>';
 
-		print '</td><td class="right">';
+		print '<td class="right">';
 		print round($row[0] / $total * 100, 2)." %";
-		print '</td></tr>';
+		print '</td>';
+
+		print '</tr>';
 
 		$i++;
 	}

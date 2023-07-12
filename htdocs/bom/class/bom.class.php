@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +18,14 @@
  */
 
 /**
- * \file        bom/class/bom.class.php
+ * \file        htdocs/bom/class/bom.class.php
  * \ingroup     bom
  * \brief       This file is a CRUD class file for BOM (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
@@ -35,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class BOM extends CommonObject
 {
+
+	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'bom';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -152,6 +160,10 @@ class BOM extends CommonObject
 	 */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_valid
+	 */
+	public $date_valid;
 
 	public $tms;
 
@@ -164,6 +176,16 @@ class BOM extends CommonObject
 	 * @var int Id User modifying
 	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_user_valid;
+
+	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_warehouse;
 
 	/**
 	 * @var string import key
@@ -180,6 +202,7 @@ class BOM extends CommonObject
 	 */
 	public $fk_product;
 	public $qty;
+	public $duration;
 	public $efficiency;
 	// END MODULEBUILDER PROPERTIES
 
@@ -225,7 +248,6 @@ class BOM extends CommonObject
 	 * @var int		Calculated cost for 1 unit of the product in BOM
 	 */
 	public $unit_cost = 0;
-
 
 
 	/**
@@ -569,10 +591,11 @@ class BOM extends CommonObject
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
 	 * @param	string	$fk_unit				Unit
-	 * @param	array		$array_options		extrafields array
+	 * @param	array	$array_options			extrafields array
+	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								<0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0)
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0, $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -627,33 +650,34 @@ class BOM extends CommonObject
 			}
 
 			// Insert line
-			$this->line = new BOMLine($this->db);
+			$line = new BOMLine($this->db);
 
-			$this->line->context = $this->context;
+			$line->context = $this->context;
 
-			$this->line->fk_bom = $this->id;
-			$this->line->fk_product = $fk_product;
-			$this->line->qty = $qty;
-			$this->line->qty_frozen = $qty_frozen;
-			$this->line->disable_stock_change = $disable_stock_change;
-			$this->line->efficiency = $efficiency;
-			$this->line->fk_bom_child = $fk_bom_child;
-			$this->line->import_key = $import_key;
-			$this->line->position = $rankToUse;
-			$this->line->fk_unit = $fk_unit;
+			$line->fk_bom = $this->id;
+			$line->fk_product = $fk_product;
+			$line->qty = $qty;
+			$line->qty_frozen = $qty_frozen;
+			$line->disable_stock_change = $disable_stock_change;
+			$line->efficiency = $efficiency;
+			$line->fk_bom_child = $fk_bom_child;
+			$line->import_key = $import_key;
+			$line->position = $rankToUse;
+			$line->fk_unit = $fk_unit;
+			$line->fk_default_workstation = $fk_default_workstation;
 
 			if (is_array($array_options) && count($array_options) > 0) {
-				$this->line->array_options = $array_options;
+				$line->array_options = $array_options;
 			}
 
-			$result = $this->line->create($user);
+			$result = $line->create($user);
 
 			if ($result > 0) {
 				$this->calculateCosts();
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $this->line->error;
+				$this->setErrorsFromObject($line);
 				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -722,8 +746,7 @@ class BOM extends CommonObject
 
 			$staticLine = clone $line;
 			$line->oldcopy = $staticLine;
-			$this->line = $line;
-			$this->line->context = $this->context;
+			$line->context = $this->context;
 
 			// Rank to use
 			$rankToUse = (int) $position;
@@ -741,32 +764,32 @@ class BOM extends CommonObject
 			}
 
 
-			$this->line->fk_bom = $this->id;
-			$this->line->qty = $qty;
-			$this->line->qty_frozen = $qty_frozen;
-			$this->line->disable_stock_change = $disable_stock_change;
-			$this->line->efficiency = $efficiency;
-			$this->line->import_key = $import_key;
-			$this->line->position = $rankToUse;
+			$line->fk_bom = $this->id;
+			$line->qty = $qty;
+			$line->qty_frozen = $qty_frozen;
+			$line->disable_stock_change = $disable_stock_change;
+			$line->efficiency = $efficiency;
+			$line->import_key = $import_key;
+			$line->position = $rankToUse;
 			if (!empty($fk_unit)) {
-				$this->line->fk_unit = $fk_unit;
+				$line->fk_unit = $fk_unit;
 			}
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
 				foreach ($array_options as $key => $value) {
-					$this->line->array_options[$key] = $array_options[$key];
+					$line->array_options[$key] = $array_options[$key];
 				}
 			}
 
-			$result = $this->line->update($user);
+			$result = $line->update($user);
 
 			if ($result > 0) {
 				$this->calculateCosts();
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $this->line->error;
+				$this->setErrorsFromObject($line);
 				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -801,10 +824,9 @@ class BOM extends CommonObject
 
 		$staticLine = clone $line;
 		$line->oldcopy = $staticLine;
-		$this->line = $line;
-		$this->line->context = $this->context;
+		$line->context = $this->context;
 
-		$result = $this->line->delete($user, $notrigger);
+		$result = $line->delete($user, $notrigger);
 
 		//Positions (rank) reordering
 		foreach ($this->lines as $bl) {
@@ -819,7 +841,7 @@ class BOM extends CommonObject
 			$this->db->commit();
 			return $result;
 		} else {
-			$this->error = $this->line->error;
+			$this->setErrorsFromObject($line);
 			dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
@@ -1065,6 +1087,43 @@ class BOM extends CommonObject
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'BOM_REOPEN');
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->loadLangs(['product', 'mrp']);
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowBillOfMaterials")];
+		}
+		$picto = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
+		if (isset($this->status)) {
+			$picto .= ' '.$this->getLibStatut(5);
+		}
+		$datas['picto'] = $picto;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->label)) {
+			$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		}
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$product = new Product($this->db);
+			$resultFetch = $product->fetch($this->fk_product);
+			if ($resultFetch > 0) {
+				$datas['product'] = "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
+			}
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -1085,25 +1144,20 @@ class BOM extends CommonObject
 		}
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->label)) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		}
-		if (!empty($this->fk_product) && $this->fk_product > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			$product = new Product($db);
-			$resultFetch = $product->fetch($this->fk_product);
-			if ($resultFetch > 0) {
-				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
-			}
-		}
-
 
 		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
 
@@ -1124,8 +1178,8 @@ class BOM extends CommonObject
 				$label = $langs->trans("ShowBillOfMaterials");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1136,7 +1190,7 @@ class BOM extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1333,7 +1387,7 @@ class BOM extends CommonObject
 	 * BOM costs calculation based on cost_price or pmp of each BOM line.
 	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
-	 * @return void
+	 * @return int			<0 if KO, >0 if OK
 	 */
 	public function calculateCosts()
 	{
@@ -1434,6 +1488,8 @@ class BOM extends CommonObject
 				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
+
+		return 1;
 	}
 
 	/**
@@ -1535,6 +1591,51 @@ class BOM extends CommonObject
 			}
 		}
 	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $db,$langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$prod = new Product($db);
+		$prod->fetch($this->fk_product);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : '').'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'fields') && !empty($this->fields['bomtype']['arrayofkeyval'])) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Type").' : </span>';
+			if ($this->bomtype == 0) {
+				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][0].'</span>';
+			} else {
+				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][1].'</span>';
+			}
+		}
+		if (property_exists($this, 'fk_product') && !is_null($this->fk_product)) {
+			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+		}
+
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }
 
 
@@ -1605,6 +1706,7 @@ class BOMLine extends CommonObjectLine
 		'fk_unit' => array('type'=>'integer', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'position'=>120, 'notnull'=>-1,),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
+		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>1050)
 	);
 
 	/**
@@ -1666,6 +1768,12 @@ class BOMLine extends CommonObjectLine
 	 * @var Bom     array of Bom in line
 	 */
 	public $childBom = array();
+
+	/**
+	 * @var int Service Workstation
+	 */
+	public $fk_default_workstation;
+
 
 
 	/**

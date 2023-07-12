@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUs
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Resources.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Defaults.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
-use \Luracast\Restler\iAuthenticate;
-use \Luracast\Restler\iUseAuthentication;
-use \Luracast\Restler\Resources;
-use \Luracast\Restler\Defaults;
-use \Luracast\Restler\RestException;
+use Luracast\Restler\iAuthenticate;
+use Luracast\Restler\iUseAuthentication;
+use Luracast\Restler\Resources;
+use Luracast\Restler\Defaults;
+use Luracast\Restler\RestException;
 
 /**
  * Dolibarr API access class
@@ -106,6 +106,9 @@ class DolibarrApiAccess implements iAuthenticate
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommanded)
 		}
+		if (preg_match('/^dolcrypt:/i', $api_key)) {
+			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
+		}
 
 		if ($api_key) {
 			$userentity = 0;
@@ -145,15 +148,38 @@ class DolibarrApiAccess implements iAuthenticate
 			if (!$login) {
 				throw new RestException(503, 'Error when searching login user from api key');
 			}
+
+
+			$genericmessageerroruser = 'Error user not valid (not found or bad status or bad validity dates) (conf->entity='.$conf->entity.')';
+
 			$fuser = new User($this->db);
 			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
 			if ($result <= 0) {
-				throw new RestException(503, 'Error when fetching user :'.$fuser->error.' (conf->entity='.$conf->entity.')');
-			}
-			if ($fuser->statut == 0) {
-				throw new RestException(503, 'Error when fetching user. This user has been locked or disabled');
+				throw new RestException(503, $genericmessageerroruser);
 			}
 
+			// Check if user status is enabled
+			if ($fuser->statut != $fuser::STATUS_ENABLED) {
+				// Status is disabled
+				dol_syslog("The user has been disabled");
+				throw new RestException(503, $genericmessageerroruser);
+			}
+
+			// Check if session was unvalidated by a password change
+			if (($fuser->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $fuser->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
+				// Session is no more valid
+				dol_syslog("The user has a date for session invalidation = ".$fuser->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+				throw new RestException(503, $genericmessageerroruser);
+			}
+
+			// Check date validity
+			if ($fuser->isNotIntoValidityDateRange()) {
+				// User validity dates are no more valid
+				dol_syslog("The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], curren date is ".dol_now());
+				throw new RestException(503, $genericmessageerroruser);
+			}
+
+			// User seems valid
 			$fuser->getrights();
 
 			// Set the property $user to the $user of API

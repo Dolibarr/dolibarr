@@ -46,6 +46,13 @@ function reception_prepare_head(Reception $object)
 	$head[$h][2] = 'reception';
 	$h++;
 
+	if ($object->statut ==  Reception::STATUS_DRAFT) {
+		$head[$h][0] = DOL_URL_ROOT."/reception/dispatch.php?id=".$object->id;
+		$head[$h][1] = $langs->trans("ReceptionDistribution");
+		$head[$h][2] = 'dispatch';
+		$h++;
+	}
+
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$objectsrc = $object;
 		if ($object->origin == 'supplier_order' && $object->origin_id > 0) {

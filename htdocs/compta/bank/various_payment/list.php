@@ -29,6 +29,7 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -45,6 +46,8 @@ if ($user->socid) {
 }
 
 $optioncss = GETPOST('optioncss', 'alpha');
+$mode      = GETPOST('mode', 'alpha');
+$massaction = GETPOST('massaction', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
@@ -83,9 +86,10 @@ $search_type_id = GETPOST('search_type_id', 'int');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}	 // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -172,6 +176,14 @@ $result = restrictedArea($user, 'banque', '', '', '');
  * Actions
  */
 
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -181,6 +193,23 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		foreach ($object->fields as $key => $val) {
+			$search[$key] = '';
+			if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
+				$search[$key.'_dtstart'] = '';
+				$search[$key.'_dtend'] = '';
+			}
+		}
+		$toselect = array();
+		$search_array_options = array();
+	}
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
+		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
+			$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+	}
 }
 
 /*
@@ -268,7 +297,7 @@ if ($search_all) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -280,7 +309,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -294,282 +323,340 @@ if ($limit) {
 }
 
 $resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
 
-	// Direct jump if only one record found
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
-		$obj = $db->fetch_object($resql);
-		$id = $obj->rowid;
-		header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$id);
-		exit;
-	}
+$num = $db->num_rows($resql);
 
-	// must be place behind the last "header(...)" call
-	llxHeader('', $langs->trans("VariousPayments"));
+// Direct jump if only one record found
+if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+	$obj = $db->fetch_object($resql);
+	$id = $obj->rowid;
+	header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$id);
+	exit;
+}
 
-	$i = 0;
-	$total = 0;
+// must be place behind the last "header(...)" call
+llxHeader('', $langs->trans("VariousPayments"));
 
-	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-		$param .= '&contextpage='.urlencode($contextpage);
-	}
-	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
-	}
-	if ($search_ref) {
-		$param .= '&search_ref='.urlencode($search_ref);
-	}
-	if ($search_label) {
-		$param .= '&search_label='.urlencode($search_label);
-	}
-	if ($search_datep_start) {
-		$param .= '&search_datep_start='.urlencode($search_datep_start);
-	}
-	if ($search_datep_end) {
-		$param .= '&search_datep_end='.urlencode($search_datep_end);
-	}
-	if ($search_datev_start) {
-		$param .= '&search_datev_start='.urlencode($search_datev_start);
-	}
-	if ($search_datev_end) {
-		$param .= '&search_datev_end='.urlencode($search_datev_end);
-	}
-	if ($search_type_id > 0) {
-		$param .= '&search_type_id='.urlencode($search_type_id);
-	}
-	if ($search_amount_deb) {
-		$param .= '&search_amount_deb='.urlencode($search_amount_deb);
-	}
-	if ($search_amount_cred) {
-		$param .= '&search_amount_cred='.urlencode($search_amount_cred);
-	}
-	if ($search_bank_account > 0) {
-		$param .= '&search_account='.urlencode($search_bank_account);
-	}
-	if ($search_accountancy_account > 0) {
-		$param .= '&search_accountancy_account='.urlencode($search_accountancy_account);
-	}
-	if ($search_accountancy_subledger > 0) {
-		$param .= '&search_accountancy_subledger='.urlencode($search_accountancy_subledger);
-	}
-	if ($optioncss != '') {
-		$param .= '&optioncss='.urlencode($optioncss);
-	}
+$i = 0;
+$total = 0;
 
-	$url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
-	if (!empty($socid)) {
-		$url .= '&socid='.urlencode($socid);
+$param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.((int) $limit);
+}
+if ($search_ref) {
+	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_label) {
+	$param .= '&search_label='.urlencode($search_label);
+}
+if ($search_datep_start) {
+	$param .= '&search_datep_start='.urlencode($search_datep_start);
+}
+if ($search_datep_end) {
+	$param .= '&search_datep_end='.urlencode($search_datep_end);
+}
+if ($search_datev_start) {
+	$param .= '&search_datev_start='.urlencode($search_datev_start);
+}
+if ($search_datev_end) {
+	$param .= '&search_datev_end='.urlencode($search_datev_end);
+}
+if ($search_type_id > 0) {
+	$param .= '&search_type_id='.urlencode($search_type_id);
+}
+if ($search_amount_deb) {
+	$param .= '&search_amount_deb='.urlencode($search_amount_deb);
+}
+if ($search_amount_cred) {
+	$param .= '&search_amount_cred='.urlencode($search_amount_cred);
+}
+if ($search_bank_account > 0) {
+	$param .= '&search_account='.urlencode($search_bank_account);
+}
+if ($search_accountancy_account > 0) {
+	$param .= '&search_accountancy_account='.urlencode($search_accountancy_account);
+}
+if ($search_accountancy_subledger > 0) {
+	$param .= '&search_accountancy_subledger='.urlencode($search_accountancy_subledger);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+
+$url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
+if (!empty($socid)) {
+	$url .= '&socid='.urlencode($socid);
+}
+$newcardbutton  = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->modifier);
+
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+
+print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+if ($search_all) {
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->modifier);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+}
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$moreforfilter= '';
 
-	if ($optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
 
-	print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print '<tr class="liste_titre">';
 
-	if ($search_all) {
-		foreach ($fieldstosearchall as $key => $val) {
-			$fieldstosearchall[$key] = $langs->trans($val);
-		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
-	}
-
-	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-	$moreforfilter= '';
-
-	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
-
-	print '<tr class="liste_titre">';
-
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-		print '<td class="liste_titre">';
-		print '</td>';
-	}
-
-	// Ref
-	if ($arrayfields['ref']['checked']) {
-		print '<td class="liste_titre left">';
-		print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
-		print '</td>';
-	}
-
-	// Label
-	if ($arrayfields['label']['checked']) {
-		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
-		print '</td>';
-	}
-
-	// Payment date
-	if ($arrayfields['datep']['checked']) {
-		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
-		print $form->selectDate($search_datep_start ? $search_datep_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-		print '</div>';
-		print '<div class="nowrap">';
-		print $form->selectDate($search_datep_end ? $search_datep_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-		print '</div>';
-		print '</td>';
-	}
-
-	// Value date
-	if ($arrayfields['datev']['checked']) {
-		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
-		print $form->selectDate($search_datev_start ? $search_datev_start : -1, 'search_date_value_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-		print '</div>';
-		print '<div class="nowrap">';
-		print $form->selectDate($search_datev_end ? $search_datev_end : -1, 'search_date_value_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-		print '</div>';
-		print '</td>';
-	}
-
-	// Payment type
-	if ($arrayfields['type']['checked']) {
-		print '<td class="liste_titre center">';
-		print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth100', 1);
-		print '</td>';
-	}
-
-	// Project
-	if ($arrayfields['project']['checked']) {
-		print '<td class="liste_titre">';
-		// TODO
-		print '</td>';
-	}
-
-	// Bank account
-	if ($arrayfields['bank']['checked']) {
-		print '<td class="liste_titre">';
-		$form->select_comptes($search_bank_account, 'search_account', 0, '', 1, '', 0, 'maxwidth100');
-		print '</td>';
-	}
-
-	// Bank entry
-	if ($arrayfields['entry']['checked']) {
-		print '<td class="liste_titre left">';
-		print '<input name="search_bank_entry" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_bank_entry).'">';
-		print '</td>';
-	}
-
-	// Accounting account
-	if ($arrayfields['account']['checked']) {
-		print '<td class="liste_titre">';
-		print '<div class="nowrap">';
-		print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array(), 1, 1, 'maxwidth200');
-		print '</div>';
-		print '</td>';
-	}
-
-	// Subledger account
-	if ($arrayfields['subledger']['checked']) {
-		print '<td class="liste_titre">';
-		print '<div class="nowrap">';
-		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth200');
-		print '</div>';
-		print '</td>';
-	}
-
-	// Debit
-	if ($arrayfields['debit']['checked']) {
-		print '<td class="liste_titre right">';
-		print '<input name="search_amount_deb" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_amount_deb).'">';
-		print '</td>';
-	}
-
-	// Credit
-	if ($arrayfields['credit']['checked']) {
-		print '<td class="liste_titre right">';
-		print '<input name="search_amount_cred" class="flat maxwidth50" type="text" size="8" value="'.dol_escape_htmltag($search_amount_cred).'">';
-		print '</td>';
-	}
-
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
+}
 
-	print '</tr>';
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+
+// Ref
+if ($arrayfields['ref']['checked']) {
+	print '<td class="liste_titre left">';
+	print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '</td>';
+}
+
+// Label
+if ($arrayfields['label']['checked']) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
+	print '</td>';
+}
+
+// Payment date
+if ($arrayfields['datep']['checked']) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_datep_start ? $search_datep_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_datep_end ? $search_datep_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
+}
+
+// Value date
+if ($arrayfields['datev']['checked']) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_datev_start ? $search_datev_start : -1, 'search_date_value_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_datev_end ? $search_datev_end : -1, 'search_date_value_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
+}
+
+// Payment type
+if ($arrayfields['type']['checked']) {
+	print '<td class="liste_titre center">';
+	print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth100', 1);
+	print '</td>';
+}
+
+// Project
+if ($arrayfields['project']['checked']) {
+	print '<td class="liste_titre">';
+	// TODO
+	print '</td>';
+}
+
+// Bank account
+if ($arrayfields['bank']['checked']) {
+	print '<td class="liste_titre">';
+	$form->select_comptes($search_bank_account, 'search_account', 0, '', 1, '', 0, 'maxwidth100');
+	print '</td>';
+}
+
+// Bank entry
+if ($arrayfields['entry']['checked']) {
+	print '<td class="liste_titre left">';
+	print '<input name="search_bank_entry" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_bank_entry).'">';
+	print '</td>';
+}
+
+// Accounting account
+if (!empty($arrayfields['account']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<div class="nowrap">';
+	print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array(), 1, 1, 'maxwidth200');
+	print '</div>';
+	print '</td>';
+}
+
+// Subledger account
+if (!empty($arrayfields['subledger']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<div class="nowrap">';
+	print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth200');
+	print '</div>';
+	print '</td>';
+}
+
+// Debit
+if (!empty($arrayfields['debit']['checked'])) {
+	print '<td class="liste_titre right">';
+	print '<input name="search_amount_deb" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_amount_deb).'">';
+	print '</td>';
+}
+
+// Credit
+if ($arrayfields['credit']['checked']) {
+	print '<td class="liste_titre right">';
+	print '<input name="search_amount_cred" class="flat maxwidth50" type="text" size="8" value="'.dol_escape_htmltag($search_amount_cred).'">';
+	print '</td>';
+}
+
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+}
+
+print '</tr>';
 
 
-	print '<tr class="liste_titre">';
+print '<tr class="liste_titre">';
 
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-		print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
-	}
-
-	if ($arrayfields['ref']['checked']) {
-		print_liste_field_titre($arrayfields['ref']['label'], $_SERVER["PHP_SELF"], 'v.rowid', '', $param, '', $sortfield, $sortorder);
-	}
-	if ($arrayfields['label']['checked']) {
-		print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], 'v.label', '', $param, '', $sortfield, $sortorder);
-	}
-	if ($arrayfields['datep']['checked']) {
-		print_liste_field_titre($arrayfields['datep']['label'], $_SERVER["PHP_SELF"], 'v.datep,v.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
-	}
-	if ($arrayfields['datev']['checked']) {
-		print_liste_field_titre($arrayfields['datev']['label'], $_SERVER["PHP_SELF"], 'v.datev,v.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
-	}
-	if ($arrayfields['type']['checked']) {
-		print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], 'type', '', $param, '', $sortfield, $sortorder, 'center ');
-	}
-	if ($arrayfields['project']['checked']) {
-		print_liste_field_titre($arrayfields['project']['label'], $_SERVER["PHP_SELF"], 'fk_project', '', $param, '', $sortfield, $sortorder);
-	}
-	if ($arrayfields['bank']['checked']) {
-		print_liste_field_titre($arrayfields['bank']['label'], $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
-	}
-	if ($arrayfields['entry']['checked']) {
-		print_liste_field_titre($arrayfields['entry']['label'], $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
-	}
-	if ($arrayfields['account']['checked']) {
-		print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
-	}
-	if ($arrayfields['subledger']['checked']) {
-		print_liste_field_titre($arrayfields['subledger']['label'], $_SERVER["PHP_SELF"], 'v.subledger_account', '', $param, '', $sortfield, $sortorder, 'left ');
-	}
-	if ($arrayfields['debit']['checked']) {
-		print_liste_field_titre($arrayfields['debit']['label'], $_SERVER["PHP_SELF"], 'v.amount', '', $param, '', $sortfield, $sortorder, 'right ');
-	}
-	if ($arrayfields['credit']['checked']) {
-		print_liste_field_titre($arrayfields['credit']['label'], $_SERVER["PHP_SELF"], 'v.amount', '', $param, '', $sortfield, $sortorder, 'right ');
-	}
-
-	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
-	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
-	print '</tr>';
+}
+
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+}
+
+if ($arrayfields['ref']['checked']) {
+	print_liste_field_titre($arrayfields['ref']['label'], $_SERVER["PHP_SELF"], 'v.rowid', '', $param, '', $sortfield, $sortorder);
+}
+if ($arrayfields['label']['checked']) {
+	print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], 'v.label', '', $param, '', $sortfield, $sortorder);
+}
+if ($arrayfields['datep']['checked']) {
+	print_liste_field_titre($arrayfields['datep']['label'], $_SERVER["PHP_SELF"], 'v.datep,v.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+}
+if ($arrayfields['datev']['checked']) {
+	print_liste_field_titre($arrayfields['datev']['label'], $_SERVER["PHP_SELF"], 'v.datev,v.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+}
+if ($arrayfields['type']['checked']) {
+	print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], 'type', '', $param, '', $sortfield, $sortorder, 'center ');
+}
+if ($arrayfields['project']['checked']) {
+	print_liste_field_titre($arrayfields['project']['label'], $_SERVER["PHP_SELF"], 'fk_project', '', $param, '', $sortfield, $sortorder);
+}
+if ($arrayfields['bank']['checked']) {
+	print_liste_field_titre($arrayfields['bank']['label'], $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
+}
+if ($arrayfields['entry']['checked']) {
+	print_liste_field_titre($arrayfields['entry']['label'], $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['account']['checked'])) {
+	print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
+}
+if (!empty($arrayfields['subledger']['checked'])) {
+	print_liste_field_titre($arrayfields['subledger']['label'], $_SERVER["PHP_SELF"], 'v.subledger_account', '', $param, '', $sortfield, $sortorder, 'left ');
+}
+if ($arrayfields['debit']['checked']) {
+	print_liste_field_titre($arrayfields['debit']['label'], $_SERVER["PHP_SELF"], 'v.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+}
+if ($arrayfields['credit']['checked']) {
+	print_liste_field_titre($arrayfields['credit']['label'], $_SERVER["PHP_SELF"], 'v.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+}
+
+// Fields from hook
+$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+}
+print '</tr>';
 
 
-	$totalarray = array();
-	$totalarray['nbfield'] = 0;
-	$totalarray['val']['total_cred'] = 0;
-	$totalarray['val']['total_deb'] = 0;
+$totalarray = array();
+$savnbfield = $totalarray['nbfield'];
+$totalarray['nbfield'] = 0;
+$totalarray['val']['total_cred'] = 0;
+$totalarray['val']['total_deb'] = 0;
 
-	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($resql);
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
+	$obj = $db->fetch_object($resql);
 
-		$variousstatic->id = $obj->rowid;
-		$variousstatic->ref = $obj->rowid;
-		$variousstatic->label = $obj->label;
+	$variousstatic->id = $obj->rowid;
+	$variousstatic->ref = $obj->rowid;
+	$variousstatic->label = $obj->label;
+	$variousstatic->datep = $obj->datep;
+	$variousstatic->type_payment = $obj->payment_code;
+	$bankline->fetch($obj->fk_bank);
+	$variousstatic->fk_bank = $bankline->getNomUrl(1);
+	$variousstatic->amount = $obj->amount;
 
-		print '<tr class="oddeven">';
+	$accountingaccount->fetch('', $obj->accountancy_code, 1);
+	$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountingaccount, 1);
+
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+			print '<div class="box-flex-container kanban">';
+		}
+		// Output Kanban
+		print $variousstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		if ($i == ($imaxinloop) - 1) {
+			print '</div>';
+			print '</td></tr>';
+		}
+	} else {
+		// Show here line of result
+		$j = 0;
+		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 
 		// No
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
@@ -594,7 +681,7 @@ if ($resql) {
 
 		// Date payment
 		if ($arrayfields['datep']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datep, 'day')."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -603,7 +690,7 @@ if ($resql) {
 
 		// Date value
 		if ($arrayfields['datev']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datev, 'day')."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -671,8 +758,7 @@ if ($resql) {
 		}
 
 		// Accounting account
-		if ($arrayfields['account']['checked']) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+		if (!empty($arrayfields['account']['checked'])) {
 			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
@@ -682,7 +768,7 @@ if ($resql) {
 		}
 
 		// Accounting subledger account
-		if ($arrayfields['subledger']['checked']) {
+		if (!empty($arrayfields['subledger']['checked'])) {
 			print '<td class="tdoverflowmax150">'.length_accounta($obj->subledger_account).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -721,44 +807,42 @@ if ($resql) {
 			print '</td>';
 		}
 
-		print '<td></td>';
-
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print '</tr>'."\n";
-
-		$i++;
 	}
-
-	// Show total line
-	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
-
-	// If no record found
-	if ($num == 0) {
-		$colspan = 1;
-		foreach ($arrayfields as $key => $val) {
-			if (!empty($val['checked'])) {
-				$colspan++;
-			}
-		}
-		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
-	}
-
-	$db->free($resql);
-
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
-	print '</table>'."\n";
-	print '</div>'."\n";
-
-	print '</form>'."\n";
-} else {
-	dol_print_error($db);
+	$i++;
 }
+
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
+$db->free($resql);
+
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+print '</table>'."\n";
+print '</div>'."\n";
+
+print '</form>'."\n";
 
 
 // End of page

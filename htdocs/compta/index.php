@@ -9,7 +9,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023 Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,9 +98,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $thirdpartystatic = new Societe($db);
 
-llxHeader("", $langs->trans("AccountancyTreasuryArea"));
+llxHeader("", $langs->trans("InvoicesArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
+print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -129,7 +129,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -408,7 +408,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 
 
 // Latest donations
-if (isModEnabled('don') && !empty($user->rights->don->lire)) {
+if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
@@ -441,6 +441,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
+
 		if ($num) {
 			$total_ttc = $totalam = $total_ht = 0;
 
@@ -487,7 +488,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 				print "</tr>\n";
 			}
 		} else {
-			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table></div><br>';
 	} else {
@@ -742,21 +743,25 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 
 
 // TODO Mettre ici recup des actions en rapport avec la compta
-$resql = '';
-if ($resql) {
+$sql = '';
+if ($sql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
 	$i = 0;
-	while ($i < $db->num_rows($resql)) {
-		$obj = $db->fetch_object($resql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num_rows = $db->num_rows($resql);
+		while ($i < $num_rows) {
+			$obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da), "day").'</td>';
-		print '<td><a href="action/card.php">'.$obj->label.'</a></td></tr>';
-		$i++;
+			print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da), "day").'</td>';
+			print '<td><a href="action/card.php">'.$obj->label.'</a></td></tr>';
+			$i++;
+		}
+		$db->free($resql);
 	}
-	$db->free($resql);
 	print "</table></div><br>";
 }
 

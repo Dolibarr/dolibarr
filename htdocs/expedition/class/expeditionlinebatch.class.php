@@ -103,11 +103,16 @@ class ExpeditionLineBatch extends CommonObject
 	 * Create an expeditiondet_batch DB record link to an expedtiondet record
 	 *
 	 * @param	int		$id_line_expdet		rowid of expedtiondet record
+	 * @param	User	$f_user				User that create
+	 * @param	int		$notrigger			1 = disable triggers
 	 * @return	int							<0 if KO, Id of record (>0) if OK
 	 */
-	public function create($id_line_expdet)
+	public function create($id_line_expdet, $f_user = null, $notrigger = 0)
 	{
+		global $user;
+
 		$error = 0;
+		if (!is_object($f_user)) $f_user = $user;
 
 		$id_line_expdet = (int) $id_line_expdet;
 
@@ -137,6 +142,18 @@ class ExpeditionLineBatch extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			$this->fk_expeditiondet = $id_line_expdet;
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('EXPEDITIONLINEBATCH_CREATE', $f_user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		if (!$error) {
 			return $this->id;
 		} else {
 			foreach ($this->errors as $errmsg) {
@@ -193,7 +210,7 @@ class ExpeditionLineBatch extends CommonObject
 		}
 		$sql .= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

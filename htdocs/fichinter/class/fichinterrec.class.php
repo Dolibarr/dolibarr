@@ -24,7 +24,7 @@
 
 /**
  *  \file       htdocs/fichinter/class/fichinterrec.class.php
- *  \ingroup    facture
+ *  \ingroup    fichinter
  *  \brief      Fichier de la classe des factures recurentes
  */
 
@@ -245,6 +245,7 @@ class FichinterRec extends Fichinter
 
 				if ($error) {
 					$this->db->rollback();
+					return -1;
 				} else {
 					$this->db->commit();
 					return $this->id;
@@ -411,16 +412,13 @@ class FichinterRec extends Fichinter
 	/**
 	 * 	Delete template fichinter rec
 	 *
-	 *	@param	 	int		$rowid	  	    Id of fichinter rec to delete. If empty, we delete current instance of fichinter rec
-	 *	@param		int		$notrigger	    1=Does not execute triggers, 0= execute triggers
-	 *	@param		int		$idwarehouse    Id warehouse to use for stock change.
+	 *	@param      User	$user			Object user who delete
+	 *	@param		int		$notrigger		Disable trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function delete($rowid = 0, $notrigger = 0, $idwarehouse = -1)
+	public function delete(User $user, $notrigger = 0)
 	{
-		if (empty($rowid)) {
-			$rowid = $this->id;
-		}
+		$rowid = $this->id;
 
 		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
@@ -481,6 +479,7 @@ class FichinterRec extends Fichinter
 
 		// Check parameters
 		if ($type < 0) {
+			$this->error = 'Bad value for parameter type';
 			return -1;
 		}
 
@@ -572,6 +571,9 @@ class FichinterRec extends Fichinter
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
+		} else {
+			$this->error = 'Bad status of recurring intervention. Must be draft status to allow addition of lines';
+			return -1;
 		}
 	}
 
@@ -664,18 +666,15 @@ class FichinterRec extends Fichinter
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *	@param	string		$option		''=Create a specimen fichinter with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	public function initAsSpecimen($option = '')
+	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
+		//$now = dol_now();
+		//$arraynow = dol_getdate($now);
+		//$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-		$now = dol_now();
-		$arraynow = dol_getdate($now);
-		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
-
-		parent::initAsSpecimen($option);
+		parent::initAsSpecimen();
 
 		$this->usenewprice = 1;
 	}
@@ -683,16 +682,16 @@ class FichinterRec extends Fichinter
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array('fichinter_rec');
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**

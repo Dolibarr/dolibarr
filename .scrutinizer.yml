@@ -8,21 +8,24 @@ build:
                 override:
                     - command: php-scrutinizer-run
                       idle_timeout: 8000
+                    #- php-scrutinizer-run --sub-project-dir=htdocs/admin
 
 imports:
-    - javascript
     - php
 
 filter:
     excluded_paths:
-        - build/*
-        - dev/*
-        - doc/*
-        - documents/*
-        - node_modules/*
-        - test/*
-    dependency_paths:
-        - htdocs/includes/*
+        - build/
+        - dev/
+        - doc/
+        - documents/
+        - node_modules/
+        - test/
+        - htdocs/custom/
+        - htdocs/includes/
+        - htdocs/install/doctemplates/
+    #dependency_paths:
+    #    - htdocs/includes/
     paths: 
         - htdocs/*
         - scripts/*
@@ -33,21 +36,23 @@ tools:
         enabled: true
         extensions:
             - php
-        dependency_paths: 
-            - htdocs/includes/
+        #dependency_paths: 
+        #    - htdocs/includes/
         filter:
             excluded_paths:
-                - build/*
-                - dev/*
-                - doc/*
-                - documents/*
-                - htdocs/includes/*
+                - build/
+                - dev/
+                - doc/
+                - documents/
+                - htdocs/custom/
+                - htdocs/includes/
+                - htdocs/install/doctemplates/
                 - htdocs/core/class/lessc.class.php
-                - node_modules/*
-                - test/*
+                - node_modules/
+                - test/
             paths:
-                - htdocs/
-                - scripts/
+                - htdocs/*
+                - scripts/*
         config:
             parameter_reference_check:
                 enabled:              true
@@ -156,73 +161,73 @@ tools:
          # To use specific config for a specific path, use path_configs: (see example on page https://scrutinizer-ci.com/docs/configuration/tool_config_structure)
                         
     # php_depend
-    php_pdepend:
-        enabled: false
-        configuration_file: null
-        suffixes:
-            - php
-        excluded_dirs: {  }
-        filter:
-            excluded_paths:
-                - 'build/*'
-                - 'dev/*'
-                - 'doc/*'
-                - 'test/*'
-                - 'htdocs/includes/*'
-            paths: {  }
+    #php_pdepend:
+    #    enabled: false
+    #    configuration_file: null
+    #    suffixes:
+    #        - php
+    #    excluded_dirs: {  }
+    #    filter:
+    #        excluded_paths:
+    #            - 'build/*'
+    #            - 'dev/*'
+    #            - 'doc/*'
+    #            - 'test/*'
+    #            - 'htdocs/includes/*'
+    #        paths: {  }
 
     # change tracking
-    php_changetracking:
-        enabled: false
-        bug_patterns:
-            - '\bfix(?:es|ed)?\b'
-        feature_patterns:
-            - '\badd(?:s|ed)?\b'
-            - '\bimplement(?:s|ed)?\b'
-        filter:
-            excluded_paths:
-                - 'build/*'
-                - 'dev/*'
-                - 'doc/*'
-                - 'documents/*'
-                - 'htdocs/includes/*'
-                - 'node_modules/*'
-                - 'test/*'
-            paths: {  }
+    #php_changetracking:
+    #    enabled: false
+    #    bug_patterns:
+    #        - '\bfix(?:es|ed)?\b'
+    #    feature_patterns:
+    #        - '\badd(?:s|ed)?\b'
+    #        - '\bimplement(?:s|ed)?\b'
+    #    filter:
+    #        excluded_paths:
+    #            - 'build/*'
+    #            - 'dev/*'
+    #            - 'doc/*'
+    #            - 'documents/*'
+    #            - 'htdocs/includes/*'
+    #            - 'node_modules/*'
+    #            - 'test/*'
+    #        paths: {  }
 
     # Similar code detection
-    php_sim:
-        enabled: false
-        min_mass: 30
-        filter:
-            excluded_paths:
-                - 'build/*'
-                - 'dev/*'
-                - 'doc/*'
-                - 'documents/*'
-                - 'htdocs/includes/*'
-                - 'node_modules/*'
-                - 'test/*'
-            paths: {  }
+    #php_sim:
+    #    enabled: false
+    #    min_mass: 30
+    #    filter:
+    #        excluded_paths:
+    #            - 'build/*'
+    #            - 'dev/*'
+    #            - 'doc/*'
+    #            - 'documents/*'
+    #            - 'htdocs/includes/*'
+    #            - 'node_modules/*'
+    #            - 'test/*'
+    #        paths: {  }
             
     # Coding-Style / Bug Detection
-    js_hint:
-        enabled: false
-        use_native_config: true
-        extensions:
-            - js
-        filter:
-            excluded_paths:
-                - 'build/*'
-                - 'dev/*'
-                - 'doc/*'
-                - 'documents/*'
-                - 'htdocs/includes/*'
-                - 'node_modules/*'
-                - 'test/*'
-            paths: {  }
-        config: {  }
-        path_configs: {  }
+    #js_hint:
+    #    enabled: false
+    #    use_native_config: true
+    #    extensions:
+    #        - js
+    #    filter:
+    #        excluded_paths:
+    #            - 'build/*'
+    #            - 'dev/*'
+    #            - 'doc/*'
+    #            - 'documents/*'
+    #            - 'htdocs/includes/*'
+    #            - 'node_modules/*'
+    #            - 'test/*'
+    #        paths: {  }
+    #    config: {  }
+    #    path_configs: {  }
 
 
 before_commands: {  }

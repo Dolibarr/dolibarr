@@ -329,7 +329,6 @@ class Dolistore
 			$html .= '</small></h2>';
 			$html .= '<small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.dol_escape_htmltag($product->reference).' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product->id).'</small><br><br>'.dol_escape_htmltag($product->description_short->language[$this->lang - 1]).'</td>';
 			// do not load if display none
-			//$html .= '<td style="display:none;" class="long_description">'.$product->description->language[$this->lang - 1].'</td>';
 			$html .= '<td class="margeCote center">';
 			$html .= $price;
 			$html .= '</td>';

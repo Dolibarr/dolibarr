@@ -145,6 +145,18 @@ class dolReceiptPrinter extends Printer
 	public $orderprinter;
 
 	/**
+	 * Array with list of printers
+	 * @var array	List of printers
+	 */
+	public $listprinters;
+
+	/**
+	 * Array with list of printer templates
+	 * @var array	List of printer templates
+	 */
+	public $listprinterstemplates;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -246,20 +258,24 @@ class dolReceiptPrinter extends Printer
 	}
 
 	/**
-	 * list printers
+	 * List printers into the array ->listprinters
 	 *
 	 * @return  int                     0 if OK; >0 if KO
 	 */
 	public function listPrinters()
 	{
 		global $conf;
+
 		$error = 0;
 		$line = 0;
 		$obj = array();
+
 		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			while ($line < $num) {
@@ -308,7 +324,9 @@ class dolReceiptPrinter extends Printer
 			$error++;
 			$this->errors[] = $this->db->lasterror;
 		}
+
 		$this->listprinters = $obj;
+
 		return $error;
 	}
 
@@ -321,13 +339,17 @@ class dolReceiptPrinter extends Printer
 	public function listPrintersTemplates()
 	{
 		global $conf;
+
 		$error = 0;
 		$line = 0;
 		$obj = array();
+
 		$sql = "SELECT rowid, name, template";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " WHERE entity = ".$conf->entity;
+
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			while ($line < $num) {
@@ -338,7 +360,9 @@ class dolReceiptPrinter extends Printer
 			$error++;
 			$this->errors[] = $this->db->lasterror;
 		}
+
 		$this->listprinterstemplates = $obj;
+
 		return $error;
 	}
 
@@ -935,7 +959,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function Init Printer
 	 *
 	 *  @param   int       $printerid       Printer id
-	 *  @return  int                        0 if OK; >0 if KO
+	 *  @return  void|int                        0 if OK; >0 if KO
 	 */
 	public function initPrinter($printerid)
 	{
