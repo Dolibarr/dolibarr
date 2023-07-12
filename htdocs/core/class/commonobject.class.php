@@ -12,9 +12,9 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
@@ -45,6 +45,12 @@
 abstract class CommonObject
 {
 	const TRIGGER_PREFIX = ''; // to be overriden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+
+	/**
+	 * @var string ID of module.
+	 */
+	public $module;
+
 	/**
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
@@ -87,6 +93,11 @@ abstract class CommonObject
 	public $element;
 
 	/**
+	 * @var int The related element
+	 */
+	public $fk_element;
+
+	/**
 	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
 	 * 				Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
 	 */
@@ -103,6 +114,11 @@ abstract class CommonObject
 	public $table_element_line = '';
 
 	/**
+	 * @var int 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 */
+	public $ismultientitymanaged;
+
+	/**
 	 * @var string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
@@ -111,6 +127,11 @@ abstract class CommonObject
 	 * @var mixed		Contains data to manage extrafields
 	 */
 	public $array_options = array();
+
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array();
 
 	/**
 	 * @var mixed		Array to store alternative languages values of object
@@ -183,6 +204,7 @@ abstract class CommonObject
 	public $fk_project;
 
 	/**
+	 * @var Project The related project object
 	 * @deprecated
 	 * @see project
 	 */
@@ -391,6 +413,22 @@ abstract class CommonObject
 	public $shipping_method_id;
 
 	/**
+	 * @var string Shipping method label
+	 * @see setShippingMethod()
+	 */
+	public $shipping_method;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+
+	/**
+	 * @var string multicurrency tx
+	 */
+	public $multicurrency_tx;
+
+	/**
 	 * @var string
 	 * @see SetDocModel()
 	 */
@@ -521,6 +559,11 @@ abstract class CommonObject
 	 * @var integer|string $date_modification;
 	 */
 	public $date_modification; // Date last change (tms field)
+	/**
+	 * @var integer|string $date_modification;
+	 * @deprecated Use date_modification
+	 */
+	public $date_update;
 
 	/**
 	 * @var integer|string $date_cloture;
@@ -590,7 +633,7 @@ abstract class CommonObject
 	public $alreadypaid;
 
 
-	protected $labelStatus;
+	public $labelStatus;
 	protected $labelStatusShort;
 
 	/**
@@ -607,6 +650,11 @@ abstract class CommonObject
 	 * @var string output
 	 */
 	public $output;
+
+	/**
+	 * @var array extraparams
+	 */
+	public $extraparams = array();
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -669,8 +717,25 @@ abstract class CommonObject
 		}
 		return -1;
 	}
+
 	/**
-	 * getTooltipContentArray
+	 * setErrorsFromObject
+	 *
+	 * @param CommonObject $object commonobject
+	 * @return void
+	 */
+	public function setErrorsFromObject($object)
+	{
+		if (!empty($object->error)) {
+			$this->error = $object->error;
+		}
+		if (!empty($object->errors)) {
+			$this->errors = array_merge($this->errors, $object->errors);
+		}
+	}
+
+	/**
+	 * Return array of datas to show into a tooltip. This method must be implemented in each object class.
 	 *
 	 * @since v18
 	 * @param array $params params to construct tooltip data
@@ -692,10 +757,42 @@ abstract class CommonObject
 	{
 		global $action, $extrafields, $langs, $hookmanager;
 
-		$datas = $this->getTooltipContentArray($params);
+		// If there is too much extrafields, we do not include them into tooltip
+		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = getDolGlobalInt('MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP', 3);
 
+		$datas = $this->getTooltipContentArray($params);
+		$count = 0;
+
+		// Add extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
+					continue;
+				}
+				if ($count >= abs($MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP)) {
+					$datas['more_extrafields'] = '<br>...';
+					break;
+				}
+				$enabled = 1;
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+				}
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+				}
+				$perms = 1;
+				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
+					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+				}
+				if (empty($enabled)) {
+					continue; // 0 = Never visible field
+				}
+				if (abs($enabled) != 1 && abs($enabled) != 3 && abs($enabled) != 5 && abs($enabled) != 4) {
+					continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list <> 4 = not visible at the creation
+				}
+				if (empty($perms)) {
+					continue; // 0 = Not visible
+				}
 				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
 					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
 				}
@@ -703,19 +800,22 @@ abstract class CommonObject
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
 					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
 				} else {
-					$value = $this->array_options['options_' . $key];
+					$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
 					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+					$count++;
 				}
 			}
 		}
 
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array(
-			'tooltipcontentarray' => &$datas
+			'tooltipcontentarray' => &$datas,
+			'params' => $params,
 		);
 		// Note that $action and $object may have been modified by some hooks
 		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
 
+		//var_dump($datas);
 		$label = implode($datas);
 
 		return $label;
@@ -772,70 +872,6 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Return full name (civility+' '+name+' '+lastname)
-	 *
-	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
-	 *	@param	int			$option			0=No option, 1=Add civility
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
-	 * 	@param	int			$maxlen			Maximum length
-	 * 	@return	string						String with full name
-	 */
-	public function getFullName($langs, $option = 0, $nameorder = -1, $maxlen = 0)
-	{
-		//print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
-		$lastname = $this->lastname;
-		$firstname = $this->firstname;
-		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
-		}
-
-		$ret = '';
-		if (!empty($option) && !empty($this->civility_code)) {
-			if ($langs->transnoentitiesnoconv("Civility".$this->civility_code) != "Civility".$this->civility_code) {
-				$ret .= $langs->transnoentitiesnoconv("Civility".$this->civility_code).' ';
-			} else {
-				$ret .= $this->civility_code.' ';
-			}
-		}
-
-		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
-
-		return dol_trunc($ret, $maxlen);
-	}
-
-	/**
-	 * Set to upper or ucwords/lower if needed
-	 *
-	 * @return void;
-	 */
-	public function setUpperOrLowerCase()
-	{
-		global $conf;
-
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
-			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
-			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
-			$this->name = dol_ucwords(dol_strtolower($this->name));
-			$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
-		}
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
-			$this->lastname = dol_strtoupper($this->lastname);
-			$this->name = dol_strtoupper($this->name);
-			$this->name_alias = dol_strtoupper($this->name_alias);
-		}
-		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
-			$this->address = dol_strtoupper($this->address);
-			$this->town = dol_strtoupper($this->town);
-		}
-		if (isset($this->email)) {
-			$this->email = dol_strtolower($this->email);
-		}
-		if (isset($this->personal_email)) {
-			$this->personal_email = dol_strtolower($this->personal_email);
-		}
-	}
-
-	/**
 	 * 	Return full address of contact
 	 *
 	 * 	@param		int			$withcountry		1=Add country into address string
@@ -865,180 +901,6 @@ abstract class CommonObject
 		return dol_format_address($this, $withcountry, $sep, '', 0, $extralangcode);
 	}
 
-
-	/**
-	 * 	Return full address for banner
-	 *
-	 * 	@param		string		$htmlkey            HTML id to make banner content unique
-	 *  @param      Object      $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
-	 *	@return		string							Full address string
-	 */
-	public function getBannerAddress($htmlkey, $object)
-	{
-		global $conf, $langs, $form, $extralanguages;
-
-		$countriesusingstate = array('AU', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also option MAIN_FORCE_STATE_INTO_ADDRESS
-
-		$contactid = 0;
-		$thirdpartyid = 0;
-		$elementforaltlanguage = $this->element;
-		if ($this->element == 'societe') {
-			$thirdpartyid = $this->id;
-		}
-		if ($this->element == 'contact') {
-			$contactid = $this->id;
-			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
-		}
-		if ($this->element == 'user') {
-			$contactid = $this->contact_id;
-			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
-		}
-
-		$out = '';
-
-		$outdone = 0;
-		$coords = $this->getFullAddress(1, ', ', (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) ? $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT : 0));
-		if ($coords) {
-			if (!empty($conf->use_javascript_ajax)) {
-				// Add picto with tooltip on map
-				$namecoords = '';
-				if ($this->element == 'contact' && !empty($conf->global->MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS)) {
-					$namecoords .= $object->name.'<br>';
-				}
-				$namecoords .= $this->getFullName($langs, 1).'<br>'.$coords;
-				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
-				$out .= '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
-				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
-				$out .= '</a> ';
-			}
-			$address = dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
-			if ($address) {
-				$out .= $address;
-				$outdone++;
-			}
-			$outdone++;
-
-			// List of extra languages
-			$arrayoflangcode = array();
-			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
-			}
-
-			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
-				if (!is_object($extralanguages)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
-					$extralanguages = new ExtraLanguages($this->db);
-				}
-				$extralanguages->fetch_name_extralanguages($elementforaltlanguage);
-
-				if (!empty($extralanguages->attributes[$elementforaltlanguage]['address']) || !empty($extralanguages->attributes[$elementforaltlanguage]['town'])) {
-					$out .= "<!-- alternatelanguage for '".$elementforaltlanguage."' set to fields '".join(',', $extralanguages->attributes[$elementforaltlanguage])."' -->\n";
-					$this->fetchValuesForExtraLanguages();
-					if (!is_object($form)) {
-						$form = new Form($this->db);
-					}
-					$htmltext = '';
-					// If there is extra languages
-					foreach ($arrayoflangcode as $extralangcode) {
-						$s = picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
-						// This also call dol_format_address()
-						$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT, $extralangcode);
-						$htmltext .= $s.dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
-					}
-					$out .= $form->textwithpicto('', $htmltext, -1, 'language', 'opacitymedium paddingleft');
-				}
-			}
-		}
-
-		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
-		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
-				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
-			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
-				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
-			} else {
-				$out .= ($outdone ? ' - ' : '').$this->state;
-			}
-			$outdone++;
-		}
-
-		if ($outdone) {
-			$out = '<div class="address inline-block">'.$out.'</div>';
-		}
-
-		if (!empty($this->phone) || !empty($this->phone_pro) || !empty($this->phone_mobile) || !empty($this->phone_perso) || !empty($this->fax) || !empty($this->office_phone) || !empty($this->user_mobile) || !empty($this->office_fax)) {
-			$out .= ($outdone ? '<br>' : '');
-		}
-		if (!empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
-			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
-			$outdone++;
-		}
-		if (!empty($this->phone_pro)) {
-			$out .= dol_print_phone($this->phone_pro, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
-			$outdone++;
-		}
-		if (!empty($this->phone_mobile)) {
-			$out .= dol_print_phone($this->phone_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
-			$outdone++;
-		}
-		if (!empty($this->phone_perso)) {
-			$out .= dol_print_phone($this->phone_perso, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePerso"));
-			$outdone++;
-		}
-		if (!empty($this->office_phone)) {
-			$out .= dol_print_phone($this->office_phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
-			$outdone++;
-		}
-		if (!empty($this->user_mobile)) {
-			$out .= dol_print_phone($this->user_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
-			$outdone++;
-		}
-		if (!empty($this->fax)) {
-			$out .= dol_print_phone($this->fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
-			$outdone++;
-		}
-		if (!empty($this->office_fax)) {
-			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
-			$outdone++;
-		}
-
-		if ($out) {
-			$out .= '<div style="clear: both;"></div>';
-		}
-		$outdone = 0;
-		if (!empty($this->email)) {
-			$out .= dol_print_email($this->email, $this->id, $object->id, 'AC_EMAIL', 0, 0, 1);
-			$outdone++;
-		}
-		if (!empty($this->url)) {
-			//$out.=dol_print_url($this->url,'_goout',0,1);//steve changed to blank
-			$out .= dol_print_url($this->url, '_blank', 0, 1);
-			$outdone++;
-		}
-
-		if (isModEnabled('socialnetworks')) {
-			$outsocialnetwork = '';
-
-			if (!empty($this->socialnetworks) && is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
-				$socialnetworksdict = getArrayOfSocialNetworks();
-				foreach ($this->socialnetworks as $key => $value) {
-					if ($value) {
-						$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key, $socialnetworksdict);
-					}
-					$outdone++;
-				}
-			}
-
-			if ($outsocialnetwork) {
-				$out .= '<div style="clear: both;">'.$outsocialnetwork.'</div>';
-			}
-		}
-
-		if ($out) {
-			return '<!-- BEGIN part to show address block -->'."\n".$out.'<!-- END Part to show address block -->'."\n";
-		} else {
-			return '';
-		}
-	}
 
 	/**
 	 * Return the link of last main doc file for direct public download.
@@ -2072,10 +1934,6 @@ abstract class CommonObject
 			$id_field = 'rowid';
 		}
 
-		$error = 0;
-
-		$this->db->begin();
-
 		// Special case
 		if ($table == 'product' && $field == 'note_private') {
 			$field = 'note';
@@ -2083,6 +1941,34 @@ abstract class CommonObject
 		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
 			$fk_user_field = 'fk_user_mod';
 		}
+
+		if ($trigkey) {
+			$oldvalue = null;
+
+			$sql = "SELECT " . $field;
+			$sql .= " FROM " . MAIN_DB_PREFIX . $table;
+			$sql .= " WHERE " . $id_field . " = " . ((int) $id);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($obj = $this->db->fetch_object($resql)) {
+					if ($format == 'date') {
+						$oldvalue = $this->db->jdate($obj->$field);
+					} else {
+						$oldvalue = $obj->$field;
+					}
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+		}
+
+		$error = 0;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$this->db->begin();
 
 		$sql = "UPDATE ".$this->db->prefix().$table." SET ";
 
@@ -2106,7 +1992,6 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".((int) $id);
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($trigkey) {
@@ -2116,6 +2001,11 @@ abstract class CommonObject
 				} else {
 					$result = $this->fetchCommon($id);
 				}
+				$this->oldcopy = clone $this;
+				if (property_exists($this->oldcopy, $field)) {
+					$this->oldcopy->$field = $oldvalue;
+				}
+
 				if ($result >= 0) {
 					$result = $this->call_trigger($trigkey, (!empty($fuser) && is_object($fuser)) ? $fuser : $user); // This may set this->errors
 				}
@@ -2565,6 +2455,8 @@ abstract class CommonObject
 
 						switch ($this->element) {
 							case 'propal':
+								/** @var Propal $this */
+								/** @var PropaleLigne $line */
 								$this->updateline(
 									$line->id,
 									$line->subprice,
@@ -2591,6 +2483,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'commande':
+								/** @var Commande $this */
+								/** @var OrderLine $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2617,6 +2511,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'facture':
+								/** @var Facture $this */
+								/** @var FactureLigne $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2644,6 +2540,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'supplier_proposal':
+								/** @var SupplierProposal $this */
+								/** @var SupplierProposalLine $line */
 								$this->updateline(
 									$line->id,
 									$line->subprice,
@@ -2668,6 +2566,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'order_supplier':
+								/** @var CommandeFournisseur $this */
+								/** @var CommandeFournisseurLigne $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2690,6 +2590,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'invoice_supplier':
+								/** @var FactureFournisseur $this */
+								/** @var SupplierInvoiceLine $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2762,7 +2664,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -3666,6 +3568,8 @@ abstract class CommonObject
 			$this->multicurrency_total_tva	= 0;
 			$this->multicurrency_total_ttc	= 0;
 
+			$this->db->begin();
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
@@ -3731,16 +3635,18 @@ abstract class CommonObject
 				$total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
 				$total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
-				if ($forcedroundingmode == '1') {	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on multicurrency
+				if ($forcedroundingmode == '1') {	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on foreign currency
 					$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs($diff) > 0.1) {
-							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your line may be corrupted. Try to edit each line manually.';
+						if (abs($diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+							// If error is more than 10 times the accurancy of rounding. This should not happen.
+							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
-							dol_print_error('', $errmsg);
-							exit;
+							$this->error = $errmsg;
+							$error++;
+							break;
 						}
 						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - $diff).", total_ttc = ".price2num($obj->total_ttc - $diff)." WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
@@ -3801,7 +3707,7 @@ abstract class CommonObject
 				$fieldtva = 'total_tva';
 			}
 
-			if (empty($nodatabaseupdate)) {
+			if (!$error && empty($nodatabaseupdate)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
 				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
 				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
@@ -3824,8 +3730,10 @@ abstract class CommonObject
 			}
 
 			if (!$error) {
+				$this->db->commit();
 				return 1;
 			} else {
+				$this->db->rollback();
 				return -1;
 			}
 		} else {
@@ -4070,7 +3978,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'shipping') {
 						$classpath = 'expedition/class';
 						$subelement = 'expedition';
-						$module = 'expedition_bon';
+						$module = 'expedition';
 					} elseif ($objecttype == 'delivery') {
 						$classpath = 'delivery/class';
 						$subelement = 'delivery';
@@ -4578,7 +4486,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Function to check if an object is used by others.
+	 *  Function to check if an object is used by others (by children).
 	 *  Check is done into this->childtables. There is no check into llx_element_element.
 	 *
 	 *  @param	int		$id			Force id of object
@@ -4599,8 +4507,8 @@ abstract class CommonObject
 			return -1;
 		}
 
-		$arraytoscan = $this->childtables;
-		// For backward compatibility, we check if array is old format array('table1', 'table2', ...)
+		$arraytoscan = $this->childtables;		// array('tablename'=>array('fk_element'=>'parentfield'), ...) or array('tablename'=>array('parent'=>table_parent, 'parentkey'=>'nameoffieldforparentfkkey'), ...)
+		// For backward compatibility, we check if array is old format array('tablename1', 'tablename2', ...)
 		$tmparray = array_keys($this->childtables);
 		if (is_numeric($tmparray[0])) {
 			$arraytoscan = array_flip($this->childtables);
@@ -4616,9 +4524,16 @@ abstract class CommonObject
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= ", ".$this->db->prefix().$element['parent']." as p";
 			}
-			$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			if (!empty($element['fk_element'])) {
+				$sql.= " WHERE c.".$element['fk_element']." = ".((int) $id);
+			} else {
+				$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			}
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= " AND c.".$element['parentkey']." = p.rowid";
+			}
+			if (!empty($element['parent']) && !empty($element['parenttypefield']) && !empty($element['parenttypevalue'])) {
+				$sql.= " AND c.".$element['parenttypefield']." = '".$this->db->escape($element['parenttypevalue'])."'";
 			}
 			if (!empty($entity)) {
 				if (!empty($element['parent']) && !empty($element['parentkey'])) {
@@ -4627,6 +4542,7 @@ abstract class CommonObject
 					$sql.= " AND c.entity = ".((int) $entity);
 				}
 			}
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -4920,9 +4836,9 @@ abstract class CommonObject
 	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				Action code
-	 *	@param  string		$seller            	Object of seller third party
-	 *	@param  string  	$buyer             	Object of buyer third party
-	 *	@param	int			$selected		   	Object line selected
+	 *	@param  Societe		$seller            	Object of seller third party
+	 *	@param  Societe  	$buyer             	Object of buyer third party
+	 *	@param	int			$selected		   	ID line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
 	 *	@return	void
@@ -5011,9 +4927,9 @@ abstract class CommonObject
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
-	 *	@param  string	    		$seller            	Object of seller third party
-	 *	@param  string	    		$buyer             	Object of buyer third party
-	 *	@param	int					$selected		   	Object line selected
+	 *	@param  Societe	    		$seller            	Object of seller third party
+	 *	@param  Societe	    		$buyer             	Object of buyer third party
+	 *	@param	int					$selected		   	ID line selected
 	 *  @param  Extrafields			$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
@@ -5025,8 +4941,6 @@ abstract class CommonObject
 		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
-
-		$element = $this->element;
 
 		$text = '';
 		$description = '';
@@ -5449,171 +5363,169 @@ abstract class CommonObject
 		$parameters = array('modelspath'=>$modelspath, 'modele'=>$modele, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'hidedesc'=>$hidedesc, 'hideref'=>$hideref, 'moreparams'=>$moreparams);
 		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-		if (empty($reshook)) {
-			dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+		if (!empty($reshook)) {
+			return $reshook;
+		}
 
-			if (empty($modele)) {
-				$this->error = 'BadValueForParameterModele';
-				return -1;
-			}
+		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
-			// Increase limit for PDF build
-			$err = error_reporting();
-			error_reporting(0);
-			@set_time_limit(120);
-			error_reporting($err);
+		if (empty($modele)) {
+			$this->error = 'BadValueForParameterModele';
+			return -1;
+		}
 
-			// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
-			$tmp = explode(':', $modele, 2);
-			if (!empty($tmp[1])) {
-				$modele = $tmp[0];
-				$srctemplatepath = $tmp[1];
-			}
+		// Increase limit for PDF build
+		$err = error_reporting();
+		error_reporting(0);
+		@set_time_limit(120);
+		error_reporting($err);
 
-			// Search template files
-			$file = '';
-			$classname = '';
-			$filefound = '';
-			$dirmodels = array('/');
-			if (is_array($conf->modules_parts['models'])) {
-				$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-			}
-			foreach ($dirmodels as $reldir) {
-				foreach (array('doc', 'pdf') as $prefix) {
-					if (in_array(get_class($this), array('Adherent'))) {
-						// Member module use prefix_modele.class.php
-						$file = $prefix."_".$modele.".class.php";
-					} else {
-						// Other module use prefix_modele.modules.php
-						$file = $prefix."_".$modele.".modules.php";
-					}
+		// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
+		$tmp = explode(':', $modele, 2);
+		if (!empty($tmp[1])) {
+			$modele = $tmp[0];
+			$srctemplatepath = $tmp[1];
+		}
 
-					// On verifie l'emplacement du modele
-					$file = dol_buildpath($reldir.$modelspath.$file, 0);
-					if (file_exists($file)) {
-						$filefound = $file;
-						$classname = $prefix.'_'.$modele;
-						break;
-					}
+		// Search template files
+		$file = '';
+		$classname = '';
+		$filefound = '';
+		$dirmodels = array('/');
+		if (is_array($conf->modules_parts['models'])) {
+			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+		}
+		foreach ($dirmodels as $reldir) {
+			foreach (array('doc', 'pdf') as $prefix) {
+				if (in_array(get_class($this), array('Adherent'))) {
+					// Member module use prefix_modele.class.php
+					$file = $prefix."_".$modele.".class.php";
+				} else {
+					// Other module use prefix_modele.modules.php
+					$file = $prefix."_".$modele.".modules.php";
 				}
-				if ($filefound) {
+
+				// On verifie l'emplacement du modele
+				$file = dol_buildpath($reldir.$modelspath.$file, 0);
+				if (file_exists($file)) {
+					$filefound = $file;
+					$classname = $prefix.'_'.$modele;
 					break;
 				}
 			}
-
-			// If generator was found
 			if ($filefound) {
-				global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
+				break;
+			}
+		}
 
-				require_once $file;
+		if (!$filefound) {
+			$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
+			$this->errors[] = $this->error;
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		}
 
-				$obj = new $classname($this->db);
+		// If generator was found
+		global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
 
-				// If generator is ODT, we must have srctemplatepath defined, if not we set it.
-				if ($obj->type == 'odt' && empty($srctemplatepath)) {
-					$varfortemplatedir = $obj->scandir;
-					if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
-						$dirtoscan = $conf->global->$varfortemplatedir;
+		require_once $file;
 
-						$listoffiles = array();
+		$obj = new $classname($this->db);
 
-						// Now we add first model found in directories scanned
-						$listofdir = explode(',', $dirtoscan);
-						foreach ($listofdir as $key => $tmpdir) {
-							$tmpdir = trim($tmpdir);
-							$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
-							if (!$tmpdir) {
-								unset($listofdir[$key]);
-								continue;
-							}
-							if (is_dir($tmpdir)) {
-								$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
-								if (count($tmpfiles)) {
-									$listoffiles = array_merge($listoffiles, $tmpfiles);
-								}
-							}
+		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
+		if ($obj->type == 'odt' && empty($srctemplatepath)) {
+			$varfortemplatedir = $obj->scandir;
+			if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
+				$dirtoscan = $conf->global->$varfortemplatedir;
+
+				$listoffiles = array();
+
+				// Now we add first model found in directories scanned
+				$listofdir = explode(',', $dirtoscan);
+				foreach ($listofdir as $key => $tmpdir) {
+					$tmpdir = trim($tmpdir);
+					$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+					if (!$tmpdir) {
+						unset($listofdir[$key]);
+						continue;
+					}
+					if (is_dir($tmpdir)) {
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
+						if (count($tmpfiles)) {
+							$listoffiles = array_merge($listoffiles, $tmpfiles);
 						}
-
-						if (count($listoffiles)) {
-							foreach ($listoffiles as $record) {
-								$srctemplatepath = $record['fullname'];
-								break;
-							}
-						}
-					}
-
-					if (empty($srctemplatepath)) {
-						$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
-						return -1;
 					}
 				}
 
-				if ($obj->type == 'odt' && !empty($srctemplatepath)) {
-					if (!dol_is_file($srctemplatepath)) {
-						dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
-						$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
-						return -1;
+				if (count($listoffiles)) {
+					foreach ($listoffiles as $record) {
+						$srctemplatepath = $record['fullname'];
+						break;
 					}
 				}
+			}
 
-				// We save charset_output to restore it because write_file can change it if needed for
-				// output format that does not support UTF8.
-				$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
-
-				if (in_array(get_class($this), array('Adherent'))) {
-					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
-				} else {
-					 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
-				}
-				// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
-
-				if ($resultwritefile > 0) {
-					$outputlangs->charset_output = $sav_charset_output;
-
-					// We delete old preview
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					dol_delete_preview($this);
-
-					// Index file in database
-					if (!empty($obj->result['fullpath'])) {
-						$destfull = $obj->result['fullpath'];
-
-						// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
-						$update_main_doc_field = 0;
-						if (!empty($obj->update_main_doc_field)) {
-							$update_main_doc_field = 1;
-						}
-
-						$this->indexFile($destfull, $update_main_doc_field);
-					} else {
-						dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
-					}
-
-					// Success in building document. We build meta file.
-					dol_meta_create($this);
-
-					return 1;
-				} else {
-					$outputlangs->charset_output = $sav_charset_output;
-					$this->error = $obj->error;
-					$this->errors = $obj->errors;
-					dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
-					return -1;
-				}
-			} else {
-				if (!$filefound) {
-					$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
-					$this->errors[] = $this->error;
-					dol_syslog($this->error, LOG_ERR);
-				} else {
-					$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
-					$this->errors[] = $this->error;
-					dol_syslog($this->error, LOG_ERR);
-				}
+			if (empty($srctemplatepath)) {
+				$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
 				return -1;
 			}
+		}
+
+		if ($obj->type == 'odt' && !empty($srctemplatepath)) {
+			if (!dol_is_file($srctemplatepath)) {
+				dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
+				$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+				return -1;
+			}
+		}
+
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
+
+		if (in_array(get_class($this), array('Adherent'))) {
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
-			return $reshook;
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
+		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
+
+		if ($resultwritefile > 0) {
+			$outputlangs->charset_output = $sav_charset_output;
+
+			// We delete old preview
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_delete_preview($this);
+
+			// Index file in database
+			if (!empty($obj->result['fullpath'])) {
+				$destfull = $obj->result['fullpath'];
+
+				// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
+				$update_main_doc_field = 0;
+				if (!empty($obj->update_main_doc_field)) {
+					$update_main_doc_field = 1;
+				}
+
+				// Check that the file exists, before indexing it.
+				// Hint: It does not exist, if we create a PDF and auto delete the ODT File
+				if (dol_is_file($destfull)) {
+					$this->indexFile($destfull, $update_main_doc_field);
+				}
+			} else {
+				dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+			}
+
+			// Success in building document. We build meta file.
+			dol_meta_create($this);
+
+			return 1;
+		} else {
+			$outputlangs->charset_output = $sav_charset_output;
+			$this->error = $obj->error;
+			$this->errors = $obj->errors;
+			dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
+			return -1;
 		}
 	}
 
@@ -5744,10 +5656,17 @@ abstract class CommonObject
 	public function addThumbs($file)
 	{
 		$file_osencoded = dol_osencode($file);
-		if (file_exists($file_osencoded)) {
-			global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
 
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php'; // This define also $maxwidthsmall, $quality, ...
+		if (file_exists($file_osencoded)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+			$tmparraysize = getDefaultImageSizes();
+			$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+			$maxheightsmall = $tmparraysize['maxheightsmall'];
+			$maxwidthmini = $tmparraysize['maxwidthmini'];
+			$maxheightmini = $tmparraysize['maxheightmini'];
+			//$quality = $tmparraysize['quality'];
+			$quality = 50;	// For thumbs, we force quality to 50
 
 			// Create small thumbs for company (Ratio is near 16/9)
 			// Used on logon for example
@@ -6137,13 +6056,15 @@ abstract class CommonObject
 
 				// If field is a computed field, value must become result of compute (regardless of whether a row exists
 				// in the element's extrafields table)
-				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
-						//var_dump($conf->disable_compute);
-						if (empty($conf->disable_compute)) {
-							global $objectoffield;		// We set a global variable to $objectoffield so
-							$objectoffield = $this;		// we can use it inside computed formula
-							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+				if (is_array($extrafields->attributes[$this->table_element]['label'])) {
+					foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
+							//var_dump($conf->disable_compute);
+							if (empty($conf->disable_compute)) {
+								global $objectoffield;        // We set a global variable to $objectoffield so
+								$objectoffield = $this;        // we can use it inside computed formula
+								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+							}
 						}
 					}
 				}
@@ -6235,7 +6156,7 @@ abstract class CommonObject
 			foreach ($this->array_options as $key => $value) {
 				if (in_array(substr($key, 8), array_keys($target_extrafields))) {	// We remove the 'options_' from $key for test
 					$new_array_options[$key] = $value;
-				} elseif (in_array($key, array_keys($target_extrafields))) {		// We test on $key that does not contains the 'options_' prefix
+				} elseif (in_array($key, array_keys($target_extrafields))) {		// We test on $key that does not contain the 'options_' prefix
 					$new_array_options['options_'.$key] = $value;
 				}
 			}
@@ -6385,6 +6306,14 @@ abstract class CommonObject
 							}
 						} else {
 							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+						}
+						break;
+					case 'checkbox':
+					case 'chkbxlst':
+						if (is_array($this->array_options[$key])) {
+							$new_array_options[$key] = implode(',', $this->array_options[$key]);
+						} else {
+							$new_array_options[$key] = $this->array_options[$key];
 						}
 						break;
 				}
@@ -6711,6 +6640,11 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					}
 					break;
+				case 'link':
+					if ($this->array_options["options_".$key] === '') {
+						$this->array_options["options_".$key] = null;
+					}
+					break;
 				/*
 				case 'link':
 					$param_list = array_keys($attributeParam['options']);
@@ -6740,6 +6674,14 @@ abstract class CommonObject
 					}
 					break;
 				*/
+				case 'checkbox':
+				case 'chkbxlst':
+					if (is_array($this->array_options[$key])) {
+						$new_array_options[$key] = implode(',', $this->array_options[$key]);
+					} else {
+						$new_array_options[$key] = $this->array_options[$key];
+					}
+					break;
 			}
 
 			$this->db->begin();
@@ -6830,7 +6772,7 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array   		$val	       Array of properties for field to show (used only if ->fields not defined)
+	 * @param  array|null	$val	       Array of properties for field to show (used only if ->fields not defined)
 	 * @param  string  		$key           Key of attribute
 	 * @param  string|array	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
@@ -7498,8 +7440,6 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		$objectid = $this->id;	// Not used ???
-
 		$label = empty($val['label']) ? '' : $val['label'];
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
@@ -7531,7 +7471,11 @@ abstract class CommonObject
 		}
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
-			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
+			$stringforoptions = $reg[1].':'.$reg[2];
+			if ($reg[1] == 'User') {
+				$stringforoptions .= ':-1';
+			}
+			$param['options'] = array($stringforoptions => $stringforoptions);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
 			$type = 'sellist';
@@ -7830,7 +7774,7 @@ abstract class CommonObject
 
 			// only if something to display (perf)
 			if ($value) {
-				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+				$param_list = array_keys($param['options']); // Example: $param_list='ObjectName:classPath:-1::customer'
 
 				$InfoFieldList = explode(":", $param_list[0]);
 				$classname = $InfoFieldList[0];
@@ -8182,7 +8126,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '1');
+						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -8190,12 +8134,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '1');
+						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '1');
+						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
@@ -8526,16 +8470,19 @@ abstract class CommonObject
 	{
 		global $user;
 
+		$module = $this->module;
 		$element = $this->element;
+
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
 			return $user->rights->fournisseur->facture;
-		} elseif ($element == 'evaluation') {
-			return $user->rights->hrm->evaluation;
+		} elseif ($module && !empty($user->rights->$module->$element)) {
+			// for modules built with ModuleBuilder
+			return $user->rights->$module->$element;
 		}
 
-		return $user->rights->{$element};
+		return $user->rights->$element;
 	}
 
 	/**
@@ -8677,9 +8624,11 @@ abstract class CommonObject
 	 *  @param      int     	$nolink         Do not add a href link to view enlarged imaged into a new tab
 	 *  @param      int|string  $overwritetitle Do not add title tag on image
 	 *  @param		int			$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
+	 *  @param		string		$cache			A string if we want to use a cached version of image
+	 *  @param		string		$addphotorefcss	Add CSS to img of photos
 	 *  @return     string						Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0)
+	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0, $cache = '', $addphotorefcss = 'photoref')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -8764,12 +8713,10 @@ abstract class CommonObject
 							if ($nbphoto % $nbbyrow == 1) {
 								$return .= '<tr class="center valignmiddle" style="border: 1px">';
 							}
-							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">';
+							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">'."\n";
 						} elseif ($nbbyrow < 0) {
-							$return .= '<div class="inline-block">';
+							$return .= '<div class="inline-block">'."\n";
 						}
-
-						$return .= "\n";
 
 						$relativefile = preg_replace('/^\//', '', $pdir.$photo);
 						if (empty($nolink)) {
@@ -8793,35 +8740,32 @@ abstract class CommonObject
 							}
 						}
 
-						$addphotorefcss = 1;
-
 						if ($usesharelink) {
 							if ($val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								} else {
 									$return .= '<!-- Show original file -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								}
 							} else {
 								$return .= '<!-- Show nophoto file (because file is not shared) -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
 							}
 						} else {
 							if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 							}
 						}
 
 						if (empty($nolink)) {
 							$return .= '</a>';
 						}
-						$return .= "\n";
 
 						if ($showfilename) {
 							$return .= '<br>'.$viewfilename;
@@ -8833,7 +8777,7 @@ abstract class CommonObject
 								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
 							// Special cas for product
-							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+							if ($modulepart == 'product' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 								// Link to resize
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
@@ -8850,7 +8794,7 @@ abstract class CommonObject
 								$return .= '</tr>';
 							}
 						} elseif ($nbbyrow < 0) {
-							$return .= '</div>';
+							$return .= '</div>'."\n";
 						}
 					}
 
@@ -8862,7 +8806,7 @@ abstract class CommonObject
 						}
 						if ($showaction) {
 							// Special case for product
-							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+							if ($modulepart == 'product' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 								// Link to resize
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
@@ -9144,45 +9088,45 @@ abstract class CommonObject
 
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (is_null($obj->{$field}) || $obj->{$field} === '' || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') {
-					$this->{$field} = '';
+				if (is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
+					$this->$field = '';
 				} else {
-					$this->{$field} = $db->jdate($obj->{$field});
+					$this->$field = $db->jdate($obj->$field);
 				}
 			} elseif ($this->isInt($info)) {
 				if ($field == 'rowid') {
-					$this->id = (int) $obj->{$field};
+					$this->id = (int) $obj->$field;
 				} else {
 					if ($this->isForcedToNullIfZero($info)) {
-						if (empty($obj->{$field})) {
-							$this->{$field} = null;
+						if (empty($obj->$field)) {
+							$this->$field = null;
 						} else {
-							$this->{$field} = (double) $obj->{$field};
+							$this->$field = (double) $obj->$field;
 						}
 					} else {
-						if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-							$this->{$field} = (int) $obj->{$field};
+						if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+							$this->$field = (int) $obj->$field;
 						} else {
-							$this->{$field} = null;
+							$this->$field = null;
 						}
 					}
 				}
 			} elseif ($this->isFloat($info)) {
 				if ($this->isForcedToNullIfZero($info)) {
-					if (empty($obj->{$field})) {
-						$this->{$field} = null;
+					if (empty($obj->$field)) {
+						$this->$field = null;
 					} else {
-						$this->{$field} = (double) $obj->{$field};
+						$this->$field = (double) $obj->$field;
 					}
 				} else {
-					if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-						$this->{$field} = (double) $obj->{$field};
+					if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						$this->$field = (double) $obj->$field;
 					} else {
-						$this->{$field} = null;
+						$this->$field = null;
 					}
 				}
 			} else {
-				$this->{$field} = isset($obj->{$field}) ? $obj->{$field} : null;
+				$this->$field = isset($obj->$field) ? $obj->$field : null;
 			}
 		}
 
@@ -9642,7 +9586,7 @@ abstract class CommonObject
 					return -1;
 				}
 			}
-		} elseif (!empty($this->fk_element) && !empty($this->childtables)) {	// If object has childs linked with a foreign key field, we check all child tables.
+		} elseif (!empty($this->childtables)) {	// If object has childs linked with a foreign key field, we check all child tables.
 			$objectisused = $this->isObjectUsed($this->id);
 			if (!empty($objectisused)) {
 				dol_syslog(get_class($this)."::deleteCommon Can't delete record as it has some child", LOG_WARNING);
@@ -9908,7 +9852,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$statusfield = 'status';
-		if ($this->element == 'don' || $this->element == 'donation') {
+		if (in_array($this->element, array('don', 'donation', 'shipping'))) {
 			$statusfield = 'fk_statut';
 		}
 
@@ -9975,6 +9919,21 @@ abstract class CommonObject
 				$this->{$key} = $value;
 			}
 		}
+
+		// Force values to default values when known
+		if (property_exists($this, 'fields')) {
+			foreach ($this->fields as $key => $value) {
+				// If fields are already set, do nothing
+				if (array_key_exists($key, $fields)) {
+					continue;
+				}
+
+				if (!empty($value['default'])) {
+					$this->$key = $value['default'];
+				}
+			}
+		}
+
 		return 1;
 	}
 

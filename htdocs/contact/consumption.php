@@ -133,11 +133,10 @@ $morehtmlref .= '<div class="refidno">';
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$objsoc->fetch($socid);
 	// Thirdparty
-	$morehtmlref .= $langs->trans('ThirdParty').' : ';
 	if ($objsoc->id > 0) {
 		$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
 	} else {
-		$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+		$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 	}
 }
 $morehtmlref .= '</div>';
@@ -378,12 +377,12 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
+	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element)."&id=".urlencode($id);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sprod_fulldescr) {
 		$param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);

@@ -120,7 +120,7 @@ class mod_member_simple extends ModeleNumRefMembers
 	 *  Return next value
 	 *
 	 *  @param  Societe		$objsoc		Object third party
-	 *  @param  Member		$object		Object we need next value for
+	 *  @param  Adherent	$object		Object we need next value for
 	 *  @return	string					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)

@@ -29,7 +29,7 @@ PartnershipCheckBacklink=パートナーシップ: 参照元のバックリン�
 # Menu
 #
 NewPartnership=新規パートナーシップ
-NewPartnershipbyWeb= パートナーシップが正常に追加された。
+NewPartnershipbyWeb=パートナーシップ リクエストが正常に追加された。近日中にご連絡するやも...
 ListOfPartnerships=パートナーシップのリスト
 
 #
@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=断りの理由
 
 NewPartnershipRequest=新しいパートナーシップリクエスト
 NewPartnershipRequestDesc=このフォームでは、パートナーシッププログラムへの参加をリクエストできる。このフォームへの記入についてサポートが必要な場合は、メール<b>%s</b>までご連絡ください。
+ThisUrlMustContainsAtLeastOneLinkToWebsite=このページには、次のドメインのいずれかへのリンクが少なくとも 1 つ含まれている必要がある: %s
 

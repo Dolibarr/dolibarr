@@ -147,7 +147,8 @@ if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
-//if ($conf->agenda->enabled && $user->rights->agenda->myactions->read) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
+//if (isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
+$elementTypeArray = array();
 
 if ($object->client) {
 	print '<tr><td class="titlefield">';
@@ -414,7 +415,7 @@ if ($sql_select) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sprod_fulldescr) {
 		$param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);

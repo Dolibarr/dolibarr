@@ -1050,16 +1050,16 @@ if ($nboftargetok) {
 			print "Go into directory $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
 			chdir("$BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build");
 			#$cmd="dpkg-source -b $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
-			$cmd="dpkg-buildpackage -us -uc";
+			$cmd="dpkg-buildpackage -us -uc --compression=gzip";
 			print "Launch DEB build ($cmd)\n";
 			$ret=`$cmd 2>&1 3>&1`;
 			print $ret."\n";
 
 			chdir("$olddir");
-			
+
 			print "You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
 			print "You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
-			
+
 			# Move to final dir
 			print "Move *_all.deb *.dsc *.orig.tar.gz *.changes to $NEWDESTI\n";
 			$ret=`mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;

@@ -26,6 +26,7 @@ Permission56002=ٹکٹوں میں ترمیم کریں۔
 Permission56003=ٹکٹیں حذف کریں۔
 Permission56004=ٹکٹوں کا انتظام کریں۔
 Permission56005=تمام فریق ثالث کے ٹکٹ دیکھیں (بیرونی صارفین کے لیے موثر نہیں، ہمیشہ ان تیسرے فریق تک محدود رہیں جس پر وہ انحصار کرتے ہیں)
+Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=ٹکٹ - اقسام
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=بیرونی تعاون کرنے وال�
 
 OriginEmail=رپورٹر ای میل
 Notify_TICKET_SENTBYMAIL=ٹکٹ کا پیغام بذریعہ ای میل بھیجیں۔
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=پڑھیں
@@ -183,7 +186,7 @@ CreatedBy=بنائی گئی
 NewTicket=نیا ٹکٹ
 SubjectAnswerToTicket=ٹکٹ کا جواب
 TicketTypeRequest=درخواست کی قسم
-TicketCategory=ٹکٹ کی درجہ بندی
+TicketCategory=Ticket group
 SeeTicket=ٹکٹ دیکھیں
 TicketMarkedAsRead=ٹکٹ کو پڑھا ہوا نشان زد کر دیا گیا ہے۔
 TicketReadOn=پڑھیں

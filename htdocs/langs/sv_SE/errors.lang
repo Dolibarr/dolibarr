@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Fel, parameter <b> %s </b> måste 
 ErrorLoginDateValidity=Fel, den här inloggningen ligger utanför giltighetsdatumintervallet
 ErrorValueLength=Fältets längd '<b> %s </b>' måste vara högre än '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' är ett reserverat nyckelord
+ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command.
 ErrorNotAvailableWithThisDistribution=Ej tillgängligt med denna distribution
 ErrorPublicInterfaceNotEnabled=Det offentliga gränssnittet var inte aktiverat
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Språket på den nya sidan måste definieras om det är inställt som en översättning av en annan sida
@@ -308,7 +309,7 @@ ErrorExistingPermission = Tillstånd <b> %s </b> för objekt <b> %s </b> finns r
 ErrorFieldExist=Värdet för <b> %s </b> finns redan
 ErrorEqualModule=Modul ogiltig i <b> %s </b>
 ErrorFieldValue=Värdet för <b> %s </b> är felaktigt
-ErrorCoherenceMenu= <b> %s </b> krävs när <b> % </b> är lika med VÄNSTER
+ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) är högre än PHP-parameter post_max_size (%s). Detta är inte en konsekvent installation.

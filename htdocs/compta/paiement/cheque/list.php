@@ -73,6 +73,16 @@ $formother = new FormOther($db);
 $checkdepositstatic = new RemiseCheque($db);
 $accountstatic = new Account($db);
 
+// List of payment mode to support
+// Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
+$arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ'));
+
+$arrayoflabels = array();
+foreach ($arrayofpaymentmodetomanage as $key => $val) {
+	$labelval = ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $val);
+	$arrayoflabels[$key] = $labelval;
+}
+
 
 /*
  * Actions
@@ -93,10 +103,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
-llxHeader('', $langs->trans("ChequesReceipts"));
+llxHeader('', $langs->trans("ChequeDeposits"));
 
 $sql = "SELECT bc.rowid, bc.ref, bc.date_bordereau,";
-$sql .= " bc.nbcheque, bc.amount, bc.statut,";
+$sql .= " bc.nbcheque, bc.amount, bc.statut, bc.type,";
 $sql .= " ba.rowid as bid, ba.label";
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -104,7 +114,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE bc.fk_bank_account = ba.rowid";
-$sql .= " AND bc.entity = ".$conf->entity;
+$sql .= " AND bc.entity = ".((int) $conf->entity);
 
 // Search criteria
 if ($search_ref) {
@@ -120,7 +130,7 @@ $sql .= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -191,10 +201,13 @@ if ($resql) {
 
 	// Fields title search
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
-	print '<td class="liste_titre" align="center">';
+	// Type
+	print '<td class="liste_titre">';
+	print '</td>';
+	print '<td class="liste_titre center">';
 	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	}
@@ -217,6 +230,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "bc.type", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "bc.date_bordereau", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -226,7 +240,10 @@ if ($resql) {
 	print "</tr>\n";
 
 	if ($num > 0) {
-		while ($i < min($num, $limit)) {
+		$savnbfield = 8;
+
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$objp = $db->fetch_object($resql);
 
 			$checkdepositstatic->id = $objp->rowid;
@@ -235,6 +252,7 @@ if ($resql) {
 			$checkdepositstatic->nbcheque = $objp->nbcheque;
 			$checkdepositstatic->amount = $objp->amount;
 			$checkdepositstatic->date_bordereau = $objp->date_bordereau;
+			$checkdepositstatic->type = $objp->type;
 
 			$account = new Account($db);
 			$account->fetch($objp->bid);
@@ -242,12 +260,12 @@ if ($resql) {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				print $checkdepositstatic->getKanbanView('');
-				if ($i == (min($num, $limit) - 1)) {
+				print $checkdepositstatic->getKanbanView('', array('selected' => in_array($checkdepositstatic->id, $arrayofselected)));
+				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
 				}
@@ -256,12 +274,15 @@ if ($resql) {
 
 				// Num ref cheque
 				print '<td>';
-
 				print $checkdepositstatic->getNomUrl(1);
 				print '</td>';
 
+				// Type
+				$labelpaymentmode = ($langs->transnoentitiesnoconv("PaymentType".$checkdepositstatic->type) != "PaymentType".$checkdepositstatic->type ? $langs->transnoentitiesnoconv("PaymentType".$checkdepositstatic->type) : $checkdepositstatic->type);
+				print '<td>'.dol_escape_htmltag($labelpaymentmode).'</td>';
+
 				// Date
-				print '<td class="center">'.dol_print_date($db->jdate($objp->date_bordereau), 'day').'</td>'; // TODO Use date hour
+				print '<td class="center">'.dol_print_date($db->jdate($objp->date_bordereau), 'dayhour', 'tzuser').'</td>';
 
 				// Bank
 				print '<td>';

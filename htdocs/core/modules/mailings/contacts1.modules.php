@@ -82,7 +82,6 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0] .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$statssql[0] .= " WHERE c.entity IN (".getEntity('contact').")";
 		$statssql[0] .= " AND c.email <> ''"; // Note that null != '' is false
-		$statssql[0] .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = c.email) = 0";
 		$statssql[0] .= " AND c.statut = 1";
 
 		return $statssql;
@@ -104,7 +103,9 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
 		$sql .= " WHERE c.entity IN (".getEntity('contact').")";
 		$sql .= " AND c.email <> ''"; // Note that null != '' is false
-		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = c.email) = 0";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = c.email and mu.entity = ".((int) $conf->entity).")";
+		}
 		// exclude unsubscribed users
 		$sql .= " AND c.statut = 1";
 
@@ -309,8 +310,8 @@ class mailing_contacts1 extends MailingTargets
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($this->db);
-			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
-			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
+			$s .= img_picto($langs->trans("DefaultLang"), 'language', 'class="pictofixedwidth"');
+			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, null, $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, null, 1);
 		}
 
 		return $s;
@@ -331,7 +332,7 @@ class mailing_contacts1 extends MailingTargets
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Ajoute destinataires dans table des cibles
+	 *  Add some recipients into target table
 	 *
 	 *  @param  int		$mailing_id    	Id of emailing
 	 *  @return int           			<0 si erreur, nb ajout si ok
@@ -389,7 +390,9 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";
 
-		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = sp.email) = 0";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = sp.email and mu.entity = ".((int) $conf->entity).")";
+		}
 		// Exclude unsubscribed email adresses
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";

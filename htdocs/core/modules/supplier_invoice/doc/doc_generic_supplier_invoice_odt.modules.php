@@ -48,12 +48,6 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 	public $issuer;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
-	 */
-	public $phpmin = array(5, 6);
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
@@ -122,9 +116,10 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobinvoicenopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -161,7 +156,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		$texte .= $conf->global->SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -178,7 +173,9 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=supplier_invoices/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=supplier_invoices/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}
@@ -189,9 +186,10 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		$texte .= '</div>';
 		$texte .= '</td>';
 
-
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -273,8 +271,8 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}

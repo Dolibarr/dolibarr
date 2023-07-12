@@ -739,7 +739,9 @@ class Reception extends CommonObject
 			} else {
 				// build array with quantity received by product in all supplier orders (origin)
 				foreach ($supplierorderdispatch->lines as $dispatch_line) {
-					$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
+					if (array_key_exists($dispatch_line->fk_product, $qty_received)) {
+						$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
+					}
 				}
 
 				// qty wished in order supplier (origin)
@@ -1022,7 +1024,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		// Stock control
-		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
+		if (isModEnabled('stock') && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1257,13 +1259,15 @@ class Reception extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
+		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, '', 0, 0, $notooltip ? 0 : 1);
 		}
-		if ($withpicto && $withpicto != 2) {
-			$result .= ' ';
+		if ($withpicto != 2) {
+			$result .= $this->ref;
 		}
-		$result .= $linkstart.$this->ref.$linkend;
+
+		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
@@ -1383,7 +1387,8 @@ class Reception extends CommonObject
 		while ($xnbp < $nbp) {
 			$line = new CommandeFournisseurDispatch($this->db);
 			$line->desc = $langs->trans("Description")." ".$xnbp;
-			$line->libelle = $langs->trans("Description")." ".$xnbp;
+			$line->libelle = $langs->trans("Description")." ".$xnbp;	// deprecated
+			$line->label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 
 			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;

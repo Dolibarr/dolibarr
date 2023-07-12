@@ -190,28 +190,14 @@ class FormActions
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
-			if ($typeelement == 'invoice') {
+			if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
 				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'propal') {
-				$title = $langs->trans('ActionsOnPropal');
 			} elseif ($typeelement == 'supplier_proposal') {
 				$title = $langs->trans('ActionsOnSupplierProposal');
-			} elseif ($typeelement == 'order') {
-				$title = $langs->trans('ActionsOnOrder');
 			} elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order') {
 				$title = $langs->trans('ActionsOnOrder');
 			} elseif ($typeelement == 'shipping') {
 				$title = $langs->trans('ActionsOnShipping');
-			} elseif ($typeelement == 'fichinter') {
-				$title = $langs->trans('ActionsOnFicheInter');
-			} elseif ($typeelement == 'project') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'task') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'member') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
 			} else {
 				$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
 			}

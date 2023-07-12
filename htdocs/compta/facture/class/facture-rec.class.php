@@ -80,6 +80,12 @@ class FactureRec extends CommonInvoice
 	 */
 	public $title;
 
+	/**
+	 * @var string 	The label of recurring invoice
+	 * @deprecated 	Use $title instead
+	 */
+	public $titre;
+
 	public $socid;
 	public $number;
 	public $date;
@@ -181,7 +187,7 @@ class FactureRec extends CommonInvoice
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'Total', 'enabled'=>1, 'visible'=>-1, 'position'=>70, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>75, 'isameasure'=>1),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>85),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>85),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'date_lim_reglement' =>array('type'=>'date', 'label'=>'Date lim reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
@@ -198,7 +204,7 @@ class FactureRec extends CommonInvoice
 		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>160, 'isameasure'=>1),
 		'auto_validate' =>array('type'=>'integer', 'label'=>'Auto validate', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
 		'generate_pdf' =>array('type'=>'integer', 'label'=>'Generate pdf', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>175),
+		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>175),
 		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency tx', 'enabled'=>1, 'visible'=>-1, 'position'=>190, 'isameasure'=>1),
@@ -1029,6 +1035,10 @@ class FactureRec extends CommonInvoice
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
+		} else {
+			$this->error = 'Recurring Invoice is suspended. adding lines not allowed.';
+
+			return -1;
 		}
 	}
 

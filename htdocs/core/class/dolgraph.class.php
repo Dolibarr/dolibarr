@@ -64,6 +64,7 @@ class DolGraph
 	public $horizTickIncrement = -1;
 	public $SetNumXTicks = -1;
 	public $labelInterval = -1;
+	public $YLabel;
 
 	public $hideXGrid = false;
 	public $hideXValues = false;
@@ -111,6 +112,11 @@ class DolGraph
 		$this->bordercolor = array(235, 235, 224);
 		$this->datacolor = array(array(120, 130, 150), array(160, 160, 180), array(190, 190, 220));
 		$this->bgcolor = array(235, 235, 224);
+
+		// For small screen, we prefer a default with of 300
+		if (!empty($conf->dol_optimize_smallscreen)) {
+			$this->width = 300;
+		}
 
 		// Load color of the theme
 		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
@@ -760,7 +766,7 @@ class DolGraph
 	private function draw_jflot($file, $fileurl)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		dol_syslog(get_class($this) . "::draw_jflot this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
@@ -908,7 +914,7 @@ class DolGraph
 				interactive: true
 			},';
 			if (count($datacolor)) {
-				$this->stringtoshow .= 'colors: ' . (!empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor)) . ',';
+				$this->stringtoshow .= 'colors: ' . json_encode($datacolor) . ',';
 			}
 			$this->stringtoshow .= 'legend: {show: ' . ($showlegend ? 'true' : 'false') . ', position: \'ne\' }
 		});
@@ -1047,7 +1053,7 @@ class DolGraph
 	private function draw_chart($file, $fileurl)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		dol_syslog(get_class($this) . "::draw_chart this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
@@ -1144,7 +1150,7 @@ class DolGraph
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px') . '; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
+		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: ' . (strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
 
 		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$i = $firstlot;
@@ -1271,7 +1277,6 @@ class DolGraph
 			$i = 0;
 			while ($i < $nblot) {	// Loop on each serie
 				$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ')';
-				//$color = (!empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor));
 
 				if ($i > 0) {
 					$this->stringtoshow .= ', ' . "\n";
@@ -1346,7 +1351,7 @@ class DolGraph
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
-				$this->stringtoshow .= ', tooltips: { mode: \'nearest\',
+				$this->stringtoshow .= 'tooltips: { mode: \'nearest\',
 					callbacks: {';
 				if (is_array($this->tooltipsTitles)) {
 					$this->stringtoshow .='

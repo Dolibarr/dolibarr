@@ -124,4 +124,10 @@ div.ticketform .index_create, div.ticketform .index_display {
 @media only screen and (max-width: 767px)
 {
 	#form_create_ticket input.text,	#form_create_ticket textarea { width: unset;}
+
+	#form_create_ticket, #form_view_ticket
+	{
+		margin-left: 0;
+		margin-right: 0;
+	}
 }

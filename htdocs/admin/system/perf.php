@@ -98,7 +98,7 @@ print '<br>';
 // Module debugbar
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
+$test = !isModEnabled('debugbar');
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {
@@ -110,7 +110,7 @@ print '<br>';
 // Applicative cache
 print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
-$test = !empty($conf->memcached->enabled);
+$test = isModEnabled('memcached');
 if ($test) {
 	if (!empty($conf->global->MEMCACHED_SERVER)) {
 		print $langs->trans("MemcachedAvailableAndSetup");
@@ -424,7 +424,7 @@ print '<br>';
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
 print $form->textwithpicto($langs->trans("CacheByServer"), $langs->trans("CacheByServerDesc"));
 print ':</strong><br>';
-// No cahce on PHP
+// No cache on PHP
 //print '<div id="httpcachephpok">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
 //print '<div id="httpcachephpko">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeNotCached",'php (.php)').'</div>';
 // Cache on rest
@@ -624,6 +624,25 @@ if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'
 	print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
 } else {
 	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
+}
+print '<br>';
+
+// Options
+print '<br>';
+print '<strong>'.$langs->trans("Options").'</strong>:<br>';
+if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
+	print 'MAIN_ACTIVATE_FILECACHE = '.getDolGlobalInt('MAIN_ACTIVATE_FILECACHE').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_ACTIVATE_FILECACHE = '.getDolGlobalInt('MAIN_ACTIVATE_FILECACHE', 0);
+	//.' '.img_picto('', 'warning.png');
+}
+print '<br>';
+
+if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP', 0);
+	//.' '.img_picto('', 'warning.png');
 }
 print '<br>';
 

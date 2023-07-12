@@ -378,10 +378,6 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 		print '</td>';
-		// Note on several rows
-		//print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-		//print nl2br($object->note_public);
-		//print '</td>';
 		print '</tr>';
 
 		// Delivery delay
@@ -517,7 +513,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
-			if ($user->rights->commande->creer) {
+			if ($user->hasRight('commande', 'creer')) {
 				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';
@@ -773,7 +769,7 @@ if ($id > 0 || !empty($ref)) {
 						$toBeShippedTotal += $toBeShipped[$objp->fk_product];
 						print $toBeShipped[$objp->fk_product];
 					} else {
-						print '0 ('.$langs->trans("Service").')';
+						print '0 <span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					}
 					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 

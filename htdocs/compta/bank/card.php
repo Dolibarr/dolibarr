@@ -55,6 +55,8 @@ $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
@@ -212,7 +214,17 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$noback = 0;
+
 			$db->commit();
+
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+
+			if (empty($noback)) {
+				header("Location: " . $urltogo);
+				exit;
+			}
 		} else {
 			$db->rollback();
 		}
@@ -380,6 +392,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -387,7 +400,7 @@ if ($action == 'create') {
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
+	print '<td><input type="text" class="flat width100" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
@@ -527,6 +540,20 @@ if ($action == 'create') {
 		print '<td><input type="text" class="flat minwidth150" name="bank" value="'.(GETPOST('bank') ?GETPOST('bank', 'alpha') : $object->bank).'"></td>';
 		print '</tr>';
 
+		$ibankey = FormBank::getIBANLabel($object);
+		$bickey = "BICNumber";
+		if ($object->getCountryCode() == 'IN') {
+			$bickey = "SWIFT";
+		}
+
+		// IBAN
+		print '<tr><td>'.$langs->trans($ibankey).'</td>';
+		print '<td><input maxlength="34" type="text" class="flat minwidth300" name="iban" value="'.(GETPOSTISSET('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
+
+		// BIC
+		print '<tr><td>'.$langs->trans($bickey).'</td>';
+		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOSTISSET('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
+
 		// Show fields of bank account
 		$sizecss = '';
 		foreach ($object->getFieldsToShow() as $val) {
@@ -553,18 +580,6 @@ if ($action == 'create') {
 			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOSTISSET($name) ? GETPOST($name, 'alpha') : $content).'"></td>';
 			print '</tr>';
 		}
-		$ibankey = FormBank::getIBANLabel($object);
-		$bickey = "BICNumber";
-		if ($object->getCountryCode() == 'IN') {
-			$bickey = "SWIFT";
-		}
-
-		// IBAN
-		print '<tr><td>'.$langs->trans($ibankey).'</td>';
-		print '<td><input maxlength="34" type="text" class="flat minwidth300" name="iban" value="'.(GETPOSTISSET('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
-
-		print '<tr><td>'.$langs->trans($bickey).'</td>';
-		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOSTISSET('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
 
 		if (isModEnabled('paymentbybanktransfer')) {
 			print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
@@ -639,7 +654,8 @@ if ($action == 'create') {
 	if ((GETPOST("id", 'int') || GETPOST("ref")) && $action != 'edit') {
 		// Show tabs
 		$head = bank_prepare_head($object);
-		print dol_get_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
+
+		print dol_get_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
@@ -661,7 +677,7 @@ if ($action == 'create') {
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("AccountType").'</td>';
@@ -753,6 +769,38 @@ if ($action == 'create') {
 			print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("BankName").'</td>';
 			print '<td>'.$object->bank.'</td></tr>';
 
+			$ibankey = FormBank::getIBANLabel($object);
+			$bickey = "BICNumber";
+			if ($object->getCountryCode() == 'IN') {
+				$bickey = "SWIFT";
+			}
+
+			// IBAN
+			print '<tr><td>'.$langs->trans($ibankey).'</td>';
+			print '<td>'.getIbanHumanReadable($object).'&nbsp;';
+			if (!empty($object->iban)) {
+				if (!checkIbanForAccount($object)) {
+					print img_picto($langs->trans("IbanNotValid"), 'warning');
+				} else {
+					print img_picto($langs->trans("IbanValid"), 'info');
+				}
+			}
+			print '</td></tr>';
+
+			// BIC
+			print '<tr><td>'.$langs->trans($bickey).'</td>';
+			print '<td>'.$object->bic.'&nbsp;';
+			if (!empty($object->bic)) {
+				if (!checkSwiftForAccount($object)) {
+					print img_picto($langs->trans("SwiftNotValid"), 'warning');
+				} else {
+					print img_picto($langs->trans("SwiftValid"), 'info');
+				}
+			}
+			print '</td></tr>';
+
+			// TODO Add a link "Show more..." for all ohter informations.
+
 			// Show fields of bank account
 			foreach ($object->getFieldsToShow() as $val) {
 				$content = '';
@@ -770,34 +818,6 @@ if ($action == 'create') {
 				print '<td>'.$content.'</td>';
 				print '</tr>';
 			}
-
-			$ibankey = FormBank::getIBANLabel($object);
-			$bickey = "BICNumber";
-			if ($object->getCountryCode() == 'IN') {
-				$bickey = "SWIFT";
-			}
-
-			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td>'.getIbanHumanReadable($object).'&nbsp;';
-			if (!empty($object->iban)) {
-				if (!checkIbanForAccount($object)) {
-					print img_picto($langs->trans("IbanNotValid"), 'warning');
-				} else {
-					print img_picto($langs->trans("IbanValid"), 'info');
-				}
-			}
-			print '</td></tr>';
-
-			print '<tr><td>'.$langs->trans($bickey).'</td>';
-			print '<td>'.$object->bic.'&nbsp;';
-			if (!empty($object->bic)) {
-				if (!checkSwiftForAccount($object)) {
-					print img_picto($langs->trans("SwiftNotValid"), 'warning');
-				} else {
-					print img_picto($langs->trans("SwiftValid"), 'info');
-				}
-			}
-			print '</td></tr>';
 
 			if (isModEnabled('prelevement')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("ICS"), $langs->trans("ICS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("StandingOrder")).')').'</td>';
@@ -898,6 +918,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">'."\n\n";
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		print dol_get_fiche_head(array(), 0, '', 0);
 
@@ -1007,6 +1028,8 @@ if ($action == 'create') {
 		if (isModEnabled('categorie')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+
+			$arrayselected = array();
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
 			if (is_array($cats)) {
@@ -1080,6 +1103,26 @@ if ($action == 'create') {
 			print '<td><input type="text" class="flat width300" name="bank" value="'.$object->bank.'"></td>';
 			print '</tr>';
 
+			$ibankey = FormBank::getIBANLabel($object);
+			$bickey = "BICNumber";
+			if ($object->getCountryCode() == 'IN') {
+				$bickey = "SWIFT";
+			}
+
+			// IBAN
+			print '<tr><td>';
+			$tooltip = $langs->trans("Example").':<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
+			print $form->textwithpicto($langs->trans($ibankey), $tooltip);
+			print '</td>';
+			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOSTISSET('iban') ? GETPOST('iban',  'alphanohtml') : $object->iban).'"></td></tr>';
+
+			// BIC
+			print '<tr><td>';
+			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
+			print $form->textwithpicto($langs->trans($bickey), $tooltip);
+			print '</td>';
+			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOSTISSET('bic') ? GETPOST('bic',  'alphanohtml') : $object->bic).'"></td></tr>';
+
 			// Show fields of bank account
 			foreach ($object->getFieldsToShow() as $val) {
 				$content = '';
@@ -1105,19 +1148,6 @@ if ($action == 'create') {
 				print '<td><input type="text" class="flat '.$css.'" name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
 				print '</tr>';
 			}
-
-			$ibankey = FormBank::getIBANLabel($object);
-			$bickey = "BICNumber";
-			if ($object->getCountryCode() == 'IN') {
-				$bickey = "SWIFT";
-			}
-
-			// IBAN
-			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOSTISSET('iban') ? GETPOST('iban',  'alphanohtml') : $object->iban).'"></td></tr>';
-
-			print '<tr><td>'.$langs->trans($bickey).'</td>';
-			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOSTISSET('bic') ? GETPOST('bic',  'alphanohtml') : $object->bic).'"></td></tr>';
 
 			if (isModEnabled('prelevement')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("ICS"), $langs->trans("ICS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("StandingOrder")).')').'</td>';

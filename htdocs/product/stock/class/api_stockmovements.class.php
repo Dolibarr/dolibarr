@@ -57,8 +57,8 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement informations
 	 *
-	 * @param 	int 	$id ID of movement
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of movement
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -104,17 +104,17 @@ class StockMovements extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".$this->db->prefix()."stock_mouvement as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement AS t LEFT JOIN ".MAIN_DB_PREFIX."stock_mouvement_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+
 		//$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
 		$sql .= ' WHERE 1 = 1';
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

@@ -150,9 +150,16 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  */
 function llxFooterVierge()
 {
+	global $conf;
+
 	print '</div>';
 
 	printCommonFooter('public');
+
+	if (!empty($conf->use_javascript_ajax)) {
+		print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
+		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext ? '&'.$ext : '').'"></script>'."\n";
+	}
 
 	print "</body>\n";
 	print "</html>\n";
@@ -163,6 +170,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -262,6 +270,7 @@ if (empty($reshook) && $action == 'add') {
 				$company->zip         = GETPOST('zipcode');
 				$company->town        = GETPOST('town');
 				$company->email       = GETPOST('email');
+				$company->url         = GETPOST('url');
 				$company->country_id  = GETPOST('country_id', 'int');
 				$company->state_id    = GETPOST('state_id', 'int');
 				$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
@@ -295,12 +304,16 @@ if (empty($reshook) && $action == 'add') {
 			if (empty($company->email)) {
 				$company->email = GETPOST('email');
 			}
+			if (empty($company->url)) {
+				$company->url = GETPOST('url');
+			}
 			if (empty($company->state_id)) {
 				$company->state_id = GETPOST('state_id', 'int');
 			}
 			if (empty($company->name_alias)) {
 				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
+
 			$company->update(0);
 		}
 
@@ -536,7 +549,7 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
 llxHeaderVierge($langs->trans("NewPartnershipRequest"));
 
 print '<br>';
-print load_fiche_titre($langs->trans("NewPartnershipRequest"), '', '', 0, 0, 'center');
+print load_fiche_titre(img_picto('', 'hands-helping', 'class="pictofixedwidth"').' &nbsp; '.$langs->trans("NewPartnershipRequest"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
@@ -560,7 +573,8 @@ print '<input type="hidden" name="action" value="add" />';
 
 print '<br>';
 
-print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
+$messagemandatory = '<span class="">'.$langs->trans("FieldsWithAreMandatory", '*').'</span>';
+//print '<br><span class="opacitymedium small">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 print dol_get_fiche_head('');
@@ -592,22 +606,36 @@ if (getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 if (!getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
-	print '<tr class="morphy"><td>'.$langs->trans('PartnershipType').' <span style="color: red">*</span></td><td>'."\n";
+	print '<tr class="morphy"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans('PartnershipType').' <span class="star">*</span></td><td>'."\n";
 	print $form->selectarray("partnershiptype", $listofpartnership, GETPOSTISSET('partnershiptype') ? GETPOST('partnershiptype', 'int') : 'ifone', 1);
 	print '</td></tr>'."\n";
 }
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").' <span style="color:red;">*</span></td><td>';
+print '<tr id="trcompany" class="trcompany"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Company").' <span class="star">*</span></td><td>';
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print '<input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Firstname").' <span class="star">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <span style="color:red;">*</span></td><td>';
+print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").' <span class="star">*</span></td><td>';
 //print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+// Url
+print '<tr><td>'.$langs->trans("Url").' <span style="color:red;">*</span></td><td>';
+print '<input type="text" name="url" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('url')).'">';
+if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
+	$listofkeytocheck = explode('|', getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK'));
+	$i = 0;
+	$s = '';
+	foreach ($listofkeytocheck as $val) {
+		$i++;
+		$s .= ($s ? ($i == count($listofkeytocheck) ? ' '.$langs->trans("or").' ' : ', ') : '').$val;
+	}
+	print '<br><span class="opacitymedium small">'.$langs->trans("ThisUrlMustContainsAtLeastOneLinkToWebsite", $s).'</small>';
+}
+print '</td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";

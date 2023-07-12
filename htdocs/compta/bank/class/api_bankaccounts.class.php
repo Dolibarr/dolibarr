@@ -70,7 +70,7 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."bank_account AS t LEFT JOIN ".MAIN_DB_PREFIX."bank_account_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_account as c";
 		}
@@ -82,11 +82,10 @@ class BankAccounts extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -122,8 +121,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Get account by ID.
 	 *
-	 * @param 	int	$id    						ID of account
-	 * @return  	Object              		Object with cleaned properties
+	 * @param 	int			$id				ID of account
+	 * @return  Object              		Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -145,8 +144,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Create account object
 	 *
-	 * @param array $request_data    Request data
-	 * @return int ID of account
+	 * @param 	array $request_data    	Request data
+	 * @return 	int 					ID of account
 	 */
 	public function post($request_data = null)
 	{
@@ -440,11 +439,10 @@ class BankAccounts extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= " ORDER BY rowid";

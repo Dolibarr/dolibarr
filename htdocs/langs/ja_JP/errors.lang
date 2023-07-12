@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=エラー、パラメータ <b> %s
 ErrorLoginDateValidity=エラー、このログインは有効期間外だ
 ErrorValueLength=フィールドの長さ '<b> %s </b>'は '<b> %s</b>'より大きくなければならない
 ErrorReservedKeyword=「<b>%s</b>」という単語は予約語 
+ErrorFilenameReserved=ファイル名 <b> %s </b> は、予約および保護されたコマンドであるため使用不可。
 ErrorNotAvailableWithThisDistribution=このディストリビューションでは利用できない
 ErrorPublicInterfaceNotEnabled=公開インターフェイスが有効になっていない
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=別のページの翻訳として設定されている場合は、新しいページの言語を定義する必要がある
@@ -308,7 +309,14 @@ ErrorExistingPermission = オブジェクト <b> %s </b> に対する権限 <b> 
 ErrorFieldExist=<b> %s </b> の値は既に存在する
 ErrorEqualModule=<b> %s </b> で無効なモジュール
 ErrorFieldValue=<b> %s </b> の値が正しくない
-ErrorCoherenceMenu= <b> %s </b> は、<b> % </b> が LEFT と等しい場合に必要です。
+ErrorCoherenceMenu= <b> %s </b> は、<b> %s </b> が「左」の場合に必要。
+ErrorUploadFileDragDrop=ファイル(s)のアップロード中にエラーが発生した
+ErrorUploadFileDragDropPermissionDenied=ファイル(s)のアップロード中にエラーが発生した: 許可されない
+ErrorFixThisHere= <a href="%s"> ここを修正すること </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=エラー: 現在のインスタンスの URL (%s) は、OAuth2 ログイン設定に定義されている URL (%s) と一致さない。このような構成で OAuth2 ログインを行うことは許可されていない。
+ErrorMenuExistValue=このタイトルまたは URL のメニューはすでに存在する
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
+ErrorTypeMenu=ナビゲーションバーに同じモジュールの別のメニューを追加することはできない。まだハンドルされていない
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。
@@ -348,6 +356,14 @@ WarningThemeForcedTo=警告、テーマは隠し定数 MAIN_FORCETHEME によっ
 WarningPagesWillBeDeleted=警告、これにより、ウェブサイトの既存のページ/コンテナもすべて削除される。事前にウェブサイトをエクスポートする必要があり、後で再インポートするためのバックアップとなる。
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=「請求書の検証」で在庫を減らすオプションが設定されている場合、自動検証は無効になる。
 WarningModuleNeedRefrech = モジュール <b> %s </b> が無効になった。有効にすることを忘れないこと
+WarningPermissionAlreadyExist=このオブジェクトの既存の権限
+
+SwissQrOnlyVIR = SwissQR 請求書は、口座振替で支払うように設定された請求書にのみ追加できる。
+SwissQrCreditorAddressInvalid = 債権者の住所が無効  (郵便番号と都市は設定されているか? (%s)
+SwissQrCreditorInformationInvalid = 債権者情報が IBAN (%s) に対して無効 : %s
+SwissQrIbanNotImplementedYet = QR-IBANはまだ実装されていない
+SwissQrPaymentInformationInvalid = 支払情報が合計 %s に対して無効  : %s
+SwissQrDebitorAddressInvalid = 債務者情報が無効  (%s)
 
 # Validate
 RequireValidValue = 値が無効.

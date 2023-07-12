@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Feil, parameter <b> %s </b> må v�
 ErrorLoginDateValidity=Feil, denne påloggingen er utenfor gyldig datoområde
 ErrorValueLength=Lengden på feltet '<b> %s </b>' må være høyere enn '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' er et reservert nøkkelord
+ErrorFilenameReserved=Filnavnet <b> %s </b> kan ikke brukes da det er en reservert og beskyttet kommando.
 ErrorNotAvailableWithThisDistribution=Ikke tilgjengelig i denne distribusjonen
 ErrorPublicInterfaceNotEnabled=Offentlig grensesnitt var ikke aktivert
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Språket til den nye siden må defineres hvis den er angitt som oversettelse av en annen side
@@ -308,7 +309,14 @@ ErrorExistingPermission = Tillatelse <b> %s </b> for objekt <b> %s </b> finnes a
 ErrorFieldExist=Verdien for <b> %s </b> finnes allerede
 ErrorEqualModule=Modulen er ugyldig i <b> %s </b>
 ErrorFieldValue=Verdien for <b> %s </b> er feil
-ErrorCoherenceMenu= <b> %s </b> er nødvendig når <b> % </b> er lik VENSTRE
+ErrorCoherenceMenu=<b>%s</b> er påkrevd når <b>%s</b> er 'venstre'
+ErrorUploadFileDragDrop=Det oppsto en feil under opplastingen av filen(e).
+ErrorUploadFileDragDropPermissionDenied=Det oppsto en feil under opplasting av filen(e): Tillatelse nektet
+ErrorFixThisHere= <a href="%s"> Fiks dette her </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Feil: URL-en til gjeldende forekomst (%s) samsvarer ikke med URL-en som er definert i OAuth2-påloggingsoppsettet (%s). Å gjøre OAuth2-pålogging i en slik konfigurasjon er ikke tillatt.
+ErrorMenuExistValue=Det finnes allerede en meny med denne tittelen eller nettadressen
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG-filer er ikke tillatt som eksterne lenker uten alternativet %s
+ErrorTypeMenu=Umulig å legge til en annen meny for samme modul på navigasjonslinjen, ikke håndtert ennå
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
@@ -348,6 +356,14 @@ WarningThemeForcedTo=Advarsel, tema har blitt tvunget til <b> %s </b> av skjult 
 WarningPagesWillBeDeleted=Advarsel, dette vil også slette alle eksisterende sider/beholdere på nettstedet. Du bør eksportere nettstedet ditt før, så du har en sikkerhetskopi for å reimportere den senere.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatisk validering er deaktivert når alternativet for å redusere beholdning er satt på "Fakturavalidering".
 WarningModuleNeedRefrech = Modul <b> %s </b> er deaktivert. Ikke glem å aktivere den
+WarningPermissionAlreadyExist=Eksisterende tillatelser for dette objektet
+
+SwissQrOnlyVIR = SwissQR-faktura kan kun legges til på fakturaer som skal betales med direkte belastning.
+SwissQrCreditorAddressInvalid = Kreditoradressen er ugyldig (er postnummer og sted angitt? (%s)
+SwissQrCreditorInformationInvalid = Kreditorinformasjon er ugyldig for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN er ikke implementert ennå
+SwissQrPaymentInformationInvalid = Betalingsinformasjonen var ugyldig for totalt %s : %s
+SwissQrDebitorAddressInvalid = Debitorinformasjonen var ugyldig (%s)
 
 # Validate
 RequireValidValue = Verdien er ikke gyldig

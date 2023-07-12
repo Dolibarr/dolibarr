@@ -274,7 +274,7 @@ class modUser extends DolibarrModules
 		$keyforelement = 'user';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		if (empty($conf->adherent->enabled)) {
+		if (!isModEnabled('adherent')) {
 			unset($this->export_fields_array[$r]['u.fk_member']);
 			unset($this->export_entities_array[$r]['u.fk_member']);
 		}

@@ -38,25 +38,28 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "orders", "stocks"));
 
-if (!$user->admin) {
-	accessforbidden();
-}
+$action = GETPOST('action', 'aZ09');
 
 $type = GETPOST('type', 'alpha');
 $value = GETPOST('value', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $label = GETPOST('label', 'alpha');
-$action = GETPOST('action', 'aZ09');
 $scandir = GETPOST('scan_dir', 'alpha');
 
 $specimenthirdparty = new Societe($db);
 $specimenthirdparty->initAsSpecimen();
 
+$error = 0;
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 /*
-* Actions
-*/
+ * Actions
+ */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -77,7 +80,9 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {  // For orders
+}
+
+if ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
 
 	$commande = new CommandeFournisseur($db);
@@ -317,8 +322,8 @@ print '</table></div><br>';
 
 
 /*
-*  Documents models for supplier orders
-*/
+ *  Documents models for supplier orders
+ */
 
 print load_fiche_titre($langs->trans("OrdersModelModule"), '', '');
 

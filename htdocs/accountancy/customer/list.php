@@ -91,6 +91,8 @@ if (!$sortfield) {
 if (!$sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
 		$sortorder = "DESC";
+	} else {
+		$sortorder = "ASC";
 	}
 }
 
@@ -100,7 +102,7 @@ $hookmanager->initHooks(array('accountancycustomerlist'));
 $formaccounting = new FormAccounting($db);
 $accountingAccount = new AccountingAccount($db);
 
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -164,7 +166,7 @@ if (empty($reshook)) {
 }
 
 
-if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
+if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	$msg = '';
 
 	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
@@ -208,6 +210,11 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 	}
 }
 
+if (GETPOST('sortfield') == 'f.datef, f.ref, l.rowid') {
+	$value = (GETPOST('sortorder') == 'asc,asc,asc' ? 0 : 1);
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $value, 'yesno', 0, '', $conf->entity);
+}
 
 
 /*
@@ -228,8 +235,8 @@ if (empty($chartaccountcode)) {
 }
 
 // Customer Invoice lines
-$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype, f.fk_facture_source,";
-$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype, f.situation_cycle_ref, f.fk_facture_source,";
+$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.situation_percent, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
@@ -352,7 +359,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -382,7 +389,7 @@ if ($result) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($search_societe) {
 		$param .= '&search_societe='.urlencode($search_societe);
@@ -439,7 +446,7 @@ if ($result) {
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	//if ($user->hasRight('mymodule', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	if ($massaction !== 'set_default_account') {
 		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
@@ -655,8 +662,30 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
 
+		// Amount
 		print '<td class="right nowraponall amount">';
-		print price($objp->total_ht);
+
+		// Create a compensation rate for old situation invoice feature.
+		$situation_ratio = 1;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			if ($objp->situation_cycle_ref) {
+				// Avoid divide by 0
+				if ($objp->situation_percent == 0) {
+					$situation_ratio = 0;
+				} else {
+					$line = new FactureLigne($db);
+					$line->fetch($objp->rowid);
+
+					// Situation invoices handling
+					$prev_progress = $line->get_prev_progress($objp->facid);
+
+					$situation_ratio = ($objp->situation_percent - $prev_progress) / $objp->situation_percent;
+				}
+			}
+			print price($objp->total_ht * $situation_ratio);
+		} else {
+			print price($objp->total_ht);
+		}
 		print '</td>';
 
 		// Vat rate

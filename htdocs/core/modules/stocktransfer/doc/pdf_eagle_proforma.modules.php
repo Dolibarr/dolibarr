@@ -69,12 +69,6 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -209,7 +203,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 		}
 
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 		$hidetop = 0;
 		if (!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)) {
@@ -694,9 +688,10 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					if ($object->remise_percent) $tvaligne -= ($tvaligne * $object->remise_percent) / 100;
+					// TODO remise_percent is an obsolete field for object parent
+					/*if ($object->remise_percent) $tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 					if ($object->remise_percent) $localtax1ligne -= ($localtax1ligne * $object->remise_percent) / 100;
-					if ($object->remise_percent) $localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
+					if ($object->remise_percent) $localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -942,10 +937,10 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		// Show payment mode CHQ
 		if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ') {
 			// Si mode reglement non force ou si force a CHQ
-			if (!empty($conf->global->FACTURE_CHQ_NUMBER)) {
+			if (getDolGlobalInt('FACTURE_CHQ_NUMBER')) {
 				if ($conf->global->FACTURE_CHQ_NUMBER > 0) {
 					$account = new Account($this->db);
-					$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+					$account->fetch(getDolGlobalInt('FACTURE_CHQ_NUMBER'));
 
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->SetFont('', 'B', $default_font_size - 3);
@@ -959,7 +954,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$posy = $pdf->GetY() + 2;
 					}
 				}
-				if ($conf->global->FACTURE_CHQ_NUMBER == -1) {
+				if (getDolGlobalInt('FACTURE_CHQ_NUMBER') == -1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->SetFont('', 'B', $default_font_size - 3);
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', 0);
@@ -1447,7 +1442,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc
 	 *      @param	int				$hideref		Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -1550,7 +1545,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 		// Adapt dynamically the width of subprice, if text is too long.
 		$tmpwidth = 0;
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			$tmpwidth2 = dol_strlen(dol_string_nohtmltag(pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails)));
 			$tmpwidth = max($tmpwidth, $tmpwidth2);

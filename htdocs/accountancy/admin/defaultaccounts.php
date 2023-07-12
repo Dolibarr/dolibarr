@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
@@ -81,6 +81,10 @@ $list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
+if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
+	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
+}
 if (isModEnabled('banque')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }

@@ -38,6 +38,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -45,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  */
 class Adherent extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -60,6 +63,11 @@ class Adherent extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+
+	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
 
 	/**
 	 * @var string picto
@@ -441,7 +449,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$errors_to			erros to
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @deprecated since V18
-	 *  @see sendEmail
+	 *  @see sendEmail()
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
 	public function send_an_email($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
@@ -1247,7 +1255,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
-						if ($result < 0) {
+						if (is_numeric($result) && $result < 0) {
 							$this->error = $luser->error;
 							dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 							$error++;
@@ -1726,8 +1734,7 @@ class Adherent extends CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $subscription->error;
-			$this->errors = $subscription->errors;
+			$this->setErrorsFromObject($subscription);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1790,13 +1797,11 @@ class Adherent extends CommonObject
 					}
 				} else {
 					$error++;
-					$this->error = $acct->error;
-					$this->errors = $acct->errors;
+					$this->setErrorsFromObject($acct);
 				}
 			} else {
 				$error++;
-				$this->error = $acct->error;
-				$this->errors = $acct->errors;
+				$this->setErrorsFromObject($acct);
 			}
 		}
 
@@ -2368,10 +2373,11 @@ class Adherent extends CommonObject
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
 		if ($option == 'subscription') {
@@ -2397,7 +2403,7 @@ class Adherent extends CommonObject
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -2410,22 +2416,21 @@ class Adherent extends CommonObject
 		}
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs($withpictoimg) == 1) {
+			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
 				$morecss .= ' paddingrightonly';
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.
-					img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams.' class="'.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';
-				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1);
+				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.(($withpictoimg == -3 || $withpictoimg == -4) ? 'small' : ''), 'mini', 0, 1);
 				$picto .= '</span>';
 			}
 			$result .= $picto;
 		}
-		if ($withpictoimg > -2 && $withpictoimg != 2) {
+		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
@@ -2510,8 +2515,8 @@ class Adherent extends CommonObject
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
-				$labelStatus = $langs->trans("MemberStatusActive");
-				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
+				$labelStatus = $langs->trans("WaitingSubscription");
+				$labelStatusShort = $langs->trans("WaitingSubscriptionShort");
 			} elseif ($date_end_subscription < dol_now()) {	// expired
 				$statusType = 'status8';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
@@ -3064,7 +3069,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (empty($conf->adherent->enabled)) { // Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('adherent')) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -3146,12 +3151,13 @@ class Adherent extends CommonObject
 							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 							$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 							$to = $adherent->email;
+							$cc = getDolGlobalString('ADHERENT_CC_MAIL_FROM');
 
 							$trackid = 'mem'.$adherent->id;
 							$moreinheader = 'X-Dolibarr-Info: sendReminderForExpiredSubscription'."\r\n";
 
 							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-							$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+							$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), $cc, '', 0, 1, '', '', $trackid, $moreinheader);
 							$result = $cmail->sendfile();
 							if (!$result) {
 								$error++;
@@ -3306,11 +3312,11 @@ class Adherent extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-
 		if (property_exists($this, 'photo') || !empty($this->photo)) {
 			$return.= Form::showphoto('memberphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
 		} else {
@@ -3318,7 +3324,8 @@ class Adherent extends CommonObject
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'type')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->type.'</span>';
 		}
@@ -3326,7 +3333,7 @@ class Adherent extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$this->getmorphylib('', 2).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

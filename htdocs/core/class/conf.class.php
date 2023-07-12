@@ -26,10 +26,10 @@
  *  				Config is stored into file conf.php
  */
 
-
 /**
  *  Class to stock current configuration
  */
+#[AllowDynamicProperties]
 class Conf
 {
 	/**
@@ -44,7 +44,7 @@ class Conf
 
 	//! To store properties found into database
 	public $global;
-	//! To store browser info
+	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	public $browser;
 
 	//! To store some setup of generic modules
@@ -109,6 +109,24 @@ class Conf
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
+	// TODO Remove this part.
+	public $fournisseur;
+	public $product;
+	public $service;
+	public $contrat;
+	public $actions;
+	public $agenda;
+	public $commande;
+	public $propal;
+	public $facture;
+	public $user;
+	public $adherent;
+	public $bank;
+	public $notification;
+	public $expensereport;
+	public $productbatch;
+
+
 
 	/**
 	 * Constructor
@@ -165,7 +183,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
@@ -341,11 +358,12 @@ class Conf
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+								// deprecated in php 8.2
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
 									$this->$modulename = new stdClass();
 								}
 								$this->$modulename->enabled = true;
-								$this->modules[] = $modulename; // Add this module in list of enabled modules
 							}
 						}
 					}
@@ -504,13 +522,6 @@ class Conf
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
-			// Sous module bons d'expedition
-			$this->expedition_bon = new stdClass();
-			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
-			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note = new stdClass();
-			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
-
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {
 				$this->fournisseur->commande = new stdClass();
@@ -635,18 +646,19 @@ class Conf
 				unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
 			}
 
-			if (!empty($this->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
+				// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
 				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
-				if (empty($this->reception->enabled)) {
+				if (!isModEnabled('reception')) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 				}
 			}
 
@@ -720,14 +732,6 @@ class Conf
 				$this->notification->email_from = $this->email_from;
 				if (!empty($this->global->NOTIFICATION_EMAIL_FROM)) {
 					$this->notification->email_from = $this->global->NOTIFICATION_EMAIL_FROM;
-				}
-			}
-
-			// conf->mailing->email_from = email by default to send Dolibarr emailings
-			if (isModEnabled('mailing')) {
-				$this->mailing->email_from = $this->email_from;
-				if (!empty($this->global->MAILING_EMAIL_FROM)) {
-					$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
 				}
 			}
 
@@ -808,11 +812,6 @@ class Conf
 				$this->global->USE_STRICT_CSV_RULES = 2;
 			}
 
-			// By default, option is on. Once set by user, this code is useless
-			if (!isset($this->global->ACCOUNTING_REEXPORT)) {
-				$this->global->ACCOUNTING_REEXPORT = 1;
-			}
-
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -865,9 +864,9 @@ class Conf
 				$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? (int) $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
 			}
 			if (isset($this->projet)) {
-				$this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? (int) $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 86400;
+				$this->projet->warning_delay = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
 				$this->projet->task = new StdClass();
-				$this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? (int) $this->global->MAIN_DELAY_TASKS_TODO : 7) * 86400;
+				$this->projet->task->warning_delay = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 			}
 
 			if (isset($this->commande)) {
@@ -948,13 +947,17 @@ class Conf
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some sensitive values)
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
 			if (!isset($this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
 				$this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
+			}
+
+			if (!isset($this->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {

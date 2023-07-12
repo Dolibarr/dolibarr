@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2023      Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +114,9 @@ class Delivery extends CommonObject
 	 */
 	public $statuts;
 
+	/**
+	 * @var DeliveryLine[] lines
+	 */
 	public $lines = array();
 
 
@@ -201,7 +205,7 @@ class Delivery extends CommonObject
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if (!isModEnabled('expedition_bon')) {
+				if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
 					$commande->fetch_lines();
@@ -229,8 +233,7 @@ class Delivery extends CommonObject
 						$error++;
 					}
 
-					if (!isModEnabled('expedition_bon')) {
-						// TODO standardize status uniformiser les statuts
+					if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						$ret = $this->setStatut(2, $this->origin_id, $this->origin);
 						if (!$ret) {
 							$error++;
@@ -277,7 +280,6 @@ class Delivery extends CommonObject
 		// phpcs:enable
 		$error = 0;
 		$idprod = $fk_product;
-		$j = 0;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
@@ -300,9 +302,11 @@ class Delivery extends CommonObject
 			$result = $line->insertExtraFields();
 		}
 
-		if ($error == 0) {
+		if (!$error) {
 			return 1;
 		}
+
+		return -1;
 	}
 
 	/**
@@ -313,8 +317,6 @@ class Delivery extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $conf;
-
 		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
 		$sql .= " l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
 		$sql .= ", l.date_delivery, l.fk_address, l.model_pdf";
@@ -392,7 +394,8 @@ class Delivery extends CommonObject
 	 */
 	public function valid($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::valid begin");
@@ -517,8 +520,10 @@ class Delivery extends CommonObject
 					}
 				}
 			}
+
+			return -1;
 		} else {
-			$this->error = "Non autorise";
+			$this->error = "NotAllowed";
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -528,9 +533,9 @@ class Delivery extends CommonObject
 	/**
 	 * 	Creating the delivery slip from an existing shipment
 	 *
-	 *	@param	User	$user            User who creates
-	 *	@param  int		$sending_id      Id of the expedition that serves as a model
-	 *	@return	integer
+	 *	@param	User	$user           User who creates
+	 *	@param  int		$sending_id		Id of the expedition that serves as a model
+	 *	@return	integer					<=0 if KO, >0 if OK
 	 */
 	public function create_from_sending($user, $sending_id)
 	{
@@ -539,6 +544,9 @@ class Delivery extends CommonObject
 
 		$expedition = new Expedition($this->db);
 		$result = $expedition->fetch($sending_id);
+		if ($result <= 0) {
+			return $result;
+		}
 
 		$this->lines = array();
 
@@ -634,7 +642,7 @@ class Delivery extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	integer|null
+	 *	@return	integer				<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function deleteline($lineid)
 	{
@@ -647,9 +655,11 @@ class Delivery extends CommonObject
 
 				return 1;
 			} else {
-				return 0;
+				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
@@ -733,7 +743,7 @@ class Delivery extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$datas = [];
 
@@ -764,10 +774,11 @@ class Delivery extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/delivery/card.php?id='.$this->id;
 
@@ -783,7 +794,9 @@ class Delivery extends CommonObject
 		}
 		//}
 
-		$linkstart = '<a href="'.$url.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
 		if ($withpicto) {
@@ -885,10 +898,10 @@ class Delivery extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du statut d'une expedition
+	 *  Return the label of the status
 	 *
-	 *  @param	int			$mode		Mode
-	 *  @return string      			Label
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -897,11 +910,11 @@ class Delivery extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string					Label
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode)
 	{
@@ -940,8 +953,6 @@ class Delivery extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 
 		// Load array of products prodids
@@ -975,7 +986,7 @@ class Delivery extends CommonObject
 
 		$i = 0;
 		$line = new DeliveryLine($this->db);
-		$line->fk_product     = $prodids[0];
+		$line->fk_product     = reset($prodids);
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
 		$line->ref            = 'REFPROD';
@@ -990,13 +1001,11 @@ class Delivery extends CommonObject
 	/**
 	 *  Renvoie la quantite de produit restante a livrer pour une commande
 	 *
-	 *  @return     array		Product remaining to be delivered
+	 *  @return     array|int		Product remaining to be delivered or <0 if KO
 	 *  TODO use new function
 	 */
 	public function getRemainingDelivered()
 	{
-		global $langs;
-
 		// Get the linked object
 		$this->fetchObjectLinked('', '', $this->id, $this->element);
 		//var_dump($this->linkedObjectsIds);
@@ -1094,7 +1103,7 @@ class Delivery extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$langs->load("deliveries");
 		$outputlangs->load("products");
@@ -1150,7 +1159,6 @@ class Delivery extends CommonObject
 }
 
 
-
 /**
  *  Management class of delivery note lines
  */
@@ -1203,12 +1211,22 @@ class DeliveryLine extends CommonObjectLine
 	public $product_ref;
 	public $product_label;
 
+	public $price;
+
 	public $fk_origin_line;
 	public $origin_id;
 
-	public $price;
-
+	/**
+	 * @var int origin line ID
+	 */
 	public $origin_line_id;
+
+	/**
+	 * @var int origin line ID
+	 * @deprecated
+	 * @see $origin_line_id
+	 */
+	public $commande_ligne_id;
 
 
 	/**

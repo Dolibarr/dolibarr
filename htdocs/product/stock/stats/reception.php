@@ -81,7 +81,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_year = '';
 }
 
-if (!$user->rights->produit->lire) accessforbidden();
+if (!$user->hasRight('produit', 'lire')) accessforbidden();
 
 
 /*
@@ -247,7 +247,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Count total nb of records
 			$totalofrecords = '';
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}
@@ -261,7 +261,7 @@ if ($id > 0 || !empty($ref)) {
 				$option .= '&id='.$object->id;
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
-					$option .= '&limit='.urlencode($limit);
+					$option .= '&limit='.((int) $limit);
 				}
 				if (!empty($search_month)) {
 					$option .= '&search_month='.urlencode($search_month);

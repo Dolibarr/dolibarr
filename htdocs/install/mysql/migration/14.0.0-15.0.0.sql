@@ -35,6 +35,8 @@
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
 -- VMYSQL4.3 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL USING packaging::real;
@@ -190,8 +192,6 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2009', '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2010', 'Enkelt bolag');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2011', 'Ideell förening');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2012', 'Stiftelse');
-
-ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
 
 
 -- START  GRH/HRM MODULE
@@ -561,3 +561,6 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+UPDATE llx_c_tva SET localtax2 = '-19:-15:-9' WHERE localtax2 = '-19' AND localtax2_type = '5' AND fk_pays = 4 AND taux = 21;
+

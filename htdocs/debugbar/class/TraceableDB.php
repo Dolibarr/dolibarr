@@ -206,6 +206,18 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
+	 *  List tables into a database with table info
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '')
+	{
+		return $this->db->DDLListTablesFull($database, $table);
+	}
+
+	/**
 	 * Return last request executed with query()
 	 *
 	 * @return	string                    Last query

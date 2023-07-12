@@ -186,7 +186,7 @@ class Utils
 		}
 
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
-		if (!empty($conf->api->enabled)) {
+		if (isModEnabled('api')) {
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);

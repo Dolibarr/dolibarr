@@ -157,7 +157,7 @@ class modTicket extends DolibarrModules
 			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
-			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
+			'tabcond' => array(isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket") && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
 			'tabhelp' => array(
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
@@ -226,7 +226,7 @@ class modTicket extends DolibarrModules
 		*/
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		/*$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
@@ -238,7 +238,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/index.php',
 			'langs' => 'ticket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 88,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read', // Use 'perms'=>'$user->rights->ticket->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
@@ -253,7 +253,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/index.php',
 			'langs' => 'ticket',
 			'position' => 101,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 2);
@@ -266,7 +266,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/card.php?action=create',
 			'langs' => 'ticket',
 			'position' => 102,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->write',
 			'target' => '',
 			'user' => 2);
@@ -280,7 +280,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/list.php?search_fk_status=non_closed',
 			'langs' => 'ticket',
 			'position' => 103,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 2);
@@ -294,7 +294,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/list.php?mode=mine&search_fk_status=non_closed',
 			'langs' => 'ticket',
 			'position' => 105,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 0);
@@ -307,7 +307,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/stats/index.php',
 			'langs' => 'ticket',
 			'position' => 107,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 0);

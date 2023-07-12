@@ -52,7 +52,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -129,7 +129,9 @@ print '<div class="fichecenter">';
 
 print '<br>';
 
-print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
+if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
+	print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
+}
 
 $param = '&id='.((int) $object->id);
 $param .= '&dol_openinpopup=1';
@@ -165,7 +167,8 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('PublicVirtualCardUrl').'</span><br>';
 
-	$fullexternaleurltovirtualcard = $object->getOnlineVirtualCardUrl();
+	$fullexternaleurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'external');
+	$fullinternalurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'internal');
 
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurluser" class="quatrevingtpercentminusx" value="'.$fullexternaleurltovirtualcard.'">';
@@ -310,8 +313,8 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<div class="center">';
 	print '<span class="opacitymedium">'.$langs->trans("Preview").'</span><br>';
 	print '<div class="virtualcard-div">';
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$fullexternaleurltovirtualcard.'">';
-	print '<iframe id="virtualcard-iframe" title="" class="center" src="'.$fullexternaleurltovirtualcard.'&mode=preview">';
+	print '<a target="_blank" rel="noopener noreferrer cursorpointer" href="'.$fullexternaleurltovirtualcard.'">'."\n";
+	print '<iframe id="virtualcard-iframe" title="" class="center" src="'.$fullinternalurltovirtualcard.'&mode=preview">';
 	print '</iframe>';
 	print '</a>';
 	print '</div>';

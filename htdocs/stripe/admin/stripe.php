@@ -232,8 +232,11 @@ if (empty($conf->stripeconnect->enabled)) {
 		print '<br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY').'" placeholder="'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx">';
-	  $out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForTestWebhook").'</span> ';
-	$url = dol_buildpath('/public/stripe/ipn.php?test', 3);
+	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForTestWebhook").'</span> ';
+	$url = dol_buildpath('/public/stripe/ipn.php', 3);
+	$url .= '?test=1';
+	//global $dolibarr_main_instance_unique_id;
+	//$url .= '&securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY, 'md5');
 	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinetestwebhookurl", 0);
 	print '<br>'.$out;
@@ -250,7 +253,7 @@ if (empty($conf->stripeconnect->enabled)) {
 					$endpoint->disabled = false;
 				}
 			}
-			$endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 3);
+			$endpoint->url = $url;
 			$endpoint->save();
 			if ($endpoint->status == 'enabled') {
 				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
@@ -296,6 +299,8 @@ if (empty($conf->stripeconnect->enabled)) {
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY').'" placeholder="'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx">';
 	$out = img_picto('', 'globe', 'class="pictofixedwidth"').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForLiveWebhook").'</span> ';
 	$url = dol_buildpath('/public/stripe/ipn.php', 3);
+	//global $dolibarr_main_instance_unique_id;
+	//$url .= '?securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY, 'md5');
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br>'.$out;
@@ -312,7 +317,7 @@ if (empty($conf->stripeconnect->enabled)) {
 					$endpoint->disabled = false;
 				}
 			}
-			$endpoint->url = dol_buildpath('/public/stripe/ipn.php', 3);
+			$endpoint->url = $url;
 			$endpoint->save();
 			if ($endpoint->status == 'enabled') {
 				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';

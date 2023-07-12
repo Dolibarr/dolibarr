@@ -90,6 +90,8 @@ class ExpenseReport extends CommonObject
 	public $fk_statut;
 
 	public $fk_c_paiement;
+	public $modepaymentid;
+
 	public $paid;
 
 	public $user_author_infos;
@@ -512,8 +514,7 @@ class ExpenseReport extends CommonObject
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
-					$this->errors += $hookmanager->errors;
-					$this->error = $hookmanager->error;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1139,9 +1140,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param   User    $user       User that delete
-	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @param   User|null   $user       User that delete
+	 * @param 	bool 		$notrigger  false=launch triggers after, true=disable triggers
+	 * @return  int         	        <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = false)
 	{
@@ -1768,10 +1769,11 @@ class ExpenseReport extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1795,8 +1797,8 @@ class ExpenseReport extends CommonObject
 				$label = $langs->trans("ShowExpenseReport");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -2335,7 +2337,7 @@ class ExpenseReport extends CommonObject
 		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE fk_user_author = '{$fuser->id}'";
+		$sql .= " WHERE fk_user_author = ".((int) $fuser->id);
 
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2376,7 +2378,7 @@ class ExpenseReport extends CommonObject
 	 * Return list of people with permission to validate expense reports.
 	 * Search for permission "approve expense report"
 	 *
-	 * @return  array       Array of user ids
+	 * @return  array|int       Array of user ids, <0 if KO
 	 */
 	public function fetch_users_approver_expensereport()
 	{
@@ -2773,17 +2775,17 @@ class ExpenseReport extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $selected,$arrayofselected;
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		if (in_array($this->id, $arrayofselected)) {
-			$selected = 1;
-		}
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_user_author') && !empty($this->id)) {
 			$return .= '<br><span class="info-box-label">'.$this->fk_user_author.'</span>';
@@ -2794,7 +2796,7 @@ class ExpenseReport extends CommonObject
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_fin, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

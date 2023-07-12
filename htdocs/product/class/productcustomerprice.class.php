@@ -66,6 +66,7 @@ class Productcustomerprice extends CommonObject
 	public $price_min;
 	public $price_min_ttc;
 	public $price_base_type;
+	public $default_vat_code;
 	public $tva_tx;
 	public $recuperableonly;
 	public $localtax1_type;
@@ -78,6 +79,9 @@ class Productcustomerprice extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var PriceByCustomerLine[]
+	 */
 	public $lines = array();
 
 
@@ -871,7 +875,7 @@ class Productcustomerprice extends CommonObject
 							$prodsocpriceupd->recuperableonly = $this->recuperableonly;
 
 							$resultupd = $prodsocpriceupd->update($user, 0, $forceupdateaffiliate);
-							if ($result < 0) {
+							if ($resultupd < 0) {
 								$error++;
 								$this->error = $prodsocpriceupd->error;
 							}
@@ -889,7 +893,7 @@ class Productcustomerprice extends CommonObject
 						$prodsocpricenew->recuperableonly = $this->recuperableonly;
 
 						$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
-						if ($result < 0) {
+						if ($resultupd < 0) {
 							$error++;
 							$this->error = $prodsocpricenew->error;
 						}
@@ -923,7 +927,7 @@ class Productcustomerprice extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_DELETE', $user);
 			if ($result < 0) {
 				$error++;

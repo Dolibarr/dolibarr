@@ -304,12 +304,19 @@ ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
-ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, status or dates of validity. Please relogin.
+ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, email, status or dates of validity. Please relogin.
 ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
 ErrorFieldExist=The value for <b>%s</b> already exist 
 ErrorEqualModule=Module invalid in <b>%s</b>
 ErrorFieldValue=Value for <b>%s</b> is incorrect
 ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
+ErrorUploadFileDragDrop=There was an error while the file(s) upload
+ErrorUploadFileDragDropPermissionDenied=There was an error while the file(s) upload : Permission denied 
+ErrorFixThisHere=<a href="%s">Fix this here</a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
+ErrorMenuExistValue=A Menu already exist with this Title or URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -349,6 +356,14 @@ WarningThemeForcedTo=Warning, theme has been forced to <b>%s</b> by hidden const
 WarningPagesWillBeDeleted=Warning, this will also delete all existing pages/containers of the website. You should export your website before, so you have a backup to re-import it later.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation is disabled when option to decrease stock is set on "Invoice validation".
 WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to enable it 
+WarningPermissionAlreadyExist=Existing permissions for this object
+
+SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
+SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
+SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
+SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
+SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
 
 # Validate
 RequireValidValue = Value not valid

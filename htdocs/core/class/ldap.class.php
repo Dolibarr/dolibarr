@@ -69,6 +69,9 @@ class Ldap
 	 * Server DN
 	 */
 	public $domain;
+
+	public $domainFQDN;
+
 	/**
 	 * User administrateur Ldap
 	 * Active Directory ne supporte pas les connexions anonymes
@@ -344,12 +347,7 @@ class Ldap
 	 */
 	public function close()
 	{
-		$r_type = get_resource_type($this->connection);
-		if ($this->connection && ($r_type === "Unknown" || !@ldap_close($this->connection))) {
-			return false;
-		} else {
-			return true;
-		}
+		return $this->unbind();
 	}
 
 	/**

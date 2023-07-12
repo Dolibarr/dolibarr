@@ -80,7 +80,7 @@ class DolibarrApi
 	 *
 	 * @param	string		$field		Field name
 	 * @param	string		$value		Value to check/clean
-	 * @param	stdClass	$object		Object
+	 * @param	Object		$object		Object
 	 * @return 	string					Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
@@ -98,8 +98,8 @@ class DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object	Object to clean
-	 * @return	Object			Object with cleaned properties
+	 * @param   Object  $object		Object to clean
+	 * @return	Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -278,7 +278,6 @@ class DolibarrApi
 	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
 	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
 	 * @return bool
-	 * @throws RestException
 	 */
 	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
 	{
@@ -302,6 +301,7 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Return if a $sqlfilters parameter is valid
+	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
 	 * @param  	string   		$sqlfilters     sqlfilter string
 	 * @param	string			$error			Error message
@@ -317,7 +317,8 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Function to forge a SQL criteria from a Generic filter string
+	 * Function to forge a SQL criteria from a Generic filter string.
+	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.

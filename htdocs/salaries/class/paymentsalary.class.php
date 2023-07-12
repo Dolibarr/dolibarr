@@ -124,7 +124,7 @@ class PaymentSalary extends CommonObject
 	 */
 	public function create($user, $closepaidcontrib = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 
@@ -184,18 +184,20 @@ class PaymentSalary extends CommonObject
 
 						// If we want to closed payed invoices
 						if ($closepaidcontrib) {
-							$contrib = new Salary($this->db);
-							$contrib->fetch($contribid);
-							$paiement = $contrib->getSommePaiement();
-							//$creditnotes=$contrib->getSumCreditNotesUsed();
+							$tmpsalary = new Salary($this->db);
+							$tmpsalary->fetch($contribid);
+							$paiement = $tmpsalary->getSommePaiement();
+							//$creditnotes=$tmpsalary->getSumCreditNotesUsed();
 							$creditnotes = 0;
-							//$deposits=$contrib->getSumDepositsUsed();
+							//$deposits=$tmpsalary->getSumDepositsUsed();
 							$deposits = 0;
 							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
+							$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
-								$result = $contrib->set_paid($user);
-							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+								$result = $tmpsalary->set_paid($user);
+							} else {
+								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							}
 						}
 					}
 				}
@@ -772,14 +774,18 @@ class PaymentSalary extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $db;
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_bank')) {
 			$return .= ' |  <span class="info-box-label">'.$this->fk_bank.'</span>';
 		}

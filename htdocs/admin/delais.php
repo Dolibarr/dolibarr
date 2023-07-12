@@ -138,12 +138,6 @@ $modules = array(
 
 $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
 
-if (!isset($conf->global->MAIN_DELAY_PROJECT_TO_CLOSE)) {
-	$conf->global->MAIN_DELAY_PROJECT_TO_CLOSE = 7; // Must be same value than into conf.class.php
-}
-if (!isset($conf->global->MAIN_DELAY_TASKS_TODO)) {
-	$conf->global->MAIN_DELAY_TASKS_TODO = 7; // Must be same value than into conf.class.php
-}
 if (!isset($conf->global->MAIN_DELAY_MEMBERS)) {
 	$conf->global->MAIN_DELAY_MEMBERS = 0; // Must be same value than into conf.class.php
 }

@@ -94,7 +94,7 @@ class CompanyBankAccount extends Account
 
 		$this->socid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 		$this->default_rib = 0;
 	}
 
@@ -102,9 +102,9 @@ class CompanyBankAccount extends Account
 	/**
 	 * Create bank information record.
 	 *
-	 * @param   User   $user		User
-	 * @param   int    $notrigger   1=Disable triggers
-	 * @return	int					<0 if KO, > 0 if OK (ID of newly created company bank account information)
+	 * @param   User|null   $user		User
+	 * @param   int    		$notrigger  1=Disable triggers
+	 * @return	int						<0 if KO, > 0 if OK (ID of newly created company bank account information)
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -170,13 +170,13 @@ class CompanyBankAccount extends Account
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	User	$user	     Object user
-	 *  @param  int     $notrigger   1=Disable triggers
-	 *	@return	int				     <=0 if KO, >0 if OK
+	 *	@param	User|null	$user	     Object user
+	 *  @param  int     	$notrigger   1=Disable triggers
+	 *	@return	int					     <=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
@@ -205,7 +205,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
 			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
 			$sql .= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
@@ -321,9 +321,9 @@ class CompanyBankAccount extends Account
 	/**
 	 *  Delete a rib from database
 	 *
-	 *	@param		User	$user		User deleting
-	 *	@param  	int		$notrigger	1=Disable triggers
-	 *  @return		int		            <0 if KO, >0 if OK
+	 *	@param		User|null	$user		User deleting
+	 *	@param  	int			$notrigger	1=Disable triggers
+	 *  @return		int		    	        <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{

@@ -190,7 +190,7 @@ if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	$param .= '&search_'.$key.'='.urlencode($search[$key]);
@@ -323,7 +323,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -349,7 +349,7 @@ $arrayofmassactions = array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->delete) {
+if ($user->hasRight('mymodule', 'delete')) {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
@@ -476,7 +476,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}

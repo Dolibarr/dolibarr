@@ -36,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
+if (isModEnabled('margin')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
@@ -276,8 +279,8 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">'."\n";
 
 // Date payment
-print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $user->rights->facture->paiement).'</td><td>';
-print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'), '', 0, '', 'id', 'tzuser');
+print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
+print $form->editfieldval("Date", 'datep', $object->date, $object, $user->hasRight('facture', 'paiement'), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'), '', 0, '', 'id', 'tzuser');
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
@@ -359,7 +362,7 @@ if (isModEnabled("banque")) {
 		print '<span class="opacitymedium">';
 		print $langs->trans("NoRecordFoundIBankcAccount", $langs->transnoentitiesnoconv("Module85Name"));
 		print '</span>';
-		if (!empty($user->rights->facture->paiement)) {
+		if ($user->hasRight('facture', 'paiement')) {
 			// Try to guess $bankaccountidofinvoices that is ID of bank account defined on invoice.
 			// Return null if not found, return 0 if it has different value for at least 2 invoices, return the value if same on all invoices where a bank is defined.
 			$amountofpayments = $object->getAmountsArray();
@@ -393,8 +396,8 @@ if (isModEnabled("banque")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note, $object, $user->rights->facture->paiement).'</td><td>';
-print $form->editfieldval("Note", 'note', $object->note, $object, $user->rights->facture->paiement, 'textarea:'.ROWS_3.':90%');
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
+print $form->editfieldval("Note", 'note', $object->note, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
 print '</table>';
@@ -432,6 +435,10 @@ if ($resql) {
 	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
+	//Add Margin
+	if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+		print '<td class="right">'.$langs->trans('Margin').'</td>';
+	}
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
@@ -446,6 +453,14 @@ if ($resql) {
 
 			$invoice = new Facture($db);
 			$invoice->fetch($objp->facid);
+
+			// Add Margin
+			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+				$formmargin = new FormMargin($db);
+				$marginInfo = array();
+				$invoice->fetch_lines();
+				$marginInfo = $formmargin->getMarginInfosArray($invoice);
+			}
 
 			$paiement = $invoice->getSommePaiement();
 			$creditnotes = $invoice->getSumCreditNotesUsed();
@@ -472,6 +487,12 @@ if ($resql) {
 				print $mc->label;
 				print '</td>';
 			}
+
+			// Add margin
+			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
+			}
+
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($objp->total_ttc).'</span></td>';
 
@@ -516,14 +537,14 @@ print '<div class="tabsAction">';
 
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 	if ($user->socid == 0 && $object->statut == 0 && $action == '') {
-		if ($user->rights->facture->paiement) {
+		if ($user->hasRight('facture', 'paiement')) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }
 
 if ($user->socid == 0 && $action == '') {
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->facture->paiement && !$disable_delete);
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->hasRight('facture', 'paiement') && !$disable_delete);
 }
 
 print '</div>';

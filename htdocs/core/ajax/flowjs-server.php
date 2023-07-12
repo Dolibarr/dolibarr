@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2023 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/bankconciliate.php
- *       \brief      File to set data for bank concilation
+ *       \file       htdocs/core/ajax/flowjs-server.php
+ *       \brief      File to upload very large file, higher than PHP limit. Using flowjs library.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -46,29 +46,48 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$module = GETPOST('module', 'aZ09');
-$upload_dir = GETPOST('upload_dir', 'alpha');
+
+$module = GETPOST('module', 'aZ09arobase');
+
 $flowFilename = GETPOST('flowFilename', 'alpha');
 $flowIdentifier = GETPOST('flowIdentifier', 'alpha');
 $flowChunkNumber = GETPOST('flowChunkNumber', 'alpha');
 $flowChunkSize = GETPOST('flowChunkSize', 'alpha');
 $flowTotalSize = GETPOST('flowTotalSize', 'alpha');
 
+$result = restrictedArea($user, $module, 0, '', 0, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+
+if ($action != 'upload') {
+	httponly_accessforbidden("Param action must be 'upload'");
+}
+
+if (!empty($conf->$module->dir_temp)) {
+	$upload_dir = $conf->$module->dir_temp;
+} else {
+	httponly_accessforbidden("Param module does not has a dir_temp directory. Module does not exists or is not activated.");
+}
+
 /*
  * Action
  */
 
-
 top_httphead();
+
 dol_syslog(join(',', $_GET));
 
-$result = true;
+$result = false;
 
 if (!empty($upload_dir)) {
 	$temp_dir = $upload_dir.'/'.$flowIdentifier;
 } else {
 	$temp_dir = DOL_DATA_ROOT.'/'.$module.'/temp/'.$flowIdentifier;
-	$upload_dir = $temp_dir;
+	$upload_dir = DOL_DATA_ROOT.'/'.$module.'/temp/';
+}
+
+if ($module != "test" && !isModEnabled($module)) {
+	echo json_encode("The module ".$module." is not enabled");
+	header("HTTP/1.0 400");
+	die();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -83,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	if (file_exists($upload_dir.'/'.$flowFilename)) {
 		echo json_encode('File '.$flowIdentifier.' was already uploaded');
 		header("HTTP/1.0 200 Ok");
+		die();
 	} elseif (!empty($_FILES)) foreach ($_FILES as $file) {
 		// check the error status
 		if ($file['error'] != 0) {
@@ -116,24 +136,24 @@ if ($result) {
 
 
 /**
- * Check if all the parts exist, and
- * gather all the parts of the file together
- * @param string    $temp_dir - the temporary directory holding all the parts of the file
- * @param string    $upload_dir - the temporary directory to create file
- * @param string    $fileName - the original file name
- * @param string    $chunkSize - each chunk size (in bytes)
- * @param string    $totalSize - original file size (in bytes)
- * @return bool     true if Ok false else
+ * Check if all the parts exist, and gather all the parts of the file together.
+ *
+ * @param string    $temp_dir 		the temporary directory holding all the parts of the file
+ * @param string    $upload_dir 	the temporary directory to create file
+ * @param string    $fileName 		the original file name
+ * @param string    $chunkSize 		each chunk size (in bytes)
+ * @param string    $totalSize 		original file size (in bytes)
+ * @return bool     				true if Ok false else
  */
 function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $totalSize)
 {
-
 	dol_syslog(__METHOD__, LOG_DEBUG);
+
 	// count all the parts of this file
 	$total_files = 0;
 	$files = dol_dir_list($temp_dir, 'files');
 	foreach ($files as $file) {
-		if (stripos($file, $fileName) !== false) {
+		if (stripos($file["name"], $fileName) !== false) {
 			$total_files++;
 		}
 	}
@@ -157,5 +177,6 @@ function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $to
 		// concurrent chunks uploads)
 		@rename($temp_dir, $temp_dir.'_UNUSED');
 	}
+
 	return true;
 }

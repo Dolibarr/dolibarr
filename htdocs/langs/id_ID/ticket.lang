@@ -26,6 +26,7 @@ Permission56002=Ubah tiket
 Permission56003=Hapus tiket
 Permission56004=Kelola tiket
 Permission56005=Lihat tiket dari semua pihak ketiga (tidak berlaku untuk pengguna eksternal, selalu terbatas pada pihak ketiga yang mereka andalkan)
+Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=Tiket - Jenis
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Kontributor eksternal
 
 OriginEmail=Email Reporter
 Notify_TICKET_SENTBYMAIL=Kirim pesan tiket melalui email
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Baca
@@ -183,7 +186,7 @@ CreatedBy=Dibuat oleh
 NewTicket=Tiket Baru
 SubjectAnswerToTicket=Jawaban tiket
 TicketTypeRequest=Jenis permintaan
-TicketCategory=Kategorisasi tiket
+TicketCategory=Ticket group
 SeeTicket=Lihat tiket
 TicketMarkedAsRead=Tiket telah ditandai sebagai sudah dibaca
 TicketReadOn=Baca terus

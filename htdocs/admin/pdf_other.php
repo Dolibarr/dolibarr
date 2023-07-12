@@ -50,6 +50,9 @@ $action = GETPOST('action', 'aZ09');
  */
 
 if ($action == 'update') {
+	if (GETPOSTISSET('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING')) {
+		dolibarr_set_const($db, "MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", GETPOST("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING"), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('PROPOSAL_PDF_HIDE_PAYMENTTERM')) {
 		dolibarr_set_const($db, "PROPOSAL_PDF_HIDE_PAYMENTTERM", GETPOST("PROPOSAL_PDF_HIDE_PAYMENTTERM"), 'chaine', 0, '', $conf->entity);
 	}
@@ -67,7 +70,7 @@ if ($action == 'update') {
 		dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_ADD_SWISS_QR_CODE')) {
-		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'alpha'), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_CATEGORY_OF_OPERATION')) {
@@ -118,6 +121,18 @@ if (isModEnabled('propal')) {
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
+	}
+	print '</td></tr>';
+
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), $langs->trans("RandomlySelectedIfSeveral"));
 	print '</td><td>';
@@ -153,14 +168,17 @@ if (isModEnabled('facture')) {
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), '');
-	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('INVOICE_ADD_SWISS_QR_CODE');
+	if (getDolGlobalString('INVOICE_ADD_ZATCA_QR_CODE') == 'bottom') {
+		print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), $langs->trans("INVOICE_ADD_SWISS_QR_CODEMore"));
 	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
+		print $langs->trans("INVOICE_ADD_SWISS_QR_CODE");
 	}
+	print '</td><td>';
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	if (getDolGlobalString('MAIN_FEATURE_LEVEL') >= 1) {
+		$arrval['bottom'] = $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").' - Need PHP 8.1+)';
+	}
+	print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
 	print '</td></tr>';
 
 	// Mention category of operations
@@ -175,9 +193,11 @@ if (isModEnabled('facture')) {
 	print $form->selectarray("INVOICE_CATEGORY_OF_OPERATION", $arrval, $conf->global->INVOICE_CATEGORY_OF_OPERATION, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("INVOICE_SHOW_SHIPPING_ADDRESS"), $langs->trans("INVOICE_SHOW_SHIPPING_ADDRESSMore"));
+	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
+		print ajax_constantonoff('INVOICE_SHOW_SHIPPING_ADDRESS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("INVOICE_SHOW_SHIPPING_ADDRESS", $arrval, $conf->global->INVOICE_SHOW_SHIPPING_ADDRESS);

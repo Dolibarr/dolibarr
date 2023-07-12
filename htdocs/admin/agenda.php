@@ -161,7 +161,7 @@ if (!empty($triggers)) {
 			$module = 'fournisseur';
 		}
 		if ($module == 'shipping') {
-			$module = 'expedition_bon';
+			$module = 'expedition';
 		}
 		if ($module == 'member') {
 			$module = 'adherent';
@@ -192,6 +192,10 @@ if (!empty($triggers)) {
 				continue;
 			}
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
+				continue;
+			}
+			if ($trigger['code'] == 'ACTION_CREATE') {
+				// This is the trigger to add an event, enabling it will create infinite loop
 				continue;
 			}
 

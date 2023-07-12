@@ -70,9 +70,9 @@ class Interfaces
 		// phpcs:enable
 		// Check parameters
 		if (!is_object($object) || !is_object($conf)) {	// Error
-			$this->error = 'function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
-			dol_syslog(get_class($this).'::run_triggers '.$this->error, LOG_ERR);
-			$this->errors[] = $this->error;
+			$error = 'function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
+			dol_syslog(get_class($this).'::run_triggers '.$error, LOG_ERR);
+			$this->errors[] = $error;
 			return -1;
 		}
 		if (!is_object($langs)) {	// Warning

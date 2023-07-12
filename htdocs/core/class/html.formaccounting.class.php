@@ -138,16 +138,16 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	array	$selectedIds	Preselected journal code array
-	 * @param	string	$htmlname	Name of field in html form
-	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
-	 * @param	int		$showempty	Add an empty field
-	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
-	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
-	 * @param	string	$morecss	More css non HTML object
-	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param   int     $disabledajaxcombo Disable ajax combo box.
-	 * @return	string				String with HTML select
+	 * @param	array	$selectedIds		Preselected journal code array
+	 * @param	string	$htmlname			Name of field in html form
+	 * @param	int		$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int		$showempty			Add an empty field
+	 * @param	int		$select_in			0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int		$select_out			Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string	$morecss			More css non HTML object
+	 * @param	string	$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param   int     $disabledajaxcombo 	Disable ajax combo box.
+	 * @return	string						String with HTML select
 	 */
 	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -370,7 +370,7 @@ class FormAccounting extends Form
 			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
 			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-			$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
+			$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 			if ($active === '1') {
 				$sql .= " AND aa.active = 1";
 			} elseif ($active === '0') {
@@ -390,7 +390,7 @@ class FormAccounting extends Form
 
 			$num_rows = $this->db->num_rows($resql);
 
-			if ($num_rows == 0 && (empty($conf->global->CHARTOFACCOUNTS) || $conf->global->CHARTOFACCOUNTS < 0)) {
+			if ($num_rows == 0 && (empty(getDolGlobalInt('CHARTOFACCOUNTS')) || getDolGlobalInt('CHARTOFACCOUNTS') < 0)) {
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {
@@ -451,9 +451,10 @@ class FormAccounting extends Form
 	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
 	 * @return string       	   			String with HTML select
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '', $labelhtmlname = '')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
 	{
 		// phpcs:enable
+		global $conf;
 
 		$aux_account = array();
 

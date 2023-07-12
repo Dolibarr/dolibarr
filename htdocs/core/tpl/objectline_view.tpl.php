@@ -249,7 +249,7 @@ if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $li
 	}
 }
 
-if (isModEnabled('accounting') && $line->fk_accounting_account > 0) {
+if (isModEnabled('accounting') && !empty($line->fk_accounting_account) && $line->fk_accounting_account > 0) {
 	$accountingaccount = new AccountingAccount($this->db);
 	$accountingaccount->fetch($line->fk_accounting_account);
 	print '<div class="clearboth"></div><br><span class="opacitymedium">'.$langs->trans('AccountingAffectation').' : </span>'.$accountingaccount->getNomUrl(0, 1, 1);
@@ -285,7 +285,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			}
 		}
 		if ($mysoc->useLocalTax(2)) {
-			if (($seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
+			if (( isset($seller->country_code) && isset($buyer->thirdparty->country_code) && $seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->total_localtax2);
 			} else {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
@@ -325,8 +325,14 @@ print $tooltiponpriceend;
 	<td class="linecoluht_currency nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
 <?php }
 
-if ($inputalsopricewithtax) { ?>
-	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php print (isset($line->pu_ttc) ? price($sign * $line->pu_ttc) : price($sign * $line->subprice)); ?></td>
+if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
+	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
+	$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
+	if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
+		$upinctax = price2num($line->total_ttc / $line->qty, 'MU');
+	}
+	print (isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
+	?></td>
 <?php } ?>
 
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
@@ -408,7 +414,7 @@ if ($outputalsopricetotalwithtax) {
 
 if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
-	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle
 			$situationinvoicelinewithparent = 1;
@@ -466,7 +472,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	print '</td>';
 
 	// Move up-down picto
-	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) {
+	if ($num > 1 && $conf->browser->layout != 'phone' && ((property_exists($this, 'situation_counter') && $this->situation_counter == 1) || empty($this->situation_cycle_ref)) && empty($disablemove)) {
 		print '<td class="linecolmove tdlineupdown center">';
 		$coldisplay++;
 		if ($i > 0) { ?>

@@ -9,7 +9,7 @@
  * Copyright (C) 2018-2021 Frédéric France		<frederic.france@netlogic.fr>
  * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
- * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,15 +190,17 @@ $checkedtypetiers = 0;
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>47, 'checked'=>0),
-	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>47, 'checked'=>1),
-	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>47, 'checked'=>1),
-	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>48),
-	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>49),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>50),
-	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>51),
-	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>100),
-	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>110),
+	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>41),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>51, 'checked'=>0),
+	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>55, 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>56, 'checked'=>1),
+	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>57),
+	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>58),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>59),
+	'cf.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>140),
+	'cf.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>145),
+	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>750),
+	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>760),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -221,11 +223,11 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $error = 0;
 
-$permissiontoread = ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
-$permissiontoadd = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
-$permissiontodelete = ($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer);
+$permissiontoread = ($user->hasRight("fournisseur", "commande", "lire") || $user->hasRight("supplier_order", "lire"));
+$permissiontoadd = ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
+$permissiontodelete = ($user->hasRight("fournisseur", "commande", "supprimer") || $user->hasRight("supplier_order", "supprimer"));
 $permissiontovalidate = $permissiontoadd;
-$permissiontoapprove = ($user->rights->fournisseur->commande->approuver || $user->rights->supplier_order->approuver);
+$permissiontoapprove = ($user->hasRight("fournisseur", "commande", "approuver") || $user->hasRight("supplier_order", "approuver"));
 
 
 /*
@@ -383,6 +385,12 @@ if (empty($reshook)) {
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
 				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 			} else {
+				// Search if the VAT reverse-charge is activated by default in supplier card to resume the information
+				if (!empty($cmd->socid) > 0) {
+					$societe = new Societe($db);
+					$societe->fetch($cmd->socid);
+					$objecttmp->vat_reverse_charge = $societe->vat_reverse_charge;
+				}
 				$objecttmp->socid = $cmd->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
 				$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -557,7 +565,7 @@ if (empty($reshook)) {
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->fournisseur->facture->dir_output;
-				$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+				$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 				//include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
 
@@ -584,7 +592,7 @@ if (empty($reshook)) {
 				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode($limit);
+				$param .= '&limit='.((int) $limit);
 			}
 			if ($sall) {
 				$param .= '&sall='.urlencode($sall);
@@ -766,6 +774,7 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip,
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,cf.date_valid, cf.date_approve,";
+$sql .= ' cf.localtax1 as total_localtax1, cf.localtax2 as total_localtax2,';
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva, cf.multicurrency_total_ttc,';
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql .= ' cf.note_public, cf.note_private,';
@@ -798,7 +807,7 @@ if ($sall) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cf.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+if ($search_sale > 0 || (!$user->hasRight("societe", "client", "voir") && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $parameters = array();
@@ -809,7 +818,7 @@ $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -961,7 +970,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -1009,7 +1018,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -1175,7 +1184,7 @@ if ($resql) {
 		}
 	}
 
-	if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
+	if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
 	if ($permissiontodelete) {
@@ -1271,7 +1280,7 @@ if ($resql) {
 	$moreforfilter = '';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight("user", "user", "lire")) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -1279,14 +1288,14 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view other users
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight("user", "user", "lire")) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1526,76 +1535,102 @@ if ($resql) {
 
 	print "</tr>\n";
 
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+
 	// Fields title
 	print '<tr class="liste_titre">';
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.ref']['label'], $_SERVER["PHP_SELF"], "cf.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.ref_supplier']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.ref_supplier']['label'], $_SERVER["PHP_SELF"], "cf.ref_supplier", "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100imp ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.fk_projet']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.fk_projet']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.fk_soc']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.fk_soc']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.zip']['checked'])) {
 		print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['state.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.fk_author']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.fk_author']['label'], $_SERVER["PHP_SELF"], "cf.fk_author", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.date_commande']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.date_commande']['label'], $_SERVER["PHP_SELF"], "cf.date_commande", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.date_livraison']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.date_livraison']['label'], $_SERVER["PHP_SELF"], 'cf.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.total_ht']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.total_ht']['label'], $_SERVER["PHP_SELF"], "cf.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.total_tva']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.total_tva']['label'], $_SERVER["PHP_SELF"], "cf.total_tva", "", $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.total_ttc']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.total_ttc']['label'], $_SERVER["PHP_SELF"], "cf.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.multicurrency_code']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_code', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.multicurrency_tx']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.multicurrency_tx']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_tx', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.multicurrency_total_ht']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.multicurrency_total_ht']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.multicurrency_total_tva']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.multicurrency_total_tva']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.multicurrency_total_ttc']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1605,33 +1640,41 @@ if ($resql) {
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['cf.date_creation']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.date_creation']['label'], $_SERVER["PHP_SELF"], "cf.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.tms']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.tms']['label'], $_SERVER["PHP_SELF"], "cf.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.fk_statut']['label'], $_SERVER["PHP_SELF"], "cf.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.billed']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.billed']['label'], $_SERVER["PHP_SELF"], 'cf.billed', '', $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.date_valid']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.date_valid']['label'], $_SERVER["PHP_SELF"], "cf.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.date_approve']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.date_approve']['label'], $_SERVER["PHP_SELF"], 'cf.date_approve', '', $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.note_public']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.note_public']['label'], $_SERVER["PHP_SELF"], "cf.note_public", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.note_private']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.note_private']['label'], $_SERVER["PHP_SELF"], "cf.note_private", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	print "</tr>\n";
-
 
 	$total = 0;
 	$subtotal = 0;
@@ -1642,6 +1685,7 @@ if ($resql) {
 	$projectstatic = new Project($db);
 
 	$i = 0;
+	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array('nbfield' => 0, 'val' => array(), 'pos' => array());
 	$totalarray['val']['cf.total_ht'] = 0;
 	$totalarray['val']['cf.total_ttc'] = 0;
@@ -1673,7 +1717,7 @@ if ($resql) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 
@@ -1685,8 +1729,8 @@ if ($resql) {
 			$thirdpartytmp->fournisseur = $obj->fournisseur;
 			$objectstatic->socid = $thirdpartytmp->getNomUrl('supplier', 0, 0, -1);
 			// Output Kanban
-			print $objectstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			print $objectstatic->getKanbanView('', array('selected' => in_array($objectstatic->id, $arrayofselected)));
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}
@@ -1774,7 +1818,7 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
-			//alias
+			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150">';
 				print $obj->alias;

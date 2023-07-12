@@ -45,6 +45,7 @@ $langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
 $mode = GETPOST('mode', 'alpha');
@@ -126,6 +127,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
+$permissiontodelete = $user->rights->tax->charges->supprimer;
 
 
 /*
@@ -170,7 +172,14 @@ if (empty($reshook)) {
 		$search_type = '';
 		$search_account = '';
 		$search_array_options = array();
+		$toselect = array();
 	}
+
+		// Mass actions
+		$objectclass = 'ChargeSociales';
+		$objectlabel = 'ChargeSociales';
+		$uploaddir = $conf->tax->dir_output;
+		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 /*
@@ -187,6 +196,8 @@ if (isModEnabled('project')) {
 }
 
 llxHeader('', $langs->trans("SocialContributions"));
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
@@ -259,7 +270,7 @@ if (isModEnabled('project')) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -303,7 +314,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
@@ -378,6 +389,15 @@ if ($user->rights->tax->charges->creer) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/sociales/card.php?action=create');
 }
 
+
+// List of mass actions available
+$arrayofmassactions = array();
+if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+$moreforfilter = '';
+
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -394,7 +414,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $center = '';
 
-print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
 	print '<div class="error">';
@@ -408,14 +428,16 @@ if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
 	$db->close();
 }
 
-$moreforfilter = '';
-$massactionbutton = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
+
+$objecttmp = new ChargeSociales($db);
+$trackid = 'sc'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : '').'">'."\n";
@@ -592,9 +614,11 @@ print '</tr>';
 
 $i = 0;
 $totalarray = $TLoadedUsers = array();
+$savnbfield = $totalarray['nbfield'];
 $totalarray['nbfield'] = 0;
 $totalarray['val']['totalttcfield'] = 0;
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
 	$chargesociale_static->id = $obj->rowid;
@@ -613,14 +637,12 @@ while ($i < min($num, $limit)) {
 	}
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-
-		$chargesociale_static->fk_project = $projectstatic->getNomUrl();
-		print $chargesociale_static->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		print $chargesociale_static->getKanbanView('', array('projectlink'=> $projectstatic->getNomUrl(1), 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
@@ -630,7 +652,15 @@ while ($i < min($num, $limit)) {
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td></td>';
+			print '<td class="center">';
+			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($chargesociale_static->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$chargesociale_static->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$chargesociale_static->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
 		}
 
 		// Line number
@@ -774,7 +804,15 @@ while ($i < min($num, $limit)) {
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td></td>';
+			print '<td class="center">';
+			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($chargesociale_static->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$chargesociale_static->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$chargesociale_static->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
 		}
 		if (!$i) {
 			$totalarray['nbfield']++;

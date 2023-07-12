@@ -76,7 +76,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->agenda) || empty($conf->agenda->enabled)) {
+		if (!isModEnabled('agenda')) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -120,6 +120,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
 			}
 			$object->actionmsg = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+			// For merge event, we add a mention
+			if (!empty($object->context['mergefromname'])) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->trans("DataFromWasMerged", $object->context['mergefromname']));
+			}
 
 			$object->sendtoid = 0;
 			$object->socid = $object->id;
@@ -763,14 +767,22 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "members"));
 
-			if (empty($object->actionmsg2)) {
-				$object->actionmsg2 = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $object->getFullName($langs));
+			$member = $this->context['member'];
+			if (!is_object($member)) {	// This should not happen but it happen when deleting a subscription from adherents/subscription/card.php
+				dol_syslog("Execute a trigger MEMBER_SUBSCRIPTION_CREATE with context key 'member' not an object");
+				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$member = new Adherent($this->db);
+				$member->fetch($object->fk_adherent);
 			}
-			$object->actionmsg = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $object->getFullName($langs));
-			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+
+			$object->actionmsg = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $member->getFullName($langs));
+			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$member->getFullName($langs);
 			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->fk_type;
 			$object->actionmsg .= "\n".$langs->transnoentities("Amount").': '.$object->amount;
 			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $member->getFullName($langs));
+			}
 
 			$object->sendtoid = 0;
 			if (isset($object->fk_soc) && $object->fk_soc > 0) {
@@ -992,6 +1004,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->trackid = 'sub'.$object->id;
 			} elseif (preg_match('/^MEMBER_/', $action)) {
 				$object->trackid = 'mem'.$object->id;
+			} elseif (preg_match('/^PARTNERSHIP_/', $action)) {
+				$object->trackid = 'pship'.$object->id;
 			} elseif (preg_match('/^PROJECT_/', $action)) {
 				$object->trackid = 'proj'.$object->id;
 			} elseif (preg_match('/^TASK_/', $action)) {
@@ -1067,8 +1081,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm = new ActionComm($this->db);
 		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
-		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note_private = $object->actionmsg;
+		$actioncomm->label       = $object->actionmsg2;		// Label of event
+		$actioncomm->note_private = $object->actionmsg;		// Description
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
@@ -1090,7 +1104,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
 		}
 
-		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
+		// Object linked (if link is for thirdparty, contact or project, it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm or llx_actioncomm_resources.
 		if (!in_array($elementtype, array('societe', 'contact', 'project'))) {
 			$actioncomm->fk_element  = $elementid;

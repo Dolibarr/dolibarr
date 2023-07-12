@@ -411,8 +411,8 @@ input.buttonpaymentstripe {
 	background-position: 8px 11px;
 }
 .logopublicpayment #dolpaymentlogo {
-	max-height: 100px;
-	max-width: 320px;
+	max-height: 80px;
+	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 
@@ -565,10 +565,13 @@ input:-moz-placeholder { color: #ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset {
-	border: 1px solid #AAAAAA !important;
+	border: 1px solid #aaa !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
 	min-inline-size: auto;
+}
+#div_container_exportoptions fieldset, #div_container_sub_exportoptions fieldset {
+	border: 1px solid #ccc !important;
 }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
@@ -683,6 +686,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
@@ -727,6 +734,12 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+.centpercentimp {
+	width: 100% !important;
+}
+.centpercentwithout1imp {
+	width: calc(100% - 1px) !important;
 }
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
@@ -831,6 +844,9 @@ textarea.centpercent {
 }
 .wordbreak {
 	word-break: break-all;
+}
+td.wordbreak img {
+	max-width: 100%;
 }
 .bold {
 	font-weight: bold !important;
@@ -1314,7 +1330,7 @@ select.flat.selectlimit {
 }
 /* using a tdoverflowxxx make the min-width not working */
 .tdnooverflowimp {
-   text-overflow: none;
+   text-overflow: unset;
 }
 .tdoverflow {
 	max-width: 0;
@@ -1575,11 +1591,11 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
-.maxscreenheightless200 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
+maxscreenheightless200 {
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, (int) $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
 }
 .maxscreenheightless300 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, (int) $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
 }
 
 
@@ -1596,7 +1612,7 @@ table[summary="list_of_modules"] .fa-cog {
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -1740,6 +1756,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
+
+	.margintoponsmartphone { margin-top: 6px; }
 
 	span.pictotitle {
 		margin-<?php echo $left; ?>: 0 !important;
@@ -1968,8 +1986,8 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
-	padding-top: 8px;
+	<?php if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) { ?>
+	padding-top: 18px;
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
@@ -2086,7 +2104,7 @@ div.blockvmenupair, div.blockvmenuimpair {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 	padding-left: 0 !important;
 }
 div.blockvmenuend, div.blockvmenubookmarks {
@@ -2156,7 +2174,7 @@ div.vmenu, td.vmenu {
 		border-top: none !important;
 		border-left: none !important;
 		border-right: none !important;
-		border-bottom: 1px solid #e0e0e0;
+		border-bottom: 1px solid #eaeaea;
 		padding-left: 0 !important;
 	}
 	div.vmenu, td.vmenu {
@@ -2303,7 +2321,7 @@ div.secondcolumn div.box {
 }
 
 /* Force values on one colum for small screen */
-@media only screen and (max-width: 1599px)
+@media only screen and (max-width: 1499px)
 {
 	div.fichehalfleft-lg {
 		float: none;
@@ -2913,7 +2931,6 @@ if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	print '	background-color: #FFFFFF;';
 }
 ?>
-
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 
@@ -3103,6 +3120,15 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
+.loginbuttonexternal {
+	width: 300px;
+	margin: auto;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	width: <?php echo $disableimages ? '26' : '30'; ?>px;
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
@@ -3441,7 +3467,7 @@ div.tabBar {
 	padding-top: 16px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
-	margin: 0px 0px 16px 0px;
+	margin: 0px 0px 30px 0px;
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
@@ -3917,6 +3943,9 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
 }
+table.liste tr.trkanban td {
+	padding: 10px 12px 10px 12px;			/* t r b l */
+}
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
 }
@@ -4253,16 +4282,20 @@ div.liste_titre_bydiv {
 	border-top-style: solid;
 	<?php if ($userborderontable) { ?>
 	border-left: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
-	/* border-right: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1); */
+	border-right: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	<?php } ?>
 
 	border-collapse: collapse;
-	display: table;
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
-	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
-	width: calc(100%);
+	/*width: calc(100% - 1px);	1px less because display is table and with 100%, it generated a right border 1px left compared to the div-table-responsive under */
+	width: unset;
 }
+div.liste_titre_bydiv_inlineblock {
+	display: inline-block;
+	width: 100%;
+}
+
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
 	height: 26px !important;
@@ -4425,7 +4458,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-of-type) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 }
 
 .noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
@@ -4440,7 +4473,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -4474,7 +4507,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	border: 1px solid var(--colorboxstatsborder);
 	border-left: 6px solid var(--colorboxstatsborder);
 	/* box-shadow: 1px 1px 8px var(--colorboxstatsborder); */
-	border-radius: 0px;
+	border-radius: 4px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
@@ -4548,6 +4581,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 		padding: 0px 0px 0px 0px;
 	}
+
+	td.tdwidgetstate {
+		text-align: center;
+	}
+
 	.boxstats, .boxstats130 {
 		margin: 3px;
 	}
@@ -4557,13 +4595,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
-		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(161, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(161, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 		/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
 	}
 	.dashboardlineindicator {
@@ -4643,13 +4681,16 @@ span.dashboardlineko {
 	display: inline-block;
 	vertical-align: middle;
 }
-.boxtable {
+.divboxtable {
 	margin-bottom: 25px !important;
+}
+.boxtable {
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
 	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
+
 table.noborder.boxtable tr td {
 	height: unset;
 }
@@ -5016,7 +5057,7 @@ div#card-errors {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* Formulaire confirmation (When Ajax JQuery is used) and Dialog popups           */
 /* ============================================================================== */
 
 .ui-dialog-titlebar {
@@ -5024,7 +5065,7 @@ div#card-errors {
 .ui-dialog-content {
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
 
 
@@ -5296,6 +5337,7 @@ span[phptag] {
 .websitebar .button.bordertransp {
 	color: unset;
 	text-decoration: unset !important;
+	margin: 0px 4px 0px 4px  !important
 }
 
 .websitebar {
@@ -5343,7 +5385,7 @@ span[phptag] {
 .websiteinputurl {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: 28px;
+	line-height: 26px;
 }
 .websiteiframenoborder {
 	border: 0px;
@@ -5468,7 +5510,9 @@ td.event-past span  {
 	background: var(--colorbacktitle);
 }*/
 
-.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
+.ui-autocomplete-loading {
+	background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat;
+}
 .ui-autocomplete {
 		   position:absolute;
 		   width:auto;
@@ -5483,7 +5527,9 @@ td.event-past span  {
 		   margin:0px;
 		   padding:0px;
 		 }
-.ui-autocomplete ul li.selected { background-color: var(--inputbackgroundcolor);}
+.ui-autocomplete ul li.selected {
+	background-color: var(--inputbackgroundcolor);
+}
 .ui-autocomplete ul li {
 		   list-style-type:none;
 		   display:block;
@@ -5897,7 +5943,7 @@ pre#editfilecontentaceeditorid {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth']) ?max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
 div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
@@ -6423,7 +6469,7 @@ input.select2-input {
 }
 div.select2-drop-above
 {
-	background: var(--colorbackvmenu1);e
+	background: var(--colorbackvmenu1);
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
@@ -6536,7 +6582,7 @@ span#select2-boxbookmark-container {
 	font-weight: normal;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr li {
-  float: left;
+  float: <?php echo $left; ?>;
   list-style: none;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr {
@@ -6684,7 +6730,7 @@ div.multi-select-menu[role="menu"] {
   height: 0;
   border-style: solid;
   border-width: 0.5em 0.23em 0em 0.23em;
-  border-color: #444 transparent transparent transparent;
+  border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
 }
 
@@ -6692,7 +6738,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-container--open .multi-select-button:after {
   border-width: 0 0.4em 0.4em 0.4em;
-  border-color: transparent transparent #999 transparent;
+  border-color: transparent transparent #888 transparent;
 }
 
 .multi-select-menuitem {
@@ -6702,6 +6748,7 @@ div.multi-select-menu[role="menu"] {
 }
 label.multi-select-menuitem {
 	line-height: 24px;
+	text-align: start;
 }
 
 
@@ -6758,7 +6805,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
-	border-radius: 2px;
+	border-radius: 4px;
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
@@ -7113,8 +7160,17 @@ div.tabsElem a.tab {
 .public_border {
 	border: 1px solid #888;
 }
+.publicnewmemberform div.tabBarWithBottom {
+	border: 1px solid #e8e8e8;
+	padding: 30px;
+	border-radius: 8px;
+	background-color: #f8f8f8;
+	/*box-shadow: 2px 2px 10px #ddd;*/
+}
 
-
+.publicnewmemberform #tablesubscribe {
+	color: #666;
+}
 
 /* ============================================================================== */
 /* Ticket module                                                                  */
@@ -7577,6 +7633,37 @@ div.clipboardCPValue.hidewithsize {
 	/* filter: blur(4px); */
 }
 
+/* ============================================================================== */
+/* For drag and drop file feature                                                 */
+/* ============================================================================== */
+
+.cssDragDropArea{
+	position: relative;
+}
+.highlightDragDropArea{
+	border: 2px #000 dashed !important;
+	background-color: #eee !important;
+}
+.highlightDragDropArea * :not(.dragDropAreaMessage *){
+	opacity:0.8;
+	filter: blur(1px) grayscale(90%);
+}
+.dragDropAreaMessage {
+	position: absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%, -50%);
+	text-align:center;
+	font-size: 2em;
+}
+
+/* ============================================================================== */
+/* CSS style used for color jPicker                                               */
+/* ============================================================================== */
+
+table.jPicker {
+	border: 1px solid #bbb !important;
+}
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */

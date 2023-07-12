@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**
@@ -101,6 +102,11 @@ class Commande extends CommonOrder
 	 * @var string Thirdparty ref of order
 	 */
 	public $ref_client;
+
+	/**
+	 * @var string Thirdparty ref of order
+	 */
+	public $ref_customer;
 
 	/**
 	 * @var int Contact ID
@@ -210,7 +216,11 @@ class Commande extends CommonOrder
 	 */
 	public $fk_remise_except;
 
+	/**
+	 * @deprecated
+	 */
 	public $remise_percent;
+
 	public $remise_absolue;
 	public $info_bits;
 	public $rang;
@@ -312,7 +322,7 @@ class Commande extends CommonOrder
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>26),
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>28),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>25),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>25),
 		'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>1, 'position'=>60),
 		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>62),
 		'date_cloture' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
@@ -320,7 +330,7 @@ class Commande extends CommonOrder
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'source' =>array('type'=>'smallint(6)', 'label'=>'Source', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		//'amount_ht' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
@@ -332,14 +342,14 @@ class Commande extends CommonOrder
 		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>155),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>160),
 		//'facture' =>array('type'=>'tinyint(4)', 'label'=>'ParentInvoice', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
-		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>170),
+		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>170),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'MulticurrencyID', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>181),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'ShippingMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>'$conf->stock->enabled', 'visible'=>-1, 'position'=>200),
+		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>'isModEnabled("stock")', 'visible'=>-1, 'position'=>200),
 		'fk_availability' =>array('type'=>'integer', 'label'=>'Availability', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
 		'fk_input_reason' =>array('type'=>'integer', 'label'=>'InputReason', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
 		//'fk_delivery_address' =>array('type'=>'integer', 'label'=>'DeliveryAddress', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
@@ -458,7 +468,7 @@ class Commande extends CommonOrder
 	 *	@param		User	$user     		User making status change
 	 *	@param		int		$idwarehouse	Id of warehouse to use for stock decrease
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						<0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -974,7 +984,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".(!empty($this->shipping_method_id) && $this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
 		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->db->escape($this->remise_absolue) : 'NULL');
-		$sql .= ", ".($this->remise_percent > 0 ? $this->db->escape($this->remise_percent) : 0);
+		$sql .= ", ".($this->remise_percent > 0 ? $this->db->escape($this->remise_percent) : 0);		// TODO deprecated
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".setEntity($this);
@@ -1241,6 +1251,7 @@ class Commande extends CommonOrder
 		$this->date_validation    = '';
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) {
 			$this->ref_client = '';
+			$this->ref_customer = '';
 		}
 
 		// Do not clone ref_ext
@@ -1279,8 +1290,7 @@ class Commande extends CommonOrder
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
-					$this->errors += $hookmanager->errors;
-					$this->error = $hookmanager->error;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1352,6 +1362,9 @@ class Commande extends CommonOrder
 			$line->marge_tx			= $marginInfos[1];
 			$line->marque_tx		= $marginInfos[2];
 
+			$line->origin           = $object->element;
+			$line->origin_id        = $object->lines[$i]->id;
+
 			// get extrafields from original line
 			$object->lines[$i]->fetch_optionals();
 			foreach ($object->lines[$i]->array_options as $options_key => $value) {
@@ -1377,6 +1390,7 @@ class Commande extends CommonOrder
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
+		$this->ref_customer         = $object->ref_client;
 
 		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN)) {
 			$this->note_private         = $object->note_private;
@@ -1436,8 +1450,7 @@ class Commande extends CommonOrder
 			$action = '';
 			$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
-				$this->errors += $hookmanager->errors;
-				$this->error = $hookmanager->error;
+				$this->setErrorsFromObject($hookmanager);
 				$error++;
 			}
 
@@ -1894,7 +1907,7 @@ class Commande extends CommonOrder
 				$this->ref = $obj->ref;
 				$this->ref_client = $obj->ref_client;
 				$this->ref_customer = $obj->ref_client;
-				$this->ref_ext				= $obj->ref_ext;
+				$this->ref_ext = $obj->ref_ext;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -1922,7 +1935,7 @@ class Commande extends CommonOrder
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_modification = $this->db->jdate($obj->tms);
 				$this->remise				= $obj->remise;
-				$this->remise_percent		= $obj->remise_percent;
+				$this->remise_percent		= $obj->remise_percent;	// TODO deprecated
 				$this->remise_absolue		= $obj->remise_absolue;
 				$this->source				= $obj->source;
 				$this->billed				= $obj->billed;
@@ -1967,7 +1980,7 @@ class Commande extends CommonOrder
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->lines = array();
 
@@ -2460,12 +2473,13 @@ class Commande extends CommonOrder
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 					<0 if KO, >0 if OK
+	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
 		$remise = trim($remise) ?trim($remise) : 0;
 
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2533,7 +2547,7 @@ class Commande extends CommonOrder
 
 		$remise = price2num($remise);
 
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2593,7 +2607,7 @@ class Commande extends CommonOrder
 	public function set_date($user, $date, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2665,7 +2679,7 @@ class Commande extends CommonOrder
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2724,7 +2738,7 @@ class Commande extends CommonOrder
 	 *  @param    	int		$offset			For pagination
 	 *  @param    	string	$sortfield		Sort criteria
 	 *  @param    	string	$sortorder		Sort order
-	 *  @return     int             		-1 if KO, array with result if OK
+	 *  @return     int|array             		-1 if KO, array with result if OK
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'c.date_commande', $sortorder = 'DESC')
 	{
@@ -2924,7 +2938,7 @@ class Commande extends CommonOrder
 	public function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2943,6 +2957,7 @@ class Commande extends CommonOrder
 			if (!$error) {
 				$this->oldcopy = clone $this;
 				$this->ref_client = $ref_client;
+				$this->ref_customer = $ref_client;
 			}
 
 			if (!$notrigger && empty($error)) {
@@ -3176,17 +3191,17 @@ class Commande extends CommonOrder
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
-			$total_ht  = $tabprice[0];
+			$total_ht = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
-			$pu_ht  = $tabprice[3];
+			$pu_ht = $tabprice[3];
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
 
 			// MultiCurrency
-			$multicurrency_total_ht  = $tabprice[16];
+			$multicurrency_total_ht = $tabprice[16];
 			$multicurrency_total_tva = $tabprice[17];
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
@@ -3294,7 +3309,7 @@ class Commande extends CommonOrder
 				}
 
 				// Mise a jour info denormalisees
-				$this->update_price(1);
+				$this->update_price(1, 'auto');
 
 				$this->db->commit();
 				return $result;
@@ -3330,6 +3345,9 @@ class Commande extends CommonOrder
 		}
 		if (isset($this->ref_client)) {
 			$this->ref_client = trim($this->ref_client);
+		}
+		if (isset($this->ref_customer)) {
+			$this->ref_customer = trim($this->ref_customer);
 		}
 		if (isset($this->note) || isset($this->note_private)) {
 			$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
@@ -3724,7 +3742,9 @@ class Commande extends CommonOrder
 	{
 		global $conf, $langs, $user;
 
+		$langs->load('orders');
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("Order")];
@@ -3733,10 +3753,26 @@ class Commande extends CommonOrder
 		if ($user->hasRight('commande', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
 			if (isset($this->statut)) {
-				$datas[] = ' '.$this->getLibStatut(5);
+				$datas['status'] = ' '.$this->getLibStatut(5);
 			}
 			$datas['Ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
 			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
+			if (!$nofetch) {
+				$langs->load('project');
+				if (empty($this->project)) {
+					$res = $this->fetch_project();
+					if ($res > 0) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
+					}
+				}
+			}
 			if (!empty($this->total_ht)) {
 				$datas['AmountHT'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 			}
@@ -3808,16 +3844,17 @@ class Commande extends CommonOrder
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
@@ -3825,7 +3862,7 @@ class Commande extends CommonOrder
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 
 			$target_value = array('_self', '_blank', '_parent', '_top');
@@ -3845,7 +3882,7 @@ class Commande extends CommonOrder
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -3957,6 +3994,7 @@ class Commande extends CommonOrder
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
+		$this->entity = $conf->entity;
 		$this->socid = 1;
 		$this->date = time();
 		$this->date_lim_reglement = $this->date + 3600 * 24 * 30;
@@ -4143,7 +4181,7 @@ class Commande extends CommonOrder
 
 		$now = dol_now();
 
-		return max($this->date, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+		return max($this->date, $this->delivery_date) < ($now - $conf->commande->client->warning_delay);
 	}
 
 	/**
@@ -4155,7 +4193,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $langs;
 
-		if (empty($this->date_livraison)) {
+		if (empty($this->delivery_date)) {
 			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		} else {
 			$text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->date_livraison, 'day');

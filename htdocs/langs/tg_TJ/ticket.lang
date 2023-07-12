@@ -26,6 +26,7 @@ Permission56002=Тағир додани чиптаҳо
 Permission56003=Билетҳоро нест кунед
 Permission56004=Идоракунии чиптаҳо
 Permission56005=Чиптаҳои ҳамаи шахсони сеюмро бинед (барои корбарони беруна муассир нест, ҳамеша бо тарафи сеюме, ки ба онҳо вобаста аст, маҳдуд аст)
+Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=Чипта - намудҳо
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Иштирокчии беруна
 
 OriginEmail=Хабарнигори почтаи электронӣ
 Notify_TICKET_SENTBYMAIL=Паёми чиптаро тавассути почтаи электронӣ фиристед
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Хондан
@@ -183,7 +186,7 @@ CreatedBy=Аз ҷониби муаллиф
 NewTicket=Билети нав
 SubjectAnswerToTicket=Ҷавоби билет
 TicketTypeRequest=Навъи дархост
-TicketCategory=Гурӯҳбандии чиптаҳо
+TicketCategory=Ticket group
 SeeTicket=Билетро бинед
 TicketMarkedAsRead=Билет ҳамчун хондашуда қайд карда шудааст
 TicketReadOn=Хонда шуд

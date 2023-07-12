@@ -492,7 +492,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -513,7 +513,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($id > 0) {
 		$param .= '&id='.urlencode($id);
@@ -928,20 +928,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $userstatic->getNomUrl(-1);
 			print "</td>\n";
 		}
+		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
-			// Inventory code
-			print '<td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objp->inventorycode).'">';
 			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
 			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';
 		}
+		// Label of movement
 		if (!empty($arrayfields['m.label']['checked'])) {
-			// Label of movement
 			print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 		}
+		// Type of movement
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
-			// Type of movement
 			switch ($objp->type_mouvement) {
 				case "0":
 					print '<td class="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
@@ -972,17 +972,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($arrayfields['m.value']['checked'])) {
 			// Qty
 			print '<td class="right">';
-			if ($objp->qt > 0) {
-				print '+';
+			if ($objp->qty >0) {
+				print '<span class="stockmovemententry">+'.$objp->qty.'</span>';
+			} else {
+				print '<span class="stockmovementexit">'.$objp->qty.'<span>';
 			}
-			print $objp->qty;
 			print '</td>';
 		}
 		if (!empty($arrayfields['m.price']['checked'])) {
 			// Price
 			print '<td class="right">';
 			if ($objp->price != 0) {
-				print price($objp->price);
+				print '<span class="opacitymedium">'.price($objp->price).'</span>';
 			}
 			print '</td>';
 		}
@@ -990,10 +991,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
+			if (in_array($objp->rowid, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$objp->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {

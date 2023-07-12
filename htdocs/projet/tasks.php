@@ -240,8 +240,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Task';
 	$objectlabel = 'Tasks';
-	$permissiontoread = $user->rights->projet->lire;
-	$permissiontodelete = $user->rights->projet->supprimer;
+	$permissiontoread = $user->hasRight('projet', 'lire');
+	$permissiontodelete = $user->hasRight('projet', 'supprimer');
 	$uploaddir = $conf->project->dir_output.'/tasks';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -288,19 +288,17 @@ if (!empty($search_timespend)) {
 	$morewherefilterarray[] = natural_search('t.duration_effective', $search_timespend, 1, 1);
 }
 
-if (!empty($search_progresscalc)) {
-	$filterprogresscalc = 'if '.natural_search('round(100 * $line->duration / $line->planned_workload,2)', $search_progresscalc, 1, 1).'{return 1;} else {return 0;}';
-} else {
-	$filterprogresscalc = '';
-}
-
 if (!empty($search_progressdeclare)) {
 	$morewherefilterarray[] = natural_search('t.progress', $search_progressdeclare, 1, 1);
 }
-
+if (!empty($search_progresscalc)) {
+	$morewherefilterarray[] = '(planned_workload IS NULL OR planned_workload = 0 OR '.natural_search('ROUND(100 * duration_effective / planned_workload, 2)', $search_progresscalc, 1, 1).')';
+	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
+}
 if ($search_task_budget_amount) {
 	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
+//var_dump($morewherefilterarray);
 
 $morewherefilter = '';
 if (count($morewherefilterarray) > 0) {
@@ -344,6 +342,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			$task = new Task($db);
 
 			$task->fk_project = $projectid;
+			$task->entity = $object->entity; // Task have the same entity of project
 			$task->ref = $taskref;
 			$task->label = $label;
 			$task->description = $description;
@@ -554,8 +553,8 @@ if ($id > 0 || !empty($ref)) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	$arrayofmassactions = array();
-	if ($user->rights->projet->creer) {
-		$arrayofmassactions['preclonetasks'] = img_picto('', 'rightarrow', 'class="pictofixedwidth"').$langs->trans("Clone");
+	if ($user->hasRight('projet', 'creer')) {
+		$arrayofmassactions['preclonetasks'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -668,7 +667,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Description
 	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-	print nl2br($object->description);
+	print dol_htmlentitiesbr($object->description);
 	print '</td></tr>';
 
 	// Categories
@@ -755,7 +754,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Project
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
-	print img_picto('', 'project');
+	print img_picto('', 'project', 'class="pictofixedwidth"');
 	if ($projectoktoentertime) {
 		$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
 	} else {
@@ -767,6 +766,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Assigned to
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
@@ -780,21 +780,25 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Date start task
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate((!empty($date_start) ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Date end task
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate((!empty($date_end) ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
+	print img_picto('', 'clock', 'class="pictofixedwidth"');
 	print $form->select_duration('planned_workload', !empty($planned_workload) ? $planned_workload : 0, 0, 'text');
 	print '</td></tr>';
 
 	// Progress
 	print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+	print img_picto('', 'fa-percent', 'class="pictofixedwidth"');
 	print $formother->select_percent($progress, 'progress', 0, 5, 0, 100, 1);
 	print '</td></tr>';
 
@@ -814,12 +818,13 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	print img_picto('', 'currency', 'class="pictofixedwidth"');
+	print '<input size="8" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
 	print '</tr>';
 
 	// Other options
-	$parameters = array();
+	$parameters = array('arrayfields' => &$arrayfields);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -846,7 +851,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Link to create task
 	$linktocreatetaskParam = array();
 	$linktocreatetaskUserRight = false;
-	if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
+	if ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'creer')) {
 		if ($object->public || $userWrite > 0) {
 			$linktocreatetaskUserRight = true;
 		} else {
@@ -896,14 +901,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
-	// Filter on categories
+	// Filter on assigned users
 	$moreforfilter = '';
-	if (count($tasksarray) > 0) {
-		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
-		$moreforfilter .= '</div>';
-	}
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
+	$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
+	$moreforfilter .= '</div>';
 	if ($moreforfilter) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
@@ -920,6 +923,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
+
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1028,13 +1039,20 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
 
 	// Action column
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+
 	print "</tr>\n";
 
 	print '<tr class="liste_titre nodrag nodrop">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
 	// print '<td>'.$langs->trans("Project").'</td>';
 	if (!empty($arrayfields['t.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], 't.ref', '', $param, '', $sortfield, $sortorder, '');
@@ -1096,20 +1114,23 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '<td></td>';
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
 	print "</tr>\n";
 
 	$nboftaskshown = 0;
 	if (count($tasksarray) > 0) {
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0; $level = 0;
-		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
+		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
 	} else {
-		$colspan = 10;
+		$colspan = count($arrayfields);
 		if ($object->usage_bill_time) {
 			$colspan += 2;
 		}
-		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
+		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
 	}
 
 	print "</table>";

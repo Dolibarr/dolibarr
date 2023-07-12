@@ -213,6 +213,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $action;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
@@ -220,12 +221,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 		}
 
 		// Add odtgeneration hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('odtgeneration'));
-		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -271,8 +267,8 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}

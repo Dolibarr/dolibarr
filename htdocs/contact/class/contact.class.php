@@ -33,6 +33,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -41,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 class Contact extends CommonObject
 {
 	use CommonSocialNetworks;
+	use CommonPeople;
 
 	/**
 	 * @var string ID to identify managed object
@@ -468,12 +470,13 @@ class Contact extends CommonObject
 	/**
 	 *  Add a contact into database
 	 *
-	 *  @param      User	$user       Object user that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @param      User	$user           Object user that create
+	 *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *  @return     int      			    <0 if KO, >0 if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 		$now = dol_now();
@@ -549,7 +552,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CONTACT_CREATE', $user);
 				if ($result < 0) {
@@ -1485,6 +1488,10 @@ class Contact extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
+
 		$result = '';
 		$params = [
 			'id' => $this->id,
@@ -1495,10 +1502,11 @@ class Contact extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
 
@@ -1508,48 +1516,55 @@ class Contact extends CommonObject
 			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($add_save_lastsearch_values) {
+			if ($url && $add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
 
 		$url .= $moreparam;
 
-		$linkclose = "";
+		$linkclose = '';
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowContact");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		$linkstart = '<a href="'.$url.'"';
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
 		$linkstart .= $linkclose.'>';
-		$linkend = '</a>';
-
-		if ($option == 'xxx') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
 			$linkend = '</a>';
 		}
 
 		$result .= $linkstart;
+
 		if ($withpicto) {
 			if ($withpicto < 0) {
 				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
 			} else {
-				$result .= img_object(($notooltip ? '' : $label), ( $this->picto ?  $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 			}
 		}
 		if ($withpicto != 2 && $withpicto != -2) {
 			$result .= '<span class="valigmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
 		}
+
 		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array('contactdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1579,10 +1594,10 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *	Return label of contact status
+	 *  Return the label of the status
 	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * 	@return 	string					Label of contact status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode)
 	{
@@ -1591,11 +1606,11 @@ class Contact extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param      int			$status     Id statut
-	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return     string					Libelle
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode)
 	{
@@ -1820,7 +1835,7 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 * Get Contact roles for a thirdparty
+	 * Get thirdparty contact roles of a given contact
 	 *
 	 * @param  string 	$element 	Element type
 	 * @return array|int			Array of contact roles or -1
@@ -1868,7 +1883,7 @@ class Contact extends CommonObject
 	 * Updates all roles (default contact for companies) according to values inside the ->roles array.
 	 * This is called by update of contact.
 	 *
-	 * @return float|int
+	 * @return int
 	 * @see fetchRoles()
 	 */
 	public function updateRoles()
@@ -1878,7 +1893,7 @@ class Contact extends CommonObject
 		$error = 0;
 
 		if (!isset($this->roles)) {
-			return;	// Avoid to loose roles when property not set
+			return 0;	// Avoid to loose roles when property not set
 		}
 
 		$this->db->begin();
@@ -2008,9 +2023,9 @@ class Contact extends CommonObject
 	/**
 	 *  Return status of prospect
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param	int		$mode       0=label long, 1=label short, 2=Picto + Label short, 3=Picto, 4=Picto + Label long
 	 *  @param	string	$label		Label to use for status for added status
-	 *  @return string        		Libelle
+	 *  @return string        		Label
 	 */
 	public function getLibProspCommStatut($mode = 0, $label = '')
 	{
@@ -2028,7 +2043,7 @@ class Contact extends CommonObject
 	 *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
 	 *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
 	 *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
-	 *  @return string       	 			Libelle du statut
+	 *  @return string       	 			Label of status
 	 */
 	public function libProspCommStatut($statut, $mode = 0, $label = '', $picto = '')
 	{
@@ -2177,6 +2192,9 @@ class Contact extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -2189,6 +2207,7 @@ class Contact extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<div class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
 			$return .= '<div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
@@ -2202,7 +2221,7 @@ class Contact extends CommonObject
 			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
 		}*/
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

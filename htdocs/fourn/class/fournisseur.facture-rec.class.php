@@ -196,7 +196,7 @@ class FactureFournisseurRec extends CommonInvoice
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>210),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>85),
-		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>175),
+		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>175),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'date_lim_reglement' =>array('type'=>'date', 'label'=>'Date lim reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
@@ -847,29 +847,29 @@ class FactureFournisseurRec extends CommonInvoice
 	}
 
 	/**
-	 *    Add a line to recursive supplier invoice
+	 * Add a line to recursive supplier invoice
 	 *
-	 * @param int $fk_product Product/Service ID predefined
-	 * @param string $ref			Ref
-	 * @param string $label			Label
-	 * @param string $desc 			Description de la ligne
-	 * @param double $pu_ht			Unit price
-	 * @param double $pu_ttc		Unit price with tax
-	 * @param double $qty 			Quantity
-	 * @param int $remise_percent 	Percentage discount of the line
-	 * @param double $txtva 		Taux de tva force, sinon -1
-	 * @param int $txlocaltax1 		Local tax 1 rate (deprecated)
-	 * @param int $txlocaltax2 		Local tax 2 rate (deprecated)
-	 * @param string $price_base_type HT or TTC
-	 * @param int $type 			Type of line (0=product, 1=service)
-	 * @param int $date_start		Date start
-	 * @param int $date_end			Date end
-	 * @param int $info_bits 		VAT npr or not ?
-	 * @param int $special_code 	Special code
-	 * @param int $rang 			Position of line
-	 * @param string $fk_unit 		Unit
-	 * @param int $pu_ht_devise 	Unit price in currency
-	 * @return int                  <0 if KO, Id of line if OK
+	 * @param int 		$fk_product 	Product/Service ID predefined
+	 * @param string 	$ref			Ref
+	 * @param string 	$label			Label
+	 * @param string 	$desc 			Description de la ligne
+	 * @param double 	$pu_ht			Unit price
+	 * @param double 	$pu_ttc			Unit price with tax
+	 * @param double 	$qty 			Quantity
+	 * @param int 		$remise_percent Percentage discount of the line
+	 * @param double 	$txtva 			Taux de tva force, sinon -1
+	 * @param int 		$txlocaltax1 	Local tax 1 rate (deprecated)
+	 * @param int 		$txlocaltax2 	Local tax 2 rate (deprecated)
+	 * @param string 	$price_base_type HT or TTC
+	 * @param int 		$type 			Type of line (0=product, 1=service)
+	 * @param int 		$date_start		Date start
+	 * @param int 		$date_end		Date end
+	 * @param int 		$info_bits 		VAT npr or not ?
+	 * @param int 		$special_code 	Special code
+	 * @param int 		$rang 			Position of line
+	 * @param string 	$fk_unit 		Unit
+	 * @param int 		$pu_ht_devise 	Unit price in currency
+	 * @return int                  	<0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function addline($fk_product, $ref, $label, $desc, $pu_ht, $pu_ttc, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
@@ -1031,6 +1031,10 @@ class FactureFournisseurRec extends CommonInvoice
 
 				return -1;
 			}
+		} else {
+			$this->error = 'Recurring Invoice is suspended. adding lines not allowed.';
+
+			return -1;
 		}
 	}
 

@@ -427,11 +427,13 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 		$elementPicto = 'expensereport';
 		$elementLabel = $langs->trans('ExpenseReport');
+	} elseif ($notifiedevent['elementtype'] == 'agenda') {
+		$elementPicto = 'action';
 	}
 
 	$labelfortrigger = 'AmountHT';
 	$codehasnotrigger = 0;
-	if (preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+	if (preg_match('/^(ACTION|HOLIDAY)/', $notifiedevent['code'])) {
 		$codehasnotrigger++;
 	}
 

@@ -81,9 +81,8 @@ class ActionsCardService
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $langs, $user, $mysoc, $canvas;
-		global $form, $formproduct;
+		global $form;
 
 		$tmpobject = new Product($this->db);
 		if (!empty($id) || !empty($ref)) {
@@ -152,7 +151,7 @@ class ActionsCardService
 		$this->tpl['label'] = $this->object->label;
 		$this->tpl['id'] = $this->object->id;
 		$this->tpl['type'] = $this->object->type;
-		$this->tpl['note'] = $this->object->note;
+		$this->tpl['note'] = $this->object->note_private;
 		$this->tpl['seuil_stock_alerte'] = $this->object->seuil_stock_alerte;
 
 		// Duration

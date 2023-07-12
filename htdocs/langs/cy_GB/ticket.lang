@@ -26,6 +26,7 @@ Permission56002=Addasu tocynnau
 Permission56003=Dileu tocynnau
 Permission56004=Rheoli tocynnau
 Permission56005=Gweld tocynnau pob trydydd parti (ddim yn effeithiol ar gyfer defnyddwyr allanol, bob amser yn gyfyngedig i'r trydydd parti y maent yn dibynnu ar)
+Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=Tocyn - Mathau
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Cyfrannwr allanol
 
 OriginEmail=Ebost y Gohebydd
 Notify_TICKET_SENTBYMAIL=Anfon neges tocyn trwy e-bost
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Darllen
@@ -183,7 +186,7 @@ CreatedBy=Crëwyd gan
 NewTicket=Tocyn Newydd
 SubjectAnswerToTicket=Ateb tocyn
 TicketTypeRequest=Math o gais
-TicketCategory=Categoreiddio tocynnau
+TicketCategory=Ticket group
 SeeTicket=Gweler tocyn
 TicketMarkedAsRead=Mae'r tocyn wedi'i farcio fel wedi'i ddarllen
 TicketReadOn=Darllen ymlaen

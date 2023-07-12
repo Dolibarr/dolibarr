@@ -20,7 +20,7 @@
 
 /**
  * \file 	htdocs/product/ajax/products.php
- * \brief 	File to return Ajax response on product list request.
+ * \brief 	File to return Ajax response on product list request, with default VAT rate.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -34,9 +34,6 @@ if (!defined('NOREQUIREHTML')) {
 }
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
-}
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
 }
 if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
@@ -225,6 +222,32 @@ if ($action == 'fetch' && !empty($id)) {
 			$outdefault_vat_code = $object->default_vat_code;
 		}
 
+		// VAT to use and default VAT for product are set to same value by default
+		$product_outtva_tx_formated =  $outtva_tx_formated;
+		$product_outtva_tx =  $outtva_tx;
+		$product_outdefault_vat_code = $outdefault_vat_code;
+
+		// If we ask the price according to buyer, we change it.
+		if (GETPOST('addalsovatforthirdpartyid', 'int')) {
+			$thirdparty_buyer = new Societe($db);
+			$thirdparty_buyer->fetch($socid);
+
+			$tmpvatwithcode = get_default_tva($mysoc, $thirdparty_buyer, $id, 0);
+
+			if (!is_numeric($tmpvatwithcode) || $tmpvatwithcode != -1) {
+				$reg =array();
+				if (preg_match('/(.+)\s\((.+)\)/', $tmpvatwithcode, $reg)) {
+					$outtva_tx = price2num($reg[1]);
+					$outtva_tx_formated = price($outtva_tx);
+					$outdefault_vat_code = $reg[2];
+				} else {
+					$outtva_tx = price2num($tmpvatwithcode);
+					$outtva_tx_formated = price($outtva_tx);
+					$outdefault_vat_code = '';
+				}
+			}
+		}
+
 		$outjson = array(
 			'ref' => $outref,
 			'label' => $outlabel,
@@ -235,13 +258,19 @@ if ($action == 'fetch' && !empty($id)) {
 			'price_ht' => $outprice_ht,
 			'price_ttc' => $outprice_ttc,
 			'pricebasetype' => $outpricebasetype,
+			'product_tva_tx_formated' => $product_outtva_tx_formated,
+			'product_tva_tx' => $product_outtva_tx,
+			'product_default_vat_code' => $product_outdefault_vat_code,
+
 			'tva_tx_formated' => $outtva_tx_formated,
 			'tva_tx' => $outtva_tx,
 			'default_vat_code' => $outdefault_vat_code,
+
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
-			'array_options'=>$object->array_options);
+			'array_options'=>$object->array_options
+		);
 	}
 
 	echo json_encode($outjson);

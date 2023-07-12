@@ -35,8 +35,10 @@ function dolStripPhpCode($str, $replacewith = '')
 
 	$newstr = '';
 
-	//split on each opening tag
-	$parts = explode('<?php', $str);
+	// Split on each opening tag
+	//$parts = explode('<?php', $str);
+	$parts = preg_split('/'.preg_quote('<?php', '/').'/i', $str);
+
 	if (!empty($parts)) {
 		$i = 0;
 		foreach ($parts as $part) {
@@ -77,8 +79,10 @@ function dolKeepOnlyPhpCode($str)
 
 	$newstr = '';
 
-	//split on each opening tag
-	$parts = explode('<?php', $str);
+	// Split on each opening tag
+	//$parts = explode('<?php', $str);
+	$parts = preg_split('/'.preg_quote('<?php', '/').'/i', $str);
+
 	if (!empty($parts)) {
 		$i = 0;
 		foreach ($parts as $part) {
@@ -118,7 +122,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')', LOG_DEBUG);
 	//if ($contenttype == 'html') { print $content;exit; }
 
-	// Replace php code. Note $content may come from database and does not contains body tags.
+	// Replace php code. Note $content may come from database and does not contain body tags.
 	$replacewith = '...php...';
 	if ($removephppart) {
 		$replacewith = '';
@@ -444,7 +448,7 @@ function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid
 			$sql .= " pageviews_total = pageviews_total + 1,";
 			$sql .= " pageviews_month = pageviews_month + 1,";
 			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
-			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['month'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
+			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
 			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
 			$sql .= " WHERE rowid = ".((int) $websiteid);
 			$resql = $db->query($sql);

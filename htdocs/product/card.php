@@ -194,9 +194,9 @@ if ($object->id > 0) {
 $hookmanager->initHooks(array('productcard', 'globalcard'));
 
 // Permissions
-$usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
+$usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'read')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')));
 
 
 /*
@@ -207,7 +207,7 @@ if ($cancel) {
 	$action = '';
 }
 
-$createbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+$createbarcode = isModEnabled('barcode');
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) {
 	$createbarcode = 0;
 }
@@ -242,7 +242,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 	// merge products
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		$error = 0;
 		$productOriginId = GETPOST('product_origin', 'int');
 		$productOrigin = new Product($db);
@@ -358,12 +358,10 @@ if (empty($reshook)) {
 
 				// External modules should update their ones too
 				if (!$error) {
+					$parameters = array('soc_origin' => $productOrigin->id, 'soc_dest' => $object->id);
 					$reshook = $hookmanager->executeHooks(
 						'replaceProduct',
-						array(
-							'soc_origin' => $productOrigin->id,
-							'soc_dest' => $object->id,
-						),
+						$parameters,
 						$object,
 						$action
 					);
@@ -453,6 +451,30 @@ if (empty($reshook)) {
 
 			$error++;
 			setEventMessages('', $errors, 'errors');
+		}
+	}
+
+	// Quick edit for extrafields
+	if ($action == 'update_extras') {
+		$object->oldcopy = dol_clone($object);
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			// Actions on extra fields
+			$result = $object->insertExtraFields('PRODUCT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
 		}
 	}
 
@@ -566,8 +588,8 @@ if (empty($reshook)) {
 			$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
-			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
-			$object->fk_default_workstation	 = GETPOST('fk_default_workstation');
+			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse', 'int');
+			$object->fk_default_workstation	 = GETPOST('fk_default_workstation', 'int');
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ?GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
@@ -732,8 +754,8 @@ if (empty($reshook)) {
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
-				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
-				$object->fk_default_workstation   = GETPOST('fk_default_workstation');
+				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse', 'int');
+				$object->fk_default_workstation   = GETPOST('fk_default_workstation', 'int');
 				// removed from update view so GETPOST always empty
 				/*
 				$object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
@@ -878,92 +900,88 @@ if (empty($reshook)) {
 		if (!GETPOST('clone_content') && !GETPOST('clone_prices')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
-			$db->begin();
-
-			$originalId = $id;
 			if ($object->id > 0) {
-				$object->ref = GETPOST('clone_ref', 'alphanohtml');
-				$object->status = 0;
-				$object->status_buy = 0;
-				$object->id = null;
-				$object->barcode = -1;
+				$error = 0;
+				$clone = dol_clone($object, 2);
 
-				if ($object->check()) {
-					$object->context['createfromclone'] = 'createfromclone';
-					$id = $object->create($user);
+				$clone->id = null;
+				$clone->ref = GETPOST('clone_ref', 'alphanohtml');
+				$clone->status = 0;
+				$clone->status_buy = 0;
+				$clone->barcode = -1;
+
+				if ($clone->check()) {
+					$db->begin();
+
+					$clone->context['createfromclone'] = 'createfromclone';
+					$id = $clone->create($user);
 					if ($id > 0) {
 						if (GETPOST('clone_composition')) {
-							$result = $object->clone_associations($originalId, $id);
-
+							$result = $clone->clone_associations($object->id, $id);
 							if ($result < 1) {
-								$db->rollback();
 								setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
-								header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
-								exit;
+								setEventMessages($clone->error, $clone->errors, 'errors');
+								$error++;
 							}
 						}
 
-						if (GETPOST('clone_categories')) {
-							$result = $object->cloneCategories($originalId, $id);
-
+						if (!$error && GETPOST('clone_categories')) {
+							$result = $clone->cloneCategories($object->id, $id);
 							if ($result < 1) {
-								$db->rollback();
 								setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
-								header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
-								exit;
+								setEventMessages($clone->error, $clone->errors, 'errors');
+								$error++;
 							}
 						}
 
-						if (GETPOST('clone_prices')) {
-							$result = $object->clone_price($originalId, $id);
-
+						if (!$error && GETPOST('clone_prices')) {
+							$result = $clone->clone_price($object->id, $id);
 							if ($result < 1) {
-								$db->rollback();
 								setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
-								header('Location: '.$_SERVER['PHP_SELF'].'?id='.$originalId);
-								exit();
+								setEventMessages($clone->error, $clone->errors, 'errors');
+								$error++;
 							}
 						}
 
-						// $object->clone_fournisseurs($originalId, $id);
-
-						$db->commit();
-						$db->close();
-
-						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-						exit;
+						// $clone->clone_fournisseurs($object->id, $id);
 					} else {
-						$id = $originalId;
-
-						if ($object->error == 'ErrorProductAlreadyExists') {
-							$db->rollback();
-
+						if ($clone->error == 'ErrorProductAlreadyExists') {
 							$refalreadyexists++;
 							$action = "";
 
-							$mesg = $langs->trans("ErrorProductAlreadyExists", $object->ref);
-							$mesg .= ' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
+							$mesg = $langs->trans("ErrorProductAlreadyExists", $clone->ref);
+							$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
 							setEventMessages($mesg, null, 'errors');
-							$object->fetch($id);
 						} else {
-							$db->rollback();
-							if (count($object->errors)) {
-								setEventMessages($object->error, $object->errors, 'errors');
-								dol_print_error($db, $object->errors);
+							if (count($clone->errors)) {
+								setEventMessages($clone->error, $clone->errors, 'errors');
+								dol_print_error($db, $clone->errors);
 							} else {
-								setEventMessages($langs->trans($object->error), null, 'errors');
-								dol_print_error($db, $object->error);
+								setEventMessages($langs->trans($clone->error), null, 'errors');
+								dol_print_error($db, $clone->error);
 							}
 						}
+						$error++;
 					}
 
-					unset($object->context['createfromclone']);
+					unset($clone->context['createfromclone']);
+
+					if ($error) {
+						$db->rollback();
+					} else {
+						$db->commit();
+						$db->close();
+						header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+						exit;
+					}
+				} else {
+					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewRefForClone")), null, 'errors');
 				}
 			} else {
-				$db->rollback();
 				dol_print_error($db, $object->error);
 			}
 		}
+		$action = 'clone';
 	}
 
 	// Delete a product
@@ -1419,7 +1437,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+		$showbarcode = isModEnabled('barcode');
 		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 			$showbarcode = 0;
 		}
@@ -1445,6 +1463,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
 				$tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 			}
+			print img_picto('', 'barcode', 'class="pictofixedwidth"');
 			print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 			print '</td></tr>';
 		}
@@ -1468,7 +1487,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse', 'int'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
-			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'">';
+			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create&token='.newToken()).'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
 			print '</a>';
 			print '</td>';
@@ -1493,7 +1512,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		if ($type == 1  && isModEnabled("workstation")) {
+		if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
 				// Default workstation
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
@@ -1504,6 +1523,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Duration
 		if ($type == 1) {
 			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
+			print img_picto('', 'clock', 'class="pictofixedwidth"');
 			print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
 			print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
 
@@ -1531,6 +1551,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 				// Brut Weight
 				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+				print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
 				print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
 				print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ?GETPOST('weight_units', 'alpha') : (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
 				print '</td></tr>';
@@ -1539,6 +1560,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Brut Length
 			if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
 				print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
+				print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
 				print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
 				print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
 				print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
@@ -1584,7 +1606,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Origin country
 			print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 			print '<td>';
-			print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+			print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx maxwidth500');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -1636,7 +1658,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1980,7 +2002,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Barcode
-			$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+			$showbarcode = isModEnabled('barcode');
 			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 				$showbarcode = 0;
 			}
@@ -2032,7 +2054,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses((GETPOSTISSET('fk_default_warehouse') ? GETPOST('fk_default_warehouse') : $object->fk_default_warehouse), 'fk_default_warehouse', 'warehouseopen', 1);
-				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&type='.GETPOST('type', 'int')).'">';
+				print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 				/*
 				print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
@@ -2086,7 +2109,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!$object->isService() && isModEnabled('bom')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
-				$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".((int) $object->id);
+				$bomkey = "Bom:bom/class/bom.class.php:0:(t.status:=:1) AND (t.fk_product:=:".((int) $object->id).')';
 				print $form->selectForForms($bomkey, 'fk_default_bom', (GETPOSTISSET('fk_default_bom') ? GETPOST('fk_default_bom') : $object->fk_default_bom), 1);
 				print '</td></tr>';
 			}
@@ -2195,12 +2218,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$arrayselected[] = $cat->id;
 					}
 				}
-				if (GETPOSTISSET('categories', 'array')) {
+				if (GETPOSTISARRAY('categories')) {
 					foreach (GETPOST('categories', 'array') as $cat) {
 						$arrayselected[] = $cat;
 					}
 				}
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 
@@ -2308,7 +2331,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		} else {
 			// Fiche en mode visu
 
-			$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+			$showbarcode = isModEnabled('barcode');
 			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 				$showbarcode = 0;
 			}

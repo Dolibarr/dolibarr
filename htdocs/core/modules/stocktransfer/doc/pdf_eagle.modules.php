@@ -60,12 +60,6 @@ class pdf_eagle extends ModelePdfStockTransfer
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -207,7 +201,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
 
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
@@ -287,7 +281,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Set nblines with the new facture lines content after hook
-				$nblines = count($object->lines);
+				$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -777,7 +771,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -971,16 +965,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 		$pdf->SetFont('', 'B', $default_font_size + 2);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("StockTransferSheet");
+		$title = $outputlangs->transnoentities("StockTransferSheet").' '.$object->ref;
 		$pdf->MultiCell($w, 4, $title, '', 'R');
 
 		$pdf->SetFont('', '', $default_font_size + 1);
-
-		$posy += 5;
-
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("Ref")." : ".$object->ref, '', 'R');
 
 		// Date prévue depart
 		if (!empty($object->date_prevue_depart)) {

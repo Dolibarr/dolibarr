@@ -175,6 +175,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
+		global $action;
 
 		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
@@ -281,13 +282,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 			if (file_exists($dir)) {
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager = new HookManager($this->db);
-				}
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
-				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Set nblines with the new facture lines content after hook
@@ -801,7 +797,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	void
+	 *  @return	float|int
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -1062,7 +1058,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	 *  @param	int			   $hidedetails		Do not show line details
 	 *  @param	int			   $hidedesc		Do not show desc
 	 *  @param	int			   $hideref			Do not show ref
-	 *  @return	null
+	 *  @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

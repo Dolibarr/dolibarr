@@ -135,14 +135,14 @@ if (empty($entity)) {
 $error = 0;
 
 $listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => !empty($user->rights->facture->lire)),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
-	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->don->lire)),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => isModEnabled('tax'), 'perms' => !empty($user->rights->tax->charges->lire)),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => !empty($user->rights->salaries->read)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => isModEnabled('banque'), 'perms' => !empty($user->rights->banque->lire)),
-	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->loan->read)),
+	'selectinvoices'=>array('label'=>'Invoices', 'picto'=>'bill', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => $user->hasRight('facture', 'lire')),
+	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'picto'=>'supplier_invoice', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
+	'selectexpensereports'=>array('label'=>'ExpenseReports', 'picto'=>'expensereport', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
+	'selectdonations'=>array('label'=>'Donations', 'picto'=>'donation', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->don->lire)),
+	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'picto'=>'bill', 'enabled' => isModEnabled('tax'), 'perms' => !empty($user->rights->tax->charges->lire)),
+	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'picto'=>'salary', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => !empty($user->rights->salaries->read)),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'picto'=>'payment', 'enabled' => isModEnabled('banque'), 'perms' => !empty($user->rights->banque->lire)),
+	'selectloanspayment'=>array('label'=>'PaymentLoan','picto'=>'loan', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->loan->read)),
 );
 
 
@@ -614,6 +614,7 @@ if (isModEnabled('projet')) {
 	print '<br>';
 }
 
+$i = 0;
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
 		continue; // list not qualified
@@ -623,7 +624,10 @@ foreach ($listofchoices as $choice => $val) {
 		$disabled = ' disabled';
 	}
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
-	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
+	print '<div class="'.($i > 0 ? 'paddingleft marginleftonly' : '').' inline-block marginrightonly paddingright"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'><label for="'.$choice.'"> ';
+	print img_picto($langs->trans($val['label']), $val['picto'], 'class=""').' '.$langs->trans($val['label']);
+	print '</label></div>';
+	$i++;
 }
 
 print '<input type="submit" class="button small" name="search" value="'.$langs->trans("Search").'">';

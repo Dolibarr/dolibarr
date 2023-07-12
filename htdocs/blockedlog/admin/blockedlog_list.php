@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
 
 // Access Control
-if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
+if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
@@ -325,7 +325,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_id != '') {
 	$param .= '&search_id='.urlencode($search_id);
@@ -550,7 +550,10 @@ if (is_array($blocks)) {
 			print '</td>';
 
 			// Link to source object
-			print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
+			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link)).'"').'>';
+			print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
+			print $object_link;
+			print '</td>';
 
 			// Amount
 			print '<td class="right nowraponall">'.price($block->amounts).'</td>';

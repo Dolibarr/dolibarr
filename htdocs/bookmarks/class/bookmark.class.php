@@ -55,6 +55,12 @@ class Bookmark extends CommonObject
 	public $db;
 
 	/**
+	 * Last error code on a local method
+	 * @var int		Error number
+	 */
+	public $errno;
+
+	/**
 	 * @var int ID
 	 */
 	public $id;
@@ -268,10 +274,10 @@ class Bookmark extends CommonObject
 	}
 
 	/**
-	 *	Return label of contact status
+	 *  Return the label of the status
 	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * 	@return 	string					Label of contact status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode)
 	{

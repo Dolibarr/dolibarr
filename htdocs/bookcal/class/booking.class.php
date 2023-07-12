@@ -104,7 +104,7 @@ class Booking extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>1.2, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'validate'=>'1', 'comment'=>"Reference of object"),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'isModEnabled("societe")', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'help'=>"LinkToThirparty", 'validate'=>'1',),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'isModEnabled("societe")', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'help'=>"LinkToThirparty", 'validate'=>'1',),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'validate'=>'1',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3, 'validate'=>'1',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0, 'cssview'=>'wordbreak', 'validate'=>'1',),
@@ -122,6 +122,7 @@ class Booking extends CommonObject
 		'email' => array('type'=>'varchar(128)', 'label'=>'email', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>-1,),
 		'start' => array('type'=>'datetime', 'label'=>'Start Hour', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>-1,),
 		'duration' => array('type'=>'integer', 'label'=>'Duration', 'enabled'=>'1', 'position'=>6, 'notnull'=>1, 'visible'=>-1,),
+		'fk_bookcal_availability' => array('type'=>'integer:Availabilities:bookcal/class/availabilities.class.php', 'label'=>'AvailabilityId', 'enabled'=>'1', 'position'=>49, 'notnull'=>1, 'visible'=>-1,),
 	);
 	public $rowid;
 	public $ref;
@@ -143,6 +144,7 @@ class Booking extends CommonObject
 	public $email;
 	public $start;
 	public $duration;
+	public $fk_bookcal_availability;
 	// END MODULEBUILDER PROPERTIES
 
 

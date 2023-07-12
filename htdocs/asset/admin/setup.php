@@ -477,7 +477,7 @@ if ($action == 'edit') {
 				print "</textarea>\n";
 			} elseif ($val['type']== 'html') {
 				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+				$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 				$doleditor->Create();
 			} elseif ($val['type'] == 'yesno') {
 				print $form->selectyesno($constname, getDolGlobalString($constname), 1);
@@ -544,7 +544,7 @@ if ($action == 'edit') {
 					print '<datalist id="pcg_type_datalist">';
 					require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancysystem.class.php';
 					$accountsystem = new AccountancySystem($db);
-					$accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
+					$accountsystem->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 					$sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
 					$sql .= " WHERE fk_pcg_version = '" . $db->escape($accountsystem->ref) . "'";
 					$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
@@ -645,7 +645,7 @@ if ($action == 'edit') {
 						print getDolGlobalString($constname);
 					}
 				} else {
-					print $conf->global->{$constname};
+					print getDolGlobalString($constname);
 				}
 				print '</td></tr>';
 			}

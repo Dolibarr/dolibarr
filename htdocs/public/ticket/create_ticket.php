@@ -117,12 +117,10 @@ if (empty($reshook)) {
 	}
 
 	if (GETPOST('addfile', 'alpha') && !GETPOST('save', 'alpha')) {
-		////$res = $object->fetch('','',GETPOST('track_id'));
-		////if($res > 0)
-		////{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		// Set tmp directory TODO Use a dedicated directory for temp mails files
+		// Set tmp directory
+		// TODO Use a dedicated directory for temporary emails files
 		$vardir = $conf->ticket->dir_output;
 		$upload_dir_tmp = $vardir.'/temp/'.session_id();
 		if (!dol_is_dir($upload_dir_tmp)) {
@@ -131,7 +129,6 @@ if (empty($reshook)) {
 
 		dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', '', null, '', 0);
 		$action = 'create_ticket';
-		////}
 	}
 
 	// Remove file
@@ -139,10 +136,11 @@ if (empty($reshook)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		// Set tmp directory
+		// TODO Use a dedicated directory for temporary emails files
 		$vardir = $conf->ticket->dir_output.'/';
 		$upload_dir_tmp = $vardir.'/temp/'.session_id();
 
-		// TODO Delete only files that was uploaded from email form
+		// TODO Delete only files that was uploaded from form
 		dol_remove_file_process(GETPOST('removedfile'), 0, 0);
 		$action = 'create_ticket';
 	}
@@ -345,6 +343,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				// Creation of the ticket
 				$id = $object->create($user);
 				if ($id <= 0) {
 					$error++;
@@ -465,14 +464,7 @@ if (empty($reshook)) {
 					}
 
 					// Copy files into ticket directory
-					$destdir = $conf->ticket->dir_output.'/'.$object->ref;
-					if (!dol_is_dir($destdir)) {
-						dol_mkdir($destdir);
-					}
-					foreach ($filename as $i => $val) {
-						dol_move($filepath[$i], $destdir.'/'.$filename[$i], 0, 1);
-						$formmail->remove_attached_files($i);
-					}
+					$object->copyFilesForTicket('');
 
 					//setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
 
@@ -512,7 +504,7 @@ $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarea">';
+print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action != "infos_success") {
 	$formticket->withfromsocid = isset($socid) ? $socid : $user->socid;
@@ -545,7 +537,7 @@ if ($action != "infos_success") {
 print '</div>';
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

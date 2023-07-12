@@ -49,10 +49,9 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 
 // Security check
-if (empty($conf->adherent->enabled)) {
+if (!isModEnabled('adherent')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
-
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
@@ -110,6 +109,10 @@ if (!$sortfield) {
 /*
  * View
  */
+
+if (empty($conf->global->MEMBER_PUBLIC_ENABLED)) {
+	httponly_accessforbidden('Public access of list of members is not enabled');
+}
 
 $form = new Form($db);
 

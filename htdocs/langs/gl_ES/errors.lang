@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Erro, o parámetro <b>%s</b>1debe 
 ErrorLoginDateValidity=Erro, este inicio de sesión está fóra do intervalo de datas validas
 ErrorValueLength=A lonxitude do campo "<b>%s</b>" debe ser superior a "<b>%s</b>"
 ErrorReservedKeyword=A palabra '<b>%s</b>' é unha palabra chave reservada
+ErrorFilenameReserved=O nome de ficheiro <b> %s </b> non se pode usar xa que é un comando reservado e protexido.
 ErrorNotAvailableWithThisDistribution=Non dispoñible con esta distribución
 ErrorPublicInterfaceNotEnabled=Interfaz pública non activada
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=O idioma da nova páxina debe definirse se se define como tradución doutra páxina
@@ -308,7 +309,14 @@ ErrorExistingPermission = Permiso <b> %s </b> para o obxecto <b> %s </b>
 ErrorFieldExist=O valor de <b> %s </b> xa existe
 ErrorEqualModule=Módulo non válido en <b> %s </b>
 ErrorFieldValue=O valor para <b> %s </b> é incorrecto
-ErrorCoherenceMenu= <b> %s </b> é preciso cando <b> % </b> é igual á ESQUERDA
+ErrorCoherenceMenu= <b> %s </b> é preciso cando <b> %s </b> é 'esquerda'
+ErrorUploadFileDragDrop=Produciuse un erro ao cargar o(s) ficheiro(s).
+ErrorUploadFileDragDropPermissionDenied=Produciuse un erro ao cargar o(s) ficheiro(s): Permiso denegado
+ErrorFixThisHere= <a href="%s"> Corrixa isto aquí </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Erro: o URL da súa instancia actual (%s) non coincide co URL definido na súa configuración de inicio de sesión de OAuth2 (%s). Non se permite o inicio de sesión OAuth2 nesta configuración.
+ErrorMenuExistValue=Xa existe un menú con este título ou URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
+ErrorTypeMenu=Imposible engadir outro menú para o mesmo módulo na barra de navegación, aínda non operativo
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.
@@ -348,6 +356,14 @@ WarningThemeForcedTo=Aviso, o tema foi forzado a <b> %s </b> pola constante ocul
 WarningPagesWillBeDeleted=Aviso, isto tamén eliminará todas as páxinas/contedores existentes do sitio web. Debería exportar o seu sitio web antes, para ter unha copia de seguridade e poder  importalo de novo máis tarde.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=A validación automática está desactivada cando a opción para diminuír o stock está definida en "Validación de facturas".
 WarningModuleNeedRefrech = Desactivouse o módulo <b> %s </b>. Non esqueza activalo
+WarningPermissionAlreadyExist=Permisos existentes para este obxecto
+
+SwissQrOnlyVIR = A factura SwissQR só se pode engadir ás facturas configuradas para pagar con pagamentos domiciliados.
+SwissQrCreditorAddressInvalid = O enderezo do acredor non é válido (están definidos o código postal e a cidade? (%s)
+SwissQrCreditorInformationInvalid = A información do acredor non é válida para o IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN aínda non implementado
+SwissQrPaymentInformationInvalid = A información de pagamento non era válida para o total de %s : %s
+SwissQrDebitorAddressInvalid = A información do debedor non era válida (%s)
 
 # Validate
 RequireValidValue = Valor non válido

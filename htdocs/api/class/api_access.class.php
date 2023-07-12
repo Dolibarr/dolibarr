@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUs
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Resources.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Defaults.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
-use \Luracast\Restler\iAuthenticate;
-use \Luracast\Restler\iUseAuthentication;
-use \Luracast\Restler\Resources;
-use \Luracast\Restler\Defaults;
-use \Luracast\Restler\RestException;
+use Luracast\Restler\iAuthenticate;
+use Luracast\Restler\iUseAuthentication;
+use Luracast\Restler\Resources;
+use Luracast\Restler\Defaults;
+use Luracast\Restler\RestException;
 
 /**
  * Dolibarr API access class
@@ -106,6 +106,9 @@ class DolibarrApiAccess implements iAuthenticate
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommanded)
 		}
+		if (preg_match('/^dolcrypt:/i', $api_key)) {
+			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
+		}
 
 		if ($api_key) {
 			$userentity = 0;
@@ -113,15 +116,15 @@ class DolibarrApiAccess implements iAuthenticate
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
 			$sql .= " u.tms as date_modification, u.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."'";
-			// TODO Check if 2 users has same API key.
+			$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
 
 			$result = $this->db->query($sql);
 			if ($result) {
-				if ($this->db->num_rows($result)) {
+				$nbrows = $this->db->num_rows($result);
+				if ($nbrows == 1) {
 					$obj = $this->db->fetch_object($result);
 					$login = $obj->login;
-					$stored_key = $obj->api_key;
+					$stored_key = dolDecrypt($obj->api_key);
 					$userentity = $obj->entity;
 
 					if (!defined("DOLENTITY") && $conf->entity != ($obj->entity ? $obj->entity : 1)) {		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
@@ -130,6 +133,8 @@ class DolibarrApiAccess implements iAuthenticate
 						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity.") and we have to reload configuration.", LOG_WARNING);
 						$conf->setValues($this->db);
 					}
+				} elseif ($nbrows > 1) {
+					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');
 				}
 			} else {
 				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error_msg);

@@ -43,6 +43,8 @@ function check_user_password_http($usertotest, $passwordtotest, $entitytotest)
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+		// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
+		/*
 		$tmpuser = new User($db);
 		$tmpuser->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
 
@@ -59,6 +61,7 @@ function check_user_password_http($usertotest, $passwordtotest, $entitytotest)
 			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 			return '--bad-login-validity--';
 		}
+		*/
 	}
 
 	return $login;

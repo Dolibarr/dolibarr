@@ -363,6 +363,7 @@ if (count($typeleaves) == 0) {
 	print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
 	print_liste_field_titre('');
 
+	$selectedfields = '';
 	if ($massactionbutton) {
 		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
 	}

@@ -8,8 +8,8 @@
  * Copyright (C) 2013-2022	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2016-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
@@ -69,11 +69,14 @@ if (isModEnabled('incoterm')) {
 }
 
 $id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
-$socid = GETPOST('socid', 'int');
+
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST("confirm");
 $ref = GETPOST('ref', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = '';
+
 $lineid		= GETPOST('lineid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $origin		= GETPOST('origin', 'alpha');
@@ -108,21 +111,22 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
-$socid = '';
+$socid = GETPOST('socid', 'int');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
+
 $isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 
 // Common permissions
-$usercanread = ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire);
-$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
-$usercandelete = ($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer);
+$usercanread = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
+$usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
+$usercandelete = ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer"));
 
 // Advanced permissions
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)));
-$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send);
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
+$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
 
 // Permissions for includes
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -297,7 +301,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'unlinkdiscount' && $usercancreate) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
-		$result = $discount->fetch(GETPOST("discountid"));
+		$result = $discount->fetch(GETPOSTINT("discountid"));
 		$discount->unlink_invoice();
 	} elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercancreate) {
 		$object->fetch($id);
@@ -414,10 +418,13 @@ if (empty($reshook)) {
 	} elseif ($action == 'setbankaccount' && $usercancreate) {
 		// bank account
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+	} elseif ($action == 'setvatreversecharge' && $usercancreate) {
+		// vat reverse charge
+		$vatreversecharge = GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
+		$result = $object->setVATReverseCharge($vatreversecharge);
 	}
 
-
-	if ($action == 'settransportmode' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
+	if ($action == 'settransportmode' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 		// transport mode
 		$result = $object->setTransportMode(GETPOST('transport_mode_id', 'int'));
 	} elseif ($action == 'setlabel' && $usercancreate) {
@@ -756,9 +763,10 @@ if (empty($reshook)) {
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->note_private = GETPOST('note_private', 'restricthtml');
-				$object->cond_reglement_id	= GETPOST('cond_reglement_id', 'int');
-				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
+				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 				$object->fk_account			= GETPOST('fk_account', 'int');
+				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
@@ -825,6 +833,7 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
+				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
@@ -885,8 +894,12 @@ if (empty($reshook)) {
 						$totalcreditnotes = $facture_source->getSumCreditNotesUsed();
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
+						$desc = $langs->trans('invoiceAvoirLineWithPaymentRestAmount');
+						$retAddLine = $object->addline($desc, $remain_to_pay, 0, 0, 0, 1, 0, 0, '', '', 0, '', 'TTC');
 
-						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 0, 0, 0, 1, 0, 0, '', '', 'TTC');
+						if ($retAddLine < 0) {
+							$error++;
+						}
 					}
 				}
 			}
@@ -976,6 +989,7 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
+				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
@@ -1623,6 +1637,16 @@ if (empty($reshook)) {
 					}
 				}
 
+				$ref_supplier = $productsupplier->ref_supplier;
+
+				$tva_tx = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
+				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
+				if (empty($tva_tx)) {
+					$tva_npr = 0;
+				}
+				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
+				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
+
 				if (empty($pu)) {
 					$pu = 0; // If pu is '' or null, we force to have a numeric value
 				}
@@ -2116,6 +2140,7 @@ if ($action == 'create') {
 	} else {
 		$cond_reglement_id = !empty($societe->cond_reglement_supplier_id) ? $societe->cond_reglement_supplier_id : 0;
 		$mode_reglement_id = !empty($societe->mode_reglement_supplier_id) ? $societe->mode_reglement_supplier_id : 0;
+		$vat_reverse_charge = $societe->vat_reverse_charge;
 		$transport_mode_id = !empty($societe->transport_mode_supplier_id) ? $societe->transport_mode_supplier_id : 0;
 		$fk_account = !empty($societe->fk_account) ? $societe->fk_account : 0;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -2152,6 +2177,7 @@ if ($action == 'create') {
 	if (!empty($currency_tx)) {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head();
 
@@ -2175,7 +2201,8 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company(empty($societe->id) ? 0 : $societe->id, 'socid', '(s.fournisseur = 1 AND s.status = 1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 widthcentpercentminusxx maxwidth500');
+		$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
+		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(empty($societe->id) ? 0 : $societe->id, 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 widthcentpercentminusxx maxwidth500');
 		// reload page to retrieve supplier informations
 		if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
 			print '<script type="text/javascript">
@@ -2517,16 +2544,19 @@ if ($action == 'create') {
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate($dateinvoice, '', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
+	print img_picto('', 'payment', 'class="pictofixedwidth"');
 	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ?GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 	// Due date
 	print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate($datedue, 'ech', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 
@@ -2559,7 +2589,22 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->label_incoterms) ? $objectsrc->label_incoterms : '', 1).'</label></td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
+		print img_picto('', 'incoterm', 'class="pictofixedwidth"');
 		print $form->select_incoterms(GETPOSTISSET('incoterm_id') ? GETPOST('incoterm_id', 'alphanohtml') : (!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), GETPOSTISSET('location_incoterms') ? GETPOST('location_incoterms', 'alphanohtml') : (!empty($objectsrc->location_incoterms) ? $objectsrc->location_incoterms : ''));
+		print '</td></tr>';
+	}
+
+	// Vat reverse-charge by default
+	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+		print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
+		// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
+		if ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
+			$vat_reverse_charge = 1;
+		} else {
+			$vat_reverse_charge = 0;
+		}
+
+		print '<input type="checkbox" name="vat_reverse_charge"'. (!empty($vat_reverse_charge) ? ' checked ' : '') . '>';
 		print '</td></tr>';
 	}
 
@@ -2568,6 +2613,7 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
+		print img_picto('', 'currency', 'class="pictofixedwidth"');
 		print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ?GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
 		print '</td></tr>';
 	}
@@ -2788,7 +2834,7 @@ if ($action == 'create') {
 		$head = facturefourn_prepare_head($object);
 		$titre = $langs->trans('SupplierInvoice');
 
-		print dol_get_fiche_head($head, 'card', $titre, -1, 'supplier_invoice');
+		print dol_get_fiche_head($head, 'card', $titre, -1, 'supplier_invoice', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
@@ -3002,7 +3048,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'supplier');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.((int) $object->thirdparty->id).'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -3011,7 +3057,7 @@ if ($action == 'create') {
 			if ($permissiontoadd) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.((int) $object->id).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -3109,7 +3155,6 @@ if ($action == 'create') {
 
 		$thirdparty = $societe;
 		$discount_type = 1;
-		$backtopage = urlencode($_SERVER["PHP_SELF"].'?facid='.$object->id);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 		print '</td></tr>';
@@ -3246,6 +3291,32 @@ if ($action == 'create') {
 			print '</tr>';
 		}
 
+		// Vat reverse-charge by default
+		if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			print '<tr><td class="nowrap">';
+			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+			print $langs->trans('VATReverseCharge');
+			print '<td>';
+			if ($action != 'editvatreversecharge' && $usercancreate) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editvatreversecharge&amp;id='.$object->id.'">'.img_edit($langs->trans('SetVATReverseCharge'), 1).'</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editvatreversecharge') {
+				print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				print '<input type="hidden" name="action" value="setvatreversecharge">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+
+				print '<input type="checkbox" name="vat_reverse_charge"' . ($object->vat_reverse_charge == '1' ? ' checked ' : '') . '>';
+
+				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				print '<input type="checkbox" name="vat_reverse_charge"'. ($object->vat_reverse_charge == '1' ? ' checked ' : '') . ' disabled>';
+			}
+			print '</td></tr>';
+		}
+
 		// Incoterms
 		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
@@ -3275,13 +3346,13 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('IntracommReportTransportMode');
 			print '</td>';
-			if ($action != 'editmode' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit().'</a></td>';
+			if ($action != 'edittransportmode' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&token='.newToken().'&id='.$object->id.'">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
 			print '<td>';
-			if ($action == 'editmode') {
+			if ($action == 'edittransportmode') {
 				$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
 			} else {
 				$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
@@ -3301,31 +3372,17 @@ if ($action == 'create') {
 
 		print '<table class="border tableforfield centpercent">';
 
-		if (isModEnabled("multicurrency") && ($object->multicurrency_code != $conf->currency)) {
-			// Multicurrency Amount HT
-			print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-			print '<td class="nowrap right amountcard">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-			print '</tr>';
-
-			// Multicurrency Amount VAT
-			print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-			print '<td class="nowrap right amountcard">'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-			print '</tr>';
-
-			// Multicurrency Amount TTC
-			print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-			print '<td class="nowrap right amountcard">'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-			print '</tr>';
+		print '<tr>';
+		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_ht, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
-
-		// Amount
-		print '<tr><td class="titlefield">'.$langs->trans('AmountHT').'</td>';
-		print '<td class="nowrap right amountcard">'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 
-		// VAT
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
-		print '<td class="nowrap right amountcard">';
+		print '<tr>';
+		print '<td>' . $langs->trans('AmountVAT') . '</td>';
+		print '<td class="nowrap amountcard right">';
 		if (GETPOST('calculationrule')) {
 			$calculationrule = GETPOST('calculationrule', 'alpha');
 		} else {
@@ -3338,32 +3395,41 @@ if ($action == 'create') {
 		}
 		// Show link for "recalculate"
 		if ($object->getVentilExportCompta() == 0) {
-			$s = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("ReCalculate").' </span>';
-			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
+			$s = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("ReCalculate") . ' </span>';
+			$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&calculationrule=totalofround">' . $langs->trans("Mode1") . '</a>';
 			$s .= ' / ';
-			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
+			$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&calculationrule=roundoftotal">' . $langs->trans("Mode2") . '</a>';
 			print '<div class="inline-block">';
-			print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'), '', 3, '', 0, 'recalculate');
+			print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum) . '<br>' . $langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'), '', 3, '', 0, 'recalculate');
 			print '&nbsp; &nbsp; &nbsp; &nbsp;';
 			print '</div>';
 		}
 		print price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency);
-		print '</td></tr>';
+		print '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
+		print '</tr>';
 
-		// Amount Local Taxes
-		//TODO: Place into a function to control showing by country or study better option
 		if ($societe->localtax1_assuj == "1") { //Localtax1
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
-			print '<td class="nowrap right amountcard">'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
+			print '<tr>';
+			print '<td>' . $langs->transcountry("AmountLT1", $societe->country_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			print '</tr>';
 		}
 		if ($societe->localtax2_assuj == "1") { //Localtax2
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
-			print '<td class="nowrap right amountcard">'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
+			print '<tr>';
+			print '<td>' . $langs->transcountry("AmountLT2", $societe->country_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			print '</tr>';
 		}
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
-		print '<td colspan="3" class="nowrap right amountcard">'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
+
+		print '<tr>';
+		print '<td>' . $langs->trans('AmountTTC') . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
 		print '</tr>';
 
 		print '</table>';
@@ -3550,7 +3616,9 @@ if ($action == 'create') {
 					print ' :</td>';
 					print '<td class="right">'.price($obj->amount_ttc).'</td>';
 					print '<td class="right">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">'.img_delete().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">';
+					print img_picto($langs->transnoentitiesnoconv("RemoveDiscount"), 'unlink');
+					print '</a>';
 					print '</td></tr>';
 					$i++;
 					if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
@@ -3712,6 +3780,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="page_y" value="">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		if (!empty($conf->use_javascript_ajax) && $object->statut == FactureFournisseur::STATUS_DRAFT) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
@@ -3876,7 +3945,7 @@ if ($action == 'create') {
 				}
 
 				// Create event
-				/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
 				}*/

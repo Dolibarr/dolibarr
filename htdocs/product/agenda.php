@@ -31,6 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
@@ -190,7 +191,7 @@ if ($id > 0 || $ref) {
 	$out = '';
 	$morehtmlcenter = '';
 	if (isModEnabled('agenda')) {
-		$permok = $user->rights->agenda->myactions->create;
+		$permok = $user->hasRight('agenda', 'myactions', 'create');
 		if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
 			if (get_class($objproduct) == 'Product') {
 				$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
@@ -198,11 +199,11 @@ if ($id > 0 || $ref) {
 			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id;
 		}
 
-		$linktocreatetimeBtnStatus = !empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create');
+		$linktocreatetimeBtnStatus = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
 	}
 
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
 
 		$param = '&id='.$id;

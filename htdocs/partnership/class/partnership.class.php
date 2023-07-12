@@ -62,6 +62,9 @@ class Partnership extends CommonObject
 	 */
 	public $picto = 'partnership';
 
+	public $type_code;
+	public $type_label;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;		// Validate (no more draft)
@@ -104,8 +107,8 @@ class Partnership extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>15, 'notnull'=>1, 'visible'=>-2, 'default'=>'1', 'index'=>1,),
-		'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:active=1', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax100'),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax125',),
+		'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax100'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax125',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -117,12 +120,12 @@ class Partnership extends CommonObject
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		'date_partnership_start' => array('type'=>'date', 'label'=>'DatePartnershipStart', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>1,),
 		'date_partnership_end' => array('type'=>'date', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>0, 'visible'=>1,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>2, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Accepted', '2'=>'Refused', '8'=>'Suspended', '9'=>'Terminated'),),
 		'url_to_check' => array('type'=>'varchar(255)', 'label'=>'UrlToCheck', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-1,),
 		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
 		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>-2,),
 		'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>73, 'notnull'=>0, 'visible'=>-2,),
 		'ip' => array('type'=>'varchar(250)', 'label'=>'Ip', 'enabled'=>'1', 'position'=>74, 'notnull'=>0, 'visible'=>-2,),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>2, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Accepted', '2'=>'Refused', '8'=>'Suspended', '9'=>'Terminated'),),
 	);
 	public $rowid;
 	public $ref;
@@ -139,13 +142,14 @@ class Partnership extends CommonObject
 	public $model_pdf;
 	public $date_partnership_start;
 	public $date_partnership_end;
-	public $status;
 	public $url_to_check;
 	public $count_last_url_check_error;
 	public $last_check_backlink;
 	public $reason_decline_or_cancel;
 	public $fk_soc;
 	public $fk_member;
+	public $ip;
+	public $status;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -198,7 +202,7 @@ class Partnership extends CommonObject
 		if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'member', 'csslist'=>'tdoverflowmax150');
 		} else {
-			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150');
+			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150');
 		}
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
@@ -373,7 +377,7 @@ class Partnership extends CommonObject
 		$sql = 'SELECT p.rowid, p.ref, p.fk_type, p.fk_soc, p.fk_member, p.status';
 		$sql .= ', p.entity, p.date_partnership_start, p.date_partnership_end, p.date_creation';
 		$sql .= ', p.fk_user_creat, p.tms, p.fk_user_modif, p.fk_user_modif';
-		$sql .= ', p.note_private, p.note_public';
+		$sql .= ', p.note_private, p.note_public, p.url_to_check';
 		$sql .= ', p.last_main_doc, p.count_last_url_check_error, p.last_check_backlink, p.reason_decline_or_cancel';
 		$sql .= ', p.import_key, p.model_pdf';
 		$sql .= ', pt.code as type_code, pt.label as type_label';
@@ -381,7 +385,7 @@ class Partnership extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_partnership_type as pt ON p.fk_type = pt.rowid';
 
 		if ($id) {
-			$sql .= " WHERE p.rowid=".((int) $id);
+			$sql .= " WHERE p.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE p.entity IN (0,".getEntity('partnership').")"; // Dont't use entity if you use rowid
 		}
@@ -428,6 +432,7 @@ class Partnership extends CommonObject
 				$this->reason_decline_or_cancel 	= $obj->reason_decline_or_cancel;
 				$this->import_key 					= $obj->import_key;
 				$this->model_pdf 					= $obj->model_pdf;
+				$this->url_to_check 				= $obj->url_to_check;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -515,7 +520,7 @@ class Partnership extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		print $sql;
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -553,6 +558,9 @@ class Partnership extends CommonObject
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
 			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
 			return -1;
+		}
+		if (empty($this->fk_user_creat)) {	// For the case the object was created with empty user (from public page).
+			$this->fk_user_creat = $user->id;
 		}
 
 		return $this->updateCommon($user, $notrigger);
@@ -990,10 +998,11 @@ class Partnership extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/partnership/partnership_card.php?id='.$this->id;
 
@@ -1014,8 +1023,8 @@ class Partnership extends CommonObject
 				$label = $langs->trans("ShowPartnership");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1330,19 +1339,21 @@ class Partnership extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $conf, $langs;
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'label')) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

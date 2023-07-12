@@ -33,13 +33,15 @@ create table llx_facture
   ref_client			varchar(255),							-- reference for customer
 
   type					smallint DEFAULT 0 NOT NULL,			-- type of invoice
+  subtype				smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
   fk_soc				integer            NOT NULL,
+
   datec					datetime,								-- date de creation de la facture
   datef					date,									-- date invoice
   date_pointoftax		date DEFAULT NULL,									-- date point of tax (for GB)
   date_valid			date,									-- date validation
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,								-- last modification date
-  date_closing				datetime,							-- date de cloture
+  date_closing			datetime,								-- date de cloture
   paye					smallint DEFAULT 0 NOT NULL,
 
   remise_percent		real     DEFAULT 0,						-- remise relative
@@ -90,7 +92,7 @@ create table llx_facture
 
   prorata_discount		real DEFAULT NULL,  					-- % of the prorata discount (to know how to add prorata discount lines for each vat rate in the invoice)
 
-  situation_cycle_ref smallint,  -- situation cycle reference. A key that is similar for all the serie.
+  situation_cycle_ref integer,   -- situation cycle reference. A key that is similar for all the serie.
   situation_counter   smallint,  -- situation counter. The number into the serie: 1, 2, ...
   situation_final     smallint,  -- 0 by default, 1 it if is the final invoice.
 

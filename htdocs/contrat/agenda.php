@@ -23,6 +23,7 @@
  */
 
 require "../main.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -89,7 +90,7 @@ if ($id > 0 || !empty($ref)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
-$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
 /*
@@ -243,14 +244,14 @@ if ($object->id > 0) {
 
 	$newcardbutton = '';
 	if (isModEnabled('agenda')) {
-		if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
+		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			$backtopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$out = '&origin='.$object->element.'&originid='.$object->id.'&backtopage='.urlencode($backtopage);
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 		}
 	}
 
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
 
 		$param = '&id='.$object->id;
@@ -261,7 +262,12 @@ if ($object->id > 0) {
 			$param .= '&limit='.$limit;
 		}
 
-		print load_fiche_titre($langs->trans("ActionsOnContract"), $newcardbutton, '');
+		// Try to know count of actioncomm from cache
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_thirdparty_'.$object->id;
+		$nbEvent = dol_getcache($cachekey);
+
+		print load_fiche_titre($langs->trans("ActionsOnContract").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), $newcardbutton, '');
 		//print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 1);
 
 		// List of all actions

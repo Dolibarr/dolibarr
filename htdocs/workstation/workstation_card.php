@@ -148,8 +148,6 @@ if (empty($reshook)) {
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -190,6 +188,9 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
+	// Set default value of the property ref
+	$object->fields['ref']['default'] = $object->getNextNumRef();
+
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Workstation")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -343,7 +344,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled)) {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {

@@ -542,7 +542,7 @@ class Dolresource extends CommonObject
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		$this->num_all = 0;
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $this->db->query($sql);
 			$this->num_all = $this->db->num_rows($result);
 		}
@@ -750,7 +750,7 @@ class Dolresource extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+
 				$label = ($langs->trans("ResourceTypeShort".$obj->code) != ("ResourceTypeShort".$obj->code) ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_code_type_resource[$obj->rowid]['code'] = $obj->code;
 				$this->cache_code_type_resource[$obj->rowid]['label'] = $label;
@@ -815,10 +815,11 @@ class Dolresource extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/resource/card.php?id='.$this->id;
 
@@ -839,8 +840,8 @@ class Dolresource extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -874,9 +875,9 @@ class Dolresource extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)

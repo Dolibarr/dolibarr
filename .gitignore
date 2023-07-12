@@ -57,3 +57,11 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
+/.asciidoctorconfig.adoc
+
+# Qodana
+.idea/vcs.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/jsLinters/jshint.xml

@@ -1175,8 +1175,7 @@ class SupplierProposal extends CommonObject
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
-					$this->errors += $hookmanager->errors;
-					$this->error = $hookmanager->error;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1260,7 +1259,6 @@ class SupplierProposal extends CommonObject
 				$this->note_public          = $obj->note_public;
 				$this->statut               = (int) $obj->fk_statut;
 				$this->status               = (int) $obj->fk_statut;
-				$this->statut_libelle       = $obj->statut_label;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
@@ -2478,6 +2476,9 @@ class SupplierProposal extends CommonObject
 	public function getTooltipContentArray($params)
 	{
 		global $conf, $langs, $menumanager;
+
+		$langs->load('supplier_proposal');
+
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowSupplierProposal")];
 		}
@@ -2538,11 +2539,11 @@ class SupplierProposal extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		if ($option == '') {
 			$url = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id.$get_params;
@@ -2568,8 +2569,8 @@ class SupplierProposal extends CommonObject
 				$label = $langs->trans("ShowSupplierProposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -2772,6 +2773,9 @@ class SupplierProposal extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -2779,7 +2783,8 @@ class SupplierProposal extends CommonObject
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'socid')) {
 			$return .= '<span class="info-box-ref"> | '.$this->socid.'</span>';
 		}
@@ -2790,7 +2795,7 @@ class SupplierProposal extends CommonObject
 			$return .='<br><span class="opacitymedium" >'.$langs->trans("AmountHT").' : </span><span class="info-box-label amount">'.price($this->total_ttc).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -3155,7 +3160,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".(!empty($this->subprice) ? price2num($this->subprice, 'MU') : "null").",";
+		$sql .= " ".price2num($this->subprice, 'MU') .",";
 		$sql .= " ".((float) $this->remise_percent).",";
 		$sql .= " ".(isset($this->info_bits) ? ((int) $this->info_bits) : "null").",";
 		$sql .= " ".price2num($this->total_ht, 'MT').",";

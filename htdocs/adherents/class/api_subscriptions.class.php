@@ -51,10 +51,10 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * Return an array with subscription informations
 	 *
-	 * @param     int     $id ID of subscription
-	 * @return    Object data without useless information
+	 * @param   int     $id 			ID of subscription
+	 * @return  Object              	Object with cleaned properties
 	 *
-	 * @throws    RestException
+	 * @throws  RestException
 	 */
 	public function get($id)
 	{
@@ -101,11 +101,10 @@ class Subscriptions extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

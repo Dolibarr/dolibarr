@@ -69,12 +69,6 @@ class pdf_standard_asset extends ModelePDFAsset
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -689,7 +683,8 @@ class pdf_standard_asset extends ModelePDFAsset
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					if ($object->remise_percent) {
+					// TODO remise_percent is an obsolete field for object parent
+					/*if ($object->remise_percent) {
 						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 					}
 					if ($object->remise_percent) {
@@ -697,7 +692,7 @@ class pdf_standard_asset extends ModelePDFAsset
 					}
 					if ($object->remise_percent) {
 						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}
+					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -1180,7 +1175,7 @@ class pdf_standard_asset extends ModelePDFAsset
 	 *  @param	int			   $hidedetails		Do not show line details
 	 *  @param	int			   $hidedesc		Do not show desc
 	 *  @param	int			   $hideref			Do not show ref
-	 *  @return	null
+	 *  @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

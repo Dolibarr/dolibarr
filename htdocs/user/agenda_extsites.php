@@ -52,6 +52,11 @@ $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', '
 
 // Security check
 $id = GETPOST('id', 'int');
+
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->getrights();
@@ -61,7 +66,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -259,7 +264,7 @@ while ($i <= $MAXAGENDA) {
 	print '<td class="nowraponall right">';
 	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
 	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ?GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
-	print $formother->selectColor($color_value, "AGENDA_EXT_COLOR_".$id.'_'.$key, 'extsitesconfig', 1, '', 'hideifnotset');
+	print $formother->selectColor($color_value, "AGENDA_EXT_COLOR_".$id.'_'.$key, '', 1, '', 'hideifnotset');
 	print '</td>';
 	print "</tr>";
 	$i++;

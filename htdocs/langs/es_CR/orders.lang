@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - orders
+Orders=Ordenes
+StatusOrderCanceledShort=Cancelado
+StatusOrderValidatedShort=Validada
+StatusOrderSentShort=En proceso
+StatusOrderCanceled=Cancelado
+StatusOrderDraft=Borrador (Necesita ser validado)
+StatusOrderValidated=Validada
+TypeContact_commande_external_BILLING=Contacto de factura de cliente
+TypeContact_commande_external_SHIPPING=Contacto de envío del cliente
+TypeContact_order_supplier_external_BILLING=Contacto de facturación del proveedor
+TypeContact_order_supplier_external_SHIPPING=Contacto de despachos del proveedor
+StatusSupplierOrderCanceledShort=Cancelado
+StatusSupplierOrderValidatedShort=Validada
+StatusSupplierOrderSentShort=En proceso
+StatusSupplierOrderCanceled=Cancelado
+StatusSupplierOrderDraft=Borrador (Necesita ser validado)
+StatusSupplierOrderValidated=Validada

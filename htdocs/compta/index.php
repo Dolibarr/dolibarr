@@ -98,9 +98,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $thirdpartystatic = new Societe($db);
 
-llxHeader("", $langs->trans("AccountancyTreasuryArea"));
+llxHeader("", $langs->trans("InvoicesArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
+print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -129,7 +129,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -408,7 +408,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 
 
 // Latest donations
-if (isModEnabled('don') && !empty($user->rights->don->lire)) {
+if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
@@ -441,6 +441,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
+
 		if ($num) {
 			$total_ttc = $totalam = $total_ht = 0;
 

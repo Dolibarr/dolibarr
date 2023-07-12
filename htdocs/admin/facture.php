@@ -629,7 +629,7 @@ if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) { // Hidden conf
 		Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
 		Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 	);
-	if (!empty($conf->global->INVOICE_USE_SITUATION)) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION')) {
 		$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
 	}
 

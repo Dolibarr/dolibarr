@@ -28,14 +28,18 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->load("compta");
 
+$limit = GETPOST('limit', 'int');
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt = GETPOST("localTaxType", 'int');
 $mode = GETPOST('mode', 'alpha');
+
 
 /*
  * View
@@ -78,10 +82,13 @@ if ($result) {
 	print "<td>".$langs->trans("Label")."</td>";
 	print "<td>".$langs->trans("PeriodEndDate")."</td>";
 	print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
-	print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
+	print '<td class="right">'.$langs->trans("PayedByThisPayment").'</td>';
 	print "</tr>\n";
-	$var = 1;
-	while ($i < $num) {
+
+	$savnbfield = 5;
+
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($result);
 
 		$localtax_static->label = $obj->label;
@@ -95,12 +102,12 @@ if ($result) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
-			print $localtax_static->getKanbanView('');
-			if ($i == ($num - 1)) {
+			print $localtax_static->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

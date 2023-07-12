@@ -749,11 +749,11 @@ class AdherentType extends CommonObject
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
 		if ($option != 'nolink') {
@@ -766,12 +766,15 @@ class AdherentType extends CommonObject
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'"'.$dataparams.' class="'.$classfortooltip.'">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
+
 		$linkend = '</a>';
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (' class="'.(($withpicto != 2) ? 'paddingright' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
@@ -991,16 +994,22 @@ class AdherentType extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs,$user;
+		global $langs, $user;
+
+		//$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		if ($user->rights->adherent->configurer) {
-			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$this->ref.'">'.img_edit().'</a></span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+
+		//$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+
+		if ($user->hasRight('adherent', 'configurer')) {
+			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.urlencode($this->ref).'">'.img_edit().'</a></span>';
 		} else {
 			$return .= '<span class="right">&nbsp;</span>';
 		}
@@ -1016,7 +1025,7 @@ class AdherentType extends CommonObject
 			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

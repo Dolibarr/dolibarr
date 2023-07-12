@@ -123,6 +123,8 @@ if (empty($reshook)) {
 
 	$backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
 
+	$object->oldQty = $object->qty;
+
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
@@ -421,7 +423,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$object->fetch_product();
-			$numref = $object->getNextNumRef($object->fk_product);
+			$numref = $object->getNextNumRef($object->product);
 		} else {
 			$numref = $object->ref;
 		}

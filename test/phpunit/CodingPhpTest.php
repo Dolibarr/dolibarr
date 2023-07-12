@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +88,12 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SecurityTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -174,26 +176,26 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname', SORT_ASC, 0, 1, '', 1);
 
 		foreach ($filesarray as $key => $file) {
-			if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/includes\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/install\/doctemplates\/websites\//', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/install\/doctemplates\/websites\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/custom\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/dolimed/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/dolimed/', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/nltechno/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/nltechno/', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/teclib/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/teclib/', $file['fullname'])) {
 				continue;
 			}
 
-			print 'Check php file '.$file['fullname']."\n";
+			//print 'Check php file '.$file['relativename']."\n";
 			$filecontent=file_get_contents($file['fullname']);
 
 			if (preg_match('/\.class\.php/', $file['relativename'])
@@ -232,7 +234,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'objectline_view.tpl.php',
 					'extrafieldsinexport.inc.php',
 					'extrafieldsinimport.inc.php',
-					'DolQueryCollector.php'
+					'DolQueryCollector.php',
+					'DoliStorage.php'
 				))) {
 					// Must not found $this->db->
 					$ok=true;
@@ -265,20 +268,22 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 
 			// Check if a var_dump has been forgotten
 			if (!preg_match('/test\/phpunit/', $file['fullname'])) {
-				$ok=true;
-				$matches=array();
-				preg_match_all('/(.)\s*var_dump/', $filecontent, $matches, PREG_SET_ORDER);
-				//var_dump($matches);
-				foreach ($matches as $key => $val) {
-					if ($val[1] != '/' && $val[1] != '*') {
-						$ok=false;
+				if (! in_array($file['name'], array('class.nusoap_base.php'))) {
+					$ok=true;
+					$matches=array();
+					preg_match_all('/(.)\s*var_dump\(/', $filecontent, $matches, PREG_SET_ORDER);
+					//var_dump($matches);
+					foreach ($matches as $key => $val) {
+						if ($val[1] != '/' && $val[1] != '*') {
+							$ok=false;
+							break;
+						}
 						break;
 					}
-					break;
+					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+					$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
+					//exit;
 				}
-				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-				$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
-				//exit;
 			}
 
 			// Check get_class followed by __METHOD__
@@ -543,6 +548,16 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			}
 			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
+
+			// Test we don't have "if ($resql >"
+			$ok=true;
+			$matches=array();
+			preg_match_all('/if \(\$resql >/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found a if $resql with a > operator (when $resql is a boolean or resource) in file '.$file['relativename'].'. Please remove the > ... part.');
 
 			// Test we don't have empty($user->hasRight
 			$ok=true;

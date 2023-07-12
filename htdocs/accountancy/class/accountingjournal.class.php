@@ -312,10 +312,10 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode		  0=libelle long, 1=libelle court
-	 *  @return	string 				   Label of type
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibType($mode = 0)
 	{
@@ -327,7 +327,7 @@ class AccountingJournal extends CommonObject
 	 *  Return type of an accounting journal
 	 *
 	 *  @param	int		$nature			Id type
-	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
+	 *  @param  int		$mode		  	0=label long, 1=label short
 	 *  @return string 				   	Label of type
 	 */
 	public function LibType($nature, $mode = 0)
@@ -387,12 +387,6 @@ class AccountingJournal extends CommonObject
 		// Clean parameters
 		if (empty($type)) $type = 'view';
 		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
-
-		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$data = array();
 
@@ -790,12 +784,6 @@ class AccountingJournal extends CommonObject
 		global $conf, $langs, $hookmanager;
 		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 
-		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$error = 0;
 
 		$hookmanager->initHooks(array('accountingjournaldao'));
@@ -940,11 +928,6 @@ class AccountingJournal extends CommonObject
 		$out = '';
 
 		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$hookmanager->initHooks(array('accountingjournaldao'));
 		$parameters = array('journal_data' => &$journal_data, 'search_date_end' => &$search_date_end, 'sep' => &$sep, 'out' => &$out);
 		$reshook = $hookmanager->executeHooks('exportCsv', $parameters, $this); // Note that $action and $object may have been

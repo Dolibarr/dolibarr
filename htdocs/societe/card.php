@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -188,10 +188,10 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		$error = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
-		$soc_origin = new Societe($db);
+		$soc_origin = new Societe($db);		// The thirdparty that we will delete
 
 		if ($soc_origin_id <= 0) {
 			$langs->load('errors');
@@ -241,6 +241,11 @@ if (empty($reshook)) {
 					}
 				}
 
+				// If alias name is not defined on target thirdparty, we can store in it the old name of company.
+				if (empty($object->name_bis) && $object->name != $soc_origin->name) {
+					$object->name_bis = $soc_origin->name;
+				}
+
 				// Merge categories
 				$static_cat = new Categorie($db);
 
@@ -279,7 +284,7 @@ if (empty($reshook)) {
 					// TODO Mutualise the list into object societe.class.php
 					$objects = array(
 						'Adherent' => '/adherents/class/adherent.class.php',
-						'Don' => '/don/class/don.class.php',
+						'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
 						'Societe' => '/societe/class/societe.class.php',
 						//'Categorie' => '/categories/class/categorie.class.php',
 						'ActionComm' => '/comm/action/class/actioncomm.class.php',
@@ -300,7 +305,7 @@ if (empty($reshook)) {
 						'Delivery' => '/delivery/class/delivery.class.php',
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
-						'Ticket' => '/ticket/class/ticket.class.php',
+						'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
 						'User' => '/user/class/user.class.php',
 						'Account' => '/compta/bank/class/account.class.php',
 						'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
@@ -308,6 +313,13 @@ if (empty($reshook)) {
 
 					//First, all core objects must update their tables
 					foreach ($objects as $object_name => $object_file) {
+						if (is_array($object_file)) {
+							if (empty($object_file['enabled'])) {
+								continue;
+							}
+							$object_file = $object_file['file'];
+						}
+
 						require_once DOL_DOCUMENT_ROOT.$object_file;
 
 						if (!$error && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {
@@ -320,10 +332,8 @@ if (empty($reshook)) {
 
 				// External modules should update their ones too
 				if (!$error) {
-					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
-						'soc_origin' => $soc_origin->id,
-						'soc_dest' => $object->id
-					), $object, $action);
+					$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $object->id);
+					$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $object, $action);
 
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -333,7 +343,7 @@ if (empty($reshook)) {
 
 
 				if (!$error) {
-					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id, 'mergefromname'=>$soc_origin->name);
 
 					// Call trigger
 					$result = $object->call_trigger('COMPANY_MODIFY', $user);
@@ -345,7 +355,7 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					//We finally remove the old thirdparty
+					// We finally remove the old thirdparty
 					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
 						setEventMessages($soc_origin->error, $soc_origin->errors, 'errors');
 						$error++;
@@ -415,7 +425,7 @@ if (empty($reshook)) {
 
 	// Add new or update third party
 	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode'))
-	&& ($action == 'add' || $action == 'update') && $user->rights->societe->creer) {
+	&& ($action == 'add' || $action == 'update') && $user->hasRight('societe', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (!GETPOST('name')) {
@@ -497,6 +507,7 @@ if (empty($reshook)) {
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 			$object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
+			$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 			$object->status = GETPOST('status', 'alpha');
 
 			// Local Taxes
@@ -617,10 +628,10 @@ if (empty($reshook)) {
 
 				$result = $object->create($user);
 
-				if (empty($error) && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
+				if ($result >= 0 && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
 					// Add mass emailing flag into table mailing_unsubscribe
-					$result = $object->setNoEmail($object->no_email);
-					if ($result < 0) {
+					$resultnoemail = $object->setNoEmail($object->no_email);
+					if ($resultnoemail < 0) {
 						$error++;
 						$errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
 						$action = 'create';
@@ -812,7 +823,7 @@ if (empty($reshook)) {
 				}
 
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
-				if (!$error && !empty($user->rights->categorie->lire)) {
+				if (!$error && $user->hasRight('categorie', 'lire')) {
 					// Customer categories association
 					$categories = GETPOST('custcats', 'array');
 					$result = $object->setCategories($categories, 'customer');
@@ -934,31 +945,31 @@ if (empty($reshook)) {
 	}
 
 	// Set third-party type
-	if ($action == 'set_thirdpartytype' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdpartytype' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setThirdpartyType(GETPOST('typent_id', 'int'));
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && $user->rights->societe->creer && isModEnabled('incoterm')) {
+	if ($action == 'set_incoterms' && $user->hasRight('societe', 'creer') && isModEnabled('incoterm')) {
 		$object->fetch($socid);
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdparty' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setParent(GETPOST('parent_id', 'int'));
 	}
 
 	// Set sales representatives
-	if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer) {
+	if ($action == 'set_salesrepresentatives' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->rights->societe->creer) {
+	if ($action == 'setwarehouse' && $user->hasRight('societe', 'creer')) {
 		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
 	}
 
@@ -1090,7 +1101,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->client = 1;
 		}
 
-		if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) {
+		if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) {
 			$object->fournisseur = 1;
 		}
 
@@ -1140,6 +1151,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->civility_id		= GETPOST('civility_id', 'alpha');
 
 		$object->tva_assuj = GETPOST('assujtva_value', 'int');
+		$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 		$object->status = GETPOST('status', 'int');
 
 		//Local Taxes
@@ -1366,10 +1378,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
 
 		print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
-		print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
-		/* Disabled. Must be implenteted by keeping the input text but calling ajax on a keydown of the input and output
-		   data of duplicate into a div under the input. We need to keep the widgetForTranslation also for some countries.
-		 */
+		print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
+		// This implementation of the feature to search already existing company has been disabled. It must be implemented by keeping the "input text" and we must call the search ajax societe/ajax/ajaxcompanies.php
+		// on a keydown of the input. We should show data about a duplicate found if we found less than 5 answers into a div under the input.
 		/*
 		print '<select class="name" name="name" id="name" style="min-width:500px"></select>';
 		print "\n".'<script type="text/javascript">';
@@ -1632,7 +1643,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 		print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
-			// Unsubscribe
+		// Unsubscribe
 		if (isModEnabled('mailing')) {
 			if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 				print "\n".'<script type="text/javascript">'."\n";
@@ -1721,7 +1732,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print "}\n";
 				print '</script>';
 				print "\n";
-				$s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+				$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 				$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 			} else {
 				$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
@@ -1730,6 +1741,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print $s;
 		print '</td>';
 		print '</tr>';
+
+		// VAT reverse charge by default
+		if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
+			print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
+			print '</td></tr>';
+		}
 
 		// Local Taxes
 		//TODO: Place into a function to control showing by country or study better option
@@ -1810,7 +1828,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Customer
@@ -1827,7 +1845,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Supplier
-			if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+			if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
 				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
@@ -1863,7 +1881,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
-		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
 		// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir) ? array($user->id) : array())));
 		print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
@@ -2006,8 +2024,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->default_lang = GETPOST('default_lang', 'alpha');
 
 				$object->tva_assuj				= GETPOST('assujtva_value', 'int');
+				$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
-				$object->status = GETPOST('status', 'int');
+				$object->status =				GETPOST('status', 'int');
 
 				// Webservices url/key
 				$object->webservices_url        = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
@@ -2457,6 +2476,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
+			// VAT reverse charge by default
+			if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
+				print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
+				print '</td></tr>';
+			}
+
 			// VAT Code
 			print '<tr><td>'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
 			print '<td colspan="3">';
@@ -2478,7 +2504,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "}\n";
 					print '</script>';
 					print "\n";
-					$s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 					$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				} else {
 					$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
@@ -2542,7 +2568,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-			if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 				// Customer
 				print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
@@ -2618,7 +2644,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<table class="nobordernopadding">';
 				if ($object->logo) {
-					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</photo><br><br></td></tr>';
 				}
 				//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
 				print '<tr><td>';
@@ -2834,6 +2860,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print yn($object->tva_assuj);
 			print '</td>';
 			print '</tr>';
+
+			if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				// VAT reverse charge by default
+				print '<tr><td>';
+				print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+				print '</td><td>';
+				print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
+				print '</td>';
+				print '</tr>';
+			}
 		}
 
 		// Local Taxes
@@ -2936,7 +2972,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "}\n";
 					print '</script>';
 					print "\n";
-					$s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
+					$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
 					$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				} else {
 					$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
@@ -2978,7 +3014,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Tags / categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			// Customer
 			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
@@ -3168,7 +3204,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $dolibarr_user->getLoginUrl(-1);
 		} else {
 			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
-			if (!$object->user_id && $user->rights->user->user->creer) {
+			if (!$object->user_id && $user->hasRight('user', 'user', 'creer')) {
 				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 		}

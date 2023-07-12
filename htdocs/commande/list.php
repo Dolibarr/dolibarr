@@ -106,7 +106,7 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$search_billed = GETPOSTISSET('search_billed') ? GETPOST('search_billed', 'int') : GETPOST('billed', 'int');
+$search_billed = GETPOST('search_billed', 'int');
 $search_status = GETPOST('search_status', 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -223,6 +223,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$error = 0;
 
 
 /*
@@ -510,10 +511,11 @@ if (empty($reshook)) {
 							if ($result > 0) {
 								$lineid = $result;
 								if (!empty($createbills_onebythird)) //increment rang to keep order
-									$TFactThirdNbLines[$rcp->socid]++;
+									$TFactThirdNbLines[$cmd->socid]++;
 							} else {
 								$lineid = 0;
 								$error++;
+								$errors[] = $objecttmp->error;
 								break;
 							}
 							// Defined the new fk_parent_line
@@ -586,7 +588,7 @@ if (empty($reshook)) {
 				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode($limit);
+				$param .= '&limit='.((int) $limit);
 			}
 			if ($sall) {
 				$param .= '&sall='.urlencode($sall);
@@ -894,22 +896,22 @@ if ($search_billed != '' && $search_billed >= 0) {
 }
 if ($search_status <> '') {
 	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
-		if ($search_status == 1 && empty($conf->expedition->enabled)) {
+		if ($search_status == 1 && !isModEnabled('expedition')) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		} else {
-			$sql .= ' AND c.fk_statut = '.((int) $search_status); // brouillon, validee, en cours, annulee
+			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
 		}
 	}
-	if ($search_status == -2) {	// To process
+	if ($search_status == -2) {	// "validated + in process"
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
-		$sql .= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))"; // If status is 2 and facture=1, it must be selected
+		$sql .= " AND (c.fk_statut IN (1,2))";
 	}
-	if ($search_status == -3) {	// To bill
+	if ($search_status == -3) {	// "validated + in process + delivered"
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
 		//$sql.= ' AND c.facture = 0'; // invoice not created
-		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
+		$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
 	}
-	if ($search_status == -4) {	//  "validate and in progress"
+	if ($search_status == -4) {	//  "validate + in progress"
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
 }
@@ -1064,7 +1066,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -1120,7 +1122,7 @@ if ($resql) {
 		$title .= ' - '.$langs->trans('StatusOrderToProcessShort');
 	}
 	if ($search_status == -3) {
-		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled) ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
+		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('expedition') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 	}
 	if ($search_status == -4) {
 		$title .= ' - '.$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort");
@@ -1147,7 +1149,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -1289,23 +1291,23 @@ if ($resql) {
 	if ($permissiontovalidate) {
 		$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 	}
-	if ($permissiontosendbymail) {
-		$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
-	}
 	if ($permissiontoclose) {
 		$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
-	}
-	if ($permissiontocancel) {
-		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel");
-	}
-	if (isModEnabled('facture') && $user->hasRight("facture", "creer")) {
-		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
 	}
 	if ($permissiontoclose) {
 		$arrayofmassactions['setbilled'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("ClassifyBilled");
 	}
+	if ($permissiontocancel) {
+		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel");
+	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	}
+	if (isModEnabled('facture') && $user->hasRight("facture", "creer")) {
+		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
+	}
+	if ($permissiontosendbymail) {
+		$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
 	}
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
 		$arrayofmassactions = array();
@@ -1645,13 +1647,13 @@ if ($resql) {
 	// Amount/Total (TTC / gross) in foreign currency
 	if (!empty($arrayfields['c.multicurrency_total_ttc']['checked'])) {
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
+		print '<input class="flat width75" type="text" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
 		print '</td>';
 	}
 	// Author
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print '<td class="liste_titre" align="center">';
-		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
+		print '<td class="liste_titre">';
+		print '<input class="flat width75" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
 	// Sales Representative
@@ -1846,7 +1848,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['c.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
@@ -2002,11 +2004,11 @@ if ($resql) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 
-			print $generic_commande->getKanbanView('');
+			print $generic_commande->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
@@ -2049,7 +2051,9 @@ if ($resql) {
 
 			// Ref customer
 			if (!empty($arrayfields['c.ref_client']['checked'])) {
-				print '<td class="nowrap tdoverflowmax200">'.$obj->ref_client.'</td>';
+				print '<td class="nowrap tdoverflowmax150" title="'.dol_escape_htmltag($obj->ref_client).'">';
+				print dol_escape_htmltag($obj->ref_client);
+				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2090,7 +2094,7 @@ if ($resql) {
 
 				// If module invoices enabled and user with invoice creation permissions
 				if (isModEnabled('facture') && !empty($conf->global->ORDER_BILLING_ALL_CUSTOMER)) {
-					if ($user->rights->facture->creer) {
+					if ($user->hasRight('facture', 'creer')) {
 						if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0)) {
 							print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$companystatic->id.'&search_billed=0&autoselectall=1">';
 							print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->name, 'object_bill', 'hideonsmartphone').'</a>';
@@ -2354,7 +2358,7 @@ if ($resql) {
 
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				print '<td class="tdoverflowmax200">';
+				print '<td class="tdoverflowmax150">';
 				if ($userstatic->id) {
 					print $userstatic->getNomUrl(-1);
 				} else {
@@ -2571,7 +2575,7 @@ if ($resql) {
 											}
 											$stock_order = $generic_product->stats_commande['qty'];
 										}
-										if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+										if (isModEnabled("supplier_order")) {
 											if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
 												$generic_product->load_stats_commande_fournisseur(0, '3');
 												$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
@@ -2592,7 +2596,7 @@ if ($resql) {
 									} else {
 										$text_info .= '<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 									}
-									if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+									if (isModEnabled("supplier_order")) {
 										$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier;
 									}
 									$text_info .= ($reliquat != $generic_commande->lines[$lig]->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($generic_commande->lines[$lig]->qty - $reliquat).')</span>' : '');

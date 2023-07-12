@@ -39,6 +39,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
  */
 abstract class ModelePDFCommandes extends CommonDocGenerator
 {
+	public $posxpicture;
+	public $posxtva;
+	public $posxup;
+	public $posxqty;
+	public $posxunit;
+	public $posxdesc;
+	public $posxdiscount;
+	public $postotalht;
+
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
+	public $atleastoneratenotnull = 0;
+	public $atleastonediscount = 0;
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

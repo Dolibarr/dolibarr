@@ -81,7 +81,7 @@ if ($object->id > 0) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+$result = restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 // Permissions
 $permissionnote = $user->hasRight('bom', 'write'); // Used by the include of actions_setnotes.inc.php
@@ -190,7 +190,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$viewlink = dolGetButtonTitle($langs->trans('GroupByX', $langs->transnoentitiesnoconv("Products")), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
 	$viewlink .= dolGetButtonTitle($langs->trans('TreeView'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
 
-	print load_fiche_titre($langs->trans("BOMNetNeeds"), $viewlink, '');
+	print load_fiche_titre($langs->trans("BOMNetNeeds"), $viewlink, 'product');
 
 	/*
 	 * Lines

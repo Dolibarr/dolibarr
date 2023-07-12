@@ -270,17 +270,17 @@ if (!empty($searchCategoryWarehouseList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryWarehouseList as $searchCategoryWarehouse) {
 		if (intval($searchCategoryWarehouse) == -2) {
-			$searchCategoryWarehouseSqlList[] = "NOT EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE p.rowid = ck.fk_warehouse)";
+			$searchCategoryWarehouseSqlList[] = " NOT EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE t.rowid = ck.fk_warehouse)";
 		} elseif (intval($searchCategoryWarehouse) > 0) {
 			if ($searchCategoryWarehouseOperator == 0) {
-				$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE p.rowid = ck.fk_warehouse AND ck.fk_categorie = ".((int) $searchCategoryWarehouse).")";
+				$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE t.rowid = ck.fk_warehouse AND ck.fk_categorie = ".((int) $searchCategoryWarehouse).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryWarehouse);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE p.rowid = ck.fk_warehouse AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE t.rowid = ck.fk_warehouse AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryWarehouseOperator == 1) {
 		if (!empty($searchCategoryWarehouseSqlList)) {
@@ -336,7 +336,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -385,7 +385,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -453,7 +453,7 @@ if ($search_all) {
 
 $moreforfilter = '';
 
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }
@@ -613,13 +613,14 @@ if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 }
 print '</tr>'."\n";
 
+$warehouse = new Entrepot($db);
+
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
-
-$warehouse = new Entrepot($db);
-
-while ($i < min($num, $limit)) {
+$savnbfield = $totalarray['nbfield'];
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
@@ -633,11 +634,11 @@ while ($i < min($num, $limit)) {
 
 	if ($mode =='kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $warehouse->getKanbanView('');
+		print $warehouse->getKanbanView('', array('selected' => in_array($warehouse->id, $arrayofselected)));
 
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
@@ -658,6 +659,9 @@ while ($i < min($num, $limit)) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		foreach ($warehouse->fields as $key => $val) {
 			if ($key == 'statut') {
@@ -716,7 +720,7 @@ while ($i < min($num, $limit)) {
 
 		// Stock qty
 		if (!empty($arrayfields["stockqty"]['checked'])) {
-			print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
+			print '<td class="right">'.price(price2num($obj->stockqty, 'MS')).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -788,9 +792,9 @@ while ($i < min($num, $limit)) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
-		}
-		if (!$i) {
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print '</tr>'."\n";

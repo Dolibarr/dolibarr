@@ -86,7 +86,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 10,
 		'id' => $id,
 		'idsel' => 'home',
-		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (empty($_SESSION["mainmenu"]) || $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '<span class="fa fa-home fa-fw paddingright"></span>',
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 0 : 1),
 		'loadLangs' => array(),
@@ -123,7 +123,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'enabled'=> ((isModEnabled('societe') &&
 			(empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 			)
-			|| ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice'))
+			|| (isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice'))
 			),
 		'perms'=> ($user->hasRight('societe',  'lire') || $user->hasRight('fournisseur',  'lire') || $user->hasRight('supplier_order',  'lire') || $user->hasRight('supplier_invoice',  'lire') || $user->hasRight('supplier_proposal',  'lire')),
 		'module'=>'societe|fournisseur'
@@ -713,7 +713,6 @@ function print_end_menu_array()
  */
 function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
 {
-
 	global $user, $conf, $langs, $hookmanager;
 
 	//var_dump($tabMenu);
@@ -722,6 +721,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]);
 	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]));
+
+	if (is_null($mainmenu)) {
+		$mainmenu = 'home';
+	}
 
 	global $usemenuhider;
 	$usemenuhider = 0;
@@ -1095,7 +1098,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			// Load translation files required by the page
 			$langs->loadLangs(array("admin", "help"));
 			$warnpicto = '';
-			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) || !empty($conf->global->MAIN_INFO_SOCIETE_SETUP_TODO_WARNING)) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
@@ -1170,16 +1173,16 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if ($user->hasRight('user', 'user', 'read')) {
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "users") {
 				$newmenu->add("", $langs->trans("Users"), 1, $user->hasRight('user',  'user', 'lire') || $user->admin);
-				$newmenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"), 2, ($user->hasRight("user", "user", "write") || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE), '', 'home');
+				$newmenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"), 2, ($user->hasRight("user", "user", "write") || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)), '', 'home');
 				$newmenu->add("/user/list.php?leftmenu=users", $langs->trans("ListOfUsers"), 2, $user->hasRight('user',  'user', 'lire') || $user->admin);
 				$newmenu->add("/user/hierarchy.php?leftmenu=users", $langs->trans("HierarchicView"), 2, $user->hasRight('user',  'user', 'lire') || $user->admin);
 				if (isModEnabled('categorie')) {
 					$langs->load("categories");
 					$newmenu->add("/categories/index.php?leftmenu=users&type=7", $langs->trans("UsersCategoriesShort"), 2, $user->hasRight('categorie',  'lire'), '', $mainmenu, 'cat');
 				}
-				$newmenu->add("", $langs->trans("Groups"), 1, ($user->hasRight('user',  'user', 'lire') || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
-				$newmenu->add("/user/group/card.php?leftmenu=users&action=create", $langs->trans("NewGroup"), 2, ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) ? $user->hasRight("user", "group_advance", "create") : $user->hasRight("user", "user", "create")) || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
-				$newmenu->add("/user/group/list.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) ? $user->hasRight('user',  'group_advance', 'read') : $user->hasRight('user',  'user', 'lire')) || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
+				$newmenu->add("", $langs->trans("Groups"), 1, ($user->hasRight('user',  'user', 'lire') || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)));
+				$newmenu->add("/user/group/card.php?leftmenu=users&action=create", $langs->trans("NewGroup"), 2, ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) ? $user->hasRight("user", "group_advance", "create") : $user->hasRight("user", "user", "create")) || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)));
+				$newmenu->add("/user/group/list.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) ? $user->hasRight('user',  'group_advance', 'read') : $user->hasRight('user',  'user', 'lire')) || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)));
 			}
 		}
 	}
@@ -1238,7 +1241,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 		}
 
 		// Suppliers
-		if (isModEnabled('societe') && (((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) || isModEnabled('supplier_proposal'))) {
+		if (isModEnabled('societe') && (isModEnabled('supplier_order') || isModEnabled('supplier_invoice') || isModEnabled('supplier_proposal'))) {
 			$langs->load("suppliers");
 			$newmenu->add("/societe/list.php?type=f&amp;leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 2, ($user->hasRight('fournisseur',  'lire') || $user->hasRight('supplier_order',  'lire') || $user->hasRight('supplier_invoice',  'lire') || $user->hasRight('supplier_proposal',  'lire')), '', $mainmenu, 'suppliers');
 			$newmenu->add("/societe/card.php?leftmenu=suppliers&amp;action=create&amp;type=f", $langs->trans("MenuNewSupplier"), 3, $user->hasRight('societe',  'creer') && ($user->hasRight('fournisseur',  'lire') || $user->hasRight('supplier_order',  'lire') || $user->hasRight('supplier_invoice',  'lire') || $user->hasRight('supplier_proposal',  'lire')));
@@ -1259,7 +1262,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=2", $menutoshow, 1, $user->hasRight('categorie',  'lire'), '', $mainmenu, 'cat');
 			}
 			// Categories suppliers
-			if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
+			if (isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
 				$newmenu->add("/categories/index.php?leftmenu=catfournish&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 1, $user->hasRight('categorie',  'lire'));
 			}
 		}
@@ -1275,7 +1278,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
 			$newmenu->add("/contact/list.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->hasRight('societe',  'contact', 'lire'));
 		}
-		if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
+		if (isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
 			$newmenu->add("/contact/list.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->hasRight('fournisseur',  'lire'));
 		}
 		$newmenu->add("/contact/list.php?leftmenu=contacts&type=o", $langs->trans("ContactOthers"), 2, $user->hasRight('societe',  'contact', 'lire'));
@@ -1632,7 +1635,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				if (isModEnabled('banque')) {
 					$newmenu->add("/compta/bank/list.php?mainmenu=accountancy&leftmenu=accountancy_admin&search_status=-1", $langs->trans("MenuBankAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_bank', 70);
 				}
-				if (isModEnabled('facture') || ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice'))) {
+				if (isModEnabled('facture') || isModEnabled('supplier_invoice')) {
 					$newmenu->add("/admin/dict.php?id=10&from=accountancy&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuVatAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_default', 80);
 				}
 				if (isModEnabled('tax')) {
@@ -1678,12 +1681,12 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 			// Journals
 			if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') {
-				$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting',  'comptarapport', 'lire'), '', '', '');
+				$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting',  'comptarapport', 'lire'), '', $mainmenu, 'accountancy_journal');
 
 				// Multi journal
 				$sql = "SELECT rowid, code, label, nature";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
-				$sql .= " WHERE entity = ".$conf->entity;
+				$sql .= " WHERE entity = ".((int) $conf->entity);
 				$sql .= " AND active = 1";
 				$sql .= " ORDER BY nature ASC, label DESC";
 
@@ -1703,7 +1706,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$nature = "sells";
 							}
 							if ($objp->nature == 3
-								&& ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice'))
+								&& isModEnabled('supplier_invoice')
 								&& empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
 									$nature = "purchases";
 							}
@@ -1734,11 +1737,12 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$langs->load('accountancy');
 								$journallabel = '';
 								if ($objp->label) {
-									$journallabel = '<span class="opacitymedium">('.$langs->transnoentities($objp->label).')</span>'; // Label of bank account in llx_accounting_journal
+									$journallabelwithoutspan = $langs->trans($objp->label);
+									$journallabel = '<span class="opacitymedium">('.$langs->trans($objp->label).')</span>'; // Label of bank account in llx_accounting_journal
 								}
 
-								$key = $langs->trans("AccountingJournalType".strtoupper($objp->nature));
-								$transferlabel = ($objp->nature && $key != "AccountingJournalType".strtoupper($langs->trans($objp->nature)) ? $key.($journallabel != $key ? ' '.$journallabel : ''): $journallabel);
+								$key = $langs->trans("AccountingJournalType".$objp->nature);	// $objp->nature is 1, 2, 3 ...
+								$transferlabel = (($objp->nature && $key != "AccountingJournalType".$objp->nature) ? $key.($journallabelwithoutspan != $key ? ' '.$journallabel : ''): $journallabel);
 
 								$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $transferlabel, 2, $user->hasRight('accounting',  'comptarapport', 'lire'));
 							}
@@ -1771,6 +1775,9 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 			// Account Balance
 			$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->hasRight('accounting',  'mouvements', 'lire'));
+
+			// Export accountancy
+			$newmenu->add("/accountancy/bookkeeping/export.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("MenuExportAccountancy"), 1, $user->hasRight('accounting',  'mouvements', 'lire'));
 
 			// Closure
 			$newmenu->add("/accountancy/closure/index.php?mainmenu=accountancy&amp;leftmenu=accountancy_closure", $langs->trans("MenuAccountancyClosure"), 1, $user->hasRight('accounting',  'fiscalyear', 'write'), '', $mainmenu, 'closure');
@@ -1814,7 +1821,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') {
 				$modecompta = 'BOOKKEEPING'; // Not yet implemented.
 			}
-			if ($modecompta && ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice'))) {
+			if ($modecompta && isModEnabled('supplier_invoice')) {
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
 					$newmenu->add("/compta/stats/supplier_turnover.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ReportPurchaseTurnover"), 2, $user->hasRight('accounting',  'comptarapport', 'lire'));
 					$newmenu->add("/compta/stats/supplier_turnover_by_thirdparty.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByCompanies"), 3, $user->hasRight('accounting',  'comptarapport', 'lire'));
@@ -2030,7 +2037,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			if (isModEnabled('variants')) {
 				$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->hasRight('product',  'read'));
 			}
-			if (isModEnabled('propal') || (isModEnabled('commande') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('facture') || isModEnabled('fournisseur') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
+			if (isModEnabled('propal') || isModEnabled('commande') || isModEnabled('facture') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
 				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->hasRight('product',  'read'));
 			}
 
@@ -2047,7 +2054,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->hasRight('service',  'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="pictofixedwidth"'));
 			$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->hasRight('service',  'creer'));
 			$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->hasRight('service',  'read'));
-			if (isModEnabled('propal') || isModEnabled('commande') || isModEnabled('facture') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
+			if (isModEnabled('propal') || isModEnabled('commande') || isModEnabled('facture') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
 				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->hasRight('service',  'read'));
 			}
 			// Categories
@@ -2163,9 +2170,9 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 		if (isModEnabled('mrp')) {
 			$langs->load("mrp");
 
-			$newmenu->add("", $langs->trans("MenuMRP"), 0, $user->hasRight('mrp',  'read'), '', $mainmenu, 'mo', 0, '', '', '', img_picto('', 'mrp', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/mrp/mo_card.php?leftmenu=mo&amp;action=create", $langs->trans("NewMO"), 1, $user->hasRight('mrp',  'write'), '', $mainmenu, 'mo');
-			$newmenu->add("/mrp/mo_list.php?leftmenu=mo", $langs->trans("List"), 1, $user->hasRight('mrp',  'read'), '', $mainmenu, 'mo');
+			$newmenu->add("", $langs->trans("MenuMRP"), 0, $user->hasRight('mrp',  'read'), '', $mainmenu, 'mrp', 0, '', '', '', img_picto('', 'mrp', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/mrp/mo_card.php?leftmenu=mo&amp;action=create", $langs->trans("NewMO"), 1, $user->hasRight('mrp',  'write'), '', $mainmenu, '');
+			$newmenu->add("/mrp/mo_list.php?leftmenu=mo", $langs->trans("List"), 1, $user->hasRight('mrp',  'read'), '', $mainmenu, '');
 		}
 	}
 }

@@ -547,3 +547,11 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23208, '', 0, 'Nor-Oriental');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23209, '', 0, 'Zuliana');
 
+-- Turkiye (Turkey) Regions (id country=221)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22101, '', 0, 'Marmara');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22102, '', 0, 'İç Anadolu');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22103, '', 0, 'Ege');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22104, '', 0, 'Akdeniz');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22105, '', 0, 'Güneydoğu');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22106, '', 0, 'Karadeniz');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22107, '', 0, 'Doğu Anadolu');

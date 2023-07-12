@@ -148,7 +148,7 @@ class HookManager
 	 *  @param		array	$parameters		Array of parameters
 	 *  @param		Object	$object			Object to use hooks on
 	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-	 *  @return		mixed					For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *  @return		int						For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
 	 *                                      $this->error or this->errors are also defined by class called by this function if error.
@@ -157,6 +157,10 @@ class HookManager
 	{
 		if (!is_array($this->hooks) || empty($this->hooks)) {
 			return 0; // No hook available, do nothing.
+		}
+		if (!is_array($parameters)) {
+			dol_syslog('executeHooks was called with a non array $parameters. Surely a bug.', LOG_WARNING);
+			$parameters = array();
 		}
 
 		$parameters['context'] = join(':', $this->contextarray);

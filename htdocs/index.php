@@ -131,6 +131,12 @@ if (empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
+	$object = new stdClass();
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('infoadmin', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook == 0) {
+		$message .= $hookmanager->resPrint;
+	}
 	if ($message) {
 		print $message.'<br>';
 		//$message.='<br>';
@@ -537,7 +543,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				$openedDashBoard .= '<div class="info-box-lines">'."\n";
 
 				foreach ($boards as $board) {
-					$openedDashBoard .= '<div class="info-box-line">';
+					$openedDashBoard .= '<div class="info-box-line spanoverflow nowrap">';
 
 					if (!empty($board->labelShort)) {
 						$infoName = '<span class="marginrightonly" title="'.$board->label.'">'.$board->labelShort.'</span>';

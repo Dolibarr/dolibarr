@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Reason for declining or canceling
 
 NewPartnershipRequest=New partnership request
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s 
 

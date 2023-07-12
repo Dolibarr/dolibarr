@@ -31,7 +31,9 @@ namespace Stripe\Issuing;
  * @property \Stripe\StripeObject $merchant_data
  * @property \Stripe\StripeObject $metadata Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
  * @property null|\Stripe\StripeObject $purchase_details Additional purchase information that is optionally provided by the merchant.
+ * @property null|\Stripe\StripeObject $treasury <a href="https://stripe.com/docs/api/treasury">Treasury</a> details related to this transaction if it was created on a [FinancialAccount](/docs/api/treasury/financial_accounts
  * @property string $type The nature of the transaction.
+ * @property null|string $wallet The digital wallet used for this transaction. One of <code>apple_pay</code>, <code>google_pay</code>, or <code>samsung_pay</code>.
  */
 class Transaction extends \Stripe\ApiResource
 {

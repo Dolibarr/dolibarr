@@ -581,10 +581,10 @@ function showWebsiteTemplates(Website $website)
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
-							if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) {
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
 								continue;
 							}
-							if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) {
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdir)) {
 								continue;
 							}
 

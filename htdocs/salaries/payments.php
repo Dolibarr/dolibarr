@@ -286,7 +286,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -326,7 +326,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_type_id) {
 	$param .= '&search_type_id='.urlencode($search_type_id);
@@ -488,24 +488,41 @@ print $searchpicto;
 print '</td>';
 print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
 
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
 print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Salary", $_SERVER["PHP_SELF"], "sal.rowid", "", $param, '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "sal.dateep", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-//print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "b.datev,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pst.code", "", $param, 'class="left"', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "s.num_payment", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
+$totalarray['nbfield']++;
 if (isModEnabled("banque")) {
 	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "s.fk_bank", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -513,7 +530,10 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
 print '</tr>'."\n";
 
 
@@ -521,7 +541,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++;
 		}
 		// There is at least one compute field that use $object
@@ -531,10 +551,11 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
-$total = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < ($limit ? min($num, $limit) : $num)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break;
@@ -543,8 +564,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
-
-
 
 	$userstatic->id = $obj->uid;
 	$userstatic->lastname = $obj->lastname;
@@ -570,18 +589,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$paymentsalstatic->fk_bank = $accountlinestatic->getNomUrl(1);
 	$paymentsalstatic->fk_user_author = $userstatic->getNomUrl(1);
 
-
-
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-
-
-		print $paymentsalstatic->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		print $paymentsalstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

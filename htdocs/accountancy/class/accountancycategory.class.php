@@ -466,7 +466,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " WHERE (aa.fk_accounting_category <> ".((int) $id)." OR aa.fk_accounting_category IS NULL)";
-		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
+		$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
 		$sql .= " GROUP BY aa.account_number, aa.label";
@@ -512,7 +512,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = "SELECT aa.rowid, aa.account_number";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
+		$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
 		$sql .= " ORDER BY LENGTH(aa.account_number) DESC;"; // LENGTH is ok with mysql and postgresql
@@ -646,7 +646,7 @@ class AccountancyCategory // extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
 		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
-		$sql .= " WHERE t.entity = ".$conf->entity;
+		$sql .= " WHERE t.entity = ".((int) $conf->entity);
 		if (is_array($cpt)) {
 			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount, 1).")";
 		} else {
@@ -839,7 +839,7 @@ class AccountancyCategory // extends CommonObject
 			exit();
 		}
 
-		$pcgverid = $conf->global->CHARTOFACCOUNTS;
+		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
 		$pcgvercode = dol_getIdFromCode($this->db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
 		if (empty($pcgvercode)) {
 			$pcgvercode = $pcgverid;

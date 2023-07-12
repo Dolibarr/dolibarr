@@ -91,7 +91,7 @@ class UserGroup extends CommonObject
 	 *
 	 * @var integer
 	 */
-	public $datem;
+	public $tms;
 
 	/**
 	 * @var string Description
@@ -116,7 +116,7 @@ class UserGroup extends CommonObject
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
 		'nom'=>array('type'=>'varchar(180)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Group name'),
-		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1,),
+		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>60, 'notnull'=>1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>100),
@@ -244,7 +244,7 @@ class UserGroup extends CommonObject
 
 		$ret = array();
 
-		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.photo, u.fk_soc, u.entity, u.employee, u.email";
+		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.photo, u.fk_soc, u.entity, u.employee, u.email, u.statut as status";
 		if (!empty($this->id)) {
 			$sql .= ", ug.entity as usergroup_entity";
 		}
@@ -286,6 +286,7 @@ class UserGroup extends CommonObject
 						$newuser->socid = $obj->fk_soc;
 						$newuser->entity = $obj->entity;
 						$newuser->employee = $obj->employee;
+						$newuser->status = $obj->status;
 
 						$ret[$obj->rowid] = $newuser;
 					} else {
@@ -698,9 +699,41 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Return label of status of user (active, inactive)
+	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
+	 *	@param	int			$option			0=No option, 1=Add civility
+	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 * 	@param	int			$maxlen			Maximum length
+	 * 	@return	string						String with full name
+	 */
+	public function getFullName($langs, $option = 0, $nameorder = -1, $maxlen = 0)
+	{
+		//print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
+		$lastname = $this->lastname;
+		$firstname = $this->firstname;
+		if (empty($lastname)) {
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+		}
+
+		$ret = '';
+		if (!empty($option) && !empty($this->civility_code)) {
+			if ($langs->transnoentitiesnoconv("Civility".$this->civility_code) != "Civility".$this->civility_code) {
+				$ret .= $langs->transnoentitiesnoconv("Civility".$this->civility_code).' ';
+			} else {
+				$ret .= $this->civility_code.' ';
+			}
+		}
+
+		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+
+		return dol_trunc($ret, $maxlen);
+	}
+
+	/**
+	 *  Return the label of the status
+	 *
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -710,11 +743,11 @@ class UserGroup extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -782,10 +815,11 @@ class UserGroup extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		if ($option == 'permissions') {
 			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
@@ -811,7 +845,7 @@ class UserGroup extends CommonObject
 				$label = $langs->trans("ShowGroup");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -931,7 +965,7 @@ class UserGroup extends CommonObject
 		$this->name = 'DOLIBARR GROUP SPECIMEN';
 		$this->note = 'This is a note';
 		$this->datec = time();
-		$this->datem = time();
+		$this->tms = time();
 
 		// Members of this group is just me
 		$this->members = array(
@@ -980,13 +1014,17 @@ class UserGroup extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'members')) {
 			$return .= '<br><span class="info-box-status opacitymedium">'.(empty($this->nb_users) ? 0 : $this->nb_users).' '.$langs->trans('Users').'</span>';
 		}

@@ -181,16 +181,25 @@ $formproduct = new FormProduct($db);
 
 $disabled = '';
 if (isModEnabled('productbatch')) {
+	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 	$langs->load("productbatch");
 	$disabled = ' disabled';
-	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
+
+	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE
+	$descmode = $langs->trans('DeStockOnShipmentOnClosing');
+	if (!isModEnabled('reception')) {
+		// STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER
+		$incmode = $langs->trans('ReStockOnDispatchOrder');
+	} else {
+		// STOCK_CALCULATE_ON_RECEPTION_CLOSE
+		$incmode = $langs->trans('StockOnReceptionOnClosing');
+	}
+	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
 }
 
-//if (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
-//{
+
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
 print '<br>';
-//}
 
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -221,7 +230,7 @@ if (isModEnabled('facture')) {
 		print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_BILL);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -242,7 +251,7 @@ if (isModEnabled('commande')) {
 		print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -261,7 +270,7 @@ if (isModEnabled("expedition")) {
 		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -278,7 +287,7 @@ if (isModEnabled("expedition")) {
 		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -301,7 +310,7 @@ $found = 0;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
@@ -313,7 +322,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -323,7 +332,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
@@ -335,7 +344,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -372,7 +381,7 @@ if (isModEnabled("reception")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 	print '<td class="right">';
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+	if (isModEnabled("supplier_order")) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1, '', '', 'reposition');
 		} else {
@@ -380,7 +389,7 @@ if (isModEnabled("reception")) {
 			print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER);
 		}
 	} else {
-		print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 	}
 	print "</td>\n</tr>\n";
 	$found++;
