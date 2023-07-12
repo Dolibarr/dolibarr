@@ -1800,7 +1800,7 @@ class Project extends CommonObject
 
 				// Loop on each task, to clone it
 				foreach ($tasksarray as $tasktoclone) {
-					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
+					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_task_parent, $move_date, true, false, $clone_task_file, true, false);
 					if ($result_clone <= 0) {
 						$this->error .= $taskstatic->error;
 						$error++;
@@ -1924,7 +1924,7 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE id=".((int) $elementSelectId);
-		} elseif ($tableName == "entrepot") {
+		} elseif (in_array($tableName, ["entrepot","mrp_mo"])) {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE rowid=".((int) $elementSelectId);
 		} else {
@@ -2429,7 +2429,16 @@ class Project extends CommonObject
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
 		if (!empty($arraydata['assignedusers'])) {
-			$return .= '<br><span class="small">'.$arraydata['assignedusers'].'</span>';
+			$return .= '<br>';
+			if ($this->public) {
+				$return .= img_picto($langs->trans('Visibility').': '.$langs->trans('SharedProject'), 'world', 'class="paddingrightonly valignmiddle"');
+				//print $langs->trans('SharedProject');
+			} else {
+				$return .= img_picto($langs->trans('Visibility').': '.$langs->trans('PrivateProject'), 'private', 'class="paddingrightonly valignmiddle"');
+				//print $langs->trans('PrivateProject');
+			}
+
+			$return .= ' <span class="small valignmiddle">'.$arraydata['assignedusers'].'</span>';
 		}
 		/*if (property_exists($this, 'user_author_id')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Author").'</span>';

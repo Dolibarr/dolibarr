@@ -200,8 +200,8 @@ TicketAssigned=Sagen er nu tildelt
 TicketChangeType=Skift type
 TicketChangeCategory=Skift analytisk kode
 TicketChangeSeverity=Ændre alvorligheden
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Tilføj eller send en besked
+TicketAddPrivateMessage=Tilføj en privat besked
 MessageSuccessfullyAdded=Sag tilføjet
 TicketMessageSuccessfullyAdded=Meddelelse med tilføjet
 TicketMessagesList=Meddelelsesliste
@@ -275,7 +275,7 @@ TicketsDelayForFirstResponseTooLong=Der er gået for lang tid siden billetåbnin
 TicketsDelayFromLastResponseTooLong=Der er gået for lang tid siden sidste svar på denne billet.
 TicketNoContractFoundToLink=Der blev ikke fundet nogen kontrakt, der automatisk er knyttet til denne billet. Link venligst en kontrakt manuelt.
 TicketManyContractsLinked=Mange kontrakter er automatisk blevet knyttet til denne billet. Sørg for at bekræfte, hvilken der skal vælges.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=Referencen [%s] er allerede brugt, din nye reference er [%s]
 
 #
 # Logs

@@ -1986,8 +1986,8 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
-	padding-top: 8px;
+	<?php if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) { ?>
+	padding-top: 18px;
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
@@ -3942,6 +3942,9 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	padding: 7px 8px 7px 8px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
+}
+table.liste tr.trkanban td {
+	padding: 10px 12px 10px 12px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
@@ -7652,6 +7655,14 @@ div.clipboardCPValue.hidewithsize {
 	transform: translate(-50%, -50%);
 	text-align:center;
 	font-size: 2em;
+}
+
+/* ============================================================================== */
+/* CSS style used for color jPicker                                               */
+/* ============================================================================== */
+
+table.jPicker {
+	border: 1px solid #bbb !important;
 }
 
 /* ============================================================================== */

@@ -304,7 +304,7 @@ ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
-ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, status or dates of validity. Please relogin.
+ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, email, status or dates of validity. Please relogin.
 ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
 ErrorFieldExist=The value for <b>%s</b> already exist 
 ErrorEqualModule=Module invalid in <b>%s</b>
@@ -315,7 +315,7 @@ ErrorUploadFileDragDropPermissionDenied=There was an error while the file(s) upl
 ErrorFixThisHere=<a href="%s">Fix this here</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
 ErrorMenuExistValue=A Menu already exist with this Title or URL
-ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s 
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
 
 # Warnings

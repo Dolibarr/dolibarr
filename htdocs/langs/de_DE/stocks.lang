@@ -320,4 +320,4 @@ StockTransferRightDelete=Umlagerungen löschen
 BatchNotFound=Charge/Seriennummer für dieses Produkt nicht gefunden
 StockMovementWillBeRecorded=Lagerbewegung wird aufgezeichnet
 StockMovementNotYetRecorded=Die Lagerbewegungen werden von diesem Schritt nicht beeinflusst
-WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
+WarningThisWIllAlsoDeleteStock=Achtung, dadurch werden auch alle im Lager vorrätigen Mengen gelöscht

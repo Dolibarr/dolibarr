@@ -53,7 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Στη φόρμα για τη δημι�
 #
 # Object
 #
-OrganizedEvent=Organized event
+OrganizedEvent=Οργανωμένη εκδήλωση
 EventOrganizationConfOrBooth= Συνέδριο ή Περίπτερο
 EventOrganizationConfOrBoothes=Συνέδρια ή Περίπτερα
 ManageOrganizeEvent = Διαχειριστείτε την οργάνωση μιας εκδήλωσης

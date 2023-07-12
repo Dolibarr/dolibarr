@@ -699,7 +699,7 @@ class Users extends DolibarrApi
 		unset($object->lines);
 		unset($object->model_pdf);
 
-		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
+		$canreadsalary = ((isModEnabled('salaries') && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
 
 		if (!$canreadsalary) {
 			unset($object->salary);

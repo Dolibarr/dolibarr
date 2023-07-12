@@ -1906,6 +1906,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<table class="noborder centpercent">';
 
 		$out .= '<tr class="liste_titre">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<th class="liste_titre width50 middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</th>';
+		}
+
 		if ($donetodo) {
 			$out .= '<td class="liste_titre"></td>';
 		}
@@ -1923,13 +1932,19 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		// Action column
-		$out .= '<td class="liste_titre" align="middle">';
-		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-		$out .= $searchpicto;
-		$out .= '</td>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<td class="liste_titre" align="middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</td>';
+		}
 		$out .= '</tr>';
 
 		$out .= '<tr class="liste_titre">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		}
 		if ($donetodo) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
@@ -1952,7 +1967,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= getTitleFieldOfList("RelatedObjects", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out .= getTitleFieldOfList("ActionOnContact", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'tdoverflowmax125 ', 0, '', 0);
 		$out .= getTitleFieldOfList("Status", 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, '', $sortfield, $sortorder, 'center ');
-		$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		}
 		$out .= '</tr>';
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
@@ -1966,6 +1984,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$actionstatic->type_code = $histo[$key]['acode'];
 
 			$out .= '<tr class="oddeven">';
+
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				$out .= '<td></td>';
+			}
 
 			// Done or todo
 			if ($donetodo) {
@@ -2127,8 +2150,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			// Status
 			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
 
-			// Actions
-			$out .= '<td></td>';
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				$out .= '<td></td>';
+			}
 
 			$out .= "</tr>\n";
 			$i++;

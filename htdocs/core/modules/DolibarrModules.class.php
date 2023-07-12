@@ -261,6 +261,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $export_fields_array;
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:login:rowid'
 	public $export_entities_array;
+	public $export_aggregate_array;
 	public $export_examplevalues_array;
 	public $export_help_array;
 	public $export_special_array; // special or computed field
@@ -292,6 +293,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $import_regex_array;
 	public $import_examplevalues_array;
 	public $import_updatekeys_array;
+	public $import_run_sql_after_array;
 	public $import_TypeFields_array;
 	public $import_help_array;
 
@@ -389,6 +391,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
+
+	public $need_javascript_ajax;
 
 	public $enabled_bydefault;
 

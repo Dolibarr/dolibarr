@@ -31,10 +31,14 @@ if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 $idstatus = GETPOST('id', 'int');
 $idprospect = GETPOST('prospectid', 'int');
 $action = GETPOST('action', 'aZ09');
+
+$prospectstatic = new Client($db);
+
 
 // Security check
 if ($user->socid > 0) {
@@ -48,14 +52,18 @@ $result = restrictedArea($user, 'societe', $idprospect, '&societe');
 
 $permisstiontoupdate = $user->hasRight('societe', 'creer');
 
+
 /*
  * View
  */
 
-top_httphead();
+top_httphead('application/json');
 
 
 if ($action === "updatestatusprospect" && $permisstiontoupdate) {
+	$prospectstatic->client = 2;
+	$prospectstatic->loadCacheOfProspStatus();
+
 	$response = '';
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
@@ -68,9 +76,8 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 		dol_print_error($db);
 	} else {
 		$num = $db->affected_rows($resql);
-		$response = http_response_code(200);
+		$response = img_action('', $prospectstatic->cacheprospectstatus[$idstatus]['code'], $prospectstatic->cacheprospectstatus[$idstatus]['picto'], 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
 	}
 
-	$response =json_encode($response);
-	echo $response;
+	echo json_encode(array('img' => $response));
 }

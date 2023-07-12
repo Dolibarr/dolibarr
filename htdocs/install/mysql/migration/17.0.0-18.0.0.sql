@@ -34,6 +34,8 @@
 
 -- v17
 
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 -- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
 
@@ -41,6 +43,8 @@ ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
 
 
 -- v18
@@ -463,6 +467,7 @@ ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
 
 ALTER TABLE fk_product_price_product DROP FOREIGN KEY fk_product_price_product;
  
+ALTER TABLE llx_societe_rib ADD COLUMN ext_payment_site varchar(128);
 
 -- Drop the composite unique index that exists on llx_commande_fournisseur to rebuild a new one without the fk_soc.
 -- The old design allowed for a duplicate reference as long as fk_soc was not the same.

@@ -202,7 +202,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	$adh->ref = $adh->getFullName($langs);
 	print '<tr>';
 	print '<td>'.$langs->trans("Member").'</td>';
-	print '<td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+	print '<td class="valeur">'.$adh->getNomUrl(-1, 0, 'subscription').'</td>';
 	print '</tr>';
 
 	// Type
@@ -300,7 +300,7 @@ if ($rowid && $action != 'edit') {
 	// Member
 	$adh->ref = $adh->getFullName($langs);
 	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(-1, 0, 'subscription').'</td>';
 	print '</tr>';
 
 	// Type

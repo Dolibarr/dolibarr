@@ -2173,7 +2173,14 @@ class ExtraFields
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, array('text'))) {
-					$value_key = GETPOST("options_".$key, 'alphanohtml');
+					$label_security_check = 'alphanohtml';
+					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
+					if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+						$label_security_check = 'nohtml';
+					} else {
+						$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+					}
+					$value_key = GETPOST("options_".$key, $label_security_check);
 				} else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') {

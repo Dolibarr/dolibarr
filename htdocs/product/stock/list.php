@@ -613,12 +613,12 @@ if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 }
 print '</tr>'."\n";
 
+$warehouse = new Entrepot($db);
+
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
-
-$warehouse = new Entrepot($db);
-
+$savnbfield = $totalarray['nbfield'];
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -634,7 +634,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode =='kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban

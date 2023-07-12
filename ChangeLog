@@ -3,6 +3,18 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 19.0.0 compared to 18.0.0 *****
+
+For uses:
+---------
+
+NEW: Right for stats orders new const MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS
+
+
+
+For developers or integrators:
+------------------------------
+
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
 For uses:
@@ -60,7 +72,6 @@ NEW: Can set the page "List of opportunities" as landing page
 NEW: Can show the sql request used on emailing selection
 NEW: can stay on edit field when errors occurs
 NEW: comment in api_mymodule for seperate methods
-NEW: constant PROPALE_ADDON_NOTE_PUBLIC_DEFAULT
 NEW: create email substitution variable for intervention signature URL
 NEW: Debug the custom CSS feature to avoid a directory search/scan at
 NEW: dev name
@@ -75,6 +86,7 @@ NEW: Email-Collector: operation type in email collector to load or create contac
 NEW: Email-Collector: easier setup - can also use ! for negative search
 NEW: Events: can add any contact on events if global MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT is set at 1
 NEW: Events: list with color
+NEW: Events: remove default percentage for event creation url
 NEW: expend/collapse list of social networks
 NEW: Filter on amount and qty on list of service's contracts
 NEW: formconfirm can support field with format datetime
@@ -98,7 +110,6 @@ NEW: Import: map table to element for get entity in import
 NEW: inc.php: handle parameters from argv
 NEW: Invoice - show category of operations
 NEW: Keep a link between user created from recruitment and application
-NEW: List product in orders
 NEW: Mass Actions: Better responsive for mass actions
 NEW: Members: add numbering modules for members
 NEW: Members: add widget box_members_by_tags.php
@@ -116,28 +127,31 @@ NEW: only get openned contact from liste_contact function, to not have acces to 
 NEW: Option to manage deposit slips for more payment modes (not only
 NEW: Option to show column for field and line selection on the left
 NEW: Orders: add sub total in order list det
+NEW: Orders: list product in orders
 NEW: Orders export: allow to export field 'shipment method'
 NEW: payment default values when supplier order created from reception
-NEW: Payment : manage contracts
+NEW: Payment: manage contracts
+NEW: Payment: sepaStripe now creates the payment mode with type pm_ using new API
 NEW: presend mass action in contact list
 NEW: Print PDF: category of operation for crabe PDF model
 NEW: Print PDF: Name and date to print on PDF Sign
 NEW: Print PDF: Use the more recent PDF templates for documents by default on a fresh install
+NEW: Print PDF: Option PDF_SHOW_PHONE_AFTER_USER_CONTACT to show phone after specific assigned contact on PDF
+NEW: Print PDF: Option PDF_SHOW_EMAIL_AFTER_USER_CONTACT to show email after specific assigned contact on PDF
 NEW: product images on popup are cached
 NEW: Products: Add statistics by amount on statistics of products.
 NEW: Proposals: filter for Signed+Billed in proposals
 NEW: Proposals: can modify margin rates in offers like VAT rates
 NEW: Proposals: option filter for NoSalesRepresentativeAffected in proposals list
+NEW: Proposals: constant PROPALE_ADDON_NOTE_PUBLIC_DEFAULT
 NEW: Provide the oldcopy value when calling setValueFrom() function with a trigger key
 NEW: Reception: can receive more than qty ordered on reception
 NEW: referential objects of batch
-NEW: remove default percentage for event creation url
 NEW: remove keys whose table element is the same as element in map list
 NEW: repair script skip views
 NEW: Security: Save date to invalidate other session into user table
 NEW: Security: Invalidate all sessions of a user when password is modified.
 NEW: search on time spent duration range
-NEW: sepaStripe now creates the payment mode with type pm_ using new API
 NEW: set payment default values when supplier order created from reception
 NEW: set today start time at beginning
 NEW: Show counter of access of website in website list
@@ -159,9 +173,8 @@ NEW: tables: llx_element_time to store time spent on several elements (mo, ticke
 NEW: TakePOS: adapt category and product pictures sizes on TakePOS
 NEW: TakePOS: limit load products in TakePOS
 NEW: The batch for remind on due date can be setup for using validation date
-NEW: The refresh link for imap collector is always visible
+NEW: The refresh link for IMAP collector is always visible
 NEW: The upgrade process can be done by creating a file upgrade.unlock
-NEW: Tickets: --Send an email when ticket assigned--
 NEW: Tickets: Send a notification email when ticket assigned
 NEW: Tickets: set ticket status to answered if the client has answered from the public interface
 NEW: Tickets: added an option to display the progress of tickets on the public interface
@@ -169,14 +182,10 @@ NEW: Tickets: add link to thirdparty tickets history
 NEW: Tickets: notify also the contributor affected to a ticket if a new message public is post (add global TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ALSO_CONTRIBUTOR)
 NEW: Use a cache file for external RSS in calendar
 NEW: Use by default the domain $dolibarr_main_url_root for SMTP HELO
-NEW: use more recent model by default
 NEW: VAT can be modified during add of line
 NEW: Website Module: Increment website counter on each page access in website module
 NEW: write all fields and their properties in asciidoc format
 NEW: Can add an array of several links in date selector
-NEW: Right for stats orders new const MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS
-NEW: Option PDF_SHOW_PHONE_AFTER_USER_CONTACT to show phone after specific assigned contact on PDF
-NEW: Option PDF_SHOW_EMAIL_AFTER_USER_CONTACT to show email after specific assigned contact on PDF
 NEW: Widgets: Implement MAIN_ACTIVATE_FILECACHE on birthday widget
 NEW: Widgets: Add widget "The next upcoming events"
 NEW: Widgets: Add widget of open opportunities
@@ -193,10 +202,11 @@ NEW: add triggers on mailing
 NEW: Add a trigger when create a shipping line batch and fix propagate missing errors
 NEW: add function for listiong objects from directory
 NEW: add helplist property to describe fields of objects
-NEW: add hook in loadLotStock() in html.formproduct.class.php file, add hook 'llxFooter', Add hook online sign
+NEW: Hooks: printFieldListFrom in contact list
+NEW: Hooks: add hook in loadLotStock() in html.formproduct.class.php file, add hook 'llxFooter', Add hook online sign
 NEW: Update lib parsedownto 1.7.4, phpspreadsheet lib to v1.12, ESCPOS v3.0, jquery, Stripe.
-NEW: Support contact in post() document API
-NEW: More APIs (update currency rate, upload of supplier documents, ...)
+NEW: API: Support contact in post() document API
+NEW: API: more APIs (update currency rate, upload of supplier documents, ...)
 NEW: ModuleBuilder: updating in modulbuilder on tab Menu when adding object
 NEW: ModuleBuilder: add/edit permissions
 NEW: ModuleBuilder: better generated documentation

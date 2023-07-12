@@ -320,4 +320,4 @@ StockTransferRightDelete=Slett lageroverføringer
 BatchNotFound=Finner ikke LOT/serie for denne varen
 StockMovementWillBeRecorded=Lagerbevegelse vil bli registrert
 StockMovementNotYetRecorded=Lagerbevegelse vil ikke bli påvirket av dette trinnet
-WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
+WarningThisWIllAlsoDeleteStock=Advarsel, dette vil også ødelegge alle mengder på lager på lageret

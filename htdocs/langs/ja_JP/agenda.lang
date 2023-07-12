@@ -180,4 +180,4 @@ BrowserPush=ブラウザのポップアップ通知
 Reminders=リマインダー
 ActiveByDefault=デフォルトで有効
 Until=それまで
-DataFromWasMerged=Data from %s was merged
+DataFromWasMerged=%s のデータがマージされました

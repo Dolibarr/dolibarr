@@ -75,7 +75,7 @@ SumOfProductWeights=Som van product-gewichten
 DetailWarehouseNumber= Magazijn informatie
 DetailWarehouseFormat= W: %s (Aantal: %d)
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Zending distributie
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=Geen verzending voor regel %s omdat er te veel combinatiemagazijn-, product- en batchcode is gevonden (%s).
+ErrorNoCombinationBatchcode=Geen verzending voor regel %s omdat er geen combinatie van magazijn-, product- en batchcode is gevonden.

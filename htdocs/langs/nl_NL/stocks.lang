@@ -320,4 +320,4 @@ StockTransferRightDelete=Aandelenoverdrachten verwijderen
 BatchNotFound=Lot / serienummer niet gevonden voor dit product
 StockMovementWillBeRecorded=Voorraadbewegingen worden geregistreerd
 StockMovementNotYetRecorded=Voorraadbewegingen worden niet beïnvloed door deze stap
-WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
+WarningThisWIllAlsoDeleteStock=Let op, dit zal ook alle hoeveelheden in voorraad in het magazijn vernietigen

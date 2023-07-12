@@ -460,7 +460,7 @@ if (empty($reshook)) {
 	}
 
 	if (($action == "addline" || $action == "freezone") && $placeid == 0) {
-		$invoice->socid = getDolGlobalString("$constforcompanyid");
+		$invoice->socid = getDolGlobalString($constforcompanyid);
 		$invoice->date = dol_now();
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
@@ -537,7 +537,7 @@ if (empty($reshook)) {
 			$invoice->fetch_thirdparty();
 			$array_options = array();
 
-			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'locatax1_tx' => $localtax1_tx, 'locatax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
+			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'localtax1_tx' => $localtax1_tx, 'localtax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
 
 			/* setup of margin calculation */
 			if (isset($conf->global->MARGIN_TYPE)) {
@@ -554,7 +554,7 @@ if (empty($reshook)) {
 					if ($pf->find_min_price_product_fournisseur($idproduct, $qty) > 0) {
 						$line['fk_fournprice'] = $pf->product_fourn_price_id;
 						$line['pa_ht'] = $pf->fourn_unitprice_with_discount;
-						if ($pf->fourn_charges > 0)
+						if (getDolGlobalString('PRODUCT_CHARGES') && $pf->fourn_charges > 0)
 							$line['pa_ht'] += $pf->fourn_charges / $pf->fourn_qty;
 					}
 				}

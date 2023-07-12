@@ -320,4 +320,4 @@ StockTransferRightDelete=Eliminar transferencias de existencias
 BatchNotFound=Lote/serie no encontrado para este producto
 StockMovementWillBeRecorded=Se registrará el movimiento de existencias.
 StockMovementNotYetRecorded=El movimiento de existencias no se verá afectado por este paso.
-WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
+WarningThisWIllAlsoDeleteStock=Advertencia, esto también destruirá todas las cantidades en stock en el almacén.
