@@ -1230,6 +1230,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			}
 		}
 
+		// Security:
 		// If we need to make a virus scan
 		if (empty($disablevirusscan) && file_exists($src_file)) {
 			$checkvirusarray = dolCheckVirus($src_file);
