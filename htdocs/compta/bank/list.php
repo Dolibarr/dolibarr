@@ -227,17 +227,17 @@ if (!empty($searchCategoryBankList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryBankList as $searchCategoryBank) {
 		if (intval($searchCategoryBank) == -2) {
-			$searchCategoryBankSqlList[] = "NOT EXISTS (SELECT ck.fk_account FROM ".MAIN_DB_PREFIX."categorie_account as ck WHERE b.rowid = ck.fk_account)";
+			$searchCategoryBankSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE b.rowid = ck.fk_element)";
 		} elseif (intval($searchCategoryBank) > 0) {
 			if ($searchCategoryBankOperator == 0) {
-				$searchCategoryBankSqlList[] = " EXISTS (SELECT ck.fk_account FROM ".MAIN_DB_PREFIX."categorie_account as ck WHERE b.rowid = ck.fk_account AND ck.fk_categorie = ".((int) $searchCategoryBank).")";
+				$searchCategoryBankSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE b.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryBank).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryBank);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryBankSqlList[] = " EXISTS (SELECT ck.fk_account FROM ".MAIN_DB_PREFIX."categorie_account as ck WHERE b.rowid = ck.fk_account AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryBankSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE b.rowid = ck.fk_account AND ck.fk_category IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryBankOperator == 1) {
 		if (!empty($searchCategoryBankSqlList)) {

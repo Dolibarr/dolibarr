@@ -630,8 +630,13 @@ class Categorie extends CommonObject
 				}
 				$value = $value['field'];
 			}
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX.$key;
-			$sql .= " WHERE ".$value." = ".((int) $this->id);
+			if ($key == 'categorie') {
+				$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
+				$sql .= " WHERE rowid = ".((int) $this->id);
+			} else {
+				$sql  = "DELETE FROM ".MAIN_DB_PREFIX."element_category";
+				$sql .= " WHERE fk_category = ".((int) $this->id);
+			}
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
@@ -1488,9 +1493,7 @@ class Categorie extends CommonObject
 			$sql = "SELECT ct.fk_category, c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."element_category as ct, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE ct.fk_category = c.rowid AND ct.fk_element = ".(int) $id;
-			// This seems useless because the table already contains id of category of 1 unique type. So commented.
-			// So now it works also with external added categories.
-			//$sql .= " AND c.type = ".((int) $this->MAP_ID[$type]);
+			$sql .= " AND c.type = ".((int) $this->MAP_ID[$type]);
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 
 			$res = $this->db->query($sql);
@@ -1960,7 +1963,7 @@ class Categorie extends CommonObject
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'categorie_societe'
+			'element_category'
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables, 1);

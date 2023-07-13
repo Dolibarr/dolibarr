@@ -391,17 +391,17 @@ if (!empty($searchCategoryContactList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryContactList as $searchCategoryContact) {
 		if (intval($searchCategoryContact) == -2) {
-			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member)";
+			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_category FROM ".MAIN_DB_PREFIX."element_category as ck WHERE d.rowid = ck.fk_element)";
 		} elseif (intval($searchCategoryContact) > 0) {
 			if ($searchCategoryContactOperator == 0) {
-				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_category FROM ".MAIN_DB_PREFIX."element_category as ck WHERE d.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryContact).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_category FROM ".MAIN_DB_PREFIX."element_category as ck WHERE d.rowid = ck.fk_element AND ck.fk_category IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryContactOperator == 1) {
 		if (!empty($searchCategoryContactSqlList)) {

@@ -1126,7 +1126,7 @@ class Adherent extends CommonObject
 		}
 
 		// Remove category
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".((int) $rowid);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_category WHERE fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=3) AND fk_element = ".((int) $rowid);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
