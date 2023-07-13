@@ -19,7 +19,7 @@
  */
 
 /**
- *	    \file       htdocs/salaries/list.php
+ *	    \file       htdocs/salaries/payments.php
  *      \ingroup    salaries
  *		\brief     	List of salaries payments
  */
@@ -68,7 +68,7 @@ if (!$sortorder) {
 $object = new PaymentSalary($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('salarieslist')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('salariespaymentslist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
