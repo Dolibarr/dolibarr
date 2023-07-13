@@ -617,6 +617,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$createok = 0;
 					$nbko++;
 				}
+			} elseif ($feature == 'modulebuilder') {
+				if (!$user->hasRight('modulebuilder', 'run')) {
+					$createok = 0;
+					$nbko++;
+				}
 			} elseif (!empty($feature2)) {													// This is for permissions on 2 levels (module->object->write)
 				foreach ($feature2 as $subfeature) {
 					if ($subfeature == 'user' && $user->id == $objectid && $user->hasRight('user', 'self', 'creer')) {
