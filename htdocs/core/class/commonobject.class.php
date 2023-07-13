@@ -9142,12 +9142,13 @@ abstract class CommonObject
 	 * Sets all object fields to null. Useful for example in lists, when printing multiple lines and a different object os fetched for each line.
 	 * @return void
 	 */
-	public function emtpyObjectVars() {
+	public function emtpyObjectVars()
+	{
 		foreach ($this->fields as $field => $arr) {
 			$this->$field = null;
 		}
 	}
-	
+
 	/**
 	 * Function to concat keys of fields
 	 *

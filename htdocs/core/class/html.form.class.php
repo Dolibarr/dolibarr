@@ -2659,9 +2659,9 @@ class Form
 
 		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
 			//Product category
-			$sql .= ", (SELECT " . $this->db->prefix() . "categorie_product.fk_categorie
-						FROM " . $this->db->prefix() . "categorie_product
-						WHERE " . $this->db->prefix() . "categorie_product.fk_product=p.rowid
+			$sql .= ", (SELECT " . $this->db->prefix() . "element_category.fk_category
+						FROM " . $this->db->prefix() . "element_category
+						WHERE " . $this->db->prefix() . "element_category.fk_category=p.rowid
 						LIMIT 1
 				) AS categorie_product_id ";
 		}
