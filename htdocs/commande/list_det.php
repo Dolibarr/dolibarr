@@ -372,7 +372,7 @@ $sql .= ', cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_pr
 $sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$sql .= ", cc.fk_category";
+	$sql .= ", cc.fk_category, cc.fk_element";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
