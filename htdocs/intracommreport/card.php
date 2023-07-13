@@ -70,7 +70,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('intracommcard', 'globalcard'));
+$hookmanager->initHooks(array('intracommreportcard', 'globalcard'));
 
 $error = 0;
 
