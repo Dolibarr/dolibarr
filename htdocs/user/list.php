@@ -458,17 +458,17 @@ if (!empty($searchCategoryUserList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryUserList as $searchCategoryUser) {
 		if (intval($searchCategoryUser) == -2) {
-			$searchCategoryUserSqlList[] = "NOT EXISTS (SELECT ck.fk_user FROM ".MAIN_DB_PREFIX."categorie_user as ck WHERE u.rowid = ck.fk_user)";
+			$searchCategoryUserSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE u.rowid = ck.fk_element)";
 		} elseif (intval($searchCategoryUser) > 0) {
 			if ($searchCategoryUserOperator == 0) {
-				$searchCategoryUserSqlList[] = " EXISTS (SELECT ck.fk_user FROM ".MAIN_DB_PREFIX."categorie_user as ck WHERE u.rowid = ck.fk_user AND ck.fk_categorie = ".((int) $searchCategoryUser).")";
+				$searchCategoryUserSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE u.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryUser).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryUser);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryUserSqlList[] = " EXISTS (SELECT ck.fk_user FROM ".MAIN_DB_PREFIX."categorie_user as ck WHERE u.rowid = ck.fk_user AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryUserSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE u.rowid = ck.fk_element AND ck.fk_category IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryUserOperator == 1) {
 		if (!empty($searchCategoryUserSqlList)) {

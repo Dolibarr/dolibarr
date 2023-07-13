@@ -326,7 +326,7 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = p." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 }
 if (!empty($searchCategoryProductList)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."element_category as cp ON p.rowid = cp.fk_element"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if (strlen(trim($search_current_account))) {
@@ -342,9 +342,9 @@ $searchCategoryProductSqlList = array();
 if ($searchCategoryProductOperator == 1) {
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "cp.fk_categorie IS NULL";
+			$searchCategoryProductSqlList[] = "cp.fk_category IS NULL";
 		} elseif (intval($searchCategoryProduct) > 0) {
-			$searchCategoryProductSqlList[] = "cp.fk_categorie = ".$db->escape($searchCategoryProduct);
+			$searchCategoryProductSqlList[] = "cp.fk_category = ".$db->escape($searchCategoryProduct);
 		}
 	}
 	if (!empty($searchCategoryProductSqlList)) {
@@ -353,9 +353,9 @@ if ($searchCategoryProductOperator == 1) {
 } else {
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "cp.fk_categorie IS NULL";
+			$searchCategoryProductSqlList[] = "cp.fk_category IS NULL";
 		} elseif (intval($searchCategoryProduct) > 0) {
-			$searchCategoryProductSqlList[] = "p.rowid IN (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product WHERE fk_categorie = ".((int) $searchCategoryProduct).")";
+			$searchCategoryProductSqlList[] = "p.rowid IN (SELECT fk_element FROM ".MAIN_DB_PREFIX."element_category WHERE fk_category = ".((int) $searchCategoryProduct).")";
 		}
 	}
 	if (!empty($searchCategoryProductSqlList)) {

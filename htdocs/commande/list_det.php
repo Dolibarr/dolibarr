@@ -372,7 +372,7 @@ $sql .= ', cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_pr
 $sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$sql .= ", cc.fk_categorie, cc.fk_soc";
+	$sql .= ", cc.fk_category";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -389,7 +389,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."element_category as cc ON s.rowid = cc.fk_element"; // We'll need this table joined to the select in order to filter by categ
 }
 
 // Détail commande
@@ -404,7 +404,7 @@ if ($sall || $search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
 }
 if ($search_product_category > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_category as cp ON cp.fk_element=pd.fk_product';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
@@ -437,7 +437,7 @@ if (!empty($disablelinefree)) {
 	$sql .= " AND cdet.fk_product IS NOT NULL";
 }
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
+	$sql .= " AND cp.fk_category = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
@@ -568,10 +568,10 @@ if ($search_project != '') {
 	$sql .= natural_search("p.title", $search_project);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
+	$sql .= " AND cc.fk_category = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
-	$sql .= " AND cc.fk_categorie IS NULL";
+	$sql .= " AND cc.fk_category IS NULL";
 }
 if ($search_fk_cond_reglement > 0) {
 	$sql .= " AND c.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
