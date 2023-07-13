@@ -1131,7 +1131,7 @@ if ($action == 'create' || $action == 'presend') {
 			$foundinter = 0;
 			if ($num) {
 				foreach ($object->linkedObjects as $objecttype => $objects) {
-					if ($objecttype = "fichinter") {
+					if ($objecttype == "fichinter") {
 						foreach ($objects as $fichinter) {
 							$foundinter++;
 							$timing += $fichinter->duration;

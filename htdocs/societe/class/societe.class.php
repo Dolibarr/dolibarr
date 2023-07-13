@@ -2676,9 +2676,9 @@ class Societe extends CommonObject
 		if (isset($this->client) && isset($this->fournisseur)) {
 			$datas['type'] = ' &nbsp; ' . $this->getTypeUrl(1);
 		}
-		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
+		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag(dol_string_nohtmltag($this->name));
 		if (!empty($this->name_alias)) {
-			$datas['namealias'] = ' ('.dol_escape_htmltag($this->name_alias).')';
+			$datas['namealias'] = ' ('.dol_escape_htmltag(dol_string_nohtmltag($this->name_alias)).')';
 		}
 		if (!empty($this->email)) {
 			$datas['email'] = '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;

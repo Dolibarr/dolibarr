@@ -319,7 +319,7 @@ class modMultiCurrency extends DolibarrModules
 
 			if ($r > 0) {
 				$multicurrency->addRate(1);
-			}else{
+			} else {
 				return 0;
 			}
 		}
