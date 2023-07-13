@@ -3844,7 +3844,7 @@ class User extends CommonObject
 	 *  Return property of user from its id
 	 *
 	 *  @param	int		$rowid      id of contact
-	 *  @param  string	$mode       'email' or 'mobile'
+	 *  @param  string	$mode       'email', 'mobile', or 'name'
 	 *  @return string  			Email of user with format: "Full name <email>"
 	 */
 	public function user_get_property($rowid, $mode)
@@ -3871,6 +3871,8 @@ class User extends CommonObject
 					$user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
 				} elseif ($mode == 'mobile') {
 					$user_property = $obj->user_mobile;
+				} elseif ($mode == 'name') {
+					$user_property = dolGetFirstLastname($obj->firstname, $obj->lastname);
 				}
 			}
 			return $user_property;
