@@ -149,7 +149,7 @@ if ((string) $type == '0') {
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object = new Product($db);
-$hookmanager->initHooks(array('productservicelist'));
+$hookmanager->initHooks(array('productlist'));
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
