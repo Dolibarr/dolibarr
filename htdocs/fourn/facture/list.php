@@ -10,7 +10,7 @@
  * Copyright (C) 2015		Abbes Bahfir			<bafbes@gmail.com>
  * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2018-2022	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2018-2023	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2018-2020	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2019-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
@@ -144,7 +144,7 @@ $now = dol_now();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new FactureFournisseur($db);
-$hookmanager->initHooks(array('supplierinvoicelist'));
+$hookmanager->initHooks(array('invoicesupplierlist'));
 $extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
