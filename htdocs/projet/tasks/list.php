@@ -108,7 +108,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'tas
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Task($db);
-$hookmanager->initHooks(array('tasklist'));
+$hookmanager->initHooks(array('projecttasklist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
