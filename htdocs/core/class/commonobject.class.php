@@ -633,7 +633,7 @@ abstract class CommonObject
 	public $alreadypaid;
 
 
-	protected $labelStatus;
+	public $labelStatus;
 	protected $labelStatusShort;
 
 	/**
@@ -3640,7 +3640,8 @@ abstract class CommonObject
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs($diff) > 0.1) {
+						if (abs($diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+							// If error is more than 10 times the accurancy of rounding. This should not happen.
 							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
 							$this->error = $errmsg;
@@ -9137,6 +9138,16 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 * Sets all object fields to null. Useful for example in lists, when printing multiple lines and a different object os fetched for each line.
+	 * @return void
+	 */
+	public function emtpyObjectVars() {
+		foreach ($this->fields as $field => $arr) {
+			$this->$field = null;
+		}
+	}
+	
 	/**
 	 * Function to concat keys of fields
 	 *

@@ -35,6 +35,7 @@ CREATE TABLE llx_bookcal_booking(
 	lastname varchar(128) NOT NULL, 
 	email varchar(128) NOT NULL, 
 	start datetime NOT NULL, 
-	duration integer NOT NULL
+	duration integer NOT NULL, 
+	fk_bookcal_availability integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

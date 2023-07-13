@@ -33,6 +33,9 @@
 
 
 -- v19
+
+ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
+
 CREATE TABLE llx_c_category
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY NOT NULL,

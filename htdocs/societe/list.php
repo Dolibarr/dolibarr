@@ -1018,6 +1018,9 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+if (!empty($place)) {
+	print '<input type="hidden" name="place" value="'.$place.'">';
+}
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 if (empty($arrayfields['customerorsupplier']['checked'])) {
@@ -1562,7 +1565,7 @@ while ($i < $imaxinloop) {
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
-		$companystatic->parent = $obj->fk_parent;
+		$companystatic->fk_parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
 	}
 
@@ -1733,10 +1736,12 @@ while ($i < $imaxinloop) {
 		// Staff
 		if (!empty($arrayfields['staff.code']['checked'])) {
 			print '<td class="center">';
-			if (!is_array($staffArray) || count($staffArray) == 0) {
-				$staffArray = $formcompany->effectif_array(1);
+			if (!empty($obj->staff_code)) {
+				if (empty($conf->cache['staffArray'])) {
+					$conf->cache['staffArray'] = $formcompany->effectif_array(1);
+				}
+				print $conf->cache['staffArray'][$obj->staff_code];
 			}
-			print $staffArray[$obj->staff_code];
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
