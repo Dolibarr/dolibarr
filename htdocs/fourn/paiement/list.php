@@ -110,7 +110,7 @@ $arrayfields = array(
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('paymentsupplierlist'));
+$hookmanager->initHooks(array('supplierpaymentlist'));
 $object = new PaiementFourn($db);
 
 // Security check
