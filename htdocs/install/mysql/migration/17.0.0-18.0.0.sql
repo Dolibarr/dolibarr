@@ -505,7 +505,7 @@ insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_count
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('5D2Y', 'Κανονική άδεια(Πενθήμερο 2ο έτος)', 1, 0, 1.75, 102, 7, 0, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('5D3-10Y', 'Κανονική άδεια(Πενθήμερο 3ο έως 10ο έτος)', 1, 0, 1.833, 102, 8, 0, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('5D10-25Y', 'Κανονική άδεια(Πενθήμερο 10ο έως 25ο έτος)', 1, 0, 2.083, 102, 9, 0, 1);
-insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D25+Y', 'Κανονική άδεια(Πενθήμερο 25+ έτη)', 1, 0, 2.166,    102, 10, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('5D25+Y', 'Κανονική άδεια(Πενθήμερο 25+ έτη)', 1, 0, 2.166, 102, 10, 0, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D1Y', 'Κανονική άδεια(Εξαήμερο 1ο έτος)', 1, 0, 2.00,    102, 11, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D2Y', 'Κανονική άδεια(Εξαήμερο 2ο έτος)', 1, 0, 2.083,    102, 12, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D3-10Y', 'Κανονική άδεια(Εξαήμερο 3ο έως 10ο έτος)', 1, 0, 2.166,    102, 13, 1);
