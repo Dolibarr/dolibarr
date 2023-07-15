@@ -501,7 +501,7 @@ insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10213, 'Ηλεκτροδότηση', 1, 1, 'ΡΕΥΜΑ');
 
 -- Leaves specific to Greece - info from https://www.kepea.gr/
-insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D1Y', 'Κανονική άδεια(Πενθήμερο 1ο έτος)', 1,  0, 1.667, 102, 6, 1);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, block_if_negative, sortorder, active) values ('5D1Y', 'Κανονική άδεια(Πενθήμερο 1ο έτος)', 1, 0, 1.667, 102, 0, 6, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D2Y', 'Κανονική άδεια(Πενθήμερο 2ο έτος)', 1,  0, 1.75, 102, 7, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D3-10Y', 'Κανονική άδεια(Πενθήμερο 3ο έως 10ο έτος)', 1, 0, 1.833, 102, 8, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D10-25Y', 'Κανονική άδεια(Πενθήμερο 10ο έως 25ο έτος)', 1, 0, 2.083,    102, 9, 1);
