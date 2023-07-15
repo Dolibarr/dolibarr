@@ -511,8 +511,8 @@ insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_count
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('6D3-10Y', 'Κανονική άδεια(Εξαήμερο 3ο έως 10ο έτος)', 1, 0, 2.166, 102, 13, 0, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('6D10-25Y', 'Κανονική άδεια(Εξαήμερο 10ο έως 25ο έτος)', 1, 0, 2.083, 102, 14, 0, 1);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('6D25+Y', 'Κανονική άδεια(Εξαήμερο 25+ έτη)', 1, 0, 2.166, 102, 15, 0, 1);
-insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('5D-WED', 'Πενθήμερη άδεια γάμου(με αποδοχές)', 0, 0, 0, 102, 16, 0);
-insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('6D-WED', 'Εξαήμερη άδεια γάμου(με αποδοχές)', 0, 0, 0, 102, 17, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('5D-WED', 'Πενθήμερη άδεια γάμου(με αποδοχές)', 0, 0, 0, 102, 16, 0, 0);
+insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, block_if_negative, active) values ('6D-WED', 'Εξαήμερη άδεια γάμου(με αποδοχές)', 0, 0, 0, 102, 17, 0, 0);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('7D-AR', 'Επταήμερη άδεια ιατρικώς υποβοηθούμενης αναπαραγωγής(με αποδοχές)', 0, 0, 0, 102, 18, 0);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('1D-BC', 'Μονοήμερη άδεια προγεννητικών εξετάσεων(με αποδοχές)', 0, 0, 0, 102, 19, 0);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('1D-GYN', 'Μονοήμερη άδεια γυναικολογικού ελέγχου(με αποδοχές)', 0,  0, 0, 102, 20, 0);
