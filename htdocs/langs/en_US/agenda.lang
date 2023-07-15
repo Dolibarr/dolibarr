@@ -180,3 +180,4 @@ BrowserPush=Browser Popup Notification
 Reminders=Reminders
 ActiveByDefault=Enabled by default
 Until=until
+DataFromWasMerged=Data from %s was merged

@@ -459,7 +459,8 @@ class Ticket extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
+
 		$error = 0;
 
 		// Clean parameters
@@ -473,6 +474,8 @@ class Ticket extends CommonObject
 		$result = $this->verify();
 
 		if ($result >= 0) {
+			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+
 			// Insert request
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."ticket(";
 			$sql .= "ref,";
@@ -521,7 +524,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
-			$sql .= ", ".((int) $conf->entity);
+			$sql .= ", ".((int) $this->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
 			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
@@ -1557,13 +1560,13 @@ class Ticket extends CommonObject
 	/**
 	 *    Mark a message as read
 	 *
-	 *    @param    User		$user			    Object user
-	 *    @param	  int			$notrigger		No trigger
-	 *    @return   int							      <0 if KO, >0 if OK
+	 *    @param    User		$user			Object user
+	 *    @param	int			$notrigger		No trigger
+	 *    @return   int							<0 if KO, 0=nothing done, >0 if OK
 	 */
 	public function markAsRead($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
@@ -1607,6 +1610,8 @@ class Ticket extends CommonObject
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
@@ -1799,13 +1804,13 @@ class Ticket extends CommonObject
 	 *
 	 *    @param    User    $user      	User that close
 	 *    @param	int		$mode		0=Close solved, 1=Close abandonned
-	 *    @return   int		           	<0 if KO, >0 if OK
+	 *    @return   int		           	<0 if KO, 0=nothing done, >0 if OK
 	 */
 	public function close(User $user, $mode = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
-		if ($this->fk_statut != Ticket::STATUS_CLOSED && $this->fk_statut != Ticket::STATUS_CANCELED) { // not closed
+		if ($this->status != Ticket::STATUS_CLOSED && $this->status != Ticket::STATUS_CANCELED) { // not closed
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
@@ -1866,6 +1871,8 @@ class Ticket extends CommonObject
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**

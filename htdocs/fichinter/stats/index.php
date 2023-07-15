@@ -230,10 +230,10 @@ print img_picto('', 'user', 'class="pictofixedwidth"');
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-$tmp = $objectstatic->LibStatut(0); // To force load of $this->statuts_short
-$liststatus = $objectstatic->statuts_short;
+$tmp = $objectstatic->LibStatut(0); // To force load of $this->labelStatus
+$liststatus = $objectstatic->labelStatus;
 if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
-	unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+	unset($liststatus[$objectstatic::STATUS_BILLED]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 }
 print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);
 print '</td></tr>';

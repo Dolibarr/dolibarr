@@ -92,7 +92,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("LastSubscriptionsModified", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.gender, a.email, a.photo, a.morphy,";
 			$sql .= " a.datefin as date_end_subscription,";

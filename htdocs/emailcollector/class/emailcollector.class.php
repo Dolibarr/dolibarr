@@ -131,6 +131,8 @@ class EmailCollector extends CommonObject
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com', 'csslist'=>'tdoverflowmax125'),
 		'port'          => array('type'=>'varchar(10)', 'label'=>'EMailHostPort', 'visible'=>1, 'enabled'=>1, 'position'=>91, 'notnull'=>1, 'searchall'=>0, 'comment'=>"IMAP server port", 'help'=>'Example: 993', 'csslist'=>'tdoverflowmax50', 'default'=>'993'),
 		'hostcharset'   => array('type'=>'varchar(16)', 'label'=>'HostCharset', 'visible'=>-1, 'enabled'=>1, 'position'=>92, 'notnull'=>0, 'searchall'=>0, 'comment'=>"IMAP server charset", 'help'=>'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default'=>'UTF-8'),
+		'imap_encryption'  => array('type'=>'varchar(16)', 'label'=>'ImapEncryption', 'visible'=>-1, 'enabled'=>1, 'position'=>93, 'searchall'=>0, 'comment'=>"IMAP encryption", 'help'=>'ImapEncryptionHelp', 'arrayofkeyval'=> array('ssl'=>'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default'=>'ssl'),
+		'norsh'  => array('type'=>'integer', 'label'=>'NoRSH', 'visible'=>-1, 'enabled'=>"!getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>94, 'searchall'=>0, 'help'=>'NoRSHHelp', 'arrayofkeyval'=> array(0 =>'No', 1 => 'Yes'), 'default'=> 0),
 		'acces_type'     => array('type'=>'integer', 'label'=>'accessType', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login type", 'arrayofkeyval'=>array('0'=>'loginPassword', '1'=>'oauthToken'), 'default'=>'0', 'help'=>''),
 		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
@@ -213,6 +215,8 @@ class EmailCollector extends CommonObject
 	public $password;
 	public $acces_type;
 	public $oauth_service;
+	public $imap_encryption;
+	public $norsh;
 	public $source_directory;
 	public $target_directory;
 	public $maxemailpercollect;
@@ -775,11 +779,9 @@ class EmailCollector extends CommonObject
 	/**
 	 * Return the connectstring to use with IMAP connection function
 	 *
-	 * @param	int		$ssl		Add /ssl tag
-	 * @param	int		$norsh		Add /norsh to connectstring
 	 * @return string
 	 */
-	public function getConnectStringIMAP($ssl = 1, $norsh = 0)
+	public function getConnectStringIMAP()
 	{
 		global $conf;
 
@@ -787,15 +789,16 @@ class EmailCollector extends CommonObject
 		$flags = '/service=imap'; // IMAP
 		if (!empty($conf->global->IMAP_FORCE_TLS)) {
 			$flags .= '/tls';
-		} elseif (empty($conf->global->IMAP_FORCE_NOSSL)) {
-			if ($ssl) {
-				$flags .= '/ssl';
-			}
+		} elseif (empty($this->imap_encryption) || ($this->imap_encryption == 'ssl' && !empty($conf->global->IMAP_FORCE_NOSSL))) {
+			$flags .= '';
+		} else {
+			$flags .= '/' . $this->imap_encryption;
 		}
+
 		$flags .= '/novalidate-cert';
 		//$flags.='/readonly';
 		//$flags.='/debug';
-		if ($norsh || !empty($conf->global->IMAP_FORCE_NORSH)) {
+		if (!empty($this->norsh) || !empty($conf->global->IMAP_FORCE_NORSH)) {
 			$flags .= '/norsh';
 		}
 		//Used in shared mailbox from Office365
@@ -1191,7 +1194,7 @@ class EmailCollector extends CommonObject
 				$client = $cm->make([
 					'host'           => $this->host,
 					'port'           => $this->port,
-					'encryption'     => 'ssl',
+					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
 					'validate_cert'  => true,
 					'protocol'       => 'imap',
 					'username'       => $this->login,
@@ -1204,7 +1207,7 @@ class EmailCollector extends CommonObject
 				$client = $cm->make([
 					'host'           => $this->host,
 					'port'           => $this->port,
-					'encryption'     => 'ssl',
+					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
 					'validate_cert'  => true,
 					'protocol'       => 'imap',
 					'username'       => $this->login,

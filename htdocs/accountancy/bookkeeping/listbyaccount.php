@@ -381,7 +381,7 @@ if (empty($reshook)) {
 		$param = '&type='.$type.$param;
 	}
 
-	//if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
+	//if ($action == 'delbookkeepingyearconfirm' && $user->hasRight('accounting', 'mouvements', 'supprimer')_tous) {
 	//	$delmonth = GETPOST('delmonth', 'int');
 	//	$delyear = GETPOST('delyear', 'int');
 	//	if ($delyear == -1) {
@@ -1297,7 +1297,7 @@ print "</table>";
 print '</div>';
 
 // TODO Replace this with mass delete action
-//if ($user->rights->accounting->mouvements->supprimer_tous) {
+//if ($user->hasRight('accounting', 'mouvements, 'supprimer_tous')) {
 //	print '<div class="tabsAction tabsActionNoBottom">'."\n";
 //	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear&token='.newToken().($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
 //	print '</div>';

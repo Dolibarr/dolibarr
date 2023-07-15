@@ -2,7 +2,7 @@
 ContractsArea=Контрактна зона
 ListOfContracts=Перелік договорів
 AllContracts=Усі договори
-ContractCard=Картка контракту
+ContractCard=Contract
 ContractStatusNotRunning=Не працює
 ContractStatusDraft=Проект
 ContractStatusValidated=Підтверджений

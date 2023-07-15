@@ -81,7 +81,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_year = '';
 }
 
-if (!$user->rights->produit->lire) accessforbidden();
+if (!$user->hasRight('produit', 'lire')) accessforbidden();
 
 
 /*

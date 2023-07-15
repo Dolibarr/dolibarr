@@ -192,8 +192,8 @@ class Establishment extends CommonObject
 		$sql .= ", address";
 		$sql .= ", zip";
 		$sql .= ", town";
-		$sql .= ", status";
 		$sql .= ", fk_country";
+		$sql .= ", status";
 		$sql .= ", entity";
 		$sql .= ", datec";
 		$sql .= ", fk_user_author";

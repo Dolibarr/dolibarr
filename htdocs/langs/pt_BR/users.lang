@@ -39,7 +39,6 @@ CreateGroup=Criar grupo
 PasswordChangedAndSentTo=Senha alterada e enviada a <b>%s</b>.
 PasswordChangeRequest=Pedido para alterar a senha para <b> %s </b>
 PasswordChangeRequestSent=Solicitação para alterar a senha para <b>%s</b> enviada a <b>%s</b>.
-IfEmailExistPasswordRequestSent=Se este e-mail for uma conta válida, um e-mail para redefinir a senha foi enviado.
 ConfirmPasswordReset=Confirmar restauração da senha
 MenuUsersAndGroups=Usuários e Grupos
 LastGroupsCreated=Últimos grupos de %s criados

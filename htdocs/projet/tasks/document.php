@@ -75,7 +75,7 @@ $socid = 0;
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
-$permissiontoadd = $user->rights->projet->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd = $user->hasRight('projet', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
@@ -142,7 +142,7 @@ if ($object->id > 0) {
 
 		print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
-		$param = ($mode == 'mine' ? '&mode=mine' : '');
+		$param = (isset($mode) && $mode == 'mine' ? '&mode=mine' : '');
 
 		// Project card
 
@@ -152,7 +152,7 @@ if ($object->id > 0) {
 		// Title
 		$morehtmlref .= $projectstatic->title;
 		// Thirdparty
-		if ($projectstatic->thirdparty->id > 0) {
+		if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 			$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
@@ -330,8 +330,8 @@ if ($object->id > 0) {
 		$param .= '&withproject=1';
 	}
 	$modulepart = 'project_task';
-	$permissiontoadd = $user->rights->projet->creer;
-	$permtoedit = $user->rights->projet->creer;
+	$permissiontoadd = $user->hasRight('projet', 'creer');
+	$permtoedit = $user->hasRight('projet', 'creer');
 	$relativepathwithnofile = dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

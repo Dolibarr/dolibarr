@@ -48,7 +48,7 @@ DateDeliveryPlanned=Dyddiad cyflwyno arfaethedig
 RefDeliveryReceipt=Cyf derbynneb danfon
 StatusReceipt=Derbynneb danfon statws
 DateReceived=Dyddiad derbyn y danfoniad
-ClassifyReception=Dosbarthu derbyniad
+ClassifyReception=Classify Received
 SendShippingByEMail=Anfon llwyth trwy e-bost
 SendShippingRef=Cyflwyno llwyth %s
 ActionsOnShipping=Digwyddiadau wrth gludo
@@ -74,3 +74,8 @@ SumOfProductWeights=Swm pwysau'r cynnyrch
 # warehouse details
 DetailWarehouseNumber= Manylion y warws
 DetailWarehouseFormat= W:%s (Qty: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

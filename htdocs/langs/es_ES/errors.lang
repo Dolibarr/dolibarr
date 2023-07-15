@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Error, el parámetro <b> %s </b> d
 ErrorLoginDateValidity=Error, este inicio de sesión está fuera del rango de fechas de validez
 ErrorValueLength=Longitud del campo '<b>%s</b>' debe ser superior a '<b>%s</b>'
 ErrorReservedKeyword=La palabra '<b>%s</b>' es una palabra reservada
+ErrorFilenameReserved=El nombre de archivo <b> %s </b> no se puede usar porque es un comando reservado y protegido.
 ErrorNotAvailableWithThisDistribution=No disponible con esta distribución
 ErrorPublicInterfaceNotEnabled=La interfaz pública no estaba habilitada
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=El idioma de la nueva página debe definirse si se establece como una traducción de otra página.
@@ -304,6 +305,18 @@ ErrorValueCantBeNull=El valor para <b> %s </b> no puede ser nulo
 ErrorDateOfMovementLowerThanDateOfFileTransmission=La fecha de la transacción bancaria no puede ser anterior a la fecha de transmisión del archivo
 ErrorTooMuchFileInForm=Demasiados archivos en el formulario, el número máximo es %s archivo(s)
 ErrorSessionInvalidatedAfterPasswordChange=La sesión ha sido invalidada tras un cambio de contraseña, estado o fechas de validez. Vuelva a iniciar sesión.
+ErrorExistingPermission = El permiso <b> %s </b> para el objeto <b> %s </b> ya existe
+ErrorFieldExist=El valor para <b> %s </b> ya existe
+ErrorEqualModule=Módulo inválido en <b> %s </b>
+ErrorFieldValue=El valor para <b> %s </b> es incorrecto
+ErrorCoherenceMenu= <b> %s </b> es necesario cuando <b> %s </b> es 'izquierda'
+ErrorUploadFileDragDrop=Hubo un error mientras se subían los archivos
+ErrorUploadFileDragDropPermissionDenied=Hubo un error mientras se subían los archivos: Permiso denegado
+ErrorFixThisHere= <a href="%s"> Arregla esto aquí </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: la URL de su instancia actual (%s) no coincide con la URL definida en su configuración de inicio de sesión de OAuth2 (%s). No se permite iniciar sesión en OAuth2 en dicha configuración.
+ErrorMenuExistValue=Ya existe un menú con este título o URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
+ErrorTypeMenu=Imposible agregar otro menú para el mismo módulo en la barra de navegación, aún no se maneja
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
@@ -342,6 +355,15 @@ WarningPaypalPaymentNotCompatibleWithStrict=El valor 'Estricto' hace que las fun
 WarningThemeForcedTo=Advertencia, el tema ha sido forzado a <b> %s </b> por la constante oculta MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Advertencia, esto también eliminará todas las páginas/contenedores existentes del sitio web. Debe exportar su sitio web antes, para tener una copia de seguridad para volver a importarlo más tarde.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validación automática está deshabilitada cuando la opción para disminuir el stock está configurada en "Validación de facturas".
+WarningModuleNeedRefrech = El módulo <b> %s </b> ha sido deshabilitado. No olvides habilitarlo
+WarningPermissionAlreadyExist=Permisos existentes para este objeto
+
+SwissQrOnlyVIR = La factura SwissQR solo se puede agregar en facturas configuradas para pagarse con pagos de débito directo.
+SwissQrCreditorAddressInvalid = La dirección del acreedor no es válida (¿están configurados el código postal y la ciudad? (%s)
+SwissQrCreditorInformationInvalid = La información del acreedor no es válida para IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN aún no implementado
+SwissQrPaymentInformationInvalid = La información de pago no era válida para el total %s : %s
+SwissQrDebitorAddressInvalid = La información del deudor no era válida (%s)
 
 # Validate
 RequireValidValue = Valor no válido

@@ -395,9 +395,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringtarget = '';
 
 	// Note: $object->host has been loaded by the fetch
-	$usessl = 1;
-
-	$connectstringserver = $object->getConnectStringIMAP($usessl);
+	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
@@ -645,9 +643,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         console.log("We change a filter");
         if (jQuery("#filtertype option:selected").attr("data-noparam")) {
             jQuery("#rulevalue").attr("placeholder", "");
-            jQuery("#rulevalue").text(""); jQuery("#rulevalue").prop("disabled", true);
-        }
-        else { jQuery("#rulevalue").prop("disabled", false); }
+            jQuery("#rulevalue").text("");
+			jQuery("#rulevalue").prop("disabled", true);
+			jQuery("#rulevaluehelp").addClass("unvisible");
+        } else {
+			jQuery("#rulevalue").prop("disabled", false);
+			jQuery("#rulevaluehelp").removeClass("unvisible");
+		}
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
 	/*$noparam = array();
@@ -658,8 +660,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '})';
 	print '</script>'."\n";
 
-	print '</td><td>';
-	print '<input type="text" name="rulevalue" id="rulevalue">';
+	print '</td><td class="nowraponall">';
+	print '<div class="nowraponall">';
+	print '<input type="text" name="rulevalue" id="rulevalue" class="inline-block valignmiddle">';
+	print '<div class="inline-block valignmiddle unvisible" id="rulevaluehelp">';
+	print img_warning($langs->trans("FilterSearchImapHelp"), '', 'pictowarning classfortooltip');
+	print '</div>';
+	print '</div>';
 	print '</td>';
 	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button smallpaddingimp" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
