@@ -1,0 +1,42 @@
+{
+    "name": "symfony/polyfill-intl-icu",
+    "type": "library",
+    "description": "Symfony polyfill for intl's ICU-related data and classes",
+    "keywords": ["polyfill", "shim", "compatibility", "portable", "intl", "icu"],
+    "homepage": "https://symfony.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nicolas Grekas",
+            "email": "p@tchwork.com"
+        },
+        {
+            "name": "Symfony Community",
+            "homepage": "https://symfony.com/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    },
+    "autoload": {
+        "files": [ "bootstrap.php" ],
+        "psr-4": { "Symfony\\Polyfill\\Intl\\Icu\\": "" },
+        "classmap": [ "Resources/stubs" ],
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "suggest": {
+        "ext-intl": "For best performance and support of other locales than \"en\""
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.27-dev"
+        },
+        "thanks": {
+            "name": "symfony/polyfill",
+            "url": "https://github.com/symfony/polyfill"
+        }
+    }
+}

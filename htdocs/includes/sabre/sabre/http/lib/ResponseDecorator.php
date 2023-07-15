@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\HTTP;
 
 /**
- * Response Decorator
+ * Response Decorator.
  *
  * This helper class allows you to easily create decorators for the Response
  * object.
@@ -12,45 +14,36 @@ namespace Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ResponseDecorator implements ResponseInterface {
-
+class ResponseDecorator implements ResponseInterface
+{
     use MessageDecoratorTrait;
 
     /**
      * Constructor.
-     *
-     * @param ResponseInterface $inner
      */
-    function __construct(ResponseInterface $inner) {
-
+    public function __construct(ResponseInterface $inner)
+    {
         $this->inner = $inner;
-
     }
 
     /**
      * Returns the current HTTP status code.
-     *
-     * @return int
      */
-    function getStatus() {
-
+    public function getStatus(): int
+    {
         return $this->inner->getStatus();
-
     }
-
 
     /**
      * Returns the human-readable status string.
      *
      * In the case of a 200, this may for example be 'OK'.
-     *
-     * @return string
      */
-    function getStatusText() {
-
+    public function getStatusText(): string
+    {
         return $this->inner->getStatusText();
-
     }
+
     /**
      * Sets the HTTP status code.
      *
@@ -61,12 +54,10 @@ class ResponseDecorator implements ResponseInterface {
      * added.
      *
      * @param string|int $status
-     * @return void
      */
-    function setStatus($status) {
-
+    public function setStatus($status)
+    {
         $this->inner->setStatus($status);
-
     }
 
     /**
@@ -76,9 +67,8 @@ class ResponseDecorator implements ResponseInterface {
      *
      * @return string
      */
-    function __toString() {
-
+    public function __toString(): string
+    {
         return $this->inner->__toString();
-
     }
 }

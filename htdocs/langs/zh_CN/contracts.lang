@@ -2,7 +2,7 @@
 ContractsArea=合同区
 ListOfContracts=联系人列表
 AllContracts=所有合同
-ContractCard=合同信息
+ContractCard=合同
 ContractStatusNotRunning=不运行
 ContractStatusDraft=草稿
 ContractStatusValidated=验证

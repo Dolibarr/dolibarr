@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=تم نقلها بالفعل إلى دفاتر اليوم
 NotYetInGeneralLedger=لم يتم نقلها بعد إلى المجلات ودفتر الأستاذ
 GroupIsEmptyCheckSetup=المجموعة فارغة ، تحقق من إعداد مجموعة المحاسبة المخصصة
 DetailByAccount=إظهار التفاصيل حسب الحساب
+DetailBy=Detail by
 AccountWithNonZeroValues=الحسابات ذات القيم غير الصفرية
 ListOfAccounts=قائمة الحسابات
 CountriesInEEC=دول الاتحاد الأوروبي
@@ -51,6 +52,8 @@ AccountantFiles=تصدير مستندات المصدر
 ExportAccountingSourceDocHelp=باستخدام هذه الأداة ، يمكنك البحث عن مصدر الأحداث التي يتم استخدامها لإنشاء المحاسبة الخاصة بك وتصديرها. <br> سيحتوي ملف ZIP المُصدَّر على قوائم العناصر المطلوبة في CSV ، بالإضافة إلى الملفات المرفقة بتنسيقها الأصلي (PDF ، ODT ، DOCX ...).
 ExportAccountingSourceDocHelp2=لتصدير دفاترك المحاسبية ، إستخدم القائمة %s - %s .
 ExportAccountingProjectHelp=حدد مشروعًا إذا كنت بحاجة إلى تقرير محاسبة لمشروع معين فقط. لا يتم تضمين تقارير المصروفات ودفعات القرض في تقارير المشروع.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=عرض حسب الحساب المحاسبي
 VueBySubAccountAccounting=عرض حسب الحساب المحاسبة الفرعي
 
@@ -112,6 +115,7 @@ MenuLoanAccounts=حسابات القروض
 MenuProductsAccounts=حسابات المنتج
 MenuClosureAccounts=حسابات الإغلاق
 MenuAccountancyClosure=اغلاق
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=اعتماد الحركات
 ProductsBinding=حسابات المنتجات
 TransferInAccounting=التحويل في المحاسبة
@@ -295,7 +299,7 @@ DescClosure=استشر هنا عدد الحركات حسب الشهر التي �
 OverviewOfMovementsNotValidated=نظرة عامة على الحركات التي لم يتم التحقق من صحتها وإغلاقها
 AllMovementsWereRecordedAsValidated=تم تسجيل جميع الحركات على أنها محققة ومغلقة
 NotAllMovementsCouldBeRecordedAsValidated=لا يمكن تسجيل جميع الحركات على أنها تم التحقق من صحتها وقفلها
-ValidateMovements=التحقق و تقيد الحركة
+ValidateMovements=Validate and lock movements
 DescValidateMovements=سيتم حظر أي تعديل أو حذف للكتابة والحروف. يجب اعتماد جميع الإدخالات الخاصة بالتمرين وإلا فلن يكون الإغلاق ممكنًا
 
 ValidateHistory=ربط تلقائي
@@ -344,12 +348,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=تعطيل الربط والتحويل في 
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=تعطيل الربط والتحويل في المحاسبة على المشتريات (لن يتم أخذ فواتير البائعين في الاعتبار في المحاسبة)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=تعطيل الربط والتحويل في المحاسبة على تقارير المصروفات (لن يتم أخذ تقارير المصروفات في الاعتبار في المحاسبة)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=ضع علامة على الخطوط المصدرة كـ <span class="warning"> (لتعديل سطر ، ستحتاج إلى حذف المعاملة بالكامل وإعادة تحويلها إلى المحاسبة) </span>
-NotifiedValidationDate=تحقق من صحة الإدخالات التي تم تصديرها وقفلها <span class="warning"> (نفس التأثير من ميزة "%s" ، ولن يكون تعديل الأسطر وحذفها بالتأكيد ممكنًا) </span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=التحقق من صحة التاريخ والقفل
 ConfirmExportFile=تأكيد إنشاء ملف محاسبي تصدير؟
@@ -381,7 +391,7 @@ ChartofaccountsId=معرف دليل الحسابات
 ## Tools - Init accounting account on product / service
 InitAccountancy=المحاسبة الأولية
 InitAccountancyDesc=يمكن استخدام هذه الصفحة لتهيئة حساب المنتجات والخدمات التي ليس لها حساب محدد للمبيعات والمشتريات.
-DefaultBindingDesc=يمكن استخدام هذه الصفحة لتعيين حساب افتراضي لاستخدامه لربط سجل المعاملات حول دفع الرواتب والتبرع والضرائب وضريبة القيمة المضافة عند عدم وجود حساب محدد بالفعل.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=يمكن استخدام هذه الصفحة لتعيين العوامل المستخدمة لعمليات الإغلاق المحاسبية.
 Options=الخيارات
 OptionModeProductSell=وضع المبيعات
@@ -433,7 +443,7 @@ ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=تأكيد الحذف الضخم
-ConfirmMassDeleteBookkeepingWritingQuestion=سيؤدي هذا إلى حذف المعاملة من المحاسبة (سيتم حذف جميع الأسطر المتعلقة بنفس المعاملة) هل أنت متأكد من أنك تريد حذف السجل (السجلات) المحددة %s؟
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=لم يتم تنفيذ بعض خطوات الإعداد الإلزامية ، يرجى إكمالها
@@ -446,7 +456,7 @@ NoJournalDefined=لم يتم تحديد دفتر
 Binded=البنود مرتبطة
 ToBind=بنود للربط
 UseMenuToSetBindindManualy=البنود غير مرتبطة بعد ، استخدم القائمة <a href="%s"> %s </a> لإجراء الربط يدويًا
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=عذرًا ، هذه الوحدة غير متوافقة مع الميزة التجريبية لفواتير الحالة
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=عدم تطابق في التوفيق بين الكود
 AccountancyErrorMismatchBalanceAmount=الرصيد (%s) لا يساوي 0
 AccountancyErrorLetteringBookkeeping=حدثت أخطاء بخصوص المعاملات: %s
@@ -476,9 +486,9 @@ FECFormatMulticurrencyAmount=مبلغ متعدد العملات (Montantdevise)
 FECFormatMulticurrencyCode=كود متعدد العملات (ايديفيز)
 
 DateExport=تاريخ التصدير
-WarningReportNotReliable=تحذير ، هذا التقرير لا يستند إلى دفتر الأستاذ ، لذلك لا يحتوي على معاملة تم تعديلها يدويًا في دفتر الأستاذ. إذا كان تسجيل دفتر اليومية الخاص بك محدثًا ، فسيكون عرض مسك الدفاتر أكثر دقة.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=تقرير دفتر المصاريف
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s حساباً

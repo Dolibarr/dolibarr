@@ -59,8 +59,8 @@ class PartnershipApi extends DolibarrApi
 	 *
 	 * Return an array with partnership informations
 	 *
-	 * @param 	int 	$id ID of partnership
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of partnership
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url	GET partnerships/{id}
 	 *

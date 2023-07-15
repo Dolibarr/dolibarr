@@ -27,6 +27,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -273,11 +274,28 @@ if ($id > 0 || $ref) {
 		$labelfororderfield = 'CreditTransferFile';
 	}
 	print $langs->trans($labelfororderfield).'</td><td>';
-	$relativepath = 'receipts/'.$object->ref.'.xml';
+
 	$modulepart = 'prelevement';
 	if ($object->type == 'bank-transfer') {
 		$modulepart = 'paymentbybanktransfer';
 	}
+
+	if (isModEnabled('multicompany')) {
+		$labelentity = $conf->entity;
+		$relativepath = 'receipts/'.$object->ref.'-'.$labelentity.'.xml';
+
+		if ($type != 'bank-transfer') {
+			$dir = $conf->prelevement->dir_output;
+		} else {
+			$dir = $conf->paymentbybanktransfer->dir_output;
+		}
+		if (!dol_is_file($dir.'/'.$relativepath)) {	// For backward compatibility
+			$relativepath = 'receipts/'.$object->ref.'.xml';
+		}
+	} else {
+		$relativepath = 'receipts/'.$object->ref.'.xml';
+	}
+
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
 	print img_picto('', 'download', 'class="paddingleft"');
 	print '</a>';
@@ -434,7 +452,7 @@ if ($id > 0 || $ref) {
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder liste" width="100%" cellpadding="4">';
+		print '<table class="noborder liste centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
