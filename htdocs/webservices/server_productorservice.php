@@ -1017,16 +1017,13 @@ function getProductsForCategory($authentication, $id, $lang = '')
 		$fuser->getrights();
 
 		$nbmax = 10;
-		if ($fuser->rights->produit->lire) {
+		if ($fuser->hasRight('produit', 'lire')) {
 			$categorie = new Categorie($db);
 			$result = $categorie->fetch($id);
 			if ($result > 0) {
-				$table = "product";
-				$field = "product";
-				$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
-				$sql .= " WHERE fk_categorie = ".((int) $id);
-				$sql .= " ORDER BY fk_".$field." ASC";
-
+				$sql  = "SELECT fk_element FROM ".MAIN_DB_PREFIX."element_category";
+				$sql .= " WHERE fk_category = ".((int) $id);
+				$sql .= " ORDER BY fk_element ASC";
 
 				dol_syslog("getProductsForCategory get id of product into category", LOG_DEBUG);
 				$res = $db->query($sql);
@@ -1035,7 +1032,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 					$tmpproduct = new Product($db);
 					$products = array();
 					while ($rec = $db->fetch_array($res)) {
-						$tmpproduct->fetch($rec['fk_'.$field]);
+						$tmpproduct->fetch($rec['fk_element']);
 						if ($tmpproduct->status > 0) {
 							$dir = (!empty($conf->product->dir_output) ? $conf->product->dir_output : $conf->service->dir_output);
 							$pdir = get_exdir($tmpproduct->id, 2, 0, 0, $tmpproduct, 'product').$tmpproduct->id."/photos/";
@@ -1075,7 +1072,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 							$elementtype = 'product';
 
-							//Retrieve all extrafield for thirdsparty
+							// Retrieve all extrafield for thirdsparty
 							// fetch optionals attributes and labels
 							$extrafields = new ExtraFields($db);
 							$extrafields->fetch_name_optionals_label($elementtype, true);
@@ -1094,11 +1091,12 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 					// Retour
 					$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'products'=> $products
+						'result'=>array('result_code'=>'OK', 'result_label'=>''),
+						'products'=> $products
 					);
 				} else {
-					$errorcode = 'NORECORDS_FOR_ASSOCIATION'; $errorlabel = 'No products associated'.$sql;
+					$errorcode = 'NORECORDS_FOR_ASSOCIATION';
+					$errorlabel = 'No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 					dol_syslog("getProductsForCategory:: ".$errorcode, LOG_DEBUG);
 				}
