@@ -307,7 +307,7 @@ class modProduct extends DolibarrModules
 			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
 		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
-			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cp.fk_categorie = cat.rowid';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_category as cp ON cp.fk_element = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cp.fk_category = cat.rowid';
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lang as l ON l.fk_product = p.rowid';
@@ -330,12 +330,14 @@ class modProduct extends DolibarrModules
 			$this->export_code[$r] = $this->rights_class.'_'.$r;
 			$this->export_label[$r] = "ProductsMultiPrice"; // Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_permission[$r] = array(array("produit", "export"));
-			$this->export_fields_array[$r] = array('p.rowid'=>"Id", 'p.ref'=>"Ref", 'p.label'=>"Label",
+			$this->export_fields_array[$r] = array(
+				'p.rowid'=>"Id", 'p.ref'=>"Ref", 'p.label'=>"Label",
 				'pr.price_base_type'=>"PriceBase", 'pr.price_level'=>"PriceLevel",
 				'pr.price'=>"PriceLevelUnitPriceHT", 'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
 				'pr.price_min'=>"MinPriceLevelUnitPriceHT", 'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx'=>'PriceLevelVATRate',
-				'pr.date_price'=>'DateCreation');
+				'pr.date_price'=>'DateCreation',
+			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
 			}

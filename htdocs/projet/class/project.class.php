@@ -927,8 +927,8 @@ class Project extends CommonObject
 
 		// Remove linked categories.
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_project";
-			$sql .= " WHERE fk_project = ".((int) $this->id);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_category";
+			$sql .= " WHERE fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=6) AND fk_element = ".((int) $this->id);
 
 			$result = $this->db->query($sql);
 			if (!$result) {

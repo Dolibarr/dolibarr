@@ -72,12 +72,12 @@ class BankAccounts extends DolibarrApi
 
 		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."bank_account AS t LEFT JOIN ".MAIN_DB_PREFIX."bank_account_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_account as c";
+			$sql .= ", ".MAIN_DB_PREFIX."element_category as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('bank_account').')';
 		// Select accounts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_account = t.rowid";
+			$sql .= " AND c.fk_category = ".((int) $category)." AND c.fk_element = t.rowid";
 		}
 		// Add sql filters
 		if ($sqlfilters) {

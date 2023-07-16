@@ -1027,8 +1027,8 @@ class ActionComm extends CommonObject
 
 		// remove categorie association
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
-			$sql .= " WHERE fk_actioncomm=".((int) $this->id);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_category";
+			$sql .= " WHERE fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=10) AND fk_element=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {

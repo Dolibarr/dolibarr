@@ -194,8 +194,8 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_categorie = cat.rowid';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = cp.fk_product';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_category as cp ON cp.fk_category = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = cp.fk_element';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON extra.fk_object = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND cat.type = 0';
@@ -239,7 +239,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cf ON cf.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_category as cf ON cf.fk_category = cat.rowid';
 		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = cf.fk_soc';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
@@ -286,8 +286,8 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_categorie = cat.rowid';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = cs.fk_soc';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_category as cs ON cs.fk_category = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = cs.fk_element';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
@@ -315,8 +315,8 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_member as cm ON cm.fk_categorie = cat.rowid';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'adherent as p ON p.rowid = cm.fk_member';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_category as cm ON cm.fk_category = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'adherent as p ON p.rowid = cm.fk_element';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as extra ON cat.rowid = extra.fk_object ';
 		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND cat.type = 3';
@@ -369,8 +369,8 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_contact as cc ON cc.fk_categorie = cat.rowid';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'socpeople as p ON p.rowid = cc.fk_socpeople';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_category as cc ON cc.fk_category = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'socpeople as p ON p.rowid = cc.fk_element';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = p.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_civility as civ ON civ.code = p.civility';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_pays';
@@ -399,8 +399,8 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_project as cp ON cp.fk_categorie = cat.rowid';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'projet as p ON p.rowid = cp.fk_project';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_category as cp ON cp.fk_category = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'projet as p ON p.rowid = cp.fk_element';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_extrafields as extra ON extra.fk_object = p.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
 		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
@@ -425,7 +425,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_user as cu ON cu.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_category as cu ON cu.fk_category = cat.rowid';
 		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'user as p ON p.rowid = cu.fk_user';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON extra.fk_object = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
@@ -480,16 +480,16 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatProdLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cp'=>MAIN_DB_PREFIX.'categorie_product');
-			$this->import_fields_array[$r] = array('cp.fk_categorie'=>"Category*", 'cp.fk_product'=>"Product*");
-			$this->import_regex_array[$r] = array('cp.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=0');
+			$this->import_tables_array[$r] = array('cp'=>MAIN_DB_PREFIX.'element_category');
+			$this->import_fields_array[$r] = array('cp.fk_category'=>"Category*", 'cp.fk_element'=>"Product*");
+			$this->import_regex_array[$r] = array('cp.fk_category'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=0');
 
 			$this->import_convertvalue_array[$r] = array(
-					'cp.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-					'cp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
+					'cp.fk_category'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+					'cp.fk_element'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
-			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"rowid or label", 'cp.fk_product'=>"rowid or ref");
-			$this->import_updatekeys_array[$r] = array('cp.fk_categorie' => 'Category', 'cp.fk_product' => 'ProductRef');
+			$this->import_examplevalues_array[$r] = array('cp.fk_category'=>"rowid or label", 'cp.fk_element'=>"rowid or ref");
+			$this->import_updatekeys_array[$r] = array('cp.fk_category' => 'Category', 'cp.fk_element' => 'ProductRef');
 		}
 
 		// 1 Suppliers
@@ -499,18 +499,18 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatSupLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cs'=>MAIN_DB_PREFIX.'categorie_fournisseur');
-			$this->import_fields_array[$r] = array('cs.fk_categorie'=>"Category*", 'cs.fk_soc'=>"Supplier*");
+			$this->import_tables_array[$r] = array('cs'=>MAIN_DB_PREFIX.'element_category');
+			$this->import_fields_array[$r] = array('cs.fk_category'=>"Category*", 'cs.fk_element'=>"Supplier*");
 			$this->import_regex_array[$r] = array(
-				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=1',
-				'cs.fk_soc'=>'rowid@'.MAIN_DB_PREFIX.'societe:fournisseur>0'
+				'cs.fk_category'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=1',
+				'cs.fk_element'=>'rowid@'.MAIN_DB_PREFIX.'societe:fournisseur>0'
 			);
 
 			$this->import_convertvalue_array[$r] = array(
-					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
+					'cs.fk_category'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+					'cs.fk_element'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or name");
+			$this->import_examplevalues_array[$r] = array('cs.fk_category'=>"rowid or label", 'cs.fk_element'=>"rowid or name");
 		}
 
 		// 2 Customers
@@ -520,18 +520,18 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatCusLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
-			$this->import_fields_array[$r] = array('cs.fk_categorie'=>"Category*", 'cs.fk_soc'=>"Customer*");
+			$this->import_tables_array[$r] = array('cs'=>MAIN_DB_PREFIX.'element_category');
+			$this->import_fields_array[$r] = array('cs.fk_category'=>"Category*", 'cs.fk_element'=>"Customer*");
 			$this->import_regex_array[$r] = array(
-				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=2',
-				'cs.fk_soc'=>'rowid@'.MAIN_DB_PREFIX.'societe:client>0'
+				'cs.fk_category'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=2',
+				'cs.fk_element'=>'rowid@'.MAIN_DB_PREFIX.'societe:client>0'
 			);
 
 			$this->import_convertvalue_array[$r] = array(
-					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
+					'cs.fk_category'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+					'cs.fk_element'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or name");
+			$this->import_examplevalues_array[$r] = array('cs.fk_category'=>"rowid or label", 'cs.fk_element'=>"rowid or name");
 		}
 
 		// 3 Members
@@ -541,15 +541,15 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatMembersLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cm'=>MAIN_DB_PREFIX.'categorie_contact');
-			$this->import_fields_array[$r] = array('cm.fk_categorie'=>"Category*", 'cm.fk_member'=>"Member*");
-			$this->import_regex_array[$r] = array('cm.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=3');
+			$this->import_tables_array[$r] = array('cm'=>MAIN_DB_PREFIX.'element_category');
+			$this->import_fields_array[$r] = array('cm.fk_category'=>"Category*", 'cm.fk_element'=>"Member*");
+			$this->import_regex_array[$r] = array('cm.fk_category'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=3');
 
 			$this->import_convertvalue_array[$r] = array(
-				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cs.fk_member'=>array('rule'=>'fetchidfromref', 'classfile'=>'/adherents/class/adherent.class.php', 'class'=>'Adherent', 'method'=>'fetch', 'element'=>'Member')
+				'cm.fk_category'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+				'cm.fk_element'=>array('rule'=>'fetchidfromref', 'classfile'=>'/adherents/class/adherent.class.php', 'class'=>'Adherent', 'method'=>'fetch', 'element'=>'Member')
 			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_member'=>"rowid or ref");
+			$this->import_examplevalues_array[$r] = array('cm.fk_category'=>"rowid or label", 'cm.fk_element'=>"rowid or ref");
 		}
 
 		// 4 Contacts/Addresses
@@ -559,18 +559,18 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatContactsLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cc'=>MAIN_DB_PREFIX.'categorie_contact');
-			$this->import_fields_array[$r] = array('cc.fk_categorie'=>"Category*", 'cc.fk_socpeople'=>"IdContact*");
+			$this->import_tables_array[$r] = array('cc'=>MAIN_DB_PREFIX.'element_category');
+			$this->import_fields_array[$r] = array('cc.fk_category'=>"Category*", 'cc.fk_element'=>"IdContact*");
 			$this->import_regex_array[$r] = array(
-				'cc.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=4'
-				//'cc.fk_socpeople'=>'rowid@'.MAIN_DB_PREFIX.'socpeople'
+				'cc.fk_category'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=4'
+				//'cc.fk_element'=>'rowid@'.MAIN_DB_PREFIX.'socpeople'
 			);
 
 			$this->import_convertvalue_array[$r] = array(
-				'cc.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				//'cc.fk_socpeople'=>array('rule'=>'fetchidfromref','classfile'=>'/contact/class/contact.class.php','class'=>'Contact','method'=>'fetch','element'=>'Contact')
+				'cc.fk_category'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+				//'cc.fk_element'=>array('rule'=>'fetchidfromref','classfile'=>'/contact/class/contact.class.php','class'=>'Contact','method'=>'fetch','element'=>'Contact')
 			);
-			$this->import_examplevalues_array[$r] = array('cc.fk_categorie'=>"rowid or label", 'cc.fk_socpeople'=>"rowid");
+			$this->import_examplevalues_array[$r] = array('cc.fk_category'=>"rowid or label", 'cc.fk_element'=>"rowid");
 		}
 
 		// 5 Bank accounts, TODO ?
@@ -582,15 +582,15 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatProjectsLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cp'=>MAIN_DB_PREFIX.'categorie_project');
-			$this->import_fields_array[$r] = array('cp.fk_categorie'=>"Category*", 'cp.fk_project'=>"Project*");
-			$this->import_regex_array[$r] = array('cp.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=6');
+			$this->import_tables_array[$r] = array('cp'=>MAIN_DB_PREFIX.'element_category');
+			$this->import_fields_array[$r] = array('cp.fk_category'=>"Category*", 'cp.fk_element'=>"Project*");
+			$this->import_regex_array[$r] = array('cp.fk_category'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=6');
 
 			$this->import_convertvalue_array[$r] = array(
-				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cs.fk_project'=>array('rule'=>'fetchidfromref', 'classfile'=>'/projet/class/project.class.php', 'class'=>'Project', 'method'=>'fetch', 'element'=>'Project')
+				'cp.fk_category'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+				'cp.fk_project'=>array('rule'=>'fetchidfromref', 'classfile'=>'/projet/class/project.class.php', 'class'=>'Project', 'method'=>'fetch', 'element'=>'Project')
 			);
-			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"rowid or label", 'cp.fk_project'=>"rowid or ref");
+			$this->import_examplevalues_array[$r] = array('cp.fk_category'=>"rowid or label", 'cp.fk_element'=>"rowid or ref");
 		}
 
 		// 7 Users
@@ -600,15 +600,15 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatUsersLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cu'=>MAIN_DB_PREFIX.'categorie_user');
-			$this->import_fields_array[$r] = array('cu.fk_categorie'=>"Category*", 'cu.fk_user'=>"User*");
-			$this->import_regex_array[$r] = array('cu.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=7');
+			$this->import_tables_array[$r] = array('cu'=>MAIN_DB_PREFIX.'element_category');
+			$this->import_fields_array[$r] = array('cu.fk_category'=>"Category*", 'cu.fk_user'=>"User*");
+			$this->import_regex_array[$r] = array('cu.fk_category'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=7');
 
 			$this->import_convertvalue_array[$r] = array(
-				'cu.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cu.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
+				'cu.fk_category'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+				'cu.fk_element'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
 			);
-			$this->import_examplevalues_array[$r] = array('cu.fk_categorie'=>"rowid or label", 'cu.fk_user'=>"rowid or login");
+			$this->import_examplevalues_array[$r] = array('cu.fk_category'=>"rowid or label", 'cu.fk_element'=>"rowid or login");
 		}
 
 		// 8 Bank Lines, TODO ?

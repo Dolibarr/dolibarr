@@ -2214,7 +2214,7 @@ class Contrat extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		if (!empty($product_categories)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON cd.fk_contrat = c.rowid";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = cd.fk_product AND cp.fk_categorie IN (".$this->db->sanitize(implode(', ', $product_categories)).")";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_category as cp ON cp.fk_element = cd.fk_product AND cp.fk_category IN (".$this->db->sanitize(implode(', ', $product_categories)).")";
 		}
 		$sql .= " WHERE c.fk_soc =".((int) $this->socid);
 		$sql .= ($option == 'others') ? " AND c.rowid <> ".((int) $this->id) : "";
