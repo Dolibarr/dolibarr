@@ -430,7 +430,7 @@ if ($search_societe) {
 if ($search_fk_project > 0) {
 	$sql .= natural_search('fk_project', $search_fk_project, 2);
 }
-if ($search_fk_contracct > 0) {
+if ($search_fk_contract > 0) {
 	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
 }
 if ($search_date_start) {
