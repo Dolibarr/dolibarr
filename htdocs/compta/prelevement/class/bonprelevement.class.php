@@ -443,7 +443,7 @@ class BonPrelevement extends CommonObject
 							$labelforaddpayment = '(BankTransferPayment)';
 						} else {
 							$modeforaddpayment = 'payment';
-                            $labelforaddpayment = '(WithdrawalPayment)';
+							$labelforaddpayment = '(WithdrawalPayment)';
 						}
 
 						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $bankaccount, '', '');
