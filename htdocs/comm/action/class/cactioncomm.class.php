@@ -178,7 +178,7 @@ class CActionComm
 		if ($morefilter) {
 			$sql .= " AND ".$morefilter;
 		}
-		$sql .= " ORDER BY type, position, module";
+		$sql .= " ORDER BY position, type, module";
 
 		dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
 		$resql = $this->db->query($sql);
