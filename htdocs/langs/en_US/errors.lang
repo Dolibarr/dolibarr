@@ -277,6 +277,7 @@ ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
 ErrorAttributeIsUsedIntoProduct=This attribute is used in one or more product variants
 ErrorAttributeValueIsUsedIntoProduct=This attribute value is used in one or more product variants
 ErrorAjaxRequestFailed=Request failed
+ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
 
 # Warnings

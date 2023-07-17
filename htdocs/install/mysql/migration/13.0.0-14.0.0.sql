@@ -42,6 +42,8 @@
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
 ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 
@@ -779,3 +781,13 @@ ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DE
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_code varchar(3);
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
+
+-- Backport 14.0.0 -> 19.0.0
+ALTER TABLE llx_mrp_mo ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_mrp_mo ADD COLUMN mrptype integer DEFAULT 0;
+ALTER TABLE llx_mrp_mo ADD COLUMN fk_parent_line integer;
+ALTER TABLE llx_mrp_production ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_unit integer DEFAULT NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN fk_default_bom integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;

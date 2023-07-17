@@ -559,6 +559,22 @@ abstract class CommonObject
 	}
 
 	/**
+	 * setErrorsFromObject
+	 *
+	 * @param CommonObject $object commonobject
+	 * @return void
+	 */
+	public function setErrorsFromObject($object)
+	{
+		if (!empty($object->error)) {
+			$this->error = $object->error;
+		}
+		if (!empty($object->errors)) {
+			$this->errors = array_merge($this->errors, $object->errors);
+		}
+	}
+
+	/**
 	 * Method to output saved errors
 	 *
 	 * @return	string		String with errors
@@ -7942,6 +7958,35 @@ abstract class CommonObject
 			if (!$db->query($sql)) {
 				if ($ignoreerrors) {
 					return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+				}
+				//$this->errors = $db->lasterror();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 * This function is meant to be called from replaceProduct with the appropriate tables
+	 * Column name fk_product MUST be used to identify products
+	 *
+	 * @param  DoliDB 	   $dbs			  Database handler
+	 * @param  int 		   $origin_id     Old product id (the product to delete)
+	 * @param  int 		   $dest_id       New product id (the product that will received element of the other)
+	 * @param  string[]    $tables        Tables that need to be changed
+	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
+	 * @return bool						  True if success, False if error
+	 */
+	public static function commonReplaceProduct(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	{
+		foreach ($tables as $table) {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_product = '.((int) $dest_id).' WHERE fk_product = '.((int) $origin_id);
+
+			if (!$dbs->query($sql)) {
+				if ($ignoreerrors) {
+					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
 				//$this->errors = $db->lasterror();
 				return false;

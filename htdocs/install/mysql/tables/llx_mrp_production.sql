@@ -15,24 +15,25 @@
 
 
 CREATE TABLE llx_mrp_production(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	fk_mo integer NOT NULL,
-	origin_id integer,
-	origin_type varchar(10),		-- 'bom' bom production line or 'free' free production line added after Mo creation from bom
-	position integer NOT NULL DEFAULT 0,
-	fk_product integer NOT NULL, 
-	fk_warehouse integer,
-	qty real NOT NULL DEFAULT 1,
-	qty_frozen smallint DEFAULT 0,
-    disable_stock_change smallint DEFAULT 0,
-	batch varchar(128),
-	role varchar(10),				-- 'toconsume' or 'toproduce' (initialized at MO creation), 'consumed' or 'produced' (added after MO validation)
-	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
-	fk_stock_movement integer,		-- id of stock movement when movements are validated
-	date_creation datetime NOT NULL, 
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14)
+                                   rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+                                   fk_mo integer NOT NULL,
+                                   origin_id integer,
+                                   origin_type varchar(10),		-- 'bom' bom production line or 'free' free production line added after Mo creation from bom
+                                   position integer NOT NULL DEFAULT 0,
+                                   fk_product integer NOT NULL,
+                                   fk_warehouse integer,
+                                   qty real NOT NULL DEFAULT 1,
+                                   qty_frozen smallint DEFAULT 0,
+                                   disable_stock_change smallint DEFAULT 0,
+                                   batch varchar(128),
+                                   role varchar(10),				-- 'toconsume' or 'toproduce' (initialized at MO creation), 'consumed' or 'produced' (added after MO validation)
+                                   fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
+                                   fk_stock_movement integer,		-- id of stock movement when movements are validated
+                                   date_creation datetime NOT NULL,
+                                   tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                   fk_user_creat integer NOT NULL,
+                                   fk_user_modif integer,
+                                   import_key varchar(14),
+                                   fk_default_workstation integer DEFAULT NULL
 ) ENGINE=innodb;
 
