@@ -739,7 +739,7 @@ class Mo extends CommonObject
 								$this->error = "BadValueForquantityToConsume";
 								break;
 							} else {
-								$moline->fk_product = $line->fk_product;
+								$moline->fk_product = $this->fk_product;
 								$moline->role = $role;
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
