@@ -946,24 +946,6 @@ class Project extends CommonObject
 			$error++;
 		}
 
-
-		// Delete all child tables
-		if (!$error) {
-			$elements = array('categorie_project'); // elements to delete. TODO Make goodway to delete
-			foreach ($elements as $table) {
-				if (!$error) {
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-					$sql .= " WHERE fk_project = ".((int) $this->id);
-
-					$result = $this->db->query($sql);
-					if (!$result) {
-						$error++;
-						$this->errors[] = $this->db->lasterror();
-					}
-				}
-			}
-		}
-
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_extrafields";
 			$sql .= " WHERE fk_object = ".((int) $this->id);
