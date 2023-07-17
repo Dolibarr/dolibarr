@@ -34,7 +34,7 @@ function workstationAdminPrepareHead()
 
 	$h = 0;
 	$head = array();
-	$head[$h][0] = DOL_URL_ROOT . "/admin/workstation.php";
+	$head[$h][0] = DOL_URL_ROOT."/admin/workstation.php";
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
@@ -60,6 +60,8 @@ function workstationAdminPrepareHead()
 	//	'entity:-tabname:Title:@workstation:/workstation/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'workstation');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'workstation', 'remove');
 
 	return $head;
 }
