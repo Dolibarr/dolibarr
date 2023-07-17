@@ -578,7 +578,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
 if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
-	$sql .= ", cc.fk_category, cc.fk_soc";
+	$sql .= ", cc.fk_category, cc.fk_element";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
