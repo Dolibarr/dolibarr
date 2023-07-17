@@ -306,8 +306,10 @@ if (empty($reshook)) {
 							$stockmove->origin_type = $object->element;
 							$stockmove->origin_id = $object->id;
 							$stockmove->context['mrp_role'] = 'toproduce';
+							$d_sellby = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'month'), GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'day'), GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'year'));
+							$d_eatby = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'month'), GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'day'), GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'year'));
 
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, $d_eatby, $d_sellby, GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -1606,14 +1608,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td>';
-									$sellbyselected = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-'.$line->id.'-'.$i.'-sellbymonth'), GETPOST('batchtoproduce-'.$line->id.'-'.$i.'-sellbyday'), GETPOST('batchtoproduce-'.$line->id.'-'.$i.'-sellbyyear'));
+									$sellbyselected = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'month'), GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'day'), GETPOST('batchtoproduce-date-sellby-'.$line->id.'-'.$i.'year'));
 									if (isset($lessersellbydate) && $sellbyselected === "") $sellbyselected = $lessersellbydate;
 									print $form->selectDate($sellbyselected, 'batchtoproduce-date-sellby-'.$line->id.'-'.$i, '', '', 1);
 									print '</td>';
 								}
 								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 									print '<td>';
-									$eatbyselected = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-'.$line->id.'-'.$i.'-eatbymonth'), GETPOST('batchtoproduce-'.$line->id.'-'.$i.'-eatbyday'), GETPOST('batchtoproduce-'.$line->id.'-'.$i.'-eatbyyear'));
+									$eatbyselected = dol_mktime(0, 0, 0, GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'month'), GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'day'), GETPOST('batchtoproduce-date-eatby-'.$line->id.'-'.$i.'year'));
 									if (isset($lessereatbydate) && $sellbyselected === "") $eatbyselected = $lessereatbydate;
 									print $form->selectDate($eatbyselected, 'batchtoproduce-date-eatby-'.$line->id.'-'.$i, '', '', 1);
 									print '</td>';
