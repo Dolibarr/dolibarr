@@ -1391,8 +1391,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			'url'=>'/mymodule/myobject_list.php',
 			'langs'=>'mymodule@mymodule',
 			'position'=>1000+\$r,
-			'enabled'=>'\$conf->testmodule->enabled',
-			'perms'=>'1',
+			'enabled'=>'\$conf->mymodule->enabled',
+			'perms'=>'\$user->hasRight(\"mymodule\", \"myobject\", \"read\")',
 			'target'=>'',
 			'user'=>2,
 		);
@@ -1406,7 +1406,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
             'langs'=>'mymodule@mymodule',
             'position'=>1000+\$r,
             'enabled'=>'\$conf->mymodule->enabled',
-            'perms'=>'1',
+			'perms'=>'\$user->hasRight(\"mymodule\", \"myobject\", \"read\")',
             'target'=>'',
             'user'=>2,
         );
@@ -1420,7 +1420,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
             'langs'=>'mymodule@mymodule',
             'position'=>1000+\$r,
             'enabled'=>'\$conf->mymodule->enabled',
-            'perms'=>'1',
+			'perms'=>'\$user->hasRight(\"mymodule\", \"myobject\", \"write\")',
             'target'=>'',
             'user'=>2
         );\n";
@@ -2535,7 +2535,13 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 }
 
 // modify a menu
-if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int')) {
+if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST('tabobj')) {
+	$objectname =  GETPOST('tabobj');
+	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+	$objects = dolGetListOfObjectClasses($destdir);
+
+
 	if (empty($cancel)) {
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
@@ -2585,10 +2591,29 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int')) {
 			} else {
 				$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu');
 			}
-			if (GETPOST('enabled') != '0') {
+			if (empty(GETPOST('enabled')) || GETPOST('enabled') != '0') {
 				$menuModify['enabled'] = "\$conf->".strtolower($module)."->enabled";
 			} else {
 				$menuModify['enabled'] = "0";
+			}
+
+			//for extract object and compare it
+			$leftMenuValue = substr($menuModify['fk_menu'], strpos($menuModify['fk_menu'], 'fk_leftmenu=') + strlen('fk_leftmenu='));
+			$found = false;
+			foreach ($objects as $value) {
+				if (strcasecmp($value, $leftMenuValue) === 0) {
+					$found = true;
+					break;
+				}
+			}
+			if ($found) {
+				$objectname = $leftMenuValue;
+			} else {
+				$objectname = 'myobject';
+			}
+
+			if (!empty(GETPOST('perms'))) {
+				$menuModify['perms'] = '$user->hasRight("'.strtolower($module).'", "'.strtolower($objectname).'", "'.GETPOST('perms').'")';
 			}
 
 			if (GETPOST('type', 'alpha') == 'top') {
@@ -4322,6 +4347,9 @@ if ($module == 'initmodule') {
 
 			$menus = $moduleobj->menu;
 
+			$permissions = $moduleobj->rights;
+			$crud = array('read'=>'CRUDRead', 'write'=>'CRUDCreateWrite', 'delete'=>'Delete');
+
 			if ($action == 'deletemenu') {
 				$formconfirms = $form->formconfirm(
 					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
@@ -4408,8 +4436,9 @@ if ($module == 'initmodule') {
 				print '</td>';
 				print '<td class="center">';
 				print '<select class="center maxwidth" name="perms">';
-				print '<option selected value="1">'.$langs->trans("Yes").'</option>';
-				print '<option value="0">'.$langs->trans("No").'</option>';
+				foreach ($crud as $key => $value) {
+					print '<option value="'.$key.'">'.$langs->trans("$value").'</option>';
+				}
 				print '</select>';
 				print '</td>';
 				print '<td class="center"><input type="text" class="center maxwidth50" name="target" value="'.dol_escape_htmltag(GETPOST('target', 'alpha')).'"></td>';
@@ -4433,12 +4462,17 @@ if ($module == 'initmodule') {
 						$propMainmenu = !empty($menu['mainmenu']) ? $menu['mainmenu'] : GETPOST('mainmenu');
 						$propLeftmenu = !empty($menu['leftmenu']) ? $menu['leftmenu'] : GETPOST('leftmenu');
 						$propUrl = !empty($menu['url']) ? $menu['url'] : GETPOST('url', 'alpha');
-						$propPerms = empty($menu['perms']) ?  $menu['perms'] : GETPOST('perms');
+						$propPerms = !empty($menu['perms']) ?  $menu['perms'] : GETPOST('perms');
 						$propUser = !empty($menu['user']) ? $menu['user'] : GETPOST('user');
 						$propTarget = !empty($menu['target']) ? $menu['target'] : GETPOST('target');
 						$propEnabled = empty($menu['enabled']) ? $menu['enabled'] : GETPOST('enabled');
+
+						//Perms
+						$arguments = explode(",", $propPerms);
+						$valPerms = trim($arguments[2], '  " "\)');
+
 						if ($action == 'editmenu' && GETPOST('menukey', 'int') == $i) {
-							//var_dump($propFk_menu);exit;
+							//var_dump($propPerms);exit;
 							print '<tr class="oddeven">';
 							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 							print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -4474,7 +4508,7 @@ if ($module == 'initmodule') {
 							print '</select>';
 							print '</td>';
 							print '<td class="left"><input type="text" class="left maxwidth75" name="mainmenu" value="'.dol_escape_htmltag($propMainmenu).'" readonly></td>';
-							print '<td class="left"><input type="text" class="left maxwidth" name="leftmenu" value="'.dol_escape_htmltag($propLeftmenu).'"></td>';
+							print '<td class="left"><input type="text" class="left maxwidth" name="leftmenu" value="'.dol_escape_htmltag($propLeftmenu).'" readonly></td>';
 							print '<td class="left"><input type="text" class="left maxwidth" name="url" value="'.dol_escape_htmltag($propUrl).'"></td>';
 							print '<td class="left"><input type="text" class="left maxwidth" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
 							print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.(1000+$r-1).'" readonly></td>';
@@ -4490,11 +4524,11 @@ if ($module == 'initmodule') {
 							print '</td>';
 							print '<td class="center">';
 							print '<select class="center maxwidth" name="perms">';
-							print '<option selected value="'.dol_escape_htmltag($propPerms).'">'.(dol_escape_htmltag($propPerms) == '0' ? $langs->trans('No') : $langs->trans('Yes')).'</option>';
-							if ($propPerms != '0') {
-								print '<option value="0">'.$langs->trans("No").'</option>';
-							} else {
-								print '<option value="1">'.$langs->trans("Yes").'</option>';
+							print '<option selected value="'.dol_escape_htmltag($propPerms).'">'.dol_escape_htmltag($langs->trans($crud[$valPerms])).'</option>';
+							foreach ($crud as $key => $value) {
+								if ($valPerms != $key) {
+									print '<option value="'.$key.'">'.$langs->trans("$value").'</option>';
+								}
 							}
 							print '</select>';
 							print '</td>';
@@ -4548,9 +4582,12 @@ if ($module == 'initmodule') {
 							print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['enabled']).'">';
 							print (dol_escape_htmltag($menu['enabled']) == '0' ? $langs->trans("Hide") : $langs->trans("Show"));
 							print '</td>';
-
 							print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['perms']).'">';
-							print (dol_escape_htmltag($menu['perms'])== '1' ? $langs->trans("Yes") : $langs->trans("No"));
+							if (strpos($menu['perms'], "\$user->hasRight") !== 0) {
+								print '';
+							} else {
+								print (dol_escape_htmltag($langs->trans($crud[$valPerms])) );
+							}
 							print '</td>';
 
 							print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['target']).'">';
