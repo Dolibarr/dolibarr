@@ -2115,7 +2115,10 @@ class ExtraFields
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 						$nofillrequired++;
-						$error_field_required[] = $langs->transnoentitiesnoconv($value);
+						if (!empty($this->attributes[$object->table_element]['langfile'][$key])) {
+							$langs->load($this->attributes[$object->table_element]['langfile'][$key]);
+						}
+						$error_field_required[$key] = $langs->transnoentitiesnoconv($value);
 					}
 				}
 
