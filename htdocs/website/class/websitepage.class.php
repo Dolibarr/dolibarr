@@ -58,7 +58,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	protected $childtablesoncascade = array('categorie_website_page');
+	protected $childtablesoncascade = array();
 
 
 	/**
@@ -127,6 +127,16 @@ class WebsitePage extends CommonObject
 	 * @var string id of external object
 	 */
 	public $fk_object;
+
+	/**
+	 * @var int id user create
+	 */
+	public $fk_user_creat;
+
+	/**
+	 * @var int id user modif
+	 */
+	public $fk_user_modif;
 
 	const STATUS_DRAFT = 0;			// offline
 	const STATUS_VALIDATED = 1;		// online
@@ -598,6 +608,15 @@ class WebsitePage extends CommonObject
 		global $conf;
 
 		$error = 0;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.'element_category';
+		$sql .= " WHERE fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=11) AND fk_element = ".(int) $this->id;
+
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$error++;
+			$this->errors[] = $this->db->lasterror();
+		}
 
 		// Delete all child tables
 		if (!$error) {
