@@ -1862,7 +1862,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					console.log("(Produce batch) Define who is the lesser date - lesser date : ", lesserdate, " - current date : ", date, date == null);
 					if (lesserdate != null && (date == null || lesserdate != date)) {
 						var newdate = formatDate(lesserdate, '<?php print $langs->trans("FormatDateShortJavaInput") ?>');
-						$(item).val(newdate);
+						$(item).val(newdate).change();
 						console.log("Set produce date: ", newdate);
 					}
 				});
