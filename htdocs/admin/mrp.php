@@ -472,6 +472,15 @@ print '<input type="submit" class="button button-edit" value="'.$langs->trans("M
 print "</td></tr>\n";
 print '</form>';
 
+// Enable auto set remaining quantities to be consumed
+print '<tr class="oddeven">';
+print '<td>' . $langs->trans("MrpEnableAutoSetRemainingQuantitiesToBeConsumed") . '</td>';
+print '<td class="right">';
+print ajax_constantonoff("MRP_AUTO_SET_REMAINING_QUANTITIES_TO_BE_CONSUMED", array(), $conf->entity);
+print '</td>';
+print "<td>&nbsp;</td>\n";
+print '</tr>';
+
 print '</table>';
 print '<br>';
 
