@@ -98,6 +98,7 @@ class mailing_fraise extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
+		global $conf;
 		$sql  = "SELECT count(distinct(a.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
@@ -236,7 +237,7 @@ class mailing_fraise extends MailingTargets
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $langs, $_POST;
+		global $conf, $langs, $_POST;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("members", "companies"));
@@ -253,8 +254,8 @@ class mailing_fraise extends MailingTargets
 		$sql .= " a.datefin, a.civility as civility_id, a.login, a.societe"; // Other fields
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		if (GETPOST('filter_category', 'int') > 0) {
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie AND c.rowid = ".((int) GETPOST('filter_category', 'int'));
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_category as cm ON cm.fk_element = a.rowid";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_category AND c.rowid = ".((int) GETPOST('filter_category', 'int'));
 		}
 		$sql .= " , ".MAIN_DB_PREFIX."adherent_type as ta";
 		$sql .= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''"; // Note that null != '' is false

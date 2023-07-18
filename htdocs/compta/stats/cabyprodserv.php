@@ -338,11 +338,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 		}
 
 		$sql .= " AND (p.rowid IN ";
-		$sql .= " (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product cp WHERE ";
+		$sql .= " (SELECT fk_element FROM ".MAIN_DB_PREFIX."element_category as cp WHERE ";
 		if ($subcat) {
-			$sql .= "cp.fk_categorie IN (".$db->sanitize($listofcatsql).")";
+			$sql .= "cp.fk_category IN (".$db->sanitize($listofcatsql).")";
 		} else {
-			$sql .= "cp.fk_categorie = ".((int) $selected_cat);
+			$sql .= "cp.fk_category = ".((int) $selected_cat);
 		}
 		$sql .= "))";
 	}
