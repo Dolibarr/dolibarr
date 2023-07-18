@@ -2505,7 +2505,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			'langs' => strtolower($module)."@".strtolower($module),
 			'position' => '',
 			'enabled' => GETPOST('enabled', 'alpha'),
-			'perms' => GETPOST('perms', 'alpha'),
+			'perms' => '$user->hasRight("'.strtolower($module).'", "'.GETPOST('objects', 'alpha').'", "'.GETPOST('perms', 'alpha').'")',
 			'target' => GETPOST('target', 'alpha'),
 			'user' => GETPOST('user', 'alpha'),
 		);
@@ -4350,6 +4350,17 @@ if ($module == 'initmodule') {
 			$permissions = $moduleobj->rights;
 			$crud = array('read'=>'CRUDRead', 'write'=>'CRUDCreateWrite', 'delete'=>'Delete');
 
+			//grouped permissions
+			$groupedRights = array();
+			foreach ($permissions as $right) {
+				$key = $right[4];
+				if (!isset($groupedRights[$key])) {
+					$groupedRights[$key] = array();
+				}
+				$groupedRights[$key][] = $right;
+			}
+				$groupedRights_json = json_encode($groupedRights);
+
 			if ($action == 'deletemenu') {
 				$formconfirms = $form->formconfirm(
 					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
@@ -4434,11 +4445,14 @@ if ($module == 'initmodule') {
 				print '<option value="0">'.$langs->trans("Hide").'</option>';
 				print '</select>';
 				print '</td>';
-				print '<td class="center">';
-				print '<select class="center maxwidth" name="perms">';
-				foreach ($crud as $key => $value) {
-					print '<option value="'.$key.'">'.$langs->trans("$value").'</option>';
+				print '<td class="left">';
+				print '<select class="center maxwidth" name="objects" id="objects">';
+				print '<option value=""></option>';
+				foreach ($objects as $value) {
+					print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
 				}
+				print '</select>';
+				print '<select class="center maxwidth hideSelect" name="perms" id="perms">';
 				print '</select>';
 				print '</td>';
 				print '<td class="center"><input type="text" class="center maxwidth50" name="target" value="'.dol_escape_htmltag(GETPOST('target', 'alpha')).'"></td>';
@@ -4470,6 +4484,7 @@ if ($module == 'initmodule') {
 						//Perms
 						$arguments = explode(",", $propPerms);
 						$valPerms = trim($arguments[2], '  " "\)');
+						$objPerms = trim($arguments[1], '  " "\)');
 
 						if ($action == 'editmenu' && GETPOST('menukey', 'int') == $i) {
 							//var_dump($propPerms);exit;
@@ -4522,14 +4537,17 @@ if ($module == 'initmodule') {
 							}
 							print '</select>';
 							print '</td>';
-							print '<td class="center">';
-							print '<select class="center maxwidth" name="perms">';
-							print '<option selected value="'.dol_escape_htmltag($propPerms).'">'.dol_escape_htmltag($langs->trans($crud[$valPerms])).'</option>';
-							foreach ($crud as $key => $value) {
-								if ($valPerms != $key) {
-									print '<option value="'.$key.'">'.$langs->trans("$value").'</option>';
+							print '<td class="left">';
+							print '<select class="center maxwidth" name="objects">';
+							print '<option selected value="'.dol_escape_htmltag($objPerms).'">'.dol_escape_htmltag($objPerms).'</option>';
+							foreach ($objects as $value) {
+								if ($objPerms != strtolower($value)) {
+									print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
 								}
 							}
+							print '</select>';
+							print '<select class="center maxwidth" name="perms">';
+
 							print '</select>';
 							print '</td>';
 							print '<td class="center"><input type="text" class="center maxwidth50" name="target" value="'.dol_escape_htmltag($propTarget).'"></td>';
@@ -4620,6 +4638,43 @@ if ($module == 'initmodule') {
 
 				print '</table>';
 				print '</div>';
+				// display permissions for each object
+				print '<script>
+				$(document).ready(function() {
+					var groupedRights = ' . $groupedRights_json . ';
+					var objectsSelect = $("select[id=\'objects\']");
+					var permsSelect = $("select[id=\'perms\']");
+				
+					objectsSelect.change(function() {
+						var selectedObject = $(this).val();
+				
+						permsSelect.empty();
+				
+						var rights = groupedRights[selectedObject];
+				
+						if (rights) {
+							for (var i = 0; i < rights.length; i++) {
+								var right = rights[i];
+								var option = $("<option></option>").attr("value", right[5]).text(right[5]);
+								permsSelect.append(option);
+							}
+						} else {
+							var option = $("<option></option>").attr("value", "read").text("read");
+								permsSelect.append(option);
+						}
+						
+						if (selectedObject !== "" && selectedObject !== null && rights) {
+							permsSelect.show();
+						} else {
+							permsSelect.hide();
+						}
+						if (objectsSelect.val() === "" || objectsSelect.val() === null) {
+							permsSelect.hide();
+						}
+					});
+				});
+				</script>';
+
 
 				print '</form>';
 			} else {
