@@ -731,7 +731,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				$sql .= " AND s.fournisseur = ".((int) $val);
 			}
 			if ($key == 'category' && (int) $val > 0) {
-				$sql .= " AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie = ".((int) $val).") ";
+				$sql .= " AND s.rowid IN (SELECT fk_element FROM ".MAIN_DB_PREFIX."element_category WHERE fk_category = ".((int) $val).") ";
 			}
 		}
 		dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);

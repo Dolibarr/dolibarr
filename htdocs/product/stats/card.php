@@ -396,7 +396,7 @@ if ($result || !($id > 0)) {
 						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
 					}
 					if ($search_categ == -2) {
-						$morefilters = ' AND NOT EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE d.fk_product = cp.fk_product)';
+						$morefilters = ' AND NOT EXISTS (SELECT cp.fk_element FROM '.MAIN_DB_PREFIX.'element_category as cp WHERE d.fk_product = cp.fk_element AND cp.fk_category IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'categorie WHERE type=0))';
 					}
 
 					if ($key == 'propal') {

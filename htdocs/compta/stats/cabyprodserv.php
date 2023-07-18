@@ -301,7 +301,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= ",".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_category as cp ON p.rowid = cp.fk_element";
 	}
 
 	$parameters = array();
@@ -323,7 +323,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND l.product_type = ".((int) $selected_type);
 	}
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " AND cp.fk_product is null";
+		$sql .= " AND cp.fk_element is null AND cp.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=0)";
 	} elseif ($selected_cat > 0) {	// Into a specific category
 		if ($subcat) {
 			$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);

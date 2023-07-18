@@ -103,8 +103,8 @@ if ($mode == 'customer') {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
 	if (is_array($custcats) && !empty($custcats)) {
-		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_category as cat ON (f.fk_soc = cat.fk_element)';
+		$stats->where .= ' AND cat.fk_category IN ('.$db->sanitize(implode(',', $custcats)).')';
 	}
 }
 if ($mode == 'supplier') {
@@ -112,8 +112,8 @@ if ($mode == 'supplier') {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
 	if (is_array($custcats) && !empty($custcats)) {
-		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_category as cat ON (f.fk_soc = cat.fk_element)';
+		$stats->where .= ' AND cat.fk_category IN ('.$db->sanitize(implode(',', $custcats)).')';
 	}
 }
 
