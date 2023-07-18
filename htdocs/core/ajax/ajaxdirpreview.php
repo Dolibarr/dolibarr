@@ -138,7 +138,7 @@ if (empty($modulepart)) {
 }
 
 // Check permissions
-if ($modulepart == 'ecm') {
+if (in_array('ecm',$modulepart) || $modulepart == 'ecm') {
 	if (!$user->hasRight('ecm', 'read')) {
 		accessforbidden();
 	}
