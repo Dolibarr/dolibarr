@@ -179,7 +179,7 @@ if ($action == 'getProducts') {
 				$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 				$sql .= " AND ref = '" . $db->escape($barcode_value_list['ref']) . "'";
 				if ($filteroncategids) {
-					$sql .= " AND EXISTS (SELECT cp.fk_product FROM " . $db->prefix() . "categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN (".$db->sanitize($filteroncategids)."))";
+					$sql .= " AND EXISTS (SELECT cp.fk_element FROM " . $db->prefix() . "element_categoriy as cp WHERE cp.fk_element = p.rowid AND cp.fk_category IN (".$db->sanitize($filteroncategids)."))";
 				}
 				$sql .= " AND tosell = 1";
 				$sql .= " AND (barcode IS NULL OR barcode <> '" . $db->escape($term) . "')";
@@ -269,7 +269,7 @@ if ($action == 'getProducts') {
 
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
-		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
+		$sql .= ' AND EXISTS (SELECT cp.fk_element FROM '.MAIN_DB_PREFIX.'element_category as cp WHERE cp.fk_element = p.rowid AND cp.fk_category IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND p.tosell = 1';
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {

@@ -124,7 +124,7 @@ class Projects extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
+			$sql .= ", ".MAIN_DB_PREFIX."element_category as c";
 		}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -146,7 +146,7 @@ class Projects extends DolibarrApi
 		}
 		// Select projects of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_project = t.rowid ";
+			$sql .= " AND c.fk_category = ".((int) $category)." AND c.fk_element = t.rowid ";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
