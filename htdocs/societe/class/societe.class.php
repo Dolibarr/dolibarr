@@ -4141,10 +4141,10 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		if ($categorie_id > 0 && $this->id > 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_soc) ";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_category (fk_category, fk_element) ";
 			$sql .= " VALUES (".((int) $categorie_id).", ".((int) $this->id).")";
 
-			if ($resql = $this->db->query($sql)) {
+			if ($this->db->query($sql)) {
 				return 0;
 			}
 		} else {
