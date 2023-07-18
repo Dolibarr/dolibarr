@@ -3119,6 +3119,7 @@ class EmailCollector extends CommonObject
 							if (!is_object($hookmanager)) {
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
+								$hookmanager->initHooks(['emailcolector']);
 							}
 
 							$parameters = array(
@@ -3293,7 +3294,7 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    UID email
-	 * @param 	string $destdir	    Target dir for attachments
+	 * @param 	string $destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return 	void
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
@@ -3346,7 +3347,7 @@ class EmailCollector extends CommonObject
 	 * @param 	string		$mid			Part no
 	 * @param 	Object		$p              Object p
 	 * @param   string      $partno         Partno
-	 * @param 	string 		$destdir	    Target dir for attachments
+	 * @param 	string 		$destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return	void
 	 */
 	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
@@ -3388,38 +3389,40 @@ class EmailCollector extends CommonObject
 			// filename may be encoded, so see imap_mime_header_decode()
 			$attachments[$filename] = $data; // this is a problem if two files have same name
 
-			// Get file name (with extension)
-			$file_name_complete =  $params['filename'];
+			if (strlen($destdir)) {
+				if (substr($destdir,-1) != '/') $destdir .= '/';
 
+				// Get file name (with extension)
+				$file_name_complete = $params['filename'];
+				$destination = $destdir.$file_name_complete;
 
-			$destination = $destdir.'/'.$file_name_complete;
+				// Extract file extension
+				$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
 
-			// Extract file extension
-			$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
+				// Extract file name without extension
+				$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
 
-			// Extract file name without extension
-			$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
+				// Save an original file name variable to track while renaming if file already exists
+				$file_name_original = $file_name;
 
-			// Save an original file name variable to track while renaming if file already exists
-			$file_name_original = $file_name;
+				// Increment file name by 1
+				$num = 1;
 
-			// Increment file name by 1
-			$num = 1;
+				/**
+				 * Check if the same file name already exists in the upload folder,
+				 * append increment number to the original filename
+				 */
+				while (file_exists($destdir.$file_name.".".$extension)) {
+					$file_name = $file_name_original . ' (' . $num . ')';
+					$file_name_complete = $file_name . "." . $extension;
+					$destination = $destdir.$file_name_complete;
+					$num++;
+				}
 
-			/**
-			 * Check if the same file name already exists in the upload folder,
-			 * append increment number to the original filename
-			 */
-			while (file_exists($destdir."/".$file_name.".".$extension)) {
-				$file_name = $file_name_original . ' (' . $num . ')';
-				$file_name_complete = $file_name . "." . $extension;
-				$destination = $destdir.'/'.$file_name_complete;
-				$num++;
+				$destination = dol_sanitizePathName($destination);
+
+				file_put_contents($destination, $data);
 			}
-
-			$destination = dol_sanitizePathName($destination);
-
-			file_put_contents($destination, $data);
 		}
 
 		// TEXT
@@ -3450,7 +3453,7 @@ class EmailCollector extends CommonObject
 		// SUBPART RECURSION
 		if (!empty($p->parts)) {
 			foreach ($p->parts as $partno0 => $p2) {
-				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1)); // 1.2, 1.2.1, etc.
+				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1), $destdir); // 1.2, 1.2.1, etc.
 			}
 		}
 	}
