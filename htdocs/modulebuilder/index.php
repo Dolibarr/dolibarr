@@ -4353,15 +4353,15 @@ if ($module == 'initmodule') {
 				$groupedRights_json = json_encode($groupedRights);
 
 			if ($action == 'deletemenu') {
-				$formconfirms = $form->formconfirm(
-					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
-					$langs->trans('Delete'),
-					$langs->trans('Confirm Delete Menu', GETPOST('menukey', 'int')),
-					'confirm_deletemenu',
-					'',
-					0,
-					1
-				);
+					$formconfirms = $form->formconfirm(
+						$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
+						$langs->trans('Delete'),
+						($menus[GETPOST('menukey')]['fk_menu'] === 'fk_mainmenu='.strtolower($module) ? $langs->trans('Warning: you will delete all menus linked to this one.', GETPOST('menukey', 'int')) : $langs->trans('Confirm Delete Menu', GETPOST('menukey', 'int'))),
+						'confirm_deletemenu',
+						'',
+						0,
+						1
+					);
 				print $formconfirms;
 			}
 			if ($action != 'editfile' || empty($file)) {
@@ -4426,8 +4426,8 @@ if ($module == 'initmodule') {
 				print '</select>';
 				print '</td>';
 				print '<td class="left"><input type="text" class="left maxwidth" name="mainmenu" value="'.(empty(GETPOST('mainmenu')) ? strtolower($module) : dol_escape_htmltag(GETPOST('mainmenu', 'alpha'))).'" readonly></td>';
-				print '<td class="center"><input type="text" class="left maxwidth" name="leftmenu" value="'.dol_escape_htmltag(GETPOST('leftmenu', 'alpha')).'"></td>';
-				print '<td class="left"><input type="text" class="left maxwidth" name="url" value="'.dol_escape_htmltag(GETPOST('url', 'alpha')).'"></td>';
+				print '<td class="center"><input id="leftmenu" type="text" class="left maxwidth" name="leftmenu" value="'.dol_escape_htmltag(GETPOST('leftmenu', 'alpha')).'"></td>';
+				print '<td class="left"><input id="url" type="text" class="left maxwidth" name="url" value="'.dol_escape_htmltag(GETPOST('url', 'alpha')).'"></td>';
 				print '<td class="left"><input type="text" class="left maxwidth" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
 				print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.(1000+$r).'" readonly></td>';
 				print '<td class="center">';
@@ -4642,8 +4642,16 @@ if ($module == 'initmodule') {
 
 				print '</table>';
 				print '</div>';
+				print '</form>';
 				print '<script>
 				$(document).ready(function() {
+					//for fill in auto url
+					$("#leftmenu").on("input", function() {
+						var inputLeftMenu = $("#leftmenu").val();
+						var url = "/'.strtolower($module).'/"+ inputLeftMenu+".php";
+						$("#url").val(url);
+					  });
+
 					var groupedRights = ' . $groupedRights_json . ';
 					var objectsSelect = $("select[id=\'objects\']");
 					var permsSelect = $("select[id=\'perms\']");
@@ -4677,7 +4685,7 @@ if ($module == 'initmodule') {
 					});
 				});
 				</script>';
-				print '</form>';
+
 				// display permissions for each object
 			} else {
 				$fullpathoffile = dol_buildpath($file, 0);
