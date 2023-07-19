@@ -358,7 +358,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validation automati
 WarningModuleNeedRefrech = Le module <b>%s</b> a été désactivé. N'oubliez pas de le réactiver
 WarningPermissionAlreadyExist=Autorisations existantes pour cet objet
 
-SwissQrOnlyVIR = La facture SwissQR ne peut être ajoutée que sur les factures configurées pour être payées par prélèvement automatique.
+SwissQrOnlyVIR = La facture SwissQR ne peut être ajoutée que sur les factures configurées pour être payées par virement.
 SwissQrCreditorAddressInvalid = L'adresse du créancier n'est pas valide (le code postal et la ville sont-ils définis ? (%s)
 SwissQrCreditorInformationInvalid = Les informations sur le créancier ne sont pas valides pour l'IBAN (%s) : %s
 SwissQrIbanNotImplementedYet = QR-IBAN pas encore implémenté
