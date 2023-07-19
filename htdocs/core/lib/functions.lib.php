@@ -11003,7 +11003,7 @@ function getElementProperties($element_type)
 		'element_properties' => $element_properties
 	);
 
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters);
+	$reshook = $hookmanager->executeHooks('getElementProperties', $parameters);
 
 	if ($reshook) {
 		$element_properties = $hookmanager->resArray;
