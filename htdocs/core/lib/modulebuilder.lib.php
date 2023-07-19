@@ -949,7 +949,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		array_push($menus, $menuWantTo);
 	} elseif ($action == 2 && !empty($key) && !empty($menuWantTo)) {
 		// update right from permissions array
-
+		$urlCounter=0;
 		// check if the values already exists
 		foreach ($menus as $index => $menu) {
 			if ($index !== $key) {
@@ -958,12 +958,12 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 						$counter++;
 					}
 					if (strcasecmp(str_replace(' ', '', $menu['url']), str_replace(' ', '', $menuWantTo['url'])) === 0) {
-						$counter++;
+						$urlCounter++;
 					}
 				}
 			}
 		}
-		if (!$counter) {
+		if (!$counter && $urlCounter < 2) {
 			$menus[$key] = $menuWantTo;
 		} else {
 			$errors++;

@@ -2522,6 +2522,10 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 		} else {
 			$menuToAdd['enabled'] = "0";
 		}
+		if (empty(GETPOST('objects'))) {
+			$menuToAdd['perms'] = '1';
+		}
+
 		$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuToAdd, null, 1);
 
 		clearstatcache(true);
@@ -2580,7 +2584,7 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 				'langs' => strtolower($module)."@".strtolower($module),
 				'position' => '',
 				'enabled' => GETPOST('enabled', 'alpha'),
-				'perms' => GETPOST('perms', 'alpha'),
+				'perms' => '',
 				'target' => GETPOST('target', 'alpha'),
 				'user' => GETPOST('user', 'alpha'),
 			);
@@ -2596,24 +2600,11 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 			} else {
 				$menuModify['enabled'] = "0";
 			}
-
-			//for extract object and compare it
-			$leftMenuValue = substr($menuModify['fk_menu'], strpos($menuModify['fk_menu'], 'fk_leftmenu=') + strlen('fk_leftmenu='));
-			$found = false;
-			foreach ($objects as $value) {
-				if (strcasecmp($value, $leftMenuValue) === 0) {
-					$found = true;
-					break;
-				}
+			if (!empty(GETPOST('perms')) && !empty(GETPOST('objects'))) {
+				$menuModify['perms'] = '$user->hasRight("'.strtolower($module).'", "'.GETPOST('objects', 'alpha').'", "'.GETPOST('perms', 'alpha').'")';
 			}
-			if ($found) {
-				$objectname = $leftMenuValue;
-			} else {
-				$objectname = 'myobject';
-			}
-
-			if (!empty(GETPOST('perms'))) {
-				$menuModify['perms'] = '$user->hasRight("'.strtolower($module).'", "'.strtolower($objectname).'", "'.GETPOST('perms').'")';
+			if (empty(GETPOST('objects'))) {
+				$menuModify['perms'] = '1';
 			}
 
 			if (GETPOST('type', 'alpha') == 'top') {
@@ -4537,18 +4528,31 @@ if ($module == 'initmodule') {
 							}
 							print '</select>';
 							print '</td>';
-							print '<td class="left">';
-							print '<select class="center maxwidth" name="objects">';
-							print '<option selected value="'.dol_escape_htmltag($objPerms).'">'.dol_escape_htmltag($objPerms).'</option>';
-							foreach ($objects as $value) {
-								if ($objPerms != strtolower($value)) {
-									print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
+							print '<td class="center">';
+							if (!empty($objPerms)) {
+								print '<input type="hidden" name="objects" value="'.$objPerms.'" />';
+								print '<select class="center maxwidth" name="perms">';
+								print '<option selected value="'.dol_escape_htmltag($valPerms).'">'.dol_escape_htmltag($langs->trans($crud[$valPerms])).'</option>';
+								foreach ($crud as $key => $val) {
+									if ($valPerms != $key) {
+										print '<option value="'.dol_escape_htmltag($key).'">'.dol_escape_htmltag($langs->trans($val)).'</option>';
+									}
 								}
+								print '</select>';
+							} else {
+								print '<select class="center maxwidth" name="objects">';
+								print '<option></option>';
+								foreach ($objects as $obj) {
+									print '<option value="'.dol_escape_htmltag(strtolower($obj)).'">'.dol_escape_htmltag($obj).'</option>';
+								}
+								print '</select>';
+								print '<select class="center maxwidth" name="perms">';
+								foreach ($crud as $key => $val) {
+									print '<option value="'.dol_escape_htmltag($key).'">'.dol_escape_htmltag($key).'</option>';
+								}
+								print '</select>';
 							}
-							print '</select>';
-							print '<select class="center maxwidth" name="perms">';
 
-							print '</select>';
 							print '</td>';
 							print '<td class="center"><input type="text" class="center maxwidth50" name="target" value="'.dol_escape_htmltag($propTarget).'"></td>';
 							print '<td class="center"><select class="center maxwidth10" name="user"><option value="2">'.$langs->trans("AllMenus").'</option><option value="0">'.$langs->trans("Internal").'</option><option value="1">'.$langs->trans("External").'</option></select></td>';
@@ -4638,7 +4642,6 @@ if ($module == 'initmodule') {
 
 				print '</table>';
 				print '</div>';
-				// display permissions for each object
 				print '<script>
 				$(document).ready(function() {
 					var groupedRights = ' . $groupedRights_json . ';
@@ -4674,9 +4677,8 @@ if ($module == 'initmodule') {
 					});
 				});
 				</script>';
-
-
 				print '</form>';
+				// display permissions for each object
 			} else {
 				$fullpathoffile = dol_buildpath($file, 0);
 
