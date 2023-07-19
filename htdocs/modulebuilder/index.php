@@ -2613,7 +2613,6 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 			}
 			if (!$error) {
 				//update menu
-				//var_dump($menuModify);exit;
 				$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
 
 				clearstatcache(true);
