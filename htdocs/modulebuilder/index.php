@@ -2595,10 +2595,10 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 			} else {
 				$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu');
 			}
-			if (empty(GETPOST('enabled')) || GETPOST('enabled') != '0') {
+			if (GETPOST('enabled') != '0') {
 				$menuModify['enabled'] = "\$conf->".strtolower($module)."->enabled";
 			} else {
-				$menuModify['enabled'] = "0";
+				$menuModify['enabled'] = '0';
 			}
 			if (!empty(GETPOST('perms')) && !empty(GETPOST('objects'))) {
 				$menuModify['perms'] = '$user->hasRight("'.strtolower($module).'", "'.GETPOST('objects', 'alpha').'", "'.GETPOST('perms', 'alpha').'")';
@@ -2613,6 +2613,7 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 			}
 			if (!$error) {
 				//update menu
+				//var_dump($menuModify);exit;
 				$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
 
 				clearstatcache(true);
@@ -4470,7 +4471,7 @@ if ($module == 'initmodule') {
 						$propPerms = !empty($menu['perms']) ?  $menu['perms'] : GETPOST('perms');
 						$propUser = !empty($menu['user']) ? $menu['user'] : GETPOST('user');
 						$propTarget = !empty($menu['target']) ? $menu['target'] : GETPOST('target');
-						$propEnabled = empty($menu['enabled']) ? $menu['enabled'] : GETPOST('enabled');
+						$propEnabled = !empty($menu['enabled']) ? $menu['enabled'] : GETPOST('enabled');
 
 						//Perms
 						$arguments = explode(",", $propPerms);
@@ -4520,11 +4521,11 @@ if ($module == 'initmodule') {
 							print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.(1000+$r-1).'" readonly></td>';
 							print '<td class="left">';
 							print '<select class="center maxwidth" name="enabled">';
-							print '<option value="'.dol_escape_htmltag($propEnabled).'">'.(dol_escape_htmltag($propEnabled) == '0' ? $langs->trans('Hide') : $langs->trans('Show')).'</option>';
-							if ($propEnabled != '0') {
-								print '<option value="0" >'.$langs->trans("Hide").'</option>';
+							print '<option selected value="'.dol_escape_htmltag($propEnabled).'">'.(dol_escape_htmltag($propEnabled) == '' ? $langs->trans('Hide') : $langs->trans('Show')).'</option>';
+							if ($propEnabled == '') {
+								print '<option value="1" >'.$langs->trans("Show").'</option>';
 							} else {
-								print '<option value="1">'.$langs->trans("Show").'</option>';
+								print '<option value="0">'.$langs->trans("Hide").'</option>';
 							}
 							print '</select>';
 							print '</td>';
@@ -4648,8 +4649,12 @@ if ($module == 'initmodule') {
 					//for fill in auto url
 					$("#leftmenu").on("input", function() {
 						var inputLeftMenu = $("#leftmenu").val();
-						var url = "/'.strtolower($module).'/"+ inputLeftMenu+".php";
-						$("#url").val(url);
+						if (inputLeftMenu !== "") {
+							var url = "/'.strtolower($module).'/"+ inputLeftMenu+".php";
+							$("#url").val(url);
+						}else {
+							$("#url").val("");
+						}
 					  });
 
 					var groupedRights = ' . $groupedRights_json . ';
