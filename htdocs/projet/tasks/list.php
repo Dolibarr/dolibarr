@@ -501,10 +501,10 @@ if ($searchCategoryCustomerOperator == 1) {
 	}
 	if (!empty($existsCategoryCustomerList)) {
 		$sqlCategoryCustomerExists = " EXISTS (";
-		$sqlCategoryCustomerExists .= " SELECT cat_cus.fk_soc";
-		$sqlCategoryCustomerExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
-		$sqlCategoryCustomerExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
-		$sqlCategoryCustomerExists .= " AND cat_cus.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryCustomerList)).")";
+		$sqlCategoryCustomerExists .= " SELECT cat_cus.fk_element";
+		$sqlCategoryCustomerExists .= " FROM ".$db->prefix()."element_category AS cat_cus";
+		$sqlCategoryCustomerExists .= " WHERE cat_cus.fk_element = p.fk_soc";
+		$sqlCategoryCustomerExists .= " AND cat_cus.fk_category IN (".$db->sanitize(implode(',', $existsCategoryCustomerList)).")";
 		$sqlCategoryCustomerExists .= " )";
 		$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerExists;
 	}
@@ -521,7 +521,7 @@ if ($searchCategoryCustomerOperator == 1) {
 			$sqlCategoryCustomerNotExists .= " )";
 			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
 		} elseif (intval($searchCategoryCustomer) > 0) {
-			$searchCategoryCustomerSqlList[] = "p.fk_soc IN (SELECT fk_soc FROM ".$db->prefix()."categorie_societe WHERE fk_categorie = ".((int) $searchCategoryCustomer).")";
+			$searchCategoryCustomerSqlList[] = "p.fk_soc IN (SELECT fk_element FROM ".$db->prefix()."element_category WHERE fk_category = ".((int) $searchCategoryCustomer).")";
 		}
 	}
 	if (!empty($searchCategoryCustomerSqlList)) {

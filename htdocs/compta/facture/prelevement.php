@@ -550,9 +550,10 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($object->type != $object::TYPE_CREDIT_NOTE) {
-		$duedate = $object->date_lim_reglement;
 		if ($type == 'bank-transfer') {
 			$duedate = $object->date_echeance;
+		} else {
+			$duedate = $object->date_lim_reglement;
 		}
 
 		if ($action == 'editpaymentterm') {

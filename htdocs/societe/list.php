@@ -549,14 +549,14 @@ if (!empty($searchCategoryCustomerList)) {
 			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategoryCustomer) > 0) {
 			if ($searchCategoryCustomerOperator == 0) {
-				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategoryCustomer).")";
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE s.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryCustomer).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE s.rowid = ck.fk_element AND ck.fk_category IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryCustomerOperator == 1) {
 		if (!empty($searchCategoryCustomerSqlList)) {
@@ -579,14 +579,14 @@ if (!empty($searchCategorySupplierList)) {
 			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategorySupplier) > 0) {
 			if ($searchCategorySupplierOperator == 0) {
-				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategorySupplier).")";
+				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE s.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategorySupplier).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE s.rowid = ck.fk_element AND ck.fk_category IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategorySupplierOperator == 1) {
 		if (!empty($searchCategorySupplierSqlList)) {

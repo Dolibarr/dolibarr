@@ -254,12 +254,12 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 if ($search_product_category > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_category as cp ON cp.fk_element=cd.fk_product';
 }
 $sql .= " WHERE c.entity IN (".getEntity($object->element).")";
 $sql .= " AND c.rowid = cd.fk_contrat";
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
+	$sql .= " AND cp.fk_category = ".((int) $search_product_category);
 }
 $sql .= " AND c.fk_soc = s.rowid";
 if (empty($user->rights->societe->client->voir) && !$socid) {
