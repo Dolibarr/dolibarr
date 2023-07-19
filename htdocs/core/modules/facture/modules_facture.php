@@ -89,6 +89,8 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	private function getSwissQrBill(Facture $object, Translate $langs)
 	{
+		global $conf;
+
 		if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') != 'bottom') {
 			return false;
 		}
@@ -124,9 +126,9 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		// Get IBAN from account.
 		$account = new Account($this->db);
 		$account->fetch($object->fk_account);
-
 		$creditorInformation = SwissQrBill\DataGroup\Element\CreditorInformation::create($account->iban);
 		if (!$creditorInformation->isValid()) {
+			$langs->load("errors");
 			$this->error = $langs->transnoentities("SwissQrCreditorInformationInvalid", $account->iban, (string) $creditorInformation->getViolations());
 			return false;
 		}
@@ -145,8 +147,10 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 			)
 		);
 
+		$currencyinvoicecode = $object->multicurrency_code ? $object->multicurrency_code : $conf->currency;
+
 		// Add payment amount, with currency
-		$pai = SwissQrBill\DataGroup\Element\PaymentAmountInformation::create($object->multicurrency_code, $object->total_ttc);
+		$pai = SwissQrBill\DataGroup\Element\PaymentAmountInformation::create($currencyinvoicecode, $object->total_ttc);
 		if (!$pai->isValid()) {
 			$this->error = $langs->transnoentities("SwissQrPaymentInformationInvalid", $object->total_ttc, (string) $pai->getViolations());
 			return false;
