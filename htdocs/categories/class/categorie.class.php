@@ -605,43 +605,20 @@ class Categorie extends CommonObject
 			}
 		}
 
-		$arraydelete = array(
-			'categorie_account' => 'fk_categorie',
-			'categorie_actioncomm' => 'fk_categorie',
-			'categorie_contact' => 'fk_categorie',
-			'categorie_fournisseur' => 'fk_categorie',
-			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
-			'categorie_member' => 'fk_categorie',
-			'categorie_user' => 'fk_categorie',
-			'categorie_product' => 'fk_categorie',
-			'categorie_project' => 'fk_categorie',
-			'categorie_societe' => 'fk_categorie',
-			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
-			'categorie_warehouse' => 'fk_categorie',
-			'categorie_website_page' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('website')),
-			'bank_class' => 'fk_categ',
-			'categorie_lang' => 'fk_category',
-			'categorie' => 'rowid',
-		);
-		foreach ($arraydelete as $key => $value) {
-			if (is_array($value)) {
-				if (empty($value['enabled'])) {
-					continue;
-				}
-				$value = $value['field'];
-			}
-			if ($key == 'categorie') {
-				$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
-				$sql .= " WHERE rowid = ".((int) $this->id);
-			} else {
-				$sql  = "DELETE FROM ".MAIN_DB_PREFIX."element_category";
-				$sql .= " WHERE fk_category = ".((int) $this->id);
-			}
-			if (!$this->db->query($sql)) {
-				$this->errors[] = $this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-				$error++;
-			}
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."element_category";
+		$sql .= " WHERE fk_category = ".((int) $this->id);
+		if (!$this->db->query($sql)) {
+			$this->errors[] = $this->db->lasterror();
+			dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+			$error++;
+		}
+
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		if (!$this->db->query($sql)) {
+			$this->errors[] = $this->db->lasterror();
+			dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+			$error++;
 		}
 
 		// Removed extrafields
