@@ -1097,7 +1097,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		//$generated_password = getRandomPassword(false);
 		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 		print '<td>';
-		print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
+		print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="16" maxlength="128" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
 		if (!empty($conf->use_javascript_ajax)) {
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
 		}
@@ -2472,7 +2472,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if ($caneditpassword || $user->hasRight("api", "apikey", "generate")) {
-					print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
+					print '<input class="minwidth300" minlength="16" maxlength="128" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
 					if (!empty($conf->use_javascript_ajax)) {
 						print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
 					}

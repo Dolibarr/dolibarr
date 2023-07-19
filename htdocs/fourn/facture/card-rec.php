@@ -64,6 +64,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 $id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
 $lineid = GETPOST('lineid', 'int');
 $title = GETPOST('title', 'alpha');
+$libelle = GETPOST('libelle', 'alpha');
 $ref_supplier = GETPOST('ref_supplier', 'alpha');
 $projectid = GETPOST('projectid', 'int');
 $year_date_when = GETPOST('year_date_when');
@@ -71,7 +72,7 @@ $month_date_when = GETPOST('month_date_when');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$objecttype = 'facturefournisseur_rec';
+$objecttype = 'facture_fourn_rec';
 if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
@@ -126,6 +127,7 @@ $now = dol_now();
 $error = 0;
 
 $result = restrictedArea($user, 'facture', $object->id, $objecttype);
+
 
 /*
  * Actions
@@ -188,6 +190,7 @@ if (empty($reshook)) {
 		if (! $error) {
 			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
 			$object->title = GETPOST('title', 'alphanohtml');
+			$object->libelle = GETPOST('libelle','alpha');
 			$object->fk_project = GETPOST('projectid', 'int');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 
@@ -218,6 +221,7 @@ if (empty($reshook)) {
 			$object->mode_reglement_code = $oldinvoice->mode_reglement_code;
 
 			$result = $object->create($user, $oldinvoice->id);
+
 			if ($result > 0) {
 				$result = $oldinvoice->delete($user, 1);
 				if ($result < 0) {
@@ -908,12 +912,12 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Title") . '</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="title" value="' . dol_escape_htmltag(GETPOST("title", 'alphanohtml')) . '">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="' . dol_escape_htmltag(GETPOST("title", 'alphanohtml')) . '" autofocus>';
 		print '</td></tr>';
 
 		// Ref supplier
-		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("SupplierRef") . '</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="ref_supplier" value="' . $object->ref_supplier . '">';
+		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("RefSupplier") . '</td><td>';
+		print '<input class="flat maxwidth500" type="text" name="ref_supplier" value="' . $object->ref_supplier . '">';
 		print '</td></tr>';
 
 		// Third party
