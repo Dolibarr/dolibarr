@@ -1440,7 +1440,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Label");
-		print_liste_field_titre("ExternalSystemID");		// external system ID
+		print_liste_field_titre($form->textwithpicto($langs->trans('ExternalSystemID'), $langs->trans("IDOfPaymentInAnExternalSystem")));		// external system ID
 		print_liste_field_titre("Bank");
 		print_liste_field_titre("RIB");
 		print_liste_field_titre("IBAN");
