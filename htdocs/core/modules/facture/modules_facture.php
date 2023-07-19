@@ -111,6 +111,9 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 			require_once DOL_DOCUMENT_ROOT.'/includes/sprain/swiss-qr-bill/autoload.php';
 		} elseif (file_exists(DOL_DOCUMENT_ROOT.'/includes/autoload.php')) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
+		} else {
+			$this->error = 'PHP library sprain/swiss-qr-bill was not found. Please install it with:<br>cd '.DOL_DOCUMENT_ROOT.'; cp composer.json.disabled composer.json; composer require sprain/swiss-qr-bill;';
+			return false;
 		}
 
 		// Create a new instance of SwissQrBill, containing default headers with fixed values
