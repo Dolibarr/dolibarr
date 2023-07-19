@@ -425,6 +425,7 @@ class ExtraFields
 				return -1;
 			}
 		}
+		return -1;
 	}
 
 	/**
@@ -2124,7 +2125,9 @@ class ExtraFields
 				) {
 					continue;
 				}
-				if (empty($visibility) || $visibility == 5) {
+				$visibility_abs = abs($visibility);
+				// not modify if extra field is not in update form (0 : never, 2 or -2 : list only, 5 or - 5 : list and view only)
+				if (empty($visibility_abs) || $visibility_abs == 2 || $visibility_abs == 5) {
 					continue;
 				}
 				if (empty($perms)) {

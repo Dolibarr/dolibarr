@@ -1230,6 +1230,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			}
 		}
 
+		// Security:
 		// If we need to make a virus scan
 		if (empty($disablevirusscan) && file_exists($src_file)) {
 			$checkvirusarray = dolCheckVirus($src_file);
@@ -1249,7 +1250,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 				$publicmediasdirwithslash .= '/';
 			}
 
-			if (strpos($upload_dir, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
+			if (strpos($upload_dir, $publicmediasdirwithslash) !== 0 || !getDolGlobalInt("MAIN_DOCUMENT_DISABLE_NOEXE_IN_MEDIAS_DIR")) {	// We never add .noexe on files into media directory
 				$file_name .= '.noexe';
 				$successcode = 2;
 			}

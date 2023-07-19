@@ -608,7 +608,7 @@ class Ticket extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error);
+			dol_print_error('', get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 

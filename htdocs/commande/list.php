@@ -2013,7 +2013,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
@@ -2646,7 +2646,7 @@ if ($resql) {
 			}
 
 			// Action column
-			if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;

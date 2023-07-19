@@ -843,6 +843,9 @@ textarea.centpercent {
 	word-break: break-word;
 }
 .wordbreak {
+	word-break: break-word;	/* cut fist between word, inside word if not possible */
+}
+.wordbreakall {
 	word-break: break-all;
 }
 td.wordbreak img {
@@ -7171,6 +7174,14 @@ div.tabsElem a.tab {
 .publicnewmemberform #tablesubscribe {
 	color: #666;
 }
+
+@media only screen and (max-width: 767px)
+{
+	.publicnewmemberform div.tabBarWithBottom {
+		padding: 10px;
+	}
+}
+
 
 /* ============================================================================== */
 /* Ticket module                                                                  */
