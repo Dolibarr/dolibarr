@@ -402,7 +402,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->errors = $order->errors;
 					return $ret;
 				}
-				$ret = $order->fetchObjectLinked($order->id, 'supplier_order', null, 'reception');
+				$ret = $order->fetchObjectLinked($order->id, 'order_supplier', null, 'reception');
 				if ($ret < 0) {
 					$this->error = $order->error;
 					$this->errors = $order->errors;
