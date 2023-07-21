@@ -3126,7 +3126,7 @@ if ($action == 'create') {
 
 	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
 	if ($socid > 0 && $fk_account) {	// A company has already been set and it has a default fk_account
-		$fk_account = GETPOSTISSET('fk_account') ? $fk_account : GETPOST("fk_account", 'int');	// The GETPOST is used only if form was posted to avoid to take default value, because in such case, the default must be the one of the company
+		$fk_account = !empty($fk_account) ? $fk_account : GETPOST("fk_account", 'int');
 	} else {	// No company forced
 		$fk_account = GETPOST("fk_account", 'int');
 	}
@@ -3682,7 +3682,7 @@ if ($action == 'create') {
 	// Payment term
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? $cond_reglement_id : GETPOST('cond_reglement_id', 'int'), 'cond_reglement_id', -1, 1);
+	print $form->getSelectConditionsPaiements((!empty('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? $cond_reglement_id : GETPOST('cond_reglement_id', 'int'), 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 
 
@@ -3739,7 +3739,7 @@ if ($action == 'create') {
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0)? $mode_reglement_id : GETPOST('mode_reglement_id'), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements((!empty('mode_reglement_id') && GETPOST('mode_reglement_id') != 0)? $mode_reglement_id : GETPOST('mode_reglement_id'), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
