@@ -722,7 +722,7 @@ function deletePropsAndPermsFromDoc($file, $objectname)
 	$new_contents = preg_replace($search, '', $str);
 	file_put_contents($file, $new_contents);
 
-	//permsIfExist
+	//perms If Exist
 	$perms = "|*".strtolower($objectname)."*|";
 	$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
 	$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
