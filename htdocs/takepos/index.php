@@ -1070,7 +1070,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 					<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
 					<span class="fas fa-home"></span></a>
 					<?php if (empty($conf->dol_use_jmobile)) {?>
-						<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+						<a class="hideonsmartphone" onclick="FullScreen();" title="<?php echo dol_escape_htmltag($langs->trans("ClickFullScreenEscapeToLeave")); ?>"><span class="fa fa-expand-arrows-alt"></span></a>
 					<?php }?>
 					</div>
 					<?php

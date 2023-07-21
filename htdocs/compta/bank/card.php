@@ -1123,7 +1123,7 @@ if ($action == 'create') {
 
 			// IBAN
 			print '<tr><td>';
-			$tooltip = $langs->trans("Example").':<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
+			$tooltip = $langs->trans("Example").':<br>CH93 0076 2011 6238 5295 7<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
 			print $form->textwithpicto($langs->trans($ibankey), $tooltip);
 			print '</td>';
 			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOSTISSET('iban') ? GETPOST('iban',  'alphanohtml') : $object->iban).'"></td></tr>';

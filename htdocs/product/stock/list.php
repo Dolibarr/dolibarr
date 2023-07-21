@@ -702,7 +702,7 @@ while ($i < $imaxinloop) {
 	$warehouse->sellvalue = $obj->sellvalue;
 
 	$object = $warehouse;
-	
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';

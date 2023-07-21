@@ -2540,7 +2540,7 @@ function dol_bc($var, $moreclass = '')
  *
  *      @param  Object		$object			A company or contact object
  * 	    @param	int			$withcountry	1=Add country into address string
- *      @param	string		$sep			Separator to use to build string
+ *      @param	string		$sep			Separator to use to separate info when building string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @param	int			$mode			0=Standard output, 1=Remove address
  *  	@param	string		$extralangcode	User extralanguage $langcode as values for address, town
@@ -2557,7 +2557,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
-		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : $object->address));
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : preg_replace('/[\n\r]/', $sep, $object->address)));
 	}
 	// Zip/Town/State
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
@@ -2587,7 +2587,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if (!empty($object->state)) {
-			$ret .= "\n".$object->state;
+			$ret .= $sep.$object->state;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('JP'))) {
 		// JP: In romaji, title firstname name\n address lines \n [state,] town zip \n country
@@ -2609,6 +2609,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
 	}
+
 	if (!is_object($outputlangs)) {
 		$outputlangs = $langs;
 	}
