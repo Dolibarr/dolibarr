@@ -9137,6 +9137,17 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Sets all object fields to null. Useful for example in lists, when printing multiple lines and a different object os fetched for each line.
+	 * @return void
+	 */
+	public function emtpyObjectVars()
+	{
+		foreach ($this->fields as $field => $arr) {
+			$this->$field = null;
+		}
+	}
+
+	/**
 	 * Function to concat keys of fields
 	 *
 	 * @param   string   $alias   	String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields defintion.
