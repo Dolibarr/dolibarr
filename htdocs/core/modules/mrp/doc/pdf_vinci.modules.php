@@ -1168,40 +1168,38 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// product info
-        $prodToMake = new Product($this->db);
-        $resProdToMake = $prodToMake->fetch($object->fk_product);
+		$prodToMake = new Product($this->db);
+		$resProdToMake = $prodToMake->fetch($object->fk_product);
 
-        if ($resProdToMake > 0)
-        {
-            // ref
-            $posy += 7;
-            $pdf->SetFont('', 'B', $default_font_size + 1);
-            $pdf->SetXY($posx, $posy);
-            $pdf->SetTextColor(0, 0, 60);
-            $pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
+		if ($resProdToMake > 0) {
+			// ref
+			$posy += 7;
+			$pdf->SetFont('', 'B', $default_font_size + 1);
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
 
-            // description
-            $posy += 5;
-            $pdf->SetFont('', 'B', $default_font_size + 3);
-            $pdf->SetXY($posx, $posy);
-            $pdf->SetTextColor(0, 0, 60);
-            $pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R');
-            $posy = $pdf->GetY() - 5;
+			// description
+			$posy += 5;
+			$pdf->SetFont('', 'B', $default_font_size + 3);
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R');
+			$posy = $pdf->GetY() - 5;
 
-            // dimensions
-            $array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
-            $dim = implode("x", $array);
-            if (!empty($dim)) {
-                $posy += 5;
-                $pdf->SetFont('', 'B', $default_font_size + 3);
-                $pdf->SetXY($posx, $posy);
-                $pdf->SetTextColor(0, 0, 60);
-                $pdf->MultiCell($w, 3, $dim, '', 'R');
-            }
+			// dimensions
+			$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
+			$dim = implode("x", $array);
+			if (!empty($dim)) {
+				$posy += 5;
+				$pdf->SetFont('', 'B', $default_font_size + 3);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $dim, '', 'R');
+			}
+		}
 
-        }
-
-        $posy += 5;
+		$posy += 5;
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
