@@ -842,7 +842,7 @@ class Mo extends CommonObject
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
 		global $langs;
-		$langs->load('stocks');
+		$langs->loadLangs(array('stocks', 'mrp'));
 
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';

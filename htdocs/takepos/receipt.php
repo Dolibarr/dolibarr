@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
- * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2023 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
- * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
+ * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ if ($object->statut == Facture::STATUS_DRAFT) {
 } else {
 	print $object->ref;
 }
-if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
+if (!empty($conf->global->TAKEPOS_SHOW_CUSTOMER)) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
 		if ($object->socid > 0) {
@@ -146,6 +146,9 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 		}
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
+}
+if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
+	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 ?>
 </p>
@@ -233,6 +236,7 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 		}
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
+	// Loop on each VAT group
 	foreach ($vat_groups as $key => $val) {
 		?>
 	<tr>
@@ -249,6 +253,23 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></td>
+</tr>
+<?php }
+
+// Now show local taxes if company uses them
+
+if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></td>
+</tr>
+<?php } ?>
+<?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
 <?php } ?>

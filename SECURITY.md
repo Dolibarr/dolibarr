@@ -59,7 +59,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * CSRF attacks are accepted but double check that you have set MAIN_SECURITY_CSRF_WITH_TOKEN to value 3.
 * The modules DebugBar and ModuleBuilder must NOT be enabled. (by default, these modules are not enabled. They are developer tools)
 * Ability for a high level user to edit web site pages into the CMS by including HTML or Javascript is an expected feature. Vulnerabilities into the website module are validated only if HTML or Javascript injection can be done by a non allowed user.
-* Fail2ban rules for rate limit on the login page,password forgotten page and all public pages (/public/*) must be installed as recommendend into the section "About - Admin tools - Section Access limits and mitigation".
+* Fail2ban rules for rate limit on the login page,password forgotten page, api calls and all public pages (/public/*) must be installed as recommendend into the section "About - Admin tools - Section Access limits and mitigation".
 
 Scope is the web application (back office) and the APIs.
 

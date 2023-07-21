@@ -327,6 +327,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
 	} elseif ($type === 'clear') {
 		return '{CLEAR}' . $password;  // Just for test, plain text password is not secured !
 	}
+	return "";
 }
 
 /**
@@ -1060,7 +1061,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		//print $sql;
 
 		// For events, check on users assigned to event
 		if ($feature === 'agenda' && $objectid > 0) {

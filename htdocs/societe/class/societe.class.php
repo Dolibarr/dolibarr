@@ -2625,12 +2625,8 @@ class Societe extends CommonObject
 		$option = $params['option'] ?? '';
 		$nofetch = !empty($params['nofetch']);
 
-		$name = $this->name;
 		$noaliasinname = (empty($params['noaliasinname']) ? 0 : $params['noaliasinname']);
 
-		if (!empty($this->name_alias) && empty($noaliasinname)) {
-			$name .= ' ('.$this->name_alias.')';
-		}
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowCompany")];
 		}
@@ -2676,9 +2672,9 @@ class Societe extends CommonObject
 		if (isset($this->client) && isset($this->fournisseur)) {
 			$datas['type'] = ' &nbsp; ' . $this->getTypeUrl(1);
 		}
-		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
-		if (!empty($this->name_alias)) {
-			$datas['namealias'] = ' ('.dol_escape_htmltag($this->name_alias).')';
+		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag(dol_string_nohtmltag($this->name));
+		if (!empty($this->name_alias) && empty($noaliasinname)) {
+			$datas['namealias'] = ' ('.dol_escape_htmltag(dol_string_nohtmltag($this->name_alias)).')';
 		}
 		if (!empty($this->email)) {
 			$datas['email'] = '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
@@ -2698,7 +2694,7 @@ class Societe extends CommonObject
 		}
 
 		if (!empty($this->address)) {
-			$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
+			$datas['address'] = '<br><b>'.$langs->trans("Addressaaa").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
 		} elseif (!empty($this->country_code)) {
 			$datas['address'] = '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		}
