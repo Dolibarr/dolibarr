@@ -953,7 +953,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (!empty($user->admin)) {
 		print '<tr><td>'.$langs->trans("Administrator").'</td>';
 		print '<td>';
-		print $form->selectyesno('admin', GETPOST('admin'), 1);
+		print $form->selectyesno('admin', GETPOST('admin'), 1, false, 0, 1);
 
 		if (isModEnabled('multicompany') && !$user->entity) {
 			if (!empty($conf->use_javascript_ajax)) {
@@ -2225,7 +2225,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					|| (isModEnabled('multicompany') && (($object->entity > 0 || ($user->entity == 0 && $object->entity == 0)) || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
 					)
 				) {
-					print $form->selectyesno('admin', $object->admin, 1);
+					print $form->selectyesno('admin', $object->admin, 1, false, 0, 1);
 
 					if (isModEnabled('multicompany') && !$user->entity) {
 						if ($conf->use_javascript_ajax) {
