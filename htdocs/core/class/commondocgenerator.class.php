@@ -986,9 +986,9 @@ abstract class CommonDocGenerator
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $formatedarrayoption['options_'.$key.'_rfc']));
 				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
 					$datetime = $formatedarrayoption['options_'.$key];
-					$formatedarrayoption['options_'.$key] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($formatedarrayoption['options_'.$key], 'dayhour') : ''); // using company output language
-					$formatedarrayoption['options_'.$key.'_locale'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($formatedarrayoption['options_'.$key], 'dayhour', 'tzserver', $outputlangs) : ''); // using output language format
-					$formatedarrayoption['options_'.$key.'_rfc'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($formatedarrayoption['options_'.$key], 'dayhourrfc') : ''); // international format
+					$formatedarrayoption['options_'.$key] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : ''); // using company output language
+					$formatedarrayoption['options_'.$key.'_locale'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : ''); // using output language format
+					$formatedarrayoption['options_'.$key.'_rfc'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : ''); // international format
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $formatedarrayoption['options_'.$key.'_locale']));
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $formatedarrayoption['options_'.$key.'_rfc']));
 				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'link') {

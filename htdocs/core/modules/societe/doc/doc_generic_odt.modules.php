@@ -357,6 +357,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$array_other = $this->get_substitutionarray_other($outputlangs);
 
 				$tmparray = array_merge($array_user, $array_soc, $array_thirdparty, $array_other);
+
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
