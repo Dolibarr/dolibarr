@@ -402,7 +402,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->errors = $order->errors;
 					return $ret;
 				}
-				$ret = $order->fetchObjectLinked($order->id, 'supplier_order', null, 'reception');
+				$ret = $order->fetchObjectLinked($order->id, $order->element, null, 'reception');
 				if ($ret < 0) {
 					$this->error = $order->error;
 					$this->errors = $order->errors;
@@ -439,7 +439,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 				if (count($diff_array) == 0) {
 					//No diff => mean everythings is received
-					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, $object->origin_id, $object->origin, 'SUPPLIER_ORDER_CLOSE');
+					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
 					if ($ret < 0) {
 						$this->error = $order->error;
 						$this->errors = $order->errors;
