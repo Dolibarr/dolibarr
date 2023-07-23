@@ -259,21 +259,37 @@ class modBookCal extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read objects of BookCal'; // Permission label
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 0 + 1);
+		$this->rights[$r][1] = 'Read objects of BookCal';
 		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->bookcal->availabilities->read)
+		$this->rights[$r][5] = 'read';
 		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update objects of BookCal'; // Permission label
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 1 + 1);
+		$this->rights[$r][1] = 'Create/Update objects of BookCal';
 		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->bookcal->availabilities->write)
+		$this->rights[$r][5] = 'write';
 		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete objects of BookCal'; // Permission label
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 2 + 1);
+		$this->rights[$r][1] = 'Delete objects of BookCal';
 		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->bookcal->availabilities->delete)
+		$this->rights[$r][5] = 'delete';
 		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 0 + 1);
+		$this->rights[$r][1] = 'Read Calendar object of BookCal';
+		$this->rights[$r][4] = 'calendar';
+		$this->rights[$r][5] = 'read';
+		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 1 + 1);
+		$this->rights[$r][1] = 'Create/Update Calendar object of BookCal';
+		$this->rights[$r][4] = 'calendar';
+		$this->rights[$r][5] = 'write';
+		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 2 + 1);
+		$this->rights[$r][1] = 'Delete Calendar object of BookCal';
+		$this->rights[$r][4] = 'calendar';
+		$this->rights[$r][5] = 'delete';
+		$r++;
+
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add

@@ -1,4 +1,4 @@
--- Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+-- Copyright (C) 2023 Alice Adminson <aadminson@example.com>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,11 +14,13 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_bookcal_availabilities(
+CREATE TABLE llx_bookcal_calendar(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) NOT NULL, 
 	label varchar(255), 
+	fk_soc integer, 
+	fk_project integer, 
 	description text, 
 	note_public text, 
 	note_private text, 
@@ -26,20 +28,7 @@ CREATE TABLE llx_bookcal_availabilities(
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
-	last_main_doc varchar(255), 
 	import_key varchar(14), 
-	model_pdf varchar(255), 
-	status integer NOT NULL, 
-	start date NOT NULL, 
-	end date NOT NULL, 
-	type integer NOT NULL, 
-	duration integer DEFAULT 30 NOT NULL, 
-	startHour integer NOT NULL, 
-	endHour integer NOT NULL, 
-	fk_bookcal_calendar integer NOT NULL
+	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
-
-
-SELECT * FROM llx_bookcal_availabilities
-WHERE rowid = 1;
