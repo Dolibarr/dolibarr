@@ -133,7 +133,7 @@ if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	exit;
 }
 // Check permissions
-if (in_array( 'ecm',$modulepart) || $modulepart == 'ecm') {
+if ((is_array($modulepart) && in_array('ecm', $modulepart)) || $modulepart == 'ecm') {
 	if (!$user->hasRight('ecm', 'read')) {
 		accessforbidden();
 	}
