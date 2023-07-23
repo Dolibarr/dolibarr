@@ -2091,7 +2091,11 @@ abstract class CommonObject
 		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
-		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		if ($fieldid == 'rowid') {
+			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
+		} else {
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		}
 		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
@@ -2161,7 +2165,11 @@ abstract class CommonObject
 		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
-		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		if ($fieldid == 'rowid') {
+			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
+		} else {
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		}
 		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
