@@ -161,7 +161,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  */
 function llxFooterVierge()
 {
-	global $conf;
+	global $conf, $langs;
 
 	print '</div>';
 
@@ -169,7 +169,7 @@ function llxFooterVierge()
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext ? '&'.$ext : '').'"></script>'."\n";
+		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.(!empty($ext) ? '&'.$ext : '').'"></script>'."\n";
 	}
 
 	print "</body>\n";
