@@ -22,7 +22,7 @@
  */
 
 /**
- * Class to manage accounting accounts
+ * Class to manage accounting journals
  */
 class AccountingJournal extends CommonObject
 {
