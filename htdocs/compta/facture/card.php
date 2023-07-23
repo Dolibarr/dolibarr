@@ -3552,9 +3552,15 @@ if ($action == 'create') {
 					$tmp .= ' disabled';
 				}
 				$tmp .= '> ';
-				// Show credit note options only if we checked credit note
+				// Show credit note options only if we checked credit note and disable standard invoice if "create credit note" button is pressed
 				print '<script type="text/javascript">
     			jQuery(document).ready(function() {
+					if (jQuery("#radio_creditnote").is(":checked")) 
+                    {
+                        jQuery("#radio_standard").prop("disabled", true);
+                    } else {
+                        jQuery("#radio_standard").prop("disabled", false);
+                    }
     				if (! jQuery("#radio_creditnote").is(":checked"))
     				{
     					jQuery("#credit_note_options").hide();
