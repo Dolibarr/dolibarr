@@ -35,3 +35,5 @@
 
 -- V19
 ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
+
+UPDATE llx_product_lot SET manufacturing_date = datec WHERE manufacturing_date IS NULL
