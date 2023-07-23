@@ -1513,14 +1513,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		if (!$error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
-				$error++;
-			}
-		}
-
-		if (!$error) {
 			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
 			$this->deleteEcmFiles();
 
