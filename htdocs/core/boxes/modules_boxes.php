@@ -21,8 +21,8 @@
 
 /**
  *	    \file       htdocs/core/boxes/modules_boxes.php
- *		\ingroup    facture
- *		\brief      Fichier contenant la classe mere des boites
+ *		\ingroup    boxes
+ *		\brief      File containing the parent class of boxes
  */
 
 
