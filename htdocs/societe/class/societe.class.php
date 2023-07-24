@@ -2135,7 +2135,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		if ($this->id) {
 			$newclient = 1;
-			if (($this->client == 2 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
+			if (($this->client == 2 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
