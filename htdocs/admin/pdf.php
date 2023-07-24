@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks', 'Trips'));
+$langs->loadLangs(array('admin', 'companies', 'languages', 'members', 'other', 'products', 'stocks', 'trips'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -271,12 +271,22 @@ print '<input type="hidden" name="action" value="update">';
 clearstatcache();
 
 
+if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
+	print '<div class="warning">';
+	print 'The not supported and hidden option PDF_SECURITY_ENCRYPTION has been enabled. This means a lof of feature related to PDF will be broken, like mass PDF generation or online signature of PDF.'."\n";
+	print 'You should disable this option.';
+	print '</div>';
+}
+
+
+
 // Misc options
 print load_fiche_titre($langs->trans("DictionaryPaperFormat"), '', '');
 
+
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 $selected = (isset($conf->global->MAIN_PDF_FORMAT) ? $conf->global->MAIN_PDF_FORMAT : '');
 if (empty($selected)) {

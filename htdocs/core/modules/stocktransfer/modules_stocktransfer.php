@@ -50,8 +50,6 @@ abstract class ModelePDFStockTransfer extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'stocktransfer';
 		$list = array();
 
@@ -87,7 +85,7 @@ abstract class ModeleNumRefStockTransfer
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Descriptive text
 	 */
 	public function info()
 	{

@@ -122,7 +122,7 @@ class CompanyPaymentMode extends CommonObject
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
-	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
+		//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
 
 	/**
@@ -146,6 +146,18 @@ class CompanyPaymentMode extends CommonObject
 	public $number;
 	public $cle_rib;
 	public $bic;
+
+	/**
+	 * @var string iban
+	 * @deprecated
+	 * @see $iban_prefix
+	 */
+	public $iban;
+
+	/**
+	 * iban_prefix
+	 * @var string
+	 */
 	public $iban_prefix;
 	public $domiciliation;
 	public $proprio;
@@ -193,32 +205,6 @@ class CompanyPaymentMode extends CommonObject
 
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
-
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var string    Name of subtable line
-	 */
-	//public $table_element_line = 'companypaymentmodedet';
-	/**
-	 * @var string    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_companypaymentmode';
-	/**
-	 * @var string    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'CompanyPaymentModeline';
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-	/**
-	 * @var CompanyPaymentModeLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
 
 
 	/**
@@ -281,8 +267,7 @@ class CompanyPaymentMode extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
-		// ...
+		// $object->title = $langs->trans("CopyOf")." ".$object->title;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

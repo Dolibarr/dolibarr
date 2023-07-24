@@ -26,7 +26,7 @@ CronCommand=Commando
 CronList=Geplande taken
 CronDelete=Verwijder geplande taken
 CronConfirmDelete=Weet u zeker dat u deze geplande taken wilt verwijderen?
-CronExecute=Start geplande taak
+CronExecute=Lanceer nu
 CronConfirmExecute=Weet u zeker dat u deze geplande taken nu wilt uitvoeren?
 CronInfo=Met de module Geplande taken kunt u taken plannen om ze automatisch uit te voeren. Taken kunnen ook handmatig worden gestart.
 CronTask=Taak
@@ -58,7 +58,7 @@ CronNote=Reactie
 CronFieldMandatory=Velden %s zijn verplicht
 CronErrEndDateStartDt=Einddatum kan niet vóór startdatum liggen
 StatusAtInstall=Status bij module-installatie
-CronStatusActiveBtn=Schema
+CronStatusActiveBtn=Planning inschakelen
 CronStatusInactiveBtn=Deactiveren
 CronTaskInactive=Deze taak is uitgeschakeld (niet gepland)
 CronId=Id
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Ga naar menu "<a href="%s">Home - Beheerhulpmidd
 JobDisabled=Taak uitgeschakeld
 MakeLocalDatabaseDumpShort=Back-up van lokale database
 MakeLocalDatabaseDump=Maak een lokale database dump. Parameters zijn: compressie ('gz' of 'bz' of 'none'), back-uptype ('mysql', 'pgsql', 'auto'), 1, 'auto' of te creëren bestandsnaam, aantal te bewaren back-upbestanden
+MakeSendLocalDatabaseDumpShort=Lokale databaseback-up verzenden
+MakeSendLocalDatabaseDump=Stuur lokale databaseback-up per e-mail. Parameters zijn: naar, van, onderwerp, bericht, bestandsnaam (naam van verzonden bestand), filter ('sql' alleen voor back-up van database)
+BackupIsTooLargeSend=Sorry, het laatste back-upbestand is te groot om per e-mail te verzenden
+CleanUnfinishedCronjobShort=Schone onvoltooide cronjob
+CleanUnfinishedCronjob=Schone cronjob vastgelopen in verwerking wanneer het proces niet meer actief is
 WarningCronDelayed=Opgelet, voor prestatiedoeleinden, ongeacht de volgende datum van uitvoering van ingeschakelde taken, kunnen uw taken worden vertraagd tot maximaal %s uur voordat ze worden uitgevoerd.
 DATAPOLICYJob=Gegevens opschonen en anonimiseren
 JobXMustBeEnabled=Taak %s moet zijn ingeschakeld
+EmailIfError=E-mail voor waarschuwing bij fout
+ErrorInBatch=Fout bij het uitvoeren van de taak %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Laatst uitgevoerde geplande taak
 NextScheduledJobExecute=Volgende geplande taak om uit te voeren
 NumberScheduledJobError=Aantal foutieve geplande taken
+NumberScheduledJobNeverFinished=Aantal geplande taken dat nooit is voltooid

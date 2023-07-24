@@ -327,7 +327,7 @@ if ($result) {
 
 		print dol_get_fiche_head($head, 'bankline', $langs->trans('LineRecord'), 0, 'accountline', 0);
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1'.(GETPOST('account', 'int', 1) ? '&id='.GETPOST('account', 'int', 1) : '').'">'.$langs->trans("BackToList").'</a>';
 
 
 		dol_banner_tab($bankline, 'rowid', $linkback);
@@ -588,7 +588,7 @@ if ($result) {
 		print "</tr>";
 
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Bank line

@@ -37,11 +37,11 @@ $langs->loadLangs(array("admin", "partnership"));
 
 $action = GETPOST('action', 'aZ09');
 
+$error = 0;
+
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$error = 0;
 
 
 /*

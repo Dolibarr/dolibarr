@@ -351,16 +351,18 @@ class Comment extends CommonObject
 
 
 	/**
-	 * Load comments linked with current task
+	 * Load comments linked with current task into ->comments
 	 *
 	 * @param	string		$element_type		Element type
 	 * @param	int			$fk_element			Id of element
-	 * @return 	array							Comment array
+	 * @return 	int								Result
 	 */
 	public function fetchAllFor($element_type, $fk_element)
 	{
 		global $db, $conf;
+
 		$this->comments = array();
+
 		if (!empty($element_type) && !empty($fk_element)) {
 			$sql = "SELECT";
 			$sql .= " c.rowid";

@@ -188,7 +188,7 @@ if (!empty($number)) {
 		} else {
 			$txt = "Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
 			dol_syslog($txt);
-			print '<body onload="javascript:history.go(-1);">'."\n";
+			print '<body onload="history.go(-1);">'."\n";
 			print '<!-- '.$txt.' -->';
 			fputs($oSocket, "Action: login\r\n");
 			fputs($oSocket, "Events: off\r\n");

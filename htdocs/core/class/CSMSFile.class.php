@@ -82,7 +82,7 @@ class CSMSFile
 		// If ending method not defined
 		if (empty($conf->global->MAIN_SMS_SENDMODE)) {
 			$this->error = 'No SMS Engine defined';
-			return -1;
+			throw new Exception('No SMS Engine defined');
 		}
 
 		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".$conf->global->MAIN_SMS_SENDMODE." charset=".$conf->file->character_set_client." from=".$from.", to=".$to.", msg length=".strlen($msg), LOG_DEBUG);
@@ -231,9 +231,7 @@ class CSMSFile
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 	}
 
@@ -257,9 +255,7 @@ class CSMSFile
 			fputs($fp, "\nResult id=".$result);
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 	}
 }

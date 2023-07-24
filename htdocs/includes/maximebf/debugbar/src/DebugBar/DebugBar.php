@@ -471,21 +471,25 @@ class DebugBar implements ArrayAccess
     // --------------------------------------------
     // ArrayAccess implementation
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($key, $value)
     {
         throw new DebugBarException("DebugBar[] is read-only");
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->getCollector($key);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($key)
     {
         return $this->hasCollector($key);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($key)
     {
         throw new DebugBarException("DebugBar[] is read-only");

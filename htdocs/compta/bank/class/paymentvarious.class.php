@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class PaymentVarious extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'variouspayment';
+	public $element = 'payment_various';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -127,6 +127,22 @@ class PaymentVarious extends CommonObject
 
 
 	/**
+	 * @var	int		Type of bank account if the payment is on a bank account
+	 */
+	public $fk_type;
+
+	/**
+	 * @var int		1 if the payment is on a bank account line that is conciliated
+	 */
+	public $rappro;
+
+	/**
+	 * @var	string	ID of bank receipt
+	 */
+	public $bank_num_releve;
+
+
+	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -168,8 +184,6 @@ class PaymentVarious extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-		$this->element = 'payment_various';
-		$this->table_element = 'payment_various';
 	}
 
 	/**
@@ -251,7 +265,6 @@ class PaymentVarious extends CommonObject
 	 */
 	public function fetch($id, $user = null)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " v.rowid,";
 		$sql .= " v.tms,";
@@ -262,7 +275,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " v.fk_typepayment,";
 		$sql .= " v.num_payment,";
 		$sql .= " v.label,";
-		$sql .= " v.note,";
+		$sql .= " v.note as note_private,";
 		$sql .= " v.accountancy_code,";
 		$sql .= " v.subledger_account,";
 		$sql .= " v.fk_projet as fk_project,";
@@ -271,7 +284,8 @@ class PaymentVarious extends CommonObject
 		$sql .= " v.fk_user_modif,";
 		$sql .= " b.fk_account,";
 		$sql .= " b.fk_type,";
-		$sql .= " b.rappro";
+		$sql .= " b.rappro,";
+		$sql .= " b.num_releve as bank_num_releve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
 		$sql .= " WHERE v.rowid = ".((int) $id);
@@ -292,7 +306,8 @@ class PaymentVarious extends CommonObject
 				$this->type_payment         = $obj->fk_typepayment;
 				$this->num_payment          = $obj->num_payment;
 				$this->label                = $obj->label;
-				$this->note                 = $obj->note;
+				$this->note                 = $obj->note_private;	// For backward compatibility
+				$this->note_private         = $obj->note_private;
 				$this->subledger_account    = $obj->subledger_account;
 				$this->accountancy_code     = $obj->accountancy_code;
 				$this->fk_project           = $obj->fk_project;
@@ -302,6 +317,7 @@ class PaymentVarious extends CommonObject
 				$this->fk_account           = $obj->fk_account;
 				$this->fk_type              = $obj->fk_type;
 				$this->rappro               = $obj->rappro;
+				$this->bank_num_releve      = $obj->bank_num_releve;
 			}
 			$this->db->free($resql);
 
@@ -585,10 +601,10 @@ class PaymentVarious extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @return  string   		   	Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -597,11 +613,11 @@ class PaymentVarious extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     Id status
-	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @return string      		Libelle
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -767,5 +783,79 @@ class PaymentVarious extends CommonObject
 			return 1;
 		}
 		return 0;
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'fk_bank')) {
+			$return .= ' | <span class="info-box-status ">'.$this->fk_bank.'</span>';
+		}
+		if (property_exists($this, 'datep')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datep), 'day').'</span>';
+		}
+		if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payment", $this->type_payment).'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+		}
+		if (property_exists($this, 'accountancy_code')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">'.$this->accountancy_code.'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Debit").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
+
+	/**
+	 * Return General accounting account with defined length (used for product and miscellaneous)
+	 *
+	 * @param 	string	$account		General accounting account
+	 * @return	string          		String with defined length
+	 */
+	public function lengthAccountg($account)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		/*
+		if (isModEnabled('accounting')) {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('', $valuetoshow, 1);
+		}*/
+
+		return length_accountg($account);
+	}
+
+	/**
+	 * Return Auxiliary accounting account of thirdparties with defined length
+	 *
+	 * @param 	string	$account		Auxiliary accounting account
+	 * @return	string          		String with defined length
+	 */
+	public function lengthAccounta($account)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		return length_accounta($account);
 	}
 }

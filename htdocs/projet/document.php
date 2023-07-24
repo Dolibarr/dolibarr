@@ -50,7 +50,7 @@ if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 }
 
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 }
 
 // Get parameters
@@ -84,7 +84,7 @@ $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$permissiontoadd = $user->rights->projet->creer;
+$permissiontoadd = $user->hasRight('projet', 'creer');
 
 
 /*
@@ -110,7 +110,7 @@ llxHeader('', $title, $help_url);
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');

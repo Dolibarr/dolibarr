@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +97,12 @@ class Reception extends CommonObject
 
 	public $date_delivery; // Date delivery planed
 
+	/**
+	 * @var integer|string Effective delivery date
+	 * @deprecated
+	 * @see $date_reception
+	 */
+	public $date;
 
 	/**
 	 * @var integer|string Effective delivery date
@@ -140,27 +146,6 @@ class Reception extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		// List of long language codes for status
-		$this->statuts = array();
-		$this->statuts[-1] = 'StatusReceptionCanceled';
-		$this->statuts[0]  = 'StatusReceptionDraft';
-		// product to receive if stock increase is on close or already received if stock increase is on validation
-		$this->statuts[1]  = 'StatusReceptionValidated';
-		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
-			$this->statuts[1]  = 'StatusReceptionValidatedReceived';
-		}
-		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION_CLOSE")) {
-			$this->statuts[1]  = 'StatusReceptionValidatedToReceive';
-		}
-		$this->statuts[2]  = 'StatusReceptionProcessed';
-
-		// List of short language codes for status
-		$this->statuts_short = array();
-		$this->statuts_short[-1] = 'StatusReceptionCanceledShort';
-		$this->statuts_short[0]  = 'StatusReceptionDraftShort';
-		$this->statuts_short[1]  = 'StatusReceptionValidatedShort';
-		$this->statuts_short[2]  = 'StatusReceptionProcessedShort';
 	}
 
 	/**
@@ -417,8 +402,7 @@ class Reception extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
-				$this->date                 = $this->db->jdate($obj->date_reception); // TODO deprecated
-				$this->date_reception = $this->db->jdate($obj->date_reception); // TODO deprecated
+				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->model_pdf            = $obj->model_pdf;
@@ -755,7 +739,9 @@ class Reception extends CommonObject
 			} else {
 				// build array with quantity received by product in all supplier orders (origin)
 				foreach ($supplierorderdispatch->lines as $dispatch_line) {
-					$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
+					if (array_key_exists($dispatch_line->fk_product, $qty_received)) {
+						$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
+					}
 				}
 
 				// qty wished in order supplier (origin)
@@ -1038,7 +1024,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		// Stock control
-		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
+		if (isModEnabled('stock') && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1273,13 +1259,15 @@ class Reception extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
+		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, '', 0, 0, $notooltip ? 0 : 1);
 		}
-		if ($withpicto && $withpicto != 2) {
-			$result .= ' ';
+		if ($withpicto != 2) {
+			$result .= $this->ref;
 		}
-		$result .= $linkstart.$this->ref.$linkend;
+
+		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
@@ -1317,8 +1305,27 @@ class Reception extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
+		// List of long language codes for status
+		$this->labelStatus[-1] = 'StatusReceptionCanceled';
+		$this->labelStatus[0]  = 'StatusReceptionDraft';
+		// product to receive if stock increase is on close or already received if stock increase is on validation
+		$this->labelStatus[1]  = 'StatusReceptionValidated';
+		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
+			$this->labelStatus[1]  = 'StatusReceptionValidatedReceived';
+		}
+		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION_CLOSE")) {
+			$this->labelStatus[1]  = 'StatusReceptionValidatedToReceive';
+		}
+		$this->labelStatus[2]  = 'StatusReceptionProcessed';
+
+		// List of short language codes for status
+		$this->labelStatusShort[-1] = 'StatusReceptionCanceledShort';
+		$this->labelStatusShort[0]  = 'StatusReceptionDraftShort';
+		$this->labelStatusShort[1]  = 'StatusReceptionValidatedShort';
+		$this->labelStatusShort[2]  = 'StatusReceptionProcessedShort';
+
+		$labelStatus = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->labelStatusShort[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {
@@ -1347,25 +1354,6 @@ class Reception extends CommonObject
 		$now = dol_now();
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
-
-		// Load array of products prodids
-		$num_prods = 0;
-		$prodids = array();
-		$sql = "SELECT rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE entity IN (".getEntity('product').")";
-		$sql .= $this->db->plimit(100);
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num_prods = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_prods) {
-				$i++;
-				$row = $this->db->fetch_row($resql);
-				$prodids[$i] = $row[0];
-			}
-		}
 
 		$order = new CommandeFournisseur($this->db);
 		$order->initAsSpecimen();
@@ -1399,7 +1387,8 @@ class Reception extends CommonObject
 		while ($xnbp < $nbp) {
 			$line = new CommandeFournisseurDispatch($this->db);
 			$line->desc = $langs->trans("Description")." ".$xnbp;
-			$line->libelle = $langs->trans("Description")." ".$xnbp;
+			$line->libelle = $langs->trans("Description")." ".$xnbp;	// deprecated
+			$line->label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 
 			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
@@ -2006,32 +1995,32 @@ class Reception extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array('reception');
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
 	 * Function used to replace a product id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old product id
-	 * @param int $dest_id New product id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'commande_fournisseur_dispatch'
 		);
 
-		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);
 	}
 }

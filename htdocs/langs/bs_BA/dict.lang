@@ -21,7 +21,7 @@ CountryNL=Holandija
 CountryHU=Mađarska
 CountryRU=Rusija
 CountrySE=Švedska
-CountryCI=Obala Slonovače
+CountryCI=Ivory Coast
 CountrySN=Senegal
 CountryAR=Argentina
 CountryCM=Kamerun
@@ -250,7 +250,9 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=Gospođa
+CivilityMMEShort=Gospođa
 CivilityMR=Gospodin
+CivilityMRShort=Gospodin
 CivilityMLE=Gospođica
 CivilityMTRE=Master
 CivilityDR=Doktor

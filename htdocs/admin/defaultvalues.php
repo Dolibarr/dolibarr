@@ -147,12 +147,12 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 			$object->value=$defaultvalue;
 			$object->entity=$conf->entity;
 			$result=$object->create($user);
-			if ($result<0) {
+			if ($result < 0) {
 				$action = '';
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				$action = "";
+				$action = '';
 				$defaulturl = '';
 				$defaultkey = '';
 				$defaultvalue = '';
@@ -226,7 +226,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -324,16 +324,16 @@ print "\n";
 print '<tr class="oddeven">';
 // Page
 print '<td>';
-print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="'.dol_escape_htmltag(GETPOST('defaulturl', 'alphanohtml')).'">';
+print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="'.dol_escape_htmltag($defaulturl).'">';
 print '</td>'."\n";
 // Field
 print '<td>';
-print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="'.dol_escape_htmltag(GETPOST('defaultkey', 'alphanohtml')).'">';
+print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="'.dol_escape_htmltag($defaultkey).'">';
 print '</td>';
 // Value
 if ($mode != 'focus' && $mode != 'mandatory') {
 	print '<td>';
-	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="">';
+	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
 	print '</td>';
 }
 // Limit to superadmin
@@ -383,7 +383,12 @@ if (!is_array($result) && $result < 0) {
 			print '</td>';
 		}
 
-		print '<td></td>';
+		// Multicompany
+		print '<td>';
+		if (isModEnabled('multicompany')) {
+			print dol_escape_htmltag($defaultvalue->entity);
+		}
+		print '</td>';
 
 		// Actions
 		print '<td class="center">';

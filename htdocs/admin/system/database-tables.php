@@ -109,12 +109,18 @@ if (!$base) {
 
 		$arrayoffilesrich = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/mysql/tables/', 'files', 0, '\.sql$');
 		$arrayoffiles = array();
+		$arrayoftablesautocreated = array();
 		foreach ($arrayoffilesrich as $value) {
 			//print $shortsqlfilename.' ';
 			$shortsqlfilename = preg_replace('/\-[a-z]+\./', '.', $value['name']);
-			$arrayoffiles[] = $shortsqlfilename;
+			$arrayoffiles[$value['name']] = $shortsqlfilename;
+			if ($value['name'] == $shortsqlfilename && ! preg_match('/\.key\.sql$/', $value['name'])) {
+				// This is a sql file automatically created
+				$arrayoftablesautocreated[$value['name']] = $shortsqlfilename;
+			}
 		}
 
+		// Now loop on tables really found into database
 		$sql = "SHOW TABLE STATUS";
 
 		$resql = $db->query($sql);
@@ -123,6 +129,7 @@ if (!$base) {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
+
 				print '<tr class="oddeven">';
 
 				print '<td>'.($i+1).'</td>';
@@ -130,11 +137,14 @@ if (!$base) {
 				$tablename = preg_replace('/^'.MAIN_DB_PREFIX.'/', 'llx_', $obj->Name);
 
 				if (in_array($tablename.'.sql', $arrayoffiles)) {
-					$img = "info";
-					//print img_picto($langs->trans("ExternalModule"), $img);
+					if (in_array($tablename.'.sql', $arrayoftablesautocreated)) {
+						$img = "info";
+					} else {
+						$img = "info_black";
+						print img_picto($langs->trans("NotAvailableByDefaultEnabledOnModuleActivation"), $img, 'class="small opacitymedium"');
+					}
 				} else {
 					$img = "info_black";
-					//print DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tablename.'.sql';
 					print img_picto($langs->trans("ExternalModule"), $img, 'class="small"');
 				}
 				print '</td>';

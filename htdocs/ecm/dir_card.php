@@ -94,14 +94,14 @@ $permissiontoread = 0;
 $permissiontoadd = 0;
 $permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permissiontoread = $user->rights->ecm->read;
-	$permissiontoadd = $user->rights->ecm->setup;
-	$permissiontoupload = $user->rights->ecm->upload;
+	$permissiontoread = $user->hasRight("ecm", "read");
+	$permissiontoadd = $user->hasRight("ecm", "setup");
+	$permissiontoupload = $user->hasRight("ecm", "upload");
 }
 if ($module == 'medias') {
-	$permissiontoread = ($user->rights->mailing->lire || $user->rights->website->read);
-	$permissiontoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permissiontoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoread = ($user->hasRight("mailing", "lire") || $user->hasRight("website", "read"));
+	$permissiontoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permissiontoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
 }
 
 if (!$permissiontoread) {

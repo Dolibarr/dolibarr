@@ -25,7 +25,7 @@
 /**
  *	    \file       htdocs/user/bank.php
  *      \ingroup    HRM
- *		\brief      Tab for HRM
+ *		\brief      Tab for HR and bank
  */
 
 // Load Dolibarr environment
@@ -56,12 +56,15 @@ $bankid = GETPOST('bankid', 'int');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('usercardBank', 'globalcard'));
+
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
@@ -79,11 +82,12 @@ if (empty($account->userid)) {
 	$account->userid = $object->id;
 }
 
-
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
+$canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 $canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
-$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
+$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || $user->hasRight('user', 'creer'));
+$permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
+$permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
 
 // Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
@@ -143,49 +147,6 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->userid = $object->id;
 
-	/*
-	if ($action == 'update' && !$cancel)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		if ($canedituser)    // Case we can edit all field
-		{
-			$error = 0;
-
-			if (!$error)
-			{
-				$objectuser->fetch($id);
-
-				$objectuser->oldcopy = dol_clone($objectuser);
-
-				$db->begin();
-
-				$objectuser->default_range = GETPOST('default_range');
-				$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
-
-				if (!$error) {
-					$ret = $objectuser->update($user);
-					if ($ret < 0) {
-						$error++;
-						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
-						} else {
-							setEventMessages($objectuser->error, $objectuser->errors, 'errors');
-						}
-					}
-				}
-
-				if (!$error && !count($objectuser->errors)) {
-					setEventMessages($langs->trans("UserModified"), null, 'mesgs');
-					$db->commit();
-				} else {
-					$db->rollback();
-				}
-			}
-		}
-	}*/
-
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
 	$account->courant         = GETPOST('courant', 'alpha');
@@ -214,6 +175,18 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	}
 }
 
+if ($action == 'delete_confirmed' && !$cancel && $permissiontoaddbankaccount) {
+	$result = $account->delete($user);
+	if ($result < 0) {
+		setEventMessages($account->error, $account->errors, 'errors');
+	} else {
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		header("Location: ".DOL_URL_ROOT.'/user/bank.php?id='.$object->id);
+		exit;
+	}
+	$action = '';
+}
+
 // update birth
 if ($action == 'setbirth' && $canadduser && !$cancel) {
 	$object->birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
@@ -235,6 +208,15 @@ if ($action == 'setpersonal_email' && $canadduser && !$cancel) {
 // update personal mobile
 if ($action == 'setpersonal_mobile' && $canadduser && !$cancel) {
 	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// update accountancy_code
+if ($action == 'setaccountancy_code' && $canadduser && !$cancel) {
+	$object->accountancy_code = (string) GETPOST('accountancy_code', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -296,7 +278,7 @@ llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write)) {
+if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write)) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -317,7 +299,7 @@ if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || 
 	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->rights->user->user->creer) {
+if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -350,9 +332,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
+
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -446,7 +431,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Sensitive salary/value information
 	if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
+		|| (isModEnabled('salaries') && !empty($user->rights->salaries->readall))
 		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))) {
 		$langs->load("salaries");
 
@@ -496,9 +481,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr>';
 		print '<td>';
-		print $form->editfieldkey("DateOfBirth", 'birth', $object->birth, $object, $user->rights->user->user->creer);
+		print $form->editfieldkey("DateOfBirth", 'birth', $object->birth, $object, $user->hasRight('user', 'user', 'creer'));
 		print '</td><td>';
-		print $form->editfieldval("DateOfBirth", 'birth', $object->birth, $object, $user->rights->user->user->creer, 'day', $object->birth);
+		print $form->editfieldval("DateOfBirth", 'birth', $object->birth, $object, $user->hasRight('user', 'user', 'creer'), 'day', $object->birth);
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -507,9 +492,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, 'dol_print_email');
+		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -518,9 +503,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'string', '', null, null, '', 0, 'dol_print_phone');
+		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'phone', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -528,7 +513,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->rights->user->user->creer);
+		print $form->editfieldkey("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->hasRight('user', 'user', 'creer'));
 		print '</td><td>';
 		if ($action == 'editdefault_c_exp_tax_cat') {
 			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
@@ -543,14 +528,14 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		} else {
 			$label_exp_tax_cat = dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 			print $langs->trans($label_exp_tax_cat);
-			//print $form->editfieldval("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->rights->user->user->creer, 'string', ($object->default_c_exp_tax_cat != '' ? $object->default_c_exp_tax_cat : ''));
+			//print $form->editfieldval("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->hasRight('user', 'user', 'creer'), 'string', ($object->default_c_exp_tax_cat != '' ? $object->default_c_exp_tax_cat : ''));
 		}
 		print '</td>';
 		print '</tr>';
 
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("DefaultRangeNumber", 'default_range', $object->default_range, $object, $user->rights->user->user->creer);
+		print $form->editfieldkey("DefaultRangeNumber", 'default_range', $object->default_range, $object, $user->hasRight('user', 'user', 'creer'));
 		print '</td><td>';
 		if ($action == 'editdefault_range') {
 			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
@@ -575,28 +560,33 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Accountancy code
 	if (isModEnabled('accounting')) {
-		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-		print '<td>'.$object->accountancy_code.'</td></tr>';
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'));
+		print '</td><td>';
+		print $form->editfieldval("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'), 'string', '', null, null, '', 0, '');
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Employee Number
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
+	if ($permissiontoreadhr) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $permissiontowritehr);
 		print '</td><td>';
-		print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'string', $object->ref_employee);
+		print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $permissiontowritehr, 'string', $object->ref_employee);
 		print '</td>';
 		print '</tr>';
 	}
 
 	// National registration number
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
+	if ($permissiontoreadhr) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $permissiontowritehr);
 		print '</td><td>';
-		print $form->editfieldval("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'string', $object->national_registration_number);
+		print $form->editfieldval("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $permissiontowritehr, 'string', $object->national_registration_number);
 		print '</td>';
 		print '</tr>';
 	}
@@ -609,7 +599,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Latest payments of salaries
-	if (!empty($conf->salaries->enabled) &&
+	if (isModEnabled('salaries') &&
 		(($user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)) || (!empty($user->rights->salaries->readall)))
 		) {
 		$payment_salary = new PaymentSalary($db);
@@ -784,7 +774,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	print '</div></div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -819,32 +809,32 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($account->id > 0) {
 		print '<tr class="oddeven">';
 		// Label
-		print '<td>'.$account->label.'</td>';
+		print '<td>'.dol_escape_htmltag($account->label).'</td>';
 		// Bank name
-		print '<td>'.$account->bank.'</td>';
+		print '<td>'.dol_escape_htmltag($account->bank).'</td>';
 		// Account number
 		print '<td>';
-		$string = '';
+		$stringescaped = '';
 		foreach ($account->getFieldsToShow() as $val) {
 			if ($val == 'BankCode') {
-				$string .= $account->code_banque.' ';
+				$stringescaped .= dol_escape_htmltag($account->code_banque).' ';
 			} elseif ($val == 'BankAccountNumber') {
-				$string .= $account->number.' ';
+				$stringescaped .= dol_escape_htmltag($account->number).' ';
 			} elseif ($val == 'DeskCode') {
-				$string .= $account->code_guichet.' ';
+				$stringescaped .= dol_escape_htmltag($account->code_guichet).' ';
 			} elseif ($val == 'BankAccountNumberKey') {
-				$string .= $account->cle_rib.' ';
+				$stringescaped .= dol_escape_htmltag($account->cle_rib).' ';
 			}
 		}
 		if (!empty($account->label) && $account->number) {
 			if (!checkBanForAccount($account)) {
-				$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
+				$stringescaped .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
 			} else {
-				$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
+				$stringescaped .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
 			}
 		}
 
-		print $string;
+		print $stringescaped;
 		print '</td>';
 		// IBAN
 		print '<td>'.getIbanHumanReadable($account);
@@ -855,7 +845,8 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		}
 		print '</td>';
 		// BIC
-		print '<td>'.$account->bic;
+		print '<td>';
+		print dol_escape_htmltag($account->bic);
 		if (!empty($account->bic)) {
 			if (!checkSwiftForAccount($account)) {
 				print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
@@ -869,8 +860,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		// Edit/Delete
 		print '<td class="right nowraponall">';
 		if ($permissiontoaddbankaccount) {
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit&token='.newToken().'">';
+			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit&token='.newToken().'">';
 			print img_picto($langs->trans("Modify"), 'edit');
+			print '</a>';
+
+			print '<a class="editfielda marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=delete_confirmed&token='.newToken().'">';
+			print img_picto($langs->trans("Delete"), 'delete');
 			print '</a>';
 		}
 		print '</td>';
@@ -880,16 +875,22 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 
 	if ($account->id == 0) {
-		$colspan = 6;
+		$colspan = 7;
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 	}
 
+
+
 	print '</table>';
 	print '</div>';
+
+	// Add hook in fields
+	$parameters = array('colspan' => ' colspan="2"');
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 }
 
 // Edit
-if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->user->creer) {
+if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user', 'user', 'creer')) {
 	$title = $langs->trans("User");
 	print dol_get_fiche_head($head, 'bank', $title, 0, 'user');
 
@@ -1004,11 +1005,11 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 	print $form->buttonsSaveCancel("Modify");
 }
 
-if ($id && $action == 'edit' && $user->rights->user->user->creer) {
+if ($id && $action == 'edit' && $user->hasRight('user', 'user', 'creer')) {
 	print '</form>';
 }
 
-if ($id && $action == 'create' && $user->rights->user->user->creer) {
+if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
 	print '</form>';
 }
 

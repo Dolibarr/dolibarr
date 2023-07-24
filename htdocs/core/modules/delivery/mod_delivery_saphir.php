@@ -58,7 +58,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -83,7 +83,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdelivery" value="'.$conf->global->DELIVERY_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdelivery" value="'.getDolGlobalString('DELIVERY_SAPHIR_MASK').'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -130,7 +130,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = $conf->global->DELIVERY_SAPHIR_MASK;
+		$mask = getDolGlobalString('DELIVERY_SAPHIR_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -162,7 +162,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc      	Object thirdparty
 	 *  @param  Object		$object			Objet livraison
-	 *  @return string      				Texte descripif
+	 *  @return string      				Descriptive text
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')
 	{

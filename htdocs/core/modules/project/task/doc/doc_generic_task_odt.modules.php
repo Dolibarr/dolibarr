@@ -3,7 +3,8 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,10 +51,10 @@ if (isModEnabled('facture')) {
 if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+if (isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (isModEnabled('contrat')) {
@@ -80,12 +81,6 @@ class doc_generic_task_odt extends ModelePDFTask
 	 * @var Societe Object that emits
 	 */
 	public $emetteur;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -199,7 +194,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			'task_projectlabel'=>$task->projectlabel,
 			'task_label'=>$task->label,
 			'task_description'=>$task->description,
-			'task_fk_parent'=>$task->fk_parent,
+			'task_fk_parent'=>$task->fk_task_parent,
 			'task_duration'=>$task->duration_effective,
 			'task_duration_formated'=>convertSecondToTime($task->duration_effective, 'allhourmin'),
 			'task_planned_workload'=>$task->planned_workload,
@@ -662,13 +657,14 @@ class doc_generic_task_odt extends ModelePDFTask
 					}
 
 					// Time ressources
-					$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
+					$sql = "SELECT t.rowid, t.element_date as task_date, t.element_duration as task_duration, t.fk_user, t.note";
 					$sql .= ", u.lastname, u.firstname";
-					$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+					$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
 					$sql .= " , ".MAIN_DB_PREFIX."user as u";
-					$sql .= " WHERE t.fk_task =".((int) $object->id);
+					$sql .= " WHERE t.fk_element =".((int) $object->id);
+					$sql .= " AND t.elementtype = 'task'";
 					$sql .= " AND t.fk_user = u.rowid";
-					$sql .= " ORDER BY t.task_date DESC";
+					$sql .= " ORDER BY t.element_date DESC";
 
 					$resql = $this->db->query($sql);
 					if ($resql) {
@@ -845,9 +841,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$odfHandler = null; // Destroy object
 
