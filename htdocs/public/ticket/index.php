@@ -93,8 +93,10 @@ print '<div class="clearboth"></div>';
 print '</div>';
 print '</div>';
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+if(getDolGlobalInt($conf->global->TICKET_SHOW_COMPANY_FOOTER)) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 
