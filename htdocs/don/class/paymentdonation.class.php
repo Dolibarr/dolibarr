@@ -92,6 +92,10 @@ class PaymentDonation extends CommonObject
 
 	public $type_code;
 	public $type_label;
+	public $chid;
+	public $datepaid;
+	public $bank_account;
+	public $bank_line;
 
 	/**
 	 * @var string Id of external payment mode
@@ -130,7 +134,7 @@ class PaymentDonation extends CommonObject
 		$now = dol_now();
 
 		// Validate parameters
-		if (!$this->datepaid) {
+		if (!$this->datep) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentDonation';
 			return -1;
 		}
@@ -189,7 +193,7 @@ class PaymentDonation extends CommonObject
 			$sql .= " fk_typepayment, num_payment, note, ext_payment_id, ext_payment_site,";
 			$sql .= " fk_user_creat, fk_bank)";
 			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaid)."',";
+			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".((float) price2num($totalamount)).",";
 			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ";
 			$sql .= " ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").",";
@@ -347,7 +351,7 @@ class PaymentDonation extends CommonObject
 		$sql .= " note=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null");
 		$sql .= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();
@@ -503,10 +507,10 @@ class PaymentDonation extends CommonObject
 
 
 	/**
-	 * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *  @return string        		Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -515,11 +519,11 @@ class PaymentDonation extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -584,10 +588,9 @@ class PaymentDonation extends CommonObject
 			if ($mode == 'payment_donation') {
 				$amount = $total;
 			}
-
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
-				$this->datepaid,
+				$this->datep,
 				$this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				$amount,

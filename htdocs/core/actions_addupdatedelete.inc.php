@@ -76,8 +76,20 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		}
 
 		// Set value to insert
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'restricthtml');
+		if (preg_match('/^text/', $object->fields[$key]['type'])) {
+			$tmparray = explode(':', $object->fields[$key]['type']);
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $tmparray[1]);
+			} else {
+				$value = GETPOST($key, 'nohtml');
+			}
+		} elseif (preg_match('/^html/', $object->fields[$key]['type'])) {
+			$tmparray = explode(':', $object->fields[$key]['type']);
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $tmparray[1]);
+			} else {
+				$value = GETPOST($key, 'restricthtml');
+			}
 		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')); // for date without hour, we use gmt
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
@@ -205,7 +217,14 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		// Set value to update
-		if (preg_match('/^(text|html)/', $object->fields[$key]['type'])) {
+		if (preg_match('/^text/', $object->fields[$key]['type'])) {
+			$tmparray = explode(':', $object->fields[$key]['type']);
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $tmparray[1]);
+			} else {
+				$value = GETPOST($key, 'nohtml');
+			}
+		} elseif (preg_match('/^html/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
 				$value = GETPOST($key, $tmparray[1]);
@@ -285,7 +304,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$action = 'view';
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
-			if ($urltogo && !$noback) {
+			if ($urltogo && empty($noback)) {
 				header("Location: " . $urltogo);
 				exit;
 			}

@@ -104,10 +104,10 @@ abstract class ModeleProductCode
 	 */
 	public $error = '';
 
-	/**     Renvoi la description par defaut du modele de numerotation
+	/**     Returns the default description of the numbering pattern
 	 *
 	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Texte descripif
+	 *      @return string      			Descriptive text
 	 */
 	public function info($langs)
 	{
@@ -191,7 +191,7 @@ abstract class ModeleProductCode
 	 *
 	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of numbers
+	 *  @return	array|int					List of numbers
 	 */
 	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{

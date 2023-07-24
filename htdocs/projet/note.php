@@ -50,14 +50,15 @@ $socid = 0;
 $hookmanager->initHooks(array('projetnote'));
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$permissionnote = $user->rights->projet->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('projet', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }

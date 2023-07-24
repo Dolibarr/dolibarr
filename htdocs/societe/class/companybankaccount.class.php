@@ -35,6 +35,17 @@ class CompanyBankAccount extends Account
 {
 	public $socid;
 
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'societe_rib';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'societe_rib';
+
+	/** @var bool $default_rib  1 = this object is the third party's default bank information */
 	public $default_rib;
 
 	/**
@@ -64,6 +75,13 @@ class CompanyBankAccount extends Account
 	 */
 	public $datem;
 
+	/**
+	 * @var string TRIGGER_PREFIX  Dolibarr 16.0 and above use the prefix to prevent the creation of inconsistently
+	 *                             named triggers
+	 * @see CommonObject::call_trigger()
+	 */
+	const TRIGGER_PREFIX = 'COMPANY_RIB';
+
 
 	/**
 	 *  Constructor
@@ -76,7 +94,7 @@ class CompanyBankAccount extends Account
 
 		$this->socid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 		$this->default_rib = 0;
 	}
 
@@ -84,9 +102,9 @@ class CompanyBankAccount extends Account
 	/**
 	 * Create bank information record.
 	 *
-	 * @param   User   $user		User
-	 * @param   int    $notrigger   1=Disable triggers
-	 * @return	int					<0 if KO, >= 0 if OK
+	 * @param   User|null   $user		User
+	 * @param   int    		$notrigger  1=Disable triggers
+	 * @return	int						<0 if KO, > 0 if OK (ID of newly created company bank account information)
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -97,6 +115,7 @@ class CompanyBankAccount extends Account
 		// Check paramaters
 		if (empty($this->socid)) {
 			$this->error = 'BadValueForParameter';
+			$this->errors[] = $this->error;
 			return -1;
 		}
 
@@ -114,6 +133,9 @@ class CompanyBankAccount extends Account
 			}
 		}
 
+
+		$this->db->begin();
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec)";
 		$sql .= " VALUES (".((int) $this->socid).", 'ban', '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
@@ -128,32 +150,33 @@ class CompanyBankAccount extends Account
 						$error++;
 					}
 					// End call triggers
-
-					if (!$error) {
-						return $this->id;
-					} else {
-						return 0;
-					}
-				} else {
-					return 1;
 				}
 			}
 		} else {
+			$error++;
 			$this->error = $this->db->lasterror();
-			return 0;
+			$this->errors[] = $this->error;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return $this->id;
+		} else {
+			$this->db->rollback();
+			return -1;
 		}
 	}
 
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	User	$user	     Object user
-	 *  @param  int     $notrigger   1=Disable triggers
-	 *	@return	int				     <=0 if KO, >0 if OK
+	 *	@param	User|null	$user	     Object user
+	 *  @param  int     	$notrigger   1=Disable triggers
+	 *	@return	int					     <=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
@@ -168,6 +191,8 @@ class CompanyBankAccount extends Account
 			$this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 		}
 
+		$this->db->begin();
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
 		$sql .= " bank = '".$this->db->escape($this->bank)."'";
 		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
@@ -180,7 +205,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
 			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
 			$sql .= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
@@ -203,20 +228,22 @@ class CompanyBankAccount extends Account
 					$error++;
 				}
 				// End call triggers
-				if (!$error) {
-					return 1;
-				} else {
-					return -1;
-				}
-			} else {
-				return 1;
 			}
 		} else {
+			$error++;
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$this->error = $langs->trans('ErrorDuplicateField');
 			} else {
 				$this->error = $this->db->lasterror();
 			}
+			$this->errors[] = $this->error;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -294,9 +321,9 @@ class CompanyBankAccount extends Account
 	/**
 	 *  Delete a rib from database
 	 *
-	 *	@param		User	$user		User deleting
-	 *	@param  	int		$notrigger	1=Disable triggers
-	 *  @return		int		            <0 if KO, >0 if OK
+	 *	@param		User|null	$user		User deleting
+	 *	@param  	int			$notrigger	1=Disable triggers
+	 *  @return		int		    	        <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
@@ -349,7 +376,7 @@ class CompanyBankAccount extends Account
 				$rib = $this->label." : ";
 			}
 
-			$rib .= (string) $this;
+			$rib .= $this->iban;
 		}
 
 		return $rib;

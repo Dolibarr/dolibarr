@@ -406,12 +406,16 @@ if ($modecompta == "RECETTES-DEPENSES") {
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
-			$amount[$obj->rowid] += $obj->amount_ttc;
+			if (empty($amount[$obj->socid])) {
+				$amount[$obj->socid] = $obj->amount_ttc;
+			} else {
+				$amount[$obj->socid] += $obj->amount_ttc;
+			}
 
-			$name[$obj->rowid] = $obj->name;
-			$address_zip[$obj->rowid] = $obj->zip;
-			$address_town[$obj->rowid] = $obj->town;
-			$address_pays[$obj->rowid] = getCountry($obj->fk_pays);
+			$name[$obj->socid] = $obj->name;
+			$address_zip[$obj->socid] = '';
+			$address_town[$obj->socid] = '';
+			$address_pays[$obj->socid] = 0;
 
 			$catotal += $obj->amount_ttc;
 

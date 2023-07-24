@@ -8,6 +8,5 @@ KnowledgeManagementAboutPage =Gestión del conocimiento sobre la página
 KnowledgeManagementArea =Conocimiento administrativo
 MenuKnowledgeRecord =Base de conocimientos
 GroupOfTicket=Grupo de entradas
-SuggestedForTicketsInGroup=Sugerido para boletos cuando el grupo es
 SetObsolete=Establecer como obsoleto
 ConfirmReopenKM=¿Desea restaurar este artículo al estado "Validado"?

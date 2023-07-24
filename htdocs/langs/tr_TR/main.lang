@@ -1,10 +1,16 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-FONTFORPDF=helvetica
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
+FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
 SeparatorThousand=.
@@ -28,6 +34,7 @@ NoTemplateDefined=Bu e-posta türü için mevcut şablon yok
 AvailableVariables=Mevcut yedek değişkenler
 NoTranslation=Çeviri yok
 Translation=Çeviri
+Translations=Translations
 CurrentTimeZone=PHP Saat Dilimi (sunucu)
 EmptySearchString=Enter non empty search criterias
 EnterADateCriteria=Enter a date criteria
@@ -199,6 +206,7 @@ Valid=Geçerli
 Approve=Onayla
 Disapprove=Onaylama
 ReOpen=Yeniden aç
+OpenVerb=Açık
 Upload=Yükle
 ToLink=Bağlantıla
 Select=Seç
@@ -216,7 +224,7 @@ UserGroup=User group
 UserGroups=User groups
 NoUserGroupDefined=Tanımlı kullanıcı grubu yok
 Password=Parola
-PasswordRetype=Parolanızı yeniden yazın
+PasswordRetype=Repeat your password
 NoteSomeFeaturesAreDisabled=Bu demoda bir çok özelliğin/modülün engelli olduğuna dikkat edin.
 Name=Adı
 NameSlashCompany=İsim / Firma
@@ -481,6 +489,7 @@ ActionsOnContact=Bu kişi/adres için etkinlikler
 ActionsOnContract=Bu sözleşme için etkinlikler
 ActionsOnMember=Bu üye hakkındaki etkinlikler
 ActionsOnProduct=Bu ürünle ilgili etkinlikler
+ActionsOnAsset=Events for this fixed asset
 NActionsLate=%s son
 ToDo=Yapılacaklar
 Completed=Tamamlanmış
@@ -921,6 +930,7 @@ DirectDownloadInternalLink=Private download link
 PrivateDownloadLinkDesc=You need to be logged and you need permissions to view or download the file
 Download=İndir
 DownloadDocument=Belgeyi indir
+DownloadSignedDocument=Download signed document
 ActualizeCurrency=Para birimini güncelle
 Fiscalyear=Mali yıl
 ModuleBuilder=Modül ve Uygulama Oluşturucu
@@ -1046,6 +1056,7 @@ SearchIntoContracts=Sözleşmeler
 SearchIntoCustomerShipments=Müşteri sevkiyatları
 SearchIntoExpenseReports=Gider raporları
 SearchIntoLeaves=İzin
+SearchIntoKM=Knowledge base
 SearchIntoTickets=Destek Bildirimleri
 SearchIntoCustomerPayments=Customer payments
 SearchIntoVendorPayments=Tedarikçi ödemeleri
@@ -1137,15 +1148,29 @@ EventReminder=Event Reminder
 UpdateForAllLines=Update for all lines
 OnHold=Beklemede
 Civility=Civility
-AffectTag=Affect Tag
+AffectTag=Assign Tag
+AffectUser=Assign User
+SetSupervisor=Set Supervisor
 CreateExternalUser=Create external user
-ConfirmAffectTag=Bulk Tag Affect
-ConfirmAffectTagQuestion=Are you sure you want to affect tags to the %s selected record(s)?
+ConfirmAffectTag=Bulk Tag Assignement
+ConfirmAffectUser=Bulk User Assignement
+ProjectRole=Role assigned on each project
+TasksRole=Role assigned on each task of each project
+ConfirmSetSupervisor=Bulk Supervisor Set
+ConfirmUpdatePrice=Choose a increase/decrease price rate
+ConfirmAffectTagQuestion=Are you sure you want to assign tags to the %s selected record(s)?
+ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s selected record(s)?
+ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
+ConfirmUpdatePriceQuestion=Are you sure you want to update the price of the %s selected record(s)?
 CategTypeNotFound=No tag type found for type of records
+Rate=Oran
+SupervisorNotFound=Supervisor not found
 CopiedToClipboard=Copied to clipboard
 InformationOnLinkToContract=This amount is only the total of all the lines of the contract. No notion of time is taken into consideration.
 ConfirmCancel=Are you sure you want to cancel
 EmailMsgID=Email MsgID
+EmailDate=Email date
+SetToStatus=Set to status %s
 SetToEnabled=Set to enabled
 SetToDisabled=Set to disabled
 ConfirmMassEnabling=mass enabling confirmation
@@ -1174,9 +1199,14 @@ Terminated=Sonlandırılmış
 AddLineOnPosition=Add line on position (at the end if empty)
 ConfirmAllocateCommercial=Assign sales representative confirmation
 ConfirmAllocateCommercialQuestion=Are you sure you want to assign the %s selected record(s)?
-CommercialsAffected=Sales representatives affected
-CommercialAffected=Sales representative affected
+CommercialsAffected=Sales representatives assigned
+CommercialAffected=Sales representative assigned
 YourMessage=Your message
 YourMessageHasBeenReceived=Your message has been received. We will answer or contact you as soon as possible.
 UrlToCheck=Url to check
 Automation=Automation
+CreatedByEmailCollector=Created by Email collector
+CreatedByPublicPortal=Created from Public portal
+UserAgent=User Agent
+InternalUser=İç kullanıcı
+ExternalUser=Dış kullanıcı

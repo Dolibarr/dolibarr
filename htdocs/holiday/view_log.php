@@ -222,7 +222,7 @@ $log_holiday = $object->fetchLog($sqlorder, $sqlwhere); // Load $object->logs
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//TODO: $result = $db->query($sql);
 	//TODO: $nbtotalofrecords = $db->num_rows($result);
 	$nbtotalofrecords = is_array($object->logs) ? count($object->logs) : 0;
@@ -241,7 +241,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if (!empty($search_id)) {
 	$param .= '&search_statut='.urlencode($search_statut);
@@ -333,11 +333,10 @@ if (!empty($arrayfields['cpl.date_action']['checked'])) {
 if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
 	$validator = new UserGroup($db);
 	$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-	$valideurobjects = $validator->listUsersForGroup($excludefilter);
+	$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 	$valideurarray = array();
-
 	foreach ($valideurobjects as $val) {
-		$valideurarray[$val->id] = $val->id;
+		$valideurarray[$val] = $val;
 	}
 
 	print '<td class="liste_titre">';

@@ -630,7 +630,7 @@ function jscheckparam()
 {
 	console.log("Click on jscheckparam");
 
-	ok=true;
+	var ok = true;
 
 	if (document.forminstall.main_dir.value == '')
 	{

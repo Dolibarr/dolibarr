@@ -120,7 +120,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					while ($minimumdatecformated < $objp->datec) {
-						$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
+						$dataseries[] = array('label' => dol_print_date($minimumdatec, 'day'), 'data' => 0);
 						$minimumdatec = dol_time_plus_duree($minimumdatec, $intervaltoadd, 'd');
 						$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 					}
@@ -130,7 +130,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 					$i++;
 				}
 				while (count($dataseries) < $days) {
-					$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
+					$dataseries[] = array('label' => dol_print_date($minimumdatec, 'day'), 'data' => 0);
 					$minimumdatec = dol_time_plus_duree($minimumdatec, $intervaltoadd, 'd');
 					$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 					$i++;
@@ -139,7 +139,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				dol_print_error($this->db);
 			}
 			$stringtoshow = '<div class="div-table-responsive-no-min">';
-			$stringtoshow .= '<script type="text/javascript">
+			$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#idsubimgDOLUSERCOOKIE_ticket_last_days").click(function() {
 						jQuery("#idfilterDOLUSERCOOKIE_ticket_last_days").toggle();

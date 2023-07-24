@@ -117,6 +117,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
+ *  @see convertSecondToTime(), convertTimeToSeconds()
  */
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
@@ -285,7 +286,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			if ($sDay > 1) {
 				$dayTranslate = $langs->trans("Days");
 			}
-			$sTime .= $sDay.' '.strtolower(dol_substr($dayTranslate, 0, 1)).'. ';
+			$sTime .= $sDay.' '.$langs->trans("d").' ';
 		}
 
 		if ($format == 'all') {

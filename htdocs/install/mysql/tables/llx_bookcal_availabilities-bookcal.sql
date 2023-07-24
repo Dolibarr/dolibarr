@@ -35,7 +35,8 @@ CREATE TABLE llx_bookcal_availabilities(
 	type integer NOT NULL, 
 	duration integer DEFAULT 30 NOT NULL, 
 	startHour integer NOT NULL, 
-	endHour integer NOT NULL
+	endHour integer NOT NULL, 
+	fk_bookcal_calendar integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 

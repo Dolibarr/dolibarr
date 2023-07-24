@@ -65,9 +65,9 @@ if (empty($conf->global->RECEPTION_ADDON_NUMBER)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstreception', 'alpha');
+	$maskconst = GETPOST('maskconstreception', 'aZ09');
 	$maskvalue = GETPOST('maskreception', 'alpha');
-	if (!empty($maskconst)) {
+	if (!empty($maskconst) && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 

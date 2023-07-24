@@ -130,9 +130,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->facture->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+$permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
 
 $arrayfields = array(
 	'f.titre'=>array('label'=>'Ref', 'checked'=>1),
@@ -233,8 +233,8 @@ if (empty($reshook)) {
 	// Mass actions
 	/*$objectclass='MyObject';
 	$objectlabel='MyObject';
-	$permissiontoread = $user->rights->mymodule->read;
-	$permissiontodelete = $user->rights->mymodule->delete;
+	$permissiontoread = $user->hasRight("mymodule", "read");
+	$permissiontodelete = $user->hasRight("mymodule", "delete");
 	$uploaddir = $conf->mymodule->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
@@ -278,17 +278,17 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn_rec as f';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_rec_extrafields as ef ON ef.fk_object = f.rowid';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '. (int) $user->id;
 }
 if ($search_ref) {
@@ -358,7 +358,7 @@ if ($tmpsortfield == 'recurring') {
 $sql .= $db->order($tmpsortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -378,7 +378,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($socid > 0) {
 		$param .= '&socid='.urlencode($socid);
@@ -709,7 +709,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['s.nom']['checked'])) {
-				print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -873,7 +873,7 @@ if ($resql) {
 			}
 			// Action column
 			print '<td class="center tdoverflowmax125">';
-			if ($user->rights->facture->creer && empty($supplierinvoicerectmp->suspended)) {
+			if ($user->hasRight('facture', 'creer') && empty($supplierinvoicerectmp->suspended)) {
 				if ($supplierinvoicerectmp->isMaxNbGenReached()) {
 					print $langs->trans("MaxNumberOfGenerationReached");
 				} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
@@ -902,7 +902,7 @@ if ($resql) {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	// Show total line

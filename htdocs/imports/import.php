@@ -142,6 +142,7 @@ $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
 $separator			= (GETPOST('separator', 'alphanohtml') ? GETPOST('separator', 'alphanohtml', 3) : '');
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
+$charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
 
 $objimport = new Import($db);
@@ -485,7 +486,7 @@ if ($step == 2 && $datatoimport) {
 	print '<tr class="liste_titre"><td colspan="5">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	foreach ($list as $key) {
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
@@ -529,7 +530,7 @@ if ($step == 3 && $datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	llxHeader('', $langs->trans("NewImport"), $help_url);
 
@@ -639,7 +640,7 @@ if ($step == 3 && $datatoimport) {
 		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 		$maxphp = @ini_get('upload_max_filesize'); // In unknown
 		if (preg_match('/k$/i', $maxphp)) {
-			$maxphp = (int) substr($maxphp, 0, -1) * 1;
+			$maxphp = (int) substr($maxphp, 0, -1);
 		}
 		if (preg_match('/m$/i', $maxphp)) {
 			$maxphp = (int) substr($maxphp, 0, -1) * 1024;
@@ -652,7 +653,7 @@ if ($step == 3 && $datatoimport) {
 		}
 		$maxphp2 = @ini_get('post_max_size'); // In unknown
 		if (preg_match('/k$/i', $maxphp2)) {
-			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1;
+			$maxphp2 = (int) substr($maxphp2, 0, -1);
 		}
 		if (preg_match('/m$/i', $maxphp2)) {
 			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024;
@@ -763,7 +764,7 @@ if ($step == 4 && $datatoimport) {
 	//var_dump($array_match_file_to_database);
 
 	$model = $format;
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	if (empty($separator)) {
 		$separator = (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE);
@@ -802,6 +803,7 @@ if ($step == 4 && $datatoimport) {
 	if ($model == 'csv') {
 		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
+		$obj->charset = '';
 	}
 	if ($model == 'xlsx') {
 		if (!preg_match('/\.xlsx$/i', $filetoimport)) {
@@ -817,17 +819,21 @@ if ($step == 4 && $datatoimport) {
 		$array_match_file_to_database = array();
 	}
 
-	// Load source fields in input file
+	// Load the source fields from input file into variable $arrayrecord
 	$fieldssource = array();
 	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport, $langs);
 	if ($result >= 0) {
 		// Read first line
 		$arrayrecord = $obj->import_read_record();
-		// Put into array fieldssource starting with 1.
+
+		// Create array $fieldssource starting with 1 with values found of first line.
 		$i = 1;
 		foreach ($arrayrecord as $key => $val) {
 			if ($val["type"] != -1) {
 				$fieldssource[$i]['example1'] = dol_trunc($val['val'], 128);
+				$i++;
+			} else {
+				$fieldssource[$i]['example1'] = $langs->trans('Empty');
 				$i++;
 			}
 		}
@@ -1078,9 +1084,9 @@ if ($step == 4 && $datatoimport) {
 		$valforsourcefieldnb[$lefti] = $key;
 		$lefti++;
 
-		if ($lefti > count($fieldstarget)) {
+		/*if ($lefti > count($fieldstarget)) {
 			break; // Other fields are in the not imported area
-		}
+		}*/
 	}
 	//var_dump($valforsourcefieldnb);
 
@@ -1134,9 +1140,9 @@ if ($step == 4 && $datatoimport) {
 
 	print '<table class="nobordernopadding centpercent tableimport">';
 	foreach ($fieldssource as $code => $line) {	// $fieldssource is an array code=column num,  line=content on first line for column in source file.
-		if ($i == $minpos) {
+		/*if ($i == $minpos) {
 			break;
-		}
+		}*/
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
@@ -1354,7 +1360,7 @@ if ($step == 4 && $datatoimport) {
 		print '				$("select.targetselectchange").find(\'option[value="\'+value+\'"]:not(:selected)\').prop("disabled", true);'."\n";	// Set to disabled except if currently selected
 		print '         }'."\n";
 		print '     });'."\n";
-		print '};'."\n";
+		print '}'."\n";
 
 		// Function to save the selection in database
 		print 'function saveSelection() {'."\n";
@@ -1402,7 +1408,7 @@ if ($step == 4 && $datatoimport) {
 					}
 		";
 
-		print '};'."\n";
+		print '}'."\n";
 
 		// If we make a change on a selectbox
 		print '$(".targetselectchange").change(function(){'."\n";
@@ -1547,7 +1553,7 @@ if ($step == 5 && $datatoimport) {
 	}
 
 	$model = $format;
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
@@ -2010,7 +2016,7 @@ if ($step == 6 && $datatoimport) {
 	}
 
 	$model = $format;
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	$importid = GETPOST("importid", 'alphanohtml');
 
 
@@ -2403,8 +2409,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 			} else {
 				print ' - ';
 			}
-			//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ExampleOnFirstLine").': </span>';
-			print '<i class="opacitymedium">'.$example.'</i>';
+			print '<i class="opacitymedium">'.dol_escape_htmltag($example).'</i>';
 		}
 		print '</td>';
 		print '</tr>';

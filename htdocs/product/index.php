@@ -36,10 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'int');
-if ($type == '' && empty($user->rights->produit->lire)) {
+if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
 	$type = '1'; // Force global page on service page only
 }
-if ($type == '' && empty($user->rights->service->lire)) {
+if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produit', 'lire')) {
 	$type = '0'; // Force global page on product page only
 }
 
@@ -58,7 +58,7 @@ if ($type == '0') {
 } elseif ($type == '1') {
 	$result = restrictedArea($user, 'service');
 } else {
-	$result = restrictedArea($user, 'produit|service|expedition');
+	$result = restrictedArea($user, 'produit|service|expedition|reception');
 }
 
 
@@ -73,11 +73,11 @@ if (!isset($_GET["type"])) {
 	$transAreaType = $langs->trans("ProductsAndServicesArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enabled)) {
+if ((isset($_GET["type"]) && $_GET["type"] == 0) || !isModEnabled("service")) {
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enabled)) {
+if ((isset($_GET["type"]) && $_GET["type"] == 1) || !isModEnabled("product")) {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -93,7 +93,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
 	// Search contract
-	if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
 	}
 
@@ -249,7 +249,7 @@ if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PR
 				$i++;
 			}
 			if ($i > $nbmax) {
-				$dataseries[] = array($langs->trans("Other"), round($rest));
+				$dataseries[] = array($langs->transnoentitiesnoconv("Other"), round($rest));
 			}
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';

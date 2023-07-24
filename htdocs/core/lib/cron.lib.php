@@ -128,7 +128,7 @@ function dol_print_cron_urls()
 		$pathtoscript = $conf->global->MAIN_DOL_SCRIPTS_ROOT;
 	}
 
-	$file = $pathtoscript.'/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY.'').' '.$logintouse.' [cronjobid]';
+	$file = $pathtoscript.'/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY).' '.$logintouse.' [cronjobid]';
 	print '<textarea class="quatrevingtpercent">'.$file."</textarea><br>\n";
 	print '<br>';
 
@@ -145,7 +145,7 @@ function dol_print_cron_urls()
 		if ($linuxlike) {
 			print $langs->trans("CronExplainHowToRunUnix");
 			print '<br>';
-			print '<textarea class="quatrevingtpercent">*/5 * * * * '.$pathtoscript.'/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY.'').' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
+			print '<textarea class="quatrevingtpercent">*/5 * * * * '.$pathtoscript.'/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY).' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
 		} else {
 			print $langs->trans("CronExplainHowToRunWin");
 		}

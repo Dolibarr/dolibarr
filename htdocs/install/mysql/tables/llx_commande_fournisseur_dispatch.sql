@@ -18,9 +18,9 @@
 -- particular supplier order. A movement with same information is also done
 -- into stock_movement so this table may be useless.
 -- 
--- Detail of each lines of a reception (qty, batch and into wich warehouse is
--- received a purchase order line).
--- This table should be also name llx_receptiondet.
+-- Detail of each lines of a reception (qty, batch and into which warehouse must be
+-- received or has been receveived a purchase order line).
+-- This table should have been named llx_receptiondet_batch
 -- ===================================================================
 
 create table llx_commande_fournisseur_dispatch

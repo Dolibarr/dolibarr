@@ -36,7 +36,7 @@ then
 	    echo "tx pull -a"
 	    tx pull -a
 	    
-	    echo "Remove some language directories (not enough translated)"
+	    echo "Remove some language directories (not enough translated) like ach, br_FR, en, frp, fy_NL, ..."
 	    rm -fr htdocs/langs/ach
 	    rm -fr htdocs/langs/br_FR
 	    rm -fr htdocs/langs/en

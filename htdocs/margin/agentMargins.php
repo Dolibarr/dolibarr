@@ -49,6 +49,11 @@ $pagenext = $page + 1;
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
+if ($user->rights->margins->read->all) {
+	$agentid = GETPOST('agentid', 'int');
+} else {
+	$agentid = $user->id;
+}
 if (!$sortfield) {
 	if ($agentid > 0) {
 		$sortfield = "s.nom";
@@ -74,11 +79,6 @@ if (!empty($enddatemonth)) {
 }
 
 // Security check
-if ($user->rights->margins->read->all) {
-	$agentid = GETPOST('agentid', 'int');
-} else {
-	$agentid = $user->id;
-}
 $result = restrictedArea($user, 'margins');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -109,7 +109,8 @@ $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $titre = $langs->trans("Margins");
 $picto = 'margin';
 
@@ -150,8 +151,10 @@ $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 $sql .= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql .= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
-$sql .= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1 * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
-$sql .= " sum(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
+$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
+$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(empty($conf->global->AGENT_CONTACT_TYPE) ?-1 : $conf->global->AGENT_CONTACT_TYPE);
@@ -316,7 +319,8 @@ if ($result) {
 			$sortfield = 'name';
 		}
 		$group_list = dol_sort_array($group_list, $sortfield, $sortorder);
-
+		$cumul_achat = 0;
+		$cumul_vente = 0;
 		foreach ($group_list as $group_id => $group_array) {
 			$pa = $group_array['buying_price'];
 			$pv = $group_array['selling_price'];
@@ -345,6 +349,12 @@ if ($result) {
 	}
 
 	// Show total margin
+	if (!isset($cumul_achat)) {
+		$cumul_achat = 0;
+	}
+	if (!isset($cumul_vente)) {
+		$cumul_vente = 0;
+	}
 	$totalMargin = $cumul_vente - $cumul_achat;
 
 	$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';

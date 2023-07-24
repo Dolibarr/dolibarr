@@ -318,7 +318,7 @@ function getIbanHumanReadable(Account $account)
 {
 	if ($account->getCountryCode() == 'FR') {
 		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', $account->iban);
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban)?'':$account->iban);
 		$iban = new PHP_IBAN\IBAN($ibantoprint);
 		return $iban->HumanFormat();
 	}
@@ -360,7 +360,7 @@ function checkBanForAccount($account)
 
 		for ($i = 0, $s = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
-			$s += (0 + (int) $code) * $coef[$i];
+			$s += ((int) $code) * $coef[$i];
 		}
 		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
 		$cle_rib = 97 - ($s % 97);

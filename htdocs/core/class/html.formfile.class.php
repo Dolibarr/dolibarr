@@ -423,7 +423,7 @@ class FormFile
 		if (preg_match('/massfilesarea_/', $modulepart)) {
 			$out .= '<div id="show_files"><br></div>'."\n";
 			$title = $langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
-			$title .= '<script>
+			$title .= '<script nonce="'.getNonce().'">
 				jQuery(document).ready(function() {
 					jQuery(\'#togglemassfilesarea\').click(function() {
 						if (jQuery(\'#togglemassfilesarea\').attr(\'ref\') == "shown")
@@ -448,6 +448,19 @@ class FormFile
 		if (!empty($title)) {
 			$titletoshow = ($title == 'none' ? '' : $title);
 		}
+
+		$submodulepart = $modulepart;
+
+		// modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
+		$tmp = explode(':', $modulepart);
+		if (!empty($tmp[1])) {
+			$modulepart = $tmp[0];
+			$submodulepart = $tmp[1];
+		}
+
+		$addcolumforpicto = ($delallowed || $printer || $morepicto);
+		$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+		$colspanmore = 0;
 
 		// Show table
 		if ($genallowed) {
@@ -648,15 +661,6 @@ class FormFile
 					$modellist = ModelePDFUserGroup::liste_modeles($this->db);
 				}
 			} else {
-				$submodulepart = $modulepart;
-
-				// modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
-				$tmp = explode(':', $modulepart);
-				if (!empty($tmp[1])) {
-					$modulepart = $tmp[0];
-					$submodulepart = $tmp[1];
-				}
-
 				// For normalized standard modules
 				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 				if (file_exists($file)) {
@@ -699,10 +703,6 @@ class FormFile
 			$out .= '<table class="liste formdoc noborder centpercent">';
 
 			$out .= '<tr class="liste_titre">';
-
-			$addcolumforpicto = ($delallowed || $printer || $morepicto);
-			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-			$colspanmore = 0;
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
@@ -837,7 +837,7 @@ class FormFile
 					}
 
 					// Show file name with link to download
-					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);;
+					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
 
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
@@ -920,6 +920,9 @@ class FormFile
 					}
 
 					if (is_object($hookmanager)) {
+						$addcolumforpicto = ($delallowed || $printer || $morepicto);
+						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+						$colspanmore = 0;
 						$parameters = array('colspan'=>($colspan + $colspanmore), 'socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart'=>$modulepart, 'relativepath'=>$relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
@@ -1100,33 +1103,33 @@ class FormFile
 	 *  Show list of documents in $filearray (may be they are all in same directory but may not)
 	 *  This also sync database if $upload_dir is defined.
 	 *
-	 *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this.
-	 * 	@param	 Object	$object				Object on which document is linked to.
-	 * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper.
-	 * 	@param	 string	$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
-	 * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file.
-	 * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
-	 * 	@param	 int	$permonobject		Permission on object (so permission to delete or crop document)
-	 * 	@param	 int	$useinecm			Change output for use in ecm module:
-	 * 										0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
-	 * 										1: Add link to edit ECM entry
-	 * 										2: Add rename and crop link
-	 *                                      4: Add a preview column
-	 *                                      5: Add link to edit ECM entry and Add a preview column
-	 * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
-	 *  @param   int	$maxlength          Maximum length of file name shown.
-	 *  @param	 string	$title				Title before list. Use 'none' to disable title.
-	 *  @param	 string $url				Full url to use for click links ('' = autodetect)
-	 *  @param	 int	$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
-	 *  @param   int    $permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
-	 *  @param   string $upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT. Fill this to complete file data with database indexes.
-	 *  @param   string $sortfield          Sort field ('name', 'size', 'position', ...)
-	 *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
-	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
-	 *  @param	 int	$addfilterfields	Add the line with filters
-	 *  @param	 int	$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
-	 *  @param	 string	$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
-	 * 	@return	 int						<0 if KO, nb of files shown if OK
+	 *  @param	 array			$filearray          Array of files loaded by dol_dir_list('files') function before calling this.
+	 * 	@param	 Object|null	$object				Object on which document is linked to.
+	 * 	@param	 string			$modulepart			Value for modulepart used by download or viewimage wrapper.
+	 * 	@param	 string			$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
+	 * 	@param	 int			$forcedownload		Force to open dialog box "Save As" when clicking on file.
+	 * 	@param	 string			$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
+	 * 	@param	 int			$permonobject		Permission on object (so permission to delete or crop document)
+	 * 	@param	 int			$useinecm			Change output for use in ecm module:
+	 * 												0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
+	 * 												1: Add link to edit ECM entry
+	 * 												2: Add rename and crop link
+	 *                                  		    4: Add a preview column
+	 *                                  		    5: Add link to edit ECM entry and Add a preview column
+	 * 	@param	 string			$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
+	 *  @param   int			$maxlength          Maximum length of file name shown.
+	 *  @param	 string			$title				Title before list. Use 'none' to disable title.
+	 *  @param	 string 		$url				Full url to use for click links ('' = autodetect)
+	 *  @param	 int			$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
+	 *  @param   int    		$permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
+	 *  @param   string 		$upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT. Fill this to complete file data with database indexes.
+	 *  @param   string 		$sortfield          Sort field ('name', 'size', 'position', ...)
+	 *  @param   string 		$sortorder          Sort order ('ASC' or 'DESC')
+	 *  @param   int    		$disablemove        1=Disable move button, 0=Position move is possible.
+	 *  @param	 int			$addfilterfields	Add the line with filters
+	 *  @param	 int			$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
+	 *  @param	 string			$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
+	 * 	@return	 int								<0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1, $moreattrondiv = '')
@@ -1204,7 +1207,7 @@ class FormFile
 			if ($permtoeditline < 0) {  // Old behaviour for backward compatibility. New feature should call method with value 0 or 1
 				$permtoeditline = 0;
 				if (in_array($modulepart, array('product', 'produit', 'service'))) {
-					if ($user->rights->produit->creer && $object->type == Product::TYPE_PRODUCT) {
+					if ($user->hasRight('produit', 'creer') && $object->type == Product::TYPE_PRODUCT) {
 						$permtoeditline = 1;
 					}
 					if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) {
@@ -1442,7 +1445,28 @@ class FormFile
 							if (in_array($modulepart, array('product', 'produit', 'service'))) {
 								$newmodulepart = 'produit|service';
 							}
-
+							if (image_format_supported($file['name']) > 0) {
+								if ($permtoeditline) {
+									$moreparaminurl = '';
+									if (!empty($object->id) && $object->id > 0) {
+										$moreparaminurl .= '&id='.$object->id;
+									} elseif (GETPOST('website', 'alpha')) {
+										$moreparaminurl .= '&website='.GETPOST('website', 'alpha');
+									}
+									// Set the backtourl
+									if ($modulepart == 'medias' && !GETPOST('website')) {
+										$moreparaminurl .= '&backtourl='.urlencode(DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1&modulepart='.$modulepart.'&section_dir='.$relativepath);
+									}
+									// Link to convert into webp
+									if (!preg_match('/\.webp$/i', $file['name'])) {
+										if ($modulepart == 'medias' && !GETPOST('website')) {
+											print '<a href="'.DOL_URL_ROOT.'/ecm/index_medias.php?action=confirmconvertimgwebp&token='.newToken().'&section_dir='.urlencode($relativepath).'&filetoregenerate='.urlencode($fileinfo['basename']).'&module='.$modulepart.$param.$moreparaminurl.'" title="'.dol_escape_htmltag($langs->trans("GenerateChosenImgWebp")).'">'.img_picto('', 'images', 'class="flip marginrightonly"').'</a>';
+										} elseif ($modulepart == 'medias' && GETPOST('website')) {
+											print '<a href="'.DOL_URL_ROOT.'/website/index.php?action=confirmconvertimgwebp&token='.newToken().'&section_dir='.urlencode($relativepath).'&filetoregenerate='.urlencode($fileinfo['basename']).'&module='.$modulepart.$param.$moreparaminurl.'" title="'.dol_escape_htmltag($langs->trans("GenerateChosenImgWebp")).'">'.img_picto('', 'images', 'class="flip marginrightonly"').'</a>';
+										}
+									}
+								}
+							}
 							if (!$disablecrop && image_format_supported($file['name']) > 0) {
 								if ($permtoeditline) {
 									// Link to resize
@@ -1934,6 +1958,7 @@ class FormFile
 		if (!empty($addfilterfields)) {
 			print '</form>';
 		}
+		return count($filearray);
 		// Fin de zone
 	}
 
@@ -1962,7 +1987,7 @@ class FormFile
 		} elseif ($sortfield == "date") {
 			$sortfield = "datea";
 		} else {
-			$sortfield = null;
+			$sortfield = '';
 		}
 		$res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
 		$param .= (isset($object->id) ? '&id='.$object->id : '');

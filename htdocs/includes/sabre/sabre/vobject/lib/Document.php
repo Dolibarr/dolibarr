@@ -16,8 +16,8 @@ namespace Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class Document extends Component {
-
+abstract class Document extends Component
+{
     /**
      * Unknown document type.
      */
@@ -55,28 +55,28 @@ abstract class Document extends Component {
      *
      * @var string
      */
-    static $defaultName;
+    public static $defaultName;
 
     /**
      * List of properties, and which classes they map to.
      *
      * @var array
      */
-    static $propertyMap = [];
+    public static $propertyMap = [];
 
     /**
      * List of components, along with which classes they map to.
      *
      * @var array
      */
-    static $componentMap = [];
+    public static $componentMap = [];
 
     /**
      * List of value-types, and which classes they map to.
      *
      * @var array
      */
-    static $valueMap = [];
+    public static $valueMap = [];
 
     /**
      * Creates a new document.
@@ -91,20 +91,20 @@ abstract class Document extends Component {
      *
      * new Document(array $children = [], $defaults = true);
      * new Document(string $name, array $children = [], $defaults = true)
-     *
-     * @return void
      */
-    function __construct() {
-
+    public function __construct()
+    {
         $args = func_get_args();
-        if (count($args) === 0 || is_array($args[0])) {
-            array_unshift($args, $this, static::$defaultName);
-            call_user_func_array(['parent', '__construct'], $args);
+        $name = static::$defaultName;
+        if (0 === count($args) || is_array($args[0])) {
+            $children = isset($args[0]) ? $args[0] : [];
+            $defaults = isset($args[1]) ? $args[1] : true;
         } else {
-            array_unshift($args, $this);
-            call_user_func_array(['parent', '__construct'], $args);
+            $name = $args[0];
+            $children = isset($args[1]) ? $args[1] : [];
+            $defaults = isset($args[2]) ? $args[2] : true;
         }
-
+        parent::__construct($this, $name, $children, $defaults);
     }
 
     /**
@@ -112,10 +112,9 @@ abstract class Document extends Component {
      *
      * @return int
      */
-    function getDocumentType() {
-
+    public function getDocumentType()
+    {
         return self::UNKNOWN;
-
     }
 
     /**
@@ -129,18 +128,13 @@ abstract class Document extends Component {
      *
      * @return mixed
      */
-    function create($name) {
-
+    public function create($name)
+    {
         if (isset(static::$componentMap[strtoupper($name)])) {
-
             return call_user_func_array([$this, 'createComponent'], func_get_args());
-
         } else {
-
             return call_user_func_array([$this, 'createProperty'], func_get_args());
-
         }
-
     }
 
     /**
@@ -158,22 +152,24 @@ abstract class Document extends Component {
      * ensure that this does not happen, set $defaults to false.
      *
      * @param string $name
-     * @param array $children
-     * @param bool $defaults
+     * @param array  $children
+     * @param bool   $defaults
      *
      * @return Component
      */
-    function createComponent($name, array $children = null, $defaults = true) {
-
+    public function createComponent($name, array $children = null, $defaults = true)
+    {
         $name = strtoupper($name);
-        $class = 'Sabre\\VObject\\Component';
+        $class = Component::class;
 
         if (isset(static::$componentMap[$name])) {
             $class = static::$componentMap[$name];
         }
-        if (is_null($children)) $children = [];
-        return new $class($this, $name, $children, $defaults);
+        if (is_null($children)) {
+            $children = [];
+        }
 
+        return new $class($this, $name, $children, $defaults);
     }
 
     /**
@@ -187,16 +183,16 @@ abstract class Document extends Component {
      * Parameter objects.
      *
      * @param string $name
-     * @param mixed $value
-     * @param array $parameters
-     * @param string $valueType Force a specific valuetype, such as URI or TEXT
+     * @param mixed  $value
+     * @param array  $parameters
+     * @param string $valueType  Force a specific valuetype, such as URI or TEXT
      *
      * @return Property
      */
-    function createProperty($name, $value = null, array $parameters = null, $valueType = null) {
-
+    public function createProperty($name, $value = null, array $parameters = null, $valueType = null)
+    {
         // If there's a . in the name, it means it's prefixed by a groupname.
-        if (($i = strpos($name, '.')) !== false) {
+        if (false !== ($i = strpos($name, '.'))) {
             $group = substr($name, 0, $i);
             $name = strtoupper(substr($name, $i + 1));
         } else {
@@ -217,17 +213,17 @@ abstract class Document extends Component {
             if (isset($parameters['VALUE'])) {
                 $class = $this->getClassNameForPropertyValue($parameters['VALUE']);
                 if (is_null($class)) {
-                    throw new InvalidDataException('Unsupported VALUE parameter for ' . $name . ' property. You supplied "' . $parameters['VALUE'] . '"');
+                    throw new InvalidDataException('Unsupported VALUE parameter for '.$name.' property. You supplied "'.$parameters['VALUE'].'"');
                 }
-            }
-            else {
+            } else {
                 $class = $this->getClassNameForPropertyName($name);
             }
         }
-        if (is_null($parameters)) $parameters = [];
+        if (is_null($parameters)) {
+            $parameters = [];
+        }
 
         return new $class($this, $name, $value, $parameters, $group);
-
     }
 
     /**
@@ -239,15 +235,15 @@ abstract class Document extends Component {
      * This method returns null if we don't have a specialized class.
      *
      * @param string $valueParam
+     *
      * @return string|null
      */
-    function getClassNameForPropertyValue($valueParam) {
-
+    public function getClassNameForPropertyValue($valueParam)
+    {
         $valueParam = strtoupper($valueParam);
         if (isset(static::$valueMap[$valueParam])) {
             return static::$valueMap[$valueParam];
         }
-
     }
 
     /**
@@ -257,14 +253,12 @@ abstract class Document extends Component {
      *
      * @return string
      */
-    function getClassNameForPropertyName($propertyName) {
-
+    public function getClassNameForPropertyName($propertyName)
+    {
         if (isset(static::$propertyMap[$propertyName])) {
             return static::$propertyMap[$propertyName];
         } else {
-            return 'Sabre\\VObject\\Property\\Unknown';
+            return Property\Unknown::class;
         }
-
     }
-
 }

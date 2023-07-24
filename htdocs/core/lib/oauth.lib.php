@@ -25,15 +25,18 @@
 
 // Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 $supportedoauth2array = array(
-	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/', 'availablescopes'=> 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print,admin_directory_user,gmail_full'),
+	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/',
+		'availablescopes'=> 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print,admin_directory_user,gmail_full,contact,https://www.googleapis.com/auth/contacts,https://www.googleapis.com/auth/calendar', 'returnurl'=>'/core/modules/oauth/google_oauthcallback.php'),
 );
 if (isModEnabled('stripe')) {
-	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'', 'availablescopes'=>'read_write');
-	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = array('callbackfile' => 'stripelive', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeLive', 'urlforcredentials'=>'', 'availablescopes'=>'read_write');
+	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'', 'availablescopes'=>'read_write', 'returnurl'=>'/core/modules/oauth/stripetest_oauthcallback.php');
+	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = array('callbackfile' => 'stripelive', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeLive', 'urlforcredentials'=>'', 'availablescopes'=>'read_write', 'returnurl'=>'/core/modules/oauth/stripelive_oauthcallback.php');
 }
-$supportedoauth2array['OAUTH_GITHUB_NAME'] = array('callbackfile' => 'github', 'picto' => 'github', 'urlforapp' => 'OAUTH_GITHUB_DESC', 'name'=>'GitHub', 'urlforcredentials'=>'https://github.com/settings/developers', 'availablescopes'=>'user,public_repo');
+$supportedoauth2array['OAUTH_GITHUB_NAME'] = array('callbackfile' => 'github', 'picto' => 'github', 'urlforapp' => 'OAUTH_GITHUB_DESC', 'name'=>'GitHub', 'urlforcredentials'=>'https://github.com/settings/developers', 'availablescopes'=>'user,public_repo', 'returnurl'=>'/core/modules/oauth/github_oauthcallback.php');
+$supportedoauth2array['OAUTH_MICROSOFT_NAME'] = array('callbackfile' => 'microsoft', 'picto' => 'microsoft', 'urlforapp' => 'OAUTH_MICROSOFT_DESC', 'name'=>'Microsoft', 'urlforcredentials'=>'https://portal.azure.com/', 'availablescopes'=>'openid,offline_access,profile,email,User.Read,https://outlook.office365.com/IMAP.AccessAsUser.All,https://outlook.office365.com/SMTP.Send', 'returnurl'=>'/core/modules/oauth/microsoft_oauthcallback.php');
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-	$supportedoauth2array['OAUTH_OTHER_NAME'] = array('callbackfile' => 'generic', 'picto' => 'generic', 'urlforapp' => 'OAUTH_OTHER_DESC', 'name'=>'Other', 'urlforcredentials'=>'', 'availablescopes'=>'Standard');
+	$supportedoauth2array['OAUTH_OTHER_NAME'] = array('callbackfile' => 'generic', 'picto' => 'generic', 'urlforapp' => 'OAUTH_OTHER_DESC', 'name'=>'Other', 'urlforcredentials'=>'', 'availablescopes'=>'Standard', 'returnurl'=>'/core/modules/oauth/generic_oauthcallback.php');
+	// See https://learn.microsoft.com/fr-fr/azure/active-directory/develop/quickstart-register-app#register-an-application
 }
 
 

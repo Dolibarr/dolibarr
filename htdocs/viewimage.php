@@ -26,6 +26,8 @@
  *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
+define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 if (!defined('NOREQUIRESOC')) {
@@ -52,44 +54,34 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Note that only directory logo is free to access without login.
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
+$needlogin = 1;
+if (isset($_GET["modulepart"])) {
+	// For logo of company
+	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
+		$needlogin = 0;
 	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+	// For barcode live generation
+	if ($_GET["modulepart"] == 'barcode') {
+		$needlogin = 0;
 	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+	// Some value of modulepart can be used to get resources that are public so no login are required.
+	if ($_GET["modulepart"] == 'medias') {
+		$needlogin = 0;
+	}
+	if ($_GET["modulepart"] == 'userphotopublic') {
+		$needlogin = 0;
+	}
+	// Used by TakePOS Auto Order
+	if ($_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
+		$needlogin = 0;
 	}
 }
 // For direct external download link, we don't need to load/check we are into a login session
-if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
+if (isset($_GET["hashp"])) {
+	$needlogin = 0;
 }
-// Some value of modulepart can be used to get resources that are public so no login are required.
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
-}
-
-// Used by TakePOS Auto Order
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
+// If nologin required
+if (!$needlogin) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -130,11 +122,11 @@ require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
-$hashp = GETPOST('hashp', 'aZ09');
-$modulepart = GETPOST('modulepart', 'alpha');
+$original_file = GETPOST('file', 'alphanohtml'); 	// Do not use urldecode here ($_GET are already decoded by PHP).
+$hashp = GETPOST('hashp', 'aZ09', 1);				// Must be read only by GET
+$modulepart = GETPOST('modulepart', 'alpha', 1);	// Must be read only by GET
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
+$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -146,7 +138,6 @@ if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') {
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
 }
-
 
 
 /*
@@ -162,11 +153,13 @@ if ($modulepart == 'fckeditor') {
  */
 
 if (GETPOST("cache", 'alpha')) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at
-	// each Dolibarr page access.
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	// Add param cache=abcdef
 	if (empty($dolibarr_nocache)) {
 		header('Cache-Control: max-age=3600, public, must-revalidate');
-		header('Pragma: cache'); // This is to avoid having Pragma: no-cache
+		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+		header('Expires: '.gmdate('D, d M Y H:i:s', time() + 3600).' GMT');	// This is to avoid to have Expires set by proxy or web server
+		//header('Expires: '.strtotime('+1 hour');
 	} else {
 		header('Cache-Control: no-cache');
 	}

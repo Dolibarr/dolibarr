@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +56,12 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return ProductTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -82,7 +84,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->produit->enabled)) {
+		if (!isModEnabled('product')) {
 			print __METHOD__." Module Product must be enabled.\n"; die(1);
 		}
 
@@ -143,7 +145,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -170,7 +172,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -243,7 +245,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Product($this->savdb);
+		$localobject=new Product($db);
 		$result=$localobject->fetch($id);
 
 		$result=$localobject->delete($user);

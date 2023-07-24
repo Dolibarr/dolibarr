@@ -52,7 +52,7 @@ if ($action == 'setbarcodeproducton') {
 	$barcodenumberingmodule = GETPOST('value', 'alpha');
 	$res = dolibarr_set_const($db, "BARCODE_PRODUCT_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
 	if ($barcodenumberingmodule == 'mod_barcode_product_standard' && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) {
-		$res = dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCT_MASK", '020{000000000}', 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCT_MASK", '04{0000000000}', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setbarcodeproductoff') {
 	$res = dolibarr_del_const($db, "BARCODE_PRODUCT_ADDON_NUM", $conf->entity);
@@ -62,7 +62,7 @@ if ($action == 'setbarcodethirdpartyon') {
 	$barcodenumberingmodule = GETPOST('value', 'alpha');
 	$res = dolibarr_set_const($db, "BARCODE_THIRDPARTY_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
 	if ($barcodenumberingmodule == 'mod_barcode_thirdparty_standard' && empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK)) {
-		$res = dolibarr_set_const($db, "BARCODE_STANDARD_THIRDPARTY_MASK", '020{000000000}', 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "BARCODE_STANDARD_THIRDPARTY_MASK", '04{0000000000}', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setbarcodethirdpartyoff') {
 	$res = dolibarr_del_const($db, "BARCODE_THIRDPARTY_ADDON_NUM", $conf->entity);

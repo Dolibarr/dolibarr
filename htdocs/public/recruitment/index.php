@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       htdocs/public/recruitment/view.php
+ *       \file       htdocs/public/recruitment/index.php
  *       \ingroup    recruitment
  *       \brief      Public file to show on job
  */
@@ -252,7 +252,7 @@ if (is_array($results)) {
 				}
 			}
 			print '<b class="wordbreak">';
-			print $tmpuser->getFullName(-1);
+			print $tmpuser->getFullName($langs);
 			print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 			print '</b>';
 			print '</b><br>';
@@ -302,7 +302,7 @@ print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs);
+htmlPrintOnlineFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 

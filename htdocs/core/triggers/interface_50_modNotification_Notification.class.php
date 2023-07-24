@@ -45,7 +45,7 @@ class InterfaceNotification extends DolibarrTriggers
 
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "notification";
-		$this->description = "Triggers of this module send email notifications according to Notification module setup.";
+		$this->description = "Triggers of this module send Email notifications according to Notification module setup.";
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = self::VERSION_DOLIBARR;
 		$this->picto = 'email';
@@ -70,6 +70,7 @@ class InterfaceNotification extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
+		// If the trigger code is not managed by the Notification module
 		if (!in_array($action, $this->listofmanagedevents)) {
 			return 0;
 		}
@@ -93,7 +94,6 @@ class InterfaceNotification extends DolibarrTriggers
 		global $conf, $action;
 		global $hookmanager;
 
-
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
@@ -112,7 +112,7 @@ class InterfaceNotification extends DolibarrTriggers
 		$ret = array();
 
 
-		$sql = "SELECT rowid, code, label, description, elementtype";
+		$sql = "SELECT rowid, code, contexts, label, description, elementtype";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
 		$sql .= $this->db->order("rang, elementtype, code");
 
@@ -135,17 +135,17 @@ class InterfaceNotification extends DolibarrTriggers
 					$element = $obj->elementtype;
 
 					// Exclude events if related module is disabled
-					if ($element == 'order_supplier' && ((!isModEnabled('fournisseur') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))) {
+					if ($element == 'order_supplier' && !isModEnabled('supplier_order')) {
 						$qualified = 0;
-					} elseif ($element == 'invoice_supplier' && ((!isModEnabled('fournisseur') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_invoice'))) {
+					} elseif ($element == 'invoice_supplier' && !isModEnabled('supplier_invoice')) {
 						$qualified = 0;
-					} elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) {
+					} elseif ($element == 'withdraw' && !isModEnabled('prelevement')) {
 						$qualified = 0;
-					} elseif ($element == 'shipping' && empty($conf->expedition->enabled)) {
+					} elseif ($element == 'shipping' && !isModEnabled('expedition')) {
 						$qualified = 0;
-					} elseif ($element == 'member' && empty($conf->adherent->enabled)) {
+					} elseif ($element == 'member' && !isModEnabled('adherent')) {
 						$qualified = 0;
-					} elseif (($element == 'expense_report' || $element == 'expensereport') && empty($conf->expensereport->enabled)) {
+					} elseif (($element == 'expense_report' || $element == 'expensereport') && !isModEnabled('expensereport')) {
 						$qualified = 0;
 					} elseif (!in_array($element, array('order_supplier', 'invoice_supplier', 'withdraw', 'shipping', 'member', 'expense_report', 'expensereport')) && empty($conf->$element->enabled)) {
 						$qualified = 0;
@@ -153,7 +153,7 @@ class InterfaceNotification extends DolibarrTriggers
 				}
 
 				if ($qualified) {
-					$ret[] = array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$obj->label, 'description'=>$obj->description, 'elementtype'=>$obj->elementtype);
+					$ret[] = array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'contexts'=>$obj->contexts, 'label'=>$obj->label, 'description'=>$obj->description, 'elementtype'=>$obj->elementtype);
 				}
 
 				$i++;

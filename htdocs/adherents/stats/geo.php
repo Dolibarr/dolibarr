@@ -287,7 +287,7 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 	print "\tvar container = document.getElementById('".$mode."');\n";
 	print "\tvar geomap = new google.visualization.GeoMap(container);\n";
 	print "\tgeomap.draw(data, options);\n";
-	print "};\n";
+	print "}\n";
 	print "</script>\n";
 
 	// print the div tag that will contain the map

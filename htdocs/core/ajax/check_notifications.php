@@ -44,6 +44,9 @@ $time = dol_now();
 $action = GETPOST('action', 'aZ09');
 $listofreminderids = GETPOST('listofreminderids', 'aZ09');
 
+// Security check
+// No permission check at top, but action later are all done with a test on $user->id.
+
 
 /*
  * Actions
@@ -68,6 +71,7 @@ if ($action == 'stopreminder') {
 	// Clean database
 	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'actioncomm_reminder';
 	$sql .= " WHERE dateremind < '".$db->idate(dol_time_plus_duree(dol_now(), -1, 'm'))."'";
+	$sql .= " AND fk_user = ".((int) $user->id).' AND entity = '.((int) $conf->entity);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -124,18 +128,10 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 
 	$sql = 'SELECT a.id as id_agenda, a.code, a.datep, a.label, a.location, ar.rowid as id_reminder, ar.dateremind, ar.fk_user as id_user_reminder';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-	if (!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS)) {
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
-		$sql .= ' WHERE a.code <> "AC_OTH_AUTO"';
-		$sql .= ' AND (';
-		$sql .= " ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
-		$sql .= ' )';
-	} else {
-		$sql .= ' JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
-		$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
-	}
+	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
+	$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".((int) $conf->entity);	// No sharing of entity for alerts
 	$sql .= $db->order('datep', 'ASC');
-	$sql .= ' LIMIT 10'; // Avoid too many notification at once
+	$sql .= $db->plimit(10); // Avoid too many notification at once
 
 	$resql = $db->query($sql);
 	if ($resql) {

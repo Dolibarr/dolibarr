@@ -241,7 +241,7 @@ if ($arrayfields['version']['checked']) {
 }
 if ($arrayfields['id']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_id" size="6 value="'.dol_escape_htmltag($search_id).'">';
+	print '<input class="flat" type="text" name="search_id" size="6" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if ($arrayfields['permission']['checked']) {

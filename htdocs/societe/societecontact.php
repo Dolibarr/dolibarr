@@ -23,7 +23,7 @@
 /**
  *     \file       htdocs/societe/societecontact.php
  *     \ingroup    societe
- *     \brief      Onglet de gestion des contacts additionnel d'une société
+ *     \brief      Tab to manage differently contact. Used when unstable feature MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES is on.
  */
 
 
@@ -78,7 +78,7 @@ $hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->societe->creer) {
+if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -98,14 +98,14 @@ if ($action == 'addcontact' && $user->rights->societe->creer) {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->societe->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
 	// bascule du statut d'un contact
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'deletecontact' && $user->rights->societe->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('societe', 'creer')) {
 	// Efface un contact
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));

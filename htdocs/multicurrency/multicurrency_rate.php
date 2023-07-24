@@ -271,7 +271,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 
 	print ' <td>'.$langs->trans('Date').'</td>';
 	print ' <td>';
-	print $form->selectDate($dateinput, 'dateinput', 0, 0, 1);
+	print $form->selectDate($dateinput, 'dateinput', 0, 0, 1, '', 1, 1);
 	print '</td>';
 
 	print '<td> '.$langs->trans('Currency').'</td>';
@@ -328,7 +328,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 
 	if ($result) {
@@ -354,7 +354,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= "&sall=".urlencode($sall);

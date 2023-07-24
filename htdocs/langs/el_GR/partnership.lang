@@ -20,6 +20,7 @@ ModulePartnershipName=Διαχείριση συνεργασιών
 PartnershipDescription=Ενότητα Διαχείριση Συνεργασιών
 PartnershipDescriptionLong= Ενότητα Διαχείριση Συνεργασιών
 Partnership=Συνεργασία
+Partnerships=Συνεργασίες
 AddPartnership=Προσθήκη συνεργασίας
 CancelPartnershipForExpiredMembers=Συνεργασία: Ακύρωση συνεργασίας μελών με συνδρομές που έχουν λήξει
 PartnershipCheckBacklink=Συνεργασία: Ελέγξτε την παραπομπή backlink
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Συνεργασία: Ελέγξτε την παραπ�
 # Menu
 #
 NewPartnership=Νέα Συνεργασία
+NewPartnershipbyWeb=Το αίτημα συνεργασίας σας προστέθηκε με επιτυχία. Θα επικοινωνήσουμε μαζί σας σύντομα...
 ListOfPartnerships=Λίστα συνεργασιών
 
 #
