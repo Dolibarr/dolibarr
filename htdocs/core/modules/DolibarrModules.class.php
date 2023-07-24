@@ -2346,7 +2346,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $conf;
 
 		$err = 0;
-		$entity = $conf->entity;
 
 		if (is_array($this->module_parts) && !empty($this->module_parts)) {
 			dol_syslog(get_class($this)."::delete_module_parts", LOG_DEBUG);
@@ -2355,6 +2354,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// If entity is defined
 				if (is_array($value) && isset($value['entity'])) {
 					$entity = $value['entity'];
+				} else {
+					$entity = $conf->entity;
 				}
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";

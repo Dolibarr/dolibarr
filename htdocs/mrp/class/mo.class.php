@@ -1711,8 +1711,11 @@ class Mo extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_bom')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->fk_bom.'</span>';
+		if (!empty($arraydata['bom'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['bom']->getNomUrl(1).'</span>';
+		}
+		if (!empty($arraydata['product'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['product']->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'qty')) {
 			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
