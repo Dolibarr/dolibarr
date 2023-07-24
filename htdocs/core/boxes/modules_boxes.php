@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/core/boxes/modules_boxes.php
- *		\ingroup    boxes
+ *		\ingroup    core
  *		\brief      File containing the parent class of boxes
  */
 
