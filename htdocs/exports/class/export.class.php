@@ -35,7 +35,18 @@ class Export
 	 */
 	public $db;
 
+	/**
+	 * @var string Last error message
+	 */
 	public $error;
+	/**
+	 * @var string Last error code
+	 */
+	public $errno;
+	/**
+	 * @var string Error messages
+	 */
+	public $errors;
 
 	public $array_export_code = array(); // Tableau de "idmodule_numexportprofile"
 	public $array_export_code_for_sort = array(); // Tableau de "idmodule_numexportprofile"
@@ -187,7 +198,7 @@ class Export
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
 									// Table of entities for export / Tableau des entites a exporter (cle=champ, valeur=entite)
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
-									// Tableau des entites qui requiert abandon du DISTINCT (cle=entite, valeur=champ id child records)
+									// Table of entities requiring DISTINCT abandonment / Tableau des entites qui requiert abandon du DISTINCT (cle=entite, valeur=champ id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
 									// Table of special field operations / Tableau des operations speciales sur champ
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
@@ -196,7 +207,7 @@ class Export
 									// Array of help tooltips
 									$this->array_export_help[$i] = (!empty($module->export_help_array[$r]) ? $module->export_help_array[$r] : '');
 
-									// Requete sql du dataset
+									// SQL dataset query / Requete SQL du dataset
 									$this->array_export_sql_start[$i] = $module->export_sql_start[$r];
 									$this->array_export_sql_end[$i] = $module->export_sql_end[$r];
 									$this->array_export_sql_order[$i] = (!empty($module->export_sql_order[$r]) ? $module->export_sql_order[$r] : null);
@@ -274,7 +285,7 @@ class Export
 			$sql .= $sqlWhere;
 		}
 
-		// Add the order
+		// Add the sort order
 		$sql .= $this->array_export_sql_order[$indice];
 
 		// Add the HAVING part.
@@ -621,7 +632,7 @@ class Export
 			$sql = $this->build_sql($indice, $array_selected, $array_filterValue);
 		}
 
-		// Run the sql
+		// Run the SQL
 		$this->sqlusedforexport = $sql;
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -645,10 +656,10 @@ class Export
 			$result = $objmodel->open_file($dirname."/".$filename, $outputlangs);
 
 			if ($result >= 0) {
-				// Genere en-tete
+				// Generate header
 				$objmodel->write_header($outputlangs);
 
-				// Genere ligne de titre
+				// Generate title line
 				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -712,7 +723,7 @@ class Export
 					$objmodel->write_record($array_selected, $obj, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 				}
 
-				// Genere en-tete
+				// Generate Footer
 				$objmodel->write_footer($outputlangs);
 
 				// Close file
@@ -846,7 +857,7 @@ class Export
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output list all export models
-	 *  TODO Move this into a class htmlxxx.class.php
+	 *  --TODO Move this into a class htmlxxx.class.php--
 	 *
 	 *	@return	void
 	 */
@@ -871,7 +882,7 @@ class Export
 				print '<td>';
 				print img_object($this->array_export_module[$keyModel]->getName(), $this->array_export_icon[$keyModel]).' ';
 				print $this->array_export_module[$keyModel]->getName().' - ';
-				// recuperation du nom de l'export
+				// recover export name / recuperation du nom de l'export
 
 				$string = $langs->trans($this->array_export_label[$keyModel]);
 				print ($string != $this->array_export_label[$keyModel] ? $string : $this->array_export_label[$keyModel]);
@@ -883,7 +894,7 @@ class Export
 					print '<td>'.str_replace(',', ' , ', $filter['field']).'</td>';
 					print '<td>'.str_replace(',', ' , ', $filter['value']).'</td>';
 				}
-				// suppression de l'export
+				// remove export / suppression de l'export
 				print '<td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();

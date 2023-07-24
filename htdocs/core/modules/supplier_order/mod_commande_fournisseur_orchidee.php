@@ -59,7 +59,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 * 	@return     string      Texte descripif
+	 * 	@return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -150,7 +150,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
-	 *  @return string      			Texte descripif
+	 *  @return string      			Descriptive text
 	 */
 	public function commande_get_num($objsoc = 0, $object = '')
 	{

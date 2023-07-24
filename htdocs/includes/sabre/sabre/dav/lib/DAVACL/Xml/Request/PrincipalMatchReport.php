@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\Xml\Request;
 
 use Sabre\Xml\Deserializer;
@@ -18,8 +20,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PrincipalMatchReport implements XmlDeserializable {
-
+class PrincipalMatchReport implements XmlDeserializable
+{
     /**
      * Report on a list of principals that match the current principal.
      */
@@ -31,7 +33,7 @@ class PrincipalMatchReport implements XmlDeserializable {
     const PRINCIPAL_PROPERTY = 2;
 
     /**
-     * Must be SELF or PRINCIPAL_PROPERTY
+     * Must be SELF or PRINCIPAL_PROPERTY.
      *
      * @var int
      */
@@ -70,11 +72,10 @@ class PrincipalMatchReport implements XmlDeserializable {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $reader->pushContext();
         $reader->elementMap['{DAV:}prop'] = 'Sabre\Xml\Deserializer\enum';
 
@@ -101,7 +102,5 @@ class PrincipalMatchReport implements XmlDeserializable {
         }
 
         return $principalMatch;
-
     }
-
 }

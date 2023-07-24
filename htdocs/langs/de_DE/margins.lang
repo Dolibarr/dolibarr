@@ -2,10 +2,11 @@
 
 Margin=Gewinnspanne
 Margins=Gewinnspannen
-TotalMargin=Gesamt-Spanne
+TotalMargin=Gewinnspanne gesamt
 MarginOnProducts=Gewinnspanne / Produkte
 MarginOnServices=Gewinnspanne / Leistungen
 MarginRate=Gewinnspannen-Rate
+ModifyMarginRates=Gewinnspannen ändern
 MarkRate=Gewinnspannen-Rate
 DisplayMarginRates=Zeige Gewinnspannen-Raten an
 DisplayMarkRates=Zeige Gewinnspannen-Raten an
@@ -17,17 +18,17 @@ ProductMargins=Produkt-Gewinnspannen
 CustomerMargins=Kunden-Gewinnspannen
 SalesRepresentativeMargins=Vertreter-Gewinnspannen
 ContactOfInvoice=Kontakt der Rechnung
-UserMargins=Spannen nach Benutzer
-ProductService=Produkt oder Dienstleistung
+UserMargins=Gewinnspannen nach Benutzer
+ProductService=Produkt oder Leistung
 AllProducts=Alle Produkte und Leistungen
-ChooseProduct/Service=Produkt oder Service wählen
+ChooseProduct/Service=Produkt oder Leistung wählen
 ForceBuyingPriceIfNull=Benutze EK-Preis/Herstellkosten als Verkaufspreis, wenn nicht definiert
-ForceBuyingPriceIfNullDetails=Wenn beim Hinzufügen einer neuen Zeile kein Kauf-/Einstandspreis angegeben wird und diese Option aktiviert ist, beträgt die Marge auf der neuen Zeile 0%% (Einkaufs-/Einstandspreis = Verkaufspreis). Wenn diese Option deaktiviert ist (empfohlen), entspricht die Marge dem standardmäßig vorgeschlagenen Wert (und kann 100%% betragen, wenn kein Standardwert gefunden werden kann).
+ForceBuyingPriceIfNullDetails=Wenn beim Hinzufügen einer neuen Position kein Kauf-/Einstandspreis angegeben wird und diese Option AKTIVIERT ist, beträgt die Marge der neuen Position 0%% (Einkaufs-/Einstandspreis = Verkaufspreis). Wenn diese Option DEAKTIVIERT ist (empfohlen), entspricht die Marge dem standardmäßig vorgeschlagenen Wert (und kann 100%% betragen, wenn kein Standardwert gefunden werden kann).
 MARGIN_METHODE_FOR_DISCOUNT=Margin-Methode für globale Rabatte
 UseDiscountAsProduct=als Produkt
-UseDiscountAsService=als Dienstleistung
+UseDiscountAsService=Als Leistung
 UseDiscountOnTotal=auf Zwischensumme
-MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiert, ob ein globaler Rabatt als Produkt, Service oder nur als Zwischensumme für die Gewinnberechnung benutzt wird.
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiert, ob ein globaler Rabatt als Produkt, als Leistung oder nur als Zwischensumme für die Gewinnberechnung benutzt wird.
 MARGIN_TYPE=Kaufpreis / Kosten standardmäßig vorgeschlagen für Standardmargenkalkulation empfohlen\n
 MargeType1=Marge beim günstigsten Einkaufspreis
 MargeType2=gewichtete Durchschnittspreis (WAP)

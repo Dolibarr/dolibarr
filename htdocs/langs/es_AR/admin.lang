@@ -589,12 +589,10 @@ EmailCollectorConfirmCollectTitle=Correo electrónico recoger confirmación
 NoNewEmailToProcess=No hay correo electrónico nuevo (filtros coincidentes) para procesar
 CodeLastResult=Último código de resultado
 ECMAutoTree=Mostrar arbol ECM automatico
-OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 ResourceSetup=Configuración del módulo de recursos
 UseSearchToSelectResource=Use un formulario de búsqueda para elegir un recurso (en lugar de una lista desplegable).
 DisabledResourceLinkUser=Deshabilitar la función para vincular un recurso a los usuarios
 DisabledResourceLinkContact=Deshabilitar función para vincular un recurso a contactos
 ConfirmUnactivation=Confirmar el reinicio del módulo
 OnMobileOnly=Solo en pantalla pequeña (teléfono inteligente)
-EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 Settings =Ajustes

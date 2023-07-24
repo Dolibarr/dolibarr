@@ -203,9 +203,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$this->errors = $hookmanager->errors;
 		}
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 
@@ -401,7 +399,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *  @param	Object		$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
-	 *  @return	void
+	 *  @return	mixed
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{

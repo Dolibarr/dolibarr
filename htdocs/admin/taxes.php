@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,25 +48,30 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-// 0=normal, 1=option vat for services is on debit
+// 0=normal, 1=option vat for services is on debit, 2=option vat for product and service on credit
 
-// TAX_MODE=0 (most cases):
+// TAX_MODE=0 (most cases in FR):
 //              Buy                     Sell
 // Product      On delivery             On delivery
 // Service      On payment              On payment
 
-// TAX_MODE=1 (option):
+// TAX_MODE=1 (option, VAT is due at invoice date):
 //              Buy                     Sell
-// Product      On delivery             On delivery
+// Product      On delivery/invoice     On delivery/invoice
 // Service      On invoice              On invoice
 
-$tax_mode = empty($conf->global->TAX_MODE) ? 0 : $conf->global->TAX_MODE;
+// TAX_MODE=2 (option, VAT is due on payment date):
+//              Buy                     Sell
+// Product      On payment              On payment
+// Service      On payment              On payment
+
+$tax_mode = getDolGlobalInt('TAX_MODE');
 
 if ($action == 'update') {
 	$error = 0;
 
 	// Tax mode
-	$tax_mode = GETPOST('tax_mode', 'alpha');
+	$tax_mode = GETPOST('tax_mode', 'int');
 
 	$db->begin();
 
@@ -220,7 +226,7 @@ if (empty($mysoc->tva_assuj)) {
 	// Products
 	print '<tr class="oddeven"><td>'.$langs->trans("Product").'</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment') {
+	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -229,7 +235,7 @@ if (empty($mysoc->tva_assuj)) {
 	}
 	print '</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+	if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -241,7 +247,7 @@ if (empty($mysoc->tva_assuj)) {
 	// Services
 	print '<tr class="oddeven"><td>'.$langs->trans("Services").'</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_BUY_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {
@@ -250,7 +256,7 @@ if (empty($mysoc->tva_assuj)) {
 	}
 	print '</td>';
 	print '<td>';
-	if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	} else {

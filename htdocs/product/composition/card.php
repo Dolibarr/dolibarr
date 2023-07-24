@@ -6,6 +6,7 @@
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,8 +76,8 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
@@ -88,58 +89,64 @@ if ($cancel) {
 	$action = '';
 }
 
-// Add subproduct to product
-if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer)) {
-	$error = 0;
-	$maxprod = GETPOST("max_prod", 'int');
+$reshook = $hookmanager->executeHooks('doActions', [], $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	for ($i = 0; $i < $maxprod; $i++) {
-		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
-		if ($qty > 0) {
-			if ($object->add_sousproduit($id, GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int')) > 0) {
-				//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
-				$action = 'edit';
-			} else {
-				$error++;
-				$action = 're-edit';
-				if ($object->error == "isFatherOfThis") {
-					setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
+if (empty($reshook)) {
+	// Add subproduct to product
+	if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+		$error = 0;
+		$maxprod = GETPOST("max_prod", 'int');
+
+		for ($i = 0; $i < $maxprod; $i++) {
+			$qty = price2num(GETPOST("prod_qty_" . $i, 'alpha'), 'MS');
+			if ($qty > 0) {
+				if ($object->add_sousproduit($id, GETPOST("prod_id_" . $i, 'int'), $qty, GETPOST("prod_incdec_" . $i, 'int')) > 0) {
+					//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
+					$action = 'edit';
 				} else {
+					$error++;
+					$action = 're-edit';
+					if ($object->error == "isFatherOfThis") {
+						setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+			} else {
+				if ($object->del_sousproduit($id, GETPOST("prod_id_" . $i, 'int')) > 0) {
+					$action = 'edit';
+				} else {
+					$error++;
+					$action = 're-edit';
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} else {
-			if ($object->del_sousproduit($id, GETPOST("prod_id_".$i, 'int')) > 0) {
-				$action = 'edit';
-			} else {
-				$error++;
-				$action = 're-edit';
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
 		}
-	}
 
-	if (!$error) {
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+		if (!$error) {
+			header("Location: " . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		}
+	} elseif ($action === 'save_composed_product') {
+		$TProduct = GETPOST('TProduct', 'array');
+		if (!empty($TProduct)) {
+			foreach ($TProduct as $id_product => $row) {
+				if ($row['qty'] > 0) {
+					$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
+				} else {
+					$object->del_sousproduit($id, $id_product);
+				}
+			}
+			setEventMessages('RecordSaved', null);
+		}
+		$action = '';
+		header("Location: " . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 		exit;
 	}
-} elseif ($action === 'save_composed_product') {
-	$TProduct = GETPOST('TProduct', 'array');
-	if (!empty($TProduct)) {
-		foreach ($TProduct as $id_product => $row) {
-			if ($row['qty'] > 0) {
-				$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
-			} else {
-				$object->del_sousproduit($id, $id_product);
-			}
-		}
-		setEventMessages('RecordSaved', null);
-	}
-	$action = '';
-	header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
-	exit;
 }
-
 
 /*
  * View
@@ -160,12 +167,22 @@ if ($action == 'search') {
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= ', pl.label as labelm, pl.description as descriptionm';
 	}
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
 	}
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
 	if ($key != "") {
 		// For natural search
 		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
@@ -214,7 +231,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Product card
 	 */
-	if ($user->rights->produit->lire || $user->rights->service->lire) {
+	if ($user->rights->produit->lire || $user->hasRight('service', 'lire')) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
@@ -315,7 +332,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('ParentProducts').'</td>';
 		print '<td>'.$langs->trans('Label').'</td>';
-		print '<td>'.$langs->trans('Qty').'</td>';
+		print '<td class="right">'.$langs->trans('Qty').'</td>';
 		print '</td>';
 		if (count($prodsfather) > 0) {
 			foreach ($prodsfather as $value) {
@@ -331,7 +348,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="oddeven">';
 				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
 				print '<td>'.dol_escape_htmltag($productstatic->label).'</td>';
-				print '<td>'.dol_escape_htmltag($value['qty']).'</td>';
+				print '<td class="right">'.dol_escape_htmltag($value['qty']).'</td>';
 				print '</tr>';
 			}
 		} else {
@@ -373,7 +390,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
 		// Qty in kit
-		print '<td class="center">'.$langs->trans('Qty').'</td>';
+		print '<td class="right">'.$langs->trans('Qty').'</td>';
 		// Stoc inc/dev
 		print '<td class="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
 		// Move
@@ -399,7 +416,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
 
 					// Product label
-					print '<td>'.$productstatic->label.'</td>';
+					print '<td title="'.dol_escape_htmltag($productstatic->label).'" class="tdoverflowmax150">'.dol_escape_htmltag($productstatic->label).'</td>';
 
 					// Best buying price
 					print '<td class="right">';
@@ -449,8 +466,8 @@ if ($id > 0 || !empty($ref)) {
 					}
 
 					// Qty + IncDec
-					if ($user->rights->produit->creer || $user->rights->service->creer) {
-						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" class="right" /></td>';
+					if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
+						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" class="right width40" /></td>';
 						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec'] == 1 ? 'checked' : '').' /></td>';
 					} else {
 						print '<td>'.$nb_of_subproduct.'</td>';
@@ -480,10 +497,11 @@ if ($id > 0 || !empty($ref)) {
 					for ($i = 0; $i < $value['level']; $i++) {
 						print ' &nbsp; &nbsp; '; // Add indentation
 					}
-					print $productstatic->getNomUrl(1, 'composition').'</td>';
+					print $productstatic->getNomUrl(1, 'composition');
+					print '</td>';
 
 					// Product label
-					print '<td>'.$productstatic->label.'</td>';
+					print '<td>'.dol_escape_htmltag($productstatic->label).'</td>';
 
 					// Best buying price
 					print '<td>&nbsp;</td>';
@@ -498,7 +516,7 @@ if ($id > 0 || !empty($ref)) {
 					}
 
 					// Qty in kit
-					print '<td class="center">'.$value['nb'].'</td>';
+					print '<td class="right">'.dol_escape_htmltag($value['nb']).'</td>';
 
 					// Inc/dec
 					print '<td>&nbsp;</td>';
@@ -556,7 +574,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td></td>';
 
 			print '<td class="center">';
-			if ($user->rights->produit->creer || $user->rights->service->creer) {
+			if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			}
 			print '</td>';
@@ -577,7 +595,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		/*if($user->rights->produit->creer || $user->rights->service->creer) {
+		/*if($user->rights->produit->creer || $user->hasRight('service', 'creer')) {
 			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		}*/
 
@@ -587,7 +605,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		// Form with product to add
-		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->rights->produit->creer || $user->rights->service->creer)) {
+		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 			print '<br>';
 
 			$rowspan = 1;
@@ -611,7 +629,7 @@ if ($id > 0 || !empty($ref)) {
 				print ajax_combobox('parent');
 			}
 			print '<div class="inline-block">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Search").'">';
+			print '<input type="submit" class="button small" value="'.$langs->trans("Search").'">';
 			print '</div>';
 			print '</form>';
 		}

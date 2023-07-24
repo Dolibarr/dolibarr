@@ -156,20 +156,31 @@ function mrpCollapseBomManagement()
 	<script type="text/javascript" language="javascript">
 
 		$(document).ready(function () {
-			// When clicking on collapse
-			$(".collapse_bom").click(function() {
-				console.log("We click on collapse");
-				var id_bom_line = $(this).attr('id').replace('collapse-', '');
-				console.log($(this).html().indexOf('folder-open'));
-				if($(this).html().indexOf('folder-open') <= 0) {
+			function folderManage(element, onClose = 0) {
+				let id_bom_line = element.attr('id').replace('collapse-', '');
+				let TSubLines = $('[parentid="'+ id_bom_line +'"]');
+
+				if(element.html().indexOf('folder-open') <= 0 && onClose < 1) {
 					$('[parentid="'+ id_bom_line +'"]').show();
-					$(this).html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+					element.html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
 				}
 				else {
-					$('[parentid="'+ id_bom_line +'"]').hide();
-					$(this).html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
-				}
+					for (let i = 0; i < TSubLines.length; i++) {
+						let subBomFolder = $(TSubLines[i]).children('.linecoldescription').children('.collapse_bom');
 
+						if (subBomFolder.length > 0) {
+							onClose = 1
+							folderManage(subBomFolder, onClose);
+						}
+					}
+					TSubLines.hide();
+					element.html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+				}
+			}
+
+			// When clicking on collapse
+			$(".collapse_bom").click(function() {
+				folderManage($(this));
 				return false;
 			});
 

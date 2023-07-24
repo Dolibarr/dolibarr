@@ -109,7 +109,7 @@ if ($resql) {
 	print "We found ".$num." couples (unpayed validated invoice - sale representative) qualified\n";
 	dol_syslog("We found ".$num." couples (unpayed validated invoice - sale representative) qualified");
 	$message = '';
-
+	$oldsalerepresentative = 0;
 	if ($num) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);

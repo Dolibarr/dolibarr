@@ -194,7 +194,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (14
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1402, 140, '14','0','VAT rate - intermediary',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1403, 140,  '8','0','VAT rate - reduced', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1404, 140,  '3','0','VAT rate - super-reduced', 1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1405, 140, '17','0','VAT rate - standard',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1405, 140, '16','0','VAT rate - standard',1);
 
 -- MALI (id country=147)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1471, 147,  '0','0','VAT rate 0', 1);
@@ -291,7 +291,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2
 -- SLOVAKIA (id country=201)
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2011, 201,  '0', '0', 'VAT rate 0', 1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2012, 201, '10', '0', 'VAT rate - reduced', 1);
-INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2013, 201, '19', '0', 'VAT rate - standard', 1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2013, 201, '20', '0', 'VAT rate - standard', 1);
 
 -- SLOVENIA (id country=202)
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2021, 202,  '0', '0', 'VAT rate 0', 1);
@@ -403,3 +403,9 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (23
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2335,61,     '0','0','No VAT',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2336,61,    '10','0','VAT 10%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2337,61,    '18','0','VAT 18%',1);
+
+-- Turkiye (Turkey) (id country=221)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (22101,221,     '0','0','No VAT',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (22102,221,    '1','0','VAT 1%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (22103,221,    '8','0','VAT 8%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (22104,221,    '18','0','VAT 18%',1);

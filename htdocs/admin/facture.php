@@ -58,24 +58,24 @@ $type = 'invoice';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstinvoice = GETPOST('maskconstinvoice', 'alpha');
-	$maskconstreplacement = GETPOST('maskconstreplacement', 'alpha');
-	$maskconstcredit = GETPOST('maskconstcredit', 'alpha');
-	$maskconstdeposit = GETPOST('maskconstdeposit', 'alpha');
+	$maskconstinvoice = GETPOST('maskconstinvoice', 'aZ09');
+	$maskconstreplacement = GETPOST('maskconstreplacement', 'aZ09');
+	$maskconstcredit = GETPOST('maskconstcredit', 'aZ09');
+	$maskconstdeposit = GETPOST('maskconstdeposit', 'aZ09');
 	$maskinvoice = GETPOST('maskinvoice', 'alpha');
 	$maskreplacement = GETPOST('maskreplacement', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
 	$maskdeposit = GETPOST('maskdeposit', 'alpha');
-	if ($maskconstinvoice) {
+	if ($maskconstinvoice && preg_match('/_MASK_/', $maskconstinvoice)) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	}
-	if ($maskconstreplacement) {
+	if ($maskconstreplacement && preg_match('/_MASK_/', $maskconstreplacement)) {
 		$res = dolibarr_set_const($db, $maskconstreplacement, $maskreplacement, 'chaine', 0, '', $conf->entity);
 	}
-	if ($maskconstcredit) {
+	if ($maskconstcredit && preg_match('/_MASK_/', $maskconstcredit)) {
 		$res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
 	}
-	if ($maskconstdeposit) {
+	if ($maskconstdeposit && preg_match('/_MASK_/', $maskconstdeposit)) {
 		$res = dolibarr_set_const($db, $maskconstdeposit, $maskdeposit, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -364,7 +364,7 @@ foreach ($dirmodels as $reldir) {
 							if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -629,7 +629,7 @@ if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) { // Hidden conf
 		Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
 		Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 	);
-	if (!empty($conf->global->INVOICE_USE_SITUATION)) {
+	if (getDolGlobalInt('INVOICE_USE_SITUATION')) {
 		$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
 	}
 
@@ -702,12 +702,14 @@ if (isModEnabled('banque')) {
 }
 print "</td></tr>";
 
+$FACTURE_CHQ_NUMBER = getDolGlobalInt('FACTURE_CHQ_NUMBER');
+
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
 print '<select class="flat" name="chq" id="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
+print '<option value="-1"'.($FACTURE_CHQ_NUMBER == -1 ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
 
 $sql = "SELECT rowid, label";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -723,7 +725,7 @@ if ($resql) {
 		$row = $db->fetch_row($resql);
 
 		print '<option value="'.$row[0].'"';
-		print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected' : '';
+		print $FACTURE_CHQ_NUMBER == $row[0] ? ' selected' : '';
 		print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
 
 		$i++;
@@ -743,7 +745,7 @@ print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";

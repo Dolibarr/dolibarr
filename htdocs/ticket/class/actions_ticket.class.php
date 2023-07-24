@@ -111,7 +111,7 @@ class ActionsTicket
 	 * @param	int		$id				ID of ticket
 	 * @param	string	$ref			Reference of ticket
 	 * @param	string	$track_id		Track ID of ticket (for public area)
-	 * @return 	void
+	 * @return int              		<0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $ref = '', $track_id = '')
 	{
@@ -305,6 +305,14 @@ class ActionsTicket
 							$res = $userstat->fetch($arraymsgs['fk_user_author']);
 							if ($res) {
 								print $userstat->getNomUrl(0);
+							}
+						} elseif (isset($arraymsgs['fk_contact_author'])) {
+							$contactstat = new Contact($this->db);
+							$res = $contactstat->fetch(0, null, '', $arraymsgs['fk_contact_author']);
+							if ($res) {
+								print $contactstat->getNomUrl(0, 'nolink');
+							} else {
+								print $arraymsgs['fk_contact_author'];
 							}
 						} else {
 							print $langs->trans('Customer');

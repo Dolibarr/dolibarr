@@ -84,7 +84,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 // Security check
-if (empty($conf->agenda->enabled)) {
+if (!isModEnabled('agenda')) {
 	httponly_accessforbidden('Module Agenda not enabled');
 }
 

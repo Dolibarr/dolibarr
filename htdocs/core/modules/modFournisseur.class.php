@@ -41,7 +41,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 		$this->numero = 40;
@@ -83,7 +83,7 @@ class modFournisseur extends DolibarrModules
 
 		$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "muscadet";
+		$this->const[$r][2] = "cornas";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -111,10 +111,19 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		// Add ability ODT for Supplier orders
 		$this->const[$r][0] = "SUPPLIER_ORDER_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_orders";
 		$this->const[$r][3] = '';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		// Add ability ODT for Supplier Invoices
+		$this->const[$r][0] = "SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "";
+		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -300,6 +309,8 @@ class modFournisseur extends DolibarrModules
 		//--------
 		$r = 0;
 
+		$langs->loadLangs(array("suppliers", "multicurrency"));
+
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Vendor invoices and lines of invoices';
@@ -455,7 +466,7 @@ class modFournisseur extends DolibarrModules
 			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'uv.login'=>'UserValidation', 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC",
 			'fd.total_tva'=>"LineTotalVAT", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
-			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
+			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'SupplierRef', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
 		if (isModEnabled("multicurrency")) {
@@ -578,7 +589,10 @@ class modFournisseur extends DolibarrModules
 		}
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture_fourn');
-		$this->import_regex_array[$r] = array('f.ref' => '(SI\d{4}-\d{4}|PROV.{1,32}$)', 'f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
+		if (empty($conf->multicurrency->enabled)) {
+			$this->import_fieldshidden_array[$r]['f.multicurrency_code'] = 'const-'.$conf->currency;
+		}
+		$this->import_regex_array[$r] = array('f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
 		$import_sample = array(
 			'f.ref' => '(PROV001)',
 			'f.ref_supplier' => 'Supplier1',
@@ -800,6 +814,7 @@ class modFournisseur extends DolibarrModules
 			'cd.fk_commande'    => 'PurchaseOrder*',
 			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product'     => 'IdProduct',
+			'cd.ref'     		=> 'SupplierRef',
 			'cd.description'    => 'LineDescription',
 			'cd.tva_tx'         => 'LineVATRate',
 			'cd.qty'            => 'LineQty',
@@ -872,7 +887,7 @@ class modFournisseur extends DolibarrModules
 
 		$this->remove($options);
 
-		//ODT template
+		//ODT template for Supplier Orders
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_orders/template_supplier_order.odt';
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_orders';
 		$dest = $dirodt.'/template_supplier_order.odt';
@@ -888,10 +903,37 @@ class modFournisseur extends DolibarrModules
 			}
 		}
 
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order_supplier' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'order_supplier', ".((int) $conf->entity).")",
+		$sql_order = array(
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order_supplier' AND entity = ".((int) $conf->entity),
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'order_supplier', ".((int) $conf->entity).")",
 		);
+
+		//ODT template for Supplier Invoice
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_invoices/template_supplier_invoices.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_invoices';
+		$dest = $dirodt.'/template_supplier_invoices.odt';
+
+		if (file_exists($src) && !file_exists($dest)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result = dol_copy($src, $dest, 0, 0);
+			if ($result < 0) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
+		}
+
+		/*
+		$sql_invoice = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'invoice_supplier' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."', 'invoice_supplier', ".((int) $conf->entity).")",
+		);
+
+		$sql = array_merge($sql_order, $sql_invoice);
+		*/
+
+		$sql = $sql_order;
 
 		return $this->_init($sql, $options);
 	}

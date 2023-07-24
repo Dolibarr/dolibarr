@@ -68,12 +68,6 @@ class pdf_vinci extends ModelePDFMo
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -684,9 +678,7 @@ class pdf_vinci extends ModelePDFMo
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -715,6 +707,7 @@ class pdf_vinci extends ModelePDFMo
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -816,11 +809,11 @@ class pdf_vinci extends ModelePDFMo
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1067,7 +1060,7 @@ class pdf_vinci extends ModelePDFMo
 	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1085,9 +1078,9 @@ class pdf_vinci extends ModelePDFMo
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		/*if($object->statut==0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )
+		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK'))
 		{
-			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->COMMANDE_DRAFT_WATERMARK);
+			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}*/
 		//Print content
 
@@ -1096,6 +1089,7 @@ class pdf_vinci extends ModelePDFMo
 
 		$posx = $this->page_largeur - $this->marge_droite - 100;
 		$posy = $this->marge_haute;
+		$w = 100;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 
@@ -1168,35 +1162,38 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// product info
-		$posy += 7;
 		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
-		$pdf->SetFont('', 'B', $default_font_size + 1);
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
+		$resProdToMake = $prodToMake->fetch($object->fk_product);
 
-		$posy += 5;
-		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
-		$pdf->SetFont('', 'B', $default_font_size + 3);
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $prodToMake->description, '', 'R');
+		if ($resProdToMake > 0) {
+			// ref
+			$posy += 7;
+			$pdf->SetFont('', 'B', $default_font_size + 1);
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
 
-		$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
-		$dim = implode("x", $array);
-		if (!empty($dim)) {
+			// description
 			$posy += 5;
 			$pdf->SetFont('', 'B', $default_font_size + 3);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $dim, '', 'R');
+			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R');
+			$posy = $pdf->GetY() - 5;
+
+			// dimensions
+			$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
+			$dim = implode("x", $array);
+			if (!empty($dim)) {
+				$posy += 5;
+				$pdf->SetFont('', 'B', $default_font_size + 3);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $dim, '', 'R');
+			}
 		}
 
 		$posy += 5;
-		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
@@ -1248,11 +1245,18 @@ class pdf_vinci extends ModelePDFMo
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
-			// Add internal contact of proposal if defined
+			// Add internal contact of object if defined
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
@@ -1367,7 +1371,7 @@ class pdf_vinci extends ModelePDFMo
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -1405,14 +1409,13 @@ class pdf_vinci extends ModelePDFMo
 		$rank = 0;
 		$this->cols['code'] = array(
 			'rank' => $rank,
-			'status' => false,
+			'status' => true,
 			'width' => 35, // in mm
 			'title' => array(
 				'textkey' => 'Ref'
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['code']['status'] = true;
 
 		$rank = 1; // do not use negative rank
 		$this->cols['desc'] = array(
@@ -1455,14 +1458,13 @@ class pdf_vinci extends ModelePDFMo
 		$rank = $rank + 10;
 		$this->cols['dim'] = array(
 			'rank' => $rank,
-			'status' => false,
+			'status' => true,
 			'width' => 25, // in mm
 			'title' => array(
 				'textkey' => 'Size'
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['dim']['status'] = true;
 
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(
@@ -1474,7 +1476,6 @@ class pdf_vinci extends ModelePDFMo
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['qty']['status'] = true;
 
 		$rank = $rank + 10;
 		$this->cols['qtytot'] = array(
@@ -1486,7 +1487,6 @@ class pdf_vinci extends ModelePDFMo
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['qtytot']['status'] = true;
 
 		// Add extrafields cols
 		if (!empty($object->lines)) {

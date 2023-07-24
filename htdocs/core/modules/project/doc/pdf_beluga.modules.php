@@ -80,12 +80,6 @@ class pdf_beluga extends ModelePDFProjects
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -130,7 +124,7 @@ class pdf_beluga extends ModelePDFProjects
 	 * Page orientation
 	 * @var string 'P' or 'Portait' (default), 'L' or 'Landscape'
 	 */
-	private $orientation = '';
+	private $orientation;
 
 	/**
 	 * Issuer
@@ -242,11 +236,11 @@ class pdf_beluga extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->project->dir_output) {
+		if ($conf->project->multidir_output[$object->entity]) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->project->dir_output;
+			$dir = $conf->project->multidir_output[$object->entity];
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -374,7 +368,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Propal',
 						'table'=>'propal',
 						'datefieldname'=>'datep',
-						'test'=>$conf->propal->enabled && $user->rights->propal->lire,
+						'test'=> isModEnabled('propal') && $user->hasRight('propal', 'lire'),
 						'lang'=>'propal'),
 					'order'=>array(
 						'name'=>"CustomersOrders",
@@ -382,7 +376,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Commande',
 						'table'=>'commande',
 						'datefieldname'=>'date_commande',
-						'test'=>$conf->commande->enabled && $user->rights->commande->lire,
+						'test'=> isModEnabled('commande') && $user->hasRight('commande', 'lire'),
 						'lang'=>'orders'),
 					'invoice'=>array(
 						'name'=>"CustomersInvoices",
@@ -391,7 +385,7 @@ class pdf_beluga extends ModelePDFProjects
 						'margin'=>'add',
 						'table'=>'facture',
 						'datefieldname'=>'datef',
-						'test'=>$conf->facture->enabled && $user->rights->facture->lire,
+						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
 						'lang'=>'bills'),
 					'invoice_predefined'=>array(
 						'name'=>"PredefinedInvoices",
@@ -399,7 +393,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'FactureRec',
 						'table'=>'facture_rec',
 						'datefieldname'=>'datec',
-						'test'=>$conf->facture->enabled && $user->rights->facture->lire,
+						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
 						'lang'=>'bills'),
 					'order_supplier'=>array(
 						'name'=>"SuppliersOrders",
@@ -424,7 +418,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Contrat',
 						'table'=>'contrat',
 						'datefieldname'=>'date_contrat',
-						'test'=>$conf->contrat->enabled && $user->rights->contrat->lire,
+						'test'=> isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
 						'lang'=>'contract'),
 					'intervention'=>array(
 						'name'=>"Interventions",
@@ -433,7 +427,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'fichinter',
 						'datefieldname'=>'date_valid',
 						'disableamount'=>1,
-						'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire,
+						'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
 						'lang'=>'interventions'),
 					'trip'=>array(
 						'name'=>"TripsAndExpenses",
@@ -443,7 +437,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire,
+						'test'=>isModEnabled('deplacement') && $user->rights->deplacement->lire,
 						'lang'=>'trip'),
 					'expensereport'=>array(
 						'name'=>"ExpensesReports",
@@ -453,7 +447,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire,
+						'test'=>isModEnabled('expensereport') && $user->rights->expensereport->lire,
 						'lang'=>'trip'),
 					'agenda'=>array(
 						'name'=>"Agenda",
@@ -462,7 +456,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'actioncomm',
 						'datefieldname'=>'datep',
 						'disableamount'=>1,
-						'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->read,
+						'test'=> isModEnabled('agenda') && $user->rights->agenda->allactions->read,
 						'lang'=>'agenda')
 				);
 
@@ -769,9 +763,7 @@ class pdf_beluga extends ModelePDFProjects
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 

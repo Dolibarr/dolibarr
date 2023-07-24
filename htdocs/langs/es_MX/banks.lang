@@ -74,7 +74,6 @@ PaymentDateUpdateSucceeded=Fecha de pago actualizada con éxito
 PaymentDateUpdateFailed=La fecha de pago no se pudo actualizar
 BankTransactionLine=Entrada bancaria
 ShowAllAccounts=Mostrar todas las cuentas
-InputReceiptNumber=Seleccione el estado de cuenta bancaria relacionado con la conciliación. Utilice un valor numérico ordenable: AAAAMM o AAAAMMDD
 EventualyAddCategory=Eventualmente, especifique una categoría en la que clasificar los registros
 ThenCheckLinesAndConciliate=A continuación, compruebe las líneas presentes en el estado de cuenta bancaria y haga clic
 RejectCheck=Cheque rechazado

@@ -120,7 +120,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</table>";
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -159,7 +159,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Count total nb of records
 		$totalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $db->query($sql);
 			$totalofrecords = $db->num_rows($result);
 		}
@@ -173,7 +173,7 @@ if ($id > 0 || !empty($ref)) {
 			$option = '&id='.$product->id;
 
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$option .= '&limit='.urlencode($limit);
+				$option .= '&limit='.((int) $limit);
 			}
 			if (!empty($search_month)) {
 				$option .= '&search_month='.urlencode($search_month);

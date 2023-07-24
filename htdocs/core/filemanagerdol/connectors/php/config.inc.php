@@ -37,7 +37,7 @@ $pos = strstr($uri, '/'); // $pos contient alors url sans nom domaine
 if ($pos == '/') {
 	$pos = ''; // si $pos vaut /, on le met a ''
 }
-define('DOL_URL_ROOT', $pos);
+//define('DOL_URL_ROOT', $pos);
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
 
 // SECURITY: You must explicitly enable this "connector". (Set it to "true").
@@ -160,7 +160,7 @@ $Config['QuickUploadPath']['File'] = $Config['UserFilesPath'];
 $Config['QuickUploadAbsolutePath']['File'] = $Config['UserFilesAbsolutePath'];
 
 $Config['AllowedExtensions']['Image'] = array('bmp', 'gif', 'jpeg', 'jpg', 'png', 'ai');
-if (!empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
+if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 	$Config['AllowedExtensions']['Image'][] = 'svg';
 }
 $Config['DeniedExtensions']['Image']	= array();

@@ -279,7 +279,7 @@ class modSociete extends DolibarrModules
 			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town", 'd.nom'=>'State', 'r.nom'=>'Region', 'c.label'=>"Country", 'c.code'=>"CountryCode", 's.phone'=>"Phone", 's.fax'=>"Fax",
 			's.url'=>"Url", 's.email'=>"Email", 's.default_lang'=>"DefaultLang", 's.canvas' => "Canvas", 's.siren'=>"ProfId1", 's.siret'=>"ProfId2", 's.ape'=>"ProfId3", 's.idprof4'=>"ProfId4",
 			's.idprof5'=>"ProfId5", 's.idprof6'=>"ProfId6", 's.tva_intra'=>"VATIntraShort", 's.capital'=>"Capital", 's.note_private'=>"NotePrivate", 's.note_public'=>"NotePublic",
-			't.libelle'=>"ThirdPartyType", 'ce.code'=>"Staff", "cfj.libelle"=>"JuridicalStatus", 's.fk_prospectlevel'=>'ProspectLevel',
+			't.code'=>"ThirdPartyType", 'ce.code'=>"DictionaryStaff", "cfj.libelle"=>"JuridicalStatus", 's.fk_prospectlevel'=>'ProspectLevel',
 			'st.code'=>'ProspectStatus', 'payterm.libelle'=>'PaymentConditions', 'paymode.libelle'=>'PaymentMode',
 			's.outstanding_limit'=>'OutstandingBill', 'pbacc.ref'=>'PaymentBankAccount', 'incoterm.code'=>'IncotermLabel'
 		);
@@ -305,25 +305,20 @@ class modSociete extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] += array('u.login'=>'SaleRepresentativeLogin', 'u.firstname'=>'SaleRepresentativeFirstname', 'u.lastname'=>'SaleRepresentativeLastname');
 
-		//$this->export_TypeFields_array[$r]=array(
-		//	's.rowid'=>"Numeric",'s.nom'=>"Text",'s.status'=>"Text",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",
-		//	's.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",
-		//	'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.default_lang'=>"Text",'s.canvas' => "Canvas",'s.siret'=>"Text",'s.siren'=>"Text",
-		//	's.ape'=>"Text",'s.idprof4'=>"Text",'s.idprof5'=>"Text",'s.idprof6'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note'=>"Text",
-		//	't.libelle'=>"Text",'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
-		//	's.fk_stcomm'=>'List:c_stcomm:libelle:code','d.nom'=>'List:c_departements:nom:rowid'
-		//);
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 'ps.nom'=>"Text",
 			's.status'=>"Numeric", 's.client'=>"Numeric", 's.fournisseur'=>"Boolean", 's.datec'=>"Date", 's.tms'=>"Date",
 			's.code_client'=>"Text", 's.code_fournisseur'=>"Text", 's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
 			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text",
-			'd.nom'=>'Text', 'r.nom'=>'Text', 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text",
+			'd.nom'=>'Text', 'r.nom'=>'Text', 'c.label'=>'List:c_country:label:label', 'c.code'=>'Text',
 			's.phone'=>"Text", 's.fax'=>"Text",
-			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Canvas",
+			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Text",
 			's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text", 's.idprof5'=>"Text", 's.idprof6'=>"Text",
 			's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_private'=>"Text", 's.note_public'=>"Text",
-			't.libelle'=>"Text", 'ce.code'=>"List:c_effectif:libelle:code", "cfj.libelle"=>"Text", 's.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
+			't.code'=>"List:c_typent:libelle:code",
+			'ce.code'=>"List:c_effectif:libelle:code",
+			"cfj.libelle"=>"Text",
+			's.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
 			'st.code'=>'List:c_stcomm:libelle:code',
 			'payterm.libelle'=>'Text', 'paymode.libelle'=>'Text',
 			's.outstanding_limit'=>'Numeric', 'pbacc.ref'=>'Text', 'incoterm.code'=>'Text',
@@ -332,7 +327,10 @@ class modSociete extends DolibarrModules
 			's.accountancy_code_sell'=>'Text', 's.accountancy_code_buy'=>'Text'
 		);
 
-		$this->export_entities_array[$r] = array('u.login'=>'user', 'u.firstname'=>'user', 'u.lastname'=>'user'); // We define here only fields that use another picto
+		$this->export_entities_array[$r] = array(	// We define here only fields that use another picto
+			'u.login'=>'user',
+			'u.firstname'=>'user',
+			'u.lastname'=>'user');
 		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -375,7 +373,7 @@ class modSociete extends DolibarrModules
 			's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
 			's.client'=>'Customer', 's.fournisseur'=>'Supplier',
 			's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
-			't.libelle'=>"ThirdPartyType"
+			't.code'=>"ThirdPartyType"
 		);
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
@@ -401,19 +399,19 @@ class modSociete extends DolibarrModules
 			's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
 			's.client'=>"Text", 's.fournisseur'=>"Text",
 			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
-			't.libelle'=>"Text",
+			't.code'=>"List:c_stcomm:libelle:code",
 			'c.entity'=>'List:entity:label:rowid',
 			's.entity'=>'List:entity:label:rowid',
 		);
-		$this->export_entities_array[$r] = array(
+		$this->export_entities_array[$r] = array(	// We define here only fields that use another picto
 			's.rowid'=>"company", 's.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company", 's.code_fournisseur'=>"company",
 			's.code_compta'=>"company", 's.code_compta_fournisseur'=>"company",
 			's.client'=>"company", 's.fournisseur'=>"company",
 			's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
-			't.libelle'=>"company",
+			't.code'=>"company",
 			's.entity'=>'company',
 		); // We define here only fields that use another picto
-		if (!isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+		if (!isModEnabled("supplier_order") && !isModEnabled("supplier_invoice")) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_fournisseur']);
 		}
@@ -571,7 +569,6 @@ class modSociete extends DolibarrModules
 				'dict' => 'DictionaryCompanyType'
 			),
 			's.capital' => array('rule' => 'numeric'),
-			's.fk_stcomm' => array('rule' => 'zeroifnull'),
 			's.parent' => array(
 				'rule' => 'fetchidfromref',
 				'file' => '/societe/class/societe.class.php',
