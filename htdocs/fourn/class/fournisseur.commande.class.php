@@ -2192,6 +2192,18 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_order";
+			$sql .= " WHERE fk_supplier_order = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		$main = MAIN_DB_PREFIX.'commande_fournisseurdet';
 		$ef = $main."_extrafields";
 		$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
