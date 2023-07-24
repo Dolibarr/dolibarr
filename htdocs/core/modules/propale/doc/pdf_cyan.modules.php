@@ -1523,12 +1523,12 @@ class pdf_cyan extends ModelePDFPropales
 
 		// Output Rect
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
-		
+
 		if (!empty($conf->global->MAIN_PDF_TITLE_TEXT_COLOR)) {
 			$arrayColorTextTitle = explode(',', $conf->global->MAIN_PDF_TITLE_TEXT_COLOR);
 			$pdf->SetTextColor($arrayColorTextTitle[0], $arrayColorTextTitle[1], $arrayColorTextTitle[2]);
 		}
-		
+
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 
 		if (!empty($conf->global->MAIN_PDF_TITLE_TEXT_COLOR)) {

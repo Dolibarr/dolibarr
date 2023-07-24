@@ -3390,7 +3390,7 @@ class EmailCollector extends CommonObject
 			$attachments[$filename] = $data; // this is a problem if two files have same name
 
 			if (strlen($destdir)) {
-				if (substr($destdir,-1) != '/') $destdir .= '/';
+				if (substr($destdir, -1) != '/') $destdir .= '/';
 
 				// Get file name (with extension)
 				$file_name_complete = $params['filename'];
