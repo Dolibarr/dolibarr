@@ -54,6 +54,7 @@ $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
+$hookmanager->initHooks(array('takeposfrontend'));
 if (empty($_SESSION["takeposterminal"])) {
 	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
@@ -92,7 +93,6 @@ if ($conf->browser->layout == 'phone') {
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
-$MAXCATEG = 5;
 
 /*
  $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
@@ -948,7 +948,7 @@ $( document ).ready(function() {
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			// If there is no cash control from today open it
-			if ($obj->rowid == null) {
+			if (!isset($obj->rowid) || is_null($obj->rowid)) {
 				print "ControlCashOpening();";
 			}
 		}
@@ -1061,15 +1061,20 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				?>
 			</div>
 			<div id="topnav-right" class="topnav-right">
-				<div class="login_block_other">
+				<?php
+				$reshook = $hookmanager->executeHooks('takepos_login_block_other');
+				if ($reshook == 0) {  //Search method ?>
+					<div class="login_block_other">
 				<input type="text" id="search" name="search" class="input-search-takepos" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
-				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
-				<span class="fas fa-home"></span></a>
-				<?php if (empty($conf->dol_use_jmobile)) { ?>
-				<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
-				<?php } ?>
-				</div>
+					<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
+					<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
+					<span class="fas fa-home"></span></a>
+					<?php if (empty($conf->dol_use_jmobile)) {?>
+						<a class="hideonsmartphone" onclick="FullScreen();" title="<?php echo dol_escape_htmltag($langs->trans("ClickFullScreenEscapeToLeave")); ?>"><span class="fa fa-expand-arrows-alt"></span></a>
+					<?php }?>
+					</div>
+					<?php
+				}?>
 				<div class="login_block_user">
 				<?php
 				print top_menu_user(1);
@@ -1090,7 +1095,11 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 <div id="ModalTerminal" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
-		<span class="close" href="#" onclick="document.getElementById('ModalTerminal').style.display = 'none';">&times;</span>
+		<?php
+		if (empty($conf->global->TAKEPOS_FORCE_TERMINAL_SELECT)) {
+			?>
+			<span class="close" href="#" onclick="document.getElementById('ModalTerminal').style.display = 'none';">&times;</span>
+		<?php } ?>
 		<h3><?php print $langs->trans("TerminalSelect"); ?></h3>
 	</div>
 	<div class="modal-body">
@@ -1242,7 +1251,9 @@ if (empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
 if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
 }
-$menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
+if ( ! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
+	$menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
+}
 $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
 $menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("Reduction").'</div>', 'action'=>'Reduction();');
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
@@ -1307,7 +1318,6 @@ if ($resql) {
 	}
 }
 
-$hookmanager->initHooks(array('takeposfrontend'));
 $parameters = array('menus'=>$menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons

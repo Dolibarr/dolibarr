@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2022  Open-DSI      			<support@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2023  Frédéric France         <frederic.france@netlogic.fr>
@@ -89,7 +90,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -805,12 +806,6 @@ if (!$error && $action == 'writebookkeeping') {
 								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 								$lettering_static = new Lettering($db);
 								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));
-
-								if ($nb_lettering < 0) {
-									$error++;
-									$errorforline++;
-									setEventMessages($lettering_static->error, $lettering_static->errors, 'errors');
-								}
 							}
 						}
 					}
@@ -1016,7 +1011,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"'.$val["type_payment"].'"'.$sep;
 					print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE')).'"'.$sep;
 					print '"'.length_accounta(getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE')).'"'.$sep;
-					print "".$sep;
+					print $sep;
 					print '"'.$reflabel.'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 					print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;

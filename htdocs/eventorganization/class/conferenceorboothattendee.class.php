@@ -51,7 +51,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var int  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 'fk_project@projet';
 
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
@@ -103,7 +103,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'comment'=>"Reference of object"),
-		'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
+		//'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'position'=>20, 'notnull'=>1, 'visible'=>0, 'index'=>1, 'picto'=>'project', 'css'=>'tdoverflowmax150 maxwidth500'),
 		'email' => array('type'=>'mail', 'label'=>'EmailAttendee', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'autofocusoncreate'=>1, 'searchall'=>1, 'csslist'=>'tdoverflowmax150'),
 		'firstname' => array('type'=>'varchar(100)', 'label'=>'Firstname', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'csslist'=>'tdoverflowmax125'),
@@ -122,8 +122,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
+		'ip' => array('type'=>'varchar(250)', 'label'=>'IPAddress', 'enabled'=>'1', 'position'=>900, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>0, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
-		'ip' => array('type'=>'varchar(250)', 'label'=>'Ip', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 	);
 	public $rowid;
 	public $ref;

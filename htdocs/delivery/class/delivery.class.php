@@ -986,7 +986,7 @@ class Delivery extends CommonObject
 
 		$i = 0;
 		$line = new DeliveryLine($this->db);
-		$line->fk_product     = $prodids[0];
+		$line->fk_product     = reset($prodids);
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
 		$line->ref            = 'REFPROD';

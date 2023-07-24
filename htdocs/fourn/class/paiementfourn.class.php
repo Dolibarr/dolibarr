@@ -8,6 +8,7 @@
  * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
  * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
+ * Copyright (C) 2023      Sylvain Legrand		  <technique@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +187,7 @@ class PaiementFourn extends Paiement
 		}
 
 		$currencyofpayment = '';
+		$currencytxofpayment = '';
 
 		foreach ($amounts as $key => $value) {
 			if (empty($value)) {
@@ -206,6 +208,9 @@ class PaiementFourn extends Paiement
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
 				return -1;
+			}
+			if (empty($currencytxofpayment)) {
+				$currencytxofpayment = $this->multicurrency_tx[$key];
 			}
 
 			$totalamount_converted += $value_converted;
@@ -264,8 +269,8 @@ class PaiementFourn extends Paiement
 					$facid = $key;
 					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount)';
-						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).')';
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)';
+						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').', '.(!empty($currencytxofpayment) ? (double) $currencytxofpayment : 1).')';
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$invoice = new FactureFournisseur($this->db);

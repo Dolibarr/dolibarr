@@ -183,8 +183,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->projet->lire;
-$permissiontodelete = $user->rights->projet->supprimer;
+$permissiontoread = $user->hasRight('projet', 'lire');
+$permissiontocreate = $user->hasRight('projet', 'creer');
+$permissiontodelete = $user->hasRight('projet', 'supprimer');
 
 if (!$permissiontoread) accessforbidden();
 
@@ -741,7 +742,7 @@ $newcardbutton = '';
 
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create', '', $user->rights->projet->creer);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create', '', $permissiontocreate);
 
 
 // Show description of content
@@ -749,7 +750,7 @@ $texthelp = '';
 if ($search_task_user == $user->id) {
 	$texthelp .= $langs->trans("MyTasksDesc");
 } else {
-	if ($user->rights->projet->all->lire && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$texthelp .= $langs->trans("TasksOnProjectsDesc");
 	} else {
 		$texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
@@ -777,7 +778,7 @@ if ($search_all) {
 $moreforfilter = '';
 
 // Filter on categories
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ProjectCategories');
@@ -806,7 +807,7 @@ $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form-
 $moreforfilter .= '</div>';
 
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST) && isModEnabled("categorie") && $user->rights->categorie->lire) {
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST) && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -1155,7 +1156,7 @@ while ($i < $imaxinloop) {
 	}
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -1341,9 +1342,15 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.planned_workload';
 				}
+				if (!isset($totalarray['val']['planned_workload'])) {
+					$totalarray['val']['t.planned_workload'] = 0;
+				}
 				$totalarray['val']['t.planned_workload'] += $obj->planned_workload;
 				if (!$i) {
 					$totalarray['totalplannedworkloadfield'] = $totalarray['nbfield'];
+				}
+				if (!isset($totalarray['totalplannedworkload'])) {
+					$totalarray['totalplannedworkload'] = 0;
 				}
 				$totalarray['totalplannedworkload'] += $obj->planned_workload;
 			}
@@ -1373,9 +1380,15 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.duration_effective';
 				}
+				if (!isset($totalarray['val']['t.duration_effective'])) {
+					$totalarray['val']['t.duration_effective'] = 0;
+				}
 				$totalarray['val']['t.duration_effective'] += $obj->duration_effective;
 				if (!$i) {
 					$totalarray['totaldurationeffectivefield'] = $totalarray['nbfield'];
+				}
+				if (!isset($totalarray['totaldurationeffective'])) {
+					$totalarray['totaldurationeffective'] = 0;
 				}
 				$totalarray['totaldurationeffective'] += $obj->duration_effective;
 			}
@@ -1410,9 +1423,15 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.progress';
 				}
+				if (!isset($totalarray['val']['t.progress'])) {
+					$totalarray['val']['t.progress'] = 0;
+				}
 				$totalarray['val']['t.progress'] += ($obj->planned_workload * $obj->progress / 100);
 				if (!$i) {
 					$totalarray['totalprogress_declaredfield'] = $totalarray['nbfield'];
+				}
+				if (!isset($totalarray['totaldurationdeclared'])) {
+					$totalarray['totaldurationdeclared'] = 0;
 				}
 				$totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
 			}
@@ -1564,19 +1583,19 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			} else {
 				print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 			}
-		} elseif ($totalarray['totalplannedworkloadfield'] == $i) {
+		} elseif (isset($totalarray['totalplannedworkloadfield']) && $totalarray['totalplannedworkloadfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
-		} elseif ($totalarray['totaldurationeffectivefield'] == $i) {
+		} elseif (isset($totalarray['totaldurationeffectivefield']) && $totalarray['totaldurationeffectivefield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totaldurationeffective'], $timespentoutputformat).'</td>';
-		} elseif ($totalarray['totalprogress_calculatedfield'] == $i) {
+		} elseif (isset($totalarray['totalprogress_calculatedfield']) && $totalarray['totalprogress_calculatedfield'] == $i) {
 			print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
-		} elseif ($totalarray['totalprogress_declaredfield'] == $i) {
+		} elseif (isset($totalarray['totalprogress_declaredfield']) && $totalarray['totalprogress_declaredfield'] == $i) {
 			print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
-		} elseif ($totalarray['totaltobillfield'] == $i) {
+		} elseif (isset($totalarray['totaltobillfield']) && $totalarray['totaltobillfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
-		} elseif ($totalarray['totalbilledfield'] == $i) {
+		} elseif (isset($totalarray['totalbilledfield']) && $totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-		} elseif ($totalarray['totalbudget_amountfield'] == $i) {
+		} elseif (isset($totalarray['totalbudget_amountfield']) && $totalarray['totalbudget_amountfield'] == $i) {
 			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';

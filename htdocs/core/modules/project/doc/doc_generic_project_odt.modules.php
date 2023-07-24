@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
@@ -82,12 +82,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 * @var Societe
 	 */
 	public $emetteur;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -198,9 +192,11 @@ class doc_generic_project_odt extends ModelePDFProjects
 			'task_projectlabel'=>$task->projectlabel,
 			'task_label'=>$task->label,
 			'task_description'=>$task->description,
-			'task_fk_parent'=>$task->fk_parent,
+			'task_fk_parent'=>$task->fk_task_parent,
 			'task_duration'=>$task->duration,
 			'task_duration_hour'=>convertSecondToTime($task->duration, 'all'),
+			'task_planned_workload'=>$task->planned_workload,
+			'task_planned_workload_hour'=>convertSecondToTime($task->planned_workload, 'all'),
 			'task_progress'=>$task->progress,
 			'task_public'=>$task->public,
 			'task_date_start'=>dol_print_date($task->date_start, 'day'),
@@ -563,8 +559,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -994,52 +990,52 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'class' => 'Fichinter',
 						'table' => 'fichinter',
 						'disableamount' => 1,
-						'test' => $conf->ficheinter->enabled && $user->hasRight('ficheinter', 'lire')
+						'test' => isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')
 					),
 					'shipping' => array(
 						'title' => "ListShippingAssociatedProject",
 						'class' => 'Expedition',
 						'table' => 'expedition',
 						'disableamount' => 1,
-						'test' => $conf->expedition->enabled && $user->rights->expedition->lire
+						'test' => isModEnabled('expedition') && $user->rights->expedition->lire
 					),
 					'trip' => array(
 						'title' => "ListTripAssociatedProject",
 						'class' => 'Deplacement',
 						'table' => 'deplacement',
 						'disableamount' => 1,
-						'test' => $conf->deplacement->enabled && $user->rights->deplacement->lire
+						'test' => isModEnabled('deplacement') && $user->rights->deplacement->lire
 					),
 					'expensereport' => array(
 						'title' => "ListExpenseReportsAssociatedProject",
 						'class' => 'ExpenseReportLine',
 						'table' => 'expensereport_det',
-						'test' => $conf->expensereport->enabled && $user->rights->expensereport->lire
+						'test' => isModEnabled('expensereport') && $user->rights->expensereport->lire
 					),
 					'donation' => array(
 						'title' => "ListDonationsAssociatedProject",
 						'class' => 'Don',
 						'table' => 'don',
-						'test' => $conf->don->enabled && $user->rights->don->lire
+						'test' => isModEnabled('don') && $user->rights->don->lire
 					),
 					'loan' => array(
 						'title' => "ListLoanAssociatedProject",
 						'class' => 'Loan',
 						'table' => 'loan',
-						'test' => $conf->loan->enabled && $user->rights->loan->read
+						'test' => isModEnabled('loan') && $user->rights->loan->read
 					),
 					'chargesociales' => array(
 						'title' => "ListSocialContributionAssociatedProject",
 						'class' => 'ChargeSociales',
 						'table' => 'chargesociales',
 						'urlnew' => DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$object->id,
-						'test' => $conf->tax->enabled && $user->rights->tax->charges->lire
+						'test' => isModEnabled('tax') && $user->rights->tax->charges->lire
 					),
 					'stock_mouvement' => array(
 						'title' => "ListMouvementStockProject",
 						'class' => 'MouvementStock',
 						'table' => 'stock_mouvement',
-						'test' => ($conf->stock->enabled && $user->rights->stock->mouvement->lire && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
+						'test' => (isModEnabled('stock') && $user->rights->stock->mouvement->lire && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
 					),
 					'agenda' => array(
 						'title' => "ListActionsAssociatedProject",

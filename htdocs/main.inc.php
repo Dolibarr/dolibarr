@@ -138,7 +138,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
-		$inj += preg_match('/update[^&].*set.+=/i', $val);	// the [^&] test is to avoir error when request is like action=update&...set...
+		$inj += preg_match('/update[^&=\w].*set.+=/i', $val);	// the [^&=\w] test is to avoid error when request is like action=update&...set... or &updatemodule=...set...
 		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
@@ -410,6 +410,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"])) {
 	$conf->browser->name = $tmp['browsername'];
 	$conf->browser->os = $tmp['browseros'];
 	$conf->browser->version = $tmp['browserversion'];
+	$conf->browser->ua = $tmp['browserua'];
 	$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
 	//var_dump($conf->browser);
 
@@ -772,23 +773,33 @@ if (!defined('NOLOGIN')) {
 			}
 		}
 
-		$allowedmethodtopostusername = 2;
+		$allowedmethodtopostusername = 3;
 		if (defined('MAIN_AUTHENTICATION_POST_METHOD')) {
-			$allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');
+			$allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');	// Note a value of 2 is not compatible with some authentication methods that put username as GET parameter
 		}
-		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
+		// TODO Remove use of $_COOKIE['login_dolibarr'] ? Replace $usertotest = with $usertotest = GETPOST("username", "alpha", $allowedmethodtopostusername);
+		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_@\-\.]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
 		$passwordtotest = GETPOST('password', 'none', $allowedmethodtopostusername);
 		$entitytotest = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
-		// Define if we received data to test the login.
+		// Define if we received the correct data to go into the test of the login with the checkLoginPassEntity().
 		$goontestloop = false;
-		if (isset($_SERVER["REMOTE_USER"]) && in_array('http', $authmode)) {
+		if (isset($_SERVER["REMOTE_USER"]) && in_array('http', $authmode)) {	// For http basic login test
 			$goontestloop = true;
 		}
-		if ($dolibarr_main_authentication == 'forceuser' && !empty($dolibarr_auto_user)) {
+		if ($dolibarr_main_authentication == 'forceuser' && !empty($dolibarr_auto_user)) {	// For automatic login with a forced user
 			$goontestloop = true;
 		}
-		if (GETPOST("username", "alpha", $allowedmethodtopostusername) || !empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode', 'alpha', 1)) {
+		if (GETPOST("username", "alpha", $allowedmethodtopostusername)) {	// For posting the login form
+			$goontestloop = true;
+		}
+		if (GETPOST('openid_mode', 'alpha', 1)) {	// For openid_connect ?
+			$goontestloop = true;
+		}
+		if (GETPOST('beforeoauthloginredirect', 'int') || GETPOST('afteroauthloginreturn')) {	// For oauth login
+			$goontestloop = true;
+		}
+		if (!empty($_COOKIE['login_dolibarr'])) {	// TODO For ? Remove this ?
 			$goontestloop = true;
 		}
 
@@ -805,7 +816,7 @@ if (!defined('NOLOGIN')) {
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
-		// Note authmode is an array for example: array('0'=>'dolibarr', '1'=>'google');
+		// Note authmode is an array for example: array('0'=>'dolibarr', '1'=>'googleoauth');
 		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr')) {
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login === '--bad-login-validity--') {
@@ -816,18 +827,20 @@ if (!defined('NOLOGIN')) {
 
 			if ($login) {
 				$dol_authmode = $conf->authmode; // This properties is defined only when logged, to say what mode was successfully used
-				$dol_tz = $_POST["tz"];
-				$dol_tz_string = $_POST["tz_string"];
+				$dol_tz = empty($_POST["tz"]) ? (empty($_SESSION["tz"]) ? '' : $_SESSION["tz"]) : $_POST["tz"];
+				$dol_tz_string = empty($_POST["tz_string"]) ? (empty($_SESSION["tz_string"]) ? '' : $_SESSION["tz_string"]) : $_POST["tz_string"];
 				$dol_tz_string = preg_replace('/\s*\(.+\)$/', '', $dol_tz_string);
 				$dol_tz_string = preg_replace('/,/', '/', $dol_tz_string);
 				$dol_tz_string = preg_replace('/\s/', '_', $dol_tz_string);
 				$dol_dst = 0;
 				// Keep $_POST here. Do not use GETPOSTISSET
-				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"])) {
+				$dol_dst_first = empty($_POST["dst_first"]) ? (empty($_SESSION["dst_first"]) ? '' : $_SESSION["dst_first"]) : $_POST["dst_first"];
+				$dol_dst_second = empty($_POST["dst_second"]) ? (empty($_SESSION["dst_second"]) ? '' : $_SESSION["dst_second"]) : $_POST["dst_second"];
+				if ($dol_dst_first && $dol_dst_second) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 					$datenow = dol_now();
-					$datefirst = dol_stringtotime($_POST["dst_first"]);
-					$datesecond = dol_stringtotime($_POST["dst_second"]);
+					$datefirst = dol_stringtotime($dol_dst_first);
+					$datesecond = dol_stringtotime($dol_dst_second);
 					if ($datenow >= $datefirst && $datenow < $datesecond) {
 						$dol_dst = 1;
 					}
@@ -1069,7 +1082,8 @@ if (!defined('NOLOGIN')) {
 			}
 
 			$action = '';
-			$reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('updateSession', $parameters, $user, $action);
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
@@ -1212,7 +1226,7 @@ if (!defined('NOLOGIN')) {
 	}
 } else {
 	// We may have NOLOGIN set, but NOREQUIREUSER not
-	if (!empty($user) && method_exists($user, 'loadDefaultValues')) {
+	if (!empty($user) && method_exists($user, 'loadDefaultValues') && !defined('NODEFAULTVALUES')) {
 		$user->loadDefaultValues();		// Load default values for everybody (works even if $user->id = 0
 	}
 }
@@ -1837,7 +1851,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		// Custom CSS
 		if (getDolGlobalString('MAIN_IHM_CUSTOM_CSS')) {
 			// If a custom CSS was set, we add link to the custom css php file
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/custom.css.php">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/custom.css.php'.($ext ? '?'.$ext : '').'&amp;revision='.getDolGlobalInt("MAIN_IHM_PARAMS_REV").'">'."\n";
 		}
 
 		// Output standard javascript links
@@ -2292,6 +2306,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
+	$dropdownBody .= '<br><b>'.$langs->trans("Company").'</b>: <span>'.dol_escape_htmltag($mysoc->name).'</span>';
 	if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_SIREN"), 1).'</span>';
 	}
@@ -2447,7 +2462,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	                </p>
 	            </div>
 
-	            <!-- Menu Body -->
+	            <!-- Menu Body user-->
 	            <div class="user-body">'.$dropdownBody.'</div>
 
 	            <!-- Menu Footer-->
@@ -2877,7 +2892,18 @@ function top_menu_search()
 	$arrayresult = null;
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This set $arrayresult
 
-	$searchInput = '<input name="search_all" id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
+	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+	// accesskey is for Mac:               CTRL + key for all browsers
+	$stringforfirstkey = $langs->trans("KeyboardShortcut");
+	if ($conf->browser->name == 'chrome') {
+		$stringforfirstkey .= ' ALT +';
+	} elseif ($conf->browser->name == 'firefox') {
+		$stringforfirstkey .= ' ALT + SHIFT +';
+	} else {
+		$stringforfirstkey .= ' CTL +';
+	}
+
+	$searchInput = '<input name="search_all"'.($stringforfirstkey ? ' title="'.dol_escape_htmltag($stringforfirstkey.' s').'"' : '').' id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
 
 	$defaultAction = '';
 	$buttonList = '<div class="dropdown-global-search-button-list" >';
@@ -2902,7 +2928,7 @@ function top_menu_search()
     ';
 
 	$dropDownHtml .= '
-        <!-- Menu Body -->
+        <!-- Menu Body search -->
         <div class="dropdown-body search-dropdown-body">
         '.$buttonList.'
         </div>
@@ -3057,12 +3083,22 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 
 			$usedbyinclude = 1;
-
 			$arrayresult = array();
 			include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This make initHooks('searchform') then set $arrayresult
 
 			if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM)) {
-				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY) ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+				// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+				// accesskey is for Mac:               CTRL + key for all browsers
+				$stringforfirstkey = $langs->trans("KeyboardShortcut");
+				if ($conf->browser->name == 'chrome') {
+					$stringforfirstkey .= ' ALT +';
+				} elseif ($conf->browser->name == 'firefox') {
+					$stringforfirstkey .= ' ALT + SHIFT +';
+				} else {
+					$stringforfirstkey .= ' CTL +';
+				}
+
+				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY) ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
 					foreach ($arrayresult as $key => $val) {
@@ -3676,7 +3712,8 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		$reshook = $hookmanager->executeHooks('beforeBodyClose'); // Note that $action and $object may have been modified by some hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			print $hookmanager->resPrint;
 		}

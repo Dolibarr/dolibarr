@@ -45,6 +45,12 @@ class FormAccounting extends Form
 	public $error = '';
 
 	/**
+	 * @var int Nb of accounts found
+	 */
+	public $nbaccounts;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param		DoliDB		$db      Database handler
@@ -138,16 +144,16 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	array	$selectedIds	Preselected journal code array
-	 * @param	string	$htmlname	Name of field in html form
-	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
-	 * @param	int		$showempty	Add an empty field
-	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
-	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
-	 * @param	string	$morecss	More css non HTML object
-	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param   int     $disabledajaxcombo Disable ajax combo box.
-	 * @return	string				String with HTML select
+	 * @param	array	$selectedIds		Preselected journal code array
+	 * @param	string	$htmlname			Name of field in html form
+	 * @param	int		$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int		$showempty			Add an empty field
+	 * @param	int		$select_in			0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int		$select_out			Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string	$morecss			More css non HTML object
+	 * @param	string	$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param   int     $disabledajaxcombo 	Disable ajax combo box.
+	 * @return	string						String with HTML select
 	 */
 	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -434,7 +440,10 @@ class FormAccounting extends Form
 			}
 		}
 
+
 		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+
+		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
 
 		return $out;
 	}
@@ -454,6 +463,7 @@ class FormAccounting extends Form
 	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
 	{
 		// phpcs:enable
+		global $conf;
 
 		$aux_account = array();
 

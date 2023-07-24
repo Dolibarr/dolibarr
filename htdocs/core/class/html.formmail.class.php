@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin	    <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2022	   Charlene Benke       <charlene@patas-monkey.com>
+/* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018-2022	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
+ *
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -430,7 +432,9 @@ class FormMail extends Form
 			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 				if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
 					foreach ($this->param['fileinit'] as $file) {
-						$this->add_attached_files($file, basename($file), dol_mimetype($file));
+						if (!empty($file)) {
+							$this->add_attached_files($file, basename($file), dol_mimetype($file));
+						}
 					}
 				}
 			}
@@ -543,6 +547,10 @@ class FormMail extends Form
 				$helpforsubstitution .= $langs->trans('AvailableVariables').' :<br><br><span class="small">'."\n";
 			}
 			foreach ($this->substit as $key => $val) {
+				// Do not show deprecated variables into the tooltip help of substitution variables
+				if (in_array($key, array('__NEWREF__', '__REFCLIENT__', '__REFSUPPLIER__', '__SUPPLIER_ORDER_DATE_DELIVERY__', '__SUPPLIER_ORDER_DELAY_DELIVERY__'))) {
+					continue;
+				}
 				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
 			}
 			if (is_array($this->substit) && count($this->substit)) {
@@ -692,18 +700,25 @@ class FormMail extends Form
 				$out .= "</td></tr>\n";
 			}
 
-			// With option one email per recipient
+			// With option for one email per recipient
 			if (!empty($this->withoptiononeemailperrecipient)) {
 				if (abs($this->withoptiononeemailperrecipient) == 1) {
 					$out .= '<tr><td class="minwidth200">';
 					$out .= $langs->trans("GroupEmails");
 					$out .= '</td><td>';
 					$out .= ' <input type="checkbox" id="oneemailperrecipient" value="1" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
-					$out .= '<label for="oneemailperrecipient">'.$langs->trans("OneEmailPerRecipient").'</label>';
-					$out .= '<span class="hideonsmartphone opacitymedium">';
-					$out .= ' - ';
-					$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
-					$out .= '</span>';
+					$out .= '<label for="oneemailperrecipient">';
+					$out .= $form->textwithpicto($langs->trans("OneEmailPerRecipient"), $langs->trans("WarningIfYouCheckOneRecipientPerEmail"), 1, 'help');
+					$out .= '</label>';
+					//$out .= '<span class="hideonsmartphone opacitymedium">';
+					//$out .= ' - ';
+					//$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+					//$out .= '</span>';
+					if (getDolGlobalString('MASS_ACTION_EMAIL_ON_DIFFERENT_THIRPARTIES_ADD_CUSTOM_EMAIL')) {
+						if (!empty($this->withto) && !is_array($this->withto)) {
+							$out .= ' '.$langs->trans("or").' <input type="email" name="emailto" value="">';
+						}
+					}
 					$out .= '</td></tr>';
 				} else {
 					$out .= '<tr><td><input type="hidden" name="oneemailperrecipient" value="1"></td><td></td></tr>';
@@ -809,7 +824,7 @@ class FormMail extends Form
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
 
 							if ($conf->entity > 1) {
-								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
+								$relativepathtofile = str_replace('/'.$conf->entity.'/', '/', $relativepathtofile);
 							}
 							// Try to extract data from full path
 							$formfile_params = array();
@@ -1077,13 +1092,14 @@ class FormMail extends Form
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 				}
 
 				$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
-
-				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
-					$withtoselected = array_keys($tmparray);
+				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
+					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
+						$withtoselected = array_keys($tmparray);
+					}
 				}
 
 				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
@@ -1114,7 +1130,7 @@ class FormMail extends Form
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 				}
 				$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
 				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
@@ -1358,7 +1374,7 @@ class FormMail extends Form
 				// If template is for a module, check module is enabled; if not, take next template
 				if ($obj->module) {
 					$tempmodulekey = $obj->module;
-					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+					if (empty($conf->$tempmodulekey) || !isModEnabled($tempmodulekey)) {
 						continue;
 					}
 				}
@@ -1494,7 +1510,7 @@ class FormMail extends Form
 				// If template is for a module, check module is enabled.
 				if ($obj->module) {
 					$tempmodulekey = $obj->module;
-					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+					if (empty($conf->$tempmodulekey) || !isModEnabled($tempmodulekey)) {
 						continue;
 					}
 				}

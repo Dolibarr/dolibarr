@@ -71,7 +71,12 @@ if ($action == 'getProducts') {
 	$object = new Categorie($db);
 	if ($category == "supplements") {
 		$category = getDolGlobalInt('TAKEPOS_SUPPLEMENTS_CATEGORY');
+		if (empty($category)) {
+			echo 'Error, the category to use for supplements is not defined. Go into setup of module TakePOS.';
+			exit;
+		}
 	}
+
 	$result = $object->fetch($category);
 	if ($result > 0) {
 		$filter = array();
@@ -354,7 +359,7 @@ if ($action == 'getProducts') {
 		$printer->pulse();
 		$printer->close();
 	}
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && !empty($user->rights->facture->lire)) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('facture', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$printer = new dolReceiptPrinter($db);

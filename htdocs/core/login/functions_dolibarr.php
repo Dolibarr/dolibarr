@@ -65,10 +65,11 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		}
 		$sql .= ") AND ".$entitycol." IN (0,".($entity ? ((int) $entity) : 1).")";
 		$sql .= " AND statut = 1";
-		// Note: Test on validity is done later
 		// Order is required to firstly found the user into entity, then the superadmin.
 		// For the case (TODO: we must avoid that) a user has renamed its login with same value than a user in entity 0.
 		$sql .= " ORDER BY entity DESC";
+
+		// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
 
 		$resql = $db->query($sql);
 		if ($resql) {

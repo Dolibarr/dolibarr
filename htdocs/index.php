@@ -131,6 +131,12 @@ if (empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
+	$object = new stdClass();
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('infoadmin', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook == 0) {
+		$message .= $hookmanager->resPrint;
+	}
 	if ($message) {
 		print $message.'<br>';
 		//$message.='<br>';

@@ -63,7 +63,7 @@ class box_scheduled_jobs extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
+		$this->hidden = !($user->hasRight('cron', 'read'));
 	}
 
 	/**
@@ -79,7 +79,7 @@ class box_scheduled_jobs extends ModeleBoxes
 		$langs->load("cron");
 		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max));
 
-		if ($user->rights->cron->read) {
+		if ($user->hasRight('cron', 'read')) {
 			include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 			$cronstatic = new Cronjob($this->db);
 			$resultarray = array();

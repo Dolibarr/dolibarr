@@ -16,10 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
- require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 
 /**
  * API class for projects
@@ -29,7 +30,6 @@
  */
 class Tasks extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -372,7 +372,7 @@ class Tasks extends DolibarrApi
 	*/
 
 	// /**
-	//  * Update a task to given project
+	//  * Update a task of a given project
 	//  *
 	//  * @param int   $id             Id of project to update
 	//  * @param int   $taskid         Id of task to update

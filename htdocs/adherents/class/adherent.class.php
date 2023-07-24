@@ -65,6 +65,11 @@ class Adherent extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * @var string picto
 	 */
 	public $picto = 'member';
@@ -2411,7 +2416,7 @@ class Adherent extends CommonObject
 		}
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs($withpictoimg) == 1) {
+			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
 				$morecss .= ' paddingrightonly';
 			}
 			// Only picto
@@ -2420,12 +2425,12 @@ class Adherent extends CommonObject
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';
-				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1);
+				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.(($withpictoimg == -3 || $withpictoimg == -4) ? 'small' : ''), 'mini', 0, 1);
 				$picto .= '</span>';
 			}
 			$result .= $picto;
 		}
-		if ($withpictoimg > -2 && $withpictoimg != 2) {
+		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
@@ -2510,8 +2515,8 @@ class Adherent extends CommonObject
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
-				$labelStatus = $langs->trans("MemberStatusActive");
-				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
+				$labelStatus = $langs->trans("WaitingSubscription");
+				$labelStatusShort = $langs->trans("WaitingSubscriptionShort");
 			} elseif ($date_end_subscription < dol_now()) {	// expired
 				$statusType = 'status8';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
@@ -3146,12 +3151,13 @@ class Adherent extends CommonObject
 							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 							$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 							$to = $adherent->email;
+							$cc = getDolGlobalString('ADHERENT_CC_MAIL_FROM');
 
 							$trackid = 'mem'.$adherent->id;
 							$moreinheader = 'X-Dolibarr-Info: sendReminderForExpiredSubscription'."\r\n";
 
 							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-							$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+							$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), $cc, '', 0, 1, '', '', $trackid, $moreinheader);
 							$result = $cmail->sendfile();
 							if (!$result) {
 								$error++;
@@ -3318,7 +3324,7 @@ class Adherent extends CommonObject
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'type')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->type.'</span>';

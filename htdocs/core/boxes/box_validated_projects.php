@@ -22,7 +22,7 @@
 
 /**
  *  \file       htdocs/core/boxes/box_validated_projects.php
- *  \ingroup    projet
+ *  \ingroup    project
  *  \brief      Module to show validated projects whose tasks are assigned to the connected person, without any time entered by the connected person
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";

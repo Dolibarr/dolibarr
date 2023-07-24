@@ -62,7 +62,7 @@ class box_produits extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>(isModEnabled("product") || isModEnabled("service")), 'perms'=>(!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)), 'module'=>'product|service');
+		$tmpentry = array('enabled'=>(isModEnabled("product") || isModEnabled("service")), 'perms'=>(!empty($user->rights->produit->lire) || $user->hasRight('service', 'lire')), 'module'=>'product|service');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -84,7 +84,7 @@ class box_produits extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
 
-		if ($user->rights->produit->lire || $user->rights->service->lire) {
+		if ($user->rights->produit->lire || $user->hasRight('service', 'lire')) {
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
 			$sql .= ", p.accountancy_code_sell";
 			$sql .= ", p.accountancy_code_sell_intra";

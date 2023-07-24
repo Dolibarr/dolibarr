@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ if ($action == 'edit') {
 print '</td></tr>';
 
 // Description
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
@@ -321,7 +321,7 @@ print '</td></tr>';
 print '<tr><td>';
 print $langs->trans("Author").'</td><td>';
 if ($object->fk_user_creat > 0) {
-	print $userstatic->getLoginUrl(1);
+	print $userstatic->getLoginUrl(-1);
 } else {
 	if ($action == 'edit') {
 		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
@@ -428,7 +428,7 @@ if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll").'<br>';
 	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
 	print $langs->trans("Name").': <input type="text" class="minwidth300" name="commentuser" value="'.dol_escape_htmltag($user->getFullName($langs)).'"> '."\n";
-	print '<input type="submit" class="button reposition" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
+	print '<input type="submit" class="button reposition smallpaddingimp" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 }
 
 print '</form>';

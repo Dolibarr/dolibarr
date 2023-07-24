@@ -412,12 +412,6 @@ class FormOther
 		$tab_categs = $static_categs->get_full_arbo($type);
 
 		$moreforfilter = '';
-		// Enhance with select2
-		if ($conf->use_javascript_ajax) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$comboenhancement = ajax_combobox('select_categ_'.$htmlname);
-			$moreforfilter .= $comboenhancement;
-		}
 
 		// Print a select with each of them
 		$moreforfilter .= '<select class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
@@ -449,6 +443,13 @@ class FormOther
 			$moreforfilter .= '<option value="-2"'.($selected == -2 ? ' selected' : '').'>- '.$langs->trans("NotCategorized").' -</option>';
 		}
 		$moreforfilter .= '</select>';
+
+		// Enhance with select2
+		if ($conf->use_javascript_ajax) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$comboenhancement = ajax_combobox('select_categ_'.$htmlname);
+			$moreforfilter .= $comboenhancement;
+		}
 
 		return $moreforfilter;
 	}
@@ -688,7 +689,7 @@ class FormOther
 
 		$numlines = count($lines);
 		for ($i = 0; $i < $numlines; $i++) {
-			if ($lines[$i]->fk_parent == $parent) {
+			if ($lines[$i]->fk_task_parent == $parent) {
 				//var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
 				// Break on a new project
@@ -728,9 +729,9 @@ class FormOther
 				if (isset($lines[$i]->id)) {		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
 					// Check if we must disable entry
 					$disabled = 0;
-					if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid))) {
+					if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_task_parent == $disablechildoftaskid))) {
 						$disabled++;
-						if ($lines[$i]->fk_parent == $disablechildoftaskid) {
+						if ($lines[$i]->fk_task_parent == $disablechildoftaskid) {
 							$newdisablechildoftaskid = $lines[$i]->id; // If task is child of a disabled parent, we will propagate id to disable next child too
 						}
 					}

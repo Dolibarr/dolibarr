@@ -121,6 +121,8 @@ class Documents extends DolibarrApi
 	 *
 	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
+	 * Supported modules: invoice, order, proposal, contract
+	 *
 	 * @param   string  $modulepart		Name of module or area concerned by file download ('thirdparty', 'member', 'proposal', 'supplier_proposal', 'order', 'supplier_order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
 	 * @param	string	$doctemplate	Set here the doc template to use for document generation (If not set, use the default template).
@@ -198,6 +200,19 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
+		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') {
+			require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+			$this->supplier_invoice = new FactureFournisseur($this->db);
+			$result = $this->supplier_invoice->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+			if (!$result) {
+				throw new RestException(404, 'Supplier invoice not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $this->supplier_invoice->model_pdf;
+			$result = $this->supplier_invoice->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result < 0) {
+				throw new RestException(500, 'Error generating document');
+			}
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$this->order = new Commande($this->db);
@@ -255,6 +270,8 @@ class Documents extends DolibarrApi
 
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
+	 *
+	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract
 	 *
 	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'proposal', 'order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param	int		$id				ID of element
@@ -332,7 +349,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->propal->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -360,7 +377,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->commande->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -386,7 +403,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Purchase order not found');
 			}
 
-			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->fournisseur->dir_output."/commande/".dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -404,7 +421,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->facture->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -582,6 +599,8 @@ class Documents extends DolibarrApi
 	 * Test sample for invoice: { "filename": "mynewfile.txt", "modulepart": "invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample for supplier invoice: { "filename": "mynewfile.txt", "modulepart": "supplier_invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample for medias file: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
+	 *
+	 * Supported modules: invoice, order, supplier_order, task/project_task, product/service, expensereport, fichinter, member, propale, agenda, contact
 	 *
 	 * @param   string  $filename           	Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('product', 'service', 'invoice', 'proposal', 'project', 'project_task', 'supplier_invoice', 'expensereport', 'member', ...)
@@ -802,7 +821,50 @@ class Documents extends DolibarrApi
 			throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
 		}
 
-		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1, 1);
+		$disablevirusscan = 0;
+		$src_file = $destfiletmp;
+		$dest_file = $destfile;
+
+		// Security:
+		// If we need to make a virus scan
+		if (empty($disablevirusscan) && file_exists($src_file)) {
+			$checkvirusarray = dolCheckVirus($src_file);
+			if (count($checkvirusarray)) {
+				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
+				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray));
+			}
+		}
+
+		// Security:
+		// Disallow file with some extensions. We rename them.
+		// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
+		if (isAFileWithExecutableContent($dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED)) {
+			// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
+			$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
+			if (!preg_match('/\/$/', $publicmediasdirwithslash)) {
+				$publicmediasdirwithslash .= '/';
+			}
+
+			if (strpos($upload_dir, $publicmediasdirwithslash) !== 0 || !getDolGlobalInt("MAIN_DOCUMENT_DISABLE_NOEXE_IN_MEDIAS_DIR")) {	// We never add .noexe on files into media directory
+				$dest_file .= '.noexe';
+			}
+		}
+
+		// Security:
+		// We refuse cache files/dirs, upload using .. and pipes into filenames.
+		if (preg_match('/^\./', basename($src_file)) || preg_match('/\.\./', $src_file) || preg_match('/[<>|]/', $src_file)) {
+			dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
+			throw new RestException(500, "Refused to deliver file ".$src_file);
+		}
+
+		// Security:
+		// We refuse cache files/dirs, upload using .. and pipes into filenames.
+		if (preg_match('/^\./', basename($dest_file)) || preg_match('/\.\./', $dest_file) || preg_match('/[<>|]/', $dest_file)) {
+			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
+			throw new RestException(500, "Refused to deliver file ".$dest_file);
+		}
+
+		$result = dol_move($destfiletmp, $dest_file, 0, $overwriteifexists, 1, 1);
 		if (!$result) {
 			throw new RestException(500, "Failed to move file into '".$destfile."'");
 		}

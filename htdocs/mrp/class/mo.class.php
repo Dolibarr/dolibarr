@@ -105,7 +105,7 @@ class Mo extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200', 'alwayseditable'=>1),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax150'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
-		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'$conf->stock->enabled', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
+		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'isModEnabled("stock")', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
@@ -149,8 +149,16 @@ class Mo extends CommonObject
 	 */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_validation
+	 */
+	public $date_valid;
 
+	/**
+	 * @var integer|string date_validation
+	 */
 	public $tms;
+
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -736,6 +744,7 @@ class Mo extends CommonObject
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
+								if (!empty($line->fk_default_workstation)) $moline->fk_default_workstation = $line->fk_default_workstation;
 
 								$resultline = $moline->create($user, false); // Never use triggers here
 								if ($resultline <= 0) {
@@ -833,7 +842,7 @@ class Mo extends CommonObject
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
 		global $langs;
-		$langs->load('stocks');
+		$langs->loadLangs(array('stocks', 'mrp'));
 
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -1700,7 +1709,7 @@ class Mo extends CommonObject
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_bom')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->fk_bom.'</span>';

@@ -113,8 +113,8 @@ if (!isModEnabled('stock')) {
 	accessforbidden();
 }
 
-$usercancreate	= $user->rights->reception->creer;
-$permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$usercancreate = $user->hasRight('reception', 'creer');
+$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
@@ -297,7 +297,7 @@ $formproduct = new FormProduct($db);
 $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
-$title = $object->ref." - ".$langs->trans('OrderDispatch');
+$title = $object->ref." - ".$langs->trans('ReceptionDistribution');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 $morejs = array('/fourn/js/lib_dispatch.js.php');
 
@@ -354,7 +354,7 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
 		if (0) {    // Do not change on reception
@@ -426,9 +426,11 @@ if ($id > 0 || !empty($ref)) {
 	print '</td>';
 	print '</tr>';
 	print '</table>';
+
 	print '<br><center>';
-	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'eraser', 'class="pictofixedwidth"').$langs->trans("ResetQtyToDispatch").'</a></td>';
-	print '<a href="#" id="autoreset" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'eraser', 'class="pictofixedwidth"').$langs->trans("Reset").'</a></td>';
+	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'autofill', 'class="pictofixedwidth"').$langs->trans("RestoreWithCurrentQtySaved").'</a></td>';
+	// Link to clear qty
+	print '<a href="#" id="autoreset" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'eraser', 'class="pictofixedwidth"').$langs->trans("ClearQtys").'</a></td>';
 	print '<center>';
 
 	print '<br>';
@@ -444,16 +446,14 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 
-
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="updatelines">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
-		// Set $products_dispatched with qty dispatched for each product id
+		// Get list of lines from the original Order into $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
@@ -469,17 +469,17 @@ if ($id > 0 || !empty($ref)) {
 			if ($num) {
 				while ($i < $num) {
 					$objd = $db->fetch_object($resql);
-					$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
+					$products_dispatched[$objd->rowid] = price2num($objd->qty, 'MS');
 					$i++;
 				}
 			}
 			$db->free($resql);
 		}
 
+
 		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, l.qty as qty,";
 		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse";
-
 		// Enable hooks to alter the SQL query (SELECT)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks(
@@ -492,14 +492,12 @@ if ($id > 0 || !empty($ref)) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 		$sql .= $hookmanager->resPrint;
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
 		$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$sql .= " AND l.product_type = 0";
 		}
-
 		// Enable hooks to alter the SQL query (WHERE)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks(
@@ -520,7 +518,6 @@ if ($id > 0 || !empty($ref)) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$numline = 1;
 
 			if ($num) {
 				print '<tr class="liste_titre">';
@@ -543,6 +540,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
 				print ' <td class="right">'.$langs->trans("QtyToDispatchShort");
+				//print '<br><a href="#" id="autoreset">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').$langs->trans("Reset").'</a></td>';
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
@@ -586,6 +584,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$conf->cache['product'] = array();
 
+			// Loop on each source order line (may be more or less than current number of lines in llx_commande_fournisseurdet)
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
@@ -611,7 +610,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<!-- Line to dispatch '.$suffix.' -->'."\n";
 						// hidden fields for js function
 						print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
-						print '<input id="qty_dispatched'.$suffix.'" type="hidden" data-dispatched="'.(float) $alreadydispatched.'" value="'.(float) $alreadydispatched.'">';
+						print '<input id="qty_dispatched'.$suffix.'" type="hidden" data-dispatched="'.((float) $alreadydispatched).'" value="'.(float) $alreadydispatched.'">';
 						print '<tr class="oddeven">';
 
 						if (empty($conf->cache['product'][$objp->fk_product])) {
@@ -644,7 +643,7 @@ if ($id > 0 || !empty($ref)) {
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number">';
-								print $langs->trans("ProductDoesNotUseBatchSerial");
+								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</small>';
 								print '</td>';
 								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="dispatch_dlc"></td>';
@@ -682,7 +681,11 @@ if ($id > 0 || !empty($ref)) {
 
 						$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
 						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;
+						$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
+						$sql .= " AND cfd.fk_commande = ".((int) $objectsrc->id);
+						$sql .= " AND cfd.fk_commandefourndet = ".(int) $objp->rowid;
+
+						//print $sql;
 						$resultsql = $db->query($sql);
 						$j = 0;
 						if ($resultsql) {
@@ -691,6 +694,7 @@ if ($id > 0 || !empty($ref)) {
 							while ($j < $numd) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
+
 								if (isModEnabled('productbatch') && !empty($objd->batch)) {
 									$type = 'batch';
 
@@ -722,7 +726,7 @@ if ($id > 0 || !empty($ref)) {
 									print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
 									print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
 
-									print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+									print '<!-- This is a U.P. (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
 									if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) { // Not tested !
 										print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
 									} else {
@@ -862,8 +866,9 @@ if ($id > 0 || !empty($ref)) {
 							}
 							$suffix = "_".$j."_".$i;
 						}
+
 						if ($j == 0) {
-							if (isModEnabled('productbatch') && !empty($objp->batch)) {
+							if (isModEnabled('productbatch') && !empty($objp->tobatch)) {
 								$type = 'batch';
 
 								// Enable hooks to append additional columns
@@ -904,7 +909,7 @@ if ($id > 0 || !empty($ref)) {
 								print '</td>';
 
 								print '<td>';
-								print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'">';
 								print '</td>';
 								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="nowraponall">';
@@ -965,7 +970,7 @@ if ($id > 0 || !empty($ref)) {
 							// Qty to dispatch
 							print '<td class="right">';
 							print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
+							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'" data-expected="'.$remaintodispatch.'">';
 							print '</td>';
 							print '<td>';
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
@@ -1105,19 +1110,23 @@ if ($id > 0 || !empty($ref)) {
 				$(".autoresettr").each(function(){
 					id = $(this).attr("name");
 					idtab = id.split("_");
-					if($(this).data("remove") == "clear"){
+					if ($(this).data("remove") == "clear"){
 						console.log("We clear the object to expected value")
+						$("#qty_"+idtab[1]+"_"+idtab[2]).val("");
+						/*
 						qtyexpected = $("#qty_"+idtab[1]+"_"+idtab[2]).data("expected")
 						console.log(qtyexpected);
 						$("#qty_"+idtab[1]+"_"+idtab[2]).val(qtyexpected);
 						qtydispatched = $("#qty_dispatched_0_"+idtab[2]).data("dispatched")
 						$("#qty_dispatched_0_"+idtab[2]).val(qtydispatched);
+						*/
 					} else {
 						console.log("We remove the object")
 						$(this).remove();
 						$("tr[name^=\'"+idtab[0]+"_\'][name$=\'_"+idtab[2]+"\']:last .splitbutton").show();
 					}
 				});
+				return false;
 			});
 
 			$("#resetalltoexpected").click(function(){
@@ -1125,6 +1134,7 @@ if ($id > 0 || !empty($ref)) {
 					console.log("We reset to expected "+$(this).attr("id")+" qty to dispatch");
 					$(this).val($(this).data("expected"));
 				});
+				return false;
 			});
 
 			$(".resetline").click(function(){

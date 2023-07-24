@@ -55,6 +55,7 @@ CopyPropalFrom=Izveidot komerciālo priekšlikumu, kopējot esošo priekšlikumu
 CreateEmptyPropal=Izveidojiet tukšus komerciālus priekšlikumus vai produktu / pakalpojumu sarakstu
 DefaultProposalDurationValidity=Default komerciālā priekšlikumu derīguma termiņš (dienās)
 DefaultPuttingPricesUpToDate=Pēc noklusējuma atjauniniet cenas ar pašreizējām zināmajām cenām, klonējot piedāvājumu
+DefaultPuttingDescUpToDate=Pēc noklusējuma atjauniniet aprakstus ar pašreiz zināmajiem priekšlikuma klonēšanas aprakstiem
 UseCustomerContactAsPropalRecipientIfExist=Izmantojiet kontaktpersonu / adresi ar veidu "Sazināties ar pēcpārbaudes priekšlikumu", ja tā ir definēta kā trešās puses adrese kā pieteikuma saņēmēja adrese
 ConfirmClonePropal=Vai tiešām vēlaties klonēt komerciālo priekšlikumu <b> %s </b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?

@@ -161,11 +161,11 @@ if (empty($reshook)) {
 
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
-		$param .= '&amp;date_startmonth=' . GETPOST('date_startmonth', 'int') . '&amp;date_startday=' . GETPOST('date_startday', 'int') . '&amp;date_startyear=' . GETPOST('date_startyear', 'int');
+		$param .= '&date_startmonth=' . GETPOST('date_startmonth', 'int') . '&date_startday=' . GETPOST('date_startday', 'int') . '&date_startyear=' . GETPOST('date_startyear', 'int');
 	}
 	if (!empty($search_date_end)) {
 		$filter['t.doc_date<='] = $search_date_end;
-		$param .= '&amp;date_endmonth=' . GETPOST('date_endmonth', 'int') . '&amp;date_endday=' . GETPOST('date_endday', 'int') . '&amp;date_endyear=' . GETPOST('date_endyear', 'int');
+		$param .= '&date_endmonth=' . GETPOST('date_endmonth', 'int') . '&date_endday=' . GETPOST('date_endday', 'int') . '&date_endyear=' . GETPOST('date_endyear', 'int');
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
@@ -177,7 +177,7 @@ if (empty($reshook)) {
 		} else {
 			$filter['t.numero_compte>='] = $search_accountancy_code_start;
 		}
-		$param .= '&amp;search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
+		$param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
 	}
 	if (!empty($search_accountancy_code_end)) {
 		if ($type == 'sub') {
@@ -185,7 +185,7 @@ if (empty($reshook)) {
 		} else {
 			$filter['t.numero_compte<='] = $search_accountancy_code_end;
 		}
-		$param .= '&amp;search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
+		$param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
 	}
 	if (!empty($search_ledger_code)) {
 		$filter['t.code_journal'] = $search_ledger_code;
@@ -375,10 +375,12 @@ if ($action != 'export_csv') {
 	}
 	$moreforfilter .= '</div>';
 
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
-	$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
-	$moreforfilter .= '</div>';
+	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
+		$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
+		$moreforfilter .= '</div>';
+	}
 
 	if (!empty($moreforfilter)) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -395,6 +397,14 @@ if ($action != 'export_csv') {
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
 	print '<tr class="liste_titre_filter">';
+
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+
 	print '<td class="liste_titre" colspan="'.$colspan.'">';
 	print '</td>';
 
@@ -404,13 +414,18 @@ if ($action != 'export_csv') {
 	print $hookmanager->resPrint;
 
 	// Action column
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 	print '</tr>'."\n";
 
 	print '<tr class="liste_titre">';
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	}
 	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 	// TODO : Retrieve the type of third party: Customer / Supplier / Employee
 	//if ($type == 'sub') {
@@ -428,7 +443,9 @@ if ($action != 'export_csv') {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	}
 	print '</tr>'."\n";
 
 	$total_debit = 0;
@@ -532,6 +549,14 @@ if ($action != 'export_csv') {
 		}
 
 		print '<tr class="oddeven">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center">';
+			print $link;
+			print '</td>';
+		}
+
 		// Accounting account
 		if ($type == 'sub') {
 			print '<td>'.$line->subledger_account.' <span class="opacitymedium">('.$line->subledger_label.')</span></td>';
@@ -581,9 +606,14 @@ if ($action != 'export_csv') {
 		} else {
 			print '<td class="right nowraponall amount">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
 		}
-		print '<td class="center">';
-		print $link;
-		print '</td>';
+
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center">';
+			print $link;
+			print '</td>';
+		}
+
 		print "</tr>\n";
 
 		// Records the sub-total
@@ -593,7 +623,12 @@ if ($action != 'export_csv') {
 	}
 
 	if (!empty($show_subgroup)) {
-		print '<tr class="liste_total"><td class="right">'.$langs->trans("SubTotal").':</td>';
+		print '<tr class="liste_total">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print "<td></td>\n";
+		}
+		print '<td class="right">'.$langs->trans("SubTotal").':</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance, 'MT')).'</td>';
 		}
@@ -604,11 +639,19 @@ if ($action != 'export_csv') {
 		} else {
 			print '<td class="right nowraponall amount">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		}
-		print "<td></td>\n";
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print "<td></td>\n";
+		}
 		print '</tr>';
 	}
 
-	print '<tr class="liste_total"><td class="right">'.$langs->trans("AccountBalance").':</td>';
+	print '<tr class="liste_total">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print "<td></td>\n";
+	}
+	print '<td class="right">'.$langs->trans("AccountBalance").':</td>';
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="nowrap right">'.price(price2num($total_opening_balance, 'MT')).'</td>';
 	}
@@ -619,7 +662,10 @@ if ($action != 'export_csv') {
 	} else {
 		print '<td class="right nowraponall amount">' . price(price2num($total_debit - $total_credit, 'MT')) . '</td>';
 	}
-	print "<td></td>\n";
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print "<td></td>\n";
+	}
 	print '</tr>';
 
 	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);

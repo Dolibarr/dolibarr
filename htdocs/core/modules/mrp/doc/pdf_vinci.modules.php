@@ -68,12 +68,6 @@ class pdf_vinci extends ModelePDFMo
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -1095,6 +1089,7 @@ class pdf_vinci extends ModelePDFMo
 
 		$posx = $this->page_largeur - $this->marge_droite - 100;
 		$posy = $this->marge_haute;
+		$w = 100;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 
@@ -1167,35 +1162,38 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// product info
-		$posy += 7;
 		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
-		$pdf->SetFont('', 'B', $default_font_size + 1);
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
+		$resProdToMake = $prodToMake->fetch($object->fk_product);
 
-		$posy += 5;
-		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
-		$pdf->SetFont('', 'B', $default_font_size + 3);
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $prodToMake->description, '', 'R');
+		if ($resProdToMake > 0) {
+			// ref
+			$posy += 7;
+			$pdf->SetFont('', 'B', $default_font_size + 1);
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $prodToMake->ref, '', 'R');
 
-		$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
-		$dim = implode("x", $array);
-		if (!empty($dim)) {
+			// description
 			$posy += 5;
 			$pdf->SetFont('', 'B', $default_font_size + 3);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $dim, '', 'R');
+			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R');
+			$posy = $pdf->GetY() - 5;
+
+			// dimensions
+			$array = array_filter(array($prodToMake->length, $prodToMake->width, $prodToMake->height));
+			$dim = implode("x", $array);
+			if (!empty($dim)) {
+				$posy += 5;
+				$pdf->SetFont('', 'B', $default_font_size + 3);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $dim, '', 'R');
+			}
 		}
 
 		$posy += 5;
-		$prodToMake = new Product($this->db);
-		$prodToMake->fetch($object->fk_product);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
@@ -1247,11 +1245,18 @@ class pdf_vinci extends ModelePDFMo
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
-			// Add internal contact of proposal if defined
+			// Add internal contact of object if defined
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);

@@ -686,6 +686,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
@@ -733,6 +737,9 @@ th .button {
 }
 .centpercentimp {
 	width: 100% !important;
+}
+.centpercentwithout1imp {
+	width: calc(100% - 1px) !important;
 }
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
@@ -836,7 +843,13 @@ textarea.centpercent {
 	word-break: break-word;
 }
 .wordbreak {
+	word-break: break-word;	/* cut fist between word, inside word if not possible */
+}
+.wordbreakall {
 	word-break: break-all;
+}
+td.wordbreak img {
+	max-width: 100%;
 }
 .bold {
 	font-weight: bold !important;
@@ -1602,7 +1615,7 @@ maxscreenheightless200 {
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -1976,8 +1989,8 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
-	padding-top: 8px;
+	<?php if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) { ?>
+	padding-top: 18px;
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
@@ -2094,7 +2107,7 @@ div.blockvmenupair, div.blockvmenuimpair {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 	padding-left: 0 !important;
 }
 div.blockvmenuend, div.blockvmenubookmarks {
@@ -2164,7 +2177,7 @@ div.vmenu, td.vmenu {
 		border-top: none !important;
 		border-left: none !important;
 		border-right: none !important;
-		border-bottom: 1px solid #e0e0e0;
+		border-bottom: 1px solid #eaeaea;
 		padding-left: 0 !important;
 	}
 	div.vmenu, td.vmenu {
@@ -2311,7 +2324,7 @@ div.secondcolumn div.box {
 }
 
 /* Force values on one colum for small screen */
-@media only screen and (max-width: 1599px)
+@media only screen and (max-width: 1499px)
 {
 	div.fichehalfleft-lg {
 		float: none;
@@ -2921,7 +2934,6 @@ if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	print '	background-color: #FFFFFF;';
 }
 ?>
-
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 
@@ -3111,6 +3123,15 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
+.loginbuttonexternal {
+	width: 300px;
+	margin: auto;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	width: <?php echo $disableimages ? '26' : '30'; ?>px;
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
@@ -3449,7 +3470,7 @@ div.tabBar {
 	padding-top: 16px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
-	margin: 0px 0px 16px 0px;
+	margin: 0px 0px 30px 0px;
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
@@ -3924,6 +3945,9 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	padding: 7px 8px 7px 8px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
+}
+table.liste tr.trkanban td {
+	padding: 10px 12px 10px 12px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
@@ -4437,7 +4461,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-of-type) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 }
 
 .noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
@@ -4452,7 +4476,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #eaeaea;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -4486,7 +4510,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	border: 1px solid var(--colorboxstatsborder);
 	border-left: 6px solid var(--colorboxstatsborder);
 	/* box-shadow: 1px 1px 8px var(--colorboxstatsborder); */
-	border-radius: 0px;
+	border-radius: 4px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
@@ -4560,6 +4584,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 		padding: 0px 0px 0px 0px;
 	}
+
+	td.tdwidgetstate {
+		text-align: center;
+	}
+
 	.boxstats, .boxstats130 {
 		margin: 3px;
 	}
@@ -4655,13 +4684,16 @@ span.dashboardlineko {
 	display: inline-block;
 	vertical-align: middle;
 }
-.boxtable {
+.divboxtable {
 	margin-bottom: 25px !important;
+}
+.boxtable {
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
 	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
+
 table.noborder.boxtable tr td {
 	height: unset;
 }
@@ -5028,7 +5060,7 @@ div#card-errors {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* Formulaire confirmation (When Ajax JQuery is used) and Dialog popups           */
 /* ============================================================================== */
 
 .ui-dialog-titlebar {
@@ -5036,7 +5068,7 @@ div#card-errors {
 .ui-dialog-content {
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
 
 
@@ -5481,7 +5513,9 @@ td.event-past span  {
 	background: var(--colorbacktitle);
 }*/
 
-.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
+.ui-autocomplete-loading {
+	background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat;
+}
 .ui-autocomplete {
 		   position:absolute;
 		   width:auto;
@@ -5496,7 +5530,9 @@ td.event-past span  {
 		   margin:0px;
 		   padding:0px;
 		 }
-.ui-autocomplete ul li.selected { background-color: var(--inputbackgroundcolor);}
+.ui-autocomplete ul li.selected {
+	background-color: var(--inputbackgroundcolor);
+}
 .ui-autocomplete ul li {
 		   list-style-type:none;
 		   display:block;
@@ -6436,7 +6472,7 @@ input.select2-input {
 }
 div.select2-drop-above
 {
-	background: var(--colorbackvmenu1);e
+	background: var(--colorbackvmenu1);
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
@@ -6697,7 +6733,7 @@ div.multi-select-menu[role="menu"] {
   height: 0;
   border-style: solid;
   border-width: 0.5em 0.23em 0em 0.23em;
-  border-color: #444 transparent transparent transparent;
+  border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
 }
 
@@ -6705,7 +6741,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-container--open .multi-select-button:after {
   border-width: 0 0.4em 0.4em 0.4em;
-  border-color: transparent transparent #999 transparent;
+  border-color: transparent transparent #888 transparent;
 }
 
 .multi-select-menuitem {
@@ -6715,6 +6751,7 @@ div.multi-select-menu[role="menu"] {
 }
 label.multi-select-menuitem {
 	line-height: 24px;
+	text-align: start;
 }
 
 
@@ -6771,7 +6808,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
-	border-radius: 2px;
+	border-radius: 4px;
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
@@ -7137,6 +7174,14 @@ div.tabsElem a.tab {
 .publicnewmemberform #tablesubscribe {
 	color: #666;
 }
+
+@media only screen and (max-width: 767px)
+{
+	.publicnewmemberform div.tabBarWithBottom {
+		padding: 10px;
+	}
+}
+
 
 /* ============================================================================== */
 /* Ticket module                                                                  */
@@ -7621,6 +7666,14 @@ div.clipboardCPValue.hidewithsize {
 	transform: translate(-50%, -50%);
 	text-align:center;
 	font-size: 2em;
+}
+
+/* ============================================================================== */
+/* CSS style used for color jPicker                                               */
+/* ============================================================================== */
+
+table.jPicker {
+	border: 1px solid #bbb !important;
 }
 
 /* ============================================================================== */

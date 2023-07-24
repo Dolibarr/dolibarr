@@ -90,8 +90,8 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
@@ -900,6 +900,15 @@ if (!empty($id) || !empty($ref)) {
 		?>
 		<table class="liste">
 			<tr class="liste_titre">
+				<?php
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre center">';
+					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
+					print $searchpicto;
+					print '</td>';
+				}
+				?>
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
 				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
@@ -910,10 +919,13 @@ if (!empty($id) || !empty($ref)) {
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
 				<?php
-				print '<td class="liste_titre center">';
-				$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
-				print $searchpicto;
-				print '</td>';
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre center">';
+					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
+					print $searchpicto;
+					print '</td>';
+				}
 				?>
 			</tr>
 		<?php
@@ -922,9 +934,22 @@ if (!empty($id) || !empty($ref)) {
 			foreach ($productCombinations as $currcomb) {
 				$prodstatic->fetch($currcomb->fk_product_child);
 				print '<tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($prodstatic->id, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+				}
+
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
 				print '<td>';
-
 				$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
 				$iMax = count($productCombination2ValuePairs);
 
@@ -941,19 +966,25 @@ if (!empty($id) || !empty($ref)) {
 				}
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 0).'</td>';
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
+
 				print '<td class="right">';
 				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&valueid='.$currcomb->id.'">'.img_edit().'</a>';
 				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
-				print '<td class="nowrap center">';
-				if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($prodstatic->id, $arrayofselected)) {
-						$selected = 1;
+
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($prodstatic->id, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
-					print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					print '</td>';
 				}
-				print '</td>';
+
 				print '</tr>';
 			}
 		} else {

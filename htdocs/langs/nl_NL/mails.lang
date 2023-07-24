@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=E-mails door gebruiker opgemaakt
 MailingModuleDescDolibarrUsers=Gebruikers met e-mails
 MailingModuleDescThirdPartiesByCategories=Derde partijen
 SendingFromWebInterfaceIsNotAllowed=Verzenden vanuit de web interface is niet toegestaan.
-EmailCollectorFilterDesc=Alle filters moeten overeenkomen om een e-mail te kunnen verzamelen
+EmailCollectorFilterDesc=Alle filters moeten overeenkomen om een e-mail te laten verzamelen. <br> U kunt het teken "!" voor de waarde van de zoekreeks als u een negatieve test nodig heeft
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Regel %s in bestand
@@ -178,5 +178,9 @@ IsAnAnswer=Is een antwoord van een initiële e-mail
 RecordCreatedByEmailCollector=Record aangemaakt door de E-mail Collector %s van e-mail %s
 DefaultBlacklistMailingStatus=Standaardwaarde voor veld '%s' bij het aanmaken van een nieuw contact
 DefaultStatusEmptyMandatory=Leeg maar verplicht
-WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
-NoMoreRecipientToSendTo=No more recipient to send the email to
+WarningLimitSendByDay=WAARSCHUWING: De configuratie of het contract van uw instantie beperkt uw aantal e-mails per dag tot <b> %s </b> . Als u probeert meer te verzenden, kan dit ertoe leiden dat uw instantie langzamer gaat werken of wordt opgeschort. Neem contact op met uw ondersteuning als u een hoger quotum nodig heeft.
+NoMoreRecipientToSendTo=Geen ontvanger meer om de e-mail naar te sturen
+EmailOptedOut=E-maileigenaar heeft verzocht om geen contact meer met hem op te nemen via deze e-mail
+EvenUnsubscribe=Inclusief opt-out e-mails
+EvenUnsubscribeDesc=Voeg opt-out-e-mails toe wanneer u e-mails als doel selecteert. Handig voor bijvoorbeeld verplichte service e-mails.
+XEmailsDoneYActionsDone=%s e-mails vooraf gekwalificeerd, %s e-mails succesvol verwerkt (voor %s record/acties uitgevoerd)

@@ -45,6 +45,12 @@
 abstract class CommonObject
 {
 	const TRIGGER_PREFIX = ''; // to be overriden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+
+	/**
+	 * @var string ID of module.
+	 */
+	public $module;
+
 	/**
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
@@ -553,6 +559,11 @@ abstract class CommonObject
 	 * @var integer|string $date_modification;
 	 */
 	public $date_modification; // Date last change (tms field)
+	/**
+	 * @var integer|string $date_modification;
+	 * @deprecated Use date_modification
+	 */
+	public $date_update;
 
 	/**
 	 * @var integer|string $date_cloture;
@@ -622,7 +633,7 @@ abstract class CommonObject
 	public $alreadypaid;
 
 
-	protected $labelStatus;
+	public $labelStatus;
 	protected $labelStatusShort;
 
 	/**
@@ -639,6 +650,11 @@ abstract class CommonObject
 	 * @var string output
 	 */
 	public $output;
+
+	/**
+	 * @var array extraparams
+	 */
+	public $extraparams = array();
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -719,7 +735,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * getTooltipContentArray
+	 * Return array of datas to show into a tooltip. This method must be implemented in each object class.
 	 *
 	 * @since v18
 	 * @param array $params params to construct tooltip data
@@ -793,7 +809,8 @@ abstract class CommonObject
 
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array(
-			'tooltipcontentarray' => &$datas
+			'tooltipcontentarray' => &$datas,
+			'params' => $params,
 		);
 		// Note that $action and $object may have been modified by some hooks
 		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
@@ -2074,7 +2091,11 @@ abstract class CommonObject
 		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
-		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		if ($fieldid == 'rowid') {
+			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
+		} else {
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		}
 		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
@@ -2144,7 +2165,11 @@ abstract class CommonObject
 		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
-		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		if ($fieldid == 'rowid') {
+			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
+		} else {
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		}
 		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
@@ -3551,6 +3576,8 @@ abstract class CommonObject
 			$this->multicurrency_total_tva	= 0;
 			$this->multicurrency_total_ttc	= 0;
 
+			$this->db->begin();
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
@@ -3616,16 +3643,18 @@ abstract class CommonObject
 				$total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
 				$total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
-				if ($forcedroundingmode == '1') {	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on multicurrency
+				if ($forcedroundingmode == '1') {	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on foreign currency
 					$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs($diff) > 0.1) {
-							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your line may be corrupted. Try to edit each line manually.';
+						if (abs($diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+							// If error is more than 10 times the accurancy of rounding. This should not happen.
+							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
-							dol_print_error('', $errmsg);
-							exit;
+							$this->error = $errmsg;
+							$error++;
+							break;
 						}
 						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - $diff).", total_ttc = ".price2num($obj->total_ttc - $diff)." WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
@@ -3686,7 +3715,7 @@ abstract class CommonObject
 				$fieldtva = 'total_tva';
 			}
 
-			if (empty($nodatabaseupdate)) {
+			if (!$error && empty($nodatabaseupdate)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
 				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
 				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
@@ -3709,8 +3738,10 @@ abstract class CommonObject
 			}
 
 			if (!$error) {
+				$this->db->commit();
 				return 1;
 			} else {
+				$this->db->rollback();
 				return -1;
 			}
 		} else {
@@ -6133,7 +6164,7 @@ abstract class CommonObject
 			foreach ($this->array_options as $key => $value) {
 				if (in_array(substr($key, 8), array_keys($target_extrafields))) {	// We remove the 'options_' from $key for test
 					$new_array_options[$key] = $value;
-				} elseif (in_array($key, array_keys($target_extrafields))) {		// We test on $key that does not contains the 'options_' prefix
+				} elseif (in_array($key, array_keys($target_extrafields))) {		// We test on $key that does not contain the 'options_' prefix
 					$new_array_options['options_'.$key] = $value;
 				}
 			}
@@ -6614,6 +6645,11 @@ abstract class CommonObject
 					break;
 				case 'boolean':
 					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
+					}
+					break;
+				case 'link':
+					if ($this->array_options["options_".$key] === '') {
 						$this->array_options["options_".$key] = null;
 					}
 					break;
@@ -7412,8 +7448,6 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		$objectid = $this->id;	// Not used ???
-
 		$label = empty($val['label']) ? '' : $val['label'];
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
@@ -7445,7 +7479,11 @@ abstract class CommonObject
 		}
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
-			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
+			$stringforoptions = $reg[1].':'.$reg[2];
+			if ($reg[1] == 'User') {
+				$stringforoptions .= ':-1';
+			}
+			$param['options'] = array($stringforoptions => $stringforoptions);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
 			$type = 'sellist';
@@ -7744,7 +7782,7 @@ abstract class CommonObject
 
 			// only if something to display (perf)
 			if ($value) {
-				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+				$param_list = array_keys($param['options']); // Example: $param_list='ObjectName:classPath:-1::customer'
 
 				$InfoFieldList = explode(":", $param_list[0]);
 				$classname = $InfoFieldList[0];
@@ -8440,16 +8478,19 @@ abstract class CommonObject
 	{
 		global $user;
 
+		$module = $this->module;
 		$element = $this->element;
+
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
 			return $user->rights->fournisseur->facture;
-		} elseif ($element == 'evaluation') {
-			return $user->rights->hrm->evaluation;
+		} elseif ($module && !empty($user->rights->$module->$element)) {
+			// for modules built with ModuleBuilder
+			return $user->rights->$module->$element;
 		}
 
-		return $user->rights->{$element};
+		return $user->rights->$element;
 	}
 
 	/**
@@ -8592,9 +8633,10 @@ abstract class CommonObject
 	 *  @param      int|string  $overwritetitle Do not add title tag on image
 	 *  @param		int			$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
 	 *  @param		string		$cache			A string if we want to use a cached version of image
+	 *  @param		string		$addphotorefcss	Add CSS to img of photos
 	 *  @return     string						Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0, $cache = '')
+	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0, $cache = '', $addphotorefcss = 'photoref')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -8706,28 +8748,26 @@ abstract class CommonObject
 							}
 						}
 
-						$addphotorefcss = 1;
-
 						if ($usesharelink) {
 							if ($val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								} else {
 									$return .= '<!-- Show original file -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								}
 							} else {
 								$return .= '<!-- Show nophoto file (because file is not shared) -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
 							}
 						} else {
 							if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 							}
 						}
 
@@ -8745,7 +8785,7 @@ abstract class CommonObject
 								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
 							// Special cas for product
-							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+							if ($modulepart == 'product' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 								// Link to resize
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
@@ -8774,7 +8814,7 @@ abstract class CommonObject
 						}
 						if ($showaction) {
 							// Special case for product
-							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+							if ($modulepart == 'product' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 								// Link to resize
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
@@ -9056,51 +9096,62 @@ abstract class CommonObject
 
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (is_null($obj->{$field}) || $obj->{$field} === '' || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') {
-					$this->{$field} = '';
+				if (is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
+					$this->$field = '';
 				} else {
-					$this->{$field} = $db->jdate($obj->{$field});
+					$this->$field = $db->jdate($obj->$field);
 				}
 			} elseif ($this->isInt($info)) {
 				if ($field == 'rowid') {
-					$this->id = (int) $obj->{$field};
+					$this->id = (int) $obj->$field;
 				} else {
 					if ($this->isForcedToNullIfZero($info)) {
-						if (empty($obj->{$field})) {
-							$this->{$field} = null;
+						if (empty($obj->$field)) {
+							$this->$field = null;
 						} else {
-							$this->{$field} = (double) $obj->{$field};
+							$this->$field = (double) $obj->$field;
 						}
 					} else {
-						if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-							$this->{$field} = (int) $obj->{$field};
+						if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+							$this->$field = (int) $obj->$field;
 						} else {
-							$this->{$field} = null;
+							$this->$field = null;
 						}
 					}
 				}
 			} elseif ($this->isFloat($info)) {
 				if ($this->isForcedToNullIfZero($info)) {
-					if (empty($obj->{$field})) {
-						$this->{$field} = null;
+					if (empty($obj->$field)) {
+						$this->$field = null;
 					} else {
-						$this->{$field} = (double) $obj->{$field};
+						$this->$field = (double) $obj->$field;
 					}
 				} else {
-					if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-						$this->{$field} = (double) $obj->{$field};
+					if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						$this->$field = (double) $obj->$field;
 					} else {
-						$this->{$field} = null;
+						$this->$field = null;
 					}
 				}
 			} else {
-				$this->{$field} = isset($obj->{$field}) ? $obj->{$field} : null;
+				$this->$field = isset($obj->$field) ? $obj->$field : null;
 			}
 		}
 
 		// If there is no 'ref' field, we force property ->ref to ->id for a better compatibility with common functions.
 		if (!isset($this->fields['ref']) && isset($this->id)) {
 			$this->ref = $this->id;
+		}
+	}
+
+	/**
+	 * Sets all object fields to null. Useful for example in lists, when printing multiple lines and a different object os fetched for each line.
+	 * @return void
+	 */
+	public function emtpyObjectVars()
+	{
+		foreach ($this->fields as $field => $arr) {
+			$this->$field = null;
 		}
 	}
 
@@ -9887,6 +9938,21 @@ abstract class CommonObject
 				$this->{$key} = $value;
 			}
 		}
+
+		// Force values to default values when known
+		if (property_exists($this, 'fields')) {
+			foreach ($this->fields as $key => $value) {
+				// If fields are already set, do nothing
+				if (array_key_exists($key, $fields)) {
+					continue;
+				}
+
+				if (!empty($value['default'])) {
+					$this->$key = $value['default'];
+				}
+			}
+		}
+
 		return 1;
 	}
 

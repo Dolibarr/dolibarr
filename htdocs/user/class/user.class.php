@@ -70,6 +70,11 @@ class User extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * @var string picto
 	 */
 	public $picto = 'user';
@@ -117,24 +122,6 @@ class User extends CommonObject
 	 * @var string user signature
 	 */
 	public $signature;
-
-	/**
-	 * @var string Address
-	 */
-	public $address;
-
-	/**
-	 * @var string zip code
-	 */
-	public $zip;
-
-	/**
-	 * @var string town
-	 */
-	public $town;
-	public $state_id; // The state/department
-	public $state_code;
-	public $state;
 
 	/**
 	 * @var string office phone
@@ -380,7 +367,6 @@ class User extends CommonObject
 		$this->db = $db;
 
 		// User preference
-		$this->liste_limit = 0;
 		$this->clicktodial_loaded = 0;
 
 		// For cache usage
@@ -702,7 +688,6 @@ class User extends CommonObject
 	 */
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
-		global $conf;
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'compta' => 'comptabilite',
@@ -2388,7 +2373,7 @@ class User extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Send new password by email
+	 *  Send a new password (or instructions to reset it) by email
 	 *
 	 *  @param	User	$user           Object user that send the email (not the user we send to) @todo object $user is not used !
 	 *  @param	string	$password       New password
@@ -2437,8 +2422,12 @@ class User extends CommonObject
 
 		if (!$changelater) {
 			$url = $urlwithroot.'/';
-			if (!empty($conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD))
+			if (!empty($conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD)) {
 				$url = $conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD;
+			}
+
+			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
+
 			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
@@ -2448,17 +2437,15 @@ class User extends CommonObject
 			$mesg .= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $appli).': '.$url."\n\n";
 			$mesg .= "--\n";
 			$mesg .= $user->getFullName($outputlangs); // Username that send the email (not the user for who we want to reset password)
-
-			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 		} else {
-			global $dolibarr_main_instance_unique_id;
-
-			//print $password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id;
+			//print $password.'-'.$this->id.'-'.$conf->file->instance_unique_id;
 			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword';
-			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id));
+			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$conf->file->instance_unique_id));
 			if (isModEnabled('multicompany')) {
 				$url .= '&entity='.(!empty($this->entity) ? $this->entity : 1);
 			}
+
+			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 
 			$msgishtml = 1;
 
@@ -2470,11 +2457,10 @@ class User extends CommonObject
 			$mesg .= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :<br>\n";
 			$mesg .= '<a href="'.$url.'" rel="noopener">'.$outputlangs->transnoentitiesnoconv("ConfirmPasswordChange").'</a>'."<br>\n<br>\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("ForgetIfNothing")."<br>\n<br>\n";
-
-			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
 		$trackid = 'use'.$this->id;
+		$sendcontext = 'password';
 
 		$mailfile = new CMailFile(
 			$subject,
@@ -2490,7 +2476,9 @@ class User extends CommonObject
 			$msgishtml,
 			'',
 			'',
-			$trackid
+			$trackid,
+			'',
+			$sendcontext
 			);
 
 		if ($mailfile->sendfile()) {
@@ -2746,7 +2734,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 * getTooltipContentArray
+	 * Return array of data to show into tooltips
 	 *
 	 * @param array $params ex option, infologin
 	 * @since v18
@@ -3083,6 +3071,8 @@ class User extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		global $langs;
+
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
@@ -3103,7 +3093,13 @@ class User extends CommonObject
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0, '', 0, 0, 24, 0, '', 'valignmiddle') : $this->ref);
+		if (isModEnabled('multicompany') && $this->admin && !$this->entity) {
+			$return .= img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+		} elseif ($this->admin) {
+			$return .= img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright paddingleft"');
+		}
+		$return .= '</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'label')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
@@ -3848,7 +3844,7 @@ class User extends CommonObject
 	 *  Return property of user from its id
 	 *
 	 *  @param	int		$rowid      id of contact
-	 *  @param  string	$mode       'email' or 'mobile'
+	 *  @param  string	$mode       'email', 'mobile', or 'name'
 	 *  @return string  			Email of user with format: "Full name <email>"
 	 */
 	public function user_get_property($rowid, $mode)
@@ -3875,6 +3871,8 @@ class User extends CommonObject
 					$user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
 				} elseif ($mode == 'mobile') {
 					$user_property = $obj->user_mobile;
+				} elseif ($mode == 'name') {
+					$user_property = dolGetFirstLastname($obj->firstname, $obj->lastname);
 				}
 			}
 			return $user_property;
@@ -3894,10 +3892,10 @@ class User extends CommonObject
 	 */
 	public function getOnlineVirtualCardUrl($mode = '', $typeofurl = 'external')
 	{
-		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
+		global $dolibarr_main_url_root;
 		global $conf;
 
-		$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
+		$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
 		if (isModEnabled('multicompany')) {
 			$entity_qr = '&entity='.((int) $conf->entity);
 		} else {

@@ -76,7 +76,7 @@ dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
 <tr>
 <td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
-<td colspan="2"><?php echo $object->note; ?></td>
+<td colspan="2" class="valeur sensiblehtmlcontent"><?php echo dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note)); ?></td>
 </tr>
 
 </table>

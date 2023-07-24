@@ -64,12 +64,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -154,20 +148,24 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		// Define column position
 		$this->posxdesc = $this->marge_gauche + 1;
-		$this->posxtva = 112;
-		$this->posxup = 126;
-		$this->posxqty = 145;
-		$this->posxunit = 162;
-		$this->posxdiscount = 162;
-		$this->postotalht = 174;
 
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->posxtva = 99;
 			$this->posxup = 114;
 			$this->posxqty = 130;
 			$this->posxunit = 147;
+		} else {
+			$this->posxtva = 106;
+			$this->posxup = 122;
+			$this->posxqty = 145;
+			$this->posxunit = 162;
 		}
-		//if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		$this->posxdiscount = 162;
+		$this->postotalht = 174;
+
+		/* if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {
+			$this->posxtva = $this->posxup;
+		} */
 		$this->posxpicture = $this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxpicture -= 20;
@@ -365,6 +363,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				// Displays notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+
+				// Extrafields in note
+				if (!empty($conf->global->INVOICE_ADD_EXTRAFIELD_IN_NOTE)) {
+					$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+					if (!empty($extranote)) {
+						$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					}
+				}
 
 				if ($notetoshow) {
 					$tab_top -= 2;
@@ -1189,11 +1195,18 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
-			// Add internal contact of proposal if defined
+			// Add internal contact of object if defined
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);

@@ -106,7 +106,7 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$search_billed = GETPOSTISSET('search_billed') ? GETPOST('search_billed', 'int') : GETPOST('billed', 'int');
+$search_billed = GETPOST('search_billed', 'int');
 $search_status = GETPOST('search_status', 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -515,6 +515,7 @@ if (empty($reshook)) {
 							} else {
 								$lineid = 0;
 								$error++;
+								$errors[] = $objecttmp->error;
 								break;
 							}
 							// Defined the new fk_parent_line
@@ -1641,13 +1642,13 @@ if ($resql) {
 	// Amount/Total (TTC / gross) in foreign currency
 	if (!empty($arrayfields['c.multicurrency_total_ttc']['checked'])) {
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
+		print '<input class="flat width75" type="text" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
 		print '</td>';
 	}
 	// Author
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print '<td class="liste_titre" align="center">';
-		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
+		print '<td class="liste_titre">';
+		print '<input class="flat width75" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
 	// Sales Representative
@@ -1842,7 +1843,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['c.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
@@ -1998,7 +1999,7 @@ if ($resql) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 
@@ -2012,7 +2013,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
@@ -2088,7 +2089,7 @@ if ($resql) {
 
 				// If module invoices enabled and user with invoice creation permissions
 				if (isModEnabled('facture') && !empty($conf->global->ORDER_BILLING_ALL_CUSTOMER)) {
-					if ($user->rights->facture->creer) {
+					if ($user->hasRight('facture', 'creer')) {
 						if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0)) {
 							print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$companystatic->id.'&search_billed=0&autoselectall=1">';
 							print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->name, 'object_bill', 'hideonsmartphone').'</a>';
@@ -2645,7 +2646,7 @@ if ($resql) {
 			}
 
 			// Action column
-			if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;

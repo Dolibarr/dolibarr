@@ -62,8 +62,8 @@ $object->fetch($id, '', '', 1);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-global $dolibarr_main_instance_unique_id;
-$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
+global $conf;
+$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
 if ($encodedsecurekey != $securekey) {
 	httponly_accessforbidden('Bad value for securitykey or public profile not enabled');
 }
@@ -207,15 +207,25 @@ $arrayofcss = array();
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
 
+print '
+<style>
+@media (prefers-color-scheme: dark) {
+	form {
+		background-color: #CCC !important;
+	}
+}
+</style>
+';
+
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
+
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
-print '<!-- Form to view job -->'."\n";
 
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
