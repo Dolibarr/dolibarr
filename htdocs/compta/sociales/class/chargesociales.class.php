@@ -735,7 +735,6 @@ class ChargeSociales extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
-		return -1;
 	}
 
 	/**
