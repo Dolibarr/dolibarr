@@ -93,7 +93,7 @@ print '<div class="clearboth"></div>';
 print '</div>';
 print '</div>';
 
-if(getDolGlobalInt($conf->global->TICKET_SHOW_COMPANY_FOOTER)) {
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
 	// End of page
 	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
 }
