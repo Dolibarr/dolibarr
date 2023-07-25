@@ -669,7 +669,7 @@ print '<br>';
 print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('>WEBSITE_MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera: 'none'; microphone: 'none';\")</span><br>";
+print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera: (); microphone: ();\")</span><br>";
 print '<br>';
 
 print '<br>';
@@ -678,7 +678,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("LimitsAndMitigation"), '', 'folder');
 
 print '<span class="opacitymedium">';
-print 'For a higher security, we also recommend to implement limits and mitigation on number of endpoints per minutes for the following URL'."<br>";
+print $langs->trans("RecommendMitigationOnURL").'<br>';
 print '</span>';
 
 print '<br>';
