@@ -16,11 +16,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   ecm		Module ecm
- *      \brief      Module for ECM (Electronic Content Management)
- *      \file       htdocs/core/modules/modECM.class.php
- *      \ingroup    ecm
- *      \brief      Description and activation file for the module ECM
+/**     
+ *  \defgroup   ecm		Module ECM
+ *  \brief      Module ECM (Electronic Content Management) to manage Documents
+ *
+ *  \file       htdocs/core/modules/modECM.class.php
+ *  \ingroup    ecm
+ *  \brief      Description and activation file for the module ECM
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
