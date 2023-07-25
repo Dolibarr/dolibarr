@@ -2100,6 +2100,7 @@ class CommandeFournisseur extends CommonOrder
 				return -1;
 			}
 		}
+		return -1;
 	}
 
 
