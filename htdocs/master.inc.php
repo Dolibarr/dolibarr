@@ -241,6 +241,14 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		// The deposit invoice type is not allowed in Greece.
 		$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
 	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+		// Standalone credit note is compulsory in Greece.
+		$conf->global->INVOICE_CREDIT_NOTE_STANDALONE = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->PRODUCT_USE_UNITS)) {
+		// Unit labels are required in Greek invoices.
+		$conf->global->PRODUCT_USE_UNITS = 1;
+	}
 	if (($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
 		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
