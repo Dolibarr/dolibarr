@@ -3127,7 +3127,7 @@ if ($action == 'create') {
 	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
 	if ($socid > 0 && $fk_account) {	// A company has already been set and it has a default fk_account
 		$fk_account = GETPOSTISSET('fk_account') ? GETPOST("fk_account", 'int') : $fk_account;
-		} else {	// No company forced
+	} else {	// No company forced
 		$fk_account = GETPOST("fk_account", 'int');
 	}
 
