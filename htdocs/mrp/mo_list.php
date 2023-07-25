@@ -596,6 +596,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 
 
 $bom = new Bom($db);
+$product = new Product($db);
 
 // Loop on record
 // --------------------------------------------------------------------
@@ -622,10 +623,15 @@ while ($i < $imaxinloop) {
 		$object->id = $obj->type_id;
 
 		// TODO Use a cache on BOM
-		$objectBom = $bom->fetch($obj->fk_bom);
+		if ($obj->fk_bom > 0) {
+			$bom->fetch($obj->fk_bom);
+		}
+		if ($obj->fk_product > 0) {
+			$product->fetch($obj->fk_product);
+		}
 
 		// Output Kanban
-		print $object->getKanbanView('', array('bom'=>$bom->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
+		print $object->getKanbanView('', array('bom'=>($obj->fk_bom > 0 ? $bom : null), 'product'=>($obj->fk_product > 0 ? $product: null), 'selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -734,7 +740,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 

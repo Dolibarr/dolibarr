@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+
 
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -73,6 +73,9 @@ if (isModEnabled('accounting')) {
 }
 if (isModEnabled('bom')) {
 	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+}
+if (isModEnabled('workstation')) {
+	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
 
 // Load translation files required by the page

@@ -2,7 +2,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 18.0.0 or higher.
+-- when current version is 19.0.0 or higher.
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -35,3 +35,5 @@
 
 -- V19
 ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
+
+UPDATE llx_product_lot SET manufacturing_date = datec WHERE manufacturing_date IS NULL

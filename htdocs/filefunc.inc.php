@@ -62,6 +62,16 @@ if (defined('DOL_INC_FOR_VERSION_ERROR')) {
 }
 
 
+// Disable some not used PHP stream
+$listofwrappers = stream_get_wrappers();
+$arrayofstreamtodisable = array('compress.zlib', 'ftps', 'glob', 'data', 'expect', 'ftp', 'ogg', 'phar', 'rar', 'zip', 'zlib');
+foreach ($arrayofstreamtodisable as $streamtodisable) {
+	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {
+		stream_wrapper_unregister($streamtodisable);
+	}
+}
+
+
 // Define vars
 $conffiletoshowshort = "conf.php";
 // Define localization of conf file

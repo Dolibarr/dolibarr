@@ -464,7 +464,7 @@ function urlencode(s) {
 
 /*
  * =================================================================
- * Purpose: Clean string to have it url encoded
+ * Purpose: Clean string to get a HTML coded string.
  * Input:   s
  * Author:  Laurent Destailleur
  * Licence: GPL

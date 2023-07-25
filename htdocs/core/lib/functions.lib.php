@@ -1594,13 +1594,17 @@ function dol_escape_json($stringtoescape)
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
- *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
+ *  @see		dol_string_nohtmltag(), dol_string_onlythesehtmltags(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
 	if ($noescapetags == 'common') {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	}
+	if ($cleanalsojavascript) {
+		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
 	}
 
 	// escape quotes and backslashes, newlines, etc.
@@ -9713,7 +9717,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule);
-		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
+		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters, $object);
 		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
 		} else {				// Hook
@@ -10780,7 +10784,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$dictvalues[$obj->{$rowidfield}] = $obj;	// $obj is stdClass
+				$dictvalues[$obj->$rowidfield] = $obj;	// $obj is stdClass
 			}
 		} else {
 			dol_print_error($db);

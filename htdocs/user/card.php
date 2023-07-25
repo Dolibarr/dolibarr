@@ -953,7 +953,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (!empty($user->admin)) {
 		print '<tr><td>'.$langs->trans("Administrator").'</td>';
 		print '<td>';
-		print $form->selectyesno('admin', GETPOST('admin'), 1);
+		print $form->selectyesno('admin', GETPOST('admin'), 1, false, 0, 1);
 
 		if (isModEnabled('multicompany') && !$user->entity) {
 			if (!empty($conf->use_javascript_ajax)) {
@@ -1049,11 +1049,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Date validity
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("RangeOfLoginValidity").'</td>';
 	print '<td>';
-	print $form->selectDate($datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1);
+	print $form->selectDate($datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"));
 
 	print ' &nbsp; ';
 
-	print $form->selectDate($dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0);
+	print $form->selectDate($dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</td>';
 	print "</tr>\n";
 
@@ -1344,7 +1344,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		// Salary
 		print '<tr><td>'.$langs->trans("Salary").'</td>';
 		print '<td>';
-		print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input size="8" type="text" name="salary" value="'.dol_escape_htmltag(GETPOST('salary')).'"> '.$langs->getCurrencySymbol($conf->currency);
+		print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input class="width100" type="text" name="salary" value="'.dol_escape_htmltag(GETPOST('salary')).'"> '.$langs->getCurrencySymbol($conf->currency);
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -1359,11 +1359,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Date employment
 	print '<tr><td>'.$langs->trans("DateOfEmployment").'</td>';
 	print '<td>';
-	print $form->selectDate($dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1);
+	print $form->selectDate($dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1, 0, '', '', '', '', 1, '', $langs->trans("from"));
 
 	print ' - ';
 
-	print $form->selectDate($dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+	print $form->selectDate($dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</td>';
 	print "</tr>\n";
 
@@ -2210,7 +2210,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$langs->load("admin");
 				print '<td>';
 				print '<input type="hidden" name="admin" value="'.$object->admin.'">'.yn($object->admin);
-				print ' ('.$langs->trans("ExternalUser").')';
+				print ' <span class="opacitymedium">('.$langs->trans("ExternalUser").')</span>';
 				print '</td></tr>';
 			} else {
 				print '<td>';
@@ -2225,7 +2225,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					|| (isModEnabled('multicompany') && (($object->entity > 0 || ($user->entity == 0 && $object->entity == 0)) || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
 					)
 				) {
-					print $form->selectyesno('admin', $object->admin, 1);
+					print $form->selectyesno('admin', $object->admin, 1, false, 0, 1);
 
 					if (isModEnabled('multicompany') && !$user->entity) {
 						if ($conf->use_javascript_ajax) {
@@ -2417,18 +2417,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($caneditfield) {
-				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1, 0, '', '', '', '', 1, '', '');
+				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"));
 			} else {
 				print dol_print_date($object->datestartvalidity, 'day');
 			}
-
-			/*if ($datestartvalidity && $dateendvalidity) {
-				print ' - ';
-			}*/
 			print ' &nbsp; ';
 
 			if ($caneditfield) {
-				print $form->selectDate($dateendvalidity ? $datendevalidity : $object->dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0, 0, '', '', '', '', 1, '', '');
+				print $form->selectDate($dateendvalidity ? $dateendvalidity : $object->dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 			} else {
 				print dol_print_date($object->dateendvalidity, 'day');
 			}
@@ -2859,7 +2855,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
 			if ($caneditfield) {
-				print $form->selectDate($dateemployment ? $dateemployment : $object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1);
+				print $form->selectDate($dateemployment ? $dateemployment : $object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1, 0, '', '', '', '', 1, '', $langs->trans("from"));
 			} else {
 				print dol_print_date($object->dateemployment, 'day');
 			}
@@ -2869,7 +2865,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			if ($caneditfield) {
-				print $form->selectDate($dateemploymentend ? $dateemploymentend : $object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+				print $form->selectDate($dateemploymentend ? $dateemploymentend : $object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 			} else {
 				print dol_print_date($object->dateemploymentend, 'day');
 			}
