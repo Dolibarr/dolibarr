@@ -308,5 +308,6 @@ class mailing_advthirdparties extends MailingTargets
 			$contactstatic->fetch($id);
 			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
+		return "";
 	}
 }
