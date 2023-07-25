@@ -5353,7 +5353,7 @@ if ($action == 'create') {
 		if ($action != 'editline' && $action != 'selectlines') {
 			// Add free products/services
 
-			$parameters = array('facid' => $facid);
+			$parameters = array('parentId' => $id);
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			if (empty($reshook))
