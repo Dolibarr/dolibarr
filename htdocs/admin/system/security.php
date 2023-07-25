@@ -48,6 +48,8 @@ $execmethod = getDolGlobalInt('MAIN_EXEC_USE_POPEN', 1);
  * View
  */
 
+$form = new Form($db);
+
 llxHeader();
 
 print load_fiche_titre($langs->trans("Security"), '', 'title_setup');
