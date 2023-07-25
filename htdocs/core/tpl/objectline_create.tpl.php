@@ -319,7 +319,7 @@ if ($nolinesbefore) {
 			$facid = GETPOST('facid', 'int');
 			echo '<div id="dropdownAddProductAndService" class="dropdown inline-block">';
 			echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" id="dropdownAddProductAndServiceLink" aria-haspopup="true" aria-expanded="false">';
-	        echo '<span class="fa fa-plus-circle valignmiddle paddingleft"> '.$langs->trans("AddProduct").'</span>';
+	        echo '<span class="fa fa-plus-circle valignmiddle paddingleft"> '.$langs->trans("Add").'</span>';
 			echo '</a>';
 	        echo '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
 			echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&leftmenu=billing&backtopage='.urlencode($_SERVER["PHP_SELF"].'?facid='.$facid).'"> '.$langs->trans("NewProduct").'</a>';
