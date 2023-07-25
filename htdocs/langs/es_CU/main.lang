@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - main
-DIRECTION=litros
+DIRECTION=ltr
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
