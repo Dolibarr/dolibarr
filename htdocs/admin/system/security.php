@@ -169,6 +169,12 @@ if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
 print '<span class="opacitymedium">'.$functiontokeep.'</span>';
 print '<br>';
 
+$arrayofstreams = stream_get_wrappers();
+if (!empty($arrayofstreams)) {
+	sort($arrayofstreams);
+	print "<strong>PHP streams</strong> = ".(join(',', $arrayofstreams)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'file,http,https,php').')</span>'."<br>\n";
+}
+
 print '<br>';
 
 // XDebug
