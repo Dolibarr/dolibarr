@@ -370,6 +370,7 @@ class modProduct extends DolibarrModules
 			$this->export_permission[$r] = array(array("produit", "export"));
 			$this->export_fields_array[$r] = array('p.rowid'=>"Id", 'p.ref'=>"Ref", 'p.label'=>"Label",
 				's.nom'=>'ThirdParty',
+				's.code_client'=>'CodeClient',
 				'pr.price_base_type'=>"PriceBase",
 				'pr.price'=>"PriceUnitPriceHT", 'pr.price_ttc'=>"PriceUnitPriceTTC",
 				'pr.price_min'=>"MinPriceUnitPriceHT", 'pr.price_min_ttc'=>"MinPriceUnitPriceTTC",
@@ -381,6 +382,7 @@ class modProduct extends DolibarrModules
 			}
 			$this->export_entities_array[$r] = array('p.rowid'=>"product", 'p.ref'=>"product", 'p.label'=>"Label",
 				's.nom'=>'company',
+				's.code_client'=>'company',
 				'pr.price_base_type'=>"product", 'pr.price'=>"product",
 				'pr.price_ttc'=>"product",
 				'pr.price_min'=>"product", 'pr.price_min_ttc'=>"product",

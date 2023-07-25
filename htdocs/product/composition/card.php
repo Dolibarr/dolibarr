@@ -89,58 +89,64 @@ if ($cancel) {
 	$action = '';
 }
 
-// Add subproduct to product
-if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-	$error = 0;
-	$maxprod = GETPOST("max_prod", 'int');
+$reshook = $hookmanager->executeHooks('doActions', [], $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	for ($i = 0; $i < $maxprod; $i++) {
-		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
-		if ($qty > 0) {
-			if ($object->add_sousproduit($id, GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int')) > 0) {
-				//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
-				$action = 'edit';
-			} else {
-				$error++;
-				$action = 're-edit';
-				if ($object->error == "isFatherOfThis") {
-					setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
+if (empty($reshook)) {
+	// Add subproduct to product
+	if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+		$error = 0;
+		$maxprod = GETPOST("max_prod", 'int');
+
+		for ($i = 0; $i < $maxprod; $i++) {
+			$qty = price2num(GETPOST("prod_qty_" . $i, 'alpha'), 'MS');
+			if ($qty > 0) {
+				if ($object->add_sousproduit($id, GETPOST("prod_id_" . $i, 'int'), $qty, GETPOST("prod_incdec_" . $i, 'int')) > 0) {
+					//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
+					$action = 'edit';
 				} else {
+					$error++;
+					$action = 're-edit';
+					if ($object->error == "isFatherOfThis") {
+						setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+			} else {
+				if ($object->del_sousproduit($id, GETPOST("prod_id_" . $i, 'int')) > 0) {
+					$action = 'edit';
+				} else {
+					$error++;
+					$action = 're-edit';
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} else {
-			if ($object->del_sousproduit($id, GETPOST("prod_id_".$i, 'int')) > 0) {
-				$action = 'edit';
-			} else {
-				$error++;
-				$action = 're-edit';
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
 		}
-	}
 
-	if (!$error) {
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+		if (!$error) {
+			header("Location: " . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		}
+	} elseif ($action === 'save_composed_product') {
+		$TProduct = GETPOST('TProduct', 'array');
+		if (!empty($TProduct)) {
+			foreach ($TProduct as $id_product => $row) {
+				if ($row['qty'] > 0) {
+					$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
+				} else {
+					$object->del_sousproduit($id, $id_product);
+				}
+			}
+			setEventMessages('RecordSaved', null);
+		}
+		$action = '';
+		header("Location: " . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 		exit;
 	}
-} elseif ($action === 'save_composed_product') {
-	$TProduct = GETPOST('TProduct', 'array');
-	if (!empty($TProduct)) {
-		foreach ($TProduct as $id_product => $row) {
-			if ($row['qty'] > 0) {
-				$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
-			} else {
-				$object->del_sousproduit($id, $id_product);
-			}
-		}
-		setEventMessages('RecordSaved', null);
-	}
-	$action = '';
-	header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
-	exit;
 }
-
 
 /*
  * View

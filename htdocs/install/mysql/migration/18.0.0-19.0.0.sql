@@ -32,9 +32,7 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- v19
-
-ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
+-- V19
 
 CREATE TABLE llx_c_category
 (
@@ -70,3 +68,7 @@ ALTER TABLE llx_element_categorie RENAME TO llx_element_category;
 
 ALTER TABLE llx_element_category ADD UNIQUE INDEX idx_element_category_idx (fk_element, fk_category);
 ALTER TABLE llx_element_category ADD CONSTRAINT fk_element_category_fk_category FOREIGN KEY (fk_category) REFERENCES llx_categorie(rowid);
+
+ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
+
+UPDATE llx_product_lot SET manufacturing_date = datec WHERE manufacturing_date IS NULL

@@ -2091,7 +2091,11 @@ abstract class CommonObject
 		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
-		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		if ($fieldid == 'rowid') {
+			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
+		} else {
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		}
 		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
@@ -2161,7 +2165,11 @@ abstract class CommonObject
 		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
-		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		if ($fieldid == 'rowid') {
+			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
+		} else {
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		}
 		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
@@ -3840,10 +3848,10 @@ abstract class CommonObject
 	 *  - source id+type + target type -> will get list of targets of the type linked to source
 	 *  - target id+type + source type -> will get list of sources of the type linked to target
 	 *
-	 *	@param	int			$sourceid			Object source id (if not defined, id of object)
-	 *	@param  string		$sourcetype			Object source type (if not defined, element name of object)
-	 *	@param  int			$targetid			Object target id (if not defined, id of object)
-	 *	@param  string		$targettype			Object target type (if not defined, element name of object)
+	 *	@param	int			$sourceid			Object source id (if not defined, $this->id)
+	 *	@param  string		$sourcetype			Object source type (if not defined, $this->element)
+	 *	@param  int			$targetid			Object target id (if not defined, $this->id)
+	 *	@param  string		$targettype			Object target type (if not defined, $this->element)
 	 *	@param  string		$clause				'OR' or 'AND' clause used when both source id and target id are provided
 	 *  @param  int			$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
