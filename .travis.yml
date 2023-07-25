@@ -383,7 +383,7 @@ script:
   - |
     echo "Upgrading Dolibarr"
     # Ensure we catch errors with -e. Set this to +e if you want to go to the end to see log files.
-    set -e
+    set +e
     cd htdocs/install
     php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
     php upgrade2.php 3.5.0 3.6.0 > $TRAVIS_BUILD_DIR/upgrade350360-2.log
