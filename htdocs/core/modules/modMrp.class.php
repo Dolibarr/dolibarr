@@ -20,7 +20,7 @@
 
 /**
  *  \defgroup   mrp     Module Mrp
- *  \brief      Mrp module descriptor.
+ *  \brief      Module to manage Manufacturing Orders (MO)
  *
  *  \file       htdocs/core/modules/modMrp.class.php
  *  \ingroup    mrp
