@@ -426,7 +426,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
 		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_category as cu ON cu.fk_category = cat.rowid';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'user as p ON p.rowid = cu.fk_user';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'user as p ON p.rowid = cu.fk_element';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON extra.fk_object = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND cat.type = 7';
@@ -601,7 +601,7 @@ class modCategorie extends DolibarrModules
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r] = array('cu'=>MAIN_DB_PREFIX.'element_category');
-			$this->import_fields_array[$r] = array('cu.fk_category'=>"Category*", 'cu.fk_user'=>"User*");
+			$this->import_fields_array[$r] = array('cu.fk_category'=>"Category*", 'cu.fk_element'=>"User*");
 			$this->import_regex_array[$r] = array('cu.fk_category'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=7');
 
 			$this->import_convertvalue_array[$r] = array(
