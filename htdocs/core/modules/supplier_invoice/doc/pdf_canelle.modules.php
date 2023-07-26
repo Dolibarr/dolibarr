@@ -1057,6 +1057,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

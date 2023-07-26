@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last invoices
+ * Class to manage the box to show invoices per month graph
  */
 class box_graph_invoices_permonth extends ModeleBoxes
 {
-	public $boxcode = "invoicespermonth";
-	public $boximg = "object_bill";
+	public $boxcode  = "invoicespermonth";
+	public $boximg   = "object_bill";
 	public $boxlabel = "BoxCustomersInvoicesPerMonth";
-	public $depends = array("facture");
+	public $depends  = array("facture");
 
 	/**
 	 * @var DoliDB Database handler.

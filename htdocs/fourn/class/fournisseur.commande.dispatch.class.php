@@ -609,6 +609,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 				return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut8');
 			}
 		}
+		return "";
 	}
 
 

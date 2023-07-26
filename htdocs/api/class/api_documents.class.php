@@ -547,6 +547,17 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->contrat->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
+		} elseif ($modulepart == 'projet' || $modulepart == 'project') {
+			$modulepart = 'project';
+			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+
+			$object = new Project($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Project not found');
+			}
+
+			$upload_dir = $conf->projet->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
@@ -676,7 +687,7 @@ class Documents extends DolibarrApi
 
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 					$object = new CommandeFournisseur($this->db);
-			} elseif ($modulepart == 'project') {
+			} elseif ($modulepart == 'projet' || $modulepart == 'project') {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
 			} elseif ($modulepart == 'task' || $modulepart == 'project_task') {

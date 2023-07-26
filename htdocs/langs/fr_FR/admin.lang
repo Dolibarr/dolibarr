@@ -2397,3 +2397,4 @@ DefaultForTypeDesc=Modèle utilisé par défaut lors de la création d'un nouvel
 OptionXShouldBeEnabledInModuleY=L'option "<b>%s</b>" doit être activée dans le module <b>%s</b>
 OptionXIsCorrectlyEnabledInModuleY=L'option "<b>%s</b>" doit être activée dans le module <b>%s</b>
 AtBottomOfPage=En bas de page
+RecommendMitigationOnURL=For a higher security, we also recommend to implement limits and mitigation on number of endpoints per minutes for the following URL

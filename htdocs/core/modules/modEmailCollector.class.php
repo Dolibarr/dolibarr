@@ -16,8 +16,8 @@
  */
 
 /**
- * 	\defgroup   emailcollector     Module emailcollector
- *  \brief      emailcollector module descriptor.
+ * 	\defgroup   emailcollector     Module Emailcollector
+ *  \brief      Module to collect emails
  *
  *  \file       htdocs/core/modules/modEmailCollector.class.php
  *  \ingroup    emailcollector
