@@ -270,7 +270,7 @@ class AdherentStats extends Stats
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_RESILIATED, "'members_resiliated'", 'NULL').") as members_resiliated";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_category as ct ON c.rowid = ct.fk_category";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON d.rowid = ct.fk_member";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON d.rowid = ct.fk_element";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as t ON t.rowid = d.fk_adherent_type";
 		$sql .= " WHERE c.entity IN (".getEntity('member_type').")";
 		$sql .= " AND d.entity IN (" . getEntity('adherent') . ")";
