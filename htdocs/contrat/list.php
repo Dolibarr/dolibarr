@@ -361,14 +361,14 @@ if (!empty($searchCategoryProductList)) {
 			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.fk_product = ck.fk_product)";
 		} elseif (intval($searchCategoryProduct) > 0) {
 			if ($searchCategoryProductOperator == 0) {
-				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.fk_product = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
+				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck, ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.fk_product = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryProduct).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.fk_product = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck, ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.fk_product = ck.fk_element AND ck.fk_category IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryProductOperator == 1) {
 		if (!empty($searchCategoryProductSqlList)) {

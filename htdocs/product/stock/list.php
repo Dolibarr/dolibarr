@@ -292,14 +292,14 @@ if (!empty($searchCategoryWarehouseList)) {
 			$searchCategoryWarehouseSqlList[] = " NOT EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE t.rowid = ck.fk_warehouse)";
 		} elseif (intval($searchCategoryWarehouse) > 0) {
 			if ($searchCategoryWarehouseOperator == 0) {
-				$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE t.rowid = ck.fk_warehouse AND ck.fk_categorie = ".((int) $searchCategoryWarehouse).")";
+				$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE t.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryWarehouse).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryWarehouse);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE t.rowid = ck.fk_warehouse AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE t.rowid = ck.fk_element AND ck.fk_category IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryWarehouseOperator == 1) {
 		if (!empty($searchCategoryWarehouseSqlList)) {
