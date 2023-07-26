@@ -962,7 +962,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 
 	// progress resume not searchable
-	print '<td class="liste_titre right"></td>';
+	if (!empty($arrayfields['t.progress_summary']['checked'])) {
+		print '<td class="liste_titre right"></td>';
+	}
 
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
