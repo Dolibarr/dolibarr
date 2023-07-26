@@ -974,6 +974,7 @@ Permission2501=Read/Download documents
 Permission2502=Download documents
 Permission2503=Submit or delete documents
 Permission2515=Setup documents directories
+Permission2610=Generate/modify users API key
 Permission2801=Use FTP client in read mode (browse and download only)
 Permission2802=Use FTP client in write mode (delete or upload files)
 Permission3200=Read archived events and fingerprints

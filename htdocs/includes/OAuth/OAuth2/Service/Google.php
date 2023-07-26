@@ -76,6 +76,7 @@ class Google extends AbstractService
 	const SCOPE_CALENDAR                    = 'https://www.googleapis.com/auth/calendar';
 	const SCOPE_CALENDAR_READ_ONLY          = 'https://www.googleapis.com/auth/calendar.readonly';
 	const SCOPE_CONTACT                     = 'https://www.google.com/m8/feeds/';
+	const SOCPE_CONTACTS					= 'https://www.googleapis.com/auth/contacts';
 	const SCOPE_CONTACTS_RO                 = 'https://www.googleapis.com/auth/contacts.readonly';
 	const SCOPE_CHROMEWEBSTORE              = 'https://www.googleapis.com/auth/chromewebstore.readonly';
 	const SCOPE_GMAIL                       = 'https://mail.google.com/mail/feed/atom';

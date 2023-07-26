@@ -2038,6 +2038,8 @@ if ($action == 'create' && $usercancreate) {
 		}
 	}
 
+	print "\n";
+
 	print '</table>';
 
 	print dol_get_fiche_end();

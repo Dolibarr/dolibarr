@@ -6389,7 +6389,7 @@ input.select2-input {
 }
 div.select2-drop-above
 {
-	background: var(--colorbackvmenu1);e
+	background: var(--colorbackvmenu1);
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
