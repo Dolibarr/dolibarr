@@ -153,6 +153,9 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			if ($object->element == 'fichinter') {
 				$keyforperm = 'ficheinter';
 			}
+			if ($object->element == 'product') {
+				$keyforperm = 'produit';
+			}
 			if (isset($user->rights->$keyforperm)) {
 				$permok = !empty($user->rights->$keyforperm->creer) || !empty($user->rights->$keyforperm->create) || !empty($user->rights->$keyforperm->write);
 			}

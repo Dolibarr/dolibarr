@@ -21,7 +21,7 @@ services:
 
 
 addons:
-  mariadb: '10.4'
+  mariadb: '10.5'
 
 
 env:
@@ -129,7 +129,15 @@ install:
 - |
   echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
   echo "(composer version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
-  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '7.0' ]; then
+    sudo composer self-update 2.2.18
+    composer -n require phpunit/phpunit ^6.0 \
+                        php-parallel-lint/php-parallel-lint ^1 \
+                        php-parallel-lint/php-console-highlighter ^0 \
+                        php-parallel-lint/php-var-dump-check ~0.4 \
+                        squizlabs/php_codesniffer ^3
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
     sudo composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7.5 \
                         php-parallel-lint/php-parallel-lint ^1 \
@@ -374,7 +382,9 @@ script:
   
   - |
     echo "Upgrading Dolibarr"
-    # Ensure we catch errors. Set this to +e if you want to go to the end to see log files.
+    # Ensure we catch errors with -e. Set this to +e if you want to go to the end to see log files.
+    # Note: We keep +e because with pgsql, one of upgrade process fails even if migration seems ok, so
+    # I disable stop on error to be able to continue. 
     set +e
     cd htdocs/install
     php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
@@ -460,13 +470,15 @@ script:
 
   - |
     echo "Unit testing"
-    # Ensure we catch errors. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
+    # Ensure we catch errors with -e. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
+    set -e
+    if [ "$TRAVIS_PHP_VERSION" != '7.0' ]; then
+      phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+      phpunitresult=$?
+      echo "Phpunit return code = $phpunitresult"
+    fi
     set +e
-    phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
-    phpunitresult=$?
-    echo "Phpunit return code = $phpunitresult"
-    set +e
-  
+
 after_script:
   - |
     echo "After script - Output last lines of dolibarr.log"

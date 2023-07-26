@@ -2154,7 +2154,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		if ($this->id) {
 			$newclient = 1;
-			if ($this->client == 2 || $this->client == 3) {
+			if (($this->client == 2 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
@@ -2690,9 +2690,9 @@ class Societe extends CommonObject
 			$label .= $this->getTypeUrl(1);
 		}
 
-		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag(dol_string_nohtmltag($this->name));
 		if (!empty($this->name_alias)) {
-			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
+			$label .= ' ('.dol_escape_htmltag(dol_string_nohtmltag($this->name_alias)).')';
 		}
 
 		if ($this->email) {
