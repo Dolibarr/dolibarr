@@ -1608,7 +1608,6 @@ if ($action == 'create') {
 		}
 
 
-
 		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
 		$objectsrc = new $classname($db);
