@@ -80,7 +80,14 @@ class User extends CommonObject
 	public $picto = 'user';
 
 	public $id = 0;
+
+	/**
+	 * @var int
+	 * @deprecated
+	 * @see $status
+	 */
 	public $statut;
+
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
@@ -167,6 +174,11 @@ class User extends CommonObject
 	 * @var string Clear password in memory
 	 */
 	public $pass;
+
+	/**
+	 * @var string Crypted password in memory
+	 */
+	public $pass_crypted;
 
 	/**
 	 * @var string Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
@@ -342,6 +354,10 @@ class User extends CommonObject
 	 */
 	public $fk_warehouse;
 
+	/**
+	 * @var int egroupware id
+	 */
+	public $egroupware_id;
 
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
@@ -830,7 +846,6 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity, $notrigger for user id=".$this->id);
 
 		if (empty($this->id)) {
-			$error++;
 			$this->error = 'Try to call addrights on an object user with an empty id';
 			return -1;
 		}
@@ -2937,7 +2952,7 @@ class User extends CommonObject
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$result .= '<span class="nopadding usertext'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
+				$result .= '<span class="nopadding usertext'.((!isset($this->status) || $this->status) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
 			}
 			if ($mode == 'login') {
 				$result .= dol_string_nohtmltag(dol_trunc($this->login, $maxlen));
@@ -3256,7 +3271,7 @@ class User extends CommonObject
 			}
 		}
 
-		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware') {
+		if (getDolGlobalString('LDAP_SERVER_TYPE') == 'egroupware') {
 			$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
 
 			$info['uidnumber'] = $this->id;
