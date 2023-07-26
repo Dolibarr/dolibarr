@@ -1016,7 +1016,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 
 		$sql = 'SELECT wp.rowid FROM '.MAIN_DB_PREFIX.'website_page as wp';
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
-			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
+			$sql .= ', '.MAIN_DB_PREFIX.'element_category as cwp';
 		}
 		$sql .= " WHERE wp.fk_website = ".((int) $website->id);
 		if ($status >= 0) {
@@ -1044,7 +1044,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		}
 		$sql .= $searchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
-			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
+			$sql .= ' AND cwp.fk_element = wp.rowid AND cwp.fk_category = '.((int) $otherfilters['category']);
 		}
 		$sql .= ")";
 		$sql .= $db->order($sortfield, $sortorder);

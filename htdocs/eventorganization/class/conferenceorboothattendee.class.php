@@ -205,7 +205,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		if (!empty($conf->global->EVENTORGANIZATION_FILTERATTENDEES_CAT)) {
-			$this->fields['fk_soc']['type'] .= ' AND rowid IN (SELECT DISTINCT c.fk_soc FROM '.MAIN_DB_PREFIX.'categorie_societe as c WHERE c.fk_categorie='.(int) $conf->global->EVENTORGANIZATION_FILTERATTENDEES_CAT.')';
+			$this->fields['fk_soc']['type'] .= ' AND rowid IN (SELECT DISTINCT c.fk_element FROM '.MAIN_DB_PREFIX.'element_category as c WHERE c.fk_category='.(int) $conf->global->EVENTORGANIZATION_FILTERATTENDEES_CAT.')';
 		}
 		if (isset($conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE)
 			&& $conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE !== ''

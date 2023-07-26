@@ -173,7 +173,7 @@ if ($action == 'search') {
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_category as cp ON p.rowid = cp.fk_element';
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
 	}
@@ -198,7 +198,7 @@ if ($action == 'search') {
 		$sql .= natural_search($params, $key);
 	}
 	if (isModEnabled('categorie') && !empty($parent) && $parent != -1) {
-		$sql .= " AND cp.fk_categorie ='".$db->escape($parent)."'";
+		$sql .= " AND cp.fk_category ='".$db->escape($parent)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC";
 
