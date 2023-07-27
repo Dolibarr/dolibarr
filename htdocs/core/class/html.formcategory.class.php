@@ -94,10 +94,11 @@ class FormCategory extends Form
 	{
 		global $conf;
 
-		$sql = "SELECT cp.fk_categorie as cat_index, cat.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cp";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid = cp.fk_categorie";
-		$sql .= " GROUP BY cp.fk_categorie, cat.label";
+		$sql = "SELECT cp.fk_category as cat_index, cat.label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_category as cp";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid = cp.fk_category";
+		$sql .= ' WHERE cat.type = 0';
+		$sql .= " GROUP BY cp.fk_category, cat.label";
 
 		dol_syslog(get_class($this)."::selectProductCategory", LOG_DEBUG);
 		$resql = $this->db->query($sql);

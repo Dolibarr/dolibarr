@@ -168,7 +168,7 @@ class KnowledgeManagement extends DolibarrApi
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		}
 		if ($category > 0) {
-			$sql .= ", ".$this->db->prefix()."categorie_knowledgemanagement as c";
+			$sql .= ", ".$this->db->prefix()."element_category as c";
 		}
 		$sql .= " WHERE 1 = 1";
 
@@ -194,8 +194,8 @@ class KnowledgeManagement extends DolibarrApi
 		}
 		// Select products of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category);
-			$sql .= " AND c.fk_knowledgemanagement = t.rowid";
+			$sql .= " AND c.fk_category = ".((int) $category);
+			$sql .= " AND c.fk_element = t.rowid";
 		}
 		if ($sqlfilters) {
 			$errormessage = '';

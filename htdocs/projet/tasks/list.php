@@ -490,9 +490,10 @@ if ($searchCategoryCustomerOperator == 1) {
 	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 		if (intval($searchCategoryCustomer) == -2) {
 			$sqlCategoryCustomerNotExists  = " NOT EXISTS (";
-			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
-			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
-			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_element";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."element_category AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_element = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " AND cat_cus.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=2)";
 			$sqlCategoryCustomerNotExists .= " )";
 			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
 		} elseif (intval($searchCategoryCustomer) > 0) {
@@ -515,9 +516,10 @@ if ($searchCategoryCustomerOperator == 1) {
 	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 		if (intval($searchCategoryCustomer) == -2) {
 			$sqlCategoryCustomerNotExists = " NOT EXISTS (";
-			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
-			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
-			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_element";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."element_category AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_element = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " AND cat_cus.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=2)";
 			$sqlCategoryCustomerNotExists .= " )";
 			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
 		} elseif (intval($searchCategoryCustomer) > 0) {

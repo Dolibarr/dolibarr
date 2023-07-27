@@ -481,7 +481,7 @@ if (!empty($searchCategoryContactList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryContactList as $searchCategoryContact) {
 		if (intval($searchCategoryContact) == -2) {
-			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE p.rowid = ck.fk_socpeople)";
+			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE ck.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=4) AND p.rowid = ck.fk_element)";
 		} elseif (intval($searchCategoryContact) > 0) {
 			if ($searchCategoryContactOperator == 0) {
 				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE p.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryContact).")";
@@ -513,7 +513,7 @@ if (!empty($searchCategoryCustomerList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 		if (intval($searchCategoryCustomer) == -2) {
-			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=2) AND s.rowid = ck.fk_element)";
 		} elseif (intval($searchCategoryCustomer) > 0) {
 			if ($searchCategoryCustomerOperator == 0) {
 				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE s.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryCustomer).")";
@@ -545,7 +545,7 @@ if (!empty($searchCategorySupplierList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 		if (intval($searchCategorySupplier) == -2) {
-			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
+			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE ck.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=1) AND s.rowid = ck.fk_element)";
 		} elseif (intval($searchCategorySupplier) > 0) {
 			if ($searchCategorySupplierOperator == 0) {
 				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE s.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategorySupplier).")";
