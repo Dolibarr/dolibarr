@@ -433,9 +433,9 @@ class IntracommReport extends CommonObject
 						AND ".$more_sql." = '".$this->db->escape($res->refinvoice)."'
 						AND d.fk_product NOT IN
 						(
-							SELECT fk_product
-							FROM ".MAIN_DB_PREFIX."categorie_product
-							WHERE fk_categorie = ".((int) $categ_fraisdeport->id)."
+							SELECT fk_element
+							FROM ".MAIN_DB_PREFIX."element_category
+							WHERE fk_category = ".((int) $categ_fraisdeport->id)."
 						)
 					)";
 
