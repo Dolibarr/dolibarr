@@ -576,7 +576,7 @@ if (!empty($searchCategorySupplierList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 		if (intval($searchCategorySupplier) == -2) {
-			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
+			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE ck.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=1) AND s.rowid = ck.fk_element)";
 		} elseif (intval($searchCategorySupplier) > 0) {
 			if ($searchCategorySupplierOperator == 0) {
 				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE s.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategorySupplier).")";

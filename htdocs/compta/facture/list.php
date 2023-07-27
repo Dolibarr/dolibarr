@@ -835,7 +835,7 @@ if (!empty($searchCategoryProductList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facturedet as fd WHERE fd.fk_facture = f.rowid AND fd.fk_product = ck.fk_product)";
+			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck, ".MAIN_DB_PREFIX."facturedet as fd WHERE ck.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=0) AND fd.fk_facture = f.rowid AND fd.fk_product = ck.fk_element)";
 		} elseif (intval($searchCategoryProduct) > 0) {
 			if ($searchCategoryProductOperator == 0) {
 				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck, ".MAIN_DB_PREFIX."facturedet as fd WHERE fd.fk_facture = f.rowid AND fd.fk_product = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryProduct).")";
@@ -865,7 +865,7 @@ if (!empty($searchCategoryCustomerList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 		if (intval($searchCategoryCustomer) == -2) {
-			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE ck.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=2) AND s.rowid = ck.fk_element)";
 		} elseif (intval($searchCategoryCustomer) > 0) {
 			if ($searchCategoryCustomerOperator == 0) {
 				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE s.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryCustomer).")";

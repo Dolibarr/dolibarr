@@ -148,12 +148,12 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= $addFilter;
 		} else {
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."element_category as cs, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
-			$sql .= " AND cs.fk_soc = s.rowid";
-			$sql .= " AND c.rowid = cs.fk_categorie";
+			$sql .= " AND cs.fk_element = s.rowid";
+			$sql .= " AND c.rowid = cs.fk_category";
 			if (GETPOST('filter_thirdparties', 'int') > 0) {
 				$sql .= " AND c.rowid=".((int) GETPOST('filter_thirdparties', 'int'));
 			}
@@ -163,12 +163,12 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= $addFilter;
 			$sql .= " UNION ";
 			$sql .= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_fournisseur as cs, ".MAIN_DB_PREFIX."categorie as c";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."element_category as cs, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
-			$sql .= " AND cs.fk_soc = s.rowid";
-			$sql .= " AND c.rowid = cs.fk_categorie";
+			$sql .= " AND cs.fk_element = s.rowid";
+			$sql .= " AND c.rowid = cs.fk_category";
 			if (GETPOST('filter_thirdparties', 'int') > 0) {
 				$sql .= " AND c.rowid=".((int) GETPOST('filter_thirdparties', 'int'));
 			}

@@ -191,7 +191,7 @@ class Products extends DolibarrApi
 		$sql .= " FROM ".$this->db->prefix()."product as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
-			$sql .= ", ".$this->db->prefix()."categorie_product as c";
+			$sql .= ", ".$this->db->prefix()."element_category as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
@@ -208,8 +208,8 @@ class Products extends DolibarrApi
 
 		// Select products of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category);
-			$sql .= " AND c.fk_product = t.rowid";
+			$sql .= " AND c.fk_category = ".((int) $category);
+			$sql .= " AND c.fk_element = t.rowid";
 		}
 		if ($mode == 1) {
 			// Show only products
@@ -876,7 +876,7 @@ class Products extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."product AS t LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ($category > 0) {
-			$sql .= ", ".$this->db->prefix()."categorie_product as c";
+			$sql .= ", ".$this->db->prefix()."element_category as c";
 		}
 		$sql .= ", ".$this->db->prefix()."product_fournisseur_price as s";
 
@@ -891,8 +891,8 @@ class Products extends DolibarrApi
 		$sql .= " AND s.fk_product = t.rowid";
 		// Select products of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category);
-			$sql .= " AND c.fk_product = t.rowid";
+			$sql .= " AND c.fk_category = ".((int) $category);
+			$sql .= " AND c.fk_element = t.rowid";
 		}
 		if ($mode == 1) {
 			// Show only products

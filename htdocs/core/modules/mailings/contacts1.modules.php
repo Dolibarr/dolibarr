@@ -165,12 +165,12 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " FROM ";
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie as c,";
-		$sql .= " ".MAIN_DB_PREFIX."categorie_contact as cs";
+		$sql .= " ".MAIN_DB_PREFIX."element_category as cs";
 		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";    // Note that null != '' is false
 		$sql .= " AND sp.statut = 1";
-		$sql .= " AND cs.fk_categorie = c.rowid";
-		$sql .= " AND cs.fk_socpeople = sp.rowid";
+		$sql .= " AND cs.fk_category = c.rowid";
+		$sql .= " AND cs.fk_element = sp.rowid";
 		$sql .= " GROUP BY c.label";
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
@@ -238,12 +238,12 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " FROM ";
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie as c,";
-		$sql .= " ".MAIN_DB_PREFIX."categorie_societe as cs";
+		$sql .= " ".MAIN_DB_PREFIX."element_category as cs";
 		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";    // Note that null != '' is false
 		$sql .= " AND sp.statut = 1";
-		$sql .= " AND cs.fk_categorie = c.rowid";
-		$sql .= " AND cs.fk_soc = sp.fk_soc";
+		$sql .= " AND cs.fk_category = c.rowid";
+		$sql .= " AND cs.fk_element = sp.fk_soc";
 		$sql .= " GROUP BY c.label";
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
@@ -275,12 +275,12 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " FROM ";
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie as c,";
-		$sql .= " ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
+		$sql .= " ".MAIN_DB_PREFIX."element_category as cs";
 		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";    // Note that null != '' is false
 		$sql .= " AND sp.statut = 1";
-		$sql .= " AND cs.fk_categorie = c.rowid";
-		$sql .= " AND cs.fk_soc = sp.fk_soc";
+		$sql .= " AND cs.fk_category = c.rowid";
+		$sql .= " AND cs.fk_element = sp.fk_soc";
 		$sql .= " GROUP BY c.label";
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
@@ -377,15 +377,15 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
 		if ($filter_category != 'all' && $filter_category != '-1') {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as cs";
+			$sql .= ", ".MAIN_DB_PREFIX."element_category as cs";
 		}
 		if ($filter_category_customer != 'all' && $filter_category_customer != '-1') {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie as c2";
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c2s";
+			$sql .= ", ".MAIN_DB_PREFIX."element_category as c2s";
 		}
 		if ($filter_category_supplier != 'all' && $filter_category_supplier != '-1') {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie as c3";
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as c3s";
+			$sql .= ", ".MAIN_DB_PREFIX."element_category as c3s";
 		}
 		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";
@@ -399,15 +399,15 @@ class mailing_contacts1 extends MailingTargets
 
 		// Filter on category
 		if ($filter_category != 'all' && $filter_category != '-1') {
-			$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_socpeople = sp.rowid";
+			$sql .= " AND cs.fk_category = c.rowid AND cs.fk_element = sp.rowid";
 			$sql .= " AND c.label = '".$this->db->escape($filter_category)."'";
 		}
 		if ($filter_category_customer != 'all' && $filter_category_customer != '-1') {
-			$sql .= " AND c2s.fk_categorie = c2.rowid AND c2s.fk_soc = sp.fk_soc";
+			$sql .= " AND c2s.fk_category = c2.rowid AND c2s.fk_element = sp.fk_soc";
 			$sql .= " AND c2.label = '".$this->db->escape($filter_category_customer)."'";
 		}
 		if ($filter_category_supplier != 'all' && $filter_category_supplier != '-1') {
-			$sql .= " AND c3s.fk_categorie = c3.rowid AND c3s.fk_soc = sp.fk_soc";
+			$sql .= " AND c3s.fk_category = c3.rowid AND c3s.fk_element = sp.fk_soc";
 			$sql .= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
 		}
 

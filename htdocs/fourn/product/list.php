@@ -165,7 +165,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_category as cp ON cp.fk_element = p.rowid";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product AND p.entity = ppf.entity";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid AND s.entity IN (".getEntity('societe').")";
@@ -183,7 +183,7 @@ if ($snom) {
 	$sql .= natural_search('p.label', $snom);
 }
 if ($catid) {
-	$sql .= " AND cp.fk_categorie = ".((int) $catid);
+	$sql .= " AND cp.fk_category = ".((int) $catid);
 }
 if ($fourn_id > 0) {
 	$sql .= " AND ppf.fk_soc = ".((int) $fourn_id);
