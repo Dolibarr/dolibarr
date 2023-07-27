@@ -20,12 +20,11 @@
 
 /**
  *	\file       htdocs/core/boxes/box_dolibarr_state_board.php
- *	\ingroup
+ *	\ingroup	core
  *	\brief      Module Dolibarr state base
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 
 
 /**
@@ -79,9 +78,10 @@ class box_dolibarr_state_board extends ModeleBoxes
 		if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS)) {
 			$hookmanager = new HookManager($this->db);
 			$hookmanager->initHooks(array('index'));
-			$object = new stdClass;
+			$object = new stdClass();
 			$action = '';
-			$hookmanager->executeHooks('addStatisticLine', array(), $object, $action);
+			$parameters =array();
+			$hookmanager->executeHooks('addStatisticLine', $parameters, $object, $action);
 			$boxstatItems = array();
 			$boxstatFromHook = '';
 			$boxstatFromHook = $hookmanager->resPrint;
@@ -113,26 +113,26 @@ class box_dolibarr_state_board extends ModeleBoxes
 			);
 			$conditions = array(
 				'users' => $user->hasRight('user', 'user', 'lire'),
-				'members' => isModEnabled('adherent') && $user->rights->adherent->lire,
-				'customers' => isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-				'prospects' => isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
-				'suppliers' => ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->lire)
-								 || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)
-								 || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)
+				'members' => isModEnabled('adherent') && $user->hasRight('adherent', 'lire'),
+				'customers' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
+				'prospects' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
+				'suppliers' => ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'lire'))
+								 || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))
+								 || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 								 )
 								 && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
 				'contacts' => isModEnabled('societe') && $user->hasRight('societe', 'contact', 'lire'),
-				'products' => isModEnabled('product') && $user->hasRight('produit', 'lire'),
-				'services' => isModEnabled('service') && $user->hasRight('service', 'lire'),
-				'proposals' => isModEnabled('propal') && $user->hasRight('propal', 'lire'),
+				'products' => isModEnabled('product') && $user->hasRight('product', 'read'),
+				'services' => isModEnabled('service') && $user->hasRight('service', 'read'),
+				'proposals' => isModEnabled('propal') && $user->hasRight('propal', 'read'),
 				'orders' => isModEnabled('commande') && $user->hasRight('commande', 'lire'),
 				'invoices' => isModEnabled('facture') && $user->hasRight('facture', 'lire'),
 				'donations' => isModEnabled('don') && $user->hasRight('don', 'lire'),
 				'contracts' => isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
 				'interventions' => isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
-				'supplier_orders' => isModEnabled('supplier_order') && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
-				'supplier_invoices' => isModEnabled('supplier_invoice') && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
-				'supplier_proposals' => isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
+				'supplier_orders' => isModEnabled('supplier_order') && $user->hasRight('fournisseur', 'commande', 'lire') && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
+				'supplier_invoices' => isModEnabled('supplier_invoice') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
+				'supplier_proposals' => isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire') && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
 				'projects' => isModEnabled('project') && $user->hasRight('projet', 'lire'),
 				'expensereports' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
 				'holidays' => isModEnabled('holiday') && $user->hasRight('holiday', 'read'),
@@ -301,7 +301,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 
 				$this->info_box_contents[0][0] = array(
 					'tr' => 'class="nohover"',
-					'td' => '',
+					'td' => 'class="tdwidgetstate"',
 					'textnoformat' => $boxstat
 				);
 			}

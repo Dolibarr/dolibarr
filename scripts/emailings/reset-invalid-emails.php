@@ -57,6 +57,11 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
+if (!isModEnabled('mailing')) {
+	print 'Module Emailing not enabled';
+	exit(-1);
+}
+
 
 /*
  * Main

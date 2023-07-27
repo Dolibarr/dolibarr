@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier
 
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ * Class to manage the Marbre numbering rule for Request for quotation
  */
 class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {

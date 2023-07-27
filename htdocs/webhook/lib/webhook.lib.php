@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2022 SuperAdmin <test@dolibarr.com>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,6 @@
 function webhookAdminPrepareHead()
 {
 	global $langs, $conf;
-
-	$langs->load("webhook@webhook");
 
 	$h = 0;
 	$head = array();
@@ -62,9 +60,9 @@ function webhookAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@webhook:/webhook/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook@webhook');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook@webhook', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook', 'remove');
 
 	return $head;
 }

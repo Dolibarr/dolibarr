@@ -24,15 +24,36 @@
  *	\ingroup    banque
  *	\brief      File to build payment reports
  */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	Classe permettant de generer les rapports de paiement
+ *	Class to manage reporting of payments
  */
-class pdf_paiement
+class pdf_paiement extends CommonDocGenerator
 {
+	public $tab_top;
+
+	public $line_height;
+
+	public $line_per_page;
+
+	public $tab_height;
+
+	public $posxdate;
+
+	public $posxpaymenttype;
+	public $posxinvoice;
+	public $posxbankaccount;
+	public $posxinvoiceamount;
+	public $posxpaymentamount;
+
+	public $doc_type;
+
+
 	/**
 	 *  Constructor
 	 *
@@ -54,10 +75,10 @@ class pdf_paiement
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->tab_top = 30;
 
@@ -185,14 +206,14 @@ class pdf_paiement
 				$sql .= ", c.code as paiement_code, p.num_paiement as num_payment";
 				$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
 				$sql .= ", pf.amount as pf_amount";
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$sql .= ", ba.ref as bankaccount";
 				}
 				$sql .= ", p.rowid as prowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql .= ", ".MAIN_DB_PREFIX."facture as f,";
 				$sql .= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -200,7 +221,7 @@ class pdf_paiement
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
@@ -211,7 +232,7 @@ class pdf_paiement
 				if (!empty($socid)) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
-				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payement are ordered by paiement_code
+				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payment are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) {
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiement ASC";
 				} else {
@@ -223,14 +244,14 @@ class pdf_paiement
 				$sql .= ", c.code as paiement_code, p.num_paiement as num_payment";
 				$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
 				$sql .= ", pf.amount as pf_amount";
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$sql .= ", ba.ref as bankaccount";
 				}
 				$sql .= ", p.rowid as prowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f,";
 				$sql .= " ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -238,7 +259,7 @@ class pdf_paiement
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
@@ -249,7 +270,7 @@ class pdf_paiement
 				if (!empty($socid)) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
-				// If global param PAYMENTS_FOURN_REPORT_GROUP_BY_MOD is set, payement fourn are ordered by paiement_code
+				// If global param PAYMENTS_FOURN_REPORT_GROUP_BY_MOD is set, payment fourn are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD)) {
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiementfourn ASC";
 				} else {
@@ -303,7 +324,7 @@ class pdf_paiement
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		//$pdf->SetKeyWords();
-		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
@@ -343,9 +364,7 @@ class pdf_paiement
 			$this->errors = $hookmanager->errors;
 		}
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 

@@ -29,6 +29,7 @@ if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to
 	}
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -55,6 +56,17 @@ $action = GETPOST('action', 'aZ09');
 
 $producttmp = new Product($db);
 $thirdpartytmp = new Societe($db);
+
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+if (!isModEnabled('barcode')) {
+	accessforbidden('Module not enabled');
+}
+if (!$user->hasRight('barcode', 'read')) {
+	accessforbidden();
+}
+restrictedArea($user, 'barcode');
 
 
 /*
@@ -102,6 +114,11 @@ if ($action == 'builddoc') {
 
 	if (empty($forbarcode)) {			// barcode value
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeValue")), null, 'errors');
+		$error++;
+	}
+	$MAXLENGTH = 51200;	// Limit set to 50Ko
+	if (dol_strlen($forbarcode) > $MAXLENGTH) {			// barcode value
+		setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BarcodeValue")).' ('.$langs->trans("RequireXStringMax", $MAXLENGTH).')', null, 'errors');
 		$error++;
 	}
 	if (empty($fk_barcode_type)) {		// barcode type = barcode encoding
@@ -214,7 +231,7 @@ if ($action == 'builddoc') {
 						'code'=>$code,
 						'encoding'=>$encoding,
 						'is2d'=>$is2d,
-						'photo'=>$barcodeimage	// Photo must be a file that exists with format supported by TCPDF
+						'photo'=>!empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
 					);
 				}
 			} else {
@@ -262,10 +279,6 @@ if ($action == 'builddoc') {
 /*
  * View
  */
-
-if (empty($conf->barcode->enabled)) {
-	accessforbidden();
-}
 
 $form = new Form($db);
 
@@ -380,7 +393,7 @@ jQuery(document).ready(function() {
 print '<input id="fillmanually" type="radio" '.((!GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode") == 'fillmanually') ? 'checked ' : '').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"><label for="fillmanually"> '.$langs->trans("FillBarCodeTypeAndValueManually").'</label>';
 print '<br>';
 
-if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)) {
+if (!empty($user->rights->produit->lire) || $user->hasRight('service', 'lire')) {
 	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"><label for="fillfromproduct"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").'</label>';
 	print '<br>';
 	print '<div class="showforproductselector">';
@@ -389,7 +402,7 @@ if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)
 	print '</div>';
 }
 
-if (!empty($user->rights->societe->lire)) {
+if ($user->hasRight('societe', 'lire')) {
 	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"><label for="fillfromthirdparty"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").'</label>';
 	print '<br>';
 	print '<div class="showforthirdpartyselector">';

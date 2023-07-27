@@ -27,6 +27,7 @@
  *		\brief      Page to show a bank statement report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -60,6 +61,9 @@ $oldbankreceipt = GETPOST('oldbankreceipt', 'alpha');
 $newbankreceipt = GETPOST('newbankreceipt', 'alpha');
 $rel = GETPOST("rel", 'alphanohtml');
 $backtopage = GETPOST('backtopage', 'alpha');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
 // Security check
 $fieldid = (!empty($ref) ? $ref : $id);
@@ -105,7 +109,8 @@ if (!$sortfield) {
 $object = new Account($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
-	$account = $object->id; // Force the search field on id of account
+	// if fetch from ref, $id may be empty
+	$id = $object->id; // Force the search field on id of account
 }
 
 
@@ -197,11 +202,6 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
@@ -228,6 +228,17 @@ if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
 
+if (empty($numref)) {
+	$title = $object->ref.' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+} else {
+	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+}
+
+
+llxHeader('', $title, $helpurl);
+
 
 if (empty($numref)) {
 	$sortfield = 'numr';
@@ -241,7 +252,7 @@ if (empty($numref)) {
 
 	// Count total nb of records
 	$totalnboflines = 0;
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$totalnboflines = $db->num_rows($result);
 	}

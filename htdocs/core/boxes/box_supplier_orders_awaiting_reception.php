@@ -19,22 +19,22 @@
  */
 
 /**
- * \file       htdocs/core/boxes/box_supplier_orders.php
+ * \file       htdocs/core/boxes/box_supplier_orders_awaiting_reception.php
  * \ingroup    fournisseurs
  * \brief      Module that generates the latest supplier orders box
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 /**
- * Class that manages the box showing latest supplier orders
+ * Class to manage the box to show last supplier orders awaiting reception
  */
 class box_supplier_orders_awaiting_reception extends ModeleBoxes
 {
 
-	public $boxcode = "supplierordersawaitingreception";
-	public $boximg = "object_order";
+	public $boxcode  = "supplierordersawaitingreception";
+	public $boximg   = "object_order";
 	public $boxlabel = "BoxLatestSupplierOrdersAwaitingReception";
-	public $depends = array("fournisseur");
+	public $depends  = array("fournisseur");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -58,7 +58,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->fournisseur->commande->lire);
+		$this->hidden = !($user->hasRight('fournisseur', 'commande', 'lire'));
 	}
 
 	/**

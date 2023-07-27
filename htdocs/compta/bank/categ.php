@@ -21,28 +21,37 @@
  */
 
 /**
- *      \file       htdocs/compta/bank/categ.php
- *      \ingroup    compta
- *      \brief      Page ajout de categories bancaires
+ *    \file       htdocs/compta/bank/categ.php
+ *    \ingroup    compta/bank
+ *    \brief      Page to manage Bank Categories
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
+
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$categid = GETPOST('categid');
+$label = GETPOST("label");
 
+
+// Initialize technical objects
+$bankcateg = new BankCateg($db);
+
+
+// Security Check  Access Control
 if (!$user->rights->banque->configurer) {
 	accessforbidden();
 }
-
-$bankcateg = new BankCateg($db);
-$categid = GETPOST('categid');
-$label = GETPOST("label");
 
 
 

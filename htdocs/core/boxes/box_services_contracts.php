@@ -60,7 +60,7 @@ class box_services_contracts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !(!empty($user->rights->service->lire) && !empty($user->rights->contrat->lire));
+		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
 	}
 
 	/**
@@ -81,7 +81,7 @@ class box_services_contracts extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract", $max));
 
-		if ($user->rights->service->lire && $user->rights->contrat->lire) {
+		if ($user->rights->service->lire && $user->hasRight('contrat', 'lire')) {
 			$contractstatic = new Contrat($this->db);
 			$contractlinestatic = new ContratLigne($this->db);
 			$thirdpartytmp = new Societe($this->db);
@@ -124,7 +124,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractlinestatic->label = $objp->label;
 					$contractlinestatic->description = $objp->description;
 					$contractlinestatic->type = $objp->type;
-					$contractlinestatic->product_id = $objp->product_id;
+					$contractlinestatic->fk_product = $objp->product_id;
 					$contractlinestatic->product_ref = $objp->product_ref;
 					$contractlinestatic->product_type = $objp->product_type;
 					$contractlinestatic->statut = $objp->contractline_status;
@@ -169,13 +169,7 @@ class box_services_contracts extends ModeleBoxes
 						}
 						$description = $objp->description;
 
-						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-							//$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-							$description = ''; // Already added into main visible desc
-						}
-
-						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, (!empty($objp->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, '');
 					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
 					}

@@ -20,9 +20,9 @@
  */
 
 /**
- *  \file       evaluation_document.php
- *  \ingroup    hrm
- *  \brief      Tab for documents linked to Evaluation
+ *    \file       htdocs/hrm/evaluation_document.php
+ *    \ingroup    hrm
+ *    \brief      Tab for documents linked to Evaluation
  */
 
 
@@ -33,20 +33,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluation.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_evaluation.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "companies", "other", "mails"));
+$langs->loadLangs(array('hrm', 'companies', 'other', 'mails'));
 
-
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
-// Get parameters
+
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -80,7 +80,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->hrm->multidir_output[$object->entity ? $object->entity : $conf->entity]."/evaluation/".get_exdir(0, 0, 0, 1, $object);
 }
 
-$permissiontoadd = $user->rights->hrm->evaluation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+// Permissions
+$permissiontoadd  = $user->rights->hrm->evaluation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 $permissiontoread = $user->rights->hrm->evaluation->read;
 
 // Security check (enable the most restrictive one)
@@ -134,10 +135,10 @@ if ($object->id) {
 	$morehtmlref .= $langs->trans('Label').' : '.$object->label;
 	$u_position = new User(($db));
 	$u_position->fetch($object->fk_user);
-	$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$u_position->getNomUrl(1);
+	$morehtmlref .= '<br>'.$u_position->getNomUrl(1);
 	$job = new Job($db);
 	$job->fetch($object->fk_job);
-	$morehtmlref .= '<br>'.$langs->trans('Job').' : '.$job->getNomUrl(1);
+	$morehtmlref .= '<br>'.$langs->trans('JobProfile').' : '.$job->getNomUrl(1);
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

@@ -34,11 +34,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe module customer orders
+ *	Class to describe module Sales Orders
  */
 class modCommande extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -80,7 +79,7 @@ class modCommande extends DolibarrModules
 
 		$this->const[$r][0] = "COMMANDE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "einstein";
+		$this->const[$r][2] = "eratosthene";
 		$this->const[$r][3] = 'Name of PDF model of order';
 		$this->const[$r][4] = 0;
 
@@ -140,8 +139,16 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][5] = 'validate';
 
 		$r++;
+		$this->rights[$r][0] = 85;
+		$this->rights[$r][1] = 'Generate the documents sales orders';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'order_advance';
+		$this->rights[$r][5] = 'generetedoc';
+
+		$r++;
 		$this->rights[$r][0] = 86;
-		$this->rights[$r][1] = 'Send sale orders by email';
+		$this->rights[$r][1] = 'Send sales orders by email';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'order_advance';
@@ -197,13 +204,13 @@ class modCommande extends DolibarrModules
 			'co.code'=>"CountryCode", 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 'c.rowid'=>"Id",
 			'c.ref'=>"Ref", 'c.ref_client'=>"RefCustomer", 'c.fk_soc'=>"IdCompany", 'c.date_creation'=>"DateCreation", 'c.date_commande'=>"OrderDate",
 			'c.date_livraison'=>"DateDeliveryPlanned", 'c.amount_ht'=>"Amount", 'c.total_ht'=>"TotalHT",
-			'c.total_ttc'=>"TotalTTC", 'c.facture'=>"Billed", 'c.fk_statut'=>'Status', 'c.note_public'=>"Note", 'c.date_livraison'=>'DeliveryDate',
+			'c.total_ttc'=>"TotalTTC", 'c.facture'=>"Billed", 'c.fk_statut'=>'Status', 'c.note_public'=>"Note", 'sm.code'=>'SendingMethod',
 			'c.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin', 'c.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin',
 			'pj.ref'=>'ProjectRef', 'cd.rowid'=>'LineId', 'cd.description'=>"LineDescription", 'cd.product_type'=>'TypeOfLineServiceOrProduct',
 			'cd.tva_tx'=>"LineVATRate", 'cd.qty'=>"LineQty", 'cd.total_ht'=>"LineTotalHT", 'cd.total_tva'=>"LineTotalVAT", 'cd.total_ttc'=>"LineTotalTTC",
 			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -213,7 +220,7 @@ class modCommande extends DolibarrModules
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('commande')));
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r]['c.entity'] = 'Entity';
 			}
 		}
@@ -228,8 +235,8 @@ class modCommande extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text',
 			's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_client'=>"Text", 'c.date_creation'=>"Date",
-			'c.date_commande'=>"Date", 'c.date_livraison'=>"Date", 'c.amount_ht'=>"Numeric", 'c.total_ht'=>"Numeric",
-			'c.total_ttc'=>"Numeric", 'c.facture'=>"Boolean", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.date_livraison'=>'Date', 'pj.ref'=>'Text',
+			'c.date_commande'=>"Date", 'c.date_livraison'=>"Date", 'sm.code'=>"Text", 'c.amount_ht'=>"Numeric", 'c.total_ht'=>"Numeric",
+			'c.total_ttc'=>"Numeric", 'c.facture'=>"Boolean", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'pj.ref'=>'Text',
 			'cd.description'=>"Text", 'cd.product_type'=>'Boolean', 'cd.tva_tx'=>"Numeric", 'cd.qty'=>"Numeric", 'cd.total_ht'=>"Numeric", 'cd.total_tva'=>"Numeric",
 			'cd.total_ttc'=>"Numeric", 'p.rowid'=>'List:product:ref::product', 'p.ref'=>'Text', 'p.label'=>'Text', 'd.nom'=>'Text',
 			'c.entity'=>'List:entity:label:rowid',
@@ -239,7 +246,7 @@ class modCommande extends DolibarrModules
 			'co.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"order",
 			'c.ref'=>"order", 'c.ref_client'=>"order", 'c.fk_soc'=>"order", 'c.date_creation'=>"order", 'c.date_commande'=>"order", 'c.amount_ht'=>"order",
 			'c.total_ht'=>"order", 'c.total_ttc'=>"order", 'c.facture'=>"order", 'c.fk_statut'=>"order", 'c.note'=>"order",
-			'c.date_livraison'=>"order", 'pj.ref'=>'project', 'cd.rowid'=>'order_line', 'cd.description'=>"order_line",
+			'c.date_livraison'=>"order", 'sm.code'=>"order", 'pj.ref'=>'project', 'cd.rowid'=>'order_line', 'cd.description'=>"order_line",
 			'cd.product_type'=>'order_line', 'cd.tva_tx'=>"order_line", 'cd.qty'=>"order_line", 'cd.total_ht'=>"order_line", 'cd.total_tva'=>"order_line",
 			'cd.total_ttc'=>"order_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'
 		);
@@ -270,6 +277,7 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'commande as c';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_shipment_mode as sm ON c.fk_shipping_method = sm.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON c.fk_projet = pj.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON c.fk_user_author = uc.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON c.fk_user_valid = uv.rowid';
@@ -320,7 +328,7 @@ class modCommande extends DolibarrModules
 			'c.fk_statut'         => 'Status*'
 		);
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['c.multicurrency_code']      = 'Currency';
 			$this->import_fields_array[$r]['c.multicurrency_tx']        = 'CurrencyRate';
 			$this->import_fields_array[$r]['c.multicurrency_total_ht']  = 'MulticurrencyAmountHT';
@@ -397,7 +405,7 @@ class modCommande extends DolibarrModules
 			'cd.rang'           => 'LinePosition'
 		);
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['cd.multicurrency_subprice'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['cd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';

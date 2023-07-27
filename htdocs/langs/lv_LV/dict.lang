@@ -247,10 +247,13 @@ CountryJE=Džērsija
 CountryME=Melnkalne
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+CountryXK=Kosova
 
 ##### Civilities #####
 CivilityMME=Kundze
+CivilityMMEShort=Kundze
 CivilityMR=Kungs
+CivilityMRShort=Kungs
 CivilityMLE=Jaunkundze.
 CivilityMTRE=Meistars
 CivilityDR=Doktors

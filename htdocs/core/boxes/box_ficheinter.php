@@ -59,7 +59,7 @@ class box_ficheinter extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->ficheinter->lire);
+		$this->hidden = !($user->hasRight('ficheinter', 'lire'));
 	}
 
 	/**

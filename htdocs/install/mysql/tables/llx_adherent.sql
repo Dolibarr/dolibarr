@@ -71,6 +71,7 @@ create table llx_adherent
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0,   -- certain champ de la fiche sont ils public ou pas ?
   datefin          datetime,                      -- end date of validity of the contribution / date de fin de validite de la cotisation
+  default_lang     varchar(6) DEFAULT NULL,
   note_private     text DEFAULT NULL,
   note_public      text DEFAULT NULL,
   model_pdf		     varchar(255),
@@ -81,5 +82,6 @@ create table llx_adherent
   fk_user_mod      integer,
   fk_user_valid    integer,
   canvas           varchar(32),                   -- type of canvas if used (null by default)
+  ip               varchar(250),                  -- ip used to create record (for public membership submission page)
   import_key       varchar(14)                    -- Import key
 )ENGINE=innodb;

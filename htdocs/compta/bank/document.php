@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -38,6 +37,9 @@ $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankaccountdocuments', 'globalcard'));
 
 // Security check
 if ($user->socid) {
@@ -93,8 +95,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
-
+$title = $object->ref.' - '.$langs->trans("Documents");
 $help_url = "EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses";
 
 llxHeader("", $title, $help_url);

@@ -24,6 +24,7 @@
  *					Initialy built by build_class_from_table on 2016-05-17 12:22
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -38,6 +39,7 @@ $langs->loadLangs(array('stocks', 'other', 'productbatch'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
+$lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -151,7 +153,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editeatby';
+			$action = 'editeatby';
 		} else {
 			$action = 'view';
 		}
@@ -162,7 +164,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editsellby';
+			$action = 'editsellby';
 		} else {
 			$action = 'view';
 		}
@@ -173,7 +175,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('eol_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editeol_date';
+			$action = 'editeol_date';
 		} else {
 			$action = 'view';
 		}
@@ -184,7 +186,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('manufacturing_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editmanufacturing_date';
+			$action = 'editmanufacturing_date';
 		} else {
 			$action = 'view';
 		}
@@ -195,7 +197,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('scrapping_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editscrapping_date';
+			$action = 'editscrapping_date';
 		} else {
 			$action = 'view';
 		}
@@ -216,7 +218,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCT_MODIFY');
 		if ($result < 0) { // Prévoir un test de format de durée
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editqc_frequency';
+			$action = 'editqc_frequency';
 		} else {
 			$action = 'view';
 		}
@@ -468,7 +470,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
 		print '</td><td>';
-		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
 		print '</td>';
 		print '</tr>';
 	}
@@ -478,7 +480,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
 		print '</td><td>';
-		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
 		print '</td>';
 		print '</tr>';
 	}
@@ -539,10 +541,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
 
-			if ($user->rights->stock->supprimer)
-			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>'."\n";
-			}
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->stock->supprimer);
 			*/
 		}
 
@@ -570,7 +569,7 @@ if ($action != 'presend') {
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread; // If you can read, you can build the PDF to read content
 		$delallowed = $usercancreate; // If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->default_lang, '', $object);
+		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', (empty($object->default_lang) ? '' : $object->default_lang), '', $object);
 	}
 
 	print '</div><div class="fichehalfright">';

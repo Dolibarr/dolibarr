@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012 Destailleur Laurent <eldy@users.sourceforge.net>
- * Copyright (C) 2014 	   Henry Florian <florian.henry@open-concept.pro>
+ * Copyright (C) 2010-2012 Destailleur Laurent 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
+ * Copyright (C) 2023 	   Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
  *	\brief      Page de traduction des produits
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -90,7 +92,7 @@ if (empty($reshook)) {
 	}
 
 	// Add translation
-	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
@@ -125,7 +127,7 @@ if (empty($reshook)) {
 	}
 
 	// Edit translation
-	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
@@ -135,6 +137,8 @@ if (empty($reshook)) {
 				$object->label = GETPOST("libelle-" . $key);
 				$object->description = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
 				$object->other = dol_htmlcleanlastbr(GETPOST("other-" . $key, 'restricthtml'));
+
+				$object->update($object->id, $user);
 			} else {
 				$object->multilangs[$key]["label"] = GETPOST("libelle-" . $key);
 				$object->multilangs[$key]["description"] = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
@@ -152,7 +156,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete translation
-	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$object = new Product($db);
 		$object->fetch($id);
 		$langtodelete = GETPOST('langdel', 'alpha');
@@ -230,7 +234,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 if (empty($reshook)) {
 	if ($action == '') {
-		if ($user->rights->produit->creer || $user->rights->service->creer) {
+		if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 			print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=add&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Add") . '</a>';
 			if ($cnt_trans > 0) {
 				print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=edit&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Modify") . '</a>';
@@ -264,12 +268,12 @@ if ($action == 'edit') {
 			print '<table class="border centpercent">';
 			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 			if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) {
 				print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>';
-				$doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
+				$doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 				$doleditor->Create();
 			}
 			print '</td></tr>';
@@ -317,7 +321,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -335,13 +339,13 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 	// Other field (not used)
 	if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) {
 		print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").'</td><td>';
-		$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
+		$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 	}

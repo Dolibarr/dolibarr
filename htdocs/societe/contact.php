@@ -31,6 +31,7 @@
  *  \brief      Page of contacts of thirdparties
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -42,35 +43,42 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
-if (!empty($conf->categorie->enabled)) {
+
+if (isModEnabled('categorie')) {
 	$langs->load("categories");
 }
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load("incoterm");
 }
-if (!empty($conf->notification->enabled)) {
+if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 
 $mesg = ''; $error = 0; $errors = array();
 
+
+// Get parameters
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
-$cancel     = GETPOST('cancel', 'alpha');
+$cancel 	= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$confirm	= GETPOST('confirm');
-$socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
+$confirm 	= GETPOST('confirm');
+$socid 		= GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
+
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
 if (empty($socid) && $action == 'view') {
 	$action = 'create';
 }
 
+// Initialize objects
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 

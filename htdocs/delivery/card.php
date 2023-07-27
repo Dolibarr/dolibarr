@@ -27,6 +27,7 @@
  *	\brief      Page to describe a delivery receipt
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
@@ -34,24 +35,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (!empty($conf->expedition_bon->enabled)) {
+if (isModEnabled('expedition')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
+$langs->loadLangs(array('bills', 'deliveries', 'orders', 'sendings'));
 
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
 
@@ -89,10 +90,10 @@ $error = 0;
  */
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);       // Note that $action and $object may have been modified by some hooks
 // Delete Link
 $permissiondellink = $user->rights->expedition->delivery->supprimer; // Used by the include of actions_dellink.inc.php
-include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be include, not include_once
 
 if ($action == 'add') {
 	$db->begin();
@@ -101,11 +102,12 @@ if ($action == 'add') {
 	$object->note          = GETPOST("note", 'restricthtml');
 	$object->note_private  = GETPOST("note", 'restricthtml');
 	$object->commande_id   = GETPOST("commande_id", 'int');
-	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
 
-	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
-		$expedition->entrepot_id = GETPOST('entrepot_id', 'int');
-	}
+	/* ->entrepot_id seems to not exists
+	if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
+		$object->entrepot_id = GETPOST('entrepot_id', 'int');
+	}*/
 
 	// We loop on each line of order to complete object delivery with qty to delivery
 	$commande = new Commande($db);
@@ -142,10 +144,10 @@ if ($action == 'add') {
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -185,7 +187,7 @@ if ($action == 'setdate_delivery' && $user->rights->expedition->delivery->creer)
 	if ($result < 0) {
 		$mesg = '<div class="error">'.$object->error.'</div>';
 	}
-} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {
+} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 	// Set incoterm
 	$result = $object->setIncoterms((int) GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
@@ -282,7 +284,7 @@ if ($action == 'create') {
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update_extras_line">';
-			print '<input type="hidden" name="origin" value="'.$origin.'">';
+			print '<input type="hidden" name="origin" value="'.$object->origin.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
@@ -309,11 +311,11 @@ if ($action == 'create') {
 			 *   Delivery
 			 */
 
-			if ($typeobject == 'commande' && $expedition->origin_id > 0 && !empty($conf->commande->enabled)) {
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('commande')) {
 				$objectsrc = new Commande($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
-			if ($typeobject == 'propal' && $expedition->origin_id > 0 && !empty($conf->propal->enabled)) {
+			if ($typeobject == 'propal' && $expedition->origin_id > 0 && isModEnabled("propal")) {
 				$objectsrc = new Propal($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
@@ -324,40 +326,28 @@ if ($action == 'create') {
 			$morehtmlref = '<div class="refidno">';
 			// Ref customer shipment
 			$morehtmlref .= $form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', 0, 1);
-			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 			$morehtmlref .= '<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
 			// Thirdparty
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$expedition->thirdparty->getNomUrl(1);
+			$morehtmlref .= '<br>'.$expedition->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$langs->load("projects");
-				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-				if (0) {    // Do not change on shipment
+				$morehtmlref .= '<br>';
+				if (0) {	// Do not change on shipment
+					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					if ($action == 'classify') {
-						// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$expedition->id.'">';
-						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-						$morehtmlref .= '</form>';
-					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
-					}
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
-					$morehtmlref .= ' : ';
 					if (!empty($objectsrc->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($objectsrc->fk_project);
-						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
-							$morehtmlref .= ' - '.$proj->title;
+							$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 						}
-					} else {
-						$morehtmlref .= '';
 					}
 				}
 			}
@@ -401,7 +391,7 @@ if ($action == 'create') {
 			*/
 
 			// Document origine
-			if ($typeobject == 'commande' && $expedition->origin_id && !empty($conf->commande->enabled)) {
+			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('commande')) {
 				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order = new Commande($db);
 				$order->fetch($expedition->origin_id);
@@ -410,7 +400,7 @@ if ($action == 'create') {
 				print "</td>\n";
 				print '</tr>';
 			}
-			if ($typeobject == 'propal' && $expedition->origin_id && !empty($conf->propal->enabled)) {
+			if ($typeobject == 'propal' && $expedition->origin_id && isModEnabled("propal")) {
 				$propal = new Propal($db);
 				$propal->fetch($expedition->origin_id);
 				print '<tr><td class="titlefield">'.$langs->trans("RefProposal").'</td>';
@@ -450,9 +440,9 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Incoterms
-			if (!empty($conf->incoterm->enabled)) {
+			if (isModEnabled('incoterm')) {
 				print '<tr><td>';
-				print '<table width="100%" class="nobordernopadding"><tr><td>';
+				print '<table class="centpercent nobordernopadding"><tr><td>';
 				print $langs->trans('IncotermLabel');
 				print '<td><td class="right">';
 				if ($user->rights->expedition->delivery->creer) {
@@ -475,13 +465,13 @@ if ($action == 'create') {
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			print nl2br($object->note_public);
+			print dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_public));
 			print "</td></tr>";
 
 			// Note Private
 			print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 			print '<td colspan="3">';
-			print nl2br($object->note_private);
+			print dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private));
 			print "</td></tr>";
 			*/
 
@@ -490,10 +480,11 @@ if ($action == 'create') {
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
 			print '</tr>';*/
 
-			if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
+
+			if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
 				// Entrepot
 				$entrepot = new Entrepot($db);
-				$entrepot->fetch($object->entrepot_id);
+				$entrepot->fetch($expedition->entrepot_id);
 				print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
 				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->label.'</a></td>';
 				print '</tr>';
@@ -546,7 +537,7 @@ if ($action == 'create') {
 						$product->fetch($object->lines[$i]->fk_product);
 
 						// Define output language
-						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$outputlangs = $langs;
 							$newlang = '';
 							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -576,11 +567,11 @@ if ($action == 'create') {
 						}
 						$text .= ' '.$object->lines[$i]->product_ref.'</a>';
 						$text .= ' - '.$label;
-						$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($object->lines[$i]->description));
+						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($object->lines[$i]->description));
 						//print $description;
 						print $form->textwithtooltip($text, $description, 3, '', '', $i);
-						print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						//print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
+						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 							print (!empty($object->lines[$i]->description) && $object->lines[$i]->description != $object->lines[$i]->product_label) ? '<br>'.dol_htmlentitiesbr($object->lines[$i]->description) : '';
 						}
 					} else {
@@ -598,7 +589,7 @@ if ($action == 'create') {
 							print $text.' '.nl2br($object->lines[$i]->description);
 						}
 
-						print_date_range($objp->date_start, $objp->date_end);
+						//print_date_range($objp->date_start, $objp->date_end);
 						print "</td>\n";
 					}
 
@@ -658,7 +649,7 @@ if ($action == 'create') {
 				}
 
 				if ($user->rights->expedition->delivery->supprimer) {
-					if ($conf->expedition_bon->enabled) {
+					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
 					} else {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id, '');

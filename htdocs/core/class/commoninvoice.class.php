@@ -34,6 +34,16 @@ abstract class CommonInvoice extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var int		Type of invoice (See TYPE_XXX constants)
+	 */
+	public $type = self::TYPE_STANDARD;
+
+	/**
+	 * @var int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table. May be used by some countries like Greece)
+	 */
+	public $subtype;
+
+	/**
 	 * Standard invoice
 	 */
 	const TYPE_STANDARD = 0;
@@ -131,8 +141,8 @@ abstract class CommonInvoice extends CommonObject
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
-	 *  @param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						Amount of payment already done, <0 and set ->error if KO
+	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|int|array						Amount of payment already done, <0 and set ->error if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -148,17 +158,27 @@ abstract class CommonInvoice extends CommonObject
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 
 			$this->db->free($resql);
-			if ($multicurrency) {
-				$this->sumpayed_multicurrency = $obj->multicurrency_amount;
-				return $obj->multicurrency_amount;
+
+			if ($obj) {
+				if ($multicurrency < 0) {
+					$this->sumpayed = $obj->amount;
+					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					return array('alreadypaid'=>(float) $obj->amount, 'alreadypaid_multicurrency'=>(float) $obj->multicurrency_amount);
+				} elseif ($multicurrency) {
+					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					return (float) $obj->multicurrency_amount;
+				} else {
+					$this->sumpayed = $obj->amount;
+					return (float) $obj->amount;
+				}
 			} else {
-				$this->sumpayed = $obj->amount;
-				return $obj->amount;
+				return 0;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
@@ -326,6 +346,7 @@ abstract class CommonInvoice extends CommonObject
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
 		$field3 = ', p.ref_ext';
+		$field4 = ', p.fk_bank'; // Bank line id
 		$sharedentity = 'facture';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			$table = 'paiementfourn_facturefourn';
@@ -336,7 +357,7 @@ abstract class CommonInvoice extends CommonObject
 			$sharedentity = 'facture_fourn';
 		}
 
-		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3;
+		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3 . $field4;
 		$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
 		$sql .= " WHERE pf.".$field." = ".((int) $this->id);
 		$sql .= " AND pf.".$field2." = p.rowid";
@@ -356,6 +377,9 @@ abstract class CommonInvoice extends CommonObject
 				$tmp = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
 				if (!empty($field3)) {
 					$tmp['ref_ext'] = $obj->ref_ext;
+				}
+				if (!empty($field4)) {
+					$tmp['fk_bank_line'] = $obj->fk_bank;
 				}
 				$retarray[] = $tmp;
 				$i++;
@@ -513,25 +537,43 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *	Return label of type of invoice
 	 *
-	 *	@return     string        Label of type of invoice
+	 *	@param		int			$withbadge		1=Add span for badge css, 2=Add span and show short label
+	 *	@return     string        				Label of type of invoice
 	 */
-	public function getLibType()
+	public function getLibType($withbadge = 0)
 	{
 		global $langs;
+
+		$labellong = "Unknown";
 		if ($this->type == CommonInvoice::TYPE_STANDARD) {
-			return $langs->trans("InvoiceStandard");
+			$labellong = "InvoiceStandard";
+			$labelshort = "InvoiceStandardShort";
 		} elseif ($this->type == CommonInvoice::TYPE_REPLACEMENT) {
-			return $langs->trans("InvoiceReplacement");
+			$labellong = "InvoiceReplacement";
+			$labelshort = "InvoiceReplacementShort";
 		} elseif ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) {
-			return $langs->trans("InvoiceAvoir");
+			$labellong = "InvoiceAvoir";
+			$labelshort = "CreditNote";
 		} elseif ($this->type == CommonInvoice::TYPE_DEPOSIT) {
-			return $langs->trans("InvoiceDeposit");
+			$labellong = "InvoiceDeposit";
+			$labelshort = "Deposit";
 		} elseif ($this->type == CommonInvoice::TYPE_PROFORMA) {
-			return $langs->trans("InvoiceProForma"); // Not used.
+			$labellong = "InvoiceProForma"; // Not used.
+			$labelshort = "ProForma";
 		} elseif ($this->type == CommonInvoice::TYPE_SITUATION) {
-			return $langs->trans("InvoiceSituation");
+			$labellong = "InvoiceSituation";
+			$labelshort = "Situation";
 		}
-		return $langs->trans("Unknown");
+
+		$out = '';
+		if ($withbadge) {
+			$out .= '<span class="badgeneutral" title="'.dol_escape_htmltag($langs->trans($labellong)).'">';
+		}
+		$out .= $langs->trans($withbadge == 2 ? $labelshort : $labellong);
+		if ($withbadge) {
+			$out .= '</span>';
+		}
+		return $out;
 	}
 
 	/**
@@ -560,7 +602,7 @@ abstract class CommonInvoice extends CommonObject
 	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1)
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $hookmanager;
 		$langs->load('bills');
 
 		if ($type == -1) {
@@ -610,6 +652,22 @@ abstract class CommonInvoice extends CommonObject
 			}
 		}
 
+		$parameters = array(
+			'status'      => $status,
+			'mode'        => $mode,
+			'paye'        => $paye,
+			'alreadypaid' => $alreadypaid,
+			'type'        => $type
+		);
+
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
+
+
+
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
@@ -619,7 +677,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  conditions and billing date.
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *  @return     integer    			       	Date limite de reglement si ok, <0 si ko
+	 *  @return     integer    			       	Date limit of payment if OK, <0 if KO
 	 */
 	public function calculate_date_lim_reglement($cond_reglement = 0)
 	{
@@ -629,6 +687,9 @@ abstract class CommonInvoice extends CommonObject
 		}
 		if (!$cond_reglement) {
 			$cond_reglement = $this->cond_reglement_id;
+		}
+		if (!$cond_reglement) {
+			return $this->date;
 		}
 
 		$cdr_nbjour = 0;
@@ -732,13 +793,13 @@ abstract class CommonInvoice extends CommonObject
 			$bac->fetch(0, $this->socid);
 
 			$sql = "SELECT count(*)";
-			$sql .= " FROM ".$this->db->prefix()."prelevement_facture_demande";
+			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			if ($type == 'bank-transfer') {
 				$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
 			} else {
 				$sql .= " WHERE fk_facture = ".((int) $this->id);
 			}
-			$sql .= " AND ext_payment_id IS NULL"; // To exclude record done for some online payments
+			$sql .= " AND type = 'ban'"; // To exclude record done for some online payments
 			$sql .= " AND traite = 0";
 
 			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
@@ -762,13 +823,13 @@ abstract class CommonInvoice extends CommonObject
 					}
 
 					if (is_numeric($amount) && $amount != 0) {
-						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_facture_demande(';
+						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
 						if ($type == 'bank-transfer') {
 							$sql .= 'fk_facture_fourn, ';
 						} else {
 							$sql .= 'fk_facture, ';
 						}
-						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, entity)';
+						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity)';
 						$sql .= " VALUES (".((int) $this->id);
 						$sql .= ", ".((float) price2num($amount));
 						$sql .= ", '".$this->db->idate($now)."'";
@@ -778,6 +839,7 @@ abstract class CommonInvoice extends CommonObject
 						$sql .= ", '".$this->db->escape($bac->number)."'";
 						$sql .= ", '".$this->db->escape($bac->cle_rib)."'";
 						$sql .= ", '".$this->db->escape($sourcetype)."'";
+						$sql .= ", 'ban'";
 						$sql .= ", ".((int) $conf->entity);
 						$sql .= ")";
 
@@ -823,6 +885,479 @@ abstract class CommonInvoice extends CommonObject
 		}
 	}
 
+
+	/**
+	 *	Create a payment order into prelevement_demande then send the payment order to Stripe (for a direct debit order or a credit transfer order).
+	 *
+	 *	@param      User	$fuser      	User asking the direct debit transfer
+	 *  @param		int		$did			ID of unitary payment request to pay
+	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
+	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
+	 *	@return     int         			<0 if KO, >0 if OK
+	 */
+	public function makeStripeSepaRequest($fuser, $did = 0, $type = 'direct-debit', $sourcetype = 'facture')
+	{
+		global $conf, $mysoc, $user, $langs;
+
+		if ($type != 'bank-transfer' && $type != 'credit-transfer' && empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+			return 0;
+		}
+		if ($type != 'direct-debit' && empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+			return 0;
+		}
+
+		$error = 0;
+
+		dol_syslog(get_class($this)."::makeStripeSepaRequest start", LOG_DEBUG);
+
+		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0) {
+			// Get the default payment mode for BAN payment of the third party
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			$bac = new CompanyBankAccount($this->db);	// table societe_rib
+			$result = $bac->fetch(0, $this->socid, 1, 'ban');
+			if ($result <= 0 || empty($bac->id)) {
+				$this->error = $langs->trans("ThirdpartyHasNoDefaultBanAccount");
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error);
+				return -1;
+			}
+
+			// Load the request to process
+			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_prelevement_bons";
+			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
+			$sql .= " WHERE rowid = ".((int) $did);
+			if ($type != 'bank-transfer' && $type != 'credit-transfer') {
+				$sql .= " AND fk_facture = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+			}
+			if ($type != 'direct-debit') {
+				$sql .= " AND fk_facture_fourn = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+			}
+			$sql .= " AND traite = 0";	// Add a protection to not process twice
+
+			dol_syslog(get_class($this)."::makeStripeSepaRequest load requests to process", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if (!$obj) {
+					dol_print_error($this->db, 'CantFindRequestWithId');
+					return -2;
+				}
+
+				// amount to pay
+				$amount = $obj->amount;
+
+				if (is_numeric($amount) && $amount != 0) {
+					require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
+					$companypaymentmode = new CompanyPaymentMode($this->db);	// table societe_rib
+					$companypaymentmode->fetch($bac->id);
+
+					// Start code for Stripe
+					// TODO We may have this coming as a parameter from the caller.
+					$service = 'StripeTest';
+					$servicestatus = 0;
+					if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+						$service = 'StripeLive';
+						$servicestatus = 1;
+					}
+
+					dol_syslog("makeStripeSepaRequest amount = ".$amount." service=" . $service . " servicestatus=" . $servicestatus . " thirdparty_id=" . $this->socid." did=".$did);
+
+					$this->stripechargedone = 0;
+					$this->stripechargeerror = 0;
+
+					$now = dol_now();
+
+					$currency = $conf->currency;
+
+					global $stripearrayofkeysbyenv;
+
+					$errorforinvoice = 0;     // We reset the $errorforinvoice at each invoice loop
+
+					$this->fetch_thirdparty();
+
+					dol_syslog("--- Process payment request thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
+
+					//$alreadypayed = $this->getSommePaiement();
+					//$amount_credit_notes_included = $this->getSumCreditNotesUsed();
+					//$amounttopay = $this->total_ttc - $alreadypayed - $amount_credit_notes_included;
+					$amounttopay = $amount;
+
+					// Correct the amount according to unit of currency
+					// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
+					$arrayzerounitcurrency = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];
+					$amountstripe = $amounttopay;
+					if (!in_array($currency, $arrayzerounitcurrency)) {
+						$amountstripe = $amountstripe * 100;
+					}
+
+					$fk_bank_account = getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');		// Bank account used for SEPA direct debit or credit transfer. Must be the Stripe account in Dolibarr.
+					if (!($fk_bank_account > 0)) {
+						$error++;
+						$errorforinvoice++;
+						dol_syslog("Error no bank account defined for Stripe payments", LOG_ERR);
+						$this->errors[] = "Error bank account for Stripe payments not defined into Stripe module";
+					}
+
+					$this->db->begin();
+
+					// Create a prelevement_bon
+					require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+					$bon = new BonPrelevement($this->db);
+					if (!$error) {
+						if (empty($obj->fk_prelevement_bons)) {
+							// This create record into llx_prelevment_bons and update link with llx_prelevement_demande
+							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', '', 0, $type, $did, $fk_bank_account);
+							if ($nbinvoices <= 0) {
+								$error++;
+								$errorforinvoice++;
+								dol_syslog("Error on BonPrelevement creation", LOG_ERR);
+								$this->errors[] = "Error on BonPrelevement creation";
+							}
+							/*
+							if (!$error) {
+								// Update the direct debit payment request of the processed request to save the id of the prelevement_bon
+								$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
+								$sql .= " fk_prelevement_bons = ".((int) $bon->id);
+								$sql .= " WHERE rowid = ".((int) $did);
+
+								$result = $this->db->query($sql);
+								if ($result < 0) {
+									$error++;
+									$this->errors[] = "Error on updateing fk_prelevement_bons to ".$bon->id;
+								}
+							}
+							*/
+						} else {
+							$error++;
+							$errorforinvoice++;
+							dol_syslog("Error Line already part of a bank payment order", LOG_ERR);
+							$this->errors[] = "The line is already included into a bank payment order. Delete the bank payment order first.";
+						}
+					}
+
+					if (!$error) {
+						if ($amountstripe > 0) {
+							try {
+								//var_dump($companypaymentmode);
+								dol_syslog("We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
+
+								$thirdparty = new Societe($this->db);
+								$resultthirdparty = $thirdparty->fetch($this->socid);
+
+								include_once DOL_DOCUMENT_ROOT . '/stripe/class/stripe.class.php';        // This include the include of htdocs/stripe/config.php
+								// So it inits or erases the $stripearrayofkeysbyenv
+								$stripe = new Stripe($this->db);
+
+								dol_syslog("makeStripeSepaRequest Current Stripe environment is " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key']);
+
+								$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
+								\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+
+
+								dol_syslog("makeStripeSepaRequest get stripe connet account", LOG_DEBUG);
+								$stripeacc = $stripe->getStripeAccount($service, $this->socid);								// Get Stripe OAuth connect account if it exists (no network access here)
+								dol_syslog("makeStripeSepaRequest get stripe connect account return " . json_encode($stripeacc), LOG_DEBUG);
+
+								$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
+								if (empty($customer) && !empty($stripe->error)) {
+									$this->errors[] = $stripe->error;
+								}
+
+								// $nbhoursbetweentries = (empty($conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES) ? 49 : $conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES);				// Must have more that 48 hours + 1 between each try (so 1 try every 3 daily batch)
+								// $nbdaysbeforeendoftries = (empty($conf->global->SELLYOURSAAS_NBDAYSBEFOREENDOFTRIES) ? 35 : $conf->global->SELLYOURSAAS_NBDAYSBEFOREENDOFTRIES);
+								$postactionmessages = [];
+
+								if ($resultthirdparty > 0 && !empty($customer)) {
+									if (!$error) {	// Payment was not canceled
+										$stripecard = null;
+										if ($companypaymentmode->type == 'ban') {
+											// Check into societe_rib if a payment mode for Stripe and ban payment exists
+											// To make a Stripe SEPA payment request, we must have the payment mode source already saved into societe_rib and retreived with ->sepaStripe
+											// The payment mode source is created when we create the bank account on Stripe with paymentmodes.php?action=create
+											$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
+										} else {
+											$error++;
+											$this->error = 'The payment mode type is not "ban"';
+										}
+
+										if ($stripecard) {  // Can be src_... (for sepa) or pm_... (new card mode). Note that card_... (old card mode) should not happen here.
+											$FULLTAG = 'DID='.$did.'-INV=' . $this->id . '-CUS=' . $thirdparty->id;
+											$description = 'Stripe payment from makeStripeSepaRequest: ' . $FULLTAG . ' did='.$did.' ref=' . $this->ref;
+
+											$stripefailurecode = '';
+											$stripefailuremessage = '';
+											$stripefailuredeclinecode = '';
+
+											// Using new SCA method
+											dol_syslog("* Create payment on SEPA " . $stripecard->id . ", amounttopay=" . $amounttopay . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
+
+											// Create payment intent and charge payment (confirmnow = true)
+											$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $this, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1, 1, $did);
+
+											$charge = new stdClass();
+
+											if ($paymentintent->status === 'succeeded' || $paymentintent->status === 'processing') {
+												$charge->status = 'ok';
+												$charge->id = $paymentintent->id;
+												$charge->customer = $customer->id;
+											} elseif ($paymentintent->status === 'requires_action') {
+												//paymentintent->status may be => 'requires_action' (no error in such a case)
+												dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
+
+												$charge->status = 'failed';
+												$charge->customer = $customer->id;
+												$charge->failure_code = $stripe->code;
+												$charge->failure_message = $stripe->error;
+												$charge->failure_declinecode = $stripe->declinecode;
+												$stripefailurecode = $stripe->code;
+												$stripefailuremessage = 'Action required. Contact the support at ';// . $conf->global->SELLYOURSAAS_MAIN_EMAIL;
+												$stripefailuredeclinecode = $stripe->declinecode;
+											} else {
+												dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
+
+												$charge->status = 'failed';
+												$charge->customer = $customer->id;
+												$charge->failure_code = $stripe->code;
+												$charge->failure_message = $stripe->error;
+												$charge->failure_declinecode = $stripe->declinecode;
+												$stripefailurecode = $stripe->code;
+												$stripefailuremessage = $stripe->error;
+												$stripefailuredeclinecode = $stripe->declinecode;
+											}
+
+											//var_dump("stripefailurecode=".$stripefailurecode." stripefailuremessage=".$stripefailuremessage." stripefailuredeclinecode=".$stripefailuredeclinecode);
+											//exit;
+
+
+											// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
+											if (empty($charge) || $charge->status == 'failed') {
+												dol_syslog('Failed to charge payment mode ' . $stripecard->id . ' stripefailurecode=' . $stripefailurecode . ' stripefailuremessage=' . $stripefailuremessage . ' stripefailuredeclinecode=' . $stripefailuredeclinecode, LOG_WARNING);
+
+												// Save a stripe payment was in error
+												$this->stripechargeerror++;
+
+												$error++;
+												$errorforinvoice++;
+												$errmsg = $langs->trans("FailedToChargeCard");
+												if (!empty($charge)) {
+													if ($stripefailuredeclinecode == 'authentication_required') {
+														$errauthenticationmessage = $langs->trans("ErrSCAAuthentication");
+														$errmsg = $errauthenticationmessage;
+													} elseif (in_array($stripefailuredeclinecode, ['insufficient_funds', 'generic_decline'])) {
+														$errmsg .= ': ' . $charge->failure_code;
+														$errmsg .= ($charge->failure_message ? ' - ' : '') . ' ' . $charge->failure_message;
+														if (empty($stripefailurecode)) {
+															$stripefailurecode = $charge->failure_code;
+														}
+														if (empty($stripefailuremessage)) {
+															$stripefailuremessage = $charge->failure_message;
+														}
+													} else {
+														$errmsg .= ': failure_code=' . $charge->failure_code;
+														$errmsg .= ($charge->failure_message ? ' - ' : '') . ' failure_message=' . $charge->failure_message;
+														if (empty($stripefailurecode)) {
+															$stripefailurecode = $charge->failure_code;
+														}
+														if (empty($stripefailuremessage)) {
+															$stripefailuremessage = $charge->failure_message;
+														}
+													}
+												} else {
+													$errmsg .= ': ' . $stripefailurecode . ' - ' . $stripefailuremessage;
+													$errmsg .= ($stripefailuredeclinecode ? ' - ' . $stripefailuredeclinecode : '');
+												}
+
+												$description = 'Stripe payment ERROR from makeStripeSepaRequest: ' . $FULLTAG;
+												$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
+												$this->errors[] = $errmsg;
+											} else {
+												dol_syslog('Successfuly request '.$type.' '.$stripecard->id);
+
+												$postactionmessages[] = 'Success to request '.$type.' (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
+
+												// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
+												// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
+												$this->stripechargedone++;
+
+												// Default description used for label of event. Will be overwrite by another value later.
+												$description = 'Stripe payment request OK (' . $charge->id . ') from makeStripeSepaRequest: ' . $FULLTAG;
+											}
+
+											$object = $this;
+
+											// Track an event
+											if (empty($charge) || $charge->status == 'failed') {
+												$actioncode = 'PAYMENT_STRIPE_KO';
+												$extraparams = $stripefailurecode;
+												$extraparams .= (($extraparams && $stripefailuremessage) ? ' - ' : '') . $stripefailuremessage;
+												$extraparams .= (($extraparams && $stripefailuredeclinecode) ? ' - ' : '') . $stripefailuredeclinecode;
+											} else {
+												$actioncode = 'PAYMENT_STRIPE_OK';
+												$extraparams = '';
+											}
+										} else {
+											$error++;
+											$errorforinvoice++;
+											dol_syslog("No ban payment method found for this stripe customer " . $customer->id, LOG_WARNING);
+											$this->errors[] = 'Failed to get direct debit payment method for stripe customer = ' . $customer->id;
+
+											$description = 'Failed to find or use the payment mode - no ban defined for the thirdparty account';
+											$stripefailurecode = 'BADPAYMENTMODE';
+											$stripefailuremessage = 'Failed to find or use the payment mode - no ban defined for the thirdparty account';
+											$postactionmessages[] = $description . ' (' . $stripearrayofkeys['publishable_key'] . ')';
+
+											$object = $this;
+
+											$actioncode = 'PAYMENT_STRIPE_KO';
+											$extraparams = '';
+										}
+									} else {
+										// If error because payment was canceled for a logical reason, we do nothing (no event added)
+										$description = '';
+										$stripefailurecode = '';
+										$stripefailuremessage = '';
+
+										$object = $this;
+
+										$actioncode = '';
+										$extraparams = '';
+									}
+								} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
+									if ($resultthirdparty <= 0) {
+										dol_syslog('SellYourSaasUtils Failed to load customer for thirdparty_id = ' . $thirdparty->id, LOG_WARNING);
+										$this->errors[] = 'Failed to load Stripe account for thirdparty_id = ' . $thirdparty->id;
+									} else { // $customer stripe not found
+										dol_syslog('SellYourSaasUtils Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_WARNING);
+										$this->errors[] = 'Failed to get Stripe account id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+									}
+									$error++;
+									$errorforinvoice++;
+
+									$description = 'Failed to find or use your payment mode (no payment mode for this customer id)';
+									$stripefailurecode = 'BADPAYMENTMODE';
+									$stripefailuremessage = 'Failed to find or use your payment mode (no payment mode for this customer id)';
+									$postactionmessages = [];
+
+									$object = $this;
+
+									$actioncode = 'PAYMENT_STRIPE_KO';
+									$extraparams = '';
+								}
+
+								if ($description) {
+									dol_syslog("* Record event for credit transfer or direct debit request result - " . $description);
+									require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+									// Insert record of payment (success or error)
+									$actioncomm = new ActionComm($this->db);
+
+									$actioncomm->type_code = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+									$actioncomm->code = 'AC_' . $actioncode;
+									$actioncomm->label = $description;
+									$actioncomm->note_private = join(",\n", $postactionmessages);
+									$actioncomm->fk_project = $this->fk_project;
+									$actioncomm->datep = $now;
+									$actioncomm->datef = $now;
+									$actioncomm->percentage = -1;   // Not applicable
+									$actioncomm->socid = $thirdparty->id;
+									$actioncomm->contactid = 0;
+									$actioncomm->authorid = $user->id;   // User saving action
+									$actioncomm->userownerid = $user->id;	// Owner of action
+									// Fields when action is a real email (content is already into note)
+									/*$actioncomm->email_msgid = $object->email_msgid;
+									 $actioncomm->email_from  = $object->email_from;
+									 $actioncomm->email_sender= $object->email_sender;
+									 $actioncomm->email_to    = $object->email_to;
+									 $actioncomm->email_tocc  = $object->email_tocc;
+									 $actioncomm->email_tobcc = $object->email_tobcc;
+									 $actioncomm->email_subject = $object->email_subject;
+									 $actioncomm->errors_to   = $object->errors_to;*/
+									$actioncomm->fk_element = $this->id;
+									$actioncomm->elementtype = $this->element;
+									$actioncomm->extraparams = dol_trunc($extraparams, 250);
+
+									$actioncomm->create($user);
+								}
+
+								$this->description = $description;
+								$this->postactionmessages = $postactionmessages;
+							} catch (Exception $e) {
+								$error++;
+								$errorforinvoice++;
+								dol_syslog('Error ' . $e->getMessage(), LOG_ERR);
+								$this->errors[] = 'Error ' . $e->getMessage();
+							}
+						} else {	// If remain to pay is null
+							$error++;
+							$errorforinvoice++;
+							dol_syslog("Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?", LOG_WARNING);
+							$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
+						}
+					}
+
+					// Set status of the order to "Transferred" with method 'api'
+					if (!$error && !$errorforinvoice) {
+						$result = $bon->set_infotrans($user, $now, 3);
+						if ($result < 0) {
+							$error++;
+							$errorforinvoice++;
+							dol_syslog("Error on BonPrelevement creation", LOG_ERR);
+							$this->errors[] = "Error on BonPrelevement creation";
+						}
+					}
+
+					if (!$error && !$errorforinvoice) {
+						// Update the direct debit payment request of the processed invoice to save the id of the prelevement_bon
+						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
+						$sql .= " ext_payment_id = '".$this->db->escape($paymentintent->id)."',";
+						$sql .= " ext_payment_site = '".$this->db->escape($service)."'";
+						$sql .= " WHERE rowid = ".((int) $did);
+
+						dol_syslog(get_class($this)."::makeStripeSepaRequest update to save stripe paymentintent ids", LOG_DEBUG);
+						$resql = $this->db->query($sql);
+						if (!$resql) {
+							$this->error = $this->db->lasterror();
+							dol_syslog(get_class($this).'::makeStripeSepaRequest Erreur');
+							$error++;
+						}
+					}
+
+					if (!$error && !$errorforinvoice) {
+						$this->db->commit();
+					} else {
+						$this->db->rollback();
+					}
+				} else {
+					$this->error = 'WithdrawRequestErrorNilAmount';
+					dol_syslog(get_class($this).'::makeStripeSepaRequest WithdrawRequestErrorNilAmount');
+					$error++;
+				}
+
+				/*
+				if (!$error) {
+					// Force payment mode of the invoice to withdraw
+					$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
+					if ($payment_mode_id > 0) {
+						$result = $this->setPaymentMethods($payment_mode_id);
+					}
+				}*/
+
+				if ($error) {
+					return -1;
+				}
+				return 1;
+			} else {
+				$this->error = $this->db->error();
+				dol_syslog(get_class($this).'::makeStripeSepaRequest Erreur -2');
+				return -2;
+			}
+		} else {
+			$this->error = "Status of invoice does not allow this";
+			dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
+			return -3;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Remove a direct debit request or a credit transfer request
@@ -834,7 +1369,7 @@ abstract class CommonInvoice extends CommonObject
 	public function demande_prelevement_delete($fuser, $did)
 	{
 		// phpcs:enable
-		$sql = 'DELETE FROM '.$this->db->prefix().'prelevement_facture_demande';
+		$sql = 'DELETE FROM '.$this->db->prefix().'prelevement_demande';
 		$sql .= ' WHERE rowid = '.((int) $did);
 		$sql .= ' AND traite = 0';
 		if ($this->db->query($sql)) {
@@ -941,33 +1476,48 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->ref_client) {
 			$complementaryinfo .= '/20/'.$this->ref_client;
 		}
-		if ($this->thirdparty->vat_number) {
-			$complementaryinfo .= '/30/'.$this->thirdparty->vat_number;
+		if ($this->thirdparty->tva_intra) {
+			$complementaryinfo .= '/30/'.$this->thirdparty->tva_intra;
 		}
 
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$bankaccount = new Account($this->db);
+
 		// Header
+		$s = '';
 		$s .= "SPC\n";
 		$s .= "0200\n";
 		$s .= "1\n";
+		// Info Seller ("Compte / Payable à")
 		if ($this->fk_account > 0) {
-			// Bank BAN if country is LI or CH
-			// TODO Add
-			$bankaccount = new Account($this->db);
+			// Bank BAN if country is LI or CH.  TODO Add a test to check than IBAN start with CH or LI
 			$bankaccount->fetch($this->fk_account);
 			$s .= $bankaccount->iban."\n";
 		} else {
 			$s .= "\n";
 		}
-		// Seller
-		$s .= "S\n";
-		$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
-		$addresslinearray = explode("\n", $mysoc->address);
-		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
-		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
-		$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
-		$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
-		$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
-		// Final seller
+		if ($bankaccount->id > 0 && getDolGlobalString('PDF_SWISS_QRCODE_USE_OWNER_OF_ACCOUNT_AS_CREDITOR')) {
+			// If a bank account is prodived and we ask to use it as creditor, we use the bank address
+			// TODO In a future, we may always use this address, and if name/address/zip/town/country differs from $mysoc, we can use the address of $mysoc into the final seller field ?
+			$s .= "S\n";
+			$s .= dol_trunc($bankaccount->proprio, 70, 'right', 'UTF-8', 1)."\n";
+			$addresslinearray = explode("\n", $bankaccount->owner_address);
+			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+			/*$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";*/
+		} else {
+			$s .= "S\n";
+			$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
+			$addresslinearray = explode("\n", $mysoc->address);
+			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+			$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
+		}
+		// Final seller (Ultimate seller) ("Créancier final" = "En faveur de")
 		$s .= "\n";
 		$s .= "\n";
 		$s .= "\n";
@@ -989,13 +1539,18 @@ abstract class CommonInvoice extends CommonObject
 		$s .= dol_trunc($this->thirdparty->country_code, 2, 'right', 'UTF-8', 1)."\n";
 		// ID of payment
 		$s .= "NON\n";			// NON or QRR
-		$s .= "\n";				// QR Code if previous field is QRR
+		$s .= "\n";				// QR Code reference if previous field is QRR
+		// Free text
 		if ($complementaryinfo) {
 			$s .= $complementaryinfo."\n";
 		} else {
 			$s .= "\n";
 		}
 		$s .= "EPD\n";
+		// More text, complementary info
+		if ($complementaryinfo) {
+			$s .= $complementaryinfo."\n";
+		}
 		$s .= "\n";
 		//var_dump($s);exit;
 		return $s;

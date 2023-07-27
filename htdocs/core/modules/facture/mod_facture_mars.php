@@ -72,7 +72,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -158,7 +158,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 * @param	Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string       			Value if OK, 0 if KO
+	 * @return  string|int       		Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -233,6 +233,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			return $prefix.$yymm."-".$num;
 		} else {
 			dol_print_error('', 'Bad parameter for getNextValue');
+			return -1;
 		}
 	}
 

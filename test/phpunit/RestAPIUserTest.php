@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +61,12 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return DateLibTest
+	 * @param 	string	$name		Name
+	 * @return RestAPIUserTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -73,7 +75,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$this->savlangs=$langs;
 		$this->savdb=$db;
 
-		if (empty($conf->api->enabled)) {
+		if (!isModEnabled('api')) {
 			print __METHOD__." module api must be enabled.\n"; die(1);
 		}
 
@@ -87,7 +89,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -100,7 +102,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -113,7 +115,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	*/
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -146,7 +148,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}

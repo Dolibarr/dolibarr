@@ -59,7 +59,7 @@ class box_factures_fourn extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->fournisseur->facture->lire);
+		$this->hidden = !($user->hasRight('fournisseur', 'facture', 'lire'));
 	}
 
 	/**
@@ -84,7 +84,7 @@ class box_factures_fourn extends ModeleBoxes
 			'text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierBills", $max)
 		);
 
-		if ($user->rights->fournisseur->facture->lire) {
+		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
 			$langs->load("bills");
 
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";

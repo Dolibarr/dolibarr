@@ -137,7 +137,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= " ".(!isset($this->libelle_facture) ? 'NULL' : "'".$this->db->escape($this->libelle_facture)."'").",";
 		$sql .= " ".(!isset($this->type_cdr) ? 'NULL' : "'".$this->db->escape($this->type_cdr)."'").",";
 		$sql .= " ".(!isset($this->nbjour) ? 'NULL' : "'".$this->db->escape($this->nbjour)."'").",";
-		$sql .= " ".(!isset($this->decalage) ? 'NULL' : "'".$this->db->escape($this->decalage)."'")."";
+		$sql .= " ".(!isset($this->decalage) ? 'NULL' : "'".$this->db->escape($this->decalage)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -316,7 +316,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= " libelle_facture=".(isset($this->libelle_facture) ? "'".$this->db->escape($this->libelle_facture)."'" : "null").",";
 		$sql .= " type_cdr=".(isset($this->type_cdr) ? $this->type_cdr : "null").",";
 		$sql .= " nbjour=".(isset($this->nbjour) ? $this->nbjour : "null").",";
-		$sql .= " decalage=".(isset($this->decalage) ? $this->decalage : "null")."";
+		$sql .= " decalage=".(isset($this->decalage) ? $this->decalage : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

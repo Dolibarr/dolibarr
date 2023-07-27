@@ -28,6 +28,7 @@ create table llx_c_tva
   localtax1_type	varchar(10)	 NOT NULL DEFAULT '0',
   localtax2         varchar(20)  NOT NULL DEFAULT '0',
   localtax2_type	varchar(10)  NOT NULL DEFAULT '0',
+  use_default	    tinyint DEFAULT 0,								-- set to 1 to be the default vat when no vat defined on product
   recuperableonly   integer NOT NULL DEFAULT 0,
   note              varchar(128),
   active            tinyint DEFAULT 1 NOT NULL,

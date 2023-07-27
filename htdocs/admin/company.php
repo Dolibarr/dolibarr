@@ -27,6 +27,7 @@
  *	\brief      Setup page to configure company/foundation
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -117,7 +118,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 		// Remove to check file size to large
 		/*if ($_FILES[$varforimage]["tmp_name"]) {*/
-			$reg = array();
+		$reg = array();
 		if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
 			$original_file = $reg[1];
 
@@ -194,7 +195,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("object", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START", 'int'), 'chaine', 0, '', $conf->entity);
 
@@ -231,6 +232,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
+
+	// Remove constant MAIN_INFO_SOCIETE_SETUP_TODO_WARNING
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_SETUP_TODO_WARNING", $conf->entity);
 
 	if (!$error) {
 		if (GETPOST('save')) {	// To avoid to show message when we juste switch the country that resubmit the form.
@@ -403,7 +407,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th></th></tr>'."\n";
 
 // Name
 print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
@@ -470,7 +474,7 @@ print '<input class="maxwidth300 widthcentpercentminusx" name="web" id="web" val
 print '</td></tr>'."\n";
 
 // Barcode
-if (!empty($conf->barcode->enabled)) {
+if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
 	print '<span class="fa fa-barcode pictofixedwidth"></span>';
@@ -478,11 +482,15 @@ if (!empty($conf->barcode->enabled)) {
 	print '</td></tr>';
 }
 
-// Logo
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), 'png, jpg').'</label></td><td>';
-print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+// Tooltip for both Logo and LogSquarred
+$tooltiplogo = $langs->trans('AvailableFormats').' : png, jpg, jpeg';
 $maxfilesizearray = getMaxFileSizeArray();
 $maxmin = $maxfilesizearray['maxmin'];
+$tooltiplogo .= ($maxmin > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxmin.' '.$langs->trans('Kb') : '';
+
+// Logo
+print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), $tooltiplogo).'</label></td><td>';
+print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 if ($maxmin > 0) {
 	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
@@ -521,7 +529,7 @@ print '</div>';
 print '</td></tr>';
 
 // Logo (squarred)
-print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), 'png, jpg').'</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), $tooltiplogo).'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 $maxfilesizearray = getMaxFileSizeArray();
 $maxmin = $maxfilesizearray['maxmin'];
@@ -567,12 +575,14 @@ print '</td></tr>';
 
 print '</table>';
 
+
 print '<br>';
+
 
 // IDs of the company (country-specific)
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><td class="titlefieldcreate wordbreak">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldcreate wordbreak">'.$langs->trans("CompanyIds").'</td><td></td></tr>';
 
 $langs->load("companies");
 
@@ -671,8 +681,8 @@ print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dol_escape_
 print '</td></tr>';
 
 // Object of the company
-print '<tr class="oddeven"><td><label for="object">'.$langs->trans("CompanyObject").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="object" id="object" rows="'.ROWS_5.'">'.(!empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
+print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
+print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_5.'">'.(!empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';
@@ -683,7 +693,7 @@ print '</div>';
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</td><td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
@@ -698,7 +708,7 @@ print load_fiche_titre($langs->trans("TypeOfSaleTaxes"), '', 'object_payment');
 
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$langs->trans("VATManagement").'</td><td></td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
@@ -728,7 +738,7 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax1Management", $mysoc->country_code), $langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax1Management", $mysoc->country_code), $langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)).'</td><td></td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
@@ -748,7 +758,7 @@ if ($mysoc->useLocalTax(1)) {
 	$opcions = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
 
 	print '<br><label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
-	print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
+	print $form->selectarray("clt1", $opcions, getDolGlobalString('MAIN_INFO_LOCALTAX_CALC1'));
 	print "</div>";
 	print "</td></tr>\n";
 
@@ -772,7 +782,7 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax2Management", $mysoc->country_code), $langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="titlefieldcreate">'.$form->textwithpicto($langs->transcountry("LocalTax2Management", $mysoc->country_code), $langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)).'</td><td></td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
@@ -789,7 +799,7 @@ if ($mysoc->useLocalTax(2)) {
 		$formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
 	}
 	print '<br><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
-	print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
+	print $form->selectarray("clt2", $opcions, getDolGlobalString('MAIN_INFO_LOCALTAX_CALC2'));
 	print "</div>";
 	print "</td></tr>\n";
 
@@ -816,7 +826,7 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td>'.$form->textwithpicto($langs->trans("RevenueStamp"), $langs->trans("RevenueStampDesc")).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("RevenueStamp"), $langs->trans("RevenueStampDesc")).'</td><td></td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 if ($mysoc->useRevenueStamp()) {

@@ -93,7 +93,7 @@ print '<tr><td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td c
 print '</tr>';
 
 // Serial / Eat-by date
-if (!empty($conf->productbatch->enabled) &&
+if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stock'))
 ) {

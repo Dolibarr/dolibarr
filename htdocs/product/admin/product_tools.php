@@ -25,6 +25,7 @@
 // TODO We must add a confirmation on button because this will make a mass change
 // FIXME Should also change table product_price for price levels
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';

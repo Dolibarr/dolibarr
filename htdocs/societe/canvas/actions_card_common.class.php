@@ -70,6 +70,8 @@ abstract class ActionsCardCommon
 			$object->fetch($id, $ref);
 		}
 		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -186,7 +188,7 @@ abstract class ActionsCardCommon
 			$s = $modCodeClient->getToolTip($langs, $this->object, 0);
 			$this->tpl['help_customercode'] = $form->textwithpicto('', $s, 1);
 
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				$this->tpl['supplier_enabled'] = 1;
 
 				// Load object modCodeFournisseur
@@ -246,7 +248,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Language
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang ? $this->object->default_lang : $conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1);
 			}
 
@@ -306,7 +308,7 @@ abstract class ActionsCardCommon
 			$arr = $formcompany->typent_array(1);
 			$this->tpl['typent'] = $arr[$this->object->typent_code];
 
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				//$s=picto_from_langcode($this->default_lang);
 				//print ($s?$s.' ':'');
@@ -342,7 +344,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Linked member
-			if (!empty($conf->adherent->enabled)) {
+			if (isModEnabled('adherent')) {
 				$langs->load("members");
 				$adh = new Adherent($this->db);
 				$result = $adh->fetch('', '', $this->object->id);
@@ -380,7 +382,7 @@ abstract class ActionsCardCommon
 	 *  Assign POST values into object
 	 *
 	 *	@param		string		$action		Action string
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post($action)
 	{

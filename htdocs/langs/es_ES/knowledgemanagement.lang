@@ -47,8 +47,14 @@ KnowledgeRecord = Artículo
 KnowledgeRecordExtraFields = Campos adicionales para el artículo
 GroupOfTicket=Grupo de tickets
 YouCanLinkArticleToATicketCategory=Puede vincular el artículo a un grupo de tickets (para que el artículo se resalte en cualquier ticket de este grupo)
-SuggestedForTicketsInGroup=Sugerido para tickets cuando el grupo es
+SuggestedForTicketsInGroup=Sugerido en la creación del ticket
 
 SetObsolete=Marcar como obsoleto
 ConfirmCloseKM=¿Confirma el cierre de este artículo como obsoleto?
 ConfirmReopenKM=¿Quieres reabrir este artículo al estado "Validado"?
+BoxLastKnowledgerecordDescription=Últimos artículos %s
+BoxLastKnowledgerecord=Últimos artículos
+BoxLastKnowledgerecordContent=Últimos artículos
+BoxLastKnowledgerecordModifiedContent=Últimos artículos modificados
+BoxLastModifiedKnowledgerecordDescription=Últimos artículos modificados %s
+BoxLastModifiedKnowledgerecord=Últimos artículos modificados

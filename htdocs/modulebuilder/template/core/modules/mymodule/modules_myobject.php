@@ -122,7 +122,7 @@ abstract class ModeleNumRefMyObject
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Descriptive text
 	 */
 	public function info()
 	{

@@ -23,6 +23,7 @@
  *       \brief      Page to setup emails sending
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -110,8 +111,11 @@ if ($action == 'send' && !$cancel) {
 		$body = make_substitutions($body, $substitutionarrayfortest);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
-
-		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
+		try {
+			$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
+		} catch (Exception $e) {
+			setEventMessages($e->getMessage(), null, 'error');
+		}
 		$result = $smsfile->sendfile(); // This send SMS
 
 		if ($result) {

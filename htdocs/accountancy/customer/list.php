@@ -43,10 +43,11 @@ $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", 
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountancycustomerlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
+
 $default_account = GETPOST('default_account', 'int');
 
 // Select Box
@@ -73,8 +74,6 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
-$btn_ventil = GETPOST('ventil', 'alpha');
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -92,6 +91,8 @@ if (!$sortfield) {
 if (!$sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
 		$sortorder = "DESC";
+	} else {
+		$sortorder = "ASC";
 	}
 }
 
@@ -101,7 +102,7 @@ $hookmanager->initHooks(array('accountancycustomerlist'));
 $formaccounting = new FormAccounting($db);
 $accountingAccount = new AccountingAccount($db);
 
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -110,7 +111,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -165,7 +166,7 @@ if (empty($reshook)) {
 }
 
 
-if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
+if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	$msg = '';
 
 	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
@@ -209,6 +210,11 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 	}
 }
 
+if (GETPOST('sortfield') == 'f.datef, f.ref, l.rowid') {
+	$value = (GETPOST('sortorder') == 'asc,asc,asc' ? 0 : 1);
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $value, 'yesno', 0, '', $conf->entity);
+}
 
 
 /*
@@ -229,8 +235,8 @@ if (empty($chartaccountcode)) {
 }
 
 // Customer Invoice lines
-$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype,";
-$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype, f.situation_cycle_ref, f.fk_facture_source,";
+$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.situation_percent, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
@@ -353,7 +359,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -383,7 +389,7 @@ if ($result) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($search_societe) {
 		$param .= '&search_societe='.urlencode($search_societe);
@@ -440,7 +446,7 @@ if ($result) {
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	//if ($user->hasRight('mymodule', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	if ($massaction !== 'set_default_account') {
 		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
@@ -496,7 +502,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1, null, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
@@ -520,8 +526,8 @@ if ($result) {
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntraShort", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'nowraponall ');
-	print_liste_field_titre("IntoAccount", '', '', '', '', '', '', '', 'center ');
+	print_liste_field_titre("DataUsedToSuggestAccount", '', '', '', '', '', '', '', 'nowraponall ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'center ');
 	$checkpicto = '';
 	if ($massactionbutton) {
 		$checkpicto = $form->showCheckAddButtons('checkforselect', 1);
@@ -579,6 +585,7 @@ if ($result) {
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
 		$facture_static->date = $db->jdate($objp->datef);
+		$facture_static->fk_facture_source = $objp->fk_facture_source;
 
 		$facture_static_det->id = $objp->rowid;
 		$facture_static_det->total_ht = $objp->total_ht;
@@ -639,7 +646,7 @@ if ($result) {
 		print '<td class="center">'.dol_print_date($facture_static->date, 'day').'</td>';
 
 		// Ref Product
-		print '<td class="tdoverflowmax150">';
+		print '<td class="tdoverflowmax100">';
 		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
 		}
@@ -648,15 +655,37 @@ if ($result) {
 		}
 		print '</td>';
 
-		// Description
+		// Description of line
 		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
 
+		// Amount
 		print '<td class="right nowraponall amount">';
-		print price($objp->total_ht);
+
+		// Create a compensation rate for old situation invoice feature.
+		$situation_ratio = 1;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			if ($objp->situation_cycle_ref) {
+				// Avoid divide by 0
+				if ($objp->situation_percent == 0) {
+					$situation_ratio = 0;
+				} else {
+					$line = new FactureLigne($db);
+					$line->fetch($objp->rowid);
+
+					// Situation invoices handling
+					$prev_progress = $line->get_prev_progress($objp->facid);
+
+					$situation_ratio = ($objp->situation_percent - $prev_progress) / $objp->situation_percent;
+				}
+			}
+			print price($objp->total_ht * $situation_ratio);
+		} else {
+			print price($objp->total_ht);
+		}
 		print '</td>';
 
 		// Vat rate
@@ -682,15 +711,22 @@ if ($result) {
 
 		// Found accounts
 		print '<td class="small">';
+		// First show default account for any products
 		$s = '1. '.(($facture_static_det->product_type == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
-		$shelp = '';
+		$shelp = ''; $ttype = 'help';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");
+		} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithvat') {
+			$shelp = $langs->trans("SaleEECWithVAT");
+		} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithoutvatnumber') {
+			$shelp = $langs->trans("SaleEECWithoutVATNumber");
+			$ttype = 'warning';
 		} elseif ($suggestedaccountingaccountbydefaultfor == 'export') {
 			$shelp .= $langs->trans("SaleExport");
 		}
 		$s .= ($code_sell_l > 0 ? length_accountg($code_sell_l) : '<span style="'.$code_sell_p_notset.'">'.$langs->trans("NotDefined").'</span>');
-		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+		print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
+		// Now show account for product
 		if ($product_static->id > 0) {
 			print '<br>';
 			$s = '2. '.(($facture_static_det->product_type == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
@@ -725,7 +761,7 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td>';
-		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? $default_account : $suggestedid, 'codeventil'.$facture_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? $default_account : $suggestedid, 'codeventil'.$facture_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth150 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox
@@ -748,6 +784,10 @@ if ($result) {
 		print '</tr>';
 		$i++;
 	}
+	if ($num_lines == 0) {
+		print '<tr><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
 	print '</table>';
 	print "</div>";
 

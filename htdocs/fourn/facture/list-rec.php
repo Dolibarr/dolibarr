@@ -29,6 +29,7 @@
  *	\brief      Page to show list of template/recurring invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -129,9 +130,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->facture->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+$permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
 
 $arrayfields = array(
 	'f.titre'=>array('label'=>'Ref', 'checked'=>1),
@@ -232,8 +233,8 @@ if (empty($reshook)) {
 	// Mass actions
 	/*$objectclass='MyObject';
 	$objectlabel='MyObject';
-	$permissiontoread = $user->rights->mymodule->read;
-	$permissiontodelete = $user->rights->mymodule->delete;
+	$permissiontoread = $user->hasRight("mymodule", "read");
+	$permissiontodelete = $user->hasRight("mymodule", "delete");
 	$uploaddir = $conf->mymodule->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
@@ -248,7 +249,7 @@ llxHeader('', $langs->trans("RepeatableSupplierInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 $companystatic = new Societe($db);
@@ -277,17 +278,17 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn_rec as f';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_rec_extrafields as ef ON ef.fk_object = f.rowid';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '. (int) $user->id;
 }
 if ($search_ref) {
@@ -357,7 +358,7 @@ if ($tmpsortfield == 'recurring') {
 $sql .= $db->order($tmpsortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -377,7 +378,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($socid > 0) {
 		$param .= '&socid='.urlencode($socid);
@@ -521,13 +522,13 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		// Payment term
 		print '<td class="liste_titre right">';
-		$form->select_conditions_paiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
+		print $form->getSelectConditionsPaiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
 		print "</td>";
 	}
 	if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 		// Payment mode
 		print '<td class="liste_titre right">';
-		$form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100');
+		print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	if (!empty($arrayfields['recurring']['checked'])) {
@@ -708,7 +709,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['s.nom']['checked'])) {
-				print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -872,7 +873,7 @@ if ($resql) {
 			}
 			// Action column
 			print '<td class="center tdoverflowmax125">';
-			if ($user->rights->facture->creer && empty($supplierinvoicerectmp->suspended)) {
+			if ($user->hasRight('facture', 'creer') && empty($supplierinvoicerectmp->suspended)) {
 				if ($supplierinvoicerectmp->isMaxNbGenReached()) {
 					print $langs->trans("MaxNumberOfGenerationReached");
 				} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
@@ -901,7 +902,7 @@ if ($resql) {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	// Show total line

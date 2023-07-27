@@ -27,16 +27,21 @@
  *  \brief      Home page for third parties area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$hookmanager = new HookManager($db);
+
+// Load translation files required by the page
+$langs->load("companies");
+
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('thirdpartiesindex'));
 
-$langs->load("companies");
+
 
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
@@ -51,6 +56,7 @@ $thirdparty_static = new Societe($db);
 if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
 }
+
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "3");
 
@@ -118,13 +124,13 @@ $result = $db->query($sql);
 if ($result) {
 	while ($objp = $db->fetch_object($result)) {
 		$found = 0;
-		if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) {
+		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) {
 			$found = 1; $third['prospect']++;
 		}
-		if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) {
+		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) {
 			$found = 1; $third['customer']++;
 		}
-		if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) {
+		if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) {
 			$found = 1; $third['supplier']++;
 		}
 		if (isModEnabled('societe') && $objp->client == 0 && $objp->fournisseur == 0) {
@@ -144,17 +150,17 @@ $thirdpartygraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("St
 if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2)) {
 	$thirdpartygraph .= '<tr><td class="center" colspan="2">';
 	$dataseries = array();
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
-		$dataseries[] = array($langs->trans("Prospects"), round($third['prospect']));
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
+		$dataseries[] = array($langs->transnoentitiesnoconv("Prospects"), round($third['prospect']));
 	}
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
-		$dataseries[] = array($langs->trans("Customers"), round($third['customer']));
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
+		$dataseries[] = array($langs->transnoentitiesnoconv("Customers"), round($third['customer']));
 	}
-	if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
-		$dataseries[] = array($langs->trans("Suppliers"), round($third['supplier']));
+	if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
+		$dataseries[] = array($langs->transnoentitiesnoconv("Suppliers"), round($third['supplier']));
 	}
 	if (isModEnabled('societe')) {
-		$dataseries[] = array($langs->trans("Others"), round($third['other']));
+		$dataseries[] = array($langs->transnoentitiesnoconv("Others"), round($third['other']));
 	}
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
@@ -167,18 +173,18 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	$thirdpartygraph .= $dolgraph->show();
 	$thirdpartygraph .= '</td></tr>'."\n";
 } else {
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
 		$statstring = "<tr>";
 		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td class="right">'.round($third['prospect']).'</td>';
 		$statstring .= "</tr>";
 	}
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
 		$statstring .= "<tr>";
 		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td class="right">'.round($third['customer']).'</td>';
 		$statstring .= "</tr>";
 	}
 	$statstring2 = '';
-	if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
+	if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
 		$statstring2 = "<tr>";
 		$statstring2 .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
 		$statstring2 .= "</tr>";
@@ -193,7 +199,7 @@ $thirdpartygraph .= '</table>';
 $thirdpartygraph .= '</div>';
 
 $thirdpartycateggraph = '';
-if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
+if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
 

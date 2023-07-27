@@ -18,7 +18,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	print "/* For dark mode */\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "@media (prefers-color-scheme: dark) {";
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
 	}
 	print "
       :root {
@@ -32,9 +34,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 			--textbutaction: rgb(255,255,255);
 
       }\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "}";
-	}
+	print "}";
 }
 ?>
 

@@ -14,7 +14,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
+-- Similar for supplier to llx_commande_fournisseur_dispatch=llx_receptiondet_batch
 -- ============================================================================
+
 CREATE TABLE llx_expeditiondet_batch (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   fk_expeditiondet int NOT NULL,
@@ -22,6 +24,6 @@ CREATE TABLE llx_expeditiondet_batch (
   sellby date DEFAULT NULL,
   batch varchar(128) DEFAULT NULL,
   qty double NOT NULL DEFAULT '0',
-  fk_origin_stock integer NOT NULL
+  fk_origin_stock integer NOT NULL			-- id into table llx_product_batch (llx_product_batch may be renamed into llx_product_stock_batch in another version). TODO We should add and use instead a fk_warehouse field
 ) ENGINE=innodb;
 
