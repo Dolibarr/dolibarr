@@ -462,17 +462,17 @@ if (!empty($searchCategoryProjectList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryProjectList as $searchCategoryProject) {
 		if (intval($searchCategoryProject) == -2) {
-			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project)";
+			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE ck.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=6) AND p.rowid = ck.fk_element)";
 		} elseif (intval($searchCategoryProject) > 0) {
 			if ($searchCategoryProjectOperator == 0) {
-				$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie = ".((int) $searchCategoryProject).")";
+				$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE p.rowid = ck.fk_element AND ck.fk_category = ".((int) $searchCategoryProject).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_element FROM ".MAIN_DB_PREFIX."element_category as ck WHERE p.rowid = ck.fk_element AND ck.fk_category IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryProjectOperator == 1) {
 		if (!empty($searchCategoryProjectSqlList)) {
