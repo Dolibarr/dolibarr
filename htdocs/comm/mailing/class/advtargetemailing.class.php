@@ -547,7 +547,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
 			}
 			if (array_key_exists('cust_categ', $arrayquery)) {
-				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc=t.rowid ";
+				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."element_category as custcateg ON custcateg.fk_element=t.rowid ";
 			}
 
 			if (!empty($arrayquery['cust_name'])) {
@@ -594,7 +594,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = " (t.fk_effectif IN (".$this->db->sanitize(implode(',', $arrayquery['cust_effectif_id']))."))";
 			}
 			if (!empty($arrayquery['cust_categ']) && count($arrayquery['cust_categ']) > 0) {
-				$sqlwhere[] = " (custcateg.fk_categorie IN (".$this->db->sanitize(implode(',', $arrayquery['cust_categ']))."))";
+				$sqlwhere[] = " (custcateg.fk_category IN (".$this->db->sanitize(implode(',', $arrayquery['cust_categ']))."))";
 			}
 			if (!empty($arrayquery['cust_language']) && count($arrayquery['cust_language']) > 0) {
 				$sqlwhere[] = " (t.default_lang IN (".$this->db->sanitize("'".implode("','", $arrayquery['cust_language'])."'", 1)."))";
@@ -701,7 +701,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		if (count($arrayquery) > 0) {
 			if (array_key_exists('contact_categ', $arrayquery)) {
-				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
+				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."element_category as contactcateg ON contactcateg.fk_element=t.rowid ";
 			}
 
 			if (!empty($arrayquery['contact_lastname'])) {
@@ -735,7 +735,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = " (t.datec >= '".$this->db->idate($arrayquery['contact_create_st_dt'])."' AND t.datec <= '".$this->db->idate($arrayquery['contact_create_end_dt'])."')";
 			}
 			if (!empty($arrayquery['contact_categ']) && count($arrayquery['contact_categ']) > 0) {
-				$sqlwhere[] = " (contactcateg.fk_categorie IN (".$this->db->escape(implode(",", $arrayquery['contact_categ']))."))";
+				$sqlwhere[] = " (contactcateg.fk_category IN (".$this->db->escape(implode(",", $arrayquery['contact_categ']))."))";
 			}
 
 			//Standard Extrafield feature
@@ -788,7 +788,7 @@ class AdvanceTargetingMailing extends CommonObject
 						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc=ts.rowid ";
 					}
 					if (array_key_exists('cust_categ', $arrayquery)) {
-						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc=ts.rowid ";
+						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."element_category as custcateg ON custcateg.fk_element=ts.rowid ";
 					}
 
 					if (!empty($arrayquery['cust_name'])) {
@@ -835,7 +835,7 @@ class AdvanceTargetingMailing extends CommonObject
 						$sqlwhere[] = " (ts.fk_effectif IN (".$this->db->sanitize(implode(',', $arrayquery['cust_effectif_id']))."))";
 					}
 					if (!empty($arrayquery['cust_categ']) && count($arrayquery['cust_categ']) > 0) {
-						$sqlwhere[] = " (custcateg.fk_categorie IN (".$this->db->sanitize(implode(',', $arrayquery['cust_categ']))."))";
+						$sqlwhere[] = " (custcateg.fk_category IN (".$this->db->sanitize(implode(',', $arrayquery['cust_categ']))."))";
 					}
 					if (!empty($arrayquery['cust_language']) && count($arrayquery['cust_language']) > 0) {
 						$sqlwhere[] = " (ts.default_lang IN ('".$this->db->sanitize(implode("','", $arrayquery['cust_language']))."'))";
