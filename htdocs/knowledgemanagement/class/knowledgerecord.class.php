@@ -468,31 +468,31 @@ class KnowledgeRecord extends CommonObject
 	public function delete(User $user, $notrigger = false)
 	{
 		$error = 0;
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement WHERE fk_knowledgemanagement = ".((int) $this->id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_category WHERE fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=13) AND fk_element = ".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
-			$this->error .= $this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
 			$errorflag = -1;
 		}
 
 		// Delete all child tables
-		if (!$error) {
-			$elements = array('categorie_knowledgemanagement');
-			foreach ($elements as $table) {
-				if (!$error) {
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-					$sql .= " WHERE fk_knowledgemanagement = ".(int) $this->id;
+		// if (!$error) {
+		// 	$elements = array();
+		// 	foreach ($elements as $table) {
+		// 		if (!$error) {
+		// 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+		// 			$sql .= " WHERE fk_knowledgemanagement = ".(int) $this->id;
 
-					$result = $this->db->query($sql);
-					if (!$result) {
-						$error++;
-						$this->errors[] = $this->db->lasterror();
-					}
-				}
-			}
-		}
+		// 			$result = $this->db->query($sql);
+		// 			if (!$result) {
+		// 				$error++;
+		// 				$this->errors[] = $this->db->lasterror();
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);

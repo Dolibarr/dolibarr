@@ -1438,9 +1438,21 @@ class Product extends CommonObject
 				}
 			}
 
+			// delete categories links
+			if (!$error) {
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_category";
+				$sql .= " WHERE fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=0) AND fk_element = ".((int) $this->id);
+
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
+
 			// Delete all child tables
 			if (!$error) {
-				$elements = array('product_fournisseur_price', 'product_price', 'product_lang', 'categorie_product', 'product_stock', 'product_customer_price', 'product_lot'); // product_batch is done before
+				$elements = array('product_fournisseur_price', 'product_price', 'product_lang', 'product_stock', 'product_customer_price', 'product_lot'); // product_batch is done before
 				foreach ($elements as $table) {
 					if (!$error) {
 						$sql = "DELETE FROM ".$this->db->prefix().$table;

@@ -296,10 +296,10 @@ class Inventory extends CommonObject
 			}
 			if (!empty($this->categories_product)) {
 				$sql .= " AND EXISTS (";
-				$sql .= " SELECT cp.fk_product";
-				$sql .= " FROM ".$this->db->prefix()."categorie_product AS cp";
-				$sql .= " WHERE cp.fk_product = ps.fk_product";
-				$sql .= " AND cp.fk_categorie IN (".$this->db->sanitize($this->categories_product).")";
+				$sql .= " SELECT cp.fk_element";
+				$sql .= " FROM ".$this->db->prefix()."element_category AS cp";
+				$sql .= " WHERE cp.fk_element = ps.fk_product";
+				$sql .= " AND cp.fk_category IN (".$this->db->sanitize($this->categories_product).")";
 				$sql .= ")";
 			}
 
