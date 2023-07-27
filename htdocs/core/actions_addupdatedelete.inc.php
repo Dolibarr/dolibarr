@@ -55,6 +55,7 @@ if ($cancel) {
 
 // Action to add record
 if ($action == 'add' && !empty($permissiontoadd)) {
+	var_dump(GETPOST('label', 'alpha'));exit;
 	foreach ($object->fields as $key => $val) {
 		if ($object->fields[$key]['type'] == 'duration') {
 			if (GETPOST($key.'hour') == '' && GETPOST($key.'min') == '') {

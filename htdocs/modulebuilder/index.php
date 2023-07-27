@@ -233,7 +233,6 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			'mymodule'=>strtolower($modulename),
 			'MyModule'=>$modulename
 		);
-
 		$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
 		//dol_mkdir($destfile);
 		if ($result <= 0) {
@@ -311,7 +310,6 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		dol_delete_file($destdir.'/myobject_document.php');
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
-		dol_delete_file($destdir.'/myobject_property_card.php');
 		dol_delete_file($destdir.'/lib/'.strtolower($modulename).'_myobject.lib.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.sql');
@@ -380,6 +378,11 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			dol_delete_file($destdir.'/README.md');
 			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
 		}
+		// for create file to add properties
+		// file_put_contents($destdir.'/'.strtolower($modulename).'propertycard.php','');
+		// $srcFileCard = DOL_DOCUMENT_ROOT.'/modulebuilder/card.php';
+		// $destFileCard = $dirins.'/'.strtolower($modulename).'/template/card.php';
+		// dol_copy($srcFileCard, $destdir.'/'.strtolower($modulename).'propertycard.php', 0,1, $arrayreplacement);
 	}
 
 	if (!$error) {
@@ -1240,7 +1243,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			'myobject_document.php'=>strtolower($objectname).'_document.php',
 			'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 			'myobject_list.php'=>strtolower($objectname).'_list.php',
-			'myobject_property_card.php'=>strtolower($objectname).'_property_card.php',
 			'admin/myobject_extrafields.php'=>'admin/'.strtolower($objectname).'_extrafields.php',
 			'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 			//'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
@@ -2623,9 +2625,6 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int')) {
 	}
 }
 
-if ($dirins && $action == "create_property") {
-}
-
 /*
  * View
  */
@@ -3416,6 +3415,15 @@ if ($module == 'initmodule') {
 				*/
 
 				print '</form>';
+			} elseif ($tabobj == 'createproperty') {
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="addproperty">';
+				print '<input type="hidden" name="tab" value="objects">';
+				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+				print '<input type="hidden" name="objectname" value="'.dol_escape_htmltag($obj).'">';
+				var_dump($obj);
+				print '</form>';
 			} elseif ($tabobj == 'deleteobject') {
 				// Delete object tab
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -3716,8 +3724,13 @@ if ($module == 'initmodule') {
 							print '<input class="button smallpaddingimp" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
 							print '<br><br>';
 
-							print load_fiche_titre($langs->trans("ObjectProperties"), '', '');
+							$mod = strtolower($module);
+							$obj = strtolower($tabobj);
+							$newproperty = dolGetButtonTitle($langs->trans('NewProperty'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.urlencode($module).'&tabobj=createproperty');
 
+							print_barre_liste($langs->trans("ObjectProperties"), $page, $_SERVER["PHP_SELF"], '', '', '', '', '', 0, '', 0, $newproperty, '', '', 0, 0, 1);
+
+							//var_dump($reflectorpropdefault);exit;
 							print '<!-- Table with properties of object -->'."\n";
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder small">';
@@ -3759,10 +3772,9 @@ if ($module == 'initmodule') {
 							// modified during the constructor and we want value into head of class before constructor is called.
 							//$properties = dol_sort_array($tmpobject->fields, 'position');
 							$properties = dol_sort_array($reflectorpropdefault['fields'], 'position');
-
 							if (!empty($properties)) {
 								// Line to add a property
-								print '<tr>';
+								//print '<tr>';
 								// print '<td class="none"><input type="text" class="maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
 								// print '<td><input type="text" class="maxwidth75" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel', 'alpha')).'"></td>';
 								// print '<td><input type="text" class="maxwidth75" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype', 'alpha')).'"></td>';
@@ -3789,18 +3801,6 @@ if ($module == 'initmodule') {
 								//  print '<td class="left tdstickyright tdstickyghostwhite">';
 								//  print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 								//  print '</td></tr>';
-								for ($i = 0; $i<22;$i++) {
-									print '<td class="center"></td>';
-								}
-								$mod = strtolower($module);
-								$obj = strtolower($tabobj);
-								if ($user->hasRight("$mod", "$obj", "write")) {
-									$newcardbutton .= dolGetButtonTitle($langs->trans('NewProperty'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?action=create_property&tab=objects&module='.urlencode($module).'&tabobj='.urlencode($tabobj));
-									print '<td class="left tdstickyright tdstickyghostwhite">';
-									print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', '', '', '', '', 0, '', 0, $newcardbutton, '', '', 0, 0, 1);
-									print '</td>';
-								}
-								print '</tr>';
 								// List of existing properties
 								foreach ($properties as $propkey => $propval) {
 									/* If from Reflection
@@ -4004,8 +4004,6 @@ if ($module == 'initmodule') {
 										print '</td>';
 									}
 									print '</tr>';
-									if ($action == 'create_property') {
-									}
 								}
 							} else {
 								if ($tab == 'specifications') {
