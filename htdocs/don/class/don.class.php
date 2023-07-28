@@ -30,6 +30,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -37,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Don extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -68,11 +71,19 @@ class Don extends CommonObject
 	 */
 	public $date;
 
+	public $datec;
+	public $datem;
+
 	/**
 	 * amount of donation
 	 * @var double
 	 */
 	public $amount;
+
+	/**
+	 * @var integer Thirdparty ID
+	 */
+	public $socid;
 
 	/**
 	 * @var string Thirdparty name
@@ -99,6 +110,9 @@ class Don extends CommonObject
 	 */
 	public $email;
 
+	public $phone;
+	public $phone_mobile;
+
 	/**
 	 * @var int 0 or 1
 	 */
@@ -121,6 +135,9 @@ class Don extends CommonObject
 	 * @var int payment mode id
 	 */
 	public $modepaymentid = 0;
+
+	public $paid;
+
 
 	/**
 	 * @var array Array of status label
@@ -206,7 +223,7 @@ class Don extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$now = dol_now();
 
@@ -224,10 +241,10 @@ class Don extends CommonObject
 			$num_socs = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num_socs) {
-				$i++;
-
 				$row = $this->db->fetch_row($resql);
 				$socids[$i] = $row[0];
+
+				$i++;
 			}
 		}
 
@@ -237,7 +254,7 @@ class Don extends CommonObject
 		$this->specimen = 1;
 		$this->lastname = 'Doe';
 		$this->firstname = 'John';
-		$this->socid = 1;
+		$this->socid = empty($socids[0]) ? 0 : $socids[0];
 		$this->date = $now;
 		$this->date_valid = $now;
 		$this->amount = 100.90;
@@ -406,9 +423,9 @@ class Don extends CommonObject
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", null";
 		$sql .= ", '".$this->db->idate($this->date)."'";
-		$sql .= ", '".$this->db->escape(trim($this->email))."'";
-		$sql .= ", '".$this->db->escape(trim($this->phone))."'";
-		$sql .= ", '".$this->db->escape(trim($this->phone_mobile))."'";
+		$sql .= ", '".(!empty($this->email) ? $this->db->escape(trim($this->email)) : "")."'";
+		$sql .= ", '".(!empty($this->phone) ? $this->db->escape(trim($this->phone)) : "")."'";
+		$sql .= ", '".(!empty($this->phone_mobile) ? $this->db->escape(trim($this->phone_mobile)) : "")."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -438,7 +455,7 @@ class Don extends CommonObject
 			}
 		}
 
-		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS)) {
+		if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_DONATION'))) {
 			//$res = $this->setValid($user);
 			//if ($res < 0) $error++;
 		}
@@ -461,7 +478,7 @@ class Don extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
@@ -549,7 +566,6 @@ class Don extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $user, $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -612,8 +628,6 @@ class Don extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
 		$sql .= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
 		$sql .= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
@@ -711,7 +725,7 @@ class Don extends CommonObject
 	public function valid_promesse($id, $userid, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $langs, $user;
+		global $user;
 
 		$error = 0;
 
@@ -746,23 +760,6 @@ class Don extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *    Classify the donation as paid, the donation was received
-	 *
-	 *	@deprecated
-	 *  @see setPaid()
-	 *  @param	int		$id           	    id of donation
-	 *  @param    int		$modepayment   	    mode of payment
-	 *  @return   int      					<0 if KO, >0 if OK
-	 */
-	public function set_paid($id, $modepayment = 0)
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
-		return $this->setPaid($id, $modepayment);
-	}
-
 	/**
 	 *    Classify the donation as paid, the donation was received
 	 *
@@ -772,7 +769,7 @@ class Don extends CommonObject
 	 */
 	public function setPaid($id, $modepayment = 0)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2, paid = 1";
 		if ($modepayment) {
 			$sql .= ", fk_payment = ".((int) $modepayment);
 		}
@@ -782,6 +779,7 @@ class Don extends CommonObject
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
 				$this->statut = 2;
+				$this->paid = 1;
 				return 1;
 			} else {
 				return 0;
@@ -832,8 +830,8 @@ class Don extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -879,8 +877,6 @@ class Don extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->nb = array();
 
 		$sql = "SELECT count(d.rowid) as nb";
@@ -989,7 +985,7 @@ class Don extends CommonObject
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = (!empty($obj->tms) ? $this->db->jdate($obj->tms) : "");
 			}
 			$this->db->free($result);
 		} else {
@@ -1024,7 +1020,7 @@ class Don extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/dons/";
+		//$modelpath = "core/modules/dons/";
 
 		// TODO Restore use of commonGenerateDocument instead of dedicated code here
 		//return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1101,18 +1097,18 @@ class Don extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old third-party id
-	 * @param  int     $dest_id        New third-party id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'don'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -1140,5 +1136,44 @@ class Don extends CommonObject
 			$sum_amount = (float) $this->db->fetch_object($resql)->sum_amount;
 			return (float) $this->amount - $sum_amount;
 		}
+	}
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'date')) {
+			$return .= ' | <span class="opacitymedium" >'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date).'</span>';
+		}
+		if (property_exists($this, 'societe') && !empty($this->societe)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Company").'</span> : <span class="info-box-label">'.$this->societe.'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="opacitymedium" >'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

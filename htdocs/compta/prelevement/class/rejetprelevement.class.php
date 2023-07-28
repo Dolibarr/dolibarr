@@ -221,7 +221,7 @@ class RejetPrelevement
 		$userid = 0;
 
 		$sql = "SELECT fk_user_demande";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE pfd.fk_prelevement_bons = ".((int) $this->bon_id);
 		$sql .= " AND pfd.fk_facture".($this->type == 'bank-transfer' ? '_fourn' : '').' = '.((int) $fac->id);
 
@@ -289,7 +289,7 @@ class RejetPrelevement
 
 		 //Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid, pl.amount";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as pf";
 		if ($this->type == 'bank-transfer') {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON (pf.fk_facture_fourn = f.rowid)";
 		} else {

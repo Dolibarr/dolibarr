@@ -27,6 +27,7 @@
  *       \brief       Page reporting Turnover (CA) by thirdparty
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -359,19 +360,23 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-			$amount_ht[$obj->socid] = $obj->amount;
-			$amount[$obj->socid] = $obj->amount_ttc;
-			$fullname = $obj->name;
+
+		$amount_ht[$obj->socid] = (empty($obj->amount) ? 0 : $obj->amount);
+		$amount[$obj->socid] = $obj->amount_ttc;
+		$fullname = $obj->name;
 		if (!empty($obj->name_alias)) {
 			$fullname .= ' ('.$obj->name_alias.')';
 		}
-			$name[$obj->socid] = $fullname;
-			$address_zip[$obj->socid] = $obj->zip;
-			$address_town[$obj->socid] = $obj->town;
-			$address_pays[$obj->socid] = getCountry($obj->fk_pays);
-			$catotal_ht += $obj->amount;
-			$catotal += $obj->amount_ttc;
-			$i++;
+		$name[$obj->socid] = $fullname;
+
+		$address_zip[$obj->socid] = $obj->zip;
+		$address_town[$obj->socid] = $obj->town;
+		$address_pays[$obj->socid] = getCountry($obj->fk_pays);
+
+		$catotal_ht += (empty($obj->amount) ? 0 : $obj->amount);
+		$catotal += $obj->amount_ttc;
+
+		$i++;
 	}
 } else {
 	dol_print_error($db);
@@ -400,12 +405,20 @@ if ($modecompta == "RECETTES-DEPENSES") {
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
-			$amount[$obj->rowid] += $obj->amount_ttc;
-			$name[$obj->rowid] = $obj->name;
-			$address_zip[$obj->rowid] = $obj->zip;
-			$address_town[$obj->rowid] = $obj->town;
-			$address_pays[$obj->rowid] = getCountry($obj->fk_pays);
+
+			if (empty($amount[$obj->socid])) {
+				$amount[$obj->socid] = $obj->amount_ttc;
+			} else {
+				$amount[$obj->socid] += $obj->amount_ttc;
+			}
+
+			$name[$obj->socid] = $obj->name;
+			$address_zip[$obj->socid] = '';
+			$address_town[$obj->socid] = '';
+			$address_pays[$obj->socid] = 0;
+
 			$catotal += $obj->amount_ttc;
+
 			$i++;
 		}
 	} else {
@@ -673,7 +686,7 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (isModEnabled('propal') && $key > 0) {
+		if (isModEnabled("propal") && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
 		if (isModEnabled('commande') && $key > 0) {

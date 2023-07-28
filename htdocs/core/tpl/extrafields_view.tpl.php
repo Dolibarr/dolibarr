@@ -65,6 +65,8 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';
 	$i = 0;
+
+	// Loop on each extrafield
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $tmpkeyextra => $tmplabelextra) {
 		$i++;
 
@@ -72,15 +74,15 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 		$enabled = 1;
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra])) {
-			$enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1);
+			$enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
-			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1);
+			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
 		}
 
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
-			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1);
+			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '2');
 		}
 		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
@@ -99,7 +101,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			$langs->load($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra]);
 		}
 		if ($action == 'edit_extras') {
-			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
+			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : (isset($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : ''));
 		} else {
 			$value = (isset($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
 			//var_dump($tmpkeyextra.' - '.$value);
@@ -114,6 +116,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
 			$collapse_group = $extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
+
 			print '<tr class="trextrafields_collapse'.$collapse_group;
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
@@ -153,43 +156,46 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			if ($object->element == 'fichinter') {
 				$keyforperm = 'ficheinter';
 			}
+			if ($object->element == 'product') {
+				$keyforperm = 'produit';
+			}
 			if (isset($user->rights->$keyforperm)) {
-				$permok = !empty($user->rights->$keyforperm->creer) || !empty($user->rights->$keyforperm->create) || !empty($user->rights->$keyforperm->write);
+				$permok = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRight($keyforperm, 'write');
 			}
 			if ($object->element == 'order_supplier') {
 				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-					$permok = $user->rights->fournisseur->commande->creer;
+					$permok = $user->hasRight('fournisseur', 'commande', 'creer');
 				} else {
-					$permok = $user->rights->supplier_order->creer;
+					$permok = $user->hasRight('supplier_order', 'creer');
 				}
 			}
 			if ($object->element == 'invoice_supplier') {
 				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-					$permok = $user->rights->fournisseur->facture->creer;
+					$permok = $user->hasRight('fournisseur', 'facture', 'creer');
 				} else {
-					$permok = $user->rights->supplier_invoice->creer;
+					$permok = $user->hasRight('supplier_invoice', 'creer');
 				}
 			}
 			if ($object->element == 'shipping') {
-				$permok = $user->rights->expedition->creer;
+				$permok = $user->hasRight('expedition', 'creer');
 			}
 			if ($object->element == 'delivery') {
-				$permok = $user->rights->expedition->delivery->creer;
+				$permok = $user->hasRight('expedition', 'delivery', 'creer');
 			}
 			if ($object->element == 'productlot') {
-				$permok = $user->rights->stock->creer;
+				$permok = $user->hasRight('stock', 'creer');
 			}
 			if ($object->element == 'facturerec') {
-				$permok = $user->rights->facture->creer;
+				$permok = $user->hasRight('facture', 'creer');
 			}
 			if ($object->element == 'mo') {
-				$permok = $user->rights->mrp->write;
+				$permok = $user->hasRight('mrp', 'write');
 			}
 			if ($object->element == 'contact') {
-				$permok = $user->rights->societe->contact->creer;
+				$permok = $user->hasRight('societe', 'contact', 'creer');
 			}
 			if ($object->element == 'salary') {
-				$permok = $user->rights->salaries->read;
+				$permok = $user->hasRight('salaries', 'read');
 			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
@@ -209,7 +215,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : '';
 
-			print '<td id="'.$html_id.'" class="valuefield '.$object->element.'_extras_'.$tmpkeyextra.' wordbreak"'.(!empty($cols) ? ' colspan="'.$cols.'"' : '').'>';
+			print '<td id="' . $html_id . '" class="valuefield ' . $object->element . '_extras_' . $tmpkeyextra . ' wordbreakimp"' . (!empty($cols) ? ' colspan="' . $cols . '"' : '') . '>';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date'))) {
@@ -237,7 +243,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
 				}
-				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formextra">';
+				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"] . '?' . $fieldid . '=' . $object->id . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';

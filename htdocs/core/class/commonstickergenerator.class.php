@@ -61,6 +61,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
  */
 abstract class CommonStickerGenerator
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 	public $code; // Code of format
 
 	/**

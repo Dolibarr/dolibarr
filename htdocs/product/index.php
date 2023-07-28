@@ -28,16 +28,18 @@
  *  \brief      Homepage products and services
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'int');
-if ($type == '' && empty($user->rights->produit->lire)) {
+if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
 	$type = '1'; // Force global page on service page only
 }
-if ($type == '' && empty($user->rights->service->lire)) {
+if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produit', 'lire')) {
 	$type = '0'; // Force global page on product page only
 }
 
@@ -47,6 +49,7 @@ $langs->loadLangs(array('products', 'stocks'));
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
+// Initialize objects
 $product_static = new Product($db);
 
 // Security check
@@ -55,7 +58,7 @@ if ($type == '0') {
 } elseif ($type == '1') {
 	$result = restrictedArea($user, 'service');
 } else {
-	$result = restrictedArea($user, 'produit|service|expedition');
+	$result = restrictedArea($user, 'produit|service|expedition|reception');
 }
 
 
@@ -70,11 +73,11 @@ if (!isset($_GET["type"])) {
 	$transAreaType = $langs->trans("ProductsAndServicesArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enabled)) {
+if ((isset($_GET["type"]) && $_GET["type"] == 0) || !isModEnabled("service")) {
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enabled)) {
+if ((isset($_GET["type"]) && $_GET["type"] == 1) || !isModEnabled("product")) {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -90,7 +93,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
 	// Search contract
-	if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
 	}
 
@@ -123,7 +126,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be 
 /*
  * Number of products and/or services
  */
-if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$prodser = array();
 	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
 	$prodser[0]['sell'] = 0;
@@ -185,12 +188,12 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 
 		$total = $SommeA + $SommeB + $SommeC + $SommeD + $SommeE + $SommeF;
 		$dataseries = array();
-		if (!empty($conf->product->enabled)) {
+		if (isModEnabled("product")) {
 			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnSale"), round($SommeA));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnPurchase"), round($SommeB));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsNotOnSell"), round($SommeC));
 		}
-		if (!empty($conf->service->enabled)) {
+		if (isModEnabled("service")) {
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnSale"), round($SommeD));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnPurchase"), round($SommeE));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesNotOnSell"), round($SommeF));
@@ -212,7 +215,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 }
 
 
-if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
+if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
 	print '<div class="div-table-responsive-no-min">';
@@ -246,7 +249,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 				$i++;
 			}
 			if ($i > $nbmax) {
-				$dataseries[] = array($langs->trans("Other"), round($rest));
+				$dataseries[] = array($langs->transnoentitiesnoconv("Other"), round($rest));
 			}
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -281,7 +284,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Latest modified products
  */
-if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
@@ -338,8 +341,13 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 				$product_static->status_buy = $objp->tobuy;
 				$product_static->status_batch = $objp->tobatch;
 
+				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+				if ($product_static->isService()) {
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+				}
+
 				// Multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql .= " WHERE fk_product = ".((int) $objp->rowid);
@@ -365,9 +373,11 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 				print "</td>";
 				// Sell price
 				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression)) {
+					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($db);
 						$price_result = $priceparser->parseProduct($product);
 						if ($price_result >= 0) {
@@ -375,10 +385,12 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 						}
 					}
 					print '<td class="nowraponall amount right">';
-					if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
-						print price($objp->price_ttc).' '.$langs->trans("TTC");
-					} else {
-						print price($objp->price).' '.$langs->trans("HT");
+					if ($usercancreadprice) {
+						if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
+							print price($objp->price_ttc).' '.$langs->trans("TTC");
+						} else {
+							print price($objp->price).' '.$langs->trans("HT");
+						}
 					}
 					print '</td>';
 				}
@@ -407,11 +419,11 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
-if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
-	if (!empty($conf->product->enabled)) {
+if (isModEnabled("invoice") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
+	if (isModEnabled("product")) {
 		activitytrim(0);
 	}
-	if (!empty($conf->service->enabled)) {
+	if (isModEnabled("service")) {
 		activitytrim(1);
 	}
 }

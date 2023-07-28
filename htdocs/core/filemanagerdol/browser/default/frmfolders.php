@@ -21,7 +21,10 @@
 
 define('NOTOKENRENEWAL', 1); // Disables token renewal
 
+// Load Dolibarr environment
 require '../../../../main.inc.php';
+
+top_httphead();
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -50,7 +53,7 @@ require '../../../../main.inc.php';
 -->
 <?php
 //$arrayofjs=array('js/common.js');
-//echo top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
+//top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 ?>
 <html>
 	<head>

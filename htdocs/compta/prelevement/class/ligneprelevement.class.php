@@ -126,7 +126,7 @@ class LignePrelevement
 	 *
 	 *    @param	int		$status     Id status
 	 *    @param    int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-	 * 	  @return   string      		Label
+	 * 	  @return   null|string      		Label
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -160,24 +160,23 @@ class LignePrelevement
 				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->transnoentitiesnoconv($this->statuts[$status]), 'statut8', 'class="valignmiddle"');
 			}
 		}
-
 		//return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'prelevement_lignes'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 }

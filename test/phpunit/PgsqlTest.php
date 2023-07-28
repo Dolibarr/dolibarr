@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +58,12 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return ContactTest
+	 * @param 	string	$name		Name
+	 * @return PgsqlTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -80,7 +82,7 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
@@ -94,7 +96,7 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -107,7 +109,7 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,7 +124,7 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -139,6 +141,18 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		/*
+		$sql = "CREATE SEQUENCE __DATABASE__.llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;";
+		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "CREATE SEQUENCE __DATABASE__.llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;");
+		*/
+
+		$sql = "ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;";
+		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "-- ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer; replaced by --\nALTER TABLE llx_bank_account ALTER COLUMN state_id TYPE integer USING state_id::integer;");
 
 		$sql="ALTER TABLE llx_table RENAME TO llx_table_new;";
 		$result=DoliDBPgsql::convertSQLFromMysql($sql);

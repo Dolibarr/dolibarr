@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Настройка модуля Stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Предложите своим клиентам страницу онлайн-платежей для платежей кредитными/дебетовыми картами через <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Это можно использовать, чтобы позволить вашим клиентам совершать разовые платежи или платежи, связанные с конкретным объектом Dolibarr (счет, заказ, ...)
 StripeOrCBDoPayment=Оплата кредитной картой или Stripe
 FollowingUrlAreAvailableToMakePayments=После URL, можно предложить страницу к клиенту сделать платеж по Dolibarr объектов
 PaymentForm=Форма оплаты
@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Живой ключ Webhook
 ONLINE_PAYMENT_WAREHOUSE=Запасы, используемые для уменьшения запасов при онлайн-оплате <br> (TODO Когда опция уменьшения запасов выполняется для действия со счетом-фактурой, и онлайн-платеж генерирует счет-фактуру самостоятельно?)
 StripeLiveEnabled=Полоса в реальном времени включена (в противном случае тестовый режим / режим песочницы)
 StripeImportPayment=Платежи Import Stripe
-ExampleOfTestCreditCard=Пример кредитной карты для тестирования: %s => действителен, %s => ошибка CVC, %s => истек срок действия, %s => заряд не производится
+ExampleOfTestCreditCard=Пример кредитной карты для тестового платежа: %s => действителен, %s => ошибка CVC, %s => срок действия истек, %s => списание не выполнено
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe-шлюзы
 OAUTH_STRIPE_TEST_ID=Идентификатор клиента Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Идентификатор клиента Stripe Connect (ca _...)
@@ -61,6 +62,7 @@ DeleteACard=Удалить карту
 ConfirmDeleteCard=Вы действительно хотите удалить эту кредитную или дебетовую карту?
 CreateCustomerOnStripe=Создать клиента на Stripe
 CreateCardOnStripe=Создать карту на Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Показать в полосе
 StripeUserAccountForActions=Учетная запись пользователя, используемая для уведомления по электронной почте о некоторых событиях Stripe (выплаты Stripe)
 StripePayoutList=Список выплат Stripe
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=Ссылка на настройку Stripe WebHook �
 PaymentWillBeRecordedForNextPeriod=Выплата будет записана за следующий период.
 ClickHereToTryAgain=<a href="%s"> Нажмите здесь, чтобы попробовать еще раз ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Из-за правил строгой аутентификации клиентов создание карты должно производиться из бэк-офиса Stripe. Вы можете щелкнуть здесь, чтобы включить запись клиента Stripe: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

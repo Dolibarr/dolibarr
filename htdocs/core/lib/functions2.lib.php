@@ -113,8 +113,8 @@ function dolGetModulesDirs($subdir = '')
 /**
  *  Try to guess default paper format according to language into $langs
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
- *	@return		string							Default paper format code
+ *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@return		string								Default paper format code
  */
 function dol_getDefaultFormat(Translate $outputlangs = null)
 {
@@ -178,9 +178,9 @@ function dol_print_file($langs, $filename, $searchalt = 0)
 				$content = file_get_contents($formfilealt);
 				$isutf8 = utf8_check($content);
 				if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-					print utf8_encode($content);
+					print mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
 				} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-					print utf8_decode($content);
+					print mb_convert_encoding($content, 'ISO-8859-1', 'UTF-8');
 				} else {
 					print $content;
 				}
@@ -416,7 +416,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_approve)) {
+		if (!empty($object->user_approve) && is_object($object->user_approve)) {
 			if ($object->user_approve->id) {
 				print $object->user_approve->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -439,7 +439,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Date approve
-	if (!empty($object->date_approve)) {
+	if (!empty($object->date_approve) || !empty($object->date_approval)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -449,7 +449,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
+		print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
 			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
@@ -1043,7 +1043,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$regType = array();
 	if (preg_match('/\{(t+)\}/i', $mask, $regType)) {
 		$masktype = $regType[1];
-		$masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
+		$masktype_value = dol_substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
 		$masktype_value = str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
 	} else {
 		$masktype = '';
@@ -1280,8 +1280,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
+
+	// To ensure that all variables within the MAX() brackets are integers
+	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
+		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
+	}
+
 	if ($bentityon) { // only if entity enable
 		$sql .= " AND entity IN (".getEntity($sharetable).")";
 	} elseif (!empty($forceentity)) {
@@ -1295,7 +1301,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 
 	//print $sql.'<br>';
-	dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
+	dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -1308,8 +1314,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (empty($counter)) {
 		$counter = $maskoffset;
 	} elseif (preg_match('/[^0-9]/i', $counter)) {
-		$counter = 0;
 		dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
+		$counter = 0;
 	} elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) {
 		$counter = $maskoffset;
 	}
@@ -1340,7 +1346,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$ref = '';
 		$sql = "SELECT ".$field." as ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -1354,7 +1360,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sql .= " AND ".$sqlwhere;
 		}
 
-		dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
+		dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1402,7 +1408,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike)."'";
+			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
@@ -1778,7 +1784,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
- *	@param	array	$tab        Array (key=>value) with all parameters to save
+ *	@param	array	$tab        Array (key=>value) with all parameters to save/update
  *	@return int         		<0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
@@ -1930,14 +1936,14 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$sql .= " ORDER BY description DESC";
 
 	dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
+	$resql_models = $db->query($sql);
+	if ($resql_models) {
+		$num = $db->num_rows($resql_models);
 		$i = 0;
 		while ($i < $num) {
 			$found = 1;
 
-			$obj = $db->fetch_object($resql);
+			$obj = $db->fetch_object($resql_models);
 
 			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
@@ -2234,10 +2240,14 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'compta/facture/class';
 		$classfile = 'facture-rec';
 		$classname = 'FactureRec';
-		$module='facture';
+		$module = 'facture';
+	} elseif ($objecttype == 'mailing') {
+		$classpath = 'comm/mailing/class';
+		$classfile = 'mailing';
+		$classname = 'Mailing';
 	}
 
-	if (!empty($conf->$module->enabled)) {
+	if (isModEnabled($module)) {
 		$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 		if ($res) {
 			if (class_exists($classname)) {
@@ -2366,6 +2376,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print '<br>We fixed '.$totalnb.' record(s). Some records may still be corrupted. New check may be required.';
 		return $totalnb;
 	}
+	return -1;
 }
 
 
@@ -2642,6 +2653,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'commande';
 	} elseif ($moduleobject == 'shipments') {
 		$moduledirforclass = 'expedition';
+	} elseif ($moduleobject == 'multicurrencies') {
+		$moduledirforclass = 'multicurrency';
 	} elseif ($moduleobject == 'facture' || $moduleobject == 'invoice' || $moduleobject == 'invoices') {
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {
@@ -2656,6 +2669,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
+	} elseif ($moduleobject == 'accounting') {
+		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}
@@ -2842,4 +2857,95 @@ function phpSyntaxError($code)
 	@ini_set('display_errors', $token);
 	@ini_set('log_errors', $inString);
 	return $code;
+}
+
+
+/**
+ * Check the syntax of some PHP code.
+ *
+ * @return 	int		>0 if OK, 0 if no			Return if we accept link added from the media browser into HTML field for public usage
+ */
+function acceptLocalLinktoMedia()
+{
+	global $user;
+
+	// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
+	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
+	// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
+	if ($acceptlocallinktomedia) {
+		global $dolibarr_main_url_root;
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+
+		// Parse $newUrl
+		$newUrlArray = parse_url($urlwithouturlroot);
+		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+		if (function_exists('gethostbyname')) {
+			$iptocheck = gethostbyname($hosttocheck);
+		} else {
+			$iptocheck = $hosttocheck;
+		}
+
+		//var_dump($iptocheck.' '.$acceptlocallinktomedia);
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+			// If ip of public url is a private network IP, we do not allow this.
+			$acceptlocallinktomedia = 0;
+			// TODO Show a warning
+		}
+
+		if (preg_match('/http:/i', $urlwithouturlroot)) {
+			// If public url is not a https, we do not allow to add medias link. It will generate security alerts when email will be sent.
+			$acceptlocallinktomedia = 0;
+			// TODO Show a warning
+		}
+
+		if (!empty($user->socid)) {
+			$acceptlocallinktomedia = 0;
+		}
+	}
+
+	//return 1;
+	return $acceptlocallinktomedia;
+}
+
+
+/**
+ * Remove first and last parenthesis but only if first is the opening and last the closing of the same group
+ *
+ * @param 	string	$string		String to sanitize
+ * @return 	string				String without global parenthesis
+ */
+function removeGlobalParenthesis($string)
+{
+	$string = trim($string);
+
+	// If string does not start and end with parenthesis, we return $string as is.
+	if (! preg_match('/^\(.*\)$/', $string)) {
+		return $string;
+	}
+
+	$nbofchars = dol_strlen($string);
+	$i = 0; $g = 0;
+	$countparenthesis = 0;
+	while ($i < $nbofchars) {
+		$char = dol_substr($string, $i, 1);
+		if ($char == '(') {
+			$countparenthesis++;
+		} elseif ($char == ')') {
+			$countparenthesis--;
+			if ($countparenthesis <= 0) {	// We reach the end of an independent group of parenthesis
+				$g++;
+			}
+		}
+		$i++;
+	}
+
+	if ($g <= 1) {
+		return preg_replace('/^\(/', '', preg_replace('/\)$/', '', $string));
+	}
+
+	return $string;
 }

@@ -22,6 +22,7 @@
  *		\brief      VAT by rate
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -209,16 +210,16 @@ $builddate = dol_now();
 if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueProducts");
 }
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInProducts");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueServices");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInServices");
 }
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -460,9 +461,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 				$j -= 12;
 			}
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td class="right" width="6%">'.price($totalpermonth[$j]).'</td>';
+			print '<td class="right" width="6%">'.price(empty($totalpermonth[$j]) ? 0 : $totalpermonth[$j]).'</td>';
 		}
-		print '<td class="right" width="6%"><b>'.price($totalpermonth['total']).'</b></td>';
+		print '<td class="right" width="6%"><b>'.price(empty($totalpermonth['total']) ? 0 : $totalpermonth['total']).'</b></td>';
 		print '</tr>';
 	} else {
 		print $db->lasterror(); // Show last sql error

@@ -61,7 +61,7 @@ class box_propales extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->propale->lire);
+		$this->hidden = !($user->hasRight('propal', 'read'));
 	}
 
 	/**
@@ -83,7 +83,7 @@ class box_propales extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."Propals", $max));
 
-		if ($user->rights->propale->lire) {
+		if ($user->hasRight('propal', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";

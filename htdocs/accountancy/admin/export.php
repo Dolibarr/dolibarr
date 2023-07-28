@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -269,9 +269,9 @@ if ($num2) {
 		// Value
 		print '<td>';
 		if (is_array($key['param'])) {
-			print $form->selectarray($label, $key['param'], $conf->global->$label, 0);
+			print $form->selectarray($label, $key['param'], getDolGlobalString($label), 0);
 		} else {
-			print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.$conf->global->$label.'">';
+			print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.getDolGlobalString($label).'">';
 		}
 
 		print '</td></tr>';

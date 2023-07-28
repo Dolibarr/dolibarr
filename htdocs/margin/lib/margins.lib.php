@@ -71,7 +71,7 @@ function marges_prepare_head()
 		$h++;
 	}
 
-	if ($user->rights->societe->lire) {
+	if ($user->hasRight('societe', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT."/margin/customerMargins.php";
 		$head[$h][1] = $langs->trans("CustomerMargins");
 		$head[$h][2] = 'customerMargins';
@@ -96,8 +96,9 @@ function marges_prepare_head()
 		$head[$h][2] = 'checkMargins';
 	}
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins', 'remove');
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins', 'remove');
 
 	return $head;
 }

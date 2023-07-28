@@ -24,6 +24,7 @@
  *		\brief      Page to display expense tax ik
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
@@ -183,7 +184,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab) {
 		if ($range->range_active == 1) {
 			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
 				echo '<input id="" class="button button-save" name="save" value="'.$langs->trans("Save").'" type="submit" />';
-				echo '<input class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)" type="button" />';
+				echo '<input class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" type="button" />';
 			} else {
 				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
 				if (!empty($range->ik->id)) {

@@ -162,7 +162,7 @@ class modBanque extends DolibarrModules
 			"s.nom"=>"company", "s.code_compta"=>"company", "s.code_compta_fournisseur"=>"company"
 		);
 		$this->export_special_array[$r] = array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG');
-		if ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled) || empty($conf->supplier_invoice->enabled)) {
+		if (!isModEnabled('supplier_order') && !isModEnabled('supplier_invoice')) {
 			unset($this->export_fields_array[$r]['s.code_compta_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_compta_fournisseur']);
 		}

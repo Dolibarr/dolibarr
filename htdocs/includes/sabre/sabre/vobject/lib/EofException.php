@@ -10,6 +10,6 @@ namespace Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class EofException extends ParseException {
-
+class EofException extends ParseException
+{
 }

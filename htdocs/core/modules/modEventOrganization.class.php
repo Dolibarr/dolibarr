@@ -40,7 +40,8 @@ class modEventOrganization extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf, $langs;
+
 		$this->db = $db;
 
 		$this->numero = 2450;
@@ -49,7 +50,7 @@ class modEventOrganization extends DolibarrModules
 
 		$this->family = "projects";
 
-		$this->module_position = '20';
+		$this->module_position = '15';
 
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
@@ -62,7 +63,7 @@ class modEventOrganization extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where EVENTORGANIZATION is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 
-		$this->picto = 'action';
+		$this->picto = 'conferenceorbooth';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -114,7 +115,7 @@ class modEventOrganization extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array('modProjet','modCategorie');
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -123,7 +124,7 @@ class modEventOrganization extends DolibarrModules
 		$this->langfiles = array("eventorganization");
 
 		// Prerequisites
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(13, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
@@ -169,7 +170,7 @@ class modEventOrganization extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -306,9 +307,106 @@ class modEventOrganization extends DolibarrModules
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER LEFTMENU CONFERENCEORBOOTH */
+
 		// Exports profiles provided by this module
 		$r = 1;
+
+		/* BEGIN MODULEBUILDER EXPORT CONFERENCEORBOOTHATTENDEES */
+		$langs->load("eventorganization");
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='ListOfAttendeesOfEvent';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r]=$this->picto;
+		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
+		$keyforclass = 'ConferenceOrBoothAttendee'; $keyforclassfile='/eventorganization/class/conferenceorboothattendee.class.php'; $keyforelement='conferenceorboothattendee';
+		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+		$this->export_entities_array[$r]['t.fk_invoice'] = 'invoice';
+		unset($this->export_fields_array[$r]['t.fk_project']);	// Remove field so we can add it at end just after
+		unset($this->export_fields_array[$r]['t.fk_soc']);	// Remove field so we can add it at end just after
+		$this->export_fields_array[$r]['t.fk_invoice'] = 'InvoiceId';
+		$this->export_fields_array[$r]['t.fk_project'] = 'ProjectId';
+		$this->export_fields_array[$r]['p.ref'] = 'ProjectRef';
+		$this->export_fields_array[$r]['t.fk_soc'] = 'IdThirdParty';
+		$this->export_entities_array[$r]['t.fk_project'] = 'project';
+		$this->export_entities_array[$r]['p.ref'] = 'project';
+		$this->export_entities_array[$r]['t.fk_soc'] = 'company';
+		$this->export_TypeFields_array[$r]['t.fk_project'] = 'Numeric';
+		$this->export_TypeFields_array[$r]['t.fk_invoice'] = 'Numeric';
+		$this->export_TypeFields_array[$r]['p.ref'] = 'Text';
+		$this->export_TypeFields_array[$r]['t.fk_soc'] = 'Numeric';
+		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
+		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
+		$keyforselect='conferenceorboothattendee'; $keyforaliasextra='extra'; $keyforelement='conferenceorboothattendee';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		//$this->export_dependencies_array[$r] = array('aaaline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		//$this->export_special_array[$r] = array('t.field'=>'...');
+		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
+		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee as t, '.MAIN_DB_PREFIX.'projet as p';
+		$this->export_sql_end[$r] .=' WHERE t.fk_project = p.rowid';
+		$this->export_sql_end[$r] .=' AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$r++;
+		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTHATTENDEES */
+
 		/* BEGIN MODULEBUILDER EXPORT CONFERENCEORBOOTH */
+		/*
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = "ExportDataset_event1";
+		$this->export_permission[$r] = array(array("agenda", "export"));
+		$this->export_fields_array[$r] = array('ac.id'=>"IdAgenda", 'ac.ref_ext'=>"ExternalRef", 'ac.datec'=>"DateCreation", 'ac.datep'=>"DateActionBegin",
+			'ac.datep2'=>"DateActionEnd", 'ac.label'=>"Title", 'ac.note'=>"Note", 'ac.percent'=>"Percent", 'ac.durationp'=>"Duration",
+			'cac.libelle'=>"ActionType",
+			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town',
+			'co.code'=>'CountryCode', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6',
+			's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
+			'p.ref' => 'ProjectRef',
+		);
+		$this->export_TypeFields_array[$r] = array('ac.ref_ext'=>"Text", 'ac.datec'=>"Date", 'ac.datep'=>"Date",
+			'ac.datep2'=>"Date", 'ac.label'=>"Text", 'ac.note'=>"Text", 'ac.percent'=>"Numeric",
+			'ac.durationp'=>"Duree",
+			'cac.libelle'=>"List:c_actioncomm:libelle:libelle",
+			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text',
+			'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
+			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
+			'p.ref' => 'Text',
+		);
+		$this->export_entities_array[$r] = array('ac.id'=>"action", 'ac.ref_ext'=>"action", 'ac.datec'=>"action", 'ac.datep'=>"action",
+			'ac.datep2'=>"action", 'ac.label'=>"action", 'ac.note'=>"action", 'ac.percent'=>"action", 'ac.durationp'=>"action",
+			'cac.libelle'=>"action",
+			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company',
+			'co.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company',
+			's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
+			'p.ref' => 'project',
+		);
+
+		$keyforselect = 'actioncomm'; $keyforelement = 'action'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM  '.MAIN_DB_PREFIX.'actioncomm as ac';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields as extra ON ac.id = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_actioncomm as cac on ac.fk_action = cac.id';
+		if (!empty($user) && empty($user->rights->agenda->allactions->read)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_resources acr on ac.id = acr.fk_actioncomm';
+		}
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp on ac.fk_contact = sp.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
+		if (!empty($user) && empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
+		$this->export_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
+		$this->export_sql_end[$r] .= " WHERE ac.entity IN (".getEntity('agenda').")";
+		$this->export_sql_end[$r] .= " AND ac.code = 'AC_EO_INDOORCONF'";
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
+		}
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
+			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
+		}
+		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
+		*/
 		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTH */
 
 		// Imports profiles provided by this module
@@ -327,7 +425,14 @@ class modEventOrganization extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
+
+		/*$result = run_sql(DOL_DOCUMENT_ROOT.'/install/mysql/data/llx_c_email_templates.sql', 1, '', 1);
+		if ($result <= 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+		TODO Instead use the array merge of the sql found into llx_c_email_templates for this module
+		*/
 
 		// Permissions
 		$this->remove($options);
@@ -369,6 +474,33 @@ class modEventOrganization extends DolibarrModules
 		}
 
 		$init = $this->_init($sql, $options);
+
+
+		// Insert some vars
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($this->db);
+
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		if (!is_object($user)) {
+			$user = new User($this->db); // To avoid error during migration
+		}
+
+		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailAskConf)');
+		if ($template->id > 0) {
+			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF', $template->id, 'chaine', 0, '', $conf->entity);
+		}
+		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailAskBooth)');
+		if ($template->id > 0) {
+			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH', $template->id, 'chaine', 0, '', $conf->entity);
+		}
+		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailBoothPayment)');
+		if ($template->id > 0) {
+			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH', $template->id, 'chaine', 0, '', $conf->entity);
+		}
+		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailRegistrationPayment)');
+		if ($template->id > 0) {
+			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT', $template->id, 'chaine', 0, '', $conf->entity);
+		}
 
 		return $init;
 	}

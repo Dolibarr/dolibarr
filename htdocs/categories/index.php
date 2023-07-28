@@ -27,6 +27,7 @@
  *      \brief      Home page of category area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
@@ -48,7 +49,7 @@ if (is_numeric($type)) {
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categoryindex'));
 
-if (!$user->rights->categorie->lire) {
+if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
 
@@ -248,13 +249,13 @@ if ($morethan1level && !empty($conf->use_javascript_ajax)) {
 print '</td></tr>';
 
 if ($nbofentries > 0) {
-	print '<tr class="pair"><td colspan="3">';
+	print '<tr class="oddeven"><td colspan="3">';
 	tree_recur($data, $data[0], 0);
 	print '</td></tr>';
 } else {
-	print '<tr class="pair">';
+	print '<tr class="oddeven">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-	print '<td valign="middle">';
+	print '<td class="valignmiddle">';
 	print $langs->trans("NoCategoryYet");
 	print '</td>';
 	print '<td>&nbsp;</td>';

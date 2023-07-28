@@ -178,7 +178,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
-	 *  @return string      			Texte descripif
+	 *  @return string      			Descriptive text
 	 */
 	public function commande_get_num($objsoc = 0, $object = '')
 	{

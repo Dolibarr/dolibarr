@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +88,12 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SecurityTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -110,7 +112,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -123,7 +125,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -136,7 +138,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -152,13 +154,13 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
 
 	/**
-	 * testSql
+	 * testPHP
 	 *
 	 * @return string
 	 */
@@ -171,34 +173,36 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname', SORT_ASC, 0, 0, '', 1);
-		//$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
+		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname', SORT_ASC, 0, 1, '', 1);
 
 		foreach ($filesarray as $key => $file) {
-			if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/includes\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/install\/doctemplates\/websites\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/dolimed/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/custom\//', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/nltechno/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/dolimed/', $file['fullname'])) {
 				continue;
 			}
-			if (preg_match('/\/htdocs\/teclib/', $file['fullname'])) {
+			if (preg_match('/\/(htdocs|html)\/nltechno/', $file['fullname'])) {
+				continue;
+			}
+			if (preg_match('/\/(htdocs|html)\/teclib/', $file['fullname'])) {
 				continue;
 			}
 
-			print 'Check php file '.$file['fullname']."\n";
+			//print 'Check php file '.$file['relativename']."\n";
 			$filecontent=file_get_contents($file['fullname']);
 
 			if (preg_match('/\.class\.php/', $file['relativename'])
 				|| preg_match('/boxes\/box_/', $file['relativename'])
 				|| preg_match('/modules\/.*\/doc\/(doc|pdf)_/', $file['relativename'])
 				|| preg_match('/modules\/(import|mailings|printing)\//', $file['relativename'])
-				|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php', 'TraceableDB.php'))) {
+				|| in_array($file['name'], array('modules_boxes.php', 'TraceableDB.php'))) {
 				// Check into Class files
 				if (! in_array($file['name'], array(
 					'api.class.php',
@@ -230,7 +234,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'objectline_view.tpl.php',
 					'extrafieldsinexport.inc.php',
 					'extrafieldsinimport.inc.php',
-					'DolQueryCollector.php'
+					'DolQueryCollector.php',
+					'DoliStorage.php'
 				))) {
 					// Must not found $this->db->
 					$ok=true;
@@ -247,22 +252,38 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				}
 			}
 
-			// Check if a var_dump has been forgotten
-			if (!preg_match('/test\/phpunit/', $file['fullname'])) {
+			// Check we don't miss top_httphead() into any ajax pages
+			if (preg_match('/ajax\//', $file['relativename'])) {
+				print "Analyze ajax page ".$file['relativename']."\n";
 				$ok=true;
 				$matches=array();
-				preg_match_all('/(.)\s*var_dump/', $filecontent, $matches, PREG_SET_ORDER);
-				//var_dump($matches);
-				foreach ($matches as $key => $val) {
-					if ($val[1] != '/' && $val[1] != '*') {
-						$ok=false;
-						break;
-					}
-					break;
+				preg_match_all('/top_httphead/', $filecontent, $matches, PREG_SET_ORDER);
+				if (count($matches) == 0) {
+					$ok=false;
 				}
 				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-				$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
+				$this->assertTrue($ok, 'Did not find top_httphead into the ajax page '.$file['relativename']);
 				//exit;
+			}
+
+			// Check if a var_dump has been forgotten
+			if (!preg_match('/test\/phpunit/', $file['fullname'])) {
+				if (! in_array($file['name'], array('class.nusoap_base.php'))) {
+					$ok=true;
+					$matches=array();
+					preg_match_all('/(.)\s*var_dump\(/', $filecontent, $matches, PREG_SET_ORDER);
+					//var_dump($matches);
+					foreach ($matches as $key => $val) {
+						if ($val[1] != '/' && $val[1] != '*') {
+							$ok=false;
+							break;
+						}
+						break;
+					}
+					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+					$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
+					//exit;
+				}
 			}
 
 			// Check get_class followed by __METHOD__
@@ -329,7 +350,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				//if ($reg[0] != 'db') $ok=false;
 			}
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELET ".$myvar...');
+			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
 			//exit;
 
 			// Check that forged sql string is using ' instead of " as string PHP quotes
@@ -398,7 +419,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$matches=array();
 			preg_match_all('/(\$sql|SET\s|WHERE\s|INSERT\s|VALUES\s|VALUES\().+\s*\'\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
+				if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'dbs->pref', 'dbs->sani', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
 					$ok=false;
 					var_dump($matches);
 					break;
@@ -463,8 +484,10 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			foreach ($matches as $key => $val) {
 				//var_dump($val);
 				if (!in_array($val[1], array(
-						"'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'",
-						"'search_status'", '"mysqldump"', '"postgresqldump"', "'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'", '"MAIN_MAIL_SMTPS_PW"'))) {
+					"'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'", "'WEBSITE_LICENSE'",
+						'"mysqldump"', '"postgresqldump"',
+						"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'",
+						'"MAIN_MAIL_SMTPS_PW"', '"MAIN_MAIL_SMTPS_PW_EMAILING"', '"MAIN_MAIL_SMTPS_PW_TICKET"'))) {
 					$ok=false;
 					break;
 				}
@@ -513,7 +536,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found a forbidden string sequence into '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
 
 
-			// Test we don't have @var array(
+			// Test we don't have preg_grep with a param without preg_quote
 			$ok=true;
 			$matches=array();
 			preg_match_all('/preg_grep\(.*\$/', $filecontent, $matches, PREG_SET_ORDER);
@@ -525,6 +548,36 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			}
 			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
+
+			// Test we don't have "if ($resql >"
+			$ok=true;
+			$matches=array();
+			preg_match_all('/if \(\$resql >/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found a if $resql with a > operator (when $resql is a boolean or resource) in file '.$file['relativename'].'. Please remove the > ... part.');
+
+			// Test we don't have empty($user->hasRight
+			$ok=true;
+			$matches=array();
+			preg_match_all('/empty\(\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
+
+			// Test we don't have empty(DolibarrApiAccess::$user->hasRight
+			$ok=true;
+			$matches=array();
+			preg_match_all('/empty\(DolibarrApiAccess::\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
 
 			// Test we don't have @var array(
 			$ok=true;

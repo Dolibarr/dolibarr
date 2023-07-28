@@ -68,8 +68,10 @@ class Notify
 		'BILL_PAYED',
 		'ORDER_CREATE',
 		'ORDER_VALIDATE',
+		'ORDER_CLOSE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',
+		'PROPAL_CLOSE_REFUSED',
 		'FICHINTER_VALIDATE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
@@ -221,7 +223,7 @@ class Notify
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 
-				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid, LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -259,7 +261,7 @@ class Notify
 					$sql .= " AND c.rowid = ".((int) $userid);
 				}
 
-				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid, LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -355,6 +357,7 @@ class Notify
 		global $dolibarr_main_url_root;
 		global $action;
 
+		// Complete the array Notify::$arrayofnotifsupported
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
@@ -369,6 +372,7 @@ class Notify
 			}
 		}
 
+		// If the trigger code is not managed by the Notification module
 		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
 			return 0;
 		}
@@ -376,7 +380,7 @@ class Notify
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/notify.lib.php';
 
-		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
+		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object id=".$object->id);
 
 		$langs->load("other");
 
@@ -402,7 +406,7 @@ class Notify
 		// Check notification per third party
 		if (!empty($object->socid) && $object->socid > 0) {
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
-			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type";
 			$sql .= " FROM ".$this->db->prefix()."socpeople as c,";
 			$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 			$sql .= " ".$this->db->prefix()."notify_def as n,";
@@ -422,7 +426,7 @@ class Notify
 
 		// Check notification per user
 		$sql .= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
-		$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+		$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type";
 		$sql .= " FROM ".$this->db->prefix()."user as c,";
 		$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 		$sql .= " ".$this->db->prefix()."notify_def as n";
@@ -434,6 +438,11 @@ class Notify
 			$sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 		}
 
+		// Check notification fixed
+		// TODO Move part found after, into a sql here
+
+
+		// Loop on all notifications enabled
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -489,6 +498,7 @@ class Notify
 		}
 
 		// Check notification using fixed email
+		// TODO Move vars NOTIFICATION_FIXEDEMAIL into table llx_notify_def and inclulde the case into previous loop of sql result
 		if (!$error) {
 			foreach ($conf->global as $key => $val) {
 				$reg = array();

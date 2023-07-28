@@ -24,6 +24,7 @@
  *		\brief      File of main public page for member module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -57,14 +58,20 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
 	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
-	$editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
+	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
+	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
+	$showtable = GETPOST('MEMBER_SHOW_TABLE');
+	$showvoteallowed = GETPOST('MEMBER_SHOW_VOTE_ALLOWED');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
 	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
 
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", !$showtable, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
+	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", !$showvoteallowed, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
 	if ($forcetype < 0) {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
@@ -96,7 +103,7 @@ if ($action == 'update') {
 $form = new Form($db);
 
 $title = $langs->trans("MembersSetup");
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 llxHeader('', $title, $help_url);
 
 
@@ -167,10 +174,30 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 print $enabledisablehtml;
 print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC" value="'.(empty($conf->global->MEMBER_ENABLE_PUBLIC) ? 0 : 1).'">';
 
+print '<br><br>';
 
-print '<br>';
 
 if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+	print '<br>';
+	//print $langs->trans('FollowingLinksArePublic').'<br>';
+	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
+	if (isModEnabled('multicompany')) {
+		$entity_qr = '?entity='.((int) $conf->entity);
+	} else {
+		$entity_qr = '';
+	}
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	print '<div class="urllink">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '</div>';
+	print ajax_autoselect('publicurlmember');
+
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -209,11 +236,34 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
-	// Can edit
+	// Min amount
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("CanEditAmount");
+	print $langs->trans("MinimumAmount");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
+	print '<input type="text" class="right width50" id="MEMBER_MIN_AMOUNT" name="MEMBER_MIN_AMOUNT" value="'.(!empty($conf->global->MEMBER_MIN_AMOUNT) ? $conf->global->MEMBER_MIN_AMOUNT : '').'">';
+	print "</td></tr>\n";
+
+	// SHow counter of validated members publicly
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("MemberCountersArePublic");
+	print '</td><td>';
+	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", (!empty($conf->global->MEMBER_COUNTERS_ARE_PUBLIC) ? $conf->global->MEMBER_COUNTERS_ARE_PUBLIC : 0), 1);
+	print "</td></tr>\n";
+
+	// Show the table of all available membership types. If not, show a form (as the default was for Dolibarr <=16.0)
+	$skiptable = (!empty($conf->global->MEMBER_SKIP_TABLE) ? $conf->global->MEMBER_SKIP_TABLE : 0);
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("MembersShowMembershipTypesTable");
+	print '</td><td>';
+	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print "</td></tr>\n";
+
+	// Show "vote allowed" setting for membership types
+	$hidevoteallowed = (!empty($conf->global->MEMBER_HIDE_VOTE_ALLOWED) ? $conf->global->MEMBER_HIDE_VOTE_ALLOWED : 0);
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("MembersShowVotesAllowed");
+	print '</td><td>';
+	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Jump to an online payment page
@@ -223,13 +273,13 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (!empty($conf->paybox->enabled)) {
+	if (isModEnabled('paybox')) {
 		$listofval['paybox'] = 'Paybox';
 	}
-	if (!empty($conf->paypal->enabled)) {
+	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}
-	if (!empty($conf->stripe->enabled)) {
+	if (isModEnabled('stripe')) {
 		$listofval['stripe'] = 'Stripe';
 	}
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
@@ -247,29 +297,6 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 print dol_get_fiche_end();
 
 print '</form>';
-
-
-if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
-	print '<br>';
-	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
-	if (!empty($conf->multicompany->enabled)) {
-		$entity_qr = '?entity='.$conf->entity;
-	} else {
-		$entity_qr = '';
-	}
-
-	// Define $urlwithroot
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-	print '<div class="urllink">';
-	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
-	print '</div>';
-	print ajax_autoselect('publicurlmember');
-}
 
 // End of page
 llxFooter();

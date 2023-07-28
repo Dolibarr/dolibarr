@@ -1,14 +1,16 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Module id
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
 EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Jalur tempat modul dihasilkan / diedit (direktori pertama untuk modul eksternal didefinisikan menjadi %s):<strong>%s </strong>
 ModuleBuilderDesc3=Modul yang dihasilkan / dapat diedit ditemukan:<strong>%s </strong>
-ModuleBuilderDesc4=Modul terdeteksi sebagai 'dapat diedit' ketika file<strong>%s </strong> ada di root direktori modul
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=Modul baru
 NewObjectInModulebuilder=Objek baru
 NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=Kunci modul
 ObjectKey=Kunci objek
 DicKey=Dictionary key
@@ -48,11 +50,14 @@ PathToModulePackage=Path ke zip paket modul / aplikasi
 PathToModuleDocumentation=Path ke file modul / dokumentasi aplikasi (%s)
 SpaceOrSpecialCharAreNotAllowed=Spasi atau karakter khusus tidak diperbolehkan.
 FileNotYetGenerated=File belum dibuat
+GenerateCode=Generate code
 RegenerateClassAndSql=Memaksa pembaruan file .class dan .sql
 RegenerateMissingFiles=Hasilkan file yang hilang
 SpecificationFile=File dokumentasi
 LanguageFile=File untuk bahasa
 ObjectProperties=Properti Obyek
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=Apakah Anda yakin ingin menghapus properti<strong>%s </strong>? Ini akan mengubah kode di kelas PHP tetapi juga menghapus kolom dari tabel definisi objek.
 NotNull=Bukan NULL
 NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
@@ -81,15 +86,16 @@ IsAMeasure=Adalah ukuran
 DirScanned=Direktori dipindai
 NoTrigger=Tidak ada pemicu
 NoWidget=Tidak ada widget
-GoToApiExplorer=Penjelajah API
+ApiExplorer=Penjelajah API
 ListOfMenusEntries=Daftar entri menu
 ListOfDictionariesEntries=Daftar entri kamus
 ListOfPermissionsDefined=Daftar izin yang ditentukan
 SeeExamples=Lihat contoh di sini
-EnabledDesc=Ketentuan untuk mengaktifkan bidang ini (Contoh: 1 atau $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=Apakah bidangnya terlihat? (Contoh: 0 = Tidak pernah terlihat, 1 = Terlihat pada daftar dan membuat / memperbarui / melihat formulir, 2 = Terlihat hanya pada daftar, 3 = Hanya terlihat pada formulir buat / perbarui / lihat (bukan daftar), 4 = Terlihat pada daftar dan perbarui / lihat saja form (bukan buat), 5 = Terlihat hanya pada form tampilan akhir daftar (bukan buat, bukan perbarui). <br> <br> Menggunakan nilai negatif berarti bidang tidak ditampilkan secara default pada daftar tetapi dapat dipilih untuk dilihat). <br> <br> Ini bisa berupa ekspresi, misalnya: <br> preg_match ('/ publik /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> (hak liburan-> mendefinisikan liburan-> hak):
-DisplayOnPdfDesc=Tampilkan bidang ini pada dokumen PDF yang kompatibel, Anda dapat mengatur posisi dengan bidang "Posisi". <br> Saat ini, model PDF kompatibel yang dikenal adalah : eratosthene (pesanan), espadon (kapal), spons (faktur), cyan (propal/kutipan), cornas (pesanan pemasok) <br> <br> <strong> For document : </strong><br>0 = tidak tampil <br>1 = tampil <br> 2 = hanya ditampilkan jika tidak kosong <br><br><strong> Untuk baris dokumen : </strong><br>0 = tidak tampil <br>1 = tampilkan dalam kolom <br>3 = tampilkan di kolom baris deskripsi  setelah deskripsi <br>4 = tampilkan di kolom deskripsi setelah deskripsi hanya jika tidak kosong
-DisplayOnPdf=Tampilan di PDF
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=Bisakah nilai bidang diakumulasikan untuk mendapatkan total ke dalam daftar? (Contoh: 1 atau 0)
 SearchAllDesc=Apakah bidang yang digunakan untuk melakukan pencarian dari alat pencarian cepat? (Contoh: 1 atau 0)
 SpecDefDesc=Masukkan di sini semua dokumentasi yang ingin Anda berikan dengan modul Anda yang belum ditentukan oleh tab lain. Anda dapat menggunakan .md atau lebih baik, sintaks .asciidoc yang kaya.
@@ -130,26 +136,44 @@ UseSpecificEditorURL = Gunakan URL editor tertentu
 UseSpecificFamily = Gunakan keluarga tertentu
 UseSpecificAuthor = Gunakan penulis tertentu
 UseSpecificVersion = Gunakan versi awal tertentu
-IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
 IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
-IncludeDocGeneration=I want to generate some documents from templates for the object
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=Jika Anda mencentang ini, beberapa kode akan dibuat untuk menambahkan kotak "Hasilkan dokumen" pada catatan.
-ShowOnCombobox=Tunjukkan nilai ke dalam kotak kombo
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=Kunci untuk tooltip
 CSSClass=CSS untuk mengedit/membuat formulir
 CSSViewClass=CSS untuk membaca formulir
 CSSListClass=CSS untuk daftar
 NotEditable=Tidak dapat diedit
 ForeignKey=Kunci asing
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Pengonversi Ascii ke HTML
 AsciiToPdfConverter=Pengonversi ascii ke PDF
 TableNotEmptyDropCanceled=Meja tidak kosong. Drop telah dibatalkan.
 ModuleBuilderNotAllowed=Pembuat modul tersedia tetapi tidak diizinkan untuk pengguna Anda.
 ImportExportProfiles=Impor dan ekspor profil
-ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
 WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
 LinkToParentMenu=Parent menu (fk_xxxxmenu)
 ListOfTabsEntries=List of tab entries
 TabsDefDesc=Define here the tabs provided by your module
 TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
+BadValueForType=Bad value for type %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object
+PermissionDeletedSuccesfuly=Permission has been successfully removed
+PermissionUpdatedSuccesfuly=Permission has been successfully updated
+PermissionAddedSuccesfuly=Permission has been successfully added
+MenuDeletedSuccessfuly=Menu has been successfully deleted
+MenuAddedSuccessfuly=Menu has been successfully added
+MenuUpdatedSuccessfuly=Menu has been successfully updated
+ApiObjectDeleted=API for object %s has been successfully deleted
+CRUDRead=Read
+CRUDCreateWrite=Create or Update
+FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.
