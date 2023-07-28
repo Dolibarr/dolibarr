@@ -314,6 +314,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result = $ldap->add($dn, $info, $user);
 				}
 
+				// Avoid Ldap error due to empty member 
+				if(isset($info['member']) && empty($info['member'])){
+					unset($info['member']);
+				}
+
+				if ($ldap->serverType == "activedirectory") {
+					$info['sAMAccountName'] = $object->name;
+				}
+
 				if ($result < 0) {
 					$this->error = "ErrorLDAP ".$ldap->error;
 				}
