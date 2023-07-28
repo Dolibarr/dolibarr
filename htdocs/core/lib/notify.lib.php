@@ -31,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
  *  @param  string          $from               Sender
  *  @param  CommonObject    $object             Related object
  *  @param  string          $newRef             Related object new reference
- *  @param  string          $projectTitle       Related project title
  *  @param  string          $companyName        Company name
  *  @param  string          $urlWithRoot        URL with root
  *  @param  Translate       $outputLangs        Object langs for output
@@ -47,7 +46,6 @@ function notify_sendMail(
     string       $from,
     CommonObject $object,
     string       $newRef,
-    string       $projectTitle,
     string       $companyName,
     string       $urlWithRoot,
     Translate    $outputLangs,
@@ -59,10 +57,12 @@ function notify_sendMail(
     global $conf, $db;
     global $hookmanager;
 
-    $res = '';
-
-    $subject = '['.$companyName.'] '.$outputLangs->transnoentitiesnoconv("DolibarrNotification");
-    $subject .= ($projectTitle ? ' '.$projectTitle : '');
+    $result = '';
+    $projectTitle = '';
+    if (!empty($object->fk_project) && !is_object($object->project)) {
+        $object->fetch_projet();
+        $projectTitle = '('.$object->project->title.')';
+    }
 
     switch ($notifCode) {
         case 'BILL_VALIDATE':
@@ -176,17 +176,22 @@ function notify_sendMail(
     $template = $notifCode.'_TEMPLATE';
     $labelToUse = $conf->global->$template;
 
-    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-    $formmail = new FormMail($db);
     $defaultMessage = null;
+    if (!empty($labelToUse)) {
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+        $formmail = new FormMail($db);
 
-    if (!empty($labelToUse)) $defaultMessage = $formmail->getEMailTemplate($db, $objectType.'_send', $user, $outputLangs, 0, 1, $labelToUse);
+        $defaultMessage = $formmail->getEMailTemplate($db, $objectType.'_send', $user, $outputLangs, 0, 1, $labelToUse);
+    }
+
     if (!empty($labelToUse) && is_object($defaultMessage) && $defaultMessage->id > 0) {
         $substitutionarray = getCommonSubstitutionArray($outputLangs, 0, null, $object);
         complete_substitutions_array($substitutionarray, $outputLangs, $object);
         $subject = make_substitutions($defaultMessage->topic, $substitutionarray, $outputLangs);
         $message = make_substitutions($defaultMessage->content, $substitutionarray, $outputLangs);
     } else {
+        $subject = '['.$companyName.'] '.$outputLangs->transnoentitiesnoconv("DolibarrNotification");
+        $subject .= ($projectTitle ? ' '.$projectTitle : '');
         $message = $outputLangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $companyName)."\n";
         $message .= $outputLangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $companyName)."\n";
         $message .= "\n";
@@ -262,8 +267,8 @@ function notify_sendMail(
 			dol_print_error($db);
 		}
 	} else {
-		$res = $mailfile->error;
+		$result = $mailfile->error;
 	}
 
-    return $res;
+    return $result;
 }

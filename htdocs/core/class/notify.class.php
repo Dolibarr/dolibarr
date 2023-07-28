@@ -437,13 +437,6 @@ class Notify
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
-			$projtitle = '';
-			if (!empty($object->fk_project)) {
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-				$proj = new Project($this->db);
-				$proj->fetch($object->fk_project);
-				$projtitle = '('.$proj->title.')';
-			}
 
 			if ($num > 0) {
 				$i = 0;
@@ -468,7 +461,6 @@ class Notify
 							$replyto,
 							$object,
 							$newref,
-							$projtitle,
 							$mysoc->name,
 							$urlwithroot,
 							$outputlangs,
@@ -545,7 +537,6 @@ class Notify
 						$replyto,
 						$object,
 						$newref,
-						$projtitle,
 						$mysoc->name,
 						$urlwithroot,
 						$langs,
