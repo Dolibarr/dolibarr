@@ -267,11 +267,13 @@ if (!empty($search_categ) && $search_categ != '-1') {
 		$sql .= " EXISTS ";
 	}
 	$sql .= "(";
-	$sql .= " SELECT cp.fk_categorie, cp.fk_product";
-	$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_product as cp";
-	$sql .= " WHERE cp.fk_product = p.rowid"; // Join for the needed table to filter by categ
+	$sql .= " SELECT cp.fk_category, cp.fk_element";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "element_category as cp";
+	$sql .= " WHERE cp.fk_element = p.rowid"; // Join for the needed table to filter by categ
 	if ($search_categ > 0) {
-		$sql .= " AND cp.fk_categorie = " . ((int) $search_categ);
+		$sql .= " AND cp.fk_category = " . ((int) $search_categ);
+	} elseif ($search_categ == -2) {
+		$sql .= " AND cp.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=0)";
 	}
 	$sql .= ")";
 }
@@ -283,11 +285,13 @@ if (!empty($search_warehouse_categ) && $search_warehouse_categ != '-1') {
 		$sql .= " EXISTS ";
 	}
 	$sql .= "(";
-	$sql .= " SELECT cp.fk_categorie, cp.fk_warehouse";
-	$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_warehouse as cp";
-	$sql .= " WHERE cp.fk_warehouse = e.rowid"; // Join for the needed table to filter by categ
+	$sql .= " SELECT cp.fk_category, cp.fk_element";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "element_category as cp";
+	$sql .= " WHERE cp.fk_element = e.rowid"; // Join for the needed table to filter by categ
 	if ($search_warehouse_categ > 0) {
-		$sql .= " AND cp.fk_categorie = " . ((int) $search_warehouse_categ);
+		$sql .= " AND cp.fk_category = " . ((int) $search_warehouse_categ);
+	} elseif ($search_warehouse_categ == -2) {
+		$sql .= " AND cp.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=9)";
 	}
 	$sql .= ")";
 }
