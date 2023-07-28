@@ -973,7 +973,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 
 			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
-
+			
+			if(getDolGlobalInt("MAIN_BUTTON_HIDE_UNAUTHORIZED")){
+				$menu_array[0]['enabled'] = 0; // hide the email 
+			}
 			// Menu level 0
 			if ($menu_array[$i]['level'] == 0) {
 				if ($menu_array[$i]['enabled']) {     // Enabled so visible

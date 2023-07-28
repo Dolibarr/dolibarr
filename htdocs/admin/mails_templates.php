@@ -46,6 +46,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langsArray=array("errors", "admin", "mails", "languages");
 
+$const = getDolGlobalInt("MAIN_BUTTON_HIDE_UNAUTHORIZED");
+if($const == 1){
+	accessforbidden();
+}
+
 if (isModEnabled('adherent')) {
 	$langsArray[]='members';
 }
