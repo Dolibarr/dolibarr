@@ -273,6 +273,7 @@ class AdherentStats extends Stats
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON d.rowid = ct.fk_element";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as t ON t.rowid = d.fk_adherent_type";
 		$sql .= " WHERE c.entity IN (".getEntity('member_type').")";
+		$sql .= " AND c.type = 3";
 		$sql .= " AND d.entity IN (" . getEntity('adherent') . ")";
 		$sql .= " AND t.entity IN (" . getEntity('adherent') . ")";
 		if ($numberYears) {
