@@ -280,9 +280,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= ",".MAIN_DB_PREFIX."facture_fourn_det as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_category as cp ON p.rowid = cp.fk_element";
 	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."element_category as cp";
 	}
 	$sql .= " WHERE l.fk_facture_fourn = f.rowid";
 	$sql .= " AND f.fk_statut in (1,2)";
@@ -295,14 +295,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND l.product_type = ".((int) $selected_type);
 	}
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " AND cp.fk_product is null";
+		$sql .= " AND cp.fk_element is null AND cp.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=0)";
 	} elseif ($selected_cat) {	// Into a specific category
 		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
 			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
-		$sql .= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
+		$sql .= " AND cp.fk_category = c.rowid AND cp.fk_element = p.rowid";
 	}
 	if ($selected_soc > 0) {
 		$sql .= " AND soc.rowid=".((int) $selected_soc);
