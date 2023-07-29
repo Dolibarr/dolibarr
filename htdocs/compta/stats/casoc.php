@@ -273,9 +273,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."element_category as cs ON s.rowid = cs.fk_element";
 	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."element_category as cs";
 	}
 	$sql .= " WHERE f.fk_statut in (1,2)";
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -288,14 +288,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " AND cs.fk_soc is null";
+		$sql .= " AND cs.fk_element is null AND cp.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=3)";
 	} elseif ($selected_cat) {	// Into a specific category
 		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
 			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
-		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
+		$sql .= " AND cs.fk_category = c.rowid AND cs.fk_element = s.rowid";
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
@@ -308,25 +308,25 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= ", ".MAIN_DB_PREFIX."paiement as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."element_category as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."element_category as cs";
 	}
 	$sql .= " WHERE p.rowid = pf.fk_paiement";
 	$sql .= " AND pf.fk_facture = f.rowid";
-	$sql .= " AND f.fk_soc = s.rowid";
+	$sql .= " AND f.fk_element = s.rowid";
 	if ($date_start && $date_end) {
 		$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " AND cs.fk_soc is null";
+		$sql .= " AND cs.fk_element is null AND cp.fk_category IN (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE type=3)";
 	} elseif ($selected_cat) {	// Into a specific category
 		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
 			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
-		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
+		$sql .= " AND cs.fk_category = c.rowid AND cs.fk_element = s.rowid";
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
 } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
