@@ -1045,15 +1045,15 @@ class Societe extends CommonObject
 					$error++;
 				}
 
-				if (!$error) {
-					dol_syslog(get_class($this)."::Create success id=".$this->id);
-					$this->db->commit();
-					return $this->id;
-				} else {
+				if ($error) {
 					dol_syslog(get_class($this)."::Create echec update ".$this->error.(empty($this->errors) ? '' : ' '.join(',', $this->errors)), LOG_ERR);
 					$this->db->rollback();
 					return -4;
 				}
+
+				dol_syslog(get_class($this)."::Create success id=".$this->id);
+				$this->db->commit();
+				return $this->id;
 	}
 
 
