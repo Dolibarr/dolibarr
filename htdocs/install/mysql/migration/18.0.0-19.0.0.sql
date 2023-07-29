@@ -59,6 +59,10 @@ INSERT INTO llx_c_category (id,module,classname) VALUES (10, 'actioncomm', 'Acti
 INSERT INTO llx_c_category (id,module,classname) VALUES (11, 'website_page', 'WebsitePage');
 INSERT INTO llx_c_category (id,module,classname) VALUES (12, 'ticket', 'Ticket');
 INSERT INTO llx_c_category (id,module,classname) VALUES (13, 'knowledgemanagement', 'KnowledgeRecord');
+INSERT INTO llx_c_category (id,module,classname) VALUES (14, 'invoice', 'Facture');
+INSERT INTO llx_c_category (id,module,classname) VALUES (15, 'supplier_invoice', 'FactureFournisseur');
+INSERT INTO llx_c_category (id,module,classname) VALUES (16, 'order', 'Commande');
+INSERT INTO llx_c_category (id,module,classname) VALUES (17, 'supplier_order', 'CommandeFournisseur');
 
 -- VMYSQL4.1 DROP INDEX idx_element_categorie_idx  on llx_element_categorie;
 -- VPGSQL8.2 DROP INDEX idx_element_categorie_idx;
