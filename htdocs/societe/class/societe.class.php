@@ -981,7 +981,19 @@ class Societe extends CommonObject
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result) {
+
+			if ($result === false) {
+				if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name); // duplicate on a field (code or profid or ...)
+					$result = -1;
+				} else {
+					$this->error = $this->db->lasterror();
+					$result = -2;
+				}
+				$this->db->rollback();
+				return $result;
+			}
+
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
 
 				$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
@@ -1042,17 +1054,6 @@ class Societe extends CommonObject
 					$this->db->rollback();
 					return -4;
 				}
-			} else {
-				if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name); // duplicate on a field (code or profid or ...)
-					$result = -1;
-				} else {
-					$this->error = $this->db->lasterror();
-					$result = -2;
-				}
-				$this->db->rollback();
-				return $result;
-			}
 	}
 
 
