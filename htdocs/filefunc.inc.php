@@ -64,7 +64,8 @@ if (defined('DOL_INC_FOR_VERSION_ERROR')) {
 
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
-$arrayofstreamtodisable = array('compress.zlib', 'ftps', 'glob', 'data', 'expect', 'ftp', 'ogg', 'phar', 'rar', 'zip', 'zlib');
+// We need '.phar' for geoip2. TODO Replace phar with explode files so we can disable phar.
+$arrayofstreamtodisable = array('compress.zlib', 'ftps', 'glob', 'data', 'expect', 'ftp', 'ogg', 'rar', 'zip', 'zlib');
 foreach ($arrayofstreamtodisable as $streamtodisable) {
 	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {
 		stream_wrapper_unregister($streamtodisable);
