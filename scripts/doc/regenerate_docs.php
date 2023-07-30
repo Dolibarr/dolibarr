@@ -18,9 +18,9 @@
  */
 
 /**
- * \file 	scripts/product/regenerate_thumbs.php
+ * \file 	scripts/doc/regenerate_docs.php
  * \ingroup scripts
- * \brief 	Regenerated thumbs of image files for products
+ * \brief 	Regenerated main documents into documents directory
  */
 
 if (!defined('NOSESSION')) {
@@ -60,8 +60,8 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (empty($argv[1])) {
-	print "Usage:    $script_file  subdirtoscan\n";
-	print "Example:  $script_file  produit\n";
+	print "Usage:    $script_file  subdirtoscan (in ".DOL_DATA_ROOT.")\n";
+	print "Example:  $script_file  propale\n";
 	exit(-1);
 }
 
@@ -78,31 +78,54 @@ if (!dol_is_dir($dir.'/'.$subdir)) {
 	exit(2);
 }
 
+print 'Scan directory '.$dir.'/'.$subdir."\n";
+
 $filearray = dol_dir_list($dir.'/'.$subdir, "directories", 0, '', 'temp$');
 
-global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
+$nbok = $nbko = 0;
+
+require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
 
 foreach ($filearray as $keyf => $valf) {
 	$ref = basename($valf['name']);
-	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
-	foreach ($filearrayimg as $keyi => $vali) {
-		print 'Process image for ref '.$ref.' : '.$vali['name']."\n";
+	print 'Process document for dir = '.$subdir.', ref '.$ref."\n";
 
-		// Create small thumbs for image
-		// Used on logon for example
-		$imgThumbSmall = vignette($vali['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-		if (preg_match('/Error/', $imgThumbSmall)) {
-			print $imgThumbSmall."\n";
-		}
+	if ($subdir == 'propale') {
+		$tmpobject = new Propal($db);
+		$ret1 = $tmpobject->fetch(0, $ref);
+		$ret2 = $tmpobject->fetch_thirdparty();
 
-		// Create mini thumbs for image (Ratio is near 16/9)
-		// Used on menu or for setup page for example
-		$imgThumbMini = vignette($vali['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
-		if (preg_match('/Error/', $imgThumbMini)) {
-			print $imgThumbMini."\n";
+		if ($ret1 > 0) {
+			//$tmpobject->build
+			//$tmpobject->setDocModel($user, GETPOST('model', 'alpha'));
+			$outputlangs = $langs;
+			$newlang = '';
+
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+
+			$hidedetails = 0;
+			$hidedesc = 0;
+			$hideref = 0;
+			$moreparams = null;
+
+			$result = $tmpobject->generateDocument($tmpobject->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+			if ($result <= 0) {
+				print 'File '.$tmpobject->model_pdf.' regenerated'."\n";
+				$nbko++;
+			} else {
+				$nbok++;
+			}
+		} else {
+			$nbko++;
 		}
 	}
 }
+
+print $nbok." objects processed\n";
+print $nbko." objects with errors\n";
 
 $db->close(); // Close $db database opened handler
 
