@@ -84,14 +84,37 @@ $filearray = dol_dir_list($dir.'/'.$subdir, "directories", 0, '', 'temp$');
 
 $nbok = $nbko = 0;
 
-require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
-
-foreach ($filearray as $keyf => $valf) {
-	$ref = basename($valf['name']);
-	print 'Process document for dir = '.$subdir.', ref '.$ref."\n";
-
-	if ($subdir == 'propale') {
+$tmpobject = null;
+if ($subdir == 'propale' || $subdir == 'proposal') {
+	if (isModEnabled('propal')) {
+		require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
 		$tmpobject = new Propal($db);
+	} else {
+		print 'Error, module not enabled'."\n";
+	}
+} else if ($subdir == 'commande' || $subdir == 'order') {
+	if (isModEnabled('commande')) {
+		require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
+		$tmpobject = new Commande($db);
+	} else {
+		print 'Error, module not enabled'."\n";
+	}
+} else if ($subdir == 'facture' || $subdir == 'invoice') {
+	if (isModEnabled('facture')) {
+		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
+		$tmpobject = new Facture($db);
+	} else {
+		print 'Error, module not enabled'."\n";
+	}
+} else {
+	print 'Dir '.$subdir.' not yet supported'."\n";
+}
+
+if ($tmpobject) {
+	foreach ($filearray as $keyf => $valf) {
+		$ref = basename($valf['name']);
+		print 'Process document for dir = '.$subdir.', ref '.$ref."\n";
+
 		$ret1 = $tmpobject->fetch(0, $ref);
 		$ret2 = $tmpobject->fetch_thirdparty();
 
@@ -127,8 +150,6 @@ foreach ($filearray as $keyf => $valf) {
 		} else {
 			$nbko++;
 		}
-	} else {
-		print 'Dir '.$subdir.' not yet supported'."\n";
 	}
 }
 
