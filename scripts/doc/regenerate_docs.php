@@ -113,14 +113,16 @@ foreach ($filearray as $keyf => $valf) {
 
 			$result = $tmpobject->generateDocument($tmpobject->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 			if ($result <= 0) {
-				print 'File '.$tmpobject->model_pdf.' regenerated'."\n";
 				$nbko++;
 			} else {
+				print 'File for ref '.$tmpobject->ref.' regenerated with template '.$tmpobject->model_pdf."\n";
 				$nbok++;
 			}
 		} else {
 			$nbko++;
 		}
+	} else {
+		print 'Dir '.$subdir.' not yet supported'."\n";
 	}
 }
 
