@@ -390,6 +390,7 @@ class pdf_cyan extends ModelePDFPropales
 				$tab_top = 90 + $top_shift;
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
+				$nexY = $tab_top;
 
 				// Incoterm
 				$height_incoterms = 0;
