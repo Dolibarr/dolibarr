@@ -56,12 +56,12 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - dir=".DOL_DATA_ROOT." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (empty($argv[1])) {
-	print "Usage:    $script_file  subdirtoscan (in ".DOL_DATA_ROOT.")\n";
-	print "Example:  $script_file  propale\n";
+	print "Usage:    $script_file  subdirtoscan (test|confirm)\n";
+	print "Example:  $script_file  propale test\n";
 	exit(-1);
 }
 
@@ -111,9 +111,15 @@ foreach ($filearray as $keyf => $valf) {
 			$hideref = 0;
 			$moreparams = null;
 
-			$result = $tmpobject->generateDocument($tmpobject->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-			if ($result <= 0) {
+			$result = 0;
+			if (!empty($argv[2]) && $argv[2] == 'confirm') {
+				$result = $tmpobject->generateDocument($tmpobject->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+			}
+			if ($result < 0) {
 				$nbko++;
+			} if ($result == 0) {
+				print 'File for ref '.$tmpobject->ref.' returned 0 during regeneration with template '.$tmpobject->model_pdf."\n";
+				$nbok++;
 			} else {
 				print 'File for ref '.$tmpobject->ref.' regenerated with template '.$tmpobject->model_pdf."\n";
 				$nbok++;
