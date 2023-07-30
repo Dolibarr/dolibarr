@@ -440,7 +440,7 @@ if ($action == 'create') {
 		} else {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
-			$filter = '((s.client:IN:1,3) AND (status:=:1))';
+			$filter = '((s.client:IN:1,2,3) AND (status:=:1))';
 			print $form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer informations. Note, this clear other input
 			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
