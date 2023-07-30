@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2020  Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2023  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
@@ -336,6 +336,14 @@ if ($result) {
 	// Fields title search
 	print '<tr class="liste_titre">';
 
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch center">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
+	}
+
 	print '<td class="liste_titre" width="15%">';
 	print $form->selectDate($date_start === '' ? -1 : $date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 	print $form->selectDate($date_end === '' ? -1 : $date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
@@ -370,15 +378,22 @@ if ($result) {
 		print '</td>';
 	}
 
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
-	print $searchpicto;
-	print '</td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
+	}
 
 	print "</tr>\n";
 
 
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre('');
+	}
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "e.dateevent", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Code", $_SERVER["PHP_SELF"], "e.type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
@@ -390,7 +405,10 @@ if ($result) {
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
-	print_liste_field_titre('');
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre('');
+	}
 	print "</tr>\n";
 
 	while ($i < min($num, $limit)) {
@@ -398,20 +416,29 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center">';
+			$htmltext = '<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
+			$htmltext .= '<br><b>'.$langs->trans("SuffixSessionName").' (DOLSESSID_...)</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
+			print $form->textwithpicto('', $htmltext);
+			print '</td>';
+		}
+
 		// Date
 		print '<td class="nowrap left">'.dol_print_date($db->jdate($obj->dateevent), '%Y-%m-%d %H:%M:%S', 'tzuserrel').'</td>';
 
 		// Code
-		print '<td>'.$obj->type.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->type).'</td>';
 
 		// IP
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		print dol_print_ip($obj->ip);
 		print '</td>';
 
 		// Login
-		print '<td class="nowrap">';
-		if ($obj->fk_user) {
+		print '<td class="tdoverflowmax150">';
+		if ($obj->fk_user > 0) {
 			$userstatic->id = $obj->fk_user;
 			$userstatic->login = $obj->login;
 			$userstatic->admin = $obj->admin;
@@ -446,23 +473,25 @@ if ($result) {
 		if (!empty($arrayfields['e.user_agent']['checked'])) {
 			// User agent
 			print '<td>';
-			print $obj->user_agent;
+			print dol_escape_htmltag($obj->user_agent);
 			print '</td>';
 		}
 
 		if (!empty($arrayfields['e.prefix_session']['checked'])) {
 			// User agent
 			print '<td>';
-			print $obj->prefix_session;
+			print dol_escape_htmltag($obj->prefix_session);
 			print '</td>';
 		}
 
-		// More informations
-		print '<td class="right">';
-		$htmltext = '<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
-		$htmltext .= '<br><b>'.$langs->trans("SuffixSessionName").' (DOLSESSID_...)</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
-		print $form->textwithpicto('', $htmltext);
-		print '</td>';
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="right">';
+			$htmltext = '<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
+			$htmltext .= '<br><b>'.$langs->trans("SuffixSessionName").' (DOLSESSID_...)</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
+			print $form->textwithpicto('', $htmltext);
+			print '</td>';
+		}
 
 		print "</tr>\n";
 		$i++;

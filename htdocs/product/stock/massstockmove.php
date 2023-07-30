@@ -480,16 +480,21 @@ $titletoadd = $langs->trans("Select");
 $buttonrecord = $langs->trans("RecordMovements");
 $titletoaddnoent = $langs->transnoentitiesnoconv("Select");
 $buttonrecordnoent = $langs->transnoentitiesnoconv("RecordMovements");
-print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span><br>';
+print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span>';
 
 print '<br>';
+//print '<br>';
 
 // Form to upload a file
 print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
+if (!empty($conf->dol_optimize_smallscreen)) {
+	print '<br>';
+}
 print '<span class="opacitymedium">';
-print $langs->trans("or").' ';
+print $langs->trans("or");
+print ' ';
 $importcsv = new ImportCsv($db, 'massstocklist');
 print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
 print '</span>';
@@ -501,7 +506,7 @@ if ($maxmin > 0) {
 }
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 $out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
-print '<input type="submit" class="button small" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
+print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
 if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
