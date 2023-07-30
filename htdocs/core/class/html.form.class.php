@@ -3547,7 +3547,25 @@ class Form
 					$label = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $label, 1);
 				}
 
-				$optlabel = $objp->ref;
+				switch ($objp->fk_product_type) {
+					case Product::TYPE_PRODUCT:
+						$picto = 'product';
+						break;
+					case Product::TYPE_SERVICE:
+						$picto = 'service';
+						break;
+					default:
+						$picto = '';
+						break;
+				}
+
+				if (empty($picto)) {
+					$optlabel = '';
+				} else {
+					$optlabel = img_object('', $picto, 'class="paddingright classfortooltip"', 0, 0, 1);
+				}
+
+				$optlabel .= $objp->ref;
 				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
 					$optlabel .= ' <span class="opacitymedium">(' . $objp->ref_fourn . ')</span>';
 				}
