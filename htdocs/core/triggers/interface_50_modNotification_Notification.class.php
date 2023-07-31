@@ -78,6 +78,7 @@ class InterfaceNotification extends DolibarrTriggers
 		}
 		$hookmanager->initHooks(array('notification'));
 
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
 		if (empty($reshook)) {
 			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
