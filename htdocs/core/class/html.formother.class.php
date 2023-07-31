@@ -847,8 +847,9 @@ class FormOther
 		$out = '';
 
 		if (!is_array($arrayofcolors) || count($arrayofcolors) < 1) {
+			// Case of selection of any color
 			$langs->load("other");
-			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
+			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax) && !getDolGlobalInt('MAIN_USE_HTML5_COLOR_SELECTOR')) {
 				$out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
@@ -913,9 +914,31 @@ class FormOther
 					);
 				 });
 	             </script>';
+				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
+			} else {
+				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat colorselector '.($morecss ? ' '.$morecss : '').'" type="color" value="#'.dol_escape_htmltag($set_color).'" />';
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
+	             jQuery(document).ready(function(){
+					var originalhex = null;
+					jQuery("#colorpicker'.$prefix.'").on(\'change\', function() {
+						var hex = jQuery("#colorpicker'.$prefix.'").val();
+						console.log("new color selected in input color "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
+				if ($setpropertyonselect) {
+					$out .= 'if (originalhex == null) {';
+					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
+					$out .= '   console.log("original color is saved into originalhex = "+originalhex);';
+					$out .= '}';
+					$out .= 'if (hex != null) {';
+					$out .= '	document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', hex);';
+					$out .= '}';
+				}
+				$out .= '
+					});
+				});
+				</script>';
 			}
-			$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
-		} else { // In most cases, this is not used. We used instead function with no specific list of colors
+		} else {
+			// In most cases, this is not used. We used instead function with no specific list of colors
 			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
 				$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
 				$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
