@@ -3332,7 +3332,7 @@ if ($module == 'initmodule') {
 					}
 
 					$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname;
-					$head3[$h][1] = img_picto('', $pictoname, 'class="pictofixedwidth"').$objectname;
+					$head3[$h][1] = img_picto('', $pictoname, 'class="pictofixedwidth valignmiddle"').$objectname;
 					$head3[$h][2] = $objectname;
 					$h++;
 				}
@@ -3562,7 +3562,7 @@ if ($module == 'initmodule') {
 							//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 							print '<br>';
 						} elseif (!empty($tmpobject)) {
-							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : '.img_picto('', $tmpobject->picto, 'class="pictofixedwidth"').$tmpobject->picto;
+							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : '.img_picto('', $tmpobject->picto, 'class="pictofixedwidth valignmiddle"').$tmpobject->picto;
 							print '<br>';
 						}
 
@@ -3777,10 +3777,10 @@ if ($module == 'initmodule') {
 								print '<td class="center"><input type="text" class="maxwidth50" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="maxwidth50" name="propcssview" value="'.dol_escape_htmltag(GETPOST('propcssview', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="maxwidth50" name="propcsslist" value="'.dol_escape_htmltag(GETPOST('propcsslist', 'alpha')).'"></td>';
-								print '<td><input type="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
+								print '<td><input type="text" class="maxwidth50" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="center maxwidth50" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
 								//print '<td class="center"><input type="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
-								print '<td><input type="number" step="1" min="0" max="1" class="text maxwidth100" name="propvalidate" value="'.dol_escape_htmltag(GETPOST('propvalidate', 'alpha')).'"></td>';
+								print '<td><input type="number" step="1" min="0" max="1" class="text maxwidth50" name="propvalidate" value="'.dol_escape_htmltag(GETPOST('propvalidate', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment', 'alpha')).'"></td>';
 								print '<td class="center tdstickyright tdstickyghostwhite">';
 								print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
@@ -4800,7 +4800,7 @@ if ($module == 'initmodule') {
 				function updateInputField() {
 					value1 = $("#crud").val();
 					value2 = $("#permissionObj").val();
-			
+
 					// Vérifie si les deux sélections sont faites
 					if ($("#label").val() == "" && value1 && value2) {
 						switch(value1.toLowerCase()){
@@ -4818,7 +4818,7 @@ if ($module == 'initmodule') {
 						}
 					}
 				}
-			
+
 				$("#crud, #permissionObj").change(updateInputField);
 				updateInputField();
 				</script>';
