@@ -85,6 +85,12 @@ if (empty($user->rights->holiday->read)) {
 	accessforbidden();
 }
 
+$arrayfields = array(
+	'cp.rowid'=>array('label'=>$langs->trans("Employee"), 'checked'=>1, 'position'=>20),
+	'cp.fk_user'=>array('label'=>$langs->trans("Supervisor"), 'checked'=>1, 'position'=>30),
+	'cp.nbHoliday'=>array('label'=>$langs->trans("NbHolidays"), 'checked'=>1, 'position'=>40),
+	'cp.note_public'=>array('label'=>$langs->trans("Note"), 'checked'=>1, 'position'=>50),
+);
 
 /*
  * Actions
@@ -286,8 +292,8 @@ if (empty($user->rights->holiday->readall)) {
 	$userchilds = $user->getAllChildIds(1);
 	$filters .= ' AND u.rowid IN ('.$db->sanitize(join(', ', $userchilds)).')';
 }
-if (!empty($search_name)) {
-	$filters .= natural_search(array('u.firstname', 'u.lastname'), $search_name);
+if ($search_name > 0) {
+	$filters .= natural_search(array('u.rowid'), $search_name, 2);
 }
 if ($search_supervisor > 0) {
 	$filters .= natural_search(array('u.fk_user'), $search_supervisor, 2);
@@ -300,6 +306,7 @@ if (is_numeric($listUsers) && $listUsers < 0) {
 }
 
 $i = 0;
+
 
 
 if (count($typeleaves) == 0) {
@@ -321,24 +328,30 @@ if (count($typeleaves) == 0) {
 	print '<tr class="liste_titre_filter">';
 
 	// User
-	print '<td class="liste_titre">';
-	print '<input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'" class="maxwidth100">';
-	print '</td>';
-
+	if (!empty($arrayfields['cp.rowid']['checked'])) {
+		print '<td class="liste_titre">';
+		print $form->select_dolusers($search_name, 'search_name', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
+		print '</td>';
+	}
 	// Supervisor
-	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
-	print '</td>';
-
+	if (!empty($arrayfields['cp.fk_user']['checked'])) {
+		print '<td class="liste_titre">';
+		print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
+		print '</td>';
+	}
 	// Type of leave request
-	if (count($typeleaves)) {
-		foreach ($typeleaves as $key => $val) {
-			print '<td class="liste_titre" style="text-align:center"></td>';
+	if (!empty($arrayfields['cp.nbHoliday']['checked'])) {
+		if (count($typeleaves)) {
+			foreach ($typeleaves as $key => $val) {
+				print '<td class="liste_titre" style="text-align:center"></td>';
+			}
+		} else {
+			print '<td class="liste_titre"></td>';
 		}
-	} else {
+	}
+	if (!empty($arrayfields['cp.note_public']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
-	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 
 	// Action column
@@ -350,27 +363,39 @@ if (count($typeleaves) == 0) {
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
-	print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"]);
-	if (count($typeleaves)) {
-		foreach ($typeleaves as $key => $val) {
-			$labeltype = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-			print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
-		}
-	} else {
-		print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
+	if (!empty($arrayfields['cp.rowid']['checked'])) {
+		print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
 	}
-	print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
+	if (!empty($arrayfields['cp.fk_user']['checked'])) {
+		print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"]);
+	}
+	if (!empty($arrayfields['cp.nbHoliday']['checked'])) {
+		if (count($typeleaves)) {
+			foreach ($typeleaves as $key => $val) {
+				$labeltype = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
+				print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
+			}
+		} else {
+			print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
+		}
+	}
+	if (!empty($arrayfields['cp.note_public']['checked'])) {
+		print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
+	}
 	print_liste_field_titre('');
+
 
 	$selectedfields = '';
 	if ($massactionbutton) {
-		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
+		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-	print '</tr>';
 
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+
+		print '</tr>';
 	$usersupervisor = new User($db);
 
 	foreach ($listUsers as $users) {
@@ -399,46 +424,52 @@ if (count($typeleaves) == 0) {
 		print '<tr class="oddeven">';
 
 		// User
-		print '<td>';
-		print $userstatic->getNomUrl(-1);
-		print '</td>';
-
-		// Supervisor
-		print '<td>';
-		if ($userstatic->fk_user > 0) {
-			print $usersupervisor->getNomUrl(-1);
+		if (!empty($arrayfields['cp.rowid']['checked'])) {
+			print '<td>';
+			print $userstatic->getNomUrl(-1);
+			print '</td>';
 		}
-		print '</td>';
+		// Supervisor
+		if (!empty($arrayfields['cp.fk_user']['checked'])) {
+			print '<td>';
+			if ($userstatic->fk_user > 0) {
+				print $usersupervisor->getNomUrl(-1);
+			}
+			print '</td>';
+		}
 
 		// Amount for each type
-		if (count($typeleaves)) {
-			foreach ($typeleaves as $key => $val) {
-				$nbtoshow = '';
-				if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') {
-					$nbtoshow = price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
-				}
+		if (!empty($arrayfields['cp.nbHoliday']['checked'])) {
+			if (count($typeleaves)) {
+				foreach ($typeleaves as $key => $val) {
+					$nbtoshow = '';
+					if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') {
+						$nbtoshow = price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
+					}
 
-				//var_dump($users['rowid'].' - '.$val['rowid']);
-				print '<td style="text-align:center">';
-				if ($canedit) {
-					print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
-				} else {
-					print $nbtoshow;
+					//var_dump($users['rowid'].' - '.$val['rowid']);
+					print '<td style="text-align:center">';
+					if ($canedit) {
+						print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
+					} else {
+						print $nbtoshow;
+					}
+					//print ' '.$langs->trans('days');
+					print '</td>'."\n";
 				}
-				//print ' '.$langs->trans('days');
-				print '</td>'."\n";
+			} else {
+				print '<td></td>';
 			}
-		} else {
-			print '<td></td>';
 		}
 
 		// Note
-		print '<td>';
-		if ($canedit) {
-			print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+		if (!empty($arrayfields['cp.note_public']['checked'])) {
+			print '<td>';
+			if ($canedit) {
+				print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+			}
+			print '</td>';
 		}
-		print '</td>';
-
 		// Button modify
 		print '<td class="center">';
 		if (!empty($user->rights->holiday->define_holiday)) {	// Allowed to set the balance of any user
