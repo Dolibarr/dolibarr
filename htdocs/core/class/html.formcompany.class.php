@@ -753,14 +753,14 @@ class FormCompany extends Form
 							if ($disabled) {
 								print ' disabled';
 							}
-							print ' selected>' . dol_trunc($obj->name, 24) . '</option>';
+							print ' selected>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . '</option>';
 							$firstCompany = $obj->rowid;
 						} else {
 							print '<option value="' . $obj->rowid . '"';
 							if ($disabled) {
 								print ' disabled';
 							}
-							print '>' . dol_trunc($obj->name, 24) . '</option>';
+							print '>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . '</option>';
 						}
 						$i++;
 					}
