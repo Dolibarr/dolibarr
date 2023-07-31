@@ -897,17 +897,12 @@ if ($search_status <> '') {
 			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
 		}
 	}
-	if ($search_status == -2) {	// "validated + in process"
-		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
-		$sql .= " AND (c.fk_statut IN (1,2))";
+
+	if ($search_status == -2) {	// To shipp (validated and in progress)
+		$sql .= " AND c.fk_statut IN (1,2)";
 	}
-	if ($search_status == -3) {	// "validated + in process + delivered"
-		//$sql.= ' AND c.fk_statut in (1,2,3)';
-		//$sql.= ' AND c.facture = 0'; // invoice not created
-		$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
-	}
-	if ($search_status == -4) {	//  "validate + in progress"
-		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
+	if ($search_status == -3) {	// To bill (validated, in progress and shipped but not invoiced)
+		$sql .= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 	}
 }
 
@@ -1741,9 +1736,9 @@ if ($resql) {
 			Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
 			Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
 			Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
+			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
 			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
 		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);

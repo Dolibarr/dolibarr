@@ -3571,9 +3571,10 @@ class Commande extends CommonOrder
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param		User	$user   Object user
+	 *	@param		String	$mode   Mode (toship, tobill, shippedtobill)
 	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-	public function load_board($user)
+	public function load_board($user, $mode)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -3589,18 +3590,48 @@ class Commande extends CommonOrder
 		}
 		$sql .= $clause." c.entity IN (".getEntity('commande').")";
 		//$sql.= " AND c.fk_statut IN (1,2,3) AND c.facture = 0";
-		$sql .= " AND ((c.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_SHIPMENTONPROCESS.")) OR (c.fk_statut = ".self::STATUS_CLOSED." AND c.facture = 0))"; // If status is 2 and facture=1, it must be selected
+		if ($mode == 'toship') {
+			// An order to ship is an open order (validated or in progress)
+			$sql .= " AND c.fk_statut IN (" . self::STATUS_VALIDATED . "," . self::STATUS_SHIPMENTONPROCESS . ")";
+		}
+		if ($mode == 'tobill') {
+			// An order to bill is an order not already billed
+			$sql .= " AND c.fk_statut IN (" . self::STATUS_VALIDATED . "," . self::STATUS_SHIPMENTONPROCESS . ", " . self::STATUS_CLOSED . ") AND c.facture = 0";
+		}
+		if ($mode == 'shippedtobill') {
+			// An order shipped and to bill is a delivered order not already billed
+			$sql .= " AND c.fk_statut IN (" . self::STATUS_CLOSED . ") AND c.facture = 0";
+		}
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			$delay_warning = 0;
+			$label = $labelShort = $url = '';
+			if ($mode == 'toship') {
+				$delay_warning = $conf->commande->client->warning_delay / 60 / 60 / 24;
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=-2&mainmenu=commercial&leftmenu=orders';
+				$label = $langs->transnoentitiesnoconv("OrdersToProcess");
+				$labelShort = $langs->transnoentitiesnoconv("Opened");
+			}
+			if ($mode == 'tobill') {
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&search_billed=0&mainmenu=commercial&leftmenu=orders';
+				$label = $langs->trans("OrdersToBill"); // We set here bill but may be billed or ordered
+				$labelShort = $langs->trans("ToBill");
+			}
+			if ($mode == 'shippedtobill') {
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=3&search_billed=0&mainmenu=commercial&leftmenu=orders';
+				$label = $langs->trans("OrdersToBill"); // We set here bill but may be billed or ordered
+				$labelShort = $langs->trans("StatusOrderDelivered").' '.$langs->trans("and").' '.$langs->trans("ToBill");
+			}
+
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->commande->client->warning_delay / 60 / 60 / 24;
-			$response->label = $langs->trans("OrdersToProcess");
-			$response->labelShort = $langs->trans("Opened");
-			$response->url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&mainmenu=commercial&leftmenu=orders';
+			$response->warning_delay = $delay_warning;
+			$response->label = $label;
+			$response->labelShort = $labelShort;
+			$response->url = $url;
 			$response->img = img_object('', "order");
 
 			$generic_commande = new Commande($this->db);
@@ -3615,7 +3646,7 @@ class Commande extends CommonOrder
 				$generic_commande->date_livraison = $this->db->jdate($obj->delivery_date);
 				$generic_commande->delivery_date = $this->db->jdate($obj->delivery_date);
 
-				if ($generic_commande->hasDelay()) {
+				if ($mode == 'toship' && $generic_commande->hasDelay()) {
 					$response->nbtodolate++;
 				}
 			}
