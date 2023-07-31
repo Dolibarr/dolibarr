@@ -101,6 +101,10 @@ if (empty($date_startmonth) || empty($date_endmonth)) {
 	$pastmonth = $dates['pastmonth'];
 }
 
+if($conf->global->ACCOUNTANCY_JOURNAL_USE_CURRENT_MONTH){
+	$pastmonth+=1;
+}
+
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
