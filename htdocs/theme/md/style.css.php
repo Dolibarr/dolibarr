@@ -5720,6 +5720,9 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  padding : 0px;
  margin : 0px;
 }
+.colorselector {
+	border: solid 1px #ddd !important;
+}
 
 
 /* Style to overwrites JQuery styles */
