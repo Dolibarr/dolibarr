@@ -272,7 +272,7 @@ abstract class CommonDocGenerator
 			'mycompany_idprof5'=>$mysoc->idprof5,
 			'mycompany_idprof6'=>$mysoc->idprof6,
 			'mycompany_vatnumber'=>$mysoc->tva_intra,
-			'mycompany_object'=>$mysoc->object,
+			'mycompany_socialobject'=>$mysoc->socialobject,
 			'mycompany_note_private'=>$mysoc->note_private,
 			//'mycompany_note_public'=>$mysoc->note_public,        // Only private not exists for "mysoc" but both for thirdparties
 		);
@@ -516,11 +516,11 @@ abstract class CommonDocGenerator
 
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
-			$array_key.'_bank_iban'=>$bank_account->iban,
-			$array_key.'_bank_bic'=>$bank_account->bic,
-			$array_key.'_bank_label'=>$bank_account->label,
-			$array_key.'_bank_number'=>$bank_account->number,
-			$array_key.'_bank_proprio'=>$bank_account->proprio,
+			$array_key.'_bank_iban' => (!empty($bank_account) ? $bank_account->iban : ''),
+			$array_key.'_bank_bic' => (!empty($bank_account) ? $bank_account->bic : ''),
+			$array_key.'_bank_label' => (!empty($bank_account) ? $bank_account->label : ''),
+			$array_key.'_bank_number' => (!empty($bank_account) ? $bank_account->number : ''),
+			$array_key.'_bank_proprio' => (!empty($bank_account) ? $bank_account->proprio : ''),
 
 			$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
 			$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),

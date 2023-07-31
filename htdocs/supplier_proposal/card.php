@@ -733,11 +733,11 @@ if (empty($reshook)) {
 					$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
 					$type = $productsupplier->type;
-					if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
+					if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
 						$price_base_type = 'HT';
 						$pu = price2num($price_ht, 'MU');
 						$pu_devise = price2num($price_ht_devise, 'CU');
-					} elseif (GETPOST('price_ttc') != '' || GETPOST('price_ttc_devise') != '') {
+					} elseif (GETPOST('price_ttc') != '' || GETPOST('multicurrency_price_ttc') != '') {
 						$price_base_type = 'TTC';
 						$pu = price2num($price_ttc, 'MU');
 						$pu_devise = price2num($price_ttc_devise, 'CU');
@@ -829,7 +829,7 @@ if (empty($reshook)) {
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-				if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
+				if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
 					$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 				} else {
 					$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -1161,11 +1161,13 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $title = $object->ref." - ".$langs->trans('Card');
 if ($action == 'create') {
 	$title = $langs->trans("SupplierProposalNew");
 }
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);
@@ -1273,16 +1275,17 @@ if ($action == 'create') {
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		$filter = '(s.fournisseur:=:1)';
-		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
+		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script>
 			$(document).ready(function() {
 				$("#socid").change(function() {
-					var socid = $(this).val();
+					console.log("We have changed the company - Reload page");
 					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+					$("input[name=action]").val("create");
+					$("form[name=add]").submit();
 				});
 			});
 			</script>';
