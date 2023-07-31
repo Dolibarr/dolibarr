@@ -92,14 +92,14 @@ if ($subdir == 'propale' || $subdir == 'proposal') {
 	} else {
 		print 'Error, module not enabled'."\n";
 	}
-} else if ($subdir == 'commande' || $subdir == 'order') {
+} elseif ($subdir == 'commande' || $subdir == 'order') {
 	if (isModEnabled('commande')) {
 		require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 		$tmpobject = new Commande($db);
 	} else {
 		print 'Error, module not enabled'."\n";
 	}
-} else if ($subdir == 'facture' || $subdir == 'invoice') {
+} elseif ($subdir == 'facture' || $subdir == 'invoice') {
 	if (isModEnabled('facture')) {
 		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 		$tmpobject = new Facture($db);
