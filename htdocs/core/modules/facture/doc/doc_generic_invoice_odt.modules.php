@@ -46,12 +46,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	public $emetteur;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -284,8 +278,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -336,12 +330,13 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$object->fetchObjectLinked('', '', '', '');
 				//print_r($object->linkedObjects['propal']); exit;
 
-				$array_propal_object = $object->linkedObjects['propal'];
-				if (isset($array_propal_object) && is_array($array_propal_object) && count($array_propal_object) > 0) {
-					$tmparrayofvalue = array_values($array_propal_object);
-					$propal_object = $tmparrayofvalue[0];
-				} else {
-					$propal_object = null;
+				$propal_object = null;
+				if (!empty($object->linkedObjects['propal'])) {
+					$array_propal_object = $object->linkedObjects['propal'];
+					if (isset($array_propal_object) && is_array($array_propal_object) && count($array_propal_object) > 0) {
+						$tmparrayofvalue = array_values($array_propal_object);
+						$propal_object = $tmparrayofvalue[0];
+					}
 				}
 
 				// Make substitution
@@ -417,15 +412,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				// TODO Search all tags {object_...:xxxx} into template then loop on this found tags to analyze them and the the corresponding
 				// property of object and use the xxxx to know how to format it.
 				// Before that, we hard code this substitution as if we have found them into the template.
-				$tmparray['object_PREVIOUS_MONTH'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%m');
-				$tmparray['object_MONTH'] = dol_print_date($this->date, '%m');
-				$tmparray['object_NEXT_MONTH'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%m');
-				$tmparray['object_PREVIOUS_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%B');
-				$tmparray['object_MONTH_TEXT'] = dol_print_date($this->date, '%B');
-				$tmparray['object_NEXT_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%B');
-				$tmparray['object_PREVIOUS_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
-				$tmparray['object_YEAR'] = dol_print_date($this->date, '%Y');
-				$tmparray['object_NEXT_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
+				$tmparray['object_PREVIOUS_MONTH'] = dol_print_date(dol_time_plus_duree($object->date, -1, 'm'), '%m');
+				$tmparray['object_MONTH'] = dol_print_date($object->date, '%m');
+				$tmparray['object_NEXT_MONTH'] = dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%m');
+				$tmparray['object_PREVIOUS_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($object->date, -1, 'm'), '%B');
+				$tmparray['object_MONTH_TEXT'] = dol_print_date($object->date, '%B');
+				$tmparray['object_NEXT_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%B');
+				$tmparray['object_PREVIOUS_YEAR'] = dol_print_date(dol_time_plus_duree($object->date, -1, 'y'), '%Y');
+				$tmparray['object_YEAR'] = dol_print_date($object->date, '%Y');
+				$tmparray['object_NEXT_YEAR'] = dol_print_date(dol_time_plus_duree($object->date, 1, 'y'), '%Y');
 
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);

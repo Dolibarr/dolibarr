@@ -541,6 +541,9 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
 
 // Fields title label
 // --------------------------------------------------------------------
@@ -564,6 +567,7 @@ foreach ($object->fields as $key => $val) {
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
+		$totalarray['nbfield']++;
 	}
 }
 // Extra fields
@@ -575,6 +579,7 @@ print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
 
@@ -583,17 +588,20 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
 }
 
 
+$bom = new Bom($db);
+$product = new Product($db);
+
 // Loop on record
 // --------------------------------------------------------------------
-$bom = new Bom($db);
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
@@ -609,16 +617,21 @@ while ($i < $imaxinloop) {
 	//mode Kanban
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		$object->id = $obj->type_id;
 
 		// TODO Use a cache on BOM
-		$objectBom = $bom->fetch($obj->fk_bom);
+		if ($obj->fk_bom > 0) {
+			$bom->fetch($obj->fk_bom);
+		}
+		if ($obj->fk_product > 0) {
+			$product->fetch($obj->fk_product);
+		}
 
 		// Output Kanban
-		print $object->getKanbanView('', array('bom'=>$objectBom->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
+		print $object->getKanbanView('', array('bom'=>($obj->fk_bom > 0 ? $bom : null), 'product'=>($obj->fk_product > 0 ? $product: null), 'selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -727,7 +740,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 

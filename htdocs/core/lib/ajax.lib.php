@@ -506,11 +506,15 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-						//console.log($(data.element).attr("data-html"));
+						//console.log("data html is "+$(data.element).attr("data-html"));
 						if (data.id == '.((int) $idforemptyvalue).' && $(data.element).attr("data-html") == undefined) {
 							return \'&nbsp;\';
 						}
-						if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
+						if ($(data.element).attr("data-html") != undefined) {
+							/* If property html set, we decode html entities and use this. */
+							/* Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, \'\', 0, 1) when building the select option. */
+							return htmlEntityDecodeJs($(data.element).attr("data-html"));
+						}
 						return data.text;
 					},
 					templateSelection: function (selection) {		/* Format visible output of selected value */

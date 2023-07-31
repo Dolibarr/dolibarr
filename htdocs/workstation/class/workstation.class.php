@@ -117,6 +117,7 @@ class Workstation extends CommonObject
 	public $rowid;
 	public $ref;
 	public $label;
+	public $type;	// HUMAN, MACHINE, ...
 
 	public $date_creation;
 	public $tms;
@@ -801,7 +802,9 @@ class Workstation extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/workstation/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				if (file_exists($dir.$file)) {
+					$mybool |= @include_once $dir.$file;
+				}
 			}
 
 			if ($mybool === false) {

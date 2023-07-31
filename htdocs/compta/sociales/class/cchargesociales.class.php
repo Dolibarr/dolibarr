@@ -501,6 +501,7 @@ class Cchargesociales
 				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 			}
 		}
+		return "";
 	}
 
 

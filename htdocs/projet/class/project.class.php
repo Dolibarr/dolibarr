@@ -571,6 +571,8 @@ class Project extends CommonObject
 			$sql .= ", dateo = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
 			$sql .= ", datee = ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
 			$sql .= ", date_close = ".($this->date_close != '' ? "'".$this->db->idate($this->date_close)."'" : 'null');
+			$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
+			$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? $this->fk_user_close : "null");
 			$sql .= ", opp_amount = ".(strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
 			$sql .= ", budget_amount = ".(strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : "null");
@@ -671,7 +673,7 @@ class Project extends CommonObject
 		$sql = "SELECT rowid, entity, ref, title, description, public, datec, opp_amount, budget_amount,";
 		$sql .= " tms, dateo as date_start, datee as date_end, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
 		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, email_msgid,";
-		$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth, max_attendees, date_start_event, date_end_event, location";
+		$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth, max_attendees, date_start_event, date_end_event, location, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		if (!empty($id)) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -734,6 +736,7 @@ class Project extends CommonObject
 				$this->date_end_event = $this->db->jdate($obj->date_end_event);
 				$this->location = $obj->location;
 				$this->email_msgid = $obj->email_msgid;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->db->free($resql);
 
@@ -1797,7 +1800,7 @@ class Project extends CommonObject
 
 				// Loop on each task, to clone it
 				foreach ($tasksarray as $tasktoclone) {
-					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
+					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_task_parent, $move_date, true, false, $clone_task_file, true, false);
 					if ($result_clone <= 0) {
 						$this->error .= $taskstatic->error;
 						$error++;
@@ -1921,7 +1924,7 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE id=".((int) $elementSelectId);
-		} elseif ($tableName == "entrepot") {
+		} elseif (in_array($tableName, ["entrepot","mrp_mo"])) {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE rowid=".((int) $elementSelectId);
 		} else {
@@ -2426,7 +2429,16 @@ class Project extends CommonObject
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
 		if (!empty($arraydata['assignedusers'])) {
-			$return .= '<br><span class="small">'.$arraydata['assignedusers'].'</span>';
+			$return .= '<br>';
+			if ($this->public) {
+				$return .= img_picto($langs->trans('Visibility').': '.$langs->trans('SharedProject'), 'world', 'class="paddingrightonly valignmiddle"');
+				//print $langs->trans('SharedProject');
+			} else {
+				$return .= img_picto($langs->trans('Visibility').': '.$langs->trans('PrivateProject'), 'private', 'class="paddingrightonly valignmiddle"');
+				//print $langs->trans('PrivateProject');
+			}
+
+			$return .= ' <span class="small valignmiddle">'.$arraydata['assignedusers'].'</span>';
 		}
 		/*if (property_exists($this, 'user_author_id')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Author").'</span>';

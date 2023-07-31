@@ -1214,6 +1214,7 @@ class FactureRec extends CommonInvoice
 				return -1;
 			}
 		}
+		return -1;
 	}
 
 
@@ -1646,6 +1647,44 @@ class FactureRec extends CommonInvoice
 		$labelStatusShort = $labelStatus;
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+	}
+
+	/**
+	 *	Load miscellaneous information for tab "Info"
+	 *
+	 *	@param  int		$id		Id of object to load
+	 *	@return	void
+	 */
+	public function info($id)
+	{
+		$sql = 'SELECT c.rowid, datec, tms as datem,';
+		$sql .= ' fk_user_author, fk_user_modif';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_rec as c';
+		$sql .= ' WHERE c.rowid = '.((int) $id);
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author) {
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_modif) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
+
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
+			}
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+		}
 	}
 
 	/**

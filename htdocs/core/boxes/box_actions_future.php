@@ -86,7 +86,7 @@ class box_actions_future extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleFutureActions", $max));
 
-		if ($user->rights->agenda->myactions->read) {
+		if ($user->hasRight('agenda', 'myactions', 'read')) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
 			$sql .= ", ta.code";
 			$sql .= ", ta.libelle as type_label";
@@ -107,7 +107,7 @@ class box_actions_future extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (empty($user->rights->agenda->allactions->read)) {
+			if (!$user->hasRight('agenda', 'allactions', 'read')) {
 				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
 			}
 			$sql .= " AND a.datep > '".$this->db->idate($now)."'";

@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -85,7 +85,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
-$search_fk_projet=GETPOST("search_fk_projet", 'int');
+$search_fk_project=GETPOST("search_fk_project", 'int');
 
 $type = GETPOST("type", "int");
 
@@ -226,7 +226,7 @@ if (empty($reshook)) {
 		$search_user = "";
 		$search_batch = "";
 		$search_qty = '';
-		$search_fk_projet=0;
+		$search_fk_project = "";
 		$search_all = "";
 		$toselect = array();
 		$search_array_options = array();
@@ -593,7 +593,7 @@ if ($action == "transfert_stock" && !$cancel) {
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 $productlot = new ProductLot($db);
@@ -690,8 +690,8 @@ if (!empty($search_batch)) {
 if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
-if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
-	$sql .= natural_search('m.fk_projet', $search_fk_projet);
+if (!empty($search_fk_project) && $search_fk_project != '-1') {
+	$sql .= natural_search('m.fk_projet', $search_fk_project);
 }
 if ($search_qty != '') {
 	$sql .= natural_search('m.value', $search_qty, 1);
@@ -795,7 +795,7 @@ if ($object->id > 0) {
 	$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {
@@ -1008,6 +1008,9 @@ if ($search_user) {
 if ($idproduct > 0) {
 	$param .= '&idproduct='.urlencode($idproduct);
 }
+if ($search_fk_project != '' && $search_fk_project != '-1') {
+	$param .= '&search_fk_project='.urlencode($search_fk_project);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -1181,7 +1184,7 @@ if (!empty($arrayfields['origin']['checked'])) {
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
 	// fk_project
 	print '<td class="liste_titre" align="left">';
-	print '&nbsp; ';
+	print $object->showInputField($object->fields['fk_project'], 'fk_project', $search_fk_project, '', '', 'search_', 'maxwidth125', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['m.type_mouvement']['checked'])) {
@@ -1395,7 +1398,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban

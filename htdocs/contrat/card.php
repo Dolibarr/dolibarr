@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Charlene Benke     		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,10 +97,10 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // fetch optionals attributes lines and labels
 $extralabelslines = $extrafields->fetch_name_optionals_label($object->table_element_line);
 
-$permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->contrat->creer; // Used by the include of actions_dellink.inc.php
-$permissiontodelete = ($user->rights->contrat->creer && $object->statut == $object::STATUS_DRAFT) || $user->rights->contrat->supprimer;
-$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('contrat', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('contrat', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->statut == $object::STATUS_DRAFT) || $user->hasRight('contrat', 'supprimer');
+$permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontoedit = $permissiontoadd;
 $error = 0;
 
@@ -865,7 +866,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer) {
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('contrat', 'supprimer')) {
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: list.php?restore_lastsearch_values=1");
@@ -993,7 +994,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->contrat->multidir_output[$object->entity];
+	$upload_dir = $conf->contrat->multidir_output[!empty($object->entity)?$object->entity:$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
@@ -1086,6 +1087,7 @@ if ($result > 0) {
 
 // Create
 if ($action == 'create') {
+	$objectsrc = null;
 	print load_fiche_titre($langs->trans('AddContract'), '', 'contract');
 
 	$soc = new Societe($db);
@@ -2150,7 +2152,7 @@ if ($action == 'create') {
 
 				if (isModEnabled('facture') && $object->statut > 0) {
 					$langs->load("bills");
-					if ($user->rights->facture->creer) {
+					if ($user->hasRight('facture', 'creer')) {
 						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
@@ -2210,8 +2212,8 @@ if ($action == 'create') {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->contrat->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->contrat->lire;
-			$delallowed = $user->rights->contrat->creer;
+			$genallowed = $user->hasRight('contrat', 'lire');
+			$delallowed = $user->hasRight('contrat', 'creer');
 
 
 			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);

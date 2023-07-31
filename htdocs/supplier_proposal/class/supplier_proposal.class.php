@@ -1259,7 +1259,6 @@ class SupplierProposal extends CommonObject
 				$this->note_public          = $obj->note_public;
 				$this->statut               = (int) $obj->fk_statut;
 				$this->status               = (int) $obj->fk_statut;
-				$this->statut_libelle       = $obj->statut_label;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
@@ -2223,7 +2222,7 @@ class SupplierProposal extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param          User	$user   Object user
-	 *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
+	 *      @param          string	$mode   "opened" for askprice to close, "signed" for proposal to invoice
 	 *      @return         WorkboardResponse|int	<0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)

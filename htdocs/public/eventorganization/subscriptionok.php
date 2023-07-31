@@ -20,9 +20,9 @@
  */
 
 /**
- *     	\file       htdocs/public/payment/paymentok.php
+ *     	\file       htdocs/public/eventorganization/subscriptionok.php
  *		\ingroup    core
- *		\brief      File to show page after a successful payment
+ *		\brief      File to show page after a successful subscription.
  *                  This page is called by payment system with url provided to it completed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  */
@@ -76,7 +76,7 @@ if ($securekeyreceived != $securekeytocompare) {
 	exit;
 }
 
-// Security check
+// Module check
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }

@@ -177,9 +177,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->contrat->lire;
-$permissiontoadd = $user->rights->contrat->creer;
-$permissiontodelete = $user->rights->contrat->supprimer;
+$permissiontoread = $user->hasRight('contrat', 'lire');
+$permissiontoadd = $user->hasRight('contrat', 'creer');
+$permissiontodelete = $user->hasRight('contrat', 'supprimer');
 
 
 /*
@@ -692,7 +692,7 @@ if ($user->rights->user->user->lire) {
 	$moreforfilter .= '</div>';
 }
 // If the user can view categories of products
-if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -701,7 +701,7 @@ if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->right
 	$moreforfilter .= '</div>';
 }
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST) && isModEnabled("categorie") && $user->rights->categorie->lire) {
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST) && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -974,7 +974,7 @@ while ($i < $imaxinloop) {
 	$socstatic->name_alias = $obj->name_alias;
 	$socstatic->email = $obj->email;
 	$socstatic->status = $obj->company_status;
-	$socstatic->logo = $obj->logo;
+	$socstatic->logo = $obj->company_logo;
 	$socstatic->country_id = $obj->country_id;
 	$socstatic->country_code = '';
 	$socstatic->country = '';
@@ -990,7 +990,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban

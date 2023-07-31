@@ -210,7 +210,7 @@ class modStock extends DolibarrModules
 			'e.phone'=>'Text', 'e.fax'=>'Text', 'e.statut'=>'Text', 'pe.rowid'=>'List:entrepot:ref:rowid:stock', 'pe.ref'=>'Text'
 		);
 		$this->export_entities_array[$r] = array();	// We define here only fields that use another icon that the one defined into export_icon
-		$this->export_aggregate_array[$r] = array();
+		$this->export_aggregate_array[$r] = array();	// TODO Not used yet
 		$keyforselect = 'warehouse';
 		$keyforelement = 'warehouse';
 		$keyforaliasextra = 'extra';
@@ -237,6 +237,9 @@ class modStock extends DolibarrModules
 			'p.datec'=>'DateCreation', 'p.tms'=>'DateModification', 'p.pmp'=>'PMPValue', 'p.cost_price'=>'CostPrice',
 			'p.seuil_stock_alerte'=>'StockLimit',
 		);
+		if (isModEnabled('barcode')) {
+			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
+		}
 		$this->export_TypeFields_array[$r] = array(
 			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
 			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
@@ -245,6 +248,9 @@ class modStock extends DolibarrModules
 			'ps.reel'=>'Numeric',
 			'p.seuil_stock_alerte'=>'Numeric',
 		);
+		if (isModEnabled('barcode')) {
+			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
+		}
 		$this->export_entities_array[$r] = array(
 			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
 			'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
@@ -252,6 +258,9 @@ class modStock extends DolibarrModules
 			'ps.reel'=>'stock',
 			'p.seuil_stock_alerte'=>'product',
 		);	// We define here only fields that use another icon that the one defined into export_icon
+		if (isModEnabled('barcode')) {
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
+		}
 		$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 		$this->export_dependencies_array[$r] = array('stock'=>array('p.rowid', 'e.rowid')); // We must keep this until the aggregate_array is used. To have a unique key, if we ask a field of a child, to avoid the DISTINCT to discard them.
 		$keyforselect = 'product';
@@ -284,6 +293,9 @@ class modStock extends DolibarrModules
 				'pb.rowid'=>'Id', 'pb.batch'=>'Batch', 'pb.qty'=>'Qty',
 				'pl.eatby'=>'EatByDate', 'pl.sellby'=>'SellByDate'
 			);
+			if (isModEnabled('barcode')) {
+				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
+			}
 			$this->export_TypeFields_array[$r] = array(
 				'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.description'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
 				'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
@@ -292,6 +304,9 @@ class modStock extends DolibarrModules
 				'pb.batch'=>'Text', 'pb.qty'=>'Numeric',
 				'pl.eatby'=>'Date', 'pl.sellby'=>'Date'
 			);
+			if (isModEnabled('barcode')) {
+				$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
+			}
 			$this->export_entities_array[$r] = array(
 				'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
 				'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
@@ -299,6 +314,9 @@ class modStock extends DolibarrModules
 				'pb.rowid'=>'batch', 'pb.batch'=>'batch', 'pb.qty'=>'batch',
 				'pl.eatby'=>'batch', 'pl.sellby'=>'batch'
 			);	// We define here only fields that use another icon that the one defined into export_icon
+			if (isModEnabled('barcode')) {
+				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
+			}
 			$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 			$this->export_dependencies_array[$r] = array('stockbatch'=>array('pb.rowid'), 'batch'=>array('pb.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 			$keyforselect = 'product_lot';
@@ -329,12 +347,18 @@ class modStock extends DolibarrModules
 			'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description", 'p.note'=>"Note",
 			'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration", 'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
 		);
+		if (isModEnabled('barcode')) {
+			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
+		}
 		$this->export_TypeFields_array[$r] = array(
 			'sm.rowid'=>'Numeric', 'sm.value'=>'Numeric', 'sm.datem'=>'Date', 'sm.batch'=>'Text', 'sm.label'=>'Text', 'sm.inventorycode'=>'Text',
 			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.description'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
 			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
 			'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree", 'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
+		if (isModEnabled('barcode')) {
+			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
+		}
 		$this->export_entities_array[$r] = array(
 			'e.rowid'=>'warehouse', 'e.ref'=>'warehouse', 'e.description'=>'warehouse', 'e.lieu'=>'warehouse', 'e.address'=>'warehouse', 'e.zip'=>'warehouse', 'e.town'=>'warehouse',
 			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
@@ -344,6 +368,9 @@ class modStock extends DolibarrModules
 			$this->export_fields_array[$r]['sm.batch'] = 'Batch';
 			$this->export_TypeFields_array[$r]['sm.batch'] = 'Text';
 			$this->export_entities_array[$r]['sm.batch'] = 'movement';
+		}
+		if (isModEnabled('barcode')) {
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
 		}
 		$this->export_aggregate_array[$r] = array('sm.value'=>'SUM'); // TODO Not used yet
 		$this->export_dependencies_array[$r] = array('movement'=>array('sm.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.

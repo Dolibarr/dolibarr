@@ -349,7 +349,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->propal->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -377,7 +377,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->commande->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -403,7 +403,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Purchase order not found');
 			}
 
-			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->fournisseur->dir_output."/commande/".dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -421,7 +421,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->facture->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -547,6 +547,17 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->contrat->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
+		} elseif ($modulepart == 'projet' || $modulepart == 'project') {
+			$modulepart = 'project';
+			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+
+			$object = new Project($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Project not found');
+			}
+
+			$upload_dir = $conf->projet->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
@@ -676,7 +687,7 @@ class Documents extends DolibarrApi
 
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 					$object = new CommandeFournisseur($this->db);
-			} elseif ($modulepart == 'project') {
+			} elseif ($modulepart == 'projet' || $modulepart == 'project') {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
 			} elseif ($modulepart == 'task' || $modulepart == 'project_task') {
@@ -821,7 +832,50 @@ class Documents extends DolibarrApi
 			throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
 		}
 
-		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1, 1);
+		$disablevirusscan = 0;
+		$src_file = $destfiletmp;
+		$dest_file = $destfile;
+
+		// Security:
+		// If we need to make a virus scan
+		if (empty($disablevirusscan) && file_exists($src_file)) {
+			$checkvirusarray = dolCheckVirus($src_file);
+			if (count($checkvirusarray)) {
+				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
+				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray));
+			}
+		}
+
+		// Security:
+		// Disallow file with some extensions. We rename them.
+		// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
+		if (isAFileWithExecutableContent($dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED)) {
+			// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
+			$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
+			if (!preg_match('/\/$/', $publicmediasdirwithslash)) {
+				$publicmediasdirwithslash .= '/';
+			}
+
+			if (strpos($upload_dir, $publicmediasdirwithslash) !== 0 || !getDolGlobalInt("MAIN_DOCUMENT_DISABLE_NOEXE_IN_MEDIAS_DIR")) {	// We never add .noexe on files into media directory
+				$dest_file .= '.noexe';
+			}
+		}
+
+		// Security:
+		// We refuse cache files/dirs, upload using .. and pipes into filenames.
+		if (preg_match('/^\./', basename($src_file)) || preg_match('/\.\./', $src_file) || preg_match('/[<>|]/', $src_file)) {
+			dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
+			throw new RestException(500, "Refused to deliver file ".$src_file);
+		}
+
+		// Security:
+		// We refuse cache files/dirs, upload using .. and pipes into filenames.
+		if (preg_match('/^\./', basename($dest_file)) || preg_match('/\.\./', $dest_file) || preg_match('/[<>|]/', $dest_file)) {
+			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
+			throw new RestException(500, "Refused to deliver file ".$dest_file);
+		}
+
+		$result = dol_move($destfiletmp, $dest_file, 0, $overwriteifexists, 1, 1);
 		if (!$result) {
 			throw new RestException(500, "Failed to move file into '".$destfile."'");
 		}

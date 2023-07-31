@@ -677,10 +677,10 @@ class pdf_squille extends ModelePdfReception
 		if ($totalVolume != '') {
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		}
-		if ($object->trueWeight) {
+		if (isset($object->trueWeight) && !empty($object->trueWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs, -1, 'no', 1);
 		}
-		if ($object->trueVolume) {
+		if (isset($object->trueVolume) && !empty($object->trueVolume)) {
 			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs, -1, 'no', 1);
 		}
 
@@ -946,7 +946,7 @@ class pdf_squille extends ModelePdfReception
 
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$text = $linkedobject->ref;
-				if ($linkedobject->ref_client) {
+				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
 					$text .= ' ('.$linkedobject->ref_client.')';
 				}
 				$Yoff = $Yoff + 8;

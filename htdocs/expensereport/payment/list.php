@@ -483,7 +483,7 @@ while ($i < $imaxinloop) {
 
 	$paymentexpensereportstatic->id = $objp->rowid;
 	$paymentexpensereportstatic->ref = $objp->ref;
-	$paymentexpensereportstatic->datep = $objp->datep;
+	$paymentexpensereportstatic->datep = $db->jdate($objp->datep);
 	$paymentexpensereportstatic->amount = $objp->pamount;
 	$paymentexpensereportstatic->fk_typepayment = $objp->paiement_type;
 
@@ -500,7 +500,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
