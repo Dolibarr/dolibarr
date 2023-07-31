@@ -100,8 +100,7 @@ if (empty($date_startmonth) || empty($date_endmonth)) {
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];
 }
-
-if($conf->global->ACCOUNTANCY_JOURNAL_USE_CURRENT_MONTH){
+if (getDolGlobalString('ACCOUNTANCY_JOURNAL_USE_CURRENT_MONTH')) {
 	$pastmonth+=1;
 }
 
