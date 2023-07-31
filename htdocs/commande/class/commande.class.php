@@ -3571,7 +3571,7 @@ class Commande extends CommonOrder
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param		User	$user   Object user
-	 *	@param		String	$mode   Mode (toship, tobill, shippedtobill)
+	 *	@param		string	$mode   Mode ('toship', 'tobill', 'shippedtobill')
 	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
