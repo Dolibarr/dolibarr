@@ -1462,10 +1462,20 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
-
-			// Subject
+			// Subject/topic
+			$topic = "";
+			foreach( $formmail->lines_model as $line){
+				if ($this->param['models_id'] == $line->id){
+					$topic = $line->topic;
+					break;
+				}
+			}
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			if($this->param['models_id'] == -1 || $this->param['models_id'] == '' ){
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			}else{
+				print '<td><input type="text" class="text minwidth500" name="subject" value="'.$topic.'" />';
+			}
 			print '</td></tr>';
 
 			// Recipients / adressed-to
