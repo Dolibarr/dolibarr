@@ -5645,6 +5645,10 @@ td.gtaskname {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+table.jPicker {
+	border-radius: 5px;
+	border: 1px solid #bbb !important;
+}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5719,6 +5723,9 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  font-size : 8pt;
  padding : 0px;
  margin : 0px;
+}
+.colorselector {
+	border: solid 1px #ddd !important;
 }
 
 

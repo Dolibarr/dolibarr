@@ -1347,7 +1347,7 @@ while ($i < $imaxinloop) {
 		// (Last) Name
 		if (!empty($arrayfields['p.lastname']['checked'])) {
 			print '<td class="middle tdoverflowmax150">';
-			print $contactstatic->getNomUrl(1);
+			print $contactstatic->getNomUrl(-1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
