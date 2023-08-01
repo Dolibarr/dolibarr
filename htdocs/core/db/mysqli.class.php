@@ -238,7 +238,11 @@ class DoliDBMysqli extends DoliDB
 			if (!class_exists('mysqli')) {
 				dol_print_error('', 'Driver mysqli for PHP not available');
 			}
-			$tmp = new mysqli_doli($host, $login, $passwd, $name, $port);
+			if (strpos($host, 'ssl://') === 0) {
+				$tmp = new mysqli_doli($host, $login, $passwd, $name, $port);
+			} else {
+				$tmp = new mysqli($host, $login, $passwd, $name, $port);
+			}
 		} catch (Exception $e) {
 			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
 		}
