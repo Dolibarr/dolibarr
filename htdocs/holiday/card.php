@@ -963,7 +963,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-            if(count($errors)) setEventMessages('',$errors, 'errors');
+            if (count($errors)) {
+				setEventMessages('', $errors, 'errors');
+			}
 		}
     }
 
