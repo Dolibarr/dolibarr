@@ -119,6 +119,7 @@ if (!$accessallowed) {
 }
 
 // Define dir according to modulepart
+$dir = '';
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	$object = new Product($db);
@@ -344,7 +345,8 @@ if ($cancel) {
 
 if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey")) {
 	if (empty($dir)) {
-		print 'Bug: Value for $dir could not be defined.';
+		dol_print_error('', 'Bug: Value for $dir could not be defined.');
+		exit;
 	}
 
 	$fullpath = $dir."/".$original_file;
