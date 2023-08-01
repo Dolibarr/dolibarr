@@ -34,7 +34,7 @@ class box_mos extends ModeleBoxes
 {
 	public $boxcode  = "lastmos";
 	public $boximg   = "object_mrp";
-	public $boxlabel = "BoxTitleLatestModifiedMOs";
+	public $boxlabel = "BoxTitleLatestModifiedMos";
 	public $depends  = array("mrp");
 
 	/**
