@@ -233,15 +233,16 @@ class DoliDBMysqli extends DoliDB
 
 		//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-		// Can also be
-		// mysqli::init(); mysql::options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 0'); mysqli::options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
-		// return mysqli::real_connect($host, $user, $pass, $db, $port);
 		$tmp = false;
 		try {
 			if (!class_exists('mysqli')) {
 				dol_print_error('', 'Driver mysqli for PHP not available');
 			}
-			$tmp = new mysqli($host, $login, $passwd, $name, $port);
+			if (strpos($host, 'ssl://') === 0) {
+				$tmp = new mysqli_doli($host, $login, $passwd, $name, $port);
+			} else {
+				$tmp = new mysqli($host, $login, $passwd, $name, $port);
+			}
 		} catch (Exception $e) {
 			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
 		}
@@ -1234,5 +1235,19 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		return $result;
+	}
+}
+
+class mysqli_doli extends mysqli {
+	public function __construct($host, $user, $pass, $db, $port = 0, $socket = "") {
+		$flags = 0;
+		parent::init();
+		if (strpos($host, 'ssl://') === 0) {
+			$host = substr($host, 6);
+			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+			parent::ssl_set(NULL, NULL, "", NULL, NULL);
+			$flags = MYSQLI_CLIENT_SSL;
+		}
+		parent::real_connect($host, $user, $pass, $db, $port, $socket, $flags);
 	}
 }
