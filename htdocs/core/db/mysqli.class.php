@@ -51,9 +51,9 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param      string	$type		Type of database (mysql, pgsql...)
 	 *	@param	    string	$host		Address of database server
-	 *	@param	    string	$user		Nom de l'utilisateur autorise
-	 *	@param	    string	$pass		Mot de passe
-	 *	@param	    string	$name		Nom de la database
+	 *	@param	    string	$user		Name of database user
+	 *	@param	    string	$pass		Password of database user
+	 *	@param	    string	$name		Name of database
 	 *	@param	    int		$port		Port of database server
 	 */
 	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
@@ -239,7 +239,7 @@ class DoliDBMysqli extends DoliDB
 				dol_print_error('', 'Driver mysqli for PHP not available');
 			}
 			if (strpos($host, 'ssl://') === 0) {
-				$tmp = new mysqli_doli($host, $login, $passwd, $name, $port);
+				$tmp = new mysqliDoli($host, $login, $passwd, $name, $port);
 			} else {
 				$tmp = new mysqli($host, $login, $passwd, $name, $port);
 			}
@@ -1238,16 +1238,32 @@ class DoliDBMysqli extends DoliDB
 	}
 }
 
-class mysqli_doli extends mysqli {
-	public function __construct($host, $user, $pass, $db, $port = 0, $socket = "") {
+/**
+ * Class to make SSL connection
+ */
+class mysqliDoli extends mysqli
+{
+	/**
+	 *	Constructor.
+	 *	This create an opened connexion to a database server and eventually to a database
+	 *
+	 *	@param	    string	$host		Address of database server
+	 *	@param	    string	$user		Name of database user
+	 *	@param	    string	$pass		Password of database user
+	 *	@param	    string	$name		Name of database
+	 *	@param	    int		$port		Port of database server
+	 *	@param	    string	$socket		Socket
+	 */
+	public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+	{
 		$flags = 0;
 		parent::init();
 		if (strpos($host, 'ssl://') === 0) {
 			$host = substr($host, 6);
 			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
-			parent::ssl_set(NULL, NULL, "", NULL, NULL);
+			parent::ssl_set(null, null, "", null, null);
 			$flags = MYSQLI_CLIENT_SSL;
 		}
-		parent::real_connect($host, $user, $pass, $db, $port, $socket, $flags);
+		parent::real_connect($host, $user, $pass, $name, $port, $socket, $flags);
 	}
 }
