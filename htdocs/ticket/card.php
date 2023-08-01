@@ -382,7 +382,7 @@ if (empty($reshook)) {
 	}
 
 	// Mark as Read
-	if ($action == "mark_ticket_read" && $permissiontoadd) {
+	if ($action == "set_read" && $permissiontoadd) {
 		$object->fetch('', '', GETPOST("track_id", 'alpha'));
 
 		if ($object->markAsRead($user) > 0) {

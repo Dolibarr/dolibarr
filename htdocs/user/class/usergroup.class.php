@@ -98,6 +98,9 @@ class UserGroup extends CommonObject
 	 */
 	public $note;
 
+	/**
+	 * @var User[]
+	 */
 	public $members = array(); // Array of users
 
 	public $nb_rights; // Number of rights granted to the user

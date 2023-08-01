@@ -334,7 +334,7 @@ if ($resql) {
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
-                if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
+				if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
 					$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
 				} else {
 					$line_cost = $obj->min_price;

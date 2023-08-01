@@ -1672,8 +1672,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+			&& $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
+		} elseif (is_object($filterobj)) {
+			return 'Bad value for $filterobj';
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
@@ -1724,12 +1728,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
-				// Generic case
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+				&& $filterobj->table_element && $filterobj->element) {
+				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
+			} elseif (is_object($filterobj)) {
+				return 'Bad value for $filterobj';
 			}
 		}
 
