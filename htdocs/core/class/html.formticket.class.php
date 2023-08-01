@@ -1471,10 +1471,10 @@ class FormTicket
 				}
 			}
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			if($this->param['models_id'] == -1 || $this->param['models_id'] == '' ){
+			if (empty($topic)) {
 				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
-			}else{
-				print '<td><input type="text" class="text minwidth500" name="subject" value="'.$topic.'" />';
+			} else {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
 			}
 			print '</td></tr>';
 
