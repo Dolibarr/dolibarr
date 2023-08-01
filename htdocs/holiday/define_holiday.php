@@ -164,8 +164,6 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					setEventMessages($holiday->error, $holiday->errors, 'errors');
 					$error++;
-				} elseif ($result == 0) {
-					setEventMessages($langs->trans("HolidayQtyNotModified", $user->login), null, 'warnings');
 				}
 
 				// Update of the days of the employee
@@ -189,6 +187,10 @@ if (empty($reshook)) {
 				$result = $db->query($sql);
 				*/
 			}
+		}
+
+		if (!$error && !$nbok) {
+			setEventMessages($langs->trans("HolidayQtyNotModified", $user->login), null, 'warnings');
 		}
 
 		if (!$error) {
