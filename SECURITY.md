@@ -4,14 +4,9 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Supported Versions for security reports
 
-| Version    | Supported              |
-| ---------- | ---------------------- |
-| <= 17.0.0  | :x:                    |
-| >= 17.0.3  | :white_check_mark:     |
-| >= develop | :white_check_mark:     |
+Security report are valid only on current stable version (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
 
 ## Reporting a Vulnerability
-
 
 To report a vulnerability, for a private report, you can:
 
