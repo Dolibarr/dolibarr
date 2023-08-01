@@ -38,6 +38,7 @@ $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
+$mode = GETPOST('optioncss', 'aZ');
 
 $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'int');
