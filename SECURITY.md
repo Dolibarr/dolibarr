@@ -15,7 +15,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report on https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US (recommended for everybody)
+- Send your report on [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 - Or send by email to security@dolibarr.org a clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary
 
