@@ -322,6 +322,13 @@ if (count($typeleaves) == 0) {
 
 	$moreforfilter = '';
 
+	$selectedfields = '';
+	if ($massactionbutton) {
+		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+	}
+
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'" id="tablelines3">'."\n";
 
@@ -383,17 +390,8 @@ if (count($typeleaves) == 0) {
 		print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
 	}
 	print_liste_field_titre('');
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 
-
-	$selectedfields = '';
-	if ($massactionbutton) {
-		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
-		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-	}
-
-
-		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 
 		print '</tr>';
 	$usersupervisor = new User($db);
