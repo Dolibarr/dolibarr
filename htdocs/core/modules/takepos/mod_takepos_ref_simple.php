@@ -130,7 +130,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 * @param   Societe     $objsoc     Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      			Next ref value or last ref if $mode is 'last'
+	 * @return  string|int     			Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
@@ -198,6 +198,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 			return $this->prefix.$pos_source.'-'.$yymm.'-'.$num;
 		} else {
 			dol_print_error('', 'Bad parameter for getNextValue');
+			return -1;
 		}
 	}
 

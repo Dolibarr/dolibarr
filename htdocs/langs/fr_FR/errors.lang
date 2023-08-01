@@ -262,7 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Erreur, le paramètre <b> %s </b> 
 ErrorLoginDateValidity=Erreur, cet identifiant est hors de la plage de date de validité
 ErrorValueLength=La longueur du champ <b>%s</b> doit être supérieure à <b>%s</b>
 ErrorReservedKeyword=Le terme '<b>%s</b>' est un mot clé réservé
-ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command.
+ErrorFilenameReserved=Le nom de fichier <b> %s </b> ne peut pas être utilisé car il s'agit d'une commande réservée et protégée.
 ErrorNotAvailableWithThisDistribution=Non disponible dans cette distribution
 ErrorPublicInterfaceNotEnabled=L’interface publique n’a pas été activée
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=La langue d'une nouvelle page, si elle est la traduction d'une autre page, doit être définie
@@ -304,12 +304,19 @@ ErrorValueForTooLow=La valeur pour <b>%s</b> est trop faible
 ErrorValueCantBeNull=La valeur pour <b>%s</b> ne peut pas être nulle
 ErrorDateOfMovementLowerThanDateOfFileTransmission=La date de l'opération bancaire ne peut être inférieure à la date de transmission du fichier
 ErrorTooMuchFileInForm=Trop de fichiers dans le formulaire, le nombre maximum est de %s fichier(s)
-ErrorSessionInvalidatedAfterPasswordChange=La session a été invalidée suite à un changement de mot de passe, d'état ou de dates de validité. Veuillez vous reconnecter.
+ErrorSessionInvalidatedAfterPasswordChange=La session a été invalidée suite à un changement de mot de passe, email, statut ou de dates de validité. Veuillez vous reconnecter.
 ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> existe déjà.
 ErrorFieldExist=La valeur pour <b>%s</b> existe déjà
 ErrorEqualModule=Module invalide dans <b>%s</b>.
 ErrorFieldValue=La valeur pour <b>%s</b> est incorrecte
-ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
+ErrorCoherenceMenu= <b> %s </b> est requis lorsque <b> %s </b> est 'left'
+ErrorUploadFileDragDrop=Une erreur s'est produite lors du téléchargement du ou des fichiers
+ErrorUploadFileDragDropPermissionDenied=Une erreur s'est produite lors du téléchargement du ou des fichiers : autorisation refusée
+ErrorFixThisHere= <a href="%s"> Corrigez ceci ici </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Erreur : L'URL de votre instance actuelle (%s) ne correspond pas à l'URL définie dans votre configuration de connexion OAuth2 (%s). La connexion OAuth2 dans une telle configuration n'est pas autorisée.
+ErrorMenuExistValue=Un menu existe déjà avec ce titre ou cette URL
+ErrorSVGFilesNotAllowedAsLinksWithout=Les fichiers SVG ne sont pas autorisés en tant que liens externes sans l'option %s
+ErrorTypeMenu=Impossible d'ajouter un autre menu pour le même module sur la barre de navigation, pas encore géré
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -349,6 +356,14 @@ WarningThemeForcedTo=Attention, le choix du thème a été forcé à <b> %s </b>
 WarningPagesWillBeDeleted=Attention, cela supprimera également toutes les pages/conteneurs existants du site. Vous devriez exporter votre site Web avant, afin d'avoir une sauvegarde pour le réimporter plus tard.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validation automatique est désactivée lorsque l'option de diminution du stock est définie sur "Validation de la facture".
 WarningModuleNeedRefrech = Le module <b>%s</b> a été désactivé. N'oubliez pas de le réactiver
+WarningPermissionAlreadyExist=Autorisations existantes pour cet objet
+
+SwissQrOnlyVIR = La facture SwissQR ne peut être ajoutée que sur les factures configurées pour être payées par virement.
+SwissQrCreditorAddressInvalid = L'adresse du créancier n'est pas valide (le code postal et la ville sont-ils définis ? (%s)
+SwissQrCreditorInformationInvalid = Les informations sur le créancier ne sont pas valides pour l'IBAN (%s) : %s
+SwissQrIbanNotImplementedYet = QR-IBAN pas encore implémenté
+SwissQrPaymentInformationInvalid = Les informations de paiement étaient invalides pour le total %s : %s
+SwissQrDebitorAddressInvalid = Les informations sur le débiteur étaient invalides (%s)
 
 # Validate
 RequireValidValue = Valeur non valide

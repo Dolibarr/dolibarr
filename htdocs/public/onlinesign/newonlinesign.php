@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,6 +156,11 @@ if ($source == 'proposal') {
 } else {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
 }
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('onlinesign'));
+
+$error = 0;
 
 
 /*
@@ -342,10 +348,21 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
-	print '</td><td class="CTableRow2">';
-	print '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
-	print '</td></tr>'."\n";
+	$amount = '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
+	$amount .= '</td><td class="CTableRow2">';
+	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
+	$amount .= '</td></tr>'."\n";
+
+	// Call Hook amountPropalSign
+	$parameters = array('source' => $source);
+	$reshook = $hookmanager->executeHooks('amountPropalSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		$amount .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$amount = $hookmanager->resPrint;
+	}
+
+	print $amount;
 
 	// Object
 	$text = '<b>'.$langs->trans("SignatureProposalRef", $object->ref).'</b>';
@@ -453,6 +470,7 @@ if ($source == 'proposal') {
 	$langs->load("fichinter");
 
 	$result = $object->fetch_thirdparty($object->socid);
+
 	// Proposer
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
 	print '</td><td class="CTableRow2">';
@@ -492,13 +510,14 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-
-
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 }
 
+// Call Hook addFormSign
+$parameters = array('source' => $source);
+$reshook = $hookmanager->executeHooks('addFormSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!$found && !$mesg) {
 	$mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
@@ -528,6 +547,7 @@ print '<tr><td class="center">';
 if ($action == "dosign" && empty($cancel)) {
 	print '<div class="tablepublicpayment">';
 	print '<input type="button" class="buttonDelete small" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
+	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly" id="name"  placeholder="'.$langs->trans("Lastname").'">';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
 	// Do not use class="reposition" here: It breaks the submit and there is a message on top to say it's ok, so going back top is better.
@@ -538,7 +558,7 @@ if ($action == "dosign" && empty($cancel)) {
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-	  $("#signature").jSignature({ color:"#000", lineWidth:4, '.(empty($conf->dol_optimize_smallscreen) ? '' : 'width: 280, ' ).'height: 180});
+	  $("#signature").jSignature({ color:"#000", lineWidth:0, '.(empty($conf->dol_optimize_smallscreen) ? '' : 'width: 280, ' ).'height: 180});
 
 	  $("#signature").on("change",function(){
 		$("#clearsignature").css("display","");
@@ -548,6 +568,7 @@ if ($action == "dosign" && empty($cancel)) {
 				console.log("We click on button sign");
 				$("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\');
 				var signature = $("#signature").jSignature("getData", "image");
+				var name = document.getElementById("name").value;
 				$.ajax({
 					type: "POST",
 					url: "'.DOL_URL_ROOT.'/core/ajax/onlineSign.php",
@@ -556,6 +577,7 @@ if ($action == "dosign" && empty($cancel)) {
 						"action" : "importSignature",
 						"token" : \''.newToken().'\',
 						"signaturebase64" : signature,
+						"onlinesignname" : name,
 						"ref" : \''.dol_escape_js($REF).'\',
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
 						"mode" : \''.dol_escape_htmltag($source).'\',
@@ -577,6 +599,7 @@ if ($action == "dosign" && empty($cancel)) {
 	  $("#clearsignature").on("click",function(){
 		$("#signature").jSignature("clear");
 		$("#signbutton").attr("disabled",true);
+		// document.getElementById("onlinesignname").value = "";
 	  });
 
 	  $("#signbutton").attr("disabled",true);
@@ -587,15 +610,19 @@ if ($action == "dosign" && empty($cancel)) {
 		if ($object->status == $object::STATUS_SIGNED) {
 			print '<br>';
 			if ($message == 'signed') {
+				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalSigned").'</span>';
 			} else {
+				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalAlreadySigned").'</span>';
 			}
 		} elseif ($object->status == $object::STATUS_NOTSIGNED) {
 			print '<br>';
 			if ($message == 'refused') {
+				print img_picto('', 'cross', '', false, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalRefused").'</span>';
 			} else {
+				print img_picto('', 'cross', '', false, 0, 0, '', 'size2x').'<br>';
 				print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
 			}
 		} else {
@@ -623,7 +650,7 @@ print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs);
+htmlPrintOnlineFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 

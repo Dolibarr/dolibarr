@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +88,12 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SecurityTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -193,7 +195,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				continue;
 			}
 
-			print 'Check php file '.$file['fullname']."\n";
+			//print 'Check php file '.$file['relativename']."\n";
 			$filecontent=file_get_contents($file['fullname']);
 
 			if (preg_match('/\.class\.php/', $file['relativename'])
@@ -417,7 +419,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$matches=array();
 			preg_match_all('/(\$sql|SET\s|WHERE\s|INSERT\s|VALUES\s|VALUES\().+\s*\'\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
+				if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'dbs->pref', 'dbs->sani', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
 					$ok=false;
 					var_dump($matches);
 					break;

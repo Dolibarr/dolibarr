@@ -5,6 +5,7 @@
  * Copyright (C) 2013		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
+ * Copyright (C) 2022		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->agenda) || empty($conf->agenda->enabled)) {
+		if (!isModEnabled('agenda')) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -119,6 +120,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
 			}
 			$object->actionmsg = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+			// For merge event, we add a mention
+			if (!empty($object->context['mergefromname'])) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->trans("DataFromWasMerged", $object->context['mergefromname']));
+			}
 
 			$object->sendtoid = 0;
 			$object->socid = $object->id;
@@ -869,6 +874,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			// Parameters $object->sendtoid defined by caller
 			//$object->sendtoid=0;
+		} elseif ($action == 'PROJECT_CLOSE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("ProjectClosedInDolibarr", $object->ref);
+			}
+			$object->actionmsg = $langs->transnoentities("ProjectClosedInDolibarr", $object->ref);
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'TASK_CREATE') {
 			// Project tasks
 			// Load translation files required by the page
@@ -1066,8 +1081,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm = new ActionComm($this->db);
 		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
-		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note_private = $object->actionmsg;
+		$actioncomm->label       = $object->actionmsg2;		// Label of event
+		$actioncomm->note_private = $object->actionmsg;		// Description
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;

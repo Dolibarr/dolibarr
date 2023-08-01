@@ -16,8 +16,8 @@
  */
 
 /**
- * 	\defgroup   emailcollector     Module emailcollector
- *  \brief      emailcollector module descriptor.
+ * 	\defgroup   emailcollector     Module Emailcollector
+ *  \brief      Module to collect emails
  *
  *  \file       htdocs/core/modules/modEmailCollector.class.php
  *  \ingroup    emailcollector
@@ -176,7 +176,7 @@ class modEmailCollector extends DolibarrModules
 			'url'=>'/admin/emailcollector_list.php?leftmenu=admintools',
 			'langs'=>'admin', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>400,
-			'enabled'=>'$conf->emailcollector->enabled && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'isModEnabled("emailcollector") && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->admin', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
@@ -296,8 +296,9 @@ class modEmailCollector extends DolibarrModules
 				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'to', 'sales@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
+				$paramstring = 'tmp_from=EXTRACT:HEADER:^From:(.*)'."\n".'socid=SETIFEMPTY:1'."\n".'usage_opportunity=SET:1'."\n".'description=EXTRACT:BODY:(.*)'."\n".'title=SET:Lead or message from __tmp_from__ received by email';
 				$sqlforexampleActionC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'project', 'tmp_from=EXTRACT:HEADER:^From:(.*);socid=SETIFEMPTY:1;usage_opportunity=SET:1;description=EXTRACT:BODY:(.*);title=SET:Lead or message from __tmp_from__ received by email', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'project', '".$this->db->escape($paramstring)."', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleC1;
 
@@ -327,8 +328,9 @@ class modEmailCollector extends DolibarrModules
 				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'to', 'jobs@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
+				$paramstring = 'tmp_from=EXTRACT:HEADER:^From:(.*)(<.*>)?'."\n".'fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*)'."\n".'description=EXTRACT:BODY:(.*)'."\n".'lastname=SET:__tmp_from__';
 				$sqlforexampleActionC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'candidature', 'tmp_from=EXTRACT:HEADER:^From:(.*)(<.*>)?;fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*);description=EXTRACT:BODY:(.*);lastname=SET:__tmp_from__', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'candidature', '".$this->db->escape($paramstring)."', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleC1;
 

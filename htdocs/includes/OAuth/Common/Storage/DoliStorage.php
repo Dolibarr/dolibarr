@@ -29,6 +29,8 @@ use OAuth\Common\Storage\Exception\TokenNotFoundException;
 use OAuth\Common\Storage\Exception\AuthorizationStateNotFoundException;
 use DoliDB;
 
+
+
 /**
  * Class to manage storage of OAUTH2 in Dolibarr
  */
@@ -67,10 +69,10 @@ class DoliStorage implements TokenStorageInterface
 
 	/**
 	 * @param 	DoliDB 	$db					Database handler
-	 * @param 	Conf 	$conf				Conf object
+	 * @param 	\Conf 	$conf				Conf object
 	 * @param	string	$keyforprovider		Key to manage several providers of the same type. For example 'abc' will be added to 'Google' to defined storage key.
 	 */
-	public function __construct(DoliDB $db, $conf, $keyforprovider = '')
+	public function __construct(DoliDB $db, \Conf $conf, $keyforprovider = '')
 	{
 		$this->db = $db;
 		$this->conf = $conf;
@@ -222,7 +224,7 @@ class DoliStorage implements TokenStorageInterface
 		//    unset($tokens[$service]);
 
 		$servicepluskeyforprovider = $service.($this->keyforprovider ? '-'.$this->keyforprovider : '');
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
@@ -285,7 +287,7 @@ class DoliStorage implements TokenStorageInterface
 		//$newstate = preg_replace('/\-.*$/', '', $state);
 		$newstate = $state;
 		$servicepluskeyforprovider = $service.($this->keyforprovider ? '-'.$this->keyforprovider : '');
-		
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
@@ -320,7 +322,7 @@ class DoliStorage implements TokenStorageInterface
 		dol_syslog("hasAuthorizationState service=".$service);
 
 		$servicepluskeyforprovider = $service.($this->keyforprovider ? '-'.$this->keyforprovider : '');
-		
+
 		$sql = "SELECT state FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";

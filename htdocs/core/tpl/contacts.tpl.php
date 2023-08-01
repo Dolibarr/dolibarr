@@ -59,7 +59,7 @@ if ($module == 'propal') {
 } elseif ($module == 'project') {
 	$permission = $user->rights->projet->creer;
 } elseif ($module == 'action') {
-	$permission = $user->rights->agenda->myactions->create;
+	$permission = $user->hasRight('agenda', 'myactions', 'create');
 } elseif ($module == 'shipping') {
 	$permission = $user->rights->expedition->creer;
 } elseif ($module == 'reception') {
@@ -143,7 +143,8 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component
+			?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
@@ -151,7 +152,7 @@ if ($permission) {
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
-			if (!empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer) {
+			if (!empty($object->socid) && $object->socid > 1 && $user->hasRight('societe', 'creer')) {
 				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$selectedCompany.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
 			print $newcardbutton;

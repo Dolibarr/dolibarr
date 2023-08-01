@@ -1,15 +1,13 @@
-<?php
+<?php declare (strict_types=1);
 
 namespace Sabre\Event\Loop;
 
 /**
  * Executes a function after x seconds.
  *
- * @param callable $cb
- * @param float $timeout timeout in seconds
  * @return void
  */
-function setTimeout(callable $cb, $timeout) {
+function setTimeout(callable $cb, float $timeout) {
 
     instance()->setTimeout($cb, $timeout);
 
@@ -20,24 +18,19 @@ function setTimeout(callable $cb, $timeout) {
  *
  * The value this function returns can be used to stop the interval with
  * clearInterval.
- *
- * @param callable $cb
- * @param float $timeout
- * @return array
  */
-function setInterval(callable $cb, $timeout) {
+function setInterval(callable $cb, float $timeout) : array {
 
     return instance()->setInterval($cb, $timeout);
 
 }
 
 /**
- * Stops a running internval.
+ * Stops a running interval.
  *
- * @param array $intervalId
  * @return void
  */
-function clearInterval($intervalId) {
+function clearInterval(array $intervalId) {
 
     instance()->clearInterval($intervalId);
 
@@ -46,7 +39,6 @@ function clearInterval($intervalId) {
 /**
  * Runs a function immediately at the next iteration of the loop.
  *
- * @param callable $cb
  * @return void
  */
 function nextTick(callable $cb) {
@@ -66,7 +58,6 @@ function nextTick(callable $cb) {
  * prevent the eventloop from never stopping.
  *
  * @param resource $stream
- * @param callable $cb
  * @return void
  */
 function addReadStream($stream, callable $cb) {
@@ -85,7 +76,6 @@ function addReadStream($stream, callable $cb) {
  * prevent the eventloop from never stopping.
  *
  * @param resource $stream
- * @param callable $cb
  * @return void
  */
 function addWriteStream($stream, callable $cb) {
@@ -144,11 +134,8 @@ function run() {
  *
  * This function will return true if there are _any_ events left in the
  * loop after the tick.
- *
- * @param bool $block
- * @return bool
  */
-function tick($block = false) {
+function tick(bool $block = false) : bool {
 
     return instance()->tick($block);
 
@@ -167,10 +154,8 @@ function stop() {
 
 /**
  * Retrieves or sets the global Loop object.
- *
- * @param Loop $newLoop
  */
-function instance(Loop $newLoop = null) {
+function instance(Loop $newLoop = null) : Loop {
 
     static $loop;
     if ($newLoop) {

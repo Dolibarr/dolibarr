@@ -34,6 +34,8 @@
  * $type, $text, $description, $line
  */
 
+/** var ObjectLine $line */
+
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 // Protection to avoid direct call of template
@@ -124,7 +126,7 @@ echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but 
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
 		$label = $tmpproduct->getLabelOfUnit('long');
 		if ($label !== '') {
@@ -163,9 +165,9 @@ if ($filtertype != 1) {
 	// Work station
 	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
-		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+		$res = $workstation->fetch($line->fk_default_workstation);
 
-		print '<td class="linecolunit nowrap right">';
+		print '<td class="linecolworkstation nowrap right">';
 		$coldisplay++;
 		if ($res > 0) echo $workstation->getNomUrl();
 		print '</td>';

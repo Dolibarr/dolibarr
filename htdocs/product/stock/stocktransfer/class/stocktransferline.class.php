@@ -117,42 +117,6 @@ class StockTransferLine extends CommonObjectLine
 	// END MODULEBUILDER PROPERTIES
 
 
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'stocktransfer_stocktransferlineline';
-
-	/**
-	 * @var int    Field with ID of parent key if this object has a parent
-	 */
-	//public $fk_element = 'fk_stocktransferline';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'StockTransferLineline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables = array();
-
-	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	 */
-	//protected $childtablesoncascade = array('stocktransfer_stocktransferlinedet');
-
-	/**
-	 * @var StockTransferLineLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *

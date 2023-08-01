@@ -69,6 +69,9 @@ class Ldap
 	 * Server DN
 	 */
 	public $domain;
+
+	public $domainFQDN;
+
 	/**
 	 * User administrateur Ldap
 	 * Active Directory ne supporte pas les connexions anonymes
@@ -738,9 +741,7 @@ class Ldap
 		if ($fp) {
 			fputs($fp, $content);
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 			return 1;
 		} else {
 			return -1;
@@ -977,7 +978,7 @@ class Ldap
 	 *
 	 * 	@param	string	$filterrecord		Record
 	 * 	@param	string	$attribute			Attributes
-	 * 	@return void
+	 * 	@return array|boolean
 	 */
 	public function getAttributeValues($filterrecord, $attribute)
 	{
@@ -1020,7 +1021,7 @@ class Ldap
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
 	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
-	 *	@return	array						Array of [id_record][ldap_field]=value
+	 *	@return	array|int					Array of [id_record][ldap_field]=value
 	 */
 	public function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter = 0, $attributeAsArray = array())
 	{
@@ -1286,7 +1287,6 @@ class Ldap
 			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0], $this->ldapcharset);
 			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0], $this->ldapcharset);
 			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0], $this->ldapcharset);
-			$this->skype      = $this->convToOutputCharset($result[0][$this->attr_skype][0], $this->ldapcharset);
 			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0], $this->ldapcharset);
 			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0], $this->ldapcharset);
 			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0], $this->ldapcharset);
@@ -1337,7 +1337,7 @@ class Ldap
 	 * 	UserAccountControl Flgs to more human understandable form...
 	 *
 	 *	@param	string		$uacf		UACF
-	 *	@return	void
+	 *	@return	array
 	 */
 	public function parseUACF($uacf)
 	{
@@ -1377,7 +1377,7 @@ class Ldap
 		}
 
 		//Return human friendly flags
-		return($retval);
+		return $retval;
 	}
 
 	/**
@@ -1409,7 +1409,7 @@ class Ldap
 			$retval = "UNKNOWN_TYPE_".$samtype;
 		}
 
-		return($retval);
+		return $retval;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

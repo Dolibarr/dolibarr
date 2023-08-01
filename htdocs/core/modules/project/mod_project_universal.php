@@ -17,16 +17,16 @@
  */
 
 /**
- *	\file       htdocs/core/modules/project/mod_project_universal.php
- *	\ingroup    project
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
+ *   \file       htdocs/core/modules/project/mod_project_universal.php
+ *   \ingroup    project
+ *   \brief      File containing the Universal project reference numbering model class
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 
 
 /**
- * 	Classe du modele de numerotation de reference de projet Universal
+ * 	Class to manage the numbering module Universal for project references
  */
 class mod_project_universal extends ModeleNumRefProjects
 {
@@ -62,7 +62,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -86,9 +86,9 @@ class mod_project_universal extends ModeleNumRefProjects
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Project"), $langs->transnoentities("Project"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
-		// Parametrage du prefix
+		// Prefix settings
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskproject" value="'.$conf->global->PROJECT_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskproject" value="'.getDolGlobalString('PROJECT_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -123,9 +123,9 @@ class mod_project_universal extends ModeleNumRefProjects
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc		Object third party
+	 *  @param   Societe		$objsoc		Object third party
 	 *  @param   Project		$project	Object project
-	 *  @return  string					Value if OK, 0 if KO
+	 *  @return  string						Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $project)
 	{
@@ -133,8 +133,8 @@ class mod_project_universal extends ModeleNumRefProjects
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		// On defini critere recherche compteur
-		$mask = $conf->global->PROJECT_UNIVERSAL_MASK;
+		// We define criterion search counter
+		$mask = getDolGlobalString('PROJECT_UNIVERSAL_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

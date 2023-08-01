@@ -430,7 +430,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
 				if (empty($reshook))
 					$object->formAddObjectLine(1, $mysoc, $soc);
 			}

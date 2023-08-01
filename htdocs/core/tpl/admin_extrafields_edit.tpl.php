@@ -172,16 +172,18 @@ $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
 $csslist = $extrafields->attributes[$elementtype]['csslist'][$attrname];
 
-if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param)) {
-	$param_chain = '';
-	foreach ($param['options'] as $key => $value) {
-		if (strlen($key)) {
-			$param_chain .= $key.','.$value."\n";
+$param_chain = '';
+if (is_array($param)) {
+	if (($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) {
+		foreach ($param['options'] as $key => $value) {
+			if (strlen($key)) {
+				$param_chain .= $key.','.$value."\n";
+			}
 		}
+	} elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate')) {
+		$paramlist = array_keys($param['options']);
+		$param_chain = $paramlist[0];
 	}
-} elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate')) {
-	$paramlist = array_keys($param['options']);
-	$param_chain = $paramlist[0];
 }
 ?>
 <!-- Label -->
@@ -289,7 +291,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable ? ' checked' : ''); ?>></td></tr>
 
 <!-- Visibility -->
-<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
+<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list != '' ? $list : '1'); ?>"></td></tr>
 
 <!-- Visibility for PDF-->

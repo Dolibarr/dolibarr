@@ -121,7 +121,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 
 	if ($rang == 0) {
 		// Test also done with jstree and dynatree (not able to have <a> inside label)
-		print '<script type="text/javascript">
+		print '<script nonce="'.getNonce().'" type="text/javascript">
 		$(document).ready(function(){
 			$("#'.$iddivjstree.'").treeview({
 				collapsed: true,

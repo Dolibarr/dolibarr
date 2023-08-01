@@ -57,8 +57,8 @@ class Boms extends DolibarrApi
 	 *
 	 * Return an array with bom informations
 	 *
-	 * @param 	int 	$id ID of bom
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of bom
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url	GET {id}
 	 * @throws 	RestException
@@ -121,7 +121,7 @@ class Boms extends DolibarrApi
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -204,6 +204,9 @@ class Boms extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->bom->$field = $value;
 		}
+
+		$this->checkRefNumbering();
+
 		if (!$this->bom->create(DolibarrApiAccess::$user)) {
 			throw new RestException(500, "Error creating BOM", array_merge(array($this->bom->error), $this->bom->errors));
 		}
@@ -239,6 +242,8 @@ class Boms extends DolibarrApi
 			}
 			$this->bom->$field = $value;
 		}
+
+		$this->checkRefNumbering();
 
 		if ($this->bom->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
@@ -364,7 +369,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
-	 * @return array|bool
+	 * @return object|bool
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -534,5 +539,28 @@ class Boms extends DolibarrApi
 				$myobject[$field] = $data[$field];
 		}
 		return $myobject;
+	}
+
+	/**
+	 * Validate the ref field and get the next Number if it's necessary.
+	 *
+	 * @return void
+	 */
+	private function checkRefNumbering(): void
+	{
+		$ref = substr($this->bom->ref, 1, 4);
+		if ($this->bom->status > 0 && $ref == 'PROV') {
+			throw new RestException(400, "Wrong naming scheme '(PROV%)' is only allowed on 'DRAFT' status. For automatic increment use 'auto' on the 'ref' field.");
+		}
+
+		if (strtolower($this->bom->ref) == 'auto') {
+			if (empty($this->bom->id) && $this->bom->status == 0) {
+				$this->bom->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
+			} else {
+				$this->bom->fetch_product();
+				$numref = $this->bom->getNextNumRef($this->bom->product);
+				$this->bom->ref = $numref;
+			}
+		}
 	}
 }

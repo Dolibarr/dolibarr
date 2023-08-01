@@ -27,11 +27,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/bookcal/class/booking.class.php');
-dol_include_once('/bookcal/lib/bookcal_booking.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bookcal/class/booking.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_booking.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "other"));
+$langs->loadLangs(array("agenda", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -97,7 +97,7 @@ $upload_dir = $conf->bookcal->multidir_output[isset($object->entity) ? $object->
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->bookcal->enabled)) accessforbidden();
+if (!isModEnabled('bookcal')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 
@@ -342,7 +342,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled)) {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {

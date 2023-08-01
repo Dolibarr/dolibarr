@@ -504,7 +504,7 @@ $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarea">';
+print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action != "infos_success") {
 	$formticket->withfromsocid = isset($socid) ? $socid : $user->socid;
@@ -536,8 +536,10 @@ if ($action != "infos_success") {
 
 print '</div>';
 
-// End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

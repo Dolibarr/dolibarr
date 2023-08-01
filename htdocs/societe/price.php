@@ -84,7 +84,7 @@ if (empty($reshook)) {
 		$search_prod = $search_label = $search_price = $search_price_ttc = '';
 	}
 
-	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		if (!(GETPOST('prodid', 'int') > 0)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Product")), null, 'errors');
@@ -150,7 +150,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'delete_customer_price' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Delete price by customer
 		$prodcustprice->id = GETPOST('lineid', 'int');
 		$result = $prodcustprice->delete($user);
@@ -163,7 +163,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
 		$update_child_soc = GETPOST('updatechildprice');
@@ -321,7 +321,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// VAT
 		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, '', false, 1);
+		print $form->load_tva("tva_tx", GETPOST("tva_tx", "alpha"), $mysoc, '', $object->id, 0, '', false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -329,7 +329,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
+		print $form->selectPriceBaseType(GETPOST("price_base_type", "aZ09"), "price_base_type");
 		print '</td>';
 		print '</tr>';
 
@@ -456,7 +456,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		} else {
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 				$nbtotalofrecords = $result;
 			}
 		}
@@ -528,7 +528,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		 */
 		print "\n".'<div class="tabsAction">'."\n";
 
-		if ($user->rights->produit->creer || $user->rights->service->creer) {
+		if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&token='.newToken().'&socid='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
 		}
 		print "\n</div>\n";
@@ -536,7 +536,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
 
@@ -619,7 +619,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print $userstatic->getNomUrl(-1);
 				print '</td>';
 				// Action
-				if ($user->rights->produit->creer || $user->rights->service->creer) {
+				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<td class="right nowraponall">';
 					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&socid='.$object->id.'&prodid='.$line->fk_product.'">';
 					print img_info();
@@ -639,7 +639,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			}
 		} else {
 			$colspan = 10;
-			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
+			if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
 				$colspan += 1;
 			}
 			print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';

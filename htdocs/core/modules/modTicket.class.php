@@ -118,7 +118,9 @@ class modTicket extends DolibarrModules
 			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
 			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
 			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0),
-			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0)
+			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0),
+			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0),
+			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER'), 'Enable footer on ticket public page', 0)
 		);
 
 
@@ -156,7 +158,7 @@ class modTicket extends DolibarrModules
 			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
-			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
+			'tabcond' => array(isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket") && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
 			'tabhelp' => array(
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
@@ -207,6 +209,13 @@ class modTicket extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'manage';
 
+		$r++;
+		$this->rights[$r][0] = 56006; // id de la permission
+		$this->rights[$r][1] = "Export ticket"; // libelle de la permission
+		//$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'export';
+
 		/* Seems not used and in conflict with societe->client->voir (see all thirdparties)
 		$r++;
 		$this->rights[$r][0] = 56005; // id de la permission
@@ -218,7 +227,7 @@ class modTicket extends DolibarrModules
 		*/
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		/*$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
@@ -230,7 +239,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/index.php',
 			'langs' => 'ticket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 88,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read', // Use 'perms'=>'$user->rights->ticket->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
@@ -245,7 +254,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/index.php',
 			'langs' => 'ticket',
 			'position' => 101,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 2);
@@ -258,7 +267,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/card.php?action=create',
 			'langs' => 'ticket',
 			'position' => 102,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->write',
 			'target' => '',
 			'user' => 2);
@@ -272,7 +281,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/list.php?search_fk_status=non_closed',
 			'langs' => 'ticket',
 			'position' => 103,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 2);
@@ -286,7 +295,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/list.php?mode=mine&search_fk_status=non_closed',
 			'langs' => 'ticket',
 			'position' => 105,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 0);
@@ -299,7 +308,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/stats/index.php',
 			'langs' => 'ticket',
 			'position' => 107,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 0);
@@ -316,6 +325,27 @@ class modTicket extends DolibarrModules
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 0);
+		$r++;
+
+		// Exports
+		//--------
+		$r = 1;
+
+		// Export list of tickets and attributes
+		$langs->load("ticket");
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='ExportDataset_ticket_1';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("ticket", "export"));
+		$this->export_icon[$r]='ticket';
+		$keyforclass = 'Ticket';$keyforclassfile='/ticket/class/ticket.class.php';$keyforelement='ticket';
+		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+		$keyforselect='ticket'; $keyforaliasextra='extra'; $keyforelement='ticket';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'ticket as t';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'ticket_extrafields as extra on (t.rowid = extra.fk_object)';
+		$this->export_sql_end[$r] .=' WHERE 1 = 1';
+		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('ticket').')';
 		$r++;
 	}
 

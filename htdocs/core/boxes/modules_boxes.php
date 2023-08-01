@@ -21,8 +21,8 @@
 
 /**
  *	    \file       htdocs/core/boxes/modules_boxes.php
- *		\ingroup    facture
- *		\brief      Fichier contenant la classe mere des boites
+ *		\ingroup    core
+ *		\brief      File containing the parent class of boxes
  */
 
 
@@ -213,7 +213,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 
 			$out .= "\n<!-- Box ".get_class($this)." start -->\n";
 
-			$out .= '<div class="box boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
+			$out .= '<div class="box divboxtable boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
 
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
 				$out .= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
@@ -432,7 +432,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				while (($file = readdir($handle)) !== false) {
 					$reg = array();
 					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $file, $reg)) {
-						if (preg_match('/\.back$/', $file)) {
+						if (preg_match('/\.back$/', $file) || preg_match('/^(.+)\.disabled\.php/', $file)) {
 							continue;
 						}
 
@@ -464,6 +464,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				closedir($handle);
 			}
 		}
+		//echo "<pre>";print_r($modules);echo "</pre>";
 
 		asort($orders);
 

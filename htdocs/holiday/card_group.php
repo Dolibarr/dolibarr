@@ -624,7 +624,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -747,11 +747,29 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 					}
 				}
 
+				$typeleaves = $object->getTypes(1, -1);
+				$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+
+				if ($object->halfday == 2) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == -1) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Afternoon";
+				} elseif ($object->halfday == 1) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == 2) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Afternoon";
+				}
+
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;
 
 				$message .= "<ul>";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Type")." : ".(empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow)."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv($starthalfdaykey)." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')." ".$langs->transnoentitiesnoconv($endhalfdaykey)."</li>\n";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
 				$message .= "</ul>\n";
 

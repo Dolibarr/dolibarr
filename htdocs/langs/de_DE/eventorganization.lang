@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Schränkt im Formular zum Erstellen/Hin
 #
 # Object
 #
+OrganizedEvent=Organisierte Veranstaltung
 EventOrganizationConfOrBooth= Konferenzbeitrag oder Stand
 EventOrganizationConfOrBoothes=Konferenzbeiträge oder Stände
 ManageOrganizeEvent = Veranstaltung organisieren

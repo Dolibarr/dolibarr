@@ -101,7 +101,7 @@ $sql .= " GROUP BY year, month, df";
 $sql .= " ORDER BY year DESC, month DESC, df DESC";
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0

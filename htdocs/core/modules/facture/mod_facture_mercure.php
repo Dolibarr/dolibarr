@@ -49,7 +49,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

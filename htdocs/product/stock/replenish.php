@@ -78,12 +78,12 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 	$listofqualifiedwarehousesid .= $tmpobj->rowid;
 	$lastWarehouseID = $tmpobj->rowid;
 	$count++;
-};
+}
 
 //MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
 if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && !empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
 	$fk_entrepot = $lastWarehouseID;
-};
+}
 
 $texte = '';
 
@@ -146,6 +146,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$includeproductswithoutdesiredqty = '';
 	$draftorder = '';
 }
+$draftchecked = "";
 if ($draftorder == 'on') {
 	$draftchecked = "checked";
 }
@@ -439,7 +440,7 @@ if ($usevirtualstock) {
 		$sqlExpeditionsCli = '0';
 	}
 
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+	if (isModEnabled("supplier_order")) {
 		$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd3.qty) IS NULL", "0", "SUM(cd3.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
 		$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";
@@ -532,7 +533,7 @@ if ($includeproductswithoutdesiredqty == 'on') {
 }
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {
@@ -614,7 +615,8 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	print '</div>';
 }
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
+$filter = '(fournisseur:=:1)';
+print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', $filter, 1);
 print '</div>';
 
 $parameters = array();
@@ -668,7 +670,7 @@ if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('
 	}
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$filters .= '&limit='.urlencode($limit);
+	$filters .= '&limit='.((int) $limit);
 }
 if (!empty($includeproductswithoutdesiredqty)) $filters .= '&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty);
 if (!empty($salert)) $filters .= '&salert='.urlencode($salert);
@@ -684,8 +686,10 @@ if (!empty($salert)) $param .= '&salert='.urlencode($salert);
 
 $stocklabel = $langs->trans('Stock');
 $stocklabelbis = $langs->trans('Stock');
+$stocktooltip = '';
 if ($usevirtualstock == 1) {
 	$stocklabel = $langs->trans('VirtualStock');
+	$stocktooltip = $langs->trans("VirtualStockDesc");
 }
 if ($usevirtualstock == 0) {
 	$stocklabel = $langs->trans('PhysicalStock');
@@ -698,7 +702,6 @@ $texte = $langs->trans('Replenishment');
 
 print '<br>';
 
-print '<div class="div-table-responsive-no-min">';
 
 if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
 	print_barre_liste(
@@ -732,6 +735,8 @@ if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
 	);
 }
 
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="liste centpercent">';
 
 // Fields title search
@@ -775,7 +780,7 @@ if (isModEnabled("service") && $type == 1) {
 }
 print_liste_field_titre('DesiredStock', $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre('StockLimitShort', $_SERVER["PHP_SELF"], 'p.seuil_stock_alerte', $param, '', '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', '', $sortfield, $sortorder, 'right ', $stocktooltip);
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	print_liste_field_titre($stocklabelbis, $_SERVER["PHP_SELF"], 'stock_real_warehouse', $param, '', '', $sortfield, $sortorder, 'right ');
 }
@@ -949,6 +954,21 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '</tr>';
 	}
 	$i++;
+}
+
+if ($num == 0) {
+	$colspan = 9;
+	if (isModEnabled("service") && $type == 1) {
+		$colspan++;
+	}
+	if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+		$colspan++;
+	}
+	print '<tr><td colspan="'.$colspan.'">';
+	print '<span class="opacitymedium">';
+	print $langs->trans("None");
+	print '</span>';
+	print '</td></tr>';
 }
 
 $parameters = array('sql'=>$sql);

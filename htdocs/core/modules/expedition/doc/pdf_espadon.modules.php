@@ -62,12 +62,6 @@ class pdf_espadon extends ModelePdfExpedition
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -782,9 +776,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -994,7 +986,7 @@ class pdf_espadon extends ModelePdfExpedition
 			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 				$logodir = $conf->mycompany->multidir_output[$object->entity];
 			}
-			if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 			} else {
 				$logo = $logodir.'/logos/'.$this->emetteur->logo;
@@ -1116,7 +1108,14 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
@@ -1238,7 +1237,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

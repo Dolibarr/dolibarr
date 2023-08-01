@@ -76,7 +76,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 		} else {
-			$sql = "SELECT pcg_version FROM " . MAIN_DB_PREFIX . "accounting_system WHERE rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
+			$sql = "SELECT pcg_version FROM " . MAIN_DB_PREFIX . "accounting_system WHERE rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 
 			dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 			$result = $db->query($sql);
@@ -139,7 +139,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 		} else {
 			$result = $object->fetch($id);
 
-			$sql = "SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid=".((int) $conf->global->CHARTOFACCOUNTS);
+			$sql = "SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid=".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 
 			dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 			$result2 = $db->query($sql);
@@ -211,7 +211,7 @@ $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $accountsystem = new AccountancySystem($db);
-$accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
+$accountsystem->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 
 $title = $langs->trans('AccountAccounting')." - ".$langs->trans('Card');
 
@@ -282,7 +282,7 @@ if ($action == 'create') {
 	print $form->textwithpicto($langs->trans("AccountingCategory"), $langs->transnoentitiesnoconv("AccountingAccountGroupsDesc"));
 	print '</td>';
 	print '<td>';
-	$formaccounting->select_accounting_category($object->account_category, 'account_category', 1, 0, 1);
+	print $formaccounting->select_accounting_category($object->account_category, 'account_category', 1, 0, 1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -359,7 +359,7 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans("AccountingCategory"), $langs->transnoentitiesnoconv("AccountingAccountGroupsDesc"));
 			print '</td>';
 			print '<td>';
-			$formaccounting->select_accounting_category($object->account_category, 'account_category', 1);
+			print $formaccounting->select_accounting_category($object->account_category, 'account_category', 1);
 			print '</td></tr>';
 
 			print '</table>';

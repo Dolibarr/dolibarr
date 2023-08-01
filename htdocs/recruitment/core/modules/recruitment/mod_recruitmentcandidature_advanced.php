@@ -54,7 +54,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

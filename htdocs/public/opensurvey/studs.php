@@ -332,7 +332,7 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
-print $langs->trans("OpenSurveyHowTo").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("OpenSurveyHowTo").'</span><br>';
 if (empty($object->allow_spy)) {
 	print '<span class="opacitymedium">'.$langs->trans("YourVoteIsPrivate").'</span><br>';
 } else {
@@ -340,17 +340,21 @@ if (empty($object->allow_spy)) {
 }
 print '<br>';
 
-print '<div class="corps"> '."\n";
+if (empty($object->description)) {
+	print '<div class="corps"> '."\n";
+}
 
 // show title of survey
 $titre = str_replace("\\", "", $object->title);
-print '<strong>'.dol_htmlentities($titre).'</strong>';
+print '<strong>'.dol_htmlentities($titre).'</strong><br>';
+
+if (!empty($object->description)) {
+	print '<br><div class="corps"> '."\n";
+}
 
 // show description of survey
 if ($object->description) {
-	print '<br><br>'."\n";
 	print dol_htmlentitiesbr($object->description);
-	print '<br>'."\n";
 }
 
 print '</div>'."\n";
@@ -465,6 +469,7 @@ if ($object->format == "D") {
 
 
 // Loop on each answer
+$currentusername = '';
 $sumfor = array();
 $sumagainst = array();
 $compteur = 0;
@@ -561,7 +566,7 @@ while ($compteur < $num) {
 			}
 		}
 	} else {
-		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
+		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour saisie
 		if ($compteur == $ligneamodifier) {
 			for ($i = 0; $i < $nbcolonnes; $i++) {
 				$car = substr($ensemblereponses, $i, 1);
@@ -650,7 +655,8 @@ while ($compteur < $num) {
 
 	// Button edit at end of line
 	if ($compteur != $ligneamodifier && $mod_ok) {
-		print '<td class="casevide"><input type="submit" class="button smallpaddingimp" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
+		$currentusername = $obj->name;
+		print '<td class="casevide"><input type="submit" class="button small" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 
 	//demande de confirmation pour modification de ligne
@@ -659,7 +665,7 @@ while ($compteur < $num) {
 			if ($compteur == $i) {
 				print '<td class="casevide">';
 				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-				print '<input type="submit" class="button button-save" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-save small" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '</td>'."\n";
 			}
 		}
@@ -676,7 +682,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	if (isset($_SESSION['nom'])) {
 		print '<input type=hidden name="nom" value="'.$_SESSION['nom'].'">'.$_SESSION['nom']."\n";
 	} else {
-		print '<input type="text" name="nom" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" maxlength="64" class=" minwidth175">'."\n";
+		print '<input type="text" name="nom" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" maxlength="64" class=" minwidth175" value="">'."\n";
 	}
 	print '</td>'."\n";
 
@@ -701,7 +707,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 		print '</td>'."\n";
 	}
 
-	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
+	// Show button to add a new line into database
 	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', false, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
@@ -835,13 +841,13 @@ if ($comments) {
 }
 
 // Form to add comment
-if ($object->allow_comments) {
+if ($object->allow_comments && $currentusername) {
 	print '<br><div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
 	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'alphanohtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';
-	print '<input type="text" name="commentuser" maxlength="64" value="'.dol_escape_htmltag(GETPOST('commentuser', 'alphanohtml')).'"> &nbsp; '."\n";
-	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
+	print '<input type="text" name="commentuser" maxlength="64" value="'.dol_escape_htmltag(GETPOSTISSET('commentuser') ? GETPOST('commentuser', 'alphanohtml') : (empty($_SESSION['nom']) ? $currentusername : $_SESSION['nom'])).'"> &nbsp; '."\n";
+	print '<input type="submit" class="button smallpaddingimp" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	print '</form>'."\n";
 
 	print '</div>'."\n"; // div add comment

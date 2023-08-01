@@ -347,7 +347,7 @@ function displayPositionCard(&$object)
 //		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 //		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 //		$genallowed = $user->hasRight('societe', 'lire');
-//		$delallowed = $user->rights->societe->creer;
+//		$delallowed = $user->hasRight('societe', 'creer');
 //
 //		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 //	}

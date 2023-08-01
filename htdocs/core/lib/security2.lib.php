@@ -52,12 +52,11 @@ function dol_getwebuser($mode)
  *	@param		string	$entitytotest		Instance of data we must check
  *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
- *  @return		string						Login or ''
+ *  @return		string						Login or '' or '--bad-login-validity--'
  */
 function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
 	global $conf, $langs;
-	//global $dolauthmode;    // To return authentication finally used
 
 	// Check parameters
 	if ($entitytotest == '') {
@@ -97,13 +96,14 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Call function to check user/password
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
-					if ($login && $login != '--bad-login-validity--') {	// Login is successfull
+					if ($login && $login != '--bad-login-validity--') {
+						// Login is successfull with this method
 						$test = false; // To stop once at first login success
 						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
-						$dol_tz = GETPOST('tz');
+						/*$dol_tz = GETPOST('tz');
 						$dol_dst = GETPOST('dst');
 						$dol_screenwidth = GETPOST('screenwidth');
-						$dol_screenheight = GETPOST('screenheight');
+						$dol_screenheight = GETPOST('screenheight');*/
 					}
 				} else {
 					dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);
@@ -411,20 +411,25 @@ function encodedecode_dbpassconf($level = 0)
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
 				if (preg_match('/crypted:/i', $buffer)) {
 					// method dol_encode/dol_decode
+					$mode = 'crypted:';
 					$val = preg_replace('/crypted:/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
 				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
 					// method dolEncrypt/dolDecrypt
+					$mode = 'dolcrypt:';
 					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dolDecrypt($buffer);
 					$passwd = $val;
 				} else {
 					$passwd = $val;
+					$mode = 'crypted:';
 					$val = dol_encode($val);
 					$passwd_crypted = $val;
+					// TODO replace with dolEncrypt()
+					// ...
 				}
 				$lineofpass = 1;
 			}
@@ -436,7 +441,7 @@ function encodedecode_dbpassconf($level = 0)
 					$config .= '$dolibarr_main_db_pass=\''.$passwd.'\';'."\n";
 				}
 				if ($level == 1) {
-					$config .= '$dolibarr_main_db_pass=\'crypted:'.$passwd_crypted.'\';'."\n";
+					$config .= '$dolibarr_main_db_pass=\''.$mode.$passwd_crypted.'\';'."\n";
 				}
 
 				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
@@ -457,7 +462,7 @@ function encodedecode_dbpassconf($level = 0)
 
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch
-			//@chmod($file, octdec('0600'));
+			//dolChmod($file, '0600');
 
 			return 1;
 		} else {
@@ -569,21 +574,30 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 {
 	global $conf;
 
+	$out = '';
+
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<!-- Js code to suggest a security key --><script type="text/javascript">';
-		print '$(document).ready(function () {
-            $("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
-				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. We will fill '.dol_escape_js($htmlname).'");
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+		$out .= "\n".'<!-- Js code to suggest a security key -->';
+		$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
+		$out .= 'jQuery(document).ready(function () {
+            jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
+				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currentotken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',
-					token: \''.dol_escape_js(newToken()).'\'
+					token: currenttoken
 				},
 				function(result) {
-					$("#'.dol_escape_js($htmlname).'").val(result);
+					if (jQuery("input#'.dol_escape_js($htmlname).'").attr("type") == "password") {
+						jQuery("input#'.dol_escape_js($htmlname).'").attr("type", "text");
+					}
+					jQuery("#'.dol_escape_js($htmlname).'").val(result);
 				});
             });
 		});'."\n";
-		print '</script>';
+		$out .= '</script>';
 	}
+
+	return $out;
 }

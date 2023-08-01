@@ -58,8 +58,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * Return an array with Expense Report informations
 	 *
-	 * @param       int         $id         ID of Expense Report
-	 * @return 	    array|mixed             Data without useless information
+	 * @param   int         $id         ID of Expense Report
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -109,7 +109,7 @@ class ExpenseReports extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport AS t LEFT JOIN ".MAIN_DB_PREFIX."expensereport_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('expensereport').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize($user_ids).")";

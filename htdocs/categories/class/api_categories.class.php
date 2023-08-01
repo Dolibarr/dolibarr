@@ -141,7 +141,7 @@ class Categories extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie AS t LEFT JOIN ".MAIN_DB_PREFIX."categories_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('category').')';
 		if (!empty($type)) {
 			$sql .= ' AND t.type='.array_search($type, Categories::$TYPES);
@@ -322,7 +322,7 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_PROJECT && !DolibarrApiAccess::$user->rights->projet->lire) {
 			throw new RestException(401);
-		} elseif ($type == Categorie::TYPE_KNOWLEDGEMANAGEMENT && !DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+		} elseif ($type == Categorie::TYPE_KNOWLEDGEMANAGEMENT && !DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			throw new RestException(401);
 		}
 

@@ -56,8 +56,8 @@ class Donations extends DolibarrApi
 	 *
 	 * Return an array with donation informations
 	 *
-	 * @param       int         $id         ID of order
-	 * @return 	array|mixed data without useless information
+	 * @param   int         $id         ID of order
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -116,7 +116,7 @@ class Donations extends DolibarrApi
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids)) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."don as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."don AS t LEFT JOIN ".MAIN_DB_PREFIX."don_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('don').')';
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids)) {
@@ -294,7 +294,7 @@ class Donations extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 *
-	 * @return  array
+	 * @return  object
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{

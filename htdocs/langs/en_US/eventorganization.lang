@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Conference Or Booth
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Manage the organization of an event
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=No public actions are open to public for this
 MaxNbOfAttendees=Max number of attendees
 DateStartEvent=Event start date
 DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated

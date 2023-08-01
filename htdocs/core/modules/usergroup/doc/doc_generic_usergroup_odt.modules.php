@@ -45,12 +45,6 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 	public $emetteur;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -280,7 +274,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 			if (file_exists($dir)) {
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile = basename($srctemplatepath);
-				$newfiletmp = preg_replace('/\.od(t|s)/i', '', $newfile);
+				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 
@@ -288,8 +282,8 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -494,9 +488,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$odfHandler = null; // Destroy object
 

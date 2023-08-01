@@ -41,7 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 header('Cache-Control: Public, must-revalidate');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 if (GETPOST('dol_hide_topmenu')) {
 	$conf->dol_hide_topmenu = 1;
@@ -73,6 +72,8 @@ if (preg_match('/'.preg_quote('core/modules/oauth', '/').'/', $php_self)) {
 	$php_self = DOL_URL_ROOT.'/index.php?mainmenu=home';
 }
 $php_self = preg_replace('/(\?|&amp;|&)action=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)username=[^&]*/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)entity=\d+/', '\1', $php_self);
 $php_self = preg_replace('/(\?|&amp;|&)massaction=[^&]+/', '\1', $php_self);
 $php_self = preg_replace('/(\?|&amp;|&)token=[^&]+/', '\1', $php_self);
 
@@ -208,15 +209,18 @@ if ($disablenofollow) {
 </div>
 
 <!-- Password -->
+<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php
-} ?>
+	<?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php
+	} ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key"></span>
 <input type="password" id="password" maxlength="128" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE) ? 'off' : 'on'; ?>" />
 </div></div>
+<?php } ?>
+
 
 <?php
 if (!empty($captcha)) {
@@ -271,13 +275,21 @@ if (!empty($morelogincontent)) {
 
 <div id="login_line2" style="clear: both">
 
+
 <!-- Button Connection -->
+<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <br>
 <div id="login-submit-wrapper">
 <input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 </div>
+<?php } ?>
+
 
 <?php
+if (isset($conf->file->main_authentication) && $conf->file->main_authentication == 'googleoauth') {
+	$forgetpasslink = '';
+}
+
 if ($forgetpasslink || $helpcenterlink) {
 	$moreparam = '';
 	if ($dol_hide_topmenu) {
@@ -325,8 +337,8 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 	$langs->load("users");
 
 	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
-	echo '<br>';
-	echo '<div class="center" style="margin-top: 4px;">';
+	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
+	print '<div class="loginbuttonexternal">';
 
 	$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 	if (!empty($url)) {
@@ -336,21 +348,21 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 		print '<span class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</span>';
 	}
 
-	echo '</div>';
+	print '</div>';
+	print '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication)) {
+if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication) && strpos($conf->browser->ua, 'DoliDroid') === false) {
 	$langs->load("users");
 
-	global $dolibarr_main_url_root;
+	echo '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
+
+	/*global $dolibarr_main_url_root;
 
 	// Define $urlwithroot
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-	echo '<br>';
-	echo '<div class="center" style="margin-top: 4px;">';
 
 	//$shortscope = 'userinfo_email,userinfo_profile';
 	$shortscope = 'openid,email,profile';	// For openid connect
@@ -359,11 +371,17 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
 	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
 
-	$url = $urltorenew;
+	//$url = $urltorenew;
+	 */
 
-	print img_picto('', 'google', 'class="pictofixedwidth"').'<a class="alogin" href="'.$url.'">'.$langs->trans("LoginWith", "Google").'</a>';
-
-	echo '</div>';
+	print '<input type="hidden" name="beforeoauthloginredirect" id="beforeoauthloginredirect" value="">';
+	print '<a class="alogin" href="#" onclick="jQuery(\'#beforeoauthloginredirect\').val(1); $(this).closest(\'form\').submit();">';
+	print '<div class="loginbuttonexternal">';
+	print img_picto('', 'google', 'class="pictofixedwidth"');
+	print $langs->trans("LoginWith", "Google");
+	print '</div>';
+	print '</a>';
+	print '</div>';
 }
 
 ?>
@@ -446,8 +464,8 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 }
 
 // Google Analytics
-// TODO Add a hook here
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
+// TODO Remove this, and add content into hook getLoginPageExtraOptions() instead
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
@@ -468,7 +486,7 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) 
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
 	if (empty($conf->dol_use_jmobile)) {
 		?>
 	<div class="center"><br>

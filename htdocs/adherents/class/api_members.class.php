@@ -55,14 +55,14 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param     int     $id ID of member
-	 * @return    array|mixed data without useless information
+	 * @param   int     $id 			ID of member
+	 * @return  Object              	Object with cleaned properties
 	 *
-	 * @throws    RestException
+	 * @throws  RestException
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -99,7 +99,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdparty($thirdparty)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -132,7 +132,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdpartyEmail($email)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -171,7 +171,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdpartyBarcode($barcode)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -217,12 +217,12 @@ class Members extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent AS t LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_member as c";
 		}
@@ -369,7 +369,7 @@ class Members extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'supprimer')) {
 			throw new RestException(401);
 		}
 		$member = new Adherent($this->db);
@@ -463,7 +463,7 @@ class Members extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -494,7 +494,7 @@ class Members extends DolibarrApi
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(401);
 		}
 

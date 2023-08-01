@@ -51,14 +51,14 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * Return an array with subscription informations
 	 *
-	 * @param     int     $id ID of subscription
-	 * @return    Object data without useless information
+	 * @param   int     $id 			ID of subscription
+	 * @return  Object              	Object with cleaned properties
 	 *
-	 * @throws    RestException
+	 * @throws  RestException
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -91,7 +91,7 @@ class Subscriptions extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -147,7 +147,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
@@ -205,7 +205,7 @@ class Subscriptions extends DolibarrApi
 	public function delete($id)
 	{
 		// The right to delete a subscription comes with the right to create one.
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(401);
 		}
 		$subscription = new Subscription($this->db);

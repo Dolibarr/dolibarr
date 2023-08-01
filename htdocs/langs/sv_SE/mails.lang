@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=E-postmeddelanden inskrivna av användaren
 MailingModuleDescDolibarrUsers=Användare med e-post
 MailingModuleDescThirdPartiesByCategories=Tredjepart
 SendingFromWebInterfaceIsNotAllowed=Skicka från webbgränssnitt är inte tillåtet.
-EmailCollectorFilterDesc=Alla filter måste matcha för att ett e-postmeddelande ska samlas in
+EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s i filen
@@ -179,4 +179,8 @@ RecordCreatedByEmailCollector=Post skapad av e-postsamlare %s från e-post %s
 DefaultBlacklistMailingStatus=Standardvärde för fältet '%s' när en ny kontakt skapas
 DefaultStatusEmptyMandatory=Tom men obligatorisk
 WarningLimitSendByDay=VARNING: Inställningen eller kontraktet för din instans begränsar ditt antal e-postmeddelanden per dag till <b> %s </b> . Om du försöker skicka mer kan det leda till att din instans saktar ner eller avbryts. Kontakta din support om du behöver en högre kvot.
-NoMoreRecipientToSendTo=No more recipient to send the email to
+NoMoreRecipientToSendTo=Inga fler mottagare att skicka e-postmeddelandet till
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s e-postmeddelanden förkvalificerade, %s e-postmeddelanden behandlade framgångsrikt (för %s post/åtgärder gjorda)

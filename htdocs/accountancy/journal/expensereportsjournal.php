@@ -64,7 +64,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -615,6 +615,8 @@ if (empty($action) || $action == 'view') {
 				print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 				print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 				print "</tr>";
+
+				$i++;
 			}
 		}
 
@@ -649,6 +651,8 @@ if (empty($action) || $action == 'view') {
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
+
+			$i++;
 		}
 
 		// VAT
@@ -685,9 +689,16 @@ if (empty($action) || $action == 'view') {
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print "</tr>";
+
+					$i++;
 				}
 			}
 		}
+	}
+
+	if (!$i) {
+		$colspan = 7;
+		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print "</table>";

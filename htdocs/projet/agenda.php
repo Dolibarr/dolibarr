@@ -36,6 +36,7 @@ $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "aZ09comma");
@@ -59,7 +60,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -111,7 +112,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$object->info($object->id);
 }
-$agenda = (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) ? '/'.$langs->trans("Agenda") : '';
+$agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) ? '/'.$langs->trans("Agenda") : '';
 $title = $langs->trans('Events').$agenda.' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
@@ -161,7 +162,7 @@ print dol_get_fiche_end();
 // Actions buttons
 
 $out = '';
-$permok = $user->rights->agenda->myactions->create;
+$permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
 	$out .= '&projectid='.$object->id;
 }
@@ -174,15 +175,15 @@ if (!empty($object->id)) {
 	print '<br>';
 
 	//print '<div class="tabsAction">';
-	$morehtmlcenter = '';
+	$morehtmlright = '';
 
 	// Show link to change view in message
 	$messagingUrl = DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id;
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 
 	// Show link to change view in agenda
 	$messagingUrl = DOL_URL_ROOT.'/projet/agenda.php?id='.$object->id;
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 
 	// // Show link to send an email (if read and not closed)
@@ -197,8 +198,8 @@ if (!empty($object->id)) {
 
 	// Show link to add event
 	if (isModEnabled('agenda')) {
-		$addActionBtnRight = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
-		$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
+		$addActionBtnRight = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
+		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 	}
 
 	$param = '&id='.$object->id;
@@ -209,7 +210,7 @@ if (!empty($object->id)) {
 		$param .= '&limit='.$limit;
 	}
 
-	print_barre_liste($langs->trans("ActionsOnProject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+	print_barre_liste($langs->trans("ActionsOnProject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();

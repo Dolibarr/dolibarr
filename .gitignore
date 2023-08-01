@@ -14,11 +14,11 @@ default.properties
 /.pydevproject
 /.vscode
 .DS_Store
-.idea
 *.iml
 *.orig
 Thumbs.db
 /dolibarr_genesis.mp4
+.phpunit.result.cache
 # Log files
 dolibarr_install.log
 upgrade.log
@@ -57,3 +57,13 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
+/.asciidoctorconfig.adoc
+
+# Qodana
+.idea/vcs.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/jsLinters/jshint.xml
+/composer.json
+/composer.lock

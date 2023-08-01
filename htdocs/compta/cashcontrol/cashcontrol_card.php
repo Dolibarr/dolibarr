@@ -671,7 +671,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print "</table>\n";
 
 		print '</div></div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 

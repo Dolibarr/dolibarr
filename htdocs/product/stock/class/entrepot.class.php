@@ -188,16 +188,17 @@ class Entrepot extends CommonObject
 	/**
 	 *	Creation d'un entrepot en base
 	 *
-	 *	@param		User	$user       Object user that create the warehouse
+	 *	@param		User	$user		Object user that create the warehouse
+	 *	@param		bool	$notrigger	false=launch triggers after, true=disable triggers
 	 *	@return		int					>0 if OK, =<0 if KO
 	 */
-	public function create($user)
+	public function create($user, $notrigger = false)
 	{
 		global $conf;
 
 		$error = 0;
 
-		$this->label = trim(!empty($this->label) ? $this->label : $this->libelle);
+		$this->label = trim($this->label);
 
 		// Error if label not defined
 		if ($this->label == '') {
@@ -228,12 +229,19 @@ class Entrepot extends CommonObject
 
 				// Actions on extra fields
 				if (!$error) {
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
+					$result = $this->insertExtraFields();
+					if ($result < 0) {
+						$error++;
 					}
+				}
+
+				if (!$error && !$notrigger) {
+					// Call triggers
+					$result = $this->call_trigger('WAREHOUSE_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
 
 				if (!$error) {
@@ -260,11 +268,12 @@ class Entrepot extends CommonObject
 	/**
 	 *	Update properties of a warehouse
 	 *
-	 *	@param		int		$id     id of warehouse to modify
-	 *	@param      User	$user	User object
+	 *	@param		int		$id			id of warehouse to modify
+	 *	@param		User	$user		User object
+	 *	@param		bool 	$notrigger	false=launch triggers after, true=disable trigge
 	 *	@return		int				>0 if OK, <0 if KO
 	 */
-	public function update($id, $user)
+	public function update($id, $user, $notrigger = false)
 	{
 		global $conf;
 
@@ -272,9 +281,6 @@ class Entrepot extends CommonObject
 
 		if (empty($id)) {
 			$id = $this->id;
-		}
-		if (empty($this->label)) {
-			$this->label = $this->libelle; // For backward compatibility
 		}
 
 		// Check if new parent is already a child of current warehouse
@@ -287,7 +293,7 @@ class Entrepot extends CommonObject
 			}
 		}
 
-		$this->label = trim(!empty($this->label) ? $this->label : $this->libelle);
+		$this->label = trim($this->label);
 
 		$this->description = trim($this->description);
 
@@ -328,6 +334,15 @@ class Entrepot extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('WAREHOUSE_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if (!$error) {
@@ -479,7 +494,6 @@ class Entrepot extends CommonObject
 				$this->fk_project     = $obj->fk_project;
 				$this->ref            = $obj->label;
 				$this->label          = $obj->label;
-				$this->libelle        = $obj->label; // deprecated
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;
 				$this->lieu           = $obj->lieu;
@@ -581,7 +595,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
-	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_different_products()
 	{
@@ -612,7 +626,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return stock and value of warehosue
 	 *
-	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_products()
 	{
@@ -692,6 +706,44 @@ class Entrepot extends CommonObject
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @since 	v18
+	 * @return 	array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->load('stocks');
+
+		$datas = [];
+
+		$option = $params['option'] ?? '';
+		$nofetch = !empty($params['nofetch']);
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("Warehouse")];
+		}
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
+		if (isset($this->statut)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
+		if (!empty($this->lieu)) {
+			$datas['locationsummary'] = '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (!$nofetch && isModEnabled('categorie')) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories_warehouse'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_WAREHOUSE, 1, 1);
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *	Return clickable name (possibility with the pictogram)
@@ -718,14 +770,20 @@ class Entrepot extends CommonObject
 		}
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
-		if (isset($this->statut)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? (empty($this->label) ? $this->libelle : $this->label) : $this->ref);
-		if (!empty($this->lieu)) {
-			$label .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = 'ToComplete';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
 
 		$url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
@@ -747,8 +805,8 @@ class Entrepot extends CommonObject
 				$label = $langs->trans("Warehouse");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -757,10 +815,10 @@ class Entrepot extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label) ? $this->libelle : $this->label));
+			$result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : $this->label);
 		}
 		$result .= $linkend;
 
@@ -816,7 +874,7 @@ class Entrepot extends CommonObject
 		// phpcs:enable
 		global $user, $langs, $conf;
 
-		$TArbo = array(empty($this->label) ? $this->libelle : $this->label);
+		$TArbo = array($this->label);
 
 		$protection = 100; // We limit depth of warehouses to 100
 
@@ -919,5 +977,41 @@ class Entrepot extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_WAREHOUSE);
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-icon bg-infobox-action" >';
+		$return .= img_picto('', $this->picto);
+		$return .= '</div>';
+		$return .= '<div class="info-box-content" >';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'lieu') && (!empty($this->lieu))) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->lieu.'</span>';
+		}
+		if (property_exists($this, 'sellvalue') && $this->sellvalue != 0) {
+			$return .= '<br><span class="info-box-label amount">'.price($this->sellvalue).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

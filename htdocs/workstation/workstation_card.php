@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.ph
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('workstation', 'other'));
+$langs->loadLangs(array('mrp', 'other'));
 
 // Get parameters
 $id          = GETPOST('id', 'int');
@@ -344,7 +344,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled)) {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {

@@ -54,6 +54,9 @@ $type = 'action';
  *	Actions
  */
 
+$error = 0;
+$errors = array();
+
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $reg = array();
@@ -179,7 +182,7 @@ if ($action == 'set') {
 $formactions = new FormActions($db);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -193,9 +196,8 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
 
 /*
- *  Documents models for supplier orders
+ *  Miscellaneous
  */
-
 
 // Define array def of models
 $def = array();
@@ -308,7 +310,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		}
 	}
 	print '</table><br>';
+
+	print load_fiche_titre($langs->trans('MiscellaneousOptions'), '', '');
 }
+
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -395,13 +400,12 @@ print '</td></tr>'."\n";
 
 print '</table>';
 
-print dol_get_fiche_end();
-
 print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
-print "<br>";
+
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

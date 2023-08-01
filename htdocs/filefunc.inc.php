@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '17.0.3'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '19.0.0-dev'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -61,7 +61,6 @@ if (defined('DOL_INC_FOR_VERSION_ERROR')) {
 	return;
 }
 
-
 // Define vars
 $conffiletoshowshort = "conf.php";
 // Define localization of conf file
@@ -76,9 +75,21 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // Include configuration
 // --- End of part replaced by Dolibarr packager makepack-dolibarr
 
-
 // Include configuration
 $result = @include_once $conffile; // Keep @ because with some error reporting this break the redirect done when file not found
+
+// Disable some not used PHP stream
+$listofwrappers = stream_get_wrappers();
+// We need '.phar' for geoip2. TODO Replace phar with explode files so we can disable phar.
+$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftps', 'glob', 'data', 'expect', 'ftp', 'ogg', 'rar', 'zip', 'zlib');
+foreach ($arrayofstreamtodisable as $streamtodisable) {
+	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {
+		if (!empty($dolibarr_main_stream_enabled) && is_array($dolibarr_main_stream_enabled) && in_array($streamtodisable, $dolibarr_main_stream_enabled)) {
+			continue;	// We do not disable this stream
+		}
+		stream_wrapper_unregister($streamtodisable);
+	}
+}
 
 if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not done and we are in a web session
 	if (!empty($_SERVER["CONTEXT_PREFIX"])) {    // CONTEXT_PREFIX and CONTEXT_DOCUMENT_ROOT are not defined on all apache versions
@@ -138,10 +149,10 @@ if (!empty($dolibarr_main_prod)) {
 }
 
 // Clean parameters
-$dolibarr_main_data_root = trim($dolibarr_main_data_root);
-$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', $dolibarr_main_url_root));
+$dolibarr_main_data_root = (empty($dolibarr_main_data_root) ? '' : trim($dolibarr_main_data_root));
+$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', empty($dolibarr_main_url_root) ? '' : $dolibarr_main_url_root));
 $dolibarr_main_url_root_alt = (empty($dolibarr_main_url_root_alt) ? '' : trim($dolibarr_main_url_root_alt));
-$dolibarr_main_document_root = trim($dolibarr_main_document_root);
+$dolibarr_main_document_root = (empty($dolibarr_main_document_root) ? '' : trim($dolibarr_main_document_root));
 $dolibarr_main_document_root_alt = (empty($dolibarr_main_document_root_alt) ? '' : trim($dolibarr_main_document_root_alt));
 
 if (empty($dolibarr_main_db_port)) {
@@ -295,8 +306,8 @@ if (!empty($dolibarr_main_force_https)) {
 define('DOL_MAIN_URL_ROOT', $tmp); // URL absolute root (https://sss/dolibarr, ...)
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
 $suburi = strstr($uri, '/'); // $suburi contains url without domain:port
-if ($suburi == '/') {
-	$suburi = ''; // If $suburi is /, it is now ''
+if (empty($suburi) || $suburi === '/') {
+	$suburi = ''; // If $suburi is null or /, it is now ''
 }
 if (!defined('DOL_URL_ROOT')) {
 	define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)

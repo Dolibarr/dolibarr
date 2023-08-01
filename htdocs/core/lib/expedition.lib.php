@@ -53,7 +53,7 @@ function expedition_prepare_head(Expedition $object)
 	$hselected = $h;
 	$h++;
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/delivery.php";
 		$head[$h][1] = $langs->trans("Receivings");
 		$h++;
@@ -121,7 +121,7 @@ function expedition_admin_prepare_head()
 	$head[$h][2] = 'receivings';
 	$h++;
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 		$extrafields->fetch_name_optionals_label('delivery');
 		$extrafields->fetch_name_optionals_label('deliverydet');
 

@@ -194,7 +194,7 @@ foreach ($listofstatus as $status) {
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="oddeven">';
 		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?mode='.$status.($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
 		print "</tr>\n";
 	}
 	if ($status == 4 && !$bool) {
@@ -224,7 +224,7 @@ foreach ($listofstatus as $status) {
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="oddeven">';
 		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?mode='.$status.($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
 		if ($status == 4 && !$bool) {
 			$bool = true;
 		} else {
@@ -239,7 +239,7 @@ print "</table></div><br>";
 
 // Draft contracts
 
-if (isModEnabled('contrat') && $user->rights->contrat->lire) {
+if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref,";
 	$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
@@ -622,7 +622,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?search_status=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
 	while ($i < $num) {

@@ -227,7 +227,7 @@ if ($resql) {
 /*
  * Open (validated) proposals
  */
-if (isModEnabled("propal") && $user->rights->propal->lire) {
+if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

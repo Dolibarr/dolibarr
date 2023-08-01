@@ -86,8 +86,8 @@ print dol_get_fiche_head($head, 'compare', '', 1);
 				}
 
 
-				$userl = $(this).closest('ul');
-				listname = $userl.attr('name');
+				var $userl = $(this).closest('ul');
+				var listname = $userl.attr('name');
 
 				var TId = [];
 
@@ -188,7 +188,7 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 
 				</div>
 
-				<div style="clear:both"></div>
+				<div class="clearboth"></div>
 
 			</div>
 
@@ -321,11 +321,11 @@ function rate(&$TMergedSkills, $field)
 	foreach ($TMergedSkills as $id => &$sk) {
 		$class = "note";
 		$how_many = 0;
-		if (empty($sk->{$field})) {
+		if (empty($sk->$field)) {
 			$note = 'x';
 			$class .= ' none';
 		} else {
-			$note = $sk->{$field};
+			$note = $sk->$field;
 			$how_many = ($field === 'rate1') ? $sk->how_many_max1 : $sk->how_many_max2;
 		}
 

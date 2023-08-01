@@ -105,14 +105,14 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->facture->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+$permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
 
-$usercanread = $user->rights->facture->lire;
-$usercancreate = $user->rights->facture->creer;
-$usercanissuepayment = $user->rights->facture->paiement;
-$usercandelete = $user->rights->facture->supprimer;
+$usercanread = $user->hasRight('facture', 'lire');
+$usercancreate = $user->hasRight('facture', 'creer');
+$usercanissuepayment = $user->hasRight('facture', 'paiement');
+$usercandelete = $user->hasRight('facture', 'supprimer');
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send);
 $usercanreopen = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->reopen);
@@ -271,7 +271,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete
-	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $user->rights->facture->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer) {
 		$object->delete($user);
 
 		header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
@@ -281,15 +281,15 @@ if (empty($reshook)) {
 
 	// Update field
 	// Set condition
-	if ($action == 'setconditions' && $user->rights->facture->creer) {
+	if ($action == 'setconditions' && $user->hasRight('facture', 'creer')) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-	} elseif ($action == 'setmode' && $user->rights->facture->creer) {
+	} elseif ($action == 'setmode' && $user->hasRight('facture', 'creer')) {
 		// Set mode
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
-	} elseif ($action == 'classin' && $user->rights->facture->creer) {
+	} elseif ($action == 'classin' && $user->hasRight('facture', 'creer')) {
 		// Set project
 		$object->setProject(GETPOST('projectid', 'int'));
-	} elseif ($action == 'setref' && $user->rights->facture->creer) {
+	} elseif ($action == 'setref' && $user->hasRight('facture', 'creer')) {
 		// Set bank account
 		//var_dump(GETPOST('ref', 'alpha'));exit;
 		$result = $object->setValueFrom('titre', $ref, '', null, 'text', '', $user, 'BILLREC_MODIFY');
@@ -306,31 +306,31 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'setbankaccount' && $user->rights->facture->creer) {
+	} elseif ($action == 'setbankaccount' && $user->hasRight('facture', 'creer')) {
 		// Set bank account
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
-	} elseif ($action == 'setfrequency' && $user->rights->facture->creer) {
+	} elseif ($action == 'setfrequency' && $user->hasRight('facture', 'creer')) {
 		// Set frequency and unit frequency
 		$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
-	} elseif ($action == 'setdate_when' && $user->rights->facture->creer) {
+	} elseif ($action == 'setdate_when' && $user->hasRight('facture', 'creer')) {
 		// Set next date of execution
 		$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 		if (!empty($date)) {
 			$object->setNextDate($date);
 		}
-	} elseif ($action == 'setnb_gen_max' && $user->rights->facture->creer) {
+	} elseif ($action == 'setnb_gen_max' && $user->hasRight('facture', 'creer')) {
 		// Set max period
 		$object->setMaxPeriod(GETPOST('nb_gen_max', 'int'));
-	} elseif ($action == 'setauto_validate' && $user->rights->facture->creer) {
+	} elseif ($action == 'setauto_validate' && $user->hasRight('facture', 'creer')) {
 		// Set auto validate
 		$object->setAutoValidate(GETPOST('auto_validate', 'int'));
-	} elseif ($action == 'setgenerate_pdf' && $user->rights->facture->creer) {
+	} elseif ($action == 'setgenerate_pdf' && $user->hasRight('facture', 'creer')) {
 		// Set generate pdf
 		$object->setGeneratepdf(GETPOST('generate_pdf', 'int'));
-	} elseif ($action == 'setmodelpdf' && $user->rights->facture->creer) {
+	} elseif ($action == 'setmodelpdf' && $user->hasRight('facture', 'creer')) {
 		// Set model pdf
 		$object->setModelpdf(GETPOST('modelpdf', 'alpha'));
-	} elseif ($action == 'disable' && $user->rights->facture->creer) {
+	} elseif ($action == 'disable' && $user->hasRight('facture', 'creer')) {
 		// Set status disabled
 		$db->begin();
 
@@ -347,7 +347,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'enable' && $user->rights->facture->creer) {
+	} elseif ($action == 'enable' && $user->hasRight('facture', 'creer')) {
 		// Set status enabled
 		$db->begin();
 
@@ -373,7 +373,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete line
-	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->facture->creer) {
+	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
@@ -417,7 +417,7 @@ if (empty($reshook)) {
 	}
 
 	// Add a new line
-	if ($action == 'addline' && $user->rights->facture->creer) {
+	if ($action == 'addline' && $user->hasRight('facture', 'creer')) {
 		$langs->load('errors');
 		$error = 0;
 
@@ -433,6 +433,11 @@ if (empty($reshook)) {
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
+
+			if (!empty($conf->global->MAIN_DISABLE_FREE_LINES) && $idprod <= 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
+				$error++;
+			}
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
@@ -1182,7 +1187,7 @@ if ($action == 'create') {
 
 		// Confirm delete of repeatable invoice
 		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_deleteinvoice', '', 'no', 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_delete', '', 'no', 1);
 		}
 
 		// Call Hook formConfirm
@@ -1209,36 +1214,27 @@ if ($action == 'create') {
 
 		$morehtmlref = '';
 		if ($action != 'editref') {
-			$morehtmlref .= $form->editfieldkey($object->ref, 'ref', $object->ref, $object, $user->rights->facture->creer, '', '', 0, 2);
+			$morehtmlref .= $form->editfieldkey($object->ref, 'ref', $object->ref, $object, $user->hasRight('facture', 'creer'), '', '', 0, 2);
 		} else {
-			$morehtmlref .= $form->editfieldval('', 'ref', $object->ref, $object, $user->rights->facture->creer, 'string');
+			$morehtmlref .= $form->editfieldval('', 'ref', $object->ref, $object, $user->hasRight('facture', 'creer'), 'string');
 		}
 
 		$morehtmlref .= '<div class="refidno">';
 		// Ref customer
-		//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', 0, 1);
-		//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', null, null, '', 1);
+		//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('facture', 'creer'), 'string', '', 0, 1);
+		//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('facture', 'creer'), 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->facture->creer) {
+			$morehtmlref .= '<br>';
+			if ($user->hasRight('facture', 'creer')) {
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref .= '</form>';
-				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
-				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -1294,7 +1290,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
-		if ($action != 'editconditions' && $user->rights->facture->creer) {
+		if ($action != 'editconditions' && $user->hasRight('facture', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1315,7 +1311,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $user->rights->facture->creer) {
+		if ($action != 'editmode' && $user->hasRight('facture', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1405,17 +1401,17 @@ if ($action == 'create') {
 
 		// Note public
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $user->rights->facture->creer);
+		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $user->hasRight('facture', 'creer'));
 		print '</td><td class="wordbreak">';
-		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
+		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->hasRight('facture', 'creer'), 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
 		print '</td>';
 		print '</tr>';
 
 		// Note private
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
+		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $user->hasRight('facture', 'creer'));
 		print '</td><td class="wordbreak">';
-		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
+		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->hasRight('facture', 'creer'), 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
 		print '</td>';
 		print '</tr>';
 
@@ -1424,7 +1420,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
 		print '<td>';
-		if (($action != 'editbankaccount') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT) {
+		if (($action != 'editbankaccount') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1442,7 +1438,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('Model');
 		print '<td>';
-		if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT) {
+		if (($action != 'editmodelpdf') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1455,7 +1451,7 @@ if ($action == 'create') {
 				$list[] = str_replace(':', '|', $k).':'.$model;
 			}
 			$select = 'select;'.implode(',', $list);
-			print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
+			print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->hasRight('facture', 'creer'), $select);
 		} else {
 			print $object->model_pdf;
 		}
@@ -1488,7 +1484,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Frequency');
 		print '</td>';
-		if ($action != 'editfrequency' && $user->rights->facture->creer) {
+		if ($action != 'editfrequency' && $user->hasRight('facture', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1516,13 +1512,13 @@ if ($action == 'create') {
 		// Date when (next invoice generation)
 		print '<tr><td>';
 		if ($action == 'date_when' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+			print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
 		} else {
 			print $langs->trans("NextDateToExecution");
 		}
 		print '</td><td>';
 		if ($action == 'date_when' || $object->frequency > 0) {
-			print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
+			print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 		}
 		//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
 		if (!$object->isMaxNbGenReached()) {
@@ -1538,13 +1534,13 @@ if ($action == 'create') {
 		// Max period / Rest period
 		print '<tr><td>';
 		if ($action == 'nb_gen_max' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+			print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->hasRight('facture', 'creer'));
 		} else {
 			print $langs->trans("MaxPeriodNumber");
 		}
 		print '</td><td>';
 		if ($action == 'nb_gen_max' || $object->frequency > 0) {
-			  print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->rights->facture->creer);
+			  print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->hasRight('facture', 'creer'));
 		} else {
 			print '';
 		}
@@ -1554,14 +1550,14 @@ if ($action == 'create') {
 		// Status of generated invoices
 		print '<tr><td>';
 		if ($action == 'auto_validate' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
+			print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'));
 		} else {
 			print $langs->trans("StatusOfGeneratedInvoices");
 		}
 		print '</td><td>';
 		$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
 		if ($action == 'auto_validate' || $object->frequency > 0) {
-			print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
+			print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'), $select);
 		}
 		print '</td>';
 		// Auto generate documents
@@ -1569,7 +1565,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td>';
 			if ($action == 'generate_pdf' || $object->frequency > 0) {
-				print $form->editfieldkey($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->rights->facture->creer);
+				print $form->editfieldkey($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->hasRight('facture', 'creer'));
 			} else {
 				print $langs->trans("StatusOfGeneratedDocuments");
 			}
@@ -1577,7 +1573,7 @@ if ($action == 'create') {
 			print '<td>';
 			$select = 'select;0:'.$langs->trans('DoNotGenerateDoc').',1:'.$langs->trans('AutogenerateDoc');
 			if ($action == 'generate_pdf' || $object->frequency > 0) {
-				print $form->editfieldval($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->rights->facture->creer, $select);
+				print $form->editfieldval($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->hasRight('facture', 'creer'), $select);
 			}
 			print '</td>';
 			print '</tr>';
@@ -1645,7 +1641,7 @@ if ($action == 'create') {
 		}
 
 		// Form to add new line
-		if ($object->statut == $object::STATUS_DRAFT && $user->rights->facture->creer && $action != 'valid' && $action != 'editline') {
+		if ($object->statut == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer') && $action != 'valid' && $action != 'editline') {
 			if ($action != 'editline') {
 				// Add free products/services
 
@@ -1679,7 +1675,7 @@ if ($action == 'create') {
 				),
 			);
 			if (empty($object->suspended)) {
-				if ($user->rights->facture->creer) {
+				if ($user->hasRight('facture', 'creer')) {
 					if (!empty($object->frequency) && $object->nb_gen_max > 0 && ($object->nb_gen_done >= $object->nb_gen_max)) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("MaxGenerationReached")) . '">' . $langs->trans("CreateBill") . '</a></div>';
 					} else {
@@ -1694,7 +1690,7 @@ if ($action == 'create') {
 				}
 			}
 
-			if ($user->rights->facture->creer) {
+			if ($user->hasRight('facture', 'creer')) {
 				if (empty($object->suspended)) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("Disable").'</a></div>';
 				} else {
@@ -1703,7 +1699,7 @@ if ($action == 'create') {
 			}
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $user->rights->facture->supprimer);
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $user->hasRight('facture', 'supprimer'));
 		}
 		print '</div>';
 

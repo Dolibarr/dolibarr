@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018-2022  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton      <anthony.berton@bb2a.fr>
  *
@@ -46,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -362,52 +364,61 @@ if (empty($reshook)) {
 
 				$description = trim(GETPOST('description', 'restricthtml'));
 
-				// If no start date
-				if (!GETPOST('date_debut_')) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatedebut');
-					exit;
-				}
-
 				// If no end date
 				if (!GETPOST('date_fin_')) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatefin');
-					exit;
+					setEventMessages($langs->trans('NoDateFin'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If start date after end date
 				if ($date_debut > $date_fin) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=datefin');
-					exit;
+					setEventMessages($langs->trans('ErrorEndDateCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If no validator designated
 				if ($approverid < 1) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=Valideur');
-					exit;
+					setEventMessages($langs->trans('InvalidValidatorCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If there is no Business Days within request
 				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 				if ($nbopenedday < 0.5) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=DureeHoliday');
-					exit;
+					setEventMessages($langs->trans('ErrorDureeCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
-				$object->description = $description;
-				$object->date_debut = $date_debut;
-				$object->date_fin = $date_fin;
-				$object->fk_validator = $approverid;
-				$object->halfday = $halfday;
+				$db->begin();
 
-				// Update
-				$verif = $object->update($user);
+				if (!$error) {
+					$object->description = $description;
+					$object->date_debut = $date_debut;
+					$object->date_fin = $date_fin;
+					$object->fk_validator = $approverid;
+					$object->halfday = $halfday;
 
-				if ($verif <= 0) {
-					setEventMessages($object->error, $object->errors, 'warnings');
-					$action = 'edit';
-				} else {
+					// Update
+					$verif = $object->update($user);
+
+					if ($verif <= 0) {
+						setEventMessages($object->error, $object->errors, 'warnings');
+						$error++;
+						$action = 'edit';
+					}
+				}
+
+				if (!$error) {
+					$db->commit();
+
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 					exit;
+				} else {
+					$db->rollback();
 				}
 			} else {
 				setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
@@ -511,11 +522,29 @@ if (empty($reshook)) {
 					}
 				}
 
+				$typeleaves = $object->getTypes(1, -1);
+				$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+
+				if ($object->halfday == 2) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == -1) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Afternoon";
+				} elseif ($object->halfday == 1) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == 2) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Afternoon";
+				}
+
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;
 
 				$message .= "<ul>";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Type")." : ".(empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow)."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv($starthalfdaykey)." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')." ".$langs->transnoentitiesnoconv($endhalfdaykey)."</li>\n";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
 				$message .= "</ul>\n";
 
@@ -1003,27 +1032,6 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
 
-		if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
-			print dol_get_fiche_head('', '', '', -1);
-
-			$out = '';
-			$nb_holiday = 0;
-			$typeleaves = $object->getTypes(1, 1);
-			foreach ($typeleaves as $key => $val) {
-				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
-				$nb_holiday += $nb_type;
-
-				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
-				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
-			}
-			print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
-			print $out;
-
-			print dol_get_fiche_end();
-		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
-			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
-		}
-
 		print dol_get_fiche_head();
 
 		//print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
@@ -1033,14 +1041,57 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		// User for leave request
 		print '<tr>';
-		print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
-		print '<td>';
+		print '<td class="titlefield fieldrequired tdtop">'.$langs->trans("User").'</td>';
+		print '<td><div class="inline-block">';
 		if ($cancreate && !$cancreateall) {
-			print img_picto('', 'user').$form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500');
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500 inline-block');
 			//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
 		} else {
-			print img_picto('', 'user').$form->select_dolusers($fuserid ? $fuserid : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500');
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fuserid ? $fuserid : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500 inline-block');
 		}
+		print '</div>';
+
+		if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+			print '<div class="leaveuserbalance paddingtop inline-block floatright badge badge-status0 badge-status margintoponsmartphone">';
+
+			$out = '';
+			$nb_holiday = 0;
+			$typeleaves = $object->getTypes(1, 1);
+			foreach ($typeleaves as $key => $val) {
+				$nb_type = $object->getCPforUser(($fuserid ? $fuserid : $user->id), $val['rowid']);
+				$nb_holiday += $nb_type;
+
+				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
+				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+			}
+			print ' &nbsp; &nbsp; ';
+
+			$htmltooltip = $langs->trans("Detail").'<br>';
+			$htmltooltip .= $out;
+
+			print $form->textwithtooltip($langs->trans('SoldeCPUser', round($nb_holiday, 5)).' '.img_picto('', 'help'), $htmltooltip);
+
+			print '</div>';
+			if (!empty($conf->use_javascript_ajax)) {
+				print '<script>';
+				print '$( document ).ready(function() {
+					jQuery("#fuserid").change(function() {
+						console.log("We change to user id "+jQuery("#fuserid").val());
+						if (jQuery("#fuserid").val() == '.((int) $user->id).') {
+							jQuery(".leaveuserbalance").show();
+						} else {
+							jQuery(".leaveuserbalance").hide();
+						}
+					});
+				});';
+				print '</script>';
+			}
+		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
+			print '<div class="leaveuserbalance paddingtop">';
+			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE);
+			print '</div>';
+		}
+
 		print '</td>';
 		print '</tr>';
 
@@ -1067,9 +1118,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<td class="fieldrequired">';
 		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
 		print '</td>';
-		print '<td>';
-		// Si la demande ne vient pas de l'agenda
-		if (!GETPOST('date_debut_')) {
+		print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');
+		if (!GETPOST('date_debut_')) {	// If visitor does not come from agenda
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
 		} else {
 			$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
@@ -1085,7 +1135,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<td class="fieldrequired">';
 		print $form->textwithpicto($langs->trans("DateFinCP"), $langs->trans("LastDayOfHoliday"));
 		print '</td>';
-		print '<td>';
+		print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');
 		if (!GETPOST('date_fin_')) {
 			print $form->selectDate(-1, 'date_fin_', 0, 0, 0, '', 1, 1);
 		} else {
@@ -1117,7 +1167,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				$defaultselectuser = GETPOST('valideur', 'int');
 			}
 			$s = $form->select_dolusers($defaultselectuser, "valideur", 1, '', 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
-			print img_picto('', 'user').$form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 		}
 
 		//print $form->select_dolusers((GETPOST('valideur','int')>0?GETPOST('valideur','int'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
@@ -1128,7 +1178,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -1145,13 +1195,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '</from>'."\n";
 	}
 } else {
-	if ($error) {
+	if ($error && $action != 'edit') {
 		print '<div class="tabBar">';
 		print $error;
 		print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
 		print '</div>';
 	} else {
-		// Affichage de la fiche d'une demande de congés payés
+		// Show page in view or edit mode
 		if (($id > 0) || $ref) {
 			$result = $object->fetch($id, $ref);
 
@@ -1263,7 +1313,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
 					print '</td>';
 					print '<td>';
-					print $form->selectDate($object->date_debut, 'date_debut_');
+					$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
+					print $form->selectDate($tmpdate ? $tmpdate : $object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
 					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ?GETPOST('starthalfday') : $starthalfday));
 					print '</td>';
@@ -1329,7 +1380,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<tr>';
 					print '<td>'.$langs->trans('DescCP').'</td>';
 					print '<td class="tdtop">';
-					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 					print $doleditor->Create(1);
 					print '</td></tr>';
 				}

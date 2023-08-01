@@ -38,6 +38,8 @@ require '../main.inc.php';
 
 $langs->load('compta');
 
+// No permission check. This is just a formatting data service.
+
 
 /*
  * View
@@ -113,7 +115,7 @@ if ($currentInvId) {																	// Here to breakdown
 			$result -= $amountToBreakdown; // And canceled substraction has been replaced by breakdown
 		}	// else there's no need to calc anything, just reset the field (result is still < 0)
 	}
-	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount).""; // Param will exist only if an img has been clicked
+	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount); // Param will exist only if an img has been clicked
 }
 
 $toJsonArray['makeRed'] = ($totalRemaining < price2num($result) || price2num($result) < 0) ? true : false;

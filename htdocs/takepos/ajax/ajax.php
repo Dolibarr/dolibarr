@@ -62,15 +62,28 @@ $hookmanager->initHooks(array('takeposproductsearch')); // new context for produ
  */
 
 if ($action == 'getProducts') {
+	$tosell = GETPOSTISSET('tosell') ? GETPOST('tosell', 'int') : '';
+	$limit = GETPOSTISSET('limit') ? GETPOST('limit', 'int') : 0;
+	$offset = GETPOSTISSET('offset') ? GETPOST('offset', 'int') : 0;
+
 	top_httphead('application/json');
 
 	$object = new Categorie($db);
 	if ($category == "supplements") {
 		$category = getDolGlobalInt('TAKEPOS_SUPPLEMENTS_CATEGORY');
+		if (empty($category)) {
+			echo 'Error, the category to use for supplements is not defined. Go into setup of module TakePOS.';
+			exit;
+		}
 	}
+
 	$result = $object->fetch($category);
 	if ($result > 0) {
-		$prods = $object->getObjectsInCateg("product", 0, 0, 0, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC');
+		$filter = array();
+		if ($tosell != '') {
+			$filter = array('customsql' => 'o.tosell = '.((int) $tosell));
+		}
+		$prods = $object->getObjectsInCateg("product", 0, $limit, $offset, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC', $filter);
 		// Removed properties we don't need
 		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
@@ -346,7 +359,7 @@ if ($action == 'getProducts') {
 		$printer->pulse();
 		$printer->close();
 	}
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && !empty($user->rights->facture->lire)) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('facture', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$printer = new dolReceiptPrinter($db);
@@ -371,6 +384,9 @@ if ($action == 'getProducts') {
 	$place = GETPOST('place', 'alpha');
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+
+	$object = new Facture($db);
+
 	$printer = new dolReceiptPrinter($db);
 	$printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
 }

@@ -159,7 +159,8 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td>';
-print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', '(s.client IN (1, 3) AND s.status = 1)', 1, 0, 0, array(), 0);
+$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
+print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', $filter, 1, 0, 0, array(), 0);
 print '</td></tr>';
 
 $atleastonefound = 0;
@@ -167,7 +168,8 @@ if (isModEnabled("banque")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1, '', 0, '', 1);
+	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse)) {
 		$atleastonefound++;
 	}
@@ -175,7 +177,8 @@ if (isModEnabled("banque")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1, '', 0, '', 1);
+	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse)) {
 		$atleastonefound++;
 	}
@@ -183,7 +186,8 @@ if (isModEnabled("banque")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1, '', 0, '', 1);
+	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse)) {
 		$atleastonefound++;
 	}
@@ -230,7 +234,8 @@ if (isModEnabled("banque")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSumup").'</td>';
 		print '<td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		$form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1);
+		print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1, '', 0, '', 1);
+		print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 		if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse)) {
 			$atleastonefound++;
 		}
@@ -249,7 +254,8 @@ if (isModEnabled("banque")) {
 		}
 		$cour = preg_match('/^LIQ.*/', $modep->code) ? 2 : 1;
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		$form->select_comptes(getDolGlobalInt($name), $name, 0, "courant=".$cour, 1);
+		print $form->select_comptes(getDolGlobalInt($name), $name, 0, "courant=".$cour, 1, '', 0, '', 1);
+		print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 		print '</td></tr>';
 	}
 }
@@ -268,7 +274,7 @@ if (isModEnabled('stock')) {
 	}
 	print '</td></tr>';
 
-	$disabled = $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal};
+	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>'; // Force warehouse (this is not a default value)

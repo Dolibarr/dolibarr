@@ -109,7 +109,8 @@ if (!$sortfield) {
 $object = new Account($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
-	$account = $object->id; // Force the search field on id of account
+	// if fetch from ref, $id may be empty
+	$id = $object->id; // Force the search field on id of account
 }
 
 
@@ -251,7 +252,7 @@ if (empty($numref)) {
 
 	// Count total nb of records
 	$totalnboflines = 0;
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$totalnboflines = $db->num_rows($result);
 	}

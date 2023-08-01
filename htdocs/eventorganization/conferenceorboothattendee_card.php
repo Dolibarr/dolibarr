@@ -47,7 +47,8 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'conferenceorboothattendeecard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOST('lineid', 'int');
+$mode = GETPOST('mode', 'alpha');
 
 $conf_or_booth_id = GETPOST('conforboothid', 'int');
 $fk_project = GETPOST('fk_project', 'int');
@@ -233,7 +234,7 @@ if (!empty($withproject)) {
 	// Title
 	$morehtmlref .= $projectstatic->title;
 	// Thirdparty
-	if ($projectstatic->thirdparty->id > 0) {
+	if (!empty($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
@@ -384,7 +385,7 @@ if (!empty($withproject)) {
 	//print '</span>';
 	print '</td><td>';
 	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.$projectstatic->id;
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 'md5');
+	$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
 	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -401,7 +402,7 @@ if (!empty($withproject)) {
 	//print '</span>';
 	print '</td><td>';
 	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 'md5');
+	$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -563,7 +564,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1'.($confOrBooth->id > 0 ? '&conforboothid='.((int) $confOrBooth->id) : '').$moreparam.'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1'.(!empty($confOrBooth->id) && $confOrBooth->id > 0 ? '&conforboothid='.((int) $confOrBooth->id) : '').$moreparam.'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 
@@ -610,7 +611,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:''), '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:''), '', $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));

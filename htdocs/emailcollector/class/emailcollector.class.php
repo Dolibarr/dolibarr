@@ -131,6 +131,8 @@ class EmailCollector extends CommonObject
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com', 'csslist'=>'tdoverflowmax125'),
 		'port'          => array('type'=>'varchar(10)', 'label'=>'EMailHostPort', 'visible'=>1, 'enabled'=>1, 'position'=>91, 'notnull'=>1, 'searchall'=>0, 'comment'=>"IMAP server port", 'help'=>'Example: 993', 'csslist'=>'tdoverflowmax50', 'default'=>'993'),
 		'hostcharset'   => array('type'=>'varchar(16)', 'label'=>'HostCharset', 'visible'=>-1, 'enabled'=>1, 'position'=>92, 'notnull'=>0, 'searchall'=>0, 'comment'=>"IMAP server charset", 'help'=>'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default'=>'UTF-8'),
+		'imap_encryption'  => array('type'=>'varchar(16)', 'label'=>'ImapEncryption', 'visible'=>-1, 'enabled'=>1, 'position'=>93, 'searchall'=>0, 'comment'=>"IMAP encryption", 'help'=>'ImapEncryptionHelp', 'arrayofkeyval'=> array('ssl'=>'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default'=>'ssl'),
+		'norsh'  => array('type'=>'integer', 'label'=>'NoRSH', 'visible'=>-1, 'enabled'=>"!getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>94, 'searchall'=>0, 'help'=>'NoRSHHelp', 'arrayofkeyval'=> array(0 =>'No', 1 => 'Yes'), 'default'=> 0),
 		'acces_type'     => array('type'=>'integer', 'label'=>'accessType', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login type", 'arrayofkeyval'=>array('0'=>'loginPassword', '1'=>'oauthToken'), 'default'=>'0', 'help'=>''),
 		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
@@ -213,6 +215,8 @@ class EmailCollector extends CommonObject
 	public $password;
 	public $acces_type;
 	public $oauth_service;
+	public $imap_encryption;
+	public $norsh;
 	public $source_directory;
 	public $target_directory;
 	public $maxemailpercollect;
@@ -762,8 +766,12 @@ class EmailCollector extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+
+			return 1;
 		} else {
 			dol_print_error($this->db);
+
+			return -1;
 		}
 	}
 
@@ -771,11 +779,9 @@ class EmailCollector extends CommonObject
 	/**
 	 * Return the connectstring to use with IMAP connection function
 	 *
-	 * @param	int		$ssl		Add /ssl tag
-	 * @param	int		$norsh		Add /norsh to connectstring
 	 * @return string
 	 */
-	public function getConnectStringIMAP($ssl = 1, $norsh = 0)
+	public function getConnectStringIMAP()
 	{
 		global $conf;
 
@@ -783,15 +789,16 @@ class EmailCollector extends CommonObject
 		$flags = '/service=imap'; // IMAP
 		if (!empty($conf->global->IMAP_FORCE_TLS)) {
 			$flags .= '/tls';
-		} elseif (empty($conf->global->IMAP_FORCE_NOSSL)) {
-			if ($ssl) {
-				$flags .= '/ssl';
-			}
+		} elseif (empty($this->imap_encryption) || ($this->imap_encryption == 'ssl' && !empty($conf->global->IMAP_FORCE_NOSSL))) {
+			$flags .= '';
+		} else {
+			$flags .= '/' . $this->imap_encryption;
 		}
+
 		$flags .= '/novalidate-cert';
 		//$flags.='/readonly';
 		//$flags.='/debug';
-		if ($norsh || !empty($conf->global->IMAP_FORCE_NORSH)) {
+		if (!empty($this->norsh) || !empty($conf->global->IMAP_FORCE_NORSH)) {
 			$flags .= '/norsh';
 		}
 		//Used in shared mailbox from Office365
@@ -895,7 +902,7 @@ class EmailCollector extends CommonObject
 
 		// Overwrite values with values extracted from source email
 		// $this->actionparam = 'opportunity_status=123;abc=EXTRACT:BODY:....'
-		$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
+		$arrayvaluetouse = dolExplodeIntoArray($actionparam, '(\n\r|\r|\n|;)', '=');
 
 		$tmp = array();
 
@@ -1187,7 +1194,7 @@ class EmailCollector extends CommonObject
 				$client = $cm->make([
 					'host'           => $this->host,
 					'port'           => $this->port,
-					'encryption'     => 'ssl',
+					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
 					'validate_cert'  => true,
 					'protocol'       => 'imap',
 					'username'       => $this->login,
@@ -1200,7 +1207,7 @@ class EmailCollector extends CommonObject
 				$client = $cm->make([
 					'host'           => $this->host,
 					'port'           => $this->port,
-					'encryption'     => 'ssl',
+					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
 					'validate_cert'  => true,
 					'protocol'       => 'imap',
 					'username'       => $this->login,
@@ -1623,8 +1630,8 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
-				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References']??'')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References']??'')." Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
@@ -2126,7 +2133,7 @@ class EmailCollector extends CommonObject
 					$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
 					if ($result > 0) {
 						dol_syslog("We found a thirdparty with the email ".$from);
-						$thirdpartyid = $thirdpartystatic->id;;
+						$thirdpartyid = $thirdpartystatic->id;
 						$thirdpartyfoundby = 'email ('.$from.')';
 					}
 				}
@@ -2154,7 +2161,7 @@ class EmailCollector extends CommonObject
 				 $result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $replyto);
 				 if ($result > 0) {
 				 dol_syslog("We found a thirdparty with the email ".$replyto);
-				 $thirdpartyid = $thirdpartystatic->id;;
+				 $thirdpartyid = $thirdpartystatic->id;
 				 $thirdpartyfoundby = 'email ('.$replyto.')';
 				 }
 				 }
@@ -2215,7 +2222,7 @@ class EmailCollector extends CommonObject
 								$operationslog .= '<br>Loop on each property to set into actionparam';
 
 								// $actionparam = 'param=SET:aaa' or 'param=EXTRACT:BODY:....'
-								$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
+								$arrayvaluetouse = dolExplodeIntoArray($actionparam, '(\n\r|\r|\n|;)', '=');
 								foreach ($arrayvaluetouse as $propertytooverwrite => $valueforproperty) {
 									$sourcestring = '';
 									$sourcefield = '';
@@ -2259,7 +2266,7 @@ class EmailCollector extends CommonObject
 
 													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 												} else {
-													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> We discard this, not used to search existing thirdparty';
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> We discard this, not a field used to search an existing thirdparty';
 												}
 											} else {
 												// Regex not found
@@ -2286,19 +2293,19 @@ class EmailCollector extends CommonObject
 										if ($propertytooverwrite == 'id') {
 											$idtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'email') {
 											$emailtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'name') {
 											$nametouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 										} elseif ($propertytooverwrite == 'name_alias') {
 											$namealiastouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 										}
 									} else {
 										$errorforactions++;
@@ -2384,6 +2391,118 @@ class EmailCollector extends CommonObject
 										dol_syslog("One and only one existing third party has been found");
 
 										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag($thirdpartystatic->id);
+									}
+								}
+							}
+						} elseif ($operation['type'] == 'loadandcreatecontact') { // Search and create contact
+							if (empty($operation['actionparam'])) {
+								$errorforactions++;
+								$this->error = "Action loadandcreatecontact has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
+								$this->errors[] = $this->error;
+							} else {
+								$contact_static = new Contact($this->db);
+								// Overwrite values with values extracted from source email
+								$errorforthisaction = $this->overwritePropertiesOfObject($contact_static, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+								if ($errorforthisaction) {
+									$errorforactions++;
+								} else {
+									if (!empty($contact_static->email) && $contact_static->email != $from) $from = $contact_static->email;
+
+									$result = $contactstatic->fetch(0, null, '', $from);
+									if ($result < 0) {
+										$errorforactions++;
+										$this->error = 'Error when getting contact with email ' . $from;
+										$this->errors[] = $this->error;
+										break;
+									} elseif ($result == 0) {
+										dol_syslog("Contact with email " . $from . " was not found. We try to create it.");
+										$contactstatic = new Contact($this->db);
+
+										// Create contact
+										$contactstatic->email = $from;
+										$operationslog .= '<br>We set property email='.dol_escape_htmltag($from);
+
+										// Overwrite values with values extracted from source email
+										$errorforthisaction = $this->overwritePropertiesOfObject($contactstatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+
+										if ($errorforthisaction) {
+											$errorforactions++;
+										} else {
+											// Search country by name or code
+											if (!empty($contactstatic->country)) {
+												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+												$result = getCountry('', 3, $this->db, '', 1, $contactstatic->country);
+												if ($result == 'NotDefined') {
+													$errorforactions++;
+													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
+												} elseif (!($result > 0)) {
+													$errorforactions++;
+													$this->error = "Error when search country by this name '" . $contactstatic->country . "'";
+													$this->errors[] = $this->db->lasterror();
+												} else {
+													$contactstatic->country_id = $result;
+													$operationslog .= '<br>We set property country_id='.dol_escape_htmltag($result);
+												}
+											} elseif (!empty($contactstatic->country_code)) {
+												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+												$result = getCountry($contactstatic->country_code, 3, $this->db);
+												if ($result == 'NotDefined') {
+													$errorforactions++;
+													$this->error = "Error country not found by this code '" . $contactstatic->country_code . "'";
+												} elseif (!($result > 0)) {
+													$errorforactions++;
+													$this->error = "Error when search country by this code '" . $contactstatic->country_code . "'";
+													$this->errors[] = $this->db->lasterror();
+												} else {
+													$contactstatic->country_id = $result;
+													$operationslog .= '<br>We set property country_id='.dol_escape_htmltag($result);
+												}
+											}
+
+											if (!$errorforactions) {
+												// Search state by name or code (for country if defined)
+												if (!empty($contactstatic->state)) {
+													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+													$result = dol_getIdFromCode($this->db, $contactstatic->state, 'c_departements', 'nom', 'rowid');
+													if (empty($result)) {
+														$errorforactions++;
+														$this->error = "Error state not found by this name '" . $contactstatic->state . "'";
+													} elseif (!($result > 0)) {
+														$errorforactions++;
+														$this->error = "Error when search state by this name '" . $contactstatic->state . "'";
+														$this->errors[] = $this->db->lasterror();
+													} else {
+														$contactstatic->state_id = $result;
+														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
+													}
+												} elseif (!empty($contactstatic->state_code)) {
+													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+													$result = dol_getIdFromCode($this->db, $contactstatic->state_code, 'c_departements', 'code_departement', 'rowid');
+													if (empty($result)) {
+														$errorforactions++;
+														$this->error = "Error state not found by this code '" . $contactstatic->state_code . "'";
+													} elseif (!($result > 0)) {
+														$errorforactions++;
+														$this->error = "Error when search state by this code '" . $contactstatic->state_code . "'";
+														$this->errors[] = $this->db->lasterror();
+													} else {
+														$contactstatic->state_id = $result;
+														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
+													}
+												}
+											}
+
+											if (!$errorforactions) {
+												$result = $contactstatic->create($user);
+												if ($result <= 0) {
+													$errorforactions++;
+													$this->error = $contactstatic->error;
+													$this->errors = $contactstatic->errors;
+												} else {
+													$operationslog .= '<br>Contact created -> id = '.dol_escape_htmltag($contactstatic->id);
+												}
+											}
+										}
 									}
 								}
 							}
@@ -2739,6 +2858,8 @@ class EmailCollector extends CommonObject
 									if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0)) {
 										$errorforactions++;
 										$this->error = 'Failed to create project: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
+
+										$operationslog .= '<br>'.$this->error;
 									} else {
 										// Create project
 										$result = $projecttocreate->create($user);
@@ -2746,6 +2867,8 @@ class EmailCollector extends CommonObject
 											$errorforactions++;
 											$this->error = 'Failed to create project: '.$langs->trans($projecttocreate->error);
 											$this->errors = $projecttocreate->errors;
+
+											$operationslog .= '<br>'.$this->error;
 										} else {
 											if ($attachments) {
 												$destdir = $conf->project->dir_output.'/'.$projecttocreate->ref;
@@ -2996,6 +3119,7 @@ class EmailCollector extends CommonObject
 							if (!is_object($hookmanager)) {
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
+								$hookmanager->initHooks(['emailcolector']);
 							}
 
 							$parameters = array(
@@ -3097,6 +3221,7 @@ class EmailCollector extends CommonObject
 
 			dol_syslog("End of loop on emails", LOG_INFO, -1);
 		} else {
+			$langs->load("admin");
 			$output = $langs->trans('NoNewEmailToProcess');
 		}
 
@@ -3169,8 +3294,8 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    UID email
-	 * @param 	string $destdir	    Target dir for attachments
-	 * @return 	array				Array with number and object
+	 * @param 	string $destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
+	 * @return 	void
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
 	{
@@ -3222,7 +3347,7 @@ class EmailCollector extends CommonObject
 	 * @param 	string		$mid			Part no
 	 * @param 	Object		$p              Object p
 	 * @param   string      $partno         Partno
-	 * @param 	string 		$destdir	    Target dir for attachments
+	 * @param 	string 		$destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return	void
 	 */
 	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
@@ -3249,7 +3374,7 @@ class EmailCollector extends CommonObject
 				$params[strtolower($x->attribute)] = $x->value;
 			}
 		}
-		if ($p->dparameters) {
+		if (!empty($p->dparameters)) {
 			foreach ($p->dparameters as $x) {
 				$params[strtolower($x->attribute)] = $x->value;
 			}
@@ -3258,44 +3383,46 @@ class EmailCollector extends CommonObject
 		// ATTACHMENT
 		// Any part with a filename is an attachment,
 		// so an attached text file (type 0) is not mistaken as the message.
-		if ($params['filename'] || $params['name']) {
+		if (!empty($params['filename']) || !empty($params['name'])) {
 			// filename may be given as 'Filename' or 'Name' or both
-			$filename = ($params['filename']) ? $params['filename'] : $params['name'];
+			$filename = $params['filename'] ?? $params['name'];
 			// filename may be encoded, so see imap_mime_header_decode()
 			$attachments[$filename] = $data; // this is a problem if two files have same name
 
-			// Get file name (with extension)
-			$file_name_complete =  $params['filename'];
+			if (strlen($destdir)) {
+				if (substr($destdir, -1) != '/') $destdir .= '/';
 
+				// Get file name (with extension)
+				$file_name_complete = $params['filename'];
+				$destination = $destdir.$file_name_complete;
 
-			$destination = $destdir.'/'.$file_name_complete;
+				// Extract file extension
+				$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
 
-			// Extract file extension
-			$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
+				// Extract file name without extension
+				$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
 
-			// Extract file name without extension
-			$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
+				// Save an original file name variable to track while renaming if file already exists
+				$file_name_original = $file_name;
 
-			// Save an original file name variable to track while renaming if file already exists
-			$file_name_original = $file_name;
+				// Increment file name by 1
+				$num = 1;
 
-			// Increment file name by 1
-			$num = 1;
+				/**
+				 * Check if the same file name already exists in the upload folder,
+				 * append increment number to the original filename
+				 */
+				while (file_exists($destdir.$file_name.".".$extension)) {
+					$file_name = $file_name_original . ' (' . $num . ')';
+					$file_name_complete = $file_name . "." . $extension;
+					$destination = $destdir.$file_name_complete;
+					$num++;
+				}
 
-			/**
-			 * Check if the same file name already exists in the upload folder,
-			 * append increment number to the original filename
-			 */
-			while (file_exists($destdir."/".$file_name.".".$extension)) {
-				$file_name = $file_name_original . ' (' . $num . ')';
-				$file_name_complete = $file_name . "." . $extension;
-				$destination = $destdir.'/'.$file_name_complete;
-				$num++;
+				$destination = dol_sanitizePathName($destination);
+
+				file_put_contents($destination, $data);
 			}
-
-			$destination = dol_sanitizePathName($destination);
-
-			file_put_contents($destination, $data);
 		}
 
 		// TEXT
@@ -3324,9 +3451,9 @@ class EmailCollector extends CommonObject
 		}
 
 		// SUBPART RECURSION
-		if ($p->parts) {
+		if (!empty($p->parts)) {
 			foreach ($p->parts as $partno0 => $p2) {
-				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1)); // 1.2, 1.2.1, etc.
+				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1), $destdir); // 1.2, 1.2.1, etc.
 			}
 		}
 	}

@@ -79,6 +79,7 @@ class ExtraFields
 		'double'=>'Float',
 		'date'=>'Date',
 		'datetime'=>'DateAndTime',
+		//'datetimegmt'=>'DateAndTimeUTC',
 		'boolean'=>'Boolean',
 		'price'=>'ExtrafieldPrice',
 		'pricecy'=>'ExtrafieldPriceWithCurrency',
@@ -125,7 +126,7 @@ class ExtraFields
 	 *  @param  array|string	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
-	 *  @param	string			$list				Visibilty ('0'=never visible, '1'=visible on list+forms, '2'=list only, '3'=form only or 'eval string')
+	 *  @param	string			$list				Visibility ('0'=never visible, '1'=visible on list+forms, '2'=list only, '3'=form only or 'eval string')
 	 *  @param	string			$help				Text with help tooltip
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
@@ -424,6 +425,7 @@ class ExtraFields
 				return -1;
 			}
 		}
+		return -1;
 	}
 
 	/**
@@ -725,6 +727,8 @@ class ExtraFields
 
 			if (is_array($param) && count($param) > 0) {
 				$params = serialize($param);
+			} elseif (is_array($param)) {
+				$params = '';
 			} elseif (strlen($param) > 0) {
 				$params = trim($param);
 			} else {
@@ -820,9 +824,9 @@ class ExtraFields
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load array this->attributes
+	 * 	Load the array of extrafields defintion $this->attributes
 	 *
-	 * 	@param	string		$elementtype		Type of element ('' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
+	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
@@ -845,6 +849,9 @@ class ExtraFields
 			$elementtype = 'commande_fournisseur';
 		}
 
+		// Test cache $this->attributes[$elementtype]['loaded'] to see if we must do something
+		// TODO
+
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
@@ -852,7 +859,7 @@ class ExtraFields
 		$sql .= " css, cssview, csslist";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
-		if ($elementtype) {
+		if ($elementtype && $elementtype != 'all') {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
 		}
 		$sql .= " ORDER BY pos";
@@ -903,7 +910,7 @@ class ExtraFields
 				}
 			}
 			if ($elementtype) {
-				$this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
+				$this->attributes[$elementtype]['loaded'] = 1; // Note: If nothing is found, we also set the key 'loaded' to 1.
 				$this->attributes[$elementtype]['count'] = $count;
 			}
 		} else {
@@ -979,7 +986,7 @@ class ExtraFields
 			// Add automatic css
 			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link') {
+			} elseif ($type == 'datetime' || $type == 'datetimegmt' || $type == 'link') {
 				$morecss = 'minwidth200imp';
 			} elseif (in_array($type, array('int', 'integer', 'double', 'price'))) {
 				$morecss = 'maxwidth75';
@@ -1031,7 +1038,7 @@ class ExtraFields
 				// TODO Must also support $moreparam
 				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 			}
-		} elseif (in_array($type, array('datetime'))) {
+		} elseif (in_array($type, array('datetime', 'datetimegmt'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 			$showtime = 1;
@@ -1144,24 +1151,24 @@ class ExtraFields
 
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 				$out .= '<option value="0">&nbsp;</option>';
-				foreach ($param['options'] as $key => $val) {
-					if ((string) $key == '') {
+				foreach ($param['options'] as $key2 => $val2) {
+					if ((string) $key2 == '') {
 						continue;
 					}
-					$valarray = explode('|', $val);
-					$val = $valarray[0];
+					$valarray = explode('|', $val2);
+					$val2 = $valarray[0];
 					$parent = '';
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
 					}
-					$out .= '<option value="'.$key.'"';
-					$out .= (((string) $value == (string) $key) ? ' selected' : '');
+					$out .= '<option value="'.$key2.'"';
+					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 					$out .= '>';
-					if ($langfile && $val) {
-						$out .= $langs->trans($val);
+					if ($langfile && $val2) {
+						$out .= $langs->trans($val2);
 					} else {
-						$out .= $val;
+						$out .= $val2;
 					}
 					$out .= '</option>';
 				}
@@ -1264,7 +1271,7 @@ class ExtraFields
 							$labeltoshow = '';
 							$obj = $this->db->fetch_object($resql);
 
-							// Several field into label (eq table:code|libelle:rowid)
+							// Several field into label (eq table:code|label:rowid)
 							$notrans = false;
 							$fields_label = explode('|', $InfoFieldList[1]);
 							if (is_array($fields_label) && count($fields_label) > 1) {
@@ -1484,7 +1491,7 @@ class ExtraFields
 							$obj = $this->db->fetch_object($resql);
 
 							$notrans = false;
-							// Several field into label (eq table:code|libelle:rowid)
+							// Several field into label (eq table:code|label:rowid)
 							$fields_label = explode('|', $InfoFieldList[1]);
 							if (is_array($fields_label)) {
 								$notrans = true;
@@ -1617,6 +1624,11 @@ class ExtraFields
 			if ($value !== '') {
 				$value = dol_print_date($value, 'dayhour', 'tzuserrel');
 			}
+		} elseif ($type == 'datetimegmt') {
+			$showsize = 19;
+			if ($value !== '') {
+				$value = dol_print_date($value, 'dayhour', 'gmt');
+			}
 		} elseif ($type == 'int') {
 			$showsize = 10;
 		} elseif ($type == 'double') {
@@ -1714,7 +1726,7 @@ class ExtraFields
 
 					$obj = $this->db->fetch_object($resql);
 
-					// Several field into label (eq table:code|libelle:rowid)
+					// Several field into label (eq table:code|label:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
 
 					if (is_array($fields_label) && count($fields_label) > 1) {
@@ -1822,7 +1834,7 @@ class ExtraFields
 					$value = ''; // value was used, so now we reste it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
-						// Several field into label (eq table:code|libelle:rowid)
+						// Several field into label (eq table:code|label:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 							if (is_array($fields_label) && count($fields_label) > 1) {
@@ -1931,7 +1943,7 @@ class ExtraFields
 
 		$cssstring = '';
 
-		if (in_array($type, array('date', 'datetime'))) {
+		if (in_array($type, array('date', 'datetime', 'datetimegmt'))) {
 			$cssstring = "center";
 		} elseif (in_array($type, array('int', 'price', 'double'))) {
 			$cssstring = "right";
@@ -1986,8 +1998,12 @@ class ExtraFields
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}
+		$disabledcookiewrite = 0;
 		if ($mode == 'create') {
-			$extrafield_collapse_display_value = 0;
+			// On create mode, force separator group to not be collapsable
+			$extrafield_collapse_display_value = 1;
+			$expand_display = true;	// We force group to be shown expanded
+			$disabledcookiewrite = 1; // We keep status of group unchanged into the cookie
 		}
 
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
@@ -2009,19 +2025,21 @@ class ExtraFields
 			// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
 			$this->expand_display[$collapse_group] = $expand_display;
 
-			if (!empty($conf->use_javascript_ajax) && $mode != 'create') {
+			if (!empty($conf->use_javascript_ajax)) {
 				$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
-				$out .= '<script type="text/javascript">'."\n";
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function(){'."\n";
-				if ($expand_display === false) {
-					$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
-					$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
-				} else {
-					$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
-					$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				if (empty($disabledcookiewrite)) {
+					if ($expand_display === false) {
+						$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
+						$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
+					} else {
+						$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
+						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+					}
 				}
 				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
-				$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$collapse_group.'");'."\n";
+				$out .= '       console.log("We click on collapse/uncollapse to hide/show .trextrafields_collapse'.$collapse_group.'");'."\n";
 				$out .= '       jQuery(".trextrafields_collapse'.$collapse_group.'").toggle(100, function(){'."\n";
 				$out .= '           if (jQuery(".trextrafields_collapse'.$collapse_group.'").is(":hidden")) {'."\n";
 				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
@@ -2045,13 +2063,13 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
-	 * @param   object	$object         	Object
-	 * @param	string	$onlykey			Only some keys are filled:
-	 *                                  	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
-	 * @param	int		$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
-	 * @return	int							1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 * @param   array|null	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
+	 * @param   object		$object         	Object
+	 * @param	string		$onlykey			Only some keys are filled:
+	 *                      	            	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
+	 *                          	        	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 * @param	int			$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
+	 * @return	int								1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
@@ -2105,7 +2123,9 @@ class ExtraFields
 				) {
 					continue;
 				}
-				if (empty($visibility)) {
+				$visibility_abs = abs($visibility);
+				// not modify if extra field is not in update form (0 : never, 2 or -2 : list only, 5 or - 5 : list and view only)
+				if (empty($visibility_abs) || $visibility_abs == 2 || $visibility_abs == 5) {
 					continue;
 				}
 				if (empty($perms)) {
@@ -2138,6 +2158,9 @@ class ExtraFields
 				} elseif (in_array($key_type, array('datetime'))) {
 					// Clean parameters
 					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'tzuserrel');
+				} elseif (in_array($key_type, array('datetimegmt'))) {
+					// Clean parameters
+					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'gmt');
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
@@ -2153,7 +2176,14 @@ class ExtraFields
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, array('text'))) {
-					$value_key = GETPOST("options_".$key, 'alphanohtml');
+					$label_security_check = 'alphanohtml';
+					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
+					if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+						$label_security_check = 'nohtml';
+					} else {
+						$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+					}
+					$value_key = GETPOST("options_".$key, $label_security_check);
 				} else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') {
@@ -2229,7 +2259,7 @@ class ExtraFields
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
-				} elseif (in_array($key_type, array('datetime'))) {
+				} elseif (in_array($key_type, array('datetime', 'datetimegmt'))) {
 					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
 					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
@@ -2237,13 +2267,24 @@ class ExtraFields
 						$dateparamname_end_hour = GETPOST($dateparamname_end . 'hour', 'int') !='-1' ? GETPOST($dateparamname_end . 'hour', 'int') : '23';
 						$dateparamname_end_min = GETPOST($dateparamname_end . 'min', 'int') !='-1' ? GETPOST($dateparamname_end . 'min', 'int') : '59';
 						$dateparamname_end_sec = GETPOST($dateparamname_end . 'sec', 'int') !='-1' ? GETPOST($dateparamname_end . 'sec', 'int') : '59';
-						$value_key = array(
-							'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'tzuserrel'),
-							'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'tzuserrel')
-						);
+						if ($key_type == 'datetimegmt') {
+							$value_key = array(
+								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'gmt'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'gmt')
+							);
+						} else {
+							$value_key = array(
+								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'tzuserrel'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'tzuserrel')
+							);
+						}
 					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
-						$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
+						if ($key_type == 'datetimegmt') {
+							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'gmt');
+						} else {
+							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
+						}
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
@@ -2282,6 +2323,11 @@ class ExtraFields
 						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
+				} elseif (in_array($key_type, array('html'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						continue; // Value was not provided, we should not set it.
+					}
+					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.

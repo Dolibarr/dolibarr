@@ -35,6 +35,8 @@
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 // This file may have been already required by main.inc.php. But may not by scripts. So, here the require_once must be kept.
 require_once 'filefunc.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 
 if (!function_exists('is_countable')) {
@@ -52,8 +54,6 @@ if (!function_exists('is_countable')) {
 /*
  * Create $conf object
  */
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 
 $conf = new Conf();
 
@@ -137,7 +137,7 @@ if (!defined('NOREQUIRETRAN')) {
  */
 $db = null;
 if (!defined('NOREQUIREDB')) {
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->error) {
 		// If we were into a website context
@@ -173,6 +173,11 @@ unset($conf->db->pass); // This is to avoid password to be shown in memory/swap 
 if (!defined('NOREQUIREUSER')) {
 	$user = new User($db);
 }
+
+/*
+ * Create the global $hookmanager object
+ */
+$hookmanager = new HookManager($db);
 
 
 /*
@@ -215,10 +220,27 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
 	}
 	if ($mysoc->country_code == 'FR' && !isset($conf->global->MAIN_PROFID1_IN_ADDRESS)) {
-		// For FR, default value of option to show profid SIRET is on by default
+		// For FR, default value of option to show profid SIRET is on by default. Decret n°2099-1299 2022-10-07
 		$conf->global->MAIN_PROFID1_IN_ADDRESS = 1;
 	}
-
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->INVOICE_CATEGORY_OF_OPERATION)) {
+		// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
+		$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
+	}
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+		// For FR, the replacement invoice type is not allowed.
+		// From an accounting point of view, this creates holes in the numbering of the invoice.
+		// This is very problematic during a fiscal control.
+		$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+		// The replacement invoice type is not allowed in Greece.
+		$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_DEPOSIT)) {
+		// The deposit invoice type is not allowed in Greece.
+		$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
+	}
 	if (($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
 		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
@@ -237,12 +259,7 @@ if (!defined('NOREQUIRETRAN')) {
 }
 
 
-// Create the global $hookmanager object
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager = new HookManager($db);
-
 
 if (!defined('MAIN_LABEL_MENTION_NPR')) {
 	define('MAIN_LABEL_MENTION_NPR', 'NPR');
 }
-//if (! defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $conf->user->dir_temp);

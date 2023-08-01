@@ -103,12 +103,12 @@ class ConferenceOrBooth extends ActionComm
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'id' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
+		'id' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'csslist'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'integer', 'label'=>'Ref', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'csslist'=>'left', 'comment'=>"Id"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax150', 'help'=>"OrganizationEvenLabelName", 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:(t.usage_organize_event:=:1)', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'position'=>52, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'project', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax100'),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'picto'=>'company', 'csslist'=>'tdoverflowmax100', 'css'=>'maxwidth500'),
-		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3),
+		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3),
 		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'css'=>'width100', 'csslist'=>'tdoverflowmax100'),
 		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'2',),
 		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'3',),
@@ -662,6 +662,49 @@ class ConferenceOrBooth extends ActionComm
 	}
 
 	/**
+	 *	Return a thumb for kanban views
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $conf, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'label')) {
+			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
+		}
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br>';
+			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
+	}
+
+	/**
 	 *	Load the info information in the object
 	 *
 	 *	@param  int		$id       Id of object
@@ -701,28 +744,6 @@ class ConferenceOrBooth extends ActionComm
 	{
 		$this->initAsSpecimenCommon();
 	}
-
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	/*public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new ConferenceOrBoothLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.((int) $this->id)));
-
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}*/
 
 	/**
 	 *  Create a document onto disk according to template module.

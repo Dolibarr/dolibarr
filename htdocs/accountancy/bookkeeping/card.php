@@ -612,7 +612,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print '<br>';
 

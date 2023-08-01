@@ -53,8 +53,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->asset->multidir_output[$object->entity] . "/" . $object->id;
 }
 
-$permissiontoread = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->read) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->read)));
-$permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->write) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->write))); // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'model_advance', 'read')));
+$permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'write')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'model_advance', 'write'))); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();

@@ -231,7 +231,7 @@ if (empty($reshook)) {
 	$objectclass = 'Account';
 	$objectlabel = 'BankTransaction';
 	$permissiontoread = !empty($user->rights->banque->lire);
-	$permissiontodelete = !empty($user->rights->banque->modifier);
+	$permissiontodelete = $user->hasRight('banque', 'modifier');
 	$uploaddir = $conf->bank->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -286,7 +286,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 			$param .= '&offset='.urlencode($offset);
 		}
 		if ($limit) {
-			$param .= '&limit='.urlencode($limit);
+			$param .= '&limit='.((int) $limit);
 		}
 		if ($search_conciliated != '' && $search_conciliated != '-1') {
 			$param .= '&search_conciliated='.urlencode($search_conciliated);
@@ -328,7 +328,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 }
 
 
-if (GETPOST('save') && !$cancel && !empty($user->rights->banque->modifier)) {
+if (GETPOST('save') && !$cancel && $user->hasRight('banque', 'modifier')) {
 	$error = 0;
 
 	if (price2num(GETPOST("addcredit")) > 0) {
@@ -388,7 +388,7 @@ if (GETPOST('save') && !$cancel && !empty($user->rights->banque->modifier)) {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && !empty($user->rights->banque->modifier)) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('banque', 'modifier')) {
 	$accline = new AccountLine($db);
 	$result = $accline->fetch(GETPOST("rowid", "int"));
 	$result = $accline->delete($user);
@@ -438,7 +438,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($id > 0) {
 	$param .= '&id='.urlencode($id);
@@ -707,7 +707,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 $nbtotalofpages = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	$nbtotalofpages = ceil($nbtotalofrecords / $limit);
@@ -814,8 +814,18 @@ if ($resql) {
 	// Form to reconcile
 	if ($user->rights->banque->consolidate && $action == 'reconcile') {
 		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
-		print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-		print '<input class="flat" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve') ?GETPOST('num_releve') : '').'" size="10">'; // The only default value is value we just entered
+		$texttoshow = $langs->trans("InputReceiptNumber").': ';
+		$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
+		$mm = dol_substr($langs->transnoentitiesnoconv("Month"), 0, 1).substr($langs->transnoentitiesnoconv("Month"), 0, 1);
+		$dd = dol_substr($langs->transnoentitiesnoconv("Day"), 0, 1).substr($langs->transnoentitiesnoconv("Day"), 0, 1);
+		$placeholder = $yyyy.$mm;
+		$placeholder .= ' '.$langs->trans("or").' ';
+		$placeholder .= $yyyy.$mm.$dd;
+		if (!$placeholder) {
+			$texttoshow .= $langs->trans("InputReceiptNumberBis");
+		}
+		print $texttoshow;
+		print '<input class="flat width175" pattern="[0-9]+" title="'.dol_escape_htmltag($texttoshow.($placeholder ? ': '.$placeholder : '')).'" id="num_releve" name="num_releve" placeholder="'.dol_escape_htmltag($placeholder).'" type="text" value="'.(GETPOST('num_releve', 'int') ? GETPOST('num_releve', 'int') : '').'">'; // The only default value is value we just entered
 		print '</div>';
 		if (is_array($options) && count($options)) {
 			print $langs->trans("EventualyAddCategory").': ';
@@ -875,7 +885,7 @@ if ($resql) {
 	}
 
 	// Form to add a transaction with no invoice
-	if (!empty($user->rights->banque->modifier) && $action == 'addline' && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
+	if ($user->hasRight('banque', 'modifier') && $action == 'addline' && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
 		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
 
 		print '<table class="noborder centpercent">';
@@ -1035,7 +1045,7 @@ if ($resql) {
 
 	if (isModEnabled('categorie')) {
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Bank line

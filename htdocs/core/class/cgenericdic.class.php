@@ -31,6 +31,11 @@
 class CGenericDic
 {
 	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'undefined';	// Will be defined into constructor

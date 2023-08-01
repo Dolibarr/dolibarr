@@ -55,6 +55,7 @@ $langs->loadLangs(array("trips", "bills", "mails"));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $id = GETPOST('id', 'int');
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth', 'int'), GETPOST('date_debutday', 'int'), GETPOST('date_debutyear', 'int'));
@@ -971,7 +972,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			setEventMessages("NOT_AUTHOR", '', 'errors');
+			setEventMessages("NOT_AUTHOR", null, 'errors');
 		}
 	}
 
@@ -1190,7 +1191,9 @@ if (empty($reshook)) {
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1405,6 +1408,7 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -1543,6 +1547,7 @@ if ($action == 'create') {
 			print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
@@ -2025,6 +2030,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="page_y" value="">';
 
 			print '<div class="div-table-responsive-no-min">';
@@ -2070,7 +2076,7 @@ if ($action == 'create') {
 				foreach ($object->lines as &$line) {
 					$numline = $i + 1;
 
-					if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int')) {
+					if ($action != 'editline' || $line->id != GETPOST('rowid', 'int')) {
 						print '<tr class="oddeven linetr" data-id="'.$line->id.'">';
 
 						// Num
@@ -2240,7 +2246,7 @@ if ($action == 'create') {
 						print '</tr>';
 					}
 
-					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
+					if ($action == 'editline' && $line->id == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
 						$colspan = 11;
 						if (isModEnabled('project')) {
@@ -2331,7 +2337,7 @@ if ($action == 'create') {
 
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 							print '<td class="fk_c_exp_tax_cat">';
-							$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
+							$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->id, 'date' => $line->date);
 							print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
 							print '</td>';
 						}
@@ -2434,12 +2440,14 @@ if ($action == 'create') {
                             } else {
                                 jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
                             }
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
 							console.log("We click on toggle of aattachtodoc");
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });'."\n";
 				if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
@@ -2772,8 +2780,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is not used
-	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->status == ExpenseReport::STATUS_APPROVED) {
-		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
+	if (($user->rights->expensereport->to_paid || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
+		//if ((round($remaintopay) == 0 || !isModEnabled("banque")) && $object->paid == 0)
 		if ($object->paid == 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}

@@ -54,13 +54,15 @@ class MyModuleApi extends DolibarrApi
 		$this->myobject = new MyObject($this->db);
 	}
 
+	/*begin methods CRUD*/
+
 	/**
 	 * Get properties of a myobject object
 	 *
 	 * Return an array with myobject informations
 	 *
-	 * @param 	int 	$id ID of myobject
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of myobject
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url	GET myobjects/{id}
 	 *
@@ -127,7 +129,7 @@ class MyModuleApi extends DolibarrApi
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -307,6 +309,31 @@ class MyModuleApi extends DolibarrApi
 	}
 
 
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param	array		$data   Array of data to validate
+	 * @return	array
+	 *
+	 * @throws	RestException
+	 */
+	private function _validate($data)
+	{
+		$myobject = array();
+		foreach ($this->myobject->fields as $field => $propfield) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+				continue; // Not a mandatory field
+			}
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$myobject[$field] = $data[$field];
+		}
+		return $myobject;
+	}
+
+	/*end methods CRUD*/
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
@@ -368,28 +395,5 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		return $object;
-	}
-
-	/**
-	 * Validate fields before create or update object
-	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
-	 *
-	 * @throws	RestException
-	 */
-	private function _validate($data)
-	{
-		$myobject = array();
-		foreach ($this->myobject->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
-				continue; // Not a mandatory field
-			}
-			if (!isset($data[$field])) {
-				throw new RestException(400, "$field field missing");
-			}
-			$myobject[$field] = $data[$field];
-		}
-		return $myobject;
 	}
 }

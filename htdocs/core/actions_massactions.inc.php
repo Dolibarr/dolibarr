@@ -94,14 +94,13 @@ if (!$error && $massaction == 'confirm_presend') {
 		$thirdparty = new Societe($db);
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
-		}
-		if ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+		} elseif ($objecttmp->element == 'contact') {
+			$thirdparty = new Contact($db);
+		} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$thirdparty = new Adherent($db);
-		}
-		if ($objecttmp->element == 'holiday') {
+		} elseif ($objecttmp->element == 'holiday') {
 			$thirdparty = new User($db);
-		}
-		if ($objecttmp->element == 'conferenceorboothattendee') {
+		} elseif ($objecttmp->element == 'conferenceorboothattendee') {
 			$thirdparty = new ConferenceOrBoothAttendee($db);
 		}
 
@@ -113,17 +112,15 @@ if (!$error && $massaction == 'confirm_presend') {
 				$tmpobjectid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
 					$tmpobjectid = $objecttmp->id;
-				}
-				if ($objecttmp->element == 'expensereport') {
+				} elseif ($objecttmp->element == 'contact') {
+					$tmpobjectid = $objecttmp->id;
+				} elseif ($objecttmp->element == 'expensereport') {
 					$tmpobjectid = $objecttmp->fk_user_author;
-				}
-				if ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+				} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 					$tmpobjectid = $objecttmp->fk_member;
-				}
-				if ($objecttmp->element == 'holiday') {
+				} elseif ($objecttmp->element == 'holiday') {
 					$tmpobjectid = $objecttmp->fk_user;
-				}
-				if ($objecttmp->element == 'conferenceorboothattendee') {
+				} elseif ($objecttmp->element == 'conferenceorboothattendee') {
 					$tmpobjectid = $objecttmp->id;
 				}
 				if (empty($tmpobjectid)) {
@@ -274,6 +271,10 @@ if (!$error && $massaction == 'confirm_presend') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
 						$sendto = $fuser->email;
+					} elseif ($objectobj->element == 'contact') {
+						$fcontact = new Contact($db);
+						$fcontact->fetch($objectobj->id);
+						$sendto = $fcontact->email;
 					} elseif ($objectobj->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 						$fadherent = new Adherent($db);
 						$fadherent->fetch($objectobj->fk_member);
@@ -474,7 +475,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$substitutionarray['__ID__']    = ($oneemailperrecipient ? join(', ', array_keys($listofqualifiedobj)) : $objecttmp->id);
 					$substitutionarray['__REF__']   = ($oneemailperrecipient ? join(', ', $listofqualifiedref) : $objecttmp->ref);
 					$substitutionarray['__EMAIL__'] = $thirdparty->email;
-					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
 					$parameters = array('mode'=>'formemail');
 
@@ -518,31 +519,28 @@ if (!$error && $massaction == 'confirm_presend') {
 						$trackid = 'thi'.$thirdparty->id;
 						if ($objecttmp->element == 'expensereport') {
 							$trackid = 'use'.$thirdparty->id;
-						}
-						if ($objecttmp->element == 'holiday') {
+						} elseif ($objecttmp->element == 'contact') {
+							$trackid = 'ctc'.$thirdparty->id;
+						} elseif ($objecttmp->element == 'holiday') {
 							$trackid = 'use'.$thirdparty->id;
 						}
 					} else {
 						$trackid = strtolower(get_class($objecttmp));
-						if (get_class($objecttmp) == 'Contrat') {
+						if (get_class($objecttmp) == 'Contact') {
+							$trackid = 'ctc';
+						} elseif (get_class($objecttmp) == 'Contrat') {
 							$trackid = 'con';
-						}
-						if (get_class($objecttmp) == 'Propal') {
+						} elseif (get_class($objecttmp) == 'Propal') {
 							$trackid = 'pro';
-						}
-						if (get_class($objecttmp) == 'Commande') {
+						} elseif (get_class($objecttmp) == 'Commande') {
 							$trackid = 'ord';
-						}
-						if (get_class($objecttmp) == 'Facture') {
+						} elseif (get_class($objecttmp) == 'Facture') {
 							$trackid = 'inv';
-						}
-						if (get_class($objecttmp) == 'Supplier_Proposal') {
+						} elseif (get_class($objecttmp) == 'Supplier_Proposal') {
 							$trackid = 'spr';
-						}
-						if (get_class($objecttmp) == 'CommandeFournisseur') {
+						} elseif (get_class($objecttmp) == 'CommandeFournisseur') {
 							$trackid = 'sor';
-						}
-						if (get_class($objecttmp) == 'FactureFournisseur') {
+						} elseif (get_class($objecttmp) == 'FactureFournisseur') {
 							$trackid = 'sin';
 						}
 
@@ -831,9 +829,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 
 			// check if pdftk is installed
 			if (file_exists($file)) {
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$langs->load("exports");
 				setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
@@ -899,9 +895,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$now = dol_now();
 			$file = $diroutputmassaction.'/'.$filename.'_'.dol_print_date($now, 'dayhourlog').'.pdf';
 			$pdf->Output($file, 'F');
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($file);
 
 			$langs->load("exports");
 			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
@@ -1728,6 +1722,66 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 		$toselect=array();
 	} else {
 		$db->rollback();
+	}
+}
+
+//if (!$error && $massaction == 'clonetasks' && $user->rights->projet->creer) {
+if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $confirm == 'yes'))) {
+	$num = 0;
+
+	dol_include_once('/projet/class/task.class.php');
+
+	$origin_task = new Task($db);
+	$clone_task = new Task($db);
+
+	foreach (GETPOST('selected') as $task) {
+		$origin_task->fetch($task, $ref = '', $loadparentdata = 0);
+
+		$defaultref = '';
+		$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . ".php")) {
+			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . '.php';
+			$modTask = new $obj;
+			$defaultref = $modTask->getNextValue(0, $clone_task);
+		}
+
+		if (!$error) {
+			$clone_task->fk_project = GETPOST('projectid', 'int');
+			$clone_task->ref = $defaultref;
+			$clone_task->label = $origin_task->label;
+			$clone_task->description = $origin_task->description;
+			$clone_task->planned_workload = $origin_task->planned_workload;
+			$clone_task->fk_task_parent = $origin_task->fk_task_parent;
+			$clone_task->date_c = dol_now();
+			$clone_task->date_start = $origin_task->date_start;
+			$clone_task->date_end = $origin_task->date_end;
+			$clone_task->progress = $origin_task->progress;
+
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost(null, $clone_task);
+
+			$taskid = $clone_task->create($user);
+
+			if ($taskid > 0) {
+				$result = $clone_task->add_contact(GETPOST("userid", 'int'), 'TASKEXECUTIVE', 'internal');
+				$num++;
+			} else {
+				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$langs->load("projects");
+					setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
+					$duplicate_code_error = true;
+				} else {
+					setEventMessages($clone_task->error, $clone_task->errors, 'errors');
+				}
+				$action = 'list';
+				$error++;
+			}
+		}
+	}
+
+	if (!$error) {
+		setEventMessage($langs->trans('NumberOfTasksCloned', $num));
+		header("Refresh: 1;URL=".DOL_URL_ROOT.'/projet/tasks.php?id=' . GETPOST('projectid', 'int'));
 	}
 }
 

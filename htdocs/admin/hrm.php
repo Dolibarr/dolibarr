@@ -70,9 +70,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'update') {
 	$max_rank = GETPOST('HRM_MAXRANK', 'int');
@@ -493,16 +491,16 @@ if ($action == 'edit') {
 
 			if ($val['type'] == 'textarea') {
 				print '<textarea class="flat" name="' . $constname . '" id="' . $constname . '" cols="50" rows="5" wrap="soft">' . "\n";
-				print $conf->global->{$constname};
+				print getDolGlobalString($constname);
 				print "</textarea>\n";
 			} elseif ($val['type'] == 'integer') {
-				print '<input  class="flat" name="' . $constname . '" id="' . $constname . '" value="' . $conf->global->$constname . '" type="number" step="1" min="0" max="50" >' . "\n";
+				print '<input  class="flat" name="' . $constname . '" id="' . $constname . '" value="' . getDolGlobalString($constname) . '" type="number" step="1" min="0" max="50" >' . "\n";
 			} elseif ($val['type'] == 'html') {
 				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
+				$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 				$doleditor->Create();
 			} elseif ($val['type'] == 'yesno') {
-				print $form->selectyesno($constname, $conf->global->{$constname}, 1);
+				print $form->selectyesno($constname, getDolGlobalString($constname), 1);
 			} elseif (preg_match('/emailtemplate:/', $val['type'])) {
 				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
@@ -577,9 +575,9 @@ if ($action == 'edit') {
 				print '</td><td>';
 
 				if ($val['type'] == 'textarea') {
-					print dol_nl2br($conf->global->{$constname});
+					print dol_nl2br(getDolGlobalString($constname));
 				} elseif ($val['type']== 'html') {
-					print  $conf->global->{$constname};
+					print getDolGlobalString($constname);
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
 				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
@@ -588,14 +586,14 @@ if ($action == 'edit') {
 
 					$tmp = explode(':', $val['type']);
 
-					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
+					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
 					if ($template<0) {
 						setEventMessages(null, $formmail->errors, 'errors');
 					}
 					print $langs->trans($template->label);
 				} elseif (preg_match('/category:/', $val['type'])) {
 					$c = new Categorie($db);
-					$result = $c->fetch($conf->global->{$constname});
+					$result = $c->fetch(getDolGlobalString($constname));
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					}

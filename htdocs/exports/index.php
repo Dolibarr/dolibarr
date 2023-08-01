@@ -72,7 +72,7 @@ print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model = new ModeleExports($db);
-$liste = $model->liste_modeles($db); // This is not a static method for exports because method load non static properties
+$liste = $model->listOfAvailableExportFormat($db); // This is not a static method for exports because method load non static properties
 
 foreach ($liste as $key => $val) {
 	if (preg_match('/__\(Disabled\)__/', $liste[$key])) {

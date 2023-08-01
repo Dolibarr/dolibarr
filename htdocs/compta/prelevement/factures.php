@@ -21,12 +21,13 @@
 /**
  *     \file       htdocs/compta/prelevement/factures.php
  *     \ingroup    prelevement
- *     \brief      Page liste des factures prelevees
+ *     \brief      Page list of invoice paied by direct debit or credit transfer
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -129,15 +130,23 @@ if ($id > 0 || $ref) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
+		// Get bank account for the payment
 		$acc = new Account($db);
-		$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
+		$fk_bank_account = $object->fk_bank_account;
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
+		}
+		if ($fk_bank_account > 0) {
+			$result = $acc->fetch($fk_bank_account);
+		}
 
-		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
 		if ($object->type == 'bank-transfer') {
 			$labelofbankfield = 'BankToPayCreditTransfer';
 		}
-		print $langs->trans($labelofbankfield);
+
+		print '<tr><td class="titlefieldcreate">';
+		print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
 		print '</td>';
 
 		print '<td>';
@@ -147,17 +156,34 @@ if ($id > 0 || $ref) {
 		print '</td>';
 		print '</tr>';
 
+		$modulepart = 'prelevement';
+		if ($object->type == 'bank-transfer') {
+			$modulepart = 'paymentbybanktransfer';
+		}
+
 		print '<tr><td class="titlefieldcreate">';
 		$labelfororderfield = 'WithdrawalFile';
 		if ($object->type == 'bank-transfer') {
 			$labelfororderfield = 'CreditTransferFile';
 		}
 		print $langs->trans($labelfororderfield).'</td><td>';
-		$relativepath = 'receipts/'.$object->ref.'.xml';
-		$modulepart = 'prelevement';
-		if ($object->type == 'bank-transfer') {
-			$modulepart = 'paymentbybanktransfer';
+
+		if (isModEnabled('multicompany')) {
+			$labelentity = $conf->entity;
+			$relativepath = 'receipts/'.$object->ref.'-'.$labelentity.'.xml';
+
+			if ($type != 'bank-transfer') {
+				$dir = $conf->prelevement->dir_output;
+			} else {
+				$dir = $conf->paymentbybanktransfer->dir_output;
+			}
+			if (!dol_is_file($dir.'/'.$relativepath)) {	// For backward compatibility
+				$relativepath = 'receipts/'.$object->ref.'.xml';
+			}
+		} else {
+			$relativepath = 'receipts/'.$object->ref.'.xml';
 		}
+
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
 		print img_picto('', 'download', 'class="paddingleft"');
 		print '</a>';
@@ -175,6 +201,9 @@ if ($id > 0 || $ref) {
 // List of invoices
 $sql = "SELECT pf.rowid, p.type,";
 $sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
+if ($object->type == 'bank-transfer') {
+	$sql .= " f.ref_supplier,";
+}
 $sql .= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -208,7 +237,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -225,7 +254,7 @@ if ($resql) {
 	$i = 0;
 
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param.='&limit='.urlencode($limit);
+		$param.='&limit='.((int) $limit);
 	}
 	$param = "&id=".urlencode($id);
 
@@ -252,6 +281,9 @@ if ($resql) {
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+	if ($object->type == 'bank-transfer') {
+		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
+	}
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AmountInvoice", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -282,6 +314,12 @@ if ($resql) {
 		print "<td>";
 		print $invoicetmp->getNomUrl(1);
 		print "</td>\n";
+
+		if ($object->type == 'bank-transfer') {
+			print '<td>';
+			print dol_escape_htmltag($invoicetmp->ref_supplier);
+			print "</td>\n";
+		}
 
 		print '<td>';
 		print $thirdpartytmp->getNomUrl(1);
@@ -323,6 +361,9 @@ if ($resql) {
 	if ($num > 0) {
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
+		if ($object->type == 'bank-transfer') {
+			print '<td>&nbsp;</td>';
+		}
 		print '<td>&nbsp;</td>';
 		print '<td class="right">';
 		print "</td>\n";

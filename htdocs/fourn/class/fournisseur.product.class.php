@@ -5,7 +5,7 @@
  * Copyright (C) 2011		Juanjo Menent		  <jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2016		Charlie Benke         <charlie@patas-monkey.com>
+ * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
  * Copyright (C) 2019-2021  Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
@@ -71,12 +71,15 @@ class ProductFournisseur extends Product
 	public $product_ref;
 
 	public $fourn_id; //supplier id
+	public $fourn_name;	// supplier name
 	public $fourn_qty; // quantity for price (can be set by get_buyprice)
 	public $fourn_pu; // unit price for quantity (can be set by get_buyprice)
 
 	public $fourn_price; // price for quantity
 	public $fourn_remise_percent; // discount for quantity (percent)
 	public $fourn_remise; // discount for quantity (amount)
+
+	public $fourn_charges;	// when getDolGlobalString('PRODUCT_CHARGES') is set
 
 	public $product_fourn_id; // product-supplier id
 	public $product_fourn_entity;
@@ -134,6 +137,12 @@ class ProductFournisseur extends Product
 	public $supplier_fk_barcode_type;
 
 	public $packaging;
+
+	public $labelStatusShort;
+	public $labelStatus;
+
+	const STATUS_OPEN = 1;
+	const STATUS_CANCELED = 0;
 
 
 	/**
@@ -609,7 +618,7 @@ class ProductFournisseur extends Product
 				$this->ref_supplier             = $obj->ref_fourn;
 				$this->desc_supplier            = $obj->desc_fourn;
 				$this->fourn_price = $obj->price;
-				$this->fourn_charges            = $obj->charges; // deprecated
+				$this->fourn_charges            = $obj->charges; // when getDolGlobalString('PRODUCT_CHARGES') is set
 				$this->fourn_qty                = $obj->quantity;
 				$this->fourn_remise_percent     = $obj->remise_percent;
 				$this->fourn_remise             = $obj->remise;
@@ -667,13 +676,13 @@ class ProductFournisseur extends Product
 	/**
 	 *    List all supplier prices of a product
 	 *
-	 *    @param    int		$prodid	    Id of product
-	 *    @param	string	$sortfield	Sort field
-	 *    @param	string	$sortorder	Sort order
-	 *    @param	int		$limit		Limit
-	 *    @param	int		$offset		Offset
-	 *    @param	int		$socid		Filter on a third party id
-	 *    @return	array				Array of ProductFournisseur with new properties to define supplier price
+	 *    @param    int			$prodid	    Id of product
+	 *    @param	string		$sortfield	Sort field
+	 *    @param	string		$sortorder	Sort order
+	 *    @param	int			$limit		Limit
+	 *    @param	int			$offset		Offset
+	 *    @param	int			$socid		Filter on a third party id
+	 *    @return	array|int				Array of ProductFournisseur with new properties to define supplier price
 	 *    @see find_min_price_product_fournisseur()
 	 */
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
@@ -685,7 +694,7 @@ class ProductFournisseur extends Product
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
-		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging";
+		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging, pfp.status as pfstatus";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND pfp.fk_soc = s.rowid AND pfp.fk_product = p.rowid";
@@ -722,7 +731,7 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_remise_percent = $record["remise_percent"];
 				$prodfourn->fourn_remise = $record["remise"];
 				$prodfourn->fourn_unitprice = $record["unitprice"];
-				$prodfourn->fourn_charges = $record["charges"]; // deprecated
+				$prodfourn->fourn_charges = $record["charges"]; // when getDolGlobalString('PRODUCT_CHARGES') is set
 				$prodfourn->fourn_tva_tx = $record["tva_tx"];
 				$prodfourn->fourn_id = $record["fourn_id"];
 				$prodfourn->fourn_name = $record["supplier_name"];
@@ -742,6 +751,7 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_multicurrency_code        = $record["multicurrency_code"];
 
 				$prodfourn->packaging = $record["packaging"];
+				$prodfourn->status = $record["pfstatus"];
 
 				if (isModEnabled('barcode')) {
 					$prodfourn->supplier_barcode = $record["barcode"];
@@ -888,7 +898,7 @@ class ProductFournisseur extends Product
 						$this->fourn_remise             = $record["remise"];
 						$this->fourn_unitprice          = $fourn_unitprice;
 						$this->fourn_unitprice_with_discount = $fourn_unitprice_with_discount;
-						$this->fourn_charges            = $record["charges"]; // deprecated
+						$this->fourn_charges            = $record["charges"]; // when getDolGlobalString('PRODUCT_CHARGES') is set
 						$this->fourn_tva_tx             = $record["tva_tx"];
 						$this->fourn_id                 = $record["fourn_id"];
 						$this->fourn_name               = $record["supplier_name"];
@@ -1005,35 +1015,35 @@ class ProductFournisseur extends Product
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'product_fournisseur_price'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
 	 * Function used to replace a product id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old product id
-	 * @param int $dest_id New product id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'product_fournisseur_price'
 		);
 
-		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -1044,7 +1054,7 @@ class ProductFournisseur extends Product
 	 *    @param	string  $sortorder              Sort order
 	 *    @param	int     $limit                  Limit
 	 *    @param	int     $offset                 Offset
-	 *    @return	array   Array of Log prices
+	 *    @return	array|int   Array of Log prices
 	 */
 	public function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
 	{
@@ -1249,7 +1259,7 @@ class ProductFournisseur extends Product
 			$label .= $this->displayPriceProductFournisseurLog($logPrices);
 		}
 
-		$url = dol_buildpath('/product/fournisseurs.php', 1).'?id='.$this->id.'&action=add_price&token='.newToken().'&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
+		$url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.((int) $this->id).'&action=create_price&token='.newToken().'&socid='.((int) $this->fourn_id).'&rowid='.((int) $this->product_fourn_price_id);
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1300,6 +1310,48 @@ class ProductFournisseur extends Product
 			$result .= $hookmanager->resPrint;
 		}
 		return $result;
+	}
+
+	/**
+	 *  Return the label of the status
+	 *
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int		$type			Type of product
+	 *  @return	string 			       	Label of status
+	 */
+	public function getLibStatut($mode = 0, $type = 0)		// must be compatible with getLibStatut of inherited Product
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return the status
+	 *
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int		$type			Type of product
+	 *  @return string 			       	Label of status
+	 */
+	public function LibStatut($status, $mode = 0, $type = 0)
+	{
+		// phpcs:enable
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+		}
+
+		$statusType = 'status4';
+		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status6';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**

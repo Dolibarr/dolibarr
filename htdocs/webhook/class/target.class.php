@@ -229,12 +229,7 @@ class Target extends CommonObject
 			return $resultcreate;
 		}
 
-		$resultvalidate = $this->validate($user, $notrigger);
-		if ($resultvalidate < 0) {
-			return $resultvalidate;
-		}
-
-		return $resultcreate;
+		return $this->id;
 	}
 
 	/**
@@ -896,10 +891,8 @@ class Target extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		// Set here init that are not commonf fields
-		// $this->property1 = ...
-		// $this->property2 = ...
-
+		$this->url = "https://thisisunurl";
+		$this->trigger_codes = "ThisIsATestCode";
 		$this->initAsSpecimenCommon();
 	}
 

@@ -261,7 +261,7 @@ if (GETPOST("orphelins", "alpha")) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -301,7 +301,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 
 if (GETPOST("orphelins")) {

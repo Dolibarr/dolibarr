@@ -134,17 +134,27 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if (!empty($user->rights->margins->creer)) {
 		if ($conf->global->MARGIN_TYPE == "1") {
-			print '<th class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</th>';
+			print '<th class="linecolmargin1 margininfos right width75">'.$langs->trans('BuyingPrice').'</th>';
 		} else {
-			print '<th class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</th>';
+			print '<th class="linecolmargin1 margininfos right width75">'.$langs->trans('CostPrice').'</th>';
 		}
 	}
 
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
-		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</th>';
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarginRate');
+		if ($user->hasRight("propal", "creer")) {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
+				print '<div class="classmarginforalllines inline-block nowraponall">';
+				print '<input type="number" name="marginforalllines" min="0" max="999.9" value="20.0" step="0.1" class="width50"><label>%</label>';
+				print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforallmargins" value="'.$langs->trans("Update").'">';
+				print '</div>';
+			}
+		}
+		print '</th>';
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
-		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</th>';
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
 	}
 }
 
