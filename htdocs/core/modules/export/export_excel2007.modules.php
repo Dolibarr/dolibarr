@@ -363,8 +363,8 @@ class ExportExcel2007 extends ModeleExports
 				if ($typefield == 'Text' || $typefield == 'TextAuto') {
 					// If $newvalue start with an equal sign we don't want it to be interpreted as a formula, so we add a '. Such transformation should be
 					// done by SetCellValueByColumnAndRow but it is not, so we do it ourself.
-					$newvalue = (dol_substr($newvalue, 0, 1) === '=' ? '\'' : '') . (string) $newvalue;
-					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, (string) $newvalue);
+					$newvalue = (dol_substr($newvalue, 0, 1) === '=' ? '\'' : '') . $newvalue;
+					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $newvalue);
 					$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
 					$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
 					$this->workbook->getActiveSheet()->getStyle($coord)->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
