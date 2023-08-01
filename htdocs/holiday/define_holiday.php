@@ -88,7 +88,7 @@ if (empty($user->rights->holiday->read)) {
 $arrayfields = array(
 	'cp.rowid'=>array('label'=>$langs->trans("Employee"), 'checked'=>1, 'position'=>20),
 	'cp.fk_user'=>array('label'=>$langs->trans("Supervisor"), 'checked'=>1, 'position'=>30),
-	'cp.nbHoliday'=>array('label'=>$langs->trans("NbHolidays"), 'checked'=>1, 'position'=>40),
+	'cp.nbHoliday'=>array('label'=>$langs->trans("MenuConfCP"), 'checked'=>1, 'position'=>40),
 	'cp.note_public'=>array('label'=>$langs->trans("Note"), 'checked'=>1, 'position'=>50),
 );
 
