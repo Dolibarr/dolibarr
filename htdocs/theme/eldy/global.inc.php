@@ -8004,7 +8004,17 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
-
+/**for style the suggestion input  */
+#suggestions {
+	display: none;
+	position: absolute;
+	top: 100%; 
+	left: 0;
+	width: 100%; 
+	background-color: #fff;
+	border: 1px solid #ccc;
+	 border-top: none;
+}
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {

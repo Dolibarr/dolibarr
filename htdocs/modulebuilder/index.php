@@ -1643,7 +1643,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			$addfieldentry = array(
 				'name'=>GETPOST('propname', 'aZ09'),
 				'label'=>GETPOST('proplabel', 'alpha'),
-				'type'=>GETPOST('proptype', 'alpha'),
+				'type'=>strtolower(GETPOST('proptype', 'alpha')),
 				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible'=>GETPOST('propvisible', 'int'),
 				'enabled'=>GETPOST('propenabled', 'int'),
@@ -1662,8 +1662,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
 				'validate' => GETPOST('propvalidate', 'int')
 			);
-
-
+			var_dump($addfieldentry);exit;
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
 				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
 			}
@@ -3462,7 +3461,7 @@ if ($module == 'initmodule') {
 					if ($key == 'propname' || $key == 'proplabel') {
 						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'proptype') {
-						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"><br><select class="maxwidth" id="suggestions" style="display: none;"></select></td>';
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><div style="position: relative;"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"><div id="suggestions"></div><div></td>';
 					} elseif ($key == 'propvalidate') {
 						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} else {
@@ -3494,54 +3493,60 @@ if ($module == 'initmodule') {
 				}
 				$(document).ready(function() {
 					// Tableau de suggestions statiques
-					var suggestions = [
-					  "integer",
-					  "varchar",
-					  "boolean",
-					  "float",
-					  "double",
-					  "vol"
-					];
+					var suggestions = ["VARCHAR", "DOUBLE", "REAL", "TEXT", "HTML", "DATETIME", "TIMESTAMP", "INTEGER", "INTEGER:CLASSNAME:RELATIVEPATH/TO/CLASSFILE.CLASS.PHP[:1[:FILTER]]"];
 					
+					function showSuggestions() {
+						var inputText = $("#proptype").val().toLowerCase();
+						var suggestionsDiv = $("#suggestions");
 					
-					function updateSuggestions() {
-					  var value = $("#proptype").val().toLowerCase();
-					  var selectSuggestions = $("#suggestions");
-				  
-					  var filteredSuggestions = suggestions.filter(function(suggestion) {
-						return suggestion.toLowerCase().indexOf(value) !== -1;
-					  });
-				  
-					  selectSuggestions.empty();
-					  for (var i = 0; i < filteredSuggestions.length; i++) {
-						var suggestion = filteredSuggestions[i];
-						var option = $("<option>").text(suggestion);
-						selectSuggestions.append(option);
-					  }
-				  
-					  if (filteredSuggestions.length > 0) {
-						selectSuggestions.show();
-						var inputOffset = $("#proptype").offset();
-						var inputHeight = $("#proptype").outerHeight();
-						selectSuggestions.css({
-						  top: inputOffset.top + inputHeight + 5,
-						  left: inputOffset.left,
+						var filteredSuggestions = suggestions.filter(function(suggestion) {
+						  return suggestion.toLowerCase().indexOf(inputText) !== -1;
 						});
-					  } else {
-						selectSuggestions.hide();
+						
+						//get suggestion on div
+						suggestionsDiv.empty();
+						for (var i = 0; i < filteredSuggestions.length; i++) {
+						  var suggestion = filteredSuggestions[i];
+						  var suggestionItem = $("<div>").text(suggestion).css({ cursor: "pointer", padding: "5px" });
+						  suggestionsDiv.append(suggestionItem);
+						}
+						
+						
+						if (inputText === "" || filteredSuggestions.length === 0) {
+						  suggestionsDiv.hide();
+						} else {
+						  suggestionsDiv.show();
+						}
 					  }
-					}
-				  
-					$("#proptype").on("input", updateSuggestions);
-				  
-					$("#suggestions").on("click", function() {
-					  var selectedValue = $(this).val();
-					  $("#proptype").val(selectedValue);
-					  $(this).hide();
-					});
-				  });
-				';
-
+					
+					  $("#proptype").on("input", showSuggestions);
+					
+					  $("#suggestions").on("click", "div", function() {
+						var selectedValue = $(this).text();
+						$("#proptype").val(selectedValue);
+						$("#suggestions").hide();
+					  });
+					// when we click outside the input
+					  $(document).on("click", function(event) {
+						if (!$(event.target).closest("#proptype, #suggestions").length) {
+						  $("#suggestions").hide();
+						}
+					  });
+					 // when we delete the content input
+					  $("#proptype").on("keyup", function() {
+						if ($(this).val() === "") {
+						  $("#suggestions").hide();
+						}
+					  });
+					// when hover in suggestion
+					$("#suggestions").on("mouseenter", "div", function() {
+						$(this).css("background-color", "#e0e0e0");
+					  });
+					
+					  $("#suggestions").on("mouseleave", "div", function() {
+						$(this).css("background-color", "#fff");
+					  });
+				  });';
 				print '</script>';
 			} elseif ($tabobj == 'deleteobject') {
 				// Delete object tab
