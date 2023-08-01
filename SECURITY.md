@@ -39,7 +39,9 @@ We are happy to thank everyone who submits valid reports which help us improve t
 
 You must be the first reporter of the vulnerability (duplicate reports are closed).
 
-You must send a clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
+You must :
+- Send your report on https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US (recommended)
+- Or send a clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary, to security@dolibarr.org
 
 You must avoid tests that could cause degradation or interruption of our service (refrain from using automated tools, and limit yourself about requests per second), that's why we recommand to install software on your own platform.
 
