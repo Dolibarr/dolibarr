@@ -92,6 +92,7 @@ $arrayfields = array(
 	'cp.note_public'=>array('label'=>$langs->trans("Note"), 'checked'=>1, 'position'=>50),
 );
 
+
 /*
  * Actions
  */
@@ -292,8 +293,8 @@ if (empty($user->rights->holiday->readall)) {
 	$userchilds = $user->getAllChildIds(1);
 	$filters .= ' AND u.rowid IN ('.$db->sanitize(join(', ', $userchilds)).')';
 }
-if ($search_name > 0) {
-	$filters .= natural_search(array('u.rowid'), $search_name, 2);
+if (!empty($search_name)) {
+	$filters .= natural_search(array('u.firstname', 'u.lastname'), $search_name);
 }
 if ($search_supervisor > 0) {
 	$filters .= natural_search(array('u.fk_user'), $search_supervisor, 2);
@@ -334,10 +335,18 @@ if (count($typeleaves) == 0) {
 
 	print '<tr class="liste_titre_filter">';
 
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch center">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+
 	// User
 	if (!empty($arrayfields['cp.rowid']['checked'])) {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_name, 'search_name', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
+		print '<input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'" class="maxwidth100">';
 		print '</td>';
 	}
 	// Supervisor
@@ -362,14 +371,20 @@ if (count($typeleaves) == 0) {
 	print '<td class="liste_titre"></td>';
 
 	// Action column
-	print '<td class="liste_titre maxwidthsearch center">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch center">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	}
 	if (!empty($arrayfields['cp.rowid']['checked'])) {
 		print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
 	}
@@ -390,10 +405,11 @@ if (count($typeleaves) == 0) {
 		print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
 	}
 	print_liste_field_titre('');
-	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-
-
-		print '</tr>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	}
+	print '</tr>';
 	$usersupervisor = new User($db);
 
 	foreach ($listUsers as $users) {
@@ -420,6 +436,20 @@ if (count($typeleaves) == 0) {
 		}
 
 		print '<tr class="oddeven">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($userstatic->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$userstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$userstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+		}
 
 		// User
 		if (!empty($arrayfields['cp.rowid']['checked'])) {
@@ -468,25 +498,47 @@ if (count($typeleaves) == 0) {
 			}
 			print '</td>';
 		}
+
 		// Button modify
 		print '<td class="center">';
 		if (!empty($user->rights->holiday->define_holiday)) {	// Allowed to set the balance of any user
 			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
-		print '<td class="nowrap center">';
 
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($userstatic->id, $arrayofselected)) {
-				$selected = 1;
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($userstatic->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$userstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$userstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '<input id="cb'.$userstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$userstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
 		}
-		print '</td>';
+
 		print '</tr>';
 
 		$i++;
+	}
+
+	if (count($listUsers) <= 0) {
+		$colspan = 2;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				if ($key == 'cp.nbHoliday') {
+					foreach ($typeleaves as $key => $val) {
+						$colspan++;
+					}
+				} else {
+					$colspan++;
+				}
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print '</table>';
