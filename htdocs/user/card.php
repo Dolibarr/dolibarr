@@ -445,7 +445,9 @@ if (empty($reshook)) {
 				if ($caneditpassword || $user->hasRight("api", "apikey", "generate")) {
 					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
 				}
-				if (!empty($user->admin)) { 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
+				if (!empty($user->admin) && $user->id != $id) {
+					// admin flag can only be set/unset by an admin user and not four ourself
+					// A test is also done later when forging sql request
 					$object->admin = GETPOST("admin", "int");
 				}
 				if ($user->admin && !$object->ldap_sid) {	// same test than on edit page
