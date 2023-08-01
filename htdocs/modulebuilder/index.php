@@ -1662,7 +1662,6 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
 				'validate' => GETPOST('propvalidate', 'int')
 			);
-			var_dump($addfieldentry);exit;
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
 				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
 			}
