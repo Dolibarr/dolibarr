@@ -7,7 +7,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 | Version    | Supported              |
 | ---------- | ---------------------- |
 | <= 17.0.0  | :x:                    |
-| >= 17.0.1  | :white_check_mark:     |
+| >= 17.0.3  | :white_check_mark:     |
 | >= develop | :white_check_mark:     |
 
 ## Reporting a Vulnerability
