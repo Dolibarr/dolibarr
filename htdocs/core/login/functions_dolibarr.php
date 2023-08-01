@@ -64,7 +64,9 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			$nbevents = $obj->nbevent;
+			if ($obj) {
+				$nbevents = $obj->nbevent;
+			}
 		}
 
 		if ($nbevents <= getDolGlobalInt("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 100)) {
