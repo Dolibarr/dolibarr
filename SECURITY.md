@@ -47,6 +47,8 @@ You must avoid tests that could cause degradation or interruption of our service
 
 You must not leak, manipulate, or destroy any user data of third parties to find your vulnerability.
 
+Reports are processed around once a month.
+
 ## Scope for qualified vulnerabilities
 
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
