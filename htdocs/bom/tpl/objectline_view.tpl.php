@@ -334,12 +334,19 @@ if ($resql) {
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
+<<<<<<< HEAD
                 if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
+=======
+				if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
+>>>>>>> 5aa227fa08aa439d33315c39934ba25e03d59fcb
 					$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
 				} else {
 					$line_cost = $obj->min_price;
 				}
+<<<<<<< HEAD
 >>>>>>> 5997ae4bb7f (FIX Fatal Error PHP 8 : division by 0 (#25384))
+=======
+>>>>>>> 5aa227fa08aa439d33315c39934ba25e03d59fcb
 				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($line_cost, 'MT').'</span></td>';
 				$total_cost+= $line_cost;
 			}
