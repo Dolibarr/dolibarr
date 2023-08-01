@@ -79,6 +79,7 @@ create table llx_user
   note_public		      text,
   note_private            text          DEFAULT NULL,
   model_pdf               varchar(255)  DEFAULT NULL,
+  last_main_doc			      varchar(255),					              -- relative filepath+filename of last main generated document
   datelastlogin           datetime,
   datepreviouslogin       datetime,
   datelastpassvalidation  datetime,				                    -- last date we change password or we made a disconnect all
