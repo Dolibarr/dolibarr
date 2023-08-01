@@ -12,8 +12,12 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, for a private report, please use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new) (if you have permissions).
-Alternatively send an email to security@dolibarr.org (for everybody)
+
+To report a vulnerability, for a private report, you can:
+
+- Send your report on https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US (recommended for everybody)
+- Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
+- Or send by email to security@dolibarr.org a clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary
 
 ## Hunting vulnerabilities on Dolibarr
 
@@ -38,10 +42,6 @@ You can install the web application yourself on your own platform/server so you 
 We are happy to thank everyone who submits valid reports which help us improve the security of Dolibarr, however only those that meet the following eligibility requirements will be "validated reports" (if not, we may close the report without any answer):
 
 You must be the first reporter of the vulnerability (duplicate reports are closed).
-
-You must :
-- Send your report on https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US (recommended)
-- Or send a clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary, to security@dolibarr.org
 
 You must avoid tests that could cause degradation or interruption of our service (refrain from using automated tools, and limit yourself about requests per second), that's why we recommand to install software on your own platform.
 
