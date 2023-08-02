@@ -72,38 +72,10 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 
-// Hôte
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
-$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
-$item->cssClass = 'minwidth500';
-
-// Setup conf BOOKCAL_MYPARAM1 as a simple string input
-$item = $formSetup->newItem('BOOKCAL_MYPARAM1');
-$item->defaultFieldValue = 'default value';
-
-// Setup conf BOOKCAL_MYPARAM1 as a simple textarea input but we replace the text of field title
-$item = $formSetup->newItem('BOOKCAL_MYPARAM2');
-$item->nameText = $item->getNameText().' more html text ';
-
-// Setup conf BOOKCAL_MYPARAM3
-$item = $formSetup->newItem('BOOKCAL_MYPARAM3');
-$item->setAsThirdpartyType();
-
-// Setup conf BOOKCAL_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('BOOKCAL_MYPARAM4')->setAsYesNo();
-
-// Setup conf BOOKCAL_MYPARAM5
-$formSetup->newItem('BOOKCAL_MYPARAM5')->setAsEmailTemplate('thirdparty');
-
-// Setup conf BOOKCAL_MYPARAM6
-$formSetup->newItem('BOOKCAL_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
-
-// Setup conf BOOKCAL_MYPARAM7
-$formSetup->newItem('BOOKCAL_MYPARAM7')->setAsProduct();
-
-$formSetup->newItem('Title')->setAsTitle();
-
-// Setup conf BOOKCAL_MYPARAM8
+// Setup conf BOOKCAL_PUBLIC_INTERFACE_TOPIC
+$item = $formSetup->newItem('BOOKCAL_PUBLIC_INTERFACE_TOPIC');
+$item->defaultFieldValue = 'MyBigCompany public interface for Bookcal';
+/*// Setup conf BOOKCAL_MYPARAM8
 $item = $formSetup->newItem('BOOKCAL_MYPARAM8');
 $TField = array(
 	'test01' => $langs->trans('test01'),
@@ -127,7 +99,7 @@ $item->setAsColor();
 $item->defaultFieldValue = '#FF0000';
 $item->nameText = $item->getNameText().' more html text ';
 $item->fieldInputOverride = '';
-$item->helpText = $langs->transnoentities('AnHelpMessage');
+$item->helpText = $langs->transnoentities('AnHelpMessage');*/
 //$item->fieldValue = '';
 //$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
 //$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
@@ -290,7 +262,7 @@ if ($action == 'edit') {
 
 $moduledir = 'bookcal';
 $myTmpObjects = array();
-$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+$myTmpObjects['Booking'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {

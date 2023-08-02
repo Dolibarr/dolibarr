@@ -5503,6 +5503,8 @@ td.cal_other_month {
 	opacity: 0.8;
 }
 
+.cal_available { background: #0060d450; }
+.cal_chosen { background: #0060d4; }
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
