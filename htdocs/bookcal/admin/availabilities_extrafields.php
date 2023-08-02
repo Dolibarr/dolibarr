@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/availabilities_extrafields.php
- *		\ingroup    bookcal
- *		\brief      Page to setup extra fields of availabilities
+ *   \file       htdocs/bookcal/admin/availabilities_extrafields.php
+ *   \ingroup    bookcal
+ *   \brief      Page to setup extra fields of availabilities
  */
 
 // Load Dolibarr environment
