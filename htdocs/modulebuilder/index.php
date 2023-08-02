@@ -3339,7 +3339,7 @@ if ($module == 'initmodule') {
 					}
 
 					$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname;
-					$head3[$h][1] = img_picto('', $pictoname, 'class="pictofixedwidth"').$objectname;
+					$head3[$h][1] = img_picto('', $pictoname, 'class="pictofixedwidth valignmiddle"').$objectname;
 					$head3[$h][2] = $objectname;
 					$h++;
 				}
@@ -3697,7 +3697,7 @@ if ($module == 'initmodule') {
 							//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 							print '<br>';
 						} elseif (!empty($tmpobject)) {
-							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : '.img_picto('', $tmpobject->picto, 'class="pictofixedwidth"').$tmpobject->picto;
+							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : '.img_picto('', $tmpobject->picto, 'class="pictofixedwidth valignmiddle"').$tmpobject->picto;
 							print '<br>';
 						}
 
@@ -3896,6 +3896,7 @@ if ($module == 'initmodule') {
 							//$properties = dol_sort_array($tmpobject->fields, 'position');
 							$properties = dol_sort_array($reflectorpropdefault['fields'], 'position');
 							if (!empty($properties)) {
+
 								// List of existing properties
 								foreach ($properties as $propkey => $propval) {
 									/* If from Reflection
@@ -4759,6 +4760,7 @@ if ($module == 'initmodule') {
 			}
 
 			if ($action != 'editfile' || empty($file)) {
+				print '<!-- Tab to manage permissions -->'."\n";
 				print '<span class="opacitymedium">';
 				$htmlhelp = $langs->trans("PermissionsDefDescTooltip", '{s1}');
 				$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultRights').'</a>', $htmlhelp);
@@ -4785,24 +4787,17 @@ if ($module == 'initmodule') {
 
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
-				print_liste_field_titre("CRUD", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
 				print_liste_field_titre("Object", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("CRUD", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
 				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
 				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
 				print "</tr>\n";
 
 				//form for add new right
 				print '<tr class="small">';
-				print '<td><input type="hidden" readonly  name="id" class="width75" value="0"></td>';
+				print '<td><input type="hidden" readonly name="id" class="width75" value="0"></td>';
 
-				print '<td><select class="maxwidth"  name="crud" id="crud">';
-				print '<option value=""></option>';
-				foreach ($crud as $key => $val) {
-					print '<option value="'.$key.'">'.$langs->trans($val).'</option>';
-				}
-				print '</td>';
-
-				print '<td><select  name="permissionObj" id="permissionObj">';
+				print '<td><select class="minwidth100" name="permissionObj" id="permissionObj">';
 				print '<option value=""></option>';
 				foreach ($objects as $obj) {
 					if ($obj != 'myobject') {
@@ -4811,8 +4806,15 @@ if ($module == 'initmodule') {
 				}
 				print '</select></td>';
 
+				print '<td><select class="maxwidth" name="crud" id="crud">';
+				print '<option value=""></option>';
+				foreach ($crud as $key => $val) {
+					print '<option value="'.$key.'">'.$langs->trans($val).'</option>';
+				}
+				print '</td>';
+
 				print '<td >';
-				print '<input  type="text" name="label" id="label">';
+				print '<input type="text" name="label" id="label" class="minwidth200">';
 				print '</td>';
 
 				print '<td class="center tdstickyright tdstickyghostwhite">';
@@ -4835,7 +4837,6 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 							print '<input type="hidden" name="action" value="update_right">';
 							print '<input type="hidden" name="counter" value="'.$i.'">';
-
 
 							print '<input type="hidden" name="permskey" value="'.$perm[0].'">';
 
@@ -4871,6 +4872,7 @@ if ($module == 'initmodule') {
 							print '</form>';
 							print '</tr>';
 						} else {
+							// $perm can be  module->object->crud or module->crud
 							print '<tr class="oddeven">';
 
 							print '<td>';
@@ -4878,11 +4880,19 @@ if ($module == 'initmodule') {
 							print '</td>';
 
 							print '<td>';
-							print ($perm[5] == 'write' ? $langs->trans($crud['write']): ucfirst($langs->trans($perm[5])));
+							if (in_array($perm[5], array('lire', 'read', 'creer', 'write', 'effacer', 'delete'))) {
+								print dol_escape_htmltag(ucfirst($perm[4]));
+							} else {
+								print '';	// No particular object
+							}
 							print '</td>';
 
 							print '<td>';
-							print dol_escape_htmltag(ucfirst($perm[4]));
+							if (in_array($perm[5], array('lire', 'read', 'creer', 'write', 'effacer', 'delete'))) {
+								print ucfirst($langs->trans($perm[5]));
+							} else {
+								print ucfirst($langs->trans($perm[4]));
+							}
 							print '</td>';
 
 							print '<td>';
@@ -4910,7 +4920,7 @@ if ($module == 'initmodule') {
 				function updateInputField() {
 					value1 = $("#crud").val();
 					value2 = $("#permissionObj").val();
-			
+
 					// Vérifie si les deux sélections sont faites
 					if ($("#label").val() == "" && value1 && value2) {
 						switch(value1.toLowerCase()){
@@ -4928,7 +4938,7 @@ if ($module == 'initmodule') {
 						}
 					}
 				}
-			
+
 				$("#crud, #permissionObj").change(updateInputField);
 				updateInputField();
 				</script>';
@@ -5734,7 +5744,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 
 				print '</table>';

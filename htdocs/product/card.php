@@ -695,7 +695,7 @@ if (empty($reshook)) {
 				if (!empty($backtopage)) {
 					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 					if (preg_match('/\?/', $backtopage)) {
-						$backtopage .= '&socid='.$object->id; // Old method
+						$backtopage .= '&productid='.$object->id; // Old method
 					}
 					header("Location: ".$backtopage);
 					exit;
