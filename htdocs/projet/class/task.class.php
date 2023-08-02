@@ -2197,6 +2197,7 @@ class Task extends CommonObjectLine
 			//else return $this->progress.' %';
 			return '&nbsp;';
 		}
+		return "";
 	}
 
 	/**

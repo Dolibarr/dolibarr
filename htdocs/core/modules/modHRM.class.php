@@ -17,10 +17,12 @@
  */
 
 /**
- * \defgroup   HRM 	Module hrm
- * \file       htdocs/core/modules/modHRM.class.php
- * \ingroup    HRM
- * \brief      Description and activation file for the module HRM
+ *  \defgroup   HRM 	Module hrm
+ *  \brief      Module for Human Resource Management (HRM)
+ *
+ *  \file       htdocs/core/modules/modHRM.class.php
+ *  \ingroup    HRM
+ *  \brief      Description and activation file for the module HRM
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 

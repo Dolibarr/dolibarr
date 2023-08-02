@@ -22,7 +22,7 @@
  */
 
 /**
- * Class to manage accounting accounts
+ * Class to manage accounting journals
  */
 class AccountingJournal extends CommonObject
 {
@@ -367,6 +367,7 @@ class AccountingJournal extends CommonObject
 				return $langs->trans('AccountingJournalType1');
 			}
 		}
+		return "";
 	}
 
 
