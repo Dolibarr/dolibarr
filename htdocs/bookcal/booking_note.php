@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       booking_note.php
- *  \ingroup    bookcal
- *  \brief      Tab for notes on Booking
+ *   \file       htdocs/bookcal/booking_note.php
+ *   \ingroup    bookcal
+ *   \brief      Tab for notes on Booking
  */
 
 // Load Dolibarr environment
@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_booking.lib.php';
 $langs->loadLangs(array("agenda", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id         = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
