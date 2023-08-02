@@ -221,6 +221,7 @@ if (empty($conf->use_javascript_ajax)) {
 		$editor = new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST) ? $conf->global->FCKEDITOR_TEST : 'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
 		$editor->Create();
 	} else {
+		// CKEditor inline enabled with the contenteditable="true"
 		print '<div style="border: 1px solid #888;" contenteditable="true">';
 		print $conf->global->FCKEDITOR_TEST;
 		print '</div>';

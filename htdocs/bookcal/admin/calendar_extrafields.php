@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/calendar_extrafields.php
- *		\ingroup    bookcal
- *		\brief      Page to setup extra fields of calendar
+ *   \file       htdocs/bookcal/admin/calendar_extrafields.php
+ *   \ingroup    bookcal
+ *   \brief      Page to setup extra fields of calendar
  */
 
 // Load Dolibarr environment
