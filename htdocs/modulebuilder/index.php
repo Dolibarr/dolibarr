@@ -1558,10 +1558,7 @@ if ($dirins && $action == 'initdic' && $module && $dicname) {
 		if (!preg_match('/^c_/', $newdicname)) {
 			$newdicname = 'c_'.$dicname;
 		}
-
-		// TODO
-
-		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'errors');
+		createNewDictionnary($module, $file, $newdicname);
 	}
 }
 
@@ -4088,6 +4085,7 @@ if ($module == 'initmodule') {
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
 			$dicts = $moduleobj->dictionaries;
+			//var_dump($dicts);exit;
 
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
@@ -4217,11 +4215,11 @@ if ($module == 'initmodule') {
 						print $dicts['tabfieldinsert'][$i];
 						print '</td>';
 
-						print '<td class="right">';
+						print '<td >';
 						print $dicts['tabrowid'][$i];
 						print '</td>';
 
-						print '<td class="right">';
+						print '<td >';
 						print $dicts['tabcond'][$i];
 						print '</td>';
 
@@ -4250,8 +4248,8 @@ if ($module == 'initmodule') {
 					print '<span class="opacitymedium">'.$langs->trans("EnterNameOfDictionaryDesc").'</span><br><br>';
 
 					print '<input type="text" name="dicname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('dicname', 'alpha') ? GETPOST('dicname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'" autofocus><br>';
-					//print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
-					//print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
+					// print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
+					// print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 					print '<input type="submit" class="button smallpaddingimp" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 					/*print '<br>';
 					print '<br>';

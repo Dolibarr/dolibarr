@@ -1020,3 +1020,70 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		return 1;
 	}return -1;
 }
+
+/**
+ * function for create table for dictionnary
+ */
+// function createNewDictionnary($modulename, $file, $namedic, $dictionnaires, $columns = null)
+// {
+// 	global $db, $error, $langs;
+// 	$newdicname = "llx_".$namedic;
+
+// 	if ($columns === null) {
+// 		$columns = array(
+// 			'rowid' => array('type' => 'integer(11)'),
+// 			'code' => array('type' => 'varchar(255) NOT NULL'),
+// 			'label' => array('type' => 'varchar(255) NOT NULL'),
+// 			'position' => array('type' => 'integer(11) NOT NULL'),
+// 			'use_default' => array('type' => 'varchar(255) DEFAULT 1'),
+// 			'status' => array('type' => 'integer')
+// 		);
+// 	}
+
+// 	$primaryKey = 'rowid';
+
+// 	foreach ($columns as $key => $value) {
+// 		if ($key === 'rowid') {
+// 			$primaryKey = 'rowid';
+// 			break;
+// 		} else {
+// 			$primaryKey = $key;
+// 			break;
+// 		}
+// 	}
+
+// 	if ($newdicname) {
+// 		$_results = $db->DDLCreateTable($newdicname, $columns, $primaryKey, "InnoDB");
+// 		if ($_results < 0) {
+// 			$error++;
+// 			dol_print_error($db);
+// 			$langs->load("errors");
+// 			setEventMessages($langs->trans("ErrorTableNotFound", $namedic), null, 'errors');
+// 		} else {
+// 			setEventMessages($langs->trans("TableCreated", $namedic), null);
+// 		}
+// 	}
+// 	$tabname = array();
+// 	$tablib = array();
+// 	$tabsql = array();
+
+// 	foreach ($dictionnaires as $dict) {
+// 	}
+
+
+// 	// add dictionnary in module builder
+// 	$dic = array(
+// 		'langs'=> "'.$modulename.'@'.$modulename.'",
+// 		'tabname' => "'.$tabname.'",
+// 		'tablib' => "'.$tablib.'",
+// 		'tabsql' => "'.$tabsql.'",
+// 		'tabsqlsort' => 'label ASC',
+// 		'tabfield' => 'code,label',
+// 		'tabfieldvalue' => 'code,label',
+// 		'tabfieldinsert' => 'code,label',
+// 		'tabrowid' => 'rowid',
+// 		'tabcond' => true,
+// 	);
+
+// 	var_dump($dic);exit;
+// }
