@@ -8206,11 +8206,10 @@ class Form
 	 * @param string 		$moreparamonempty 	Add more param on the empty option line. Not used if show_empty not set
 	 * @param int 			$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
 	 * @param int 			$nohtmlescape 		No html escaping.
-	 * @param string 		$input 				select if we want activate de html part or js
 	 * @return string							HTML select string.
 	 * @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
-	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = 'minwidth75', $addjscombo = 1, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0, $input = "select")
+	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = 'minwidth75', $addjscombo = 1, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
 	{
 		global $conf, $langs;
 
@@ -8225,152 +8224,110 @@ class Form
 
 		$out = '';
 
-		if ($input === "select") {
-			if ($addjscombo < 0) {
-				if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-					$addjscombo = 1;
+		if ($addjscombo < 0) {
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$addjscombo = 1;
+			} else {
+				$addjscombo = 0;
+			}
+		}
+		$idname = str_replace(array('[', ']'), array('', ''), $htmlname);
+		$out .= '<select id="' . preg_replace('/^\./', '', $idname) . '" ' . ($disabled ? 'disabled="disabled" ' : '') . 'class="flat ' . (preg_replace('/^\./', '', $htmlname)) . ($morecss ? ' ' . $morecss : '') . ' selectformat"';
+		$out .= ' name="' . preg_replace('/^\./', '', $htmlname) . '" ' . ($moreparam ? $moreparam : '');
+		$out .= '>';
+		if ($show_empty) {
+			$textforempty = ' ';
+			if (!empty($conf->use_javascript_ajax)) {
+				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+			}
+			if (!is_numeric($show_empty)) {
+				$textforempty = $show_empty;
+			}
+			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+		}
+		if (is_array($array)) {
+			// Translate
+			if ($translate) {
+				foreach ($array as $key => $value) {
+					if (!is_array($value)) {
+						$array[$key] = $langs->trans($value);
+					} else {
+						$array[$key]['label'] = $langs->trans($value['label']);
+					}
+				}
+			}
+			// Sort
+			if ($sort == 'ASC') {
+				asort($array);
+			} elseif ($sort == 'DESC') {
+				arsort($array);
+			}
+			foreach ($array as $key => $tmpvalue) {
+				if (is_array($tmpvalue)) {
+					$value = $tmpvalue['label'];
+					$disabled = empty($tmpvalue['disabled']) ? '' : ' disabled';
+					$style = empty($tmpvalue['css']) ? '' : ' class="' . $tmpvalue['css'] . '"';
 				} else {
-					$addjscombo = 0;
+					$value = $tmpvalue;
+					$disabled = '';
+					$style = '';
 				}
-			}
-
-			$idname = str_replace(array('[', ']'), array('', ''), $htmlname);
-			$out .= '<select id="' . preg_replace('/^\./', '', $idname) . '" ' . ($disabled ? 'disabled="disabled" ' : '') . 'class="flat ' . (preg_replace('/^\./', '', $htmlname)) . ($morecss ? ' ' . $morecss : '') . ' selectformat"';
-			$out .= ' name="' . preg_replace('/^\./', '', $htmlname) . '" ' . ($moreparam ? $moreparam : '');
-			$out .= '>';
-
-			if ($show_empty) {
-				$textforempty = ' ';
-				if (!empty($conf->use_javascript_ajax)) {
-					$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-				}
-				if (!is_numeric($show_empty)) {
-					$textforempty = $show_empty;
-				}
-				$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
-			}
-
-			if (is_array($array)) {
-				// Translate
-				if ($translate) {
-					foreach ($array as $key => $value) {
-						if (!is_array($value)) {
-							$array[$key] = $langs->trans($value);
-						} else {
-							$array[$key]['label'] = $langs->trans($value['label']);
-						}
+				if (!empty($disablebademail)) {
+					if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))
+						|| ($disablebademail == 2 && preg_match('/---/', $value))) {
+						$disabled = ' disabled';
+						$style = ' class="warning"';
 					}
 				}
-
-				// Sort
-				if ($sort == 'ASC') {
-					asort($array);
-				} elseif ($sort == 'DESC') {
-					arsort($array);
-				}
-
-				foreach ($array as $key => $tmpvalue) {
-					if (is_array($tmpvalue)) {
-						$value = $tmpvalue['label'];
-						$disabled = empty($tmpvalue['disabled']) ? '' : ' disabled';
-						$style = empty($tmpvalue['css']) ? '' : ' class="' . $tmpvalue['css'] . '"';
+				if ($key_in_label) {
+					if (empty($nohtmlescape)) {
+						$selectOptionValue = dol_escape_htmltag($key . ' - ' . ($maxlen ? dol_trunc($value, $maxlen) : $value));
 					} else {
-						$value = $tmpvalue;
-						$disabled = '';
-						$style = '';
+						$selectOptionValue = $key . ' - ' . ($maxlen ? dol_trunc($value, $maxlen) : $value);
 					}
-					if (!empty($disablebademail)) {
-						if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))
-							|| ($disablebademail == 2 && preg_match('/---/', $value))) {
-							$disabled = ' disabled';
-							$style = ' class="warning"';
-						}
-					}
-
-					if ($key_in_label) {
-						if (empty($nohtmlescape)) {
-							$selectOptionValue = dol_escape_htmltag($key . ' - ' . ($maxlen ? dol_trunc($value, $maxlen) : $value));
-						} else {
-							$selectOptionValue = $key . ' - ' . ($maxlen ? dol_trunc($value, $maxlen) : $value);
-						}
+				} else {
+					if (empty($nohtmlescape)) {
+						$selectOptionValue = dol_escape_htmltag($maxlen ? dol_trunc($value, $maxlen) : $value);
 					} else {
-						if (empty($nohtmlescape)) {
-							$selectOptionValue = dol_escape_htmltag($maxlen ? dol_trunc($value, $maxlen) : $value);
-						} else {
-							$selectOptionValue = $maxlen ? dol_trunc($value, $maxlen) : $value;
-						}
-						if ($value == '' || $value == '-') {
-							$selectOptionValue = '&nbsp;';
-						}
+						$selectOptionValue = $maxlen ? dol_trunc($value, $maxlen) : $value;
 					}
-
-					$out .= '<option value="' . $key . '"';
-					$out .= $style . $disabled;
-					if (is_array($id)) {
-						if (in_array($key, $id) && !$disabled) {
-							$out .= ' selected'; // To preselect a value
-						}
-					} else {
-						$id = (string) $id; // if $id = 0, then $id = '0'
-						if ($id != '' && ($id == $key || ($id == 'ifone' && count($array) == 1)) && !$disabled) {
-							$out .= ' selected'; // To preselect a value
-						}
+					if ($value == '' || $value == '-') {
+						$selectOptionValue = '&nbsp;';
 					}
-					if ($nohtmlescape) {
-						$out .= ' data-html="' . dol_escape_htmltag($selectOptionValue) . '"';
-					}
-					if (is_array($tmpvalue)) {
-						foreach ($tmpvalue as $keyforvalue => $valueforvalue) {
-							if (preg_match('/^data-/', $keyforvalue)) {
-								$out .= ' '.$keyforvalue.'="'.dol_escape_htmltag($valueforvalue).'"';
-							}
-						}
-					}
-					$out .= '>';
-					$out .= $selectOptionValue;
-					$out .= "</option>\n";
 				}
+				$out .= '<option value="' . $key . '"';
+				$out .= $style . $disabled;
+				if (is_array($id)) {
+					if (in_array($key, $id) && !$disabled) {
+						$out .= ' selected'; // To preselect a value
+					}
+				} else {
+					$id = (string) $id; // if $id = 0, then $id = '0'
+					if ($id != '' && ($id == $key || ($id == 'ifone' && count($array) == 1)) && !$disabled) {
+						$out .= ' selected'; // To preselect a value
+					}
+				}
+				if ($nohtmlescape) {
+					$out .= ' data-html="' . dol_escape_htmltag($selectOptionValue) . '"';
+				}
+				if (is_array($tmpvalue)) {
+					foreach ($tmpvalue as $keyforvalue => $valueforvalue) {
+						if (preg_match('/^data-/', $keyforvalue)) {
+							$out .= ' '.$keyforvalue.'="'.dol_escape_htmltag($valueforvalue).'"';
+						}
+					}
+				}
+				$out .= '>';
+				$out .= $selectOptionValue;
+				$out .= "</option>\n";
 			}
-
-			$out .= "</select>";
-
-				// Add code for jquery to use multiselect
-			if ($addjscombo && $jsbeautify) {
-				// Enhance with select2
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
-			}
-		} elseif ($input == "inputSeparator") {
-			$out .= '<label class="forhide" for="delimiter">Delimiter:</label>';
-			$out .= '<input type="radio" class="testinput forhide" name="delimiter" value="," id="comma" checked><label class="forhide" for="comma">,</label>';
-			$out .= '<input type="radio" class="testinput forhide" name="delimiter" value=";" id="semicolon"><label class="forhide" for="semicolon">;</label>';
-
-			$out .= '<script>
-						jQuery(document).ready(function() {
-							$(".selectformat").on("change", function() {
-								var separator;
-								var selected = $(this).val();
-								if (selected == "excel2007" || selected == "tsv") {
-									$("input.testinput").prop("disabled", true);
-									$(".forhide").hide();
-								} else {
-									$("input.testinput").prop("disabled", false);
-									$(".forhide").show();
-								}
-							
-								if ($("#semicolon").is(":checked")) {
-									separator = ";";
-								} else {
-									separator = ",";
-								}
-							});
-							if ("' . $conf->global->EXPORT_CSV_SEPARATOR_TO_USE . '" == ";") {
-								$("#semicolon").prop("checked", true);
-							} else {
-								$("#comma").prop("checked", true);
-							}
-						});
-					</script>';
+		}
+		$out .= "</select>";
+			// Add code for jquery to use multiselect
+		if ($addjscombo && $jsbeautify) {
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
 
