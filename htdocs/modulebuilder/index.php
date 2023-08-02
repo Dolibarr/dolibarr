@@ -1558,7 +1558,7 @@ if ($dirins && $action == 'initdic' && $module && $dicname) {
 		if (!preg_match('/^c_/', $newdicname)) {
 			$newdicname = 'c_'.$dicname;
 		}
-		createNewDictionnary($module, $file, $newdicname);
+		//createNewDictionnary($module, $file, $newdicname);
 	}
 }
 
