@@ -153,7 +153,9 @@ if (empty($reshook)) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				$country_code = $obj->code;
+				if ($obj) {
+					$country_code = $obj->code;
+				}
 			} else {
 				dol_print_error($db);
 			}
@@ -390,11 +392,11 @@ if ($resql) {
 		print '<option value="-1">&nbsp;</option>';
 		while ($i < $numbis) {
 			$obj = $db->fetch_object($resqlchart);
-
-			print '<option value="'.$obj->rowid.'"';
-			print ($pcgver == $obj->rowid) ? ' selected' : '';
-			print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
-
+			if ($obj) {
+				print '<option value="'.$obj->rowid.'"';
+				print ($pcgver == $obj->rowid) ? ' selected' : '';
+				print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
+			}
 			$i++;
 		}
 	} else {
