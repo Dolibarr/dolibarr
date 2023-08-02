@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=E-mailek a felhasználó által
 MailingModuleDescDolibarrUsers=E-mailekkel rendelkező felhasználók
 MailingModuleDescThirdPartiesByCategories=Harmadik felek
 SendingFromWebInterfaceIsNotAllowed=A webes felületről történő küldés nem megengedett.
-EmailCollectorFilterDesc=Minden szűrőnek meg kell egyeznie ahhoz, hogy e-mailt gyűjtsön
+EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=%s sor a fájlban
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=A '%s' mező alapértelmezett értéke új névjeg
 DefaultStatusEmptyMandatory=Üres, de kötelező
 WarningLimitSendByDay=FIGYELMEZTETÉS: A példány beállítása vagy szerződése a napi e-mailek számát <b> %s </b> értékre korlátozza. Ha többet próbál küldeni, előfordulhat, hogy a példány lelassul vagy felfüggeszthető. Ha magasabb kvótára van szüksége, forduljon ügyfélszolgálatához.
 NoMoreRecipientToSendTo=No more recipient to send the email to
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s e-mailek előminősítettek, %s e-mailek sikeresen feldolgozva (az %s rekord/műveletek elvégzése esetén)

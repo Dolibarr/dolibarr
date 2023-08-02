@@ -35,6 +35,10 @@ $langs->load("users");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
@@ -46,7 +50,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 

@@ -70,7 +70,7 @@ if ($action == 'update') {
 		dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_ADD_SWISS_QR_CODE')) {
-		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'alpha'), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_CATEGORY_OF_OPERATION')) {
@@ -163,19 +163,22 @@ if (isModEnabled('facture')) {
 		print ajax_constantonoff('INVOICE_ADD_ZATCA_QR_CODE');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("INVOICE_ADD_ZATCA_QR_CODE", $arrval, $conf->global->INVOICE_ADD_ZATCA_QR_CODE);
+		print $form->selectarray("INVOICE_ADD_ZATCA_QR_CODE", $arrval, getDolGlobalString('INVOICE_ADD_ZATCA_QR_CODE'));
 	}
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), '');
-	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('INVOICE_ADD_SWISS_QR_CODE');
+	if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
+		print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), $langs->trans("INVOICE_ADD_SWISS_QR_CODEMore"));
 	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
+		print $langs->trans("INVOICE_ADD_SWISS_QR_CODE");
 	}
+	print '</td><td>';
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
+		$arrval['bottom'] = $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").' - Need PHP 8.1+ and some PHP libs)';
+	}
+	print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE'));
 	print '</td></tr>';
 
 	// Mention category of operations

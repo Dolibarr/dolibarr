@@ -357,7 +357,7 @@ class Users extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		// Check user authorization
-		if (empty(DolibarrApiAccess::$user->rights->user->user->creer) && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(401, "User update not allowed");
 		}
 
@@ -473,7 +473,7 @@ class Users extends DolibarrApi
 	{
 		global $conf;
 
-		if (empty(DolibarrApiAccess::$user->rights->user->user->creer) && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(401);
 		}
 
@@ -699,7 +699,7 @@ class Users extends DolibarrApi
 		unset($object->lines);
 		unset($object->model_pdf);
 
-		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
+		$canreadsalary = ((isModEnabled('salaries') && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
 
 		if (!$canreadsalary) {
 			unset($object->salary);

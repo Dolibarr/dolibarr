@@ -934,6 +934,10 @@ div.floatright
 {
 	display:inline-block;
 }
+.inline-blockimp
+{
+	display:inline-block !important;
+}
 .largenumber {
 	font-size: 1.4em;
 }
@@ -975,6 +979,9 @@ th .button {
 }
 .centpercentimp {
 	width: 100% !important;
+}
+.centpercentwithout1imp {
+	width: calc(100% - 1px) !important;
 }
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
@@ -1078,6 +1085,9 @@ textarea.centpercent {
 	word-break: break-word;
 }
 .wordbreak {
+	word-break: break-word;	/* cut fist between word, inside word if not possible */
+}
+.wordbreakall {
 	word-break: break-all;
 }
 td.wordbreak img {
@@ -4047,6 +4057,10 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	padding: 4px 6px 4px 6px;			/* t r b l */
 	height: 22px;
 }
+table.liste tr.trkanban td {
+	padding: 10px 14px 10px 14px;			/* t r b l */
+}
+
 form.tagtable {
 	padding: unset !important;
 	border: unset !important;
@@ -4658,6 +4672,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		padding-left: 0 !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
+	}
+
+	td.tdwidgetstate {
+		text-align: center;
 	}
 
 	.boxstats, .boxstats130 {
@@ -5627,6 +5645,10 @@ td.gtaskname {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+table.jPicker {
+	border-radius: 5px;
+	border: 1px solid #bbb !important;
+}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5701,6 +5723,9 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  font-size : 8pt;
  padding : 0px;
  margin : 0px;
+}
+.colorselector {
+	border: solid 1px #ddd !important;
 }
 
 
@@ -7574,6 +7599,14 @@ div.clipboardCPValue.hidewithsize {
 	transform: translate(-50%, -50%);
 	text-align:center;
 	font-size: 2em;
+}
+
+/* ============================================================================== */
+/* CSS style used for color jPicker                                               */
+/* ============================================================================== */
+
+table.jPicker {
+	border: 1px solid #bbb !important;
 }
 
 /* ============================================================================== */

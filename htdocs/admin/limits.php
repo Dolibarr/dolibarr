@@ -238,22 +238,22 @@ if (empty($mysoc->country_code)) {
 	$s = 2 / 3; $qty = 1; $vat = 0;
 	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-	print " x ".$langs->trans("Quantity").": ".$qty;
-	print " - ".$langs->trans("VAT").": ".$vat.'%';
+	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 	print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	$s = 10 / 3; $qty = 1; $vat = 0;
 	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-	print " x ".$langs->trans("Quantity").": ".$qty;
-	print " - ".$langs->trans("VAT").": ".$vat.'%';
+	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 	print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	$s = 10 / 3; $qty = 2; $vat = 0;
 	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-	print " x ".$langs->trans("Quantity").": ".$qty;
-	print " - ".$langs->trans("VAT").": ".$vat.'%';
+	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 	print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	// Add vat rates examples specific to country
@@ -287,8 +287,8 @@ if (empty($mysoc->country_code)) {
 				$s = 10 / 3;
 				$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 				print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-				print " x ".$langs->trans("Quantity").": ".$qty;
-				print " - ".$langs->trans("VAT").": ".$vat.'%';
+				print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+				print ' - <span class="opacitymedium">'.$langs->trans("VAT").':</span> '.$vat.'%';
 				print ($vatarray['code'] ? ' ('.$vatarray['code'].')' : '');
 				print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ";
 				print $tmparray[0].' / '.$tmparray[1].($tmparray[9] ? '+'.$tmparray[9] : '').($tmparray[10] ? '+'.$tmparray[10] : '').' / '.$tmparray[2];
@@ -305,15 +305,15 @@ if (empty($mysoc->country_code)) {
 		$s = 10 / 3; $qty = 1; $vat = 10;
 		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-		print " x ".$langs->trans("Quantity").": ".$qty;
-		print " - ".$langs->trans("VAT").": ".$vat.'%';
+		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 		print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 		$s = 10 / 3; $qty = 2; $vat = 10;
 		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-		print " x ".$langs->trans("Quantity").": ".$qty;
-		print " - ".$langs->trans("VAT").": ".$vat.'%';
+		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 		print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 	}
 }

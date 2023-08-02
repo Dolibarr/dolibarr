@@ -300,9 +300,9 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX.$tabletouse." as ".$tablealiastouse;
 		}
 
-		// Add the where here
-		/*
-		$sqlfilters = GETPOST('search_component_params_hidden', 'alphanohtml');
+		// Add a where here keeping only the citeria on $tabletouse
+		// TODO
+		/*$sqlfilters = ... GETPOST('search_component_params_hidden', 'alphanohtml');
 		if ($sqlfilters) {
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
@@ -418,7 +418,7 @@ $startyear = $endyear - 2;
 
 $param = '';
 
-print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" autocomplete="off">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="viewgraph">';
 print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
@@ -572,6 +572,8 @@ print '</form>';
 // Generate the SQL request
 $sql = '';
 if (!empty($search_measures) && !empty($search_xaxis)) {
+	$errormessage = '';
+
 	$fieldid = 'rowid';
 
 	$sql = "SELECT ";
@@ -663,7 +665,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 				}
 			}
 		} else {
-			dol_print_error($db, 'Found a key into search_xaxis not found into arrayofxaxis');
+			$errormessage = 'Found a key into search_xaxis not found into arrayofxaxis';
 		}
 	}
 
@@ -690,7 +692,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 				}
 			}
 		} else {
-			dol_print_error($db, 'Found a key into search_groupby not found into arrayofgroupby');
+			$errormessage = 'Found a key into search_groupby not found into arrayofgroupby';
 		}
 	}
 
@@ -717,7 +719,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 				}
 			}
 		} else {
-			dol_print_error($db, 'Found a key into search_measures not found into arrayofmesures');
+			$errormessage = 'Found a key into search_measures not found into arrayofmesures';
 		}
 	}
 
@@ -728,11 +730,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	// Add the where here
 	$sqlfilters = $search_component_params_hidden;
 	if ($sqlfilters) {
-		$errormessage = '';
-		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-		if ($errormessage) {
-			print dol_escape_htmltag($errormessage);
-		}
+		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage, 0, 0, 1);
 	}
 	$sql .= " GROUP BY ";
 	foreach ($search_xaxis as $key => $val) {
@@ -796,6 +794,11 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	$sql = preg_replace('/,\s*$/', '', $sql);
 }
 //print $sql;
+
+if ($errormessage) {
+	print dol_escape_htmltag($errormessage);
+	$sql = '';
+}
 
 $legend = array();
 foreach ($search_measures as $key => $val) {

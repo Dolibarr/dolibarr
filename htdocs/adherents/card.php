@@ -119,6 +119,8 @@ if ($id) {
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
+$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
+
 
 /*
  * 	Actions
@@ -316,7 +318,7 @@ if (empty($reshook)) {
 			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid = GETPOST("typeid", 'int');
-			//$object->note = trim(GETPOST("comment","alpha"));
+			//$object->note = trim(GETPOST("comment", "restricthtml"));
 			$object->morphy = GETPOST("morphy", 'alpha');
 
 			if (GETPOST('deletephoto', 'alpha')) {
@@ -994,6 +996,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberType").'</td><td>';
 		$listetype = $adht->liste_array(1);
+		print img_picto('', $adht->picto, 'class="pictofixedwidth"');
 		if (count($listetype)) {
 			print $form->selectarray("typeid", $listetype, (GETPOST('typeid', 'int') ? GETPOST('typeid', 'int') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
 		} else {
@@ -1105,7 +1108,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>\n";
 
 		// Public profil
-		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+		print "<tr><td>".$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist)."</td><td>\n";
 		print $form->selectyesno("public", $object->public, 1);
 		print "</td></tr>\n";
 
@@ -1336,7 +1339,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (!$value['active']) {
 					break;
 				}
-				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'"></td></tr>';
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (isset($object->socialnetworks[$key])? $object->socialnetworks[$key] : null)).'"></td></tr>';
 			}
 		}
 
@@ -1354,7 +1357,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Public profil
-		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+		print "<tr><td>".$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist)."</td><td>\n";
 		print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1);
 		print "</td></tr>\n";
 
@@ -1809,7 +1812,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Public
-		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

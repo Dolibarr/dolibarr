@@ -417,9 +417,9 @@ class ActionsTicket
 				print '<div class="inline-block center marginbottomonly">';
 
 				if ($status == 1) {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_read&token='.newToken(); // To set as read, we use a dedicated action
 				} else {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=confirm_set_status&token='.newToken().'&new_status='.$status;
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=confirm_set_status&token='.newToken().'&new_status='.((int) $status);
 				}
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';

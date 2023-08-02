@@ -25,7 +25,8 @@
 
 // Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 $supportedoauth2array = array(
-	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/', 'availablescopes'=> 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print,admin_directory_user,gmail_full', 'returnurl'=>'/core/modules/oauth/google_oauthcallback.php'),
+	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/',
+		'availablescopes'=> 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print,admin_directory_user,gmail_full,contact,https://www.googleapis.com/auth/contacts,https://www.googleapis.com/auth/calendar', 'returnurl'=>'/core/modules/oauth/google_oauthcallback.php'),
 );
 if (isModEnabled('stripe')) {
 	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'', 'availablescopes'=>'read_write', 'returnurl'=>'/core/modules/oauth/stripetest_oauthcallback.php');

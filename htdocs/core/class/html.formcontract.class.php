@@ -59,7 +59,7 @@ class FormContract
 	 *	@param	int		$maxlength	Maximum length of label
 	 *	@param	int		$showempty	Show empty line
 	 *	@param	int		$showRef	Show customer and supplier reference on each contract (when found)
-	 *	@return int         		Nbr of project if OK, <0 if KO
+	 *	@return int         		Nbr of contract if OK, <0 if KO
 	 */
 	public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0)
 	{
@@ -187,8 +187,9 @@ class FormContract
 		print '<form method="post" action="'.$page.'">';
 		print '<input type="hidden" name="action" value="setcontract">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		$this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef);
+		$result = $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef);
 		print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
+		return $result;
 	}
 }

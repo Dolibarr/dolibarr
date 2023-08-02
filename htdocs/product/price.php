@@ -120,7 +120,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if (($action == 'update_vat') && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if (($action == 'update_vat') && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
 		// We must define tva_tx, npr and local taxes
@@ -615,7 +615,7 @@ if (empty($reshook)) {
 	 * Price by customer
 	 * ****************************************************
 	 */
-	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$maxpricesupplier = $object->min_recommended_price();
 
 		$update_child_soc = GETPOST('updatechildprice', 'int');
@@ -734,7 +734,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$maxpricesupplier = $object->min_recommended_price();
 
 		$update_child_soc = GETPOST('updatechildprice', 'int');
@@ -1108,7 +1108,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					print '<td>&nbsp;</td>';
 					print '</tr>';
 					foreach ($object->prices_by_qty_list[$i] as $ii => $prices) {
-						if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+						if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 							print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 							print '<input type="hidden" name="token" value="'.newToken().'">';
 							print '<input type="hidden" name="action" value="update_price_by_qty">';
@@ -1128,7 +1128,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 							print '<td class="right">'.price($prices['unitprice']).'</td>';
 							print '<td class="right">'.price($prices['remise_percent']).' %</td>';
 							print '<td class="center">';
-							if (($user->rights->produit->creer || $user->rights->service->creer)) {
+							if (($user->rights->produit->creer || $user->hasRight('service', 'creer'))) {
 								print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
 								print img_edit().'</a>';
 								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
@@ -1140,7 +1140,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 							print '</tr>';
 						}
 					}
-					if ($action != 'edit_price_by_qty' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+					if ($action != 'edit_price_by_qty' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 						print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="action" value="update_price_by_qty">';
@@ -1260,7 +1260,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 				print '</form>';
 			}
 			foreach ($object->prices_by_qty_list[0] as $ii => $prices) {
-				if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+				if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 					print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="update_price_by_qty">';
@@ -1289,7 +1289,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					print '<td class="right">'.price($prices['unitprice']).'</td>';
 					print '<td class="right">'.price($prices['remise_percent']).' %</td>';
 					print '<td class="center">';
-					if (($user->rights->produit->creer || $user->rights->service->creer)) {
+					if (($user->rights->produit->creer || $user->hasRight('service', 'creer'))) {
 						print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
 						print img_edit().'</a>';
 						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';

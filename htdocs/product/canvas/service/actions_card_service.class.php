@@ -24,7 +24,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
- *	Class with controller methods for product canvas
+ *	Class with controller methods for service canvas
  */
 class ActionsCardService
 {
@@ -151,7 +151,7 @@ class ActionsCardService
 		$this->tpl['label'] = $this->object->label;
 		$this->tpl['id'] = $this->object->id;
 		$this->tpl['type'] = $this->object->type;
-		$this->tpl['note'] = $this->object->note;
+		$this->tpl['note'] = $this->object->note_private;
 		$this->tpl['seuil_stock_alerte'] = $this->object->seuil_stock_alerte;
 
 		// Duration

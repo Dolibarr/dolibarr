@@ -83,12 +83,6 @@ class doc_generic_task_odt extends ModelePDFTask
 	public $emetteur;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -200,7 +194,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			'task_projectlabel'=>$task->projectlabel,
 			'task_label'=>$task->label,
 			'task_description'=>$task->description,
-			'task_fk_parent'=>$task->fk_parent,
+			'task_fk_parent'=>$task->fk_task_parent,
 			'task_duration'=>$task->duration_effective,
 			'task_duration_formated'=>convertSecondToTime($task->duration_effective, 'allhourmin'),
 			'task_planned_workload'=>$task->planned_workload,

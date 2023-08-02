@@ -59,7 +59,7 @@ class FileUpload
 		$filename = $element_prop['classfile'];
 		$dir_output = $element_prop['dir_output'];
 
-		//print 'fileupload.class.php: element='.$element.' pathname='.$pathname.' filename='.$filename.' dir_output='.$dir_output;
+		//print 'fileupload.class.php: element='.$element.' pathname='.$pathname.' filename='.$filename.' dir_output='.$dir_output."\n";
 
 		if (empty($dir_output)) {
 			setEventMessage('The element '.$element.' is not supported for uploading file. dir_output is unknow.', 'errors');
@@ -222,7 +222,10 @@ class FileUpload
 			foreach ($this->options['image_versions'] as $version => $options) {
 				if (is_file($options['upload_dir'].$file_name)) {
 					$tmp = explode('.', $file->name);
-					$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
+
+					// We save the path of mini file into file->... (seems not used)
+					$keyforfile = $version.'_url';
+					$file->$keyforfile = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 				}
 			}
 			$this->setFileDeleteUrl($file);
@@ -242,7 +245,7 @@ class FileUpload
 	}
 
 	/**
-	 *  Create thumbs of a file uploaded. Only the "mini" thumb is generated.
+	 *  Create thumbs of a file uploaded.
 	 *
 	 *  @param	string	$file_name		Filename
 	 *  @param	string	$options 		is array('max_width', 'max_height')
@@ -250,7 +253,7 @@ class FileUpload
 	 */
 	protected function createScaledImage($file_name, $options)
 	{
-		global $maxwidthmini, $maxheightmini;
+		global $maxwidthmini, $maxheightmini, $maxwidthsmall, $maxheightsmall;
 
 		$file_path = $this->options['upload_dir'].$file_name;
 		$new_file_path = $options['upload_dir'].$file_name;
@@ -261,11 +264,16 @@ class FileUpload
 				return false;
 			}
 
-			$res = vignette($file_path, $maxwidthmini, $maxheightmini, '_mini'); // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
-
+			$res = vignette($file_path, $maxwidthmini, $maxheightmini, '_mini'); // We don't use ->addThumbs here because there is no object
 			if (preg_match('/error/i', $res)) {
 				return false;
 			}
+
+			$res = vignette($file_path, $maxwidthsmall, $maxheightsmall, '_small'); // We don't use ->addThumbs here because there is no object
+			if (preg_match('/error/i', $res)) {
+				return false;
+			}
+
 			return true;
 		} else {
 			return false;
@@ -386,7 +394,8 @@ class FileUpload
 	}
 
 	/**
-	 * handleFileUpload
+	 * handleFileUpload.
+	 * Validate data, move the uploaded file then create the thumbs if this is an image.
 	 *
 	 * @param 	string		$uploaded_file		Uploade file
 	 * @param 	string		$name				Name
@@ -428,9 +437,12 @@ class FileUpload
 				if ($file_size === $file->size) {
 					$file->url = $this->options['upload_url'].rawurlencode($file->name);
 					foreach ($this->options['image_versions'] as $version => $options) {
-						if ($this->createScaledImage($file->name, $options)) {
+						if ($this->createScaledImage($file->name, $options)) {	// Creation of thumbs mini and small is ok
 							$tmp = explode('.', $file->name);
-							$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
+
+							// We save the path of mini file into file->... (seems not used)
+							$keyforfile = $version.'_url';
+							$file->$keyforfile = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 						}
 					}
 				} elseif ($this->options['discard_aborted_uploads']) {
