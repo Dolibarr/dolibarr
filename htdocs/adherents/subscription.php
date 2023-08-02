@@ -604,7 +604,8 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 }
 
 // Public
-print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
+print '<tr><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 // Other attributes
 $cols = 2;

@@ -766,8 +766,10 @@ if ($action == "view_ticketlist") {
 	print "</div>";
 }
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

@@ -56,6 +56,9 @@ $bankid = GETPOST('bankid', 'int');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('usercardBank', 'globalcard'));
+
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
@@ -205,6 +208,15 @@ if ($action == 'setpersonal_email' && $canadduser && !$cancel) {
 // update personal mobile
 if ($action == 'setpersonal_mobile' && $canadduser && !$cancel) {
 	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// update accountancy_code
+if ($action == 'setaccountancy_code' && $canadduser && !$cancel) {
+	$object->accountancy_code = (string) GETPOST('accountancy_code', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -419,7 +431,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Sensitive salary/value information
 	if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
+		|| (isModEnabled('salaries') && !empty($user->rights->salaries->readall))
 		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))) {
 		$langs->load("salaries");
 
@@ -482,7 +494,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<td>';
 		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, 'dol_print_email');
+		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -493,7 +505,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<td>';
 		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'string', '', null, null, '', 0, 'dol_print_phone');
+		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'phone', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -548,8 +560,13 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Accountancy code
 	if (isModEnabled('accounting')) {
-		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-		print '<td>'.$object->accountancy_code.'</td></tr>';
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'));
+		print '</td><td>';
+		print $form->editfieldval("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'), 'string', '', null, null, '', 0, '');
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Employee Number
@@ -582,7 +599,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Latest payments of salaries
-	if (!empty($conf->salaries->enabled) &&
+	if (isModEnabled('salaries') &&
 		(($user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)) || (!empty($user->rights->salaries->readall)))
 		) {
 		$payment_salary = new PaymentSalary($db);
@@ -862,8 +879,14 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 	}
 
+
+
 	print '</table>';
 	print '</div>';
+
+	// Add hook in fields
+	$parameters = array('colspan' => ' colspan="2"');
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 }
 
 // Edit

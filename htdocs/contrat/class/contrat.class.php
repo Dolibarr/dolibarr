@@ -689,6 +689,7 @@ class Contrat extends CommonObject
 				$this->error = 'Fetch found several records.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
+				return 0;
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {

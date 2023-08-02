@@ -410,6 +410,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"])) {
 	$conf->browser->name = $tmp['browsername'];
 	$conf->browser->os = $tmp['browseros'];
 	$conf->browser->version = $tmp['browserversion'];
+	$conf->browser->ua = $tmp['browserua'];
 	$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
 	//var_dump($conf->browser);
 
@@ -1225,7 +1226,7 @@ if (!defined('NOLOGIN')) {
 	}
 } else {
 	// We may have NOLOGIN set, but NOREQUIREUSER not
-	if (!empty($user) && method_exists($user, 'loadDefaultValues')) {
+	if (!empty($user) && method_exists($user, 'loadDefaultValues') && !defined('NODEFAULTVALUES')) {
 		$user->loadDefaultValues();		// Load default values for everybody (works even if $user->id = 0
 	}
 }

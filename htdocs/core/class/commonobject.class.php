@@ -45,6 +45,12 @@
 abstract class CommonObject
 {
 	const TRIGGER_PREFIX = ''; // to be overriden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+
+	/**
+	 * @var string ID of module.
+	 */
+	public $module;
+
 	/**
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
@@ -553,6 +559,11 @@ abstract class CommonObject
 	 * @var integer|string $date_modification;
 	 */
 	public $date_modification; // Date last change (tms field)
+	/**
+	 * @var integer|string $date_modification;
+	 * @deprecated Use date_modification
+	 */
+	public $date_update;
 
 	/**
 	 * @var integer|string $date_cloture;
@@ -622,7 +633,7 @@ abstract class CommonObject
 	public $alreadypaid;
 
 
-	protected $labelStatus;
+	public $labelStatus;
 	protected $labelStatusShort;
 
 	/**
@@ -639,6 +650,11 @@ abstract class CommonObject
 	 * @var string output
 	 */
 	public $output;
+
+	/**
+	 * @var array extraparams
+	 */
+	public $extraparams = array();
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -2075,7 +2091,11 @@ abstract class CommonObject
 		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
-		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		if ($fieldid == 'rowid') {
+			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
+		} else {
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		}
 		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
@@ -2145,7 +2165,11 @@ abstract class CommonObject
 		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
-		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		if ($fieldid == 'rowid') {
+			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
+		} else {
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		}
 		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
@@ -3552,6 +3576,8 @@ abstract class CommonObject
 			$this->multicurrency_total_tva	= 0;
 			$this->multicurrency_total_ttc	= 0;
 
+			$this->db->begin();
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
@@ -3617,16 +3643,18 @@ abstract class CommonObject
 				$total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
 				$total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
-				if ($forcedroundingmode == '1') {	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on multicurrency
+				if ($forcedroundingmode == '1') {	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on foreign currency
 					$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs($diff) > 0.1) {
-							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your line may be corrupted. Try to edit each line manually.';
+						if (abs($diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+							// If error is more than 10 times the accurancy of rounding. This should not happen.
+							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
-							dol_print_error('', $errmsg);
-							exit;
+							$this->error = $errmsg;
+							$error++;
+							break;
 						}
 						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - $diff).", total_ttc = ".price2num($obj->total_ttc - $diff)." WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
@@ -3687,7 +3715,7 @@ abstract class CommonObject
 				$fieldtva = 'total_tva';
 			}
 
-			if (empty($nodatabaseupdate)) {
+			if (!$error && empty($nodatabaseupdate)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
 				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
 				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
@@ -3710,8 +3738,10 @@ abstract class CommonObject
 			}
 
 			if (!$error) {
+				$this->db->commit();
 				return 1;
 			} else {
+				$this->db->rollback();
 				return -1;
 			}
 		} else {
@@ -3818,10 +3848,10 @@ abstract class CommonObject
 	 *  - source id+type + target type -> will get list of targets of the type linked to source
 	 *  - target id+type + source type -> will get list of sources of the type linked to target
 	 *
-	 *	@param	int			$sourceid			Object source id (if not defined, id of object)
-	 *	@param  string		$sourcetype			Object source type (if not defined, element name of object)
-	 *	@param  int			$targetid			Object target id (if not defined, id of object)
-	 *	@param  string		$targettype			Object target type (if not defined, element name of object)
+	 *	@param	int			$sourceid			Object source id (if not defined, $this->id)
+	 *	@param  string		$sourcetype			Object source type (if not defined, $this->element)
+	 *	@param  int			$targetid			Object target id (if not defined, $this->id)
+	 *	@param  string		$targettype			Object target type (if not defined, $this->element)
 	 *	@param  string		$clause				'OR' or 'AND' clause used when both source id and target id are provided
 	 *  @param  int			$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
@@ -9066,51 +9096,62 @@ abstract class CommonObject
 
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (is_null($obj->{$field}) || $obj->{$field} === '' || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') {
-					$this->{$field} = '';
+				if (is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
+					$this->$field = '';
 				} else {
-					$this->{$field} = $db->jdate($obj->{$field});
+					$this->$field = $db->jdate($obj->$field);
 				}
 			} elseif ($this->isInt($info)) {
 				if ($field == 'rowid') {
-					$this->id = (int) $obj->{$field};
+					$this->id = (int) $obj->$field;
 				} else {
 					if ($this->isForcedToNullIfZero($info)) {
-						if (empty($obj->{$field})) {
-							$this->{$field} = null;
+						if (empty($obj->$field)) {
+							$this->$field = null;
 						} else {
-							$this->{$field} = (double) $obj->{$field};
+							$this->$field = (double) $obj->$field;
 						}
 					} else {
-						if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-							$this->{$field} = (int) $obj->{$field};
+						if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+							$this->$field = (int) $obj->$field;
 						} else {
-							$this->{$field} = null;
+							$this->$field = null;
 						}
 					}
 				}
 			} elseif ($this->isFloat($info)) {
 				if ($this->isForcedToNullIfZero($info)) {
-					if (empty($obj->{$field})) {
-						$this->{$field} = null;
+					if (empty($obj->$field)) {
+						$this->$field = null;
 					} else {
-						$this->{$field} = (double) $obj->{$field};
+						$this->$field = (double) $obj->$field;
 					}
 				} else {
-					if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-						$this->{$field} = (double) $obj->{$field};
+					if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						$this->$field = (double) $obj->$field;
 					} else {
-						$this->{$field} = null;
+						$this->$field = null;
 					}
 				}
 			} else {
-				$this->{$field} = isset($obj->{$field}) ? $obj->{$field} : null;
+				$this->$field = isset($obj->$field) ? $obj->$field : null;
 			}
 		}
 
 		// If there is no 'ref' field, we force property ->ref to ->id for a better compatibility with common functions.
 		if (!isset($this->fields['ref']) && isset($this->id)) {
 			$this->ref = $this->id;
+		}
+	}
+
+	/**
+	 * Sets all object fields to null. Useful for example in lists, when printing multiple lines and a different object os fetched for each line.
+	 * @return void
+	 */
+	public function emtpyObjectVars()
+	{
+		foreach ($this->fields as $field => $arr) {
+			$this->$field = null;
 		}
 	}
 

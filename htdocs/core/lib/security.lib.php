@@ -327,6 +327,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
 	} elseif ($type === 'clear') {
 		return '{CLEAR}' . $password;  // Just for test, plain text password is not secured !
 	}
+	return "";
 }
 
 /**
@@ -413,6 +414,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'tax') {
 		$feature2 = 'charges';
 	}
+	if ($features == 'workstation') {
+		$feature2 = 'workstation';
+	}
 	if ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		$features = 'fournisseur';
 		if (is_object($object) && $object->element == 'invoice_supplier') {
@@ -473,12 +477,12 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			continue;
 		}
 
-		if ($feature == 'societe') {
+		if ($feature == 'societe' && (empty($feature2) || !in_array('contact', $feature2))) {
 			if (!$user->hasRight('societe', 'lire') && !$user->hasRight('fournisseur', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
-		} elseif ($feature == 'contact') {
+		} elseif (($feature == 'societe' && (!empty($feature2) && in_array('contact', $feature2))) || $feature == 'contact') {
 			if (empty($user->rights->societe->contact->lire)) {
 				$readok = 0;
 				$nbko++;
@@ -611,6 +615,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'ecm') {
 				if (!$user->rights->ecm->upload) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'modulebuilder') {
+				if (!$user->hasRight('modulebuilder', 'run')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -842,6 +851,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		//var_dump($feature);exit;
 
 		// For backward compatibility
+		if ($feature == 'societe' && !empty($feature2) && is_array($feature2) && in_array('contact', $feature2)) {
+			$feature = 'contact';
+			$feature2 = '';
+		}
 		if ($feature == 'member') {
 			$feature = 'adherent';
 		}
@@ -865,7 +878,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		// Array to define rules of checks to do
 		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
-		$checkother = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
+		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
 		$checktask = array('projet_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
@@ -943,7 +956,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checkother) && $objectid > 0) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
+		if (in_array($feature, $checkparentsoc) && $objectid > 0) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -1053,7 +1066,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		//print $sql;
 
 		// For events, check on users assigned to event
 		if ($feature === 'agenda' && $objectid > 0) {
@@ -1075,11 +1087,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$useridtocheck = 0;
 			if ($feature == 'holiday') {
 				$useridtocheck = $object->fk_user;
-				if (!in_array($useridtocheck, $childids)) {
-					return false;
-				}
-				$useridtocheck = $object->fk_validator;
-				if (!in_array($useridtocheck, $childids)) {
+				if (!in_array($object->fk_user, $childids) && !in_array($object->fk_validator, $childids)) {
 					return false;
 				}
 			}

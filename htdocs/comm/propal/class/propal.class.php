@@ -337,7 +337,7 @@ class Propal extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>180),
 		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'ShippingMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
-		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>'$conf->stock->enabled', 'visible'=>-1, 'position'=>191),
+		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>'isModEnabled("stock")', 'visible'=>-1, 'position'=>191),
 		'fk_availability' =>array('type'=>'integer', 'label'=>'Availability', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
 		'fk_delivery_address' =>array('type'=>'integer', 'label'=>'DeliveryAddress', 'enabled'=>1, 'visible'=>0, 'position'=>200), // deprecated
 		'fk_input_reason' =>array('type'=>'integer', 'label'=>'InputReason', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
@@ -966,7 +966,7 @@ class Propal extends CommonObject
 					$this->line_order(true, 'DESC');
 				}
 
-				$this->update_price(1);
+				$this->update_price(1, 'auto');
 
 				$this->fk_propal = $this->id;
 				$this->rowid = $rowid;
@@ -1641,7 +1641,6 @@ class Propal extends CommonObject
 
 				$this->status               = (int) $obj->fk_statut;
 				$this->statut               = $this->status; // deprecated
-				$this->statut_libelle       = $obj->statut_label;
 
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
@@ -3449,7 +3448,7 @@ class Propal extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param          User	$user   Object user
-	 *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
+	 *      @param          string	$mode   "opened" for proposal to close, "signed" for proposal to invoice
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)

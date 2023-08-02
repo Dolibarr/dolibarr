@@ -384,7 +384,9 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write)
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
+if ($action == 'confirm_clone' && $confirm != 'yes') {
+	$action = '';
+}
 
 if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries->write)) {
 	$db->begin();
@@ -733,9 +735,9 @@ if ($id > 0) {
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
-		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
+		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
 	}
 
 	if ($action == 'paid') {

@@ -473,9 +473,10 @@ function getBrowserInfo($user_agent)
 		'browsername' => $name,
 		'browserversion' => $version,
 		'browseros' => $os,
-		'layout' => $layout,
-		'phone' => $phone,
-		'tablet' => $tablet
+		'browserua' => $user_agent,
+		'layout' => $layout,	// tablet, phone, classic
+		'phone' => $phone,		// deprecated
+		'tablet' => $tablet		// deprecated
 	);
 }
 
@@ -486,7 +487,7 @@ function getBrowserInfo($user_agent)
  */
 function dol_shutdown()
 {
-	global $conf, $user, $langs, $db;
+	global $user, $langs, $db;
 	$disconnectdone = false;
 	$depth = 0;
 	if (is_object($db) && !empty($db->connected)) {
@@ -1326,7 +1327,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
 	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
-	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
+	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '`');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
@@ -1351,7 +1352,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
-	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';');
+	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';', '`');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
@@ -1583,20 +1584,27 @@ function dol_escape_json($stringtoescape)
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
- *  When we output string on pages, we use dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes, and use dol_escape_htmltag() for simple labels.
+ *  When we output string on pages, we use
+ *  - dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes,
+ *  - dol_escape_htmltag() for simple labels.
+ *  - htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
- *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
+ *  @see		dol_string_nohtmltag(), dol_string_onlythesehtmltags(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
 	if ($noescapetags == 'common') {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	}
+	if ($cleanalsojavascript) {
+		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
 	}
 
 	// escape quotes and backslashes, newlines, etc.
@@ -2536,7 +2544,7 @@ function dol_bc($var, $moreclass = '')
  *
  *      @param  Object		$object			A company or contact object
  * 	    @param	int			$withcountry	1=Add country into address string
- *      @param	string		$sep			Separator to use to build string
+ *      @param	string		$sep			Separator to use to separate info when building string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @param	int			$mode			0=Standard output, 1=Remove address
  *  	@param	string		$extralangcode	User extralanguage $langcode as values for address, town
@@ -2553,7 +2561,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
-		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : $object->address));
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : preg_replace('/[\n\r]/', $sep, $object->address)));
 	}
 	// Zip/Town/State
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
@@ -2583,7 +2591,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if (!empty($object->state)) {
-			$ret .= "\n".$object->state;
+			$ret .= $sep.$object->state;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('JP'))) {
 		// JP: In romaji, title firstname name\n address lines \n [state,] town zip \n country
@@ -2605,6 +2613,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
 	}
+
 	if (!is_object($outputlangs)) {
 		$outputlangs = $langs;
 	}
@@ -4199,7 +4208,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
 				'currency', 'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
@@ -4364,7 +4373,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Define $color
 			$arrayconvpictotocolor = array(
 				'address'=>'#6c6aa8', 'building'=>'#6c6aa8', 'bom'=>'#a69944',
-				'cog'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'cron'=>'#555',
+				'clone'=>'#999', 'cog'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'cron'=>'#555',
 				'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999', 'language'=>'#555',
 				//'dolly'=>'#a69944', 'dollyrevert'=>'#a69944',
@@ -5608,7 +5617,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 			do {
 				if ($pagenavastextinput) {
 					if ($cpt == $page) {
-						$pagelist .= '<li class="pagination"><input type="text" class="width25 center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
+						$pagelist .= '<li class="pagination"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
 						$pagelist .= '/';
 					}
 				} else {
@@ -5940,7 +5949,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *											- text unchanged or partial if ($rounding = ''): price2num('W9ç', '', 0)   => '9ç', price2num('W9ç', '', 1)   => 'W9ç', price2num('W9ç', '', 2)   => '9ç'
  *											- '0' if ($rounding is defined):                 price2num('W9ç', 'MT', 0) => '9',  price2num('W9ç', 'MT', 1) => '0',   price2num('W9ç', 'MT', 2) => '9'
  *											Note: The best way to guarantee a numeric value is to add a cast (float) before the price2num().
- *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined.
+ *											If amount is null or '', it returns '' if $rounding = '', it returns '0' if $rounding is defined.
  *
  *	@see    price()							Opposite function of price2num
  */
@@ -9642,7 +9651,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 									$function = $labeltemp[3];
 									if ($obj && $function && method_exists($obj, $function)) {
 										$nbrec = $obj->$function($object->id, $obj);
-										$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+										if (!empty($nbrec)) {
+											$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+										}
 									}
 								}
 							}
@@ -9706,7 +9717,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule);
-		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
+		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters, $object);
 		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
 		} else {				// Hook
@@ -9927,13 +9938,17 @@ function printCommonFooter($zone = 'private')
  * Split a string with 2 keys into key array.
  * For example: "A=1;B=2;C=2" is exploded into array('A'=>1,'B'=>2,'C'=>3)
  *
- * @param 	string	$string		String to explode
- * @param 	string	$delimiter	Delimiter between each couple of data. Example: ';' or '[\n;]+' or '(\n\r|\r|\n|;)'
- * @param 	string	$kv			Delimiter between key and value
- * @return	array				Array of data exploded
+ * @param 	string|null	$string		String to explode
+ * @param 	string		$delimiter	Delimiter between each couple of data. Example: ';' or '[\n;]+' or '(\n\r|\r|\n|;)'
+ * @param 	string		$kv			Delimiter between key and value
+ * @return	array					Array of data exploded
  */
 function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 {
+	if (is_null($string)) {
+		return array();
+	}
+
 	if (preg_match('/^\[.*\]$/sm', $delimiter) || preg_match('/^\(.*\)$/sm', $delimiter)) {
 		// This is a regex string
 		$newdelimiter = $delimiter;
@@ -10769,7 +10784,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$dictvalues[$obj->{$rowidfield}] = $obj;	// $obj is stdClass
+				$dictvalues[$obj->$rowidfield] = $obj;	// $obj is stdClass
 			}
 		} else {
 			dol_print_error($db);
@@ -12506,6 +12521,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 		$out .= '<tr class="liste_titre">';
 
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<th class="liste_titre width50 middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</th>';
+		}
+
 		$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, '')."\n";
 
 		$out .= '<th class="liste_titre"><strong class="hideonsmartphone">'.$langs->trans("Search").' : </strong></th>';
@@ -12521,10 +12544,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		$out .= '<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'" placeholder="'.$langs->trans("Label").'">';
 		$out .= '</th>';
 
-		$out .= '<th class="liste_titre width50 middle">';
-		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-		$out .= $searchpicto;
-		$out .= '</th>';
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<th class="liste_titre width50 middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</th>';
+		}
+
 		$out .= '</tr>';
 
 
@@ -12605,7 +12632,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			$out .= '</span>';
 			// Date
-			$out .= '<span class="time"><i class="fa fa-clock-o"></i> ';
+			$out .= '<span class="time"><i class="fa fa-clock-o valignmiddle"></i> <span class="valignmiddle">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
@@ -12632,13 +12659,13 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			if ($late) {
 				$out .= img_warning($langs->trans("Late")).' ';
 			}
-			$out .= "</span>\n";
+			$out .= "</span></span>\n";
 
 			// Ref
 			$out .= '<h3 class="timeline-header">';
 
 			// Author of event
-			$out .= '<div class="messaging-author inline-block">';
+			$out .= '<div class="messaging-author inline-block tdoverflowmax150 valignmiddle marginrightonly">';
 			if ($histo[$key]['userid'] > 0) {
 				if (!isset($userGetNomUrlCache[$histo[$key]['userid']])) { // is in cache ?
 					$userstatic->fetch($histo[$key]['userid']);

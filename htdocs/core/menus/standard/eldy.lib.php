@@ -86,7 +86,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 10,
 		'id' => $id,
 		'idsel' => 'home',
-		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (empty($_SESSION["mainmenu"]) || $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '<span class="fa fa-home fa-fw paddingright"></span>',
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 0 : 1),
 		'loadLangs' => array(),
@@ -722,6 +722,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]);
 	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]));
 
+	if (is_null($mainmenu)) {
+		$mainmenu = 'home';
+	}
+
 	global $usemenuhider;
 	$usemenuhider = 0;
 
@@ -1094,7 +1098,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			// Load translation files required by the page
 			$langs->loadLangs(array("admin", "help"));
 			$warnpicto = '';
-			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) || !empty($conf->global->MAIN_INFO_SOCIETE_SETUP_TODO_WARNING)) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
@@ -1151,12 +1155,12 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
 			$newmenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"), 1);
 			$newmenu->add("/admin/system/security.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoSecurity"), 1);
+			$newmenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"), 1);
+			$newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"), 1);
 			$newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"), 1);
 			$newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"), 1);
 			$newmenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"), 1);
 			$newmenu->add("/admin/tools/purge.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Purge"), 1);
-			$newmenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"), 1);
-			$newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"), 1);
 			$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('ExternalResources'), 1);
 
 			if (isModEnabled('product') || isModEnabled('service')) {

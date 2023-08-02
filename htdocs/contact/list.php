@@ -1295,7 +1295,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -1347,7 +1347,7 @@ while ($i < $imaxinloop) {
 		// (Last) Name
 		if (!empty($arrayfields['p.lastname']['checked'])) {
 			print '<td class="middle tdoverflowmax150">';
-			print $contactstatic->getNomUrl(1);
+			print $contactstatic->getNomUrl(-1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

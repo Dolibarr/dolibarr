@@ -137,21 +137,21 @@ $isdraft = (isset($object->statut) && ($object->statut == $object::STATUS_DRAFT)
 $result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande', 'fk_soc', 'rowid', $isdraft);
 
 // Common permissions
-$usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
-$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
-$usercandelete	= (($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer) || ($usercancreate && isset($object->statut) && $object->statut == $object::STATUS_DRAFT));
+$usercanread	= ($user->hasRight("fournisseur", "commande", "lire") || $user->hasRight("supplier_order", "lire"));
+$usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
+$usercandelete	= (($user->hasRight("fournisseur", "commande", "supprimer") || $user->hasRight("supplier_order", "supprimer")) || ($usercancreate && isset($object->statut) && $object->statut == $object::STATUS_DRAFT));
 
 // Advanced permissions
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)));
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_order_advance", "validate")));
 
 // Additional area permissions
-$usercanapprove			= !empty($user->rights->fournisseur->commande->approuver) ? $user->rights->fournisseur->commande->approuver : 0;
-$usercanapprovesecond	= !empty($user->rights->fournisseur->commande->approve2) ? $user->rights->fournisseur->commande->approve2 : 0;
-$usercanorder			= !empty($user->rights->fournisseur->commande->commander) ? $user->rights->fournisseur->commande->commander : 0;
+$usercanapprove			= $user->hasRight("fournisseur", "commande", "approuver");
+$usercanapprovesecond	= $user->hasRight("fournisseur", "commande", "approve2");
+$usercanorder			= $user->hasRight("fournisseur", "commande", "commander");
 if (empty($conf->reception->enabled)) {
-	$usercanreceive = $user->rights->fournisseur->commande->receptionner;
+	$usercanreceive = $user->hasRight("fournisseur", "commande", "receptionner");
 } else {
-	$usercanreceive = $user->rights->reception->creer;
+	$usercanreceive = $user->hasRight("reception", "creer");
 }
 
 // Permissions for includes
@@ -579,11 +579,11 @@ if (empty($reshook)) {
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
 				$type = $productsupplier->type;
-				if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
+				if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
 					$price_base_type = 'HT';
 					$pu = price2num($price_ht, 'MU');
 					$pu_devise = price2num($price_ht_devise, 'CU');
-				} elseif (GETPOST('price_ttc') != '' || GETPOST('price_ttc_devise') != '') {
+				} elseif (GETPOST('price_ttc') != '' || GETPOST('multicurrency_price_ttc') != '') {
 					$price_base_type = 'TTC';
 					$pu = price2num($price_ttc, 'MU');
 					$pu_devise = price2num($price_ttc_devise, 'CU');
@@ -658,7 +658,7 @@ if (empty($reshook)) {
 			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-			if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
+			if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			} else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -1606,7 +1606,6 @@ if ($action == 'create') {
 			$element = 'supplier_proposal';
 			$subelement = 'supplier_proposal';
 		}
-
 
 
 		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
@@ -2608,7 +2607,7 @@ if ($action == 'create') {
 				//if (isModEnabled('facture'))
 				//{
 				if (isModEnabled("supplier_invoice") && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1)) {  // statut 2 means approved, 7 means canceled
-					if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->rights->supplier_invoice->creer) {
+					if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
 				}
@@ -2620,7 +2619,7 @@ if ($action == 'create') {
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'">'.$langs->trans("ClassifyBilled").'</a>';
 					} else {
 						if (!empty($object->linkedObjectsIds['invoice_supplier'])) {
-							if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->rights->supplier_invoice->creer) {
+							if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
 								print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'">'.$langs->trans("ClassifyBilled").'</a>';
 							}
 						} else {

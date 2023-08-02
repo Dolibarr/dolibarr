@@ -1513,14 +1513,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		if (!$error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
-				$error++;
-			}
-		}
-
-		if (!$error) {
 			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
 			$this->deleteEcmFiles();
 
@@ -2660,7 +2652,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut as status, ff.total_ht, ff.total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= ' WHERE ff.paye = 0';
@@ -3068,7 +3060,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3210,7 +3202,7 @@ class FactureFournisseur extends CommonInvoice
 	{
 		global $user;
 
-		return $user->rights->fournisseur->facture;
+		return $user->hasRight("fournisseur", "facture");
 	}
 
 	/**
