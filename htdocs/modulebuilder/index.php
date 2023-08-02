@@ -4443,7 +4443,7 @@ if ($module == 'initmodule') {
 					print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
 				}
 				print '</select>';
-				print '<select class="center maxwidth hideSelect" name="perms" id="perms">';
+				print '<select class="center maxwidth hideobject" name="perms" id="perms">';
 				print '</select>';
 				print '</td>';
 				print '<td class="center"><input type="text" class="center maxwidth50" name="target" value="'.dol_escape_htmltag(GETPOST('target', 'alpha')).'"></td>';

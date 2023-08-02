@@ -7994,10 +7994,6 @@ table.jPicker {
 	}
 }
 
-/* for hide a select */
-.hideSelect {
-	display : none;
-}
 
 @media only screen and (max-width: 320px)
 {
