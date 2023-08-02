@@ -54,7 +54,7 @@ function notify_sendMail(
 	string       $type,
 	string       $email
 ): string {
-    global $conf, $db;
+    global $conf, $db, $user;
     global $hookmanager;
 
     $result = '';
@@ -261,7 +261,7 @@ function notify_sendMail(
 
 	if ($mailfile->sendfile()) {
 		$sql = "INSERT INTO ".$db->prefix()."notify (daten, fk_action, fk_soc, ".$fkContact."type, objet_type, type_target, objet_id, email)";
-		$sql .= " VALUES ('".$db->idate(dol_now())."', ".$actionId.", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".(($contactId) ? $contactId.', ' : '')."'".$db->escape($type)."', '".$db->escape($objectType)."', '".$db->escape($targetType)."', ".((int) $object->id).", '".$db->escape($email)."')";
+		$sql .= " VALUES ('".$db->idate(dol_now())."', ".(int) $actionId.", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".(($contactId) ? (int) $contactId.', ' : '')."'".$db->escape($type)."', '".$db->escape($objectType)."', '".$db->escape($targetType)."', ".((int) $object->id).", '".$db->escape($email)."')";
 
 		if (!$db->query($sql)) {
 			dol_print_error($db);
