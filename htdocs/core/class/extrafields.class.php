@@ -2184,6 +2184,8 @@ class ExtraFields
 						$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
 					}
 					$value_key = GETPOST("options_".$key, $label_security_check);
+				} elseif (in_array($key_type, array('json'))) {
+					$value_key = GETPOST("options_".$key, 'none');
 				} else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') {
