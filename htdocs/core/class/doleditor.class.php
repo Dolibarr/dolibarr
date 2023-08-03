@@ -163,7 +163,10 @@ class DolEditor
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
-				$pluginstodisable = 'elementspath,save,flash,div,specialchar,anchor';
+				$pluginstodisable = 'elementspath,save,flash,div,anchor';
+				if (!getDolGlobalString('FCKEDITOR_ENABLE_SPECIALCHAR')) {
+					$pluginstodisable .= ',specialchar';
+					}
 				if (!empty($conf->dol_optimize_smallscreen)) {
 					$pluginstodisable .= ',scayt,wsc,find,undo';
 				}
