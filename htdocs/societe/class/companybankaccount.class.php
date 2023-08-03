@@ -49,7 +49,7 @@ class CompanyBankAccount extends Account
 	public $default_rib;
 
 	/**
-	 * Value 'FRST' or 'RCUR' (For SEPA mandate). Warning, in database, we store 'RECUR'.
+	 * Value 'FRST' or 'RCUR' (For SEPA mandate)
 	 *
 	 * @var string
 	 */
