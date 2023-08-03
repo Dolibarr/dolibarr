@@ -2551,7 +2551,8 @@ if ($action == 'create') {
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ?GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
+	print $form->getSelectConditionsPaiements((!empty('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
+
 	print '</td></tr>';
 
 	// Due date
@@ -2563,13 +2564,25 @@ if ($action == 'create') {
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	$form->select_types_paiements(GETPOSTISSET('mode_reglement_id') ?GETPOST('mode_reglement_id', 'int') : $mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
+	if (!empty(GETPOST('mode_reglement_id')) && $selected_mode_reglement_id != GETPOST('mode_reglement_id', 'int')) {
+		$selected_mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+	} else {
+		$selected_mode_reglement_id = $mode_reglement_id;
+	}
+	$form->select_types_paiements($selected_mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
 	print '</td></tr>';
 
 	// Bank Account
 	if (isModEnabled("banque")) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
+		$selected_fk_account = $fk_account;
+		if ($socid > 0 && $fk_account) {
+			if (GETPOST('fk_account') != -1 && $fk_account != GETPOST('fk_account', 'int')) {
+				$selected_fk_account = GETPOST('fk_account', 'int');
+			}
+		}
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(($selected_fk_account < 0 ? '' : $selected_fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
