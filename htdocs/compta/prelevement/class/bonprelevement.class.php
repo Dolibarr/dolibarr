@@ -966,7 +966,7 @@ class BonPrelevement extends CommonObject
 								if ($format == 'FRST' && $bac->frstrecur != 'FRST') {
 									continue;
 								}
-								if ($format == 'RCUR' && ($bac->frstrecur != 'RCUR' && $bac->frstrecur != 'RECUR')) {
+								if ($format == 'RCUR' && $bac->frstrecur != 'RCUR') {
 									continue;
 								}
 							}
