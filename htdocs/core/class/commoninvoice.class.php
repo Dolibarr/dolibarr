@@ -773,7 +773,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
-	 *  @param		float	$amount			Amount we request direct debit for
+	 *  @param		float	$amount			Amount we request direct debit or credit transfer for. If 0, the remain to pay will be calculated and used.
 	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *	@return     int         			<0 if KO, >0 if OK
@@ -887,8 +887,24 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
+	 *  Create a payment with Stripe card
+	 *  Must take amount using Stripe and record an event into llx_actioncomm
+	 *  Record bank payment
+	 *  Send email to customer ?
+	 *
+	 *	@param      User	$fuser      	User asking the direct debit transfer
+	 *  @param		int		$id				Invoice ID with remain to pay
+	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
+	 *	@return     int         			<0 if KO, >0 if OK
+	 */
+	public function makeStripeCardRequest($fuser, $id, $sourcetype = 'facture')
+	{
+		// TODO See in sellyoursaas
+	}
+
+	/**
 	 *  Create a direct debit order into prelevement_bons then
-	 *  Send the payment order to Stripe (for a direct debit order or a credit transfer order).
+	 *  Send the payment order to Stripe (for a direct debit order or a credit transfer order) and record an event in llx_actioncomm.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$did			ID of unitary payment request to pay
@@ -898,7 +914,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture')
 	{
-		global $conf, $mysoc, $user, $langs;
+		global $conf, $user, $langs;
 
 		if ($type != 'bank-transfer' && $type != 'credit-transfer' && empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
 			return 0;
