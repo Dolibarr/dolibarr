@@ -3688,7 +3688,7 @@ if ($action == 'create') {
 	// Payment term
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements((!empty('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
+	print $form->getSelectConditionsPaiements((!empty('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? $cond_reglement_id : GETPOST('cond_reglement_id', 'int'), 'cond_reglement_id', -1, 1, 0, 'maxwidth500 widthcentpercentminusx');
 	print '</td></tr>';
 
 
