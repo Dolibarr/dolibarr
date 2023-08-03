@@ -922,7 +922,7 @@ abstract class CommonInvoice extends CommonObject
 				return -1;
 			}
 
-			// Load the request to process
+			// Load the pending payment requests to process
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_prelevement_bons";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " WHERE rowid = ".((int) $did);
@@ -932,7 +932,7 @@ abstract class CommonInvoice extends CommonObject
 			if ($type != 'direct-debit') {
 				$sql .= " AND fk_facture_fourn = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
 			}
-			$sql .= " AND traite = 0";	// Add a protection to not process twice
+			$sql .= " AND traite = 0";	// Add a protection to not process twice. We select only pending requests with no credit transfer order created yet.
 
 			dol_syslog(get_class($this)."::makeStripeSepaRequest load requests to process", LOG_DEBUG);
 			$resql = $this->db->query($sql);
