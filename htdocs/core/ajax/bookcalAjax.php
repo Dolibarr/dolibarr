@@ -43,11 +43,13 @@ if (!defined("NOLOGIN")) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-include '../../main.inc.php';
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$idavailability = GETPOST('id', 'aZ09');
-$datetocheckbooking = GETPOST('datetocheck', 'aZ09');
+$idavailability = GETPOST('id', 'int');
+$datetocheckbooking = GETPOST('datetocheck', 'int');
+$error = 0;
 
 // Security check
 /*if (!defined("NOLOGIN")) {	// No need of restrictedArea if not logged: Later the select will filter on public articles only if not logged.
@@ -63,7 +65,54 @@ $result = "{}";
 top_httphead('application/json');
 
 if ($action == 'verifyavailability') {
-	// code...
+	$response = array();
+	if (empty($idavailability)) {
+		$error++;
+		$response["code"] = "MISSING_ID";
+		$response["message"] = "Missing parameter id";
+		header('HTTP/1.0 400 Bad Request');
+	}
+	if (empty($datetocheckbooking)) {
+		$error++;
+		$response["code"] = "MISSING_DATE_AVAILABILITY";
+		$response["message"] = "Missing parameter datetocheck";
+		header('HTTP/1.0 400 Bad Request');
+	}
+	if (!$error) {
+		$datetocheckbooking_end = dol_time_plus_duree($datetocheckbooking, 1, 'd');
+		$sql = "SELECT b.start, b.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_booking as b";
+		$sql .= " WHERE fk_bookcal_availability = ".((int) $idavailability);
+		$sql .= " AND b.start >= '".$db->idate($datetocheckbooking)."'";
+		$sql .= " AND b.start < '".$db->idate($datetocheckbooking_end)."'";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			$response = array();
+			$response["content"] = array();
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				$dateobject = $obj->start;
+				$dateobject = explode(" ", $dateobject)[1];
+				$dateobject = explode(":", $dateobject);
+
+				$dateobjectstring = $dateobject[0].$dateobject[1];
+
+				$response["content"][] = $dateobjectstring;
+				$i++;
+			}
+			if ($i == 0) {
+				$response["code"] = "NO_DATA_FOUND";
+			} else {
+				$response["code"] = "SUCCESS";
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+	$result = json_encode($response);
 }
 
 /*

@@ -284,8 +284,6 @@ if ($action == 'create') {
 }
 print '</td>';
 
-//print '<div class="sectioncalendarbymonth" style="display:flex; padding:2px">';
-//print '<div>';
 print '<td>';
 if ($action == "create") {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -424,7 +422,7 @@ if ($action == "create") {
 		for ($j=0; $j < 60 ; $j += $hoursavailabilities_duration) {
 			$timestring = ($i < 10 ? '0'.$i : $i).':'.($j < 10 ? '0'.$j : $j);
 			$timestringid = ($i < 10 ? '0'.$i : $i).''.($j < 10 ? '0'.$j : $j);
-			print '<input type="submit" class="button btnformbooking" name="timebooking" id="'.$timestringid.'" value="'.$timestring.'"><br>';
+			print '<span id="'.$timestringid.'" class="btnformbooking"><input type="submit" class="button" name="timebooking" value="'.$timestring.'"><br></span>';
 		}
 	}
 	print '</form>';
@@ -432,17 +430,19 @@ if ($action == "create") {
 	print '</div>';
 
 	print '</td>';
-	//print '</div>';
 }
 print '</td>';
 print '</tr>';
-//print '</div>';
-//print '</div>';
 print '</table>';
 print '</div>';
 print '</div>';
 
 print '<script>';
+print '
+function hideTimeBooking(time){
+	console.log("#"+time);
+	$("#"+time).hide();
+}';
 print '$(document).ready(function() {
     $(".cal_available").on("click", function(){
 		$(".cal_chosen").removeClass("cal_chosen");
@@ -453,10 +453,24 @@ print '$(document).ready(function() {
 			data: {
 				action: "verifyavailability",
 				id: '.$id.',
-				datetocheck: $(this).children("div").attr("id"),
-				token: "'.newToken().'",
+				datetocheck: $(this).children("div").data("datetime"),
+				token: "'.currentToken().'",
 			}
 		}).done(function (data) {
+			data = JSON.parse(data);
+			$(".btnformbooking").show();
+			console.log("We show all booking");
+			if(data["code"] == "SUCCESS"){
+				timearray = data["content"];
+				timearray.forEach((time) => hideTimeBooking(time));
+				console.log("We hide all taken time for booking");
+			} else {
+				if(data["code"] == "NO_DATA_FOUND"){
+					console.log("No booking to hide");
+				} else {
+					console.log(data["message"]);
+				}
+			}
 		});
 		$(".bookingtab").removeClass("hidden");
 		$("#bookingtabspandate").text($(this).children("div").data("date"));
