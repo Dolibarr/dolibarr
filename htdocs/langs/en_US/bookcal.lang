@@ -54,3 +54,5 @@ MyWidget = My widget
 MyWidgetDescription = My widget description
 
 AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking as been saved
+BookingReservationHourAfter=We confirm the reservation of your meeting at the date %s

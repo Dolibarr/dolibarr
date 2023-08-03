@@ -209,8 +209,7 @@ if ($action == 'add') {
 	}
 	if (!$error) {
 		$db->commit();
-		Header("Location: ".$urlback);
-		exit;
+		$action = 'afteradd';
 	} else {
 		$db->rollback();
 		$action = 'create';
@@ -231,258 +230,264 @@ if ($action == 'create') {
 } else {
 	$backtopage = DOL_URL_ROOT.'/public/bookcal/index.php?id='.$fk_calendar;
 }
-print '<div class="bookcalpublicarea centpercent center" style="position:absolute;width:fit-content;height:70%;top:60%;left: 50%;transform: translate(-50%, -50%);">';
-print '<div class="bookcalform boxtable" style="border:thin solid gray;padding:5px">';
-
-print '<table>';
-print '<tr>';
-print '<td>';
-print '<a href="'.$backtopage.'">Cancel</a>';
-print '</td>';
-print '<td>';
-if ($action != 'create') {
-	print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="id" value="'.$id.'">';
-	print '<input type="hidden" name="fk_calendar" value="'.$fk_calendar.'">';
-
-	$nav = "<a href=\"?id=".$id."&year=".$prev_year."&month=".$prev_month.$param."&fk_calendar=".$fk_calendar."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
-	$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%b %Y");
-	$nav .= " </span>\n";
-	$nav .= " &nbsp; <a href=\"?id=".$id."&year=".$next_year."&month=".$next_month.$param."&fk_calendar=".$fk_calendar."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
-	if (empty($conf->dol_optimize_smallscreen)) {
-		$nav .= " &nbsp; <a href=\"?id=".$id."&year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param.'&amp;fk_calendar='.$fk_calendar.'" class="datenowlink">'.$langs->trans("Today").'</a> ';
-	}
-	$nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
-	$nav .= '<button type="submit" class="liste_titre button_search valignmiddle" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-
-	print $nav;
-	print '</form>';
+print '<div class="bookcalpublicarea centpercent center" style="min-width:30%;position:absolute;width:fit-content;height:70%;top:60%;left: 50%;transform: translate(-50%, -50%);">';
+print '<div class="bookcalform boxtable" style="border:thin solid gray;padding:5px;min-height:50%">';
+if ($action == 'afteradd') {
+	print '<h2>';
+	print $langs->trans("BookingSuccessfullyBooked");
+	print '</h2>';
+	print $langs->trans("BookingReservationHourAfter", dol_print_date(GETPOST("datetimebooking", 'int'), "dayhourtext"));
 } else {
-	print '<span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span>';
-}
-print '</td>';
-print '<td>';
-print '<div class="center hidden bookingtab" style="height:50%">';
-print '<span id="bookingtabspandate"></span>';
-print '</div>';
-print '</td>';
-print '</tr>';
-
-print '<tr>';
-print '<td>';
-
-print '<h2>'.(!empty($availability->label) ? $availability->label : $availability->ref).'</h2>';
-print '<span>'.$langs->trans("AppointmentDuration", $availability->duration).'</span>';
-if ($action == 'create') {
-	print '<br>';
-	if (empty($datetimebooking)) {
-		$timebookingarray = explode(":", $timebooking);
-		$datetimebooking = dol_time_plus_duree($datetimechosen, intval($timebookingarray[0]), "h");
-		$datetimebooking = dol_time_plus_duree($datetimebooking, intval($timebookingarray[1]), "i");
-	}
-	print '<span>'.img_picto("", "calendar")."&nbsp;".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
-}
-print '</td>';
-
-print '<td>';
-if ($action == "create") {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="datetimebooking" value="'.$datetimebooking.'">';
-	print '<input type="hidden" name="datechosen" value="'.$datechosen.'">';
-	print '<input type="hidden" name="id" value="'.$id.'">';
-	print '<input type="hidden" name="fk_calendar" value="'.$fk_calendar.'">';
-	print '<input type="hidden" name="duration" value="'.$availability->duration.'">';
-
-	// Lastname
-	print '<tr><td>'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
-	// Firstname
-	print '<tr><td>'.$langs->trans("Firstname").' <span class="star">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
-	// EMail
-	print '<tr><td>'.$langs->trans("Email").' <span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
-
-	// Comments
+	print '<table>';
 	print '<tr>';
-	print '<td class="tdtop">'.$langs->trans("Message").'</td>';
-	print '<td class="tdtop"><textarea name="description" id="description" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_2.'">'.dol_escape_htmltag(GETPOST('description', 'restricthtml'), 0, 1).'</textarea></td>';
-	print '</tr>'."\n";
-	print '</table>'."\n";
-	print '<div class="center">';
-	print '<input type="submit" value="'.$langs->trans("Submit").'" id="submitsave" class="button">';
-	print '</div>';
-	print '</form>';
-} else {
-	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
-	print ' <tr class="liste_titre">';
-	// Column title of weeks numbers
-	echo '  <td class="center">#</td>';
-	$i = 0;
-	while ($i < 7) {
-		print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
-		$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
-		if (!empty($conf->dol_optimize_smallscreen)) {
-			$labelshort = array(0=>'SundayMin', 1=>'MondayMin', 2=>'TuesdayMin', 3=>'WednesdayMin', 4=>'ThursdayMin', 5=>'FridayMin', 6=>'SaturdayMin');
-			print $langs->trans($labelshort[$numdayinweek]);
-		} else {
-			print $langs->trans("Day".$numdayinweek);
-		}
-		print '  </td>'."\n";
-		$i++;
-	}
-	echo ' </tr>'."\n";
-	$todayarray = dol_getdate($now, 'fast');
-	$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
-	$availabilities_start = $availability->start;
-	$availabilities_end = $availability->end;
+	print '<td>';
+	print '<a href="'.$backtopage.'">Cancel</a>';
+	print '</td>';
+	print '<td>';
+	if ($action == 'create') {
+		print '<span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span>';
+	} else {
+		print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="fk_calendar" value="'.$fk_calendar.'">';
 
-	for ($iter_week = 0; $iter_week < 6; $iter_week++) {
-		echo " <tr>\n";
-		// Get date of the current day, format 'yyyy-mm-dd'
-		if ($tmpday <= 0) { // If number of the current day is in previous month
-			$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
-		} elseif ($tmpday <= $max_day_in_month) { // If number of the current day is in current month
-			$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
-		} else // If number of the current day is in next month
-		{
-			$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
+		$nav = "<a href=\"?id=".$id."&year=".$prev_year."&month=".$prev_month.$param."&fk_calendar=".$fk_calendar."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
+		$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%b %Y");
+		$nav .= " </span>\n";
+		$nav .= " &nbsp; <a href=\"?id=".$id."&year=".$next_year."&month=".$next_month.$param."&fk_calendar=".$fk_calendar."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
+		if (empty($conf->dol_optimize_smallscreen)) {
+			$nav .= " &nbsp; <a href=\"?id=".$id."&year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param.'&amp;fk_calendar='.$fk_calendar.'" class="datenowlink">'.$langs->trans("Today").'</a> ';
 		}
-		// Get week number for the targeted date '$currdate0'
-		$numweek0 = date("W", strtotime(date($currdate0)));
-		// Show the week number, and define column width
-		echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
+		$nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
+		$nav .= '<button type="submit" class="liste_titre button_search valignmiddle" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 
-		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
-			if ($tmpday <= 0) {
-				/* Show days before the beginning of the current month (previous month)  */
-				$style = 'cal_other_month cal_past';
-				if ($iter_day == 6) {
-					$style .= ' cal_other_month_right';
-				}
-				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-				show_day_events($max_day_in_prev_month + $tmpday, $prev_month, $prev_year);
-				echo "  </td>\n";
-			} elseif ($tmpday <= $max_day_in_month) {
-				/* Show days of the current month */
-				$curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
-				$style = 'cal_current_month';
-				if ($iter_day == 6) {
-					$style .= ' cal_current_month_right';
-				}
-				$today = 0;
-				if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) {
-					$today = 1;
-				}
-				if ($curtime > $todaytms && $availabilities_start <= $curtime && $availabilities_end >= $curtime) {
-					$style .= ' cal_available cursorpointer';
-				}
-				if ($curtime < $todaytms) {
-					$style .= ' cal_past';
-				}
-				$dateint = sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $tmpday);
-				if (!empty(explode('dayevent_', $datechosen)[1]) && explode('dayevent_', $datechosen)[1] == $dateint) {
-					$style .= ' cal_chosen';
-					$isdatechosen = true;
-				}
-				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-				show_day_events($tmpday, $month, $year, $today);
-				echo "</td>\n";
-			} else {
-				/* Show days after the current month (next month) */
-				$style = 'cal_other_month';
-				if ($iter_day == 6) {
-					$style .= ' cal_other_month_right';
-				}
-				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-				show_day_events($tmpday - $max_day_in_month, $next_month, $next_year);
-				echo "</td>\n";
-			}
-			$tmpday++;
-		}
-		echo " </tr>\n";
+		print $nav;
+		print '</form>';
 	}
-	print '</table>';
 	print '</td>';
 	print '<td>';
 	print '<div class="center hidden bookingtab" style="height:50%">';
-	print '<div  style="margin-top:8px;max-height:330px" class="div-table-responsive-no-min">';
-	print '<form name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="id" value="'.$id.'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="create">';
-	print '<input type="hidden" id="datechosen" name="datechosen" value="">';
-	print '<input type="hidden" id="datetimechosen" name="datetimechosen" value="">';
-	print '<input type="hidden" id="fk_calendar" name="fk_calendar" value="'.$fk_calendar.'">';
-
-	$hoursavailabilities_start = $availability->startHour;
-	$hoursavailabilities_end = $availability->endHour;
-	$hoursavailabilities_duration = $availability->duration;
-	for ($i=$hoursavailabilities_start; $i < $hoursavailabilities_end; $i++) {
-		for ($j=0; $j < 60 ; $j += $hoursavailabilities_duration) {
-			$timestring = ($i < 10 ? '0'.$i : $i).':'.($j < 10 ? '0'.$j : $j);
-			$timestringid = ($i < 10 ? '0'.$i : $i).''.($j < 10 ? '0'.$j : $j);
-			print '<span id="'.$timestringid.'" class="btnformbooking"><input type="submit" class="button" name="timebooking" value="'.$timestring.'"><br></span>';
-		}
-	}
-	print '</form>';
+	print '<span id="bookingtabspandate"></span>';
 	print '</div>';
-	print '</div>';
-
 	print '</td>';
-}
-print '</td>';
-print '</tr>';
-print '</table>';
-print '</div>';
-print '</div>';
+	print '</tr>';
 
-print '<script>';
-print '
-function hideTimeBooking(time){
-	console.log("#"+time);
-	$("#"+time).hide();
-}';
-print '$(document).ready(function() {
-    $(".cal_available").on("click", function(){
-		$(".cal_chosen").removeClass("cal_chosen");
-		$(this).addClass("cal_chosen");
-		$.ajax({
-			type: "POST",
-			url: "'.DOL_URL_ROOT.'/core/ajax/bookcalAjax.php",
-			data: {
-				action: "verifyavailability",
-				id: '.$id.',
-				datetocheck: $(this).children("div").data("datetime"),
-				token: "'.currentToken().'",
-			}
-		}).done(function (data) {
-			data = JSON.parse(data);
-			$(".btnformbooking").show();
-			console.log("We show all booking");
-			if(data["code"] == "SUCCESS"){
-				timearray = data["content"];
-				timearray.forEach((time) => hideTimeBooking(time));
-				console.log("We hide all taken time for booking");
+	print '<tr>';
+	print '<td>';
+
+	print '<h2>'.(!empty($availability->label) ? $availability->label : $availability->ref).'</h2>';
+	print '<span>'.$langs->trans("AppointmentDuration", $availability->duration).'</span>';
+	if ($action == 'create') {
+		print '<br>';
+		if (empty($datetimebooking)) {
+			$timebookingarray = explode(":", $timebooking);
+			$datetimebooking = dol_time_plus_duree($datetimechosen, intval($timebookingarray[0]), "h");
+			$datetimebooking = dol_time_plus_duree($datetimebooking, intval($timebookingarray[1]), "i");
+		}
+		print '<span>'.img_picto("", "calendar")."&nbsp;".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
+	}
+	print '</td>';
+
+	print '<td>';
+	if ($action == "create") {
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="datetimebooking" value="'.$datetimebooking.'">';
+		print '<input type="hidden" name="datechosen" value="'.$datechosen.'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="fk_calendar" value="'.$fk_calendar.'">';
+		print '<input type="hidden" name="duration" value="'.$availability->duration.'">';
+
+		// Lastname
+		print '<tr><td>'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+		// Firstname
+		print '<tr><td>'.$langs->trans("Firstname").' <span class="star">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+		// EMail
+		print '<tr><td>'.$langs->trans("Email").' <span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+
+		// Comments
+		print '<tr>';
+		print '<td class="tdtop">'.$langs->trans("Message").'</td>';
+		print '<td class="tdtop"><textarea name="description" id="description" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_2.'">'.dol_escape_htmltag(GETPOST('description', 'restricthtml'), 0, 1).'</textarea></td>';
+		print '</tr>'."\n";
+		print '</table>'."\n";
+		print '<div class="center">';
+		print '<input type="submit" value="'.$langs->trans("Submit").'" id="submitsave" class="button">';
+		print '</div>';
+		print '</form>';
+	} else {
+		print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
+		print ' <tr class="liste_titre">';
+		// Column title of weeks numbers
+		echo '  <td class="center">#</td>';
+		$i = 0;
+		while ($i < 7) {
+			print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
+			$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
+			if (!empty($conf->dol_optimize_smallscreen)) {
+				$labelshort = array(0=>'SundayMin', 1=>'MondayMin', 2=>'TuesdayMin', 3=>'WednesdayMin', 4=>'ThursdayMin', 5=>'FridayMin', 6=>'SaturdayMin');
+				print $langs->trans($labelshort[$numdayinweek]);
 			} else {
-				if(data["code"] == "NO_DATA_FOUND"){
-					console.log("No booking to hide");
-				} else {
-					console.log(data["message"]);
-				}
+				print $langs->trans("Day".$numdayinweek);
 			}
+			print '  </td>'."\n";
+			$i++;
+		}
+		echo ' </tr>'."\n";
+		$todayarray = dol_getdate($now, 'fast');
+		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
+		$availabilities_start = $availability->start;
+		$availabilities_end = $availability->end;
+
+		for ($iter_week = 0; $iter_week < 6; $iter_week++) {
+			echo " <tr>\n";
+			// Get date of the current day, format 'yyyy-mm-dd'
+			if ($tmpday <= 0) { // If number of the current day is in previous month
+				$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
+			} elseif ($tmpday <= $max_day_in_month) { // If number of the current day is in current month
+				$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
+			} else // If number of the current day is in next month
+			{
+				$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
+			}
+			// Get week number for the targeted date '$currdate0'
+			$numweek0 = date("W", strtotime(date($currdate0)));
+			// Show the week number, and define column width
+			echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
+
+			for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+				if ($tmpday <= 0) {
+					/* Show days before the beginning of the current month (previous month)  */
+					$style = 'cal_other_month cal_past';
+					if ($iter_day == 6) {
+						$style .= ' cal_other_month_right';
+					}
+					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+					show_day_events($max_day_in_prev_month + $tmpday, $prev_month, $prev_year);
+					echo "  </td>\n";
+				} elseif ($tmpday <= $max_day_in_month) {
+					/* Show days of the current month */
+					$curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
+					$style = 'cal_current_month';
+					if ($iter_day == 6) {
+						$style .= ' cal_current_month_right';
+					}
+					$today = 0;
+					if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) {
+						$today = 1;
+					}
+					if ($curtime > $todaytms && $availabilities_start <= $curtime && $availabilities_end >= $curtime) {
+						$style .= ' cal_available cursorpointer';
+					}
+					if ($curtime < $todaytms) {
+						$style .= ' cal_past';
+					}
+					$dateint = sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $tmpday);
+					if (!empty(explode('dayevent_', $datechosen)[1]) && explode('dayevent_', $datechosen)[1] == $dateint) {
+						$style .= ' cal_chosen';
+						$isdatechosen = true;
+					}
+					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+					show_day_events($tmpday, $month, $year, $today);
+					echo "</td>\n";
+				} else {
+					/* Show days after the current month (next month) */
+					$style = 'cal_other_month';
+					if ($iter_day == 6) {
+						$style .= ' cal_other_month_right';
+					}
+					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+					show_day_events($tmpday - $max_day_in_month, $next_month, $next_year);
+					echo "</td>\n";
+				}
+				$tmpday++;
+			}
+			echo " </tr>\n";
+		}
+		print '</table>';
+		print '</td>';
+		print '<td>';
+		print '<div class="center hidden bookingtab" style="height:50%">';
+		print '<div  style="margin-top:8px;max-height:330px" class="div-table-responsive-no-min">';
+		print '<form name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="create">';
+		print '<input type="hidden" id="datechosen" name="datechosen" value="">';
+		print '<input type="hidden" id="datetimechosen" name="datetimechosen" value="">';
+		print '<input type="hidden" id="fk_calendar" name="fk_calendar" value="'.$fk_calendar.'">';
+
+		$hoursavailabilities_start = $availability->startHour;
+		$hoursavailabilities_end = $availability->endHour;
+		$hoursavailabilities_duration = $availability->duration;
+		for ($i=$hoursavailabilities_start; $i < $hoursavailabilities_end; $i++) {
+			for ($j=0; $j < 60 ; $j += $hoursavailabilities_duration) {
+				$timestring = ($i < 10 ? '0'.$i : $i).':'.($j < 10 ? '0'.$j : $j);
+				$timestringid = ($i < 10 ? '0'.$i : $i).''.($j < 10 ? '0'.$j : $j);
+				print '<span id="'.$timestringid.'" class="btnformbooking"><input type="submit" class="button" name="timebooking" value="'.$timestring.'"><br></span>';
+			}
+		}
+		print '</form>';
+		print '</div>';
+		print '</div>';
+
+		print '</td>';
+	}
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+	print '</div>';
+	print '</div>';
+
+	print '<script>';
+	print '
+	function hideTimeBooking(time){
+		console.log("#"+time);
+		$("#"+time).hide();
+	}';
+	print '$(document).ready(function() {
+		$(".cal_available").on("click", function(){
+			$(".cal_chosen").removeClass("cal_chosen");
+			$(this).addClass("cal_chosen");
+			$.ajax({
+				type: "POST",
+				url: "'.DOL_URL_ROOT.'/core/ajax/bookcalAjax.php",
+				data: {
+					action: "verifyavailability",
+					id: '.$id.',
+					datetocheck: $(this).children("div").data("datetime"),
+					token: "'.currentToken().'",
+				}
+			}).done(function (data) {
+				data = JSON.parse(data);
+				$(".btnformbooking").show();
+				console.log("We show all booking");
+				if(data["code"] == "SUCCESS"){
+					timearray = data["content"];
+					timearray.forEach((time) => hideTimeBooking(time));
+					console.log("We hide all taken time for booking");
+				} else {
+					if(data["code"] == "NO_DATA_FOUND"){
+						console.log("No booking to hide");
+					} else {
+						console.log(data["message"]);
+					}
+				}
+			});
+			$(".bookingtab").removeClass("hidden");
+			$("#bookingtabspandate").text($(this).children("div").data("date"));
+			$("#datechosen").val($(this).children("div").attr("id"));
+			$("#datetimechosen").val($(this).children("div").data("datetime"));
 		});
-		$(".bookingtab").removeClass("hidden");
-		$("#bookingtabspandate").text($(this).children("div").data("date"));
-		$("#datechosen").val($(this).children("div").attr("id"));
-		$("#datetimechosen").val($(this).children("div").data("datetime"));
-	});
 
-	$("btnformbooking")
+		$("btnformbooking")
 
-	'.($datechosen ? '$(".cal_chosen").trigger( "click" )' : '').'
-});';
-print '</script>';
+		'.($datechosen ? '$(".cal_chosen").trigger( "click" )' : '').'
+	});';
+	print '</script>';
+}
 
 llxFooter('', 'public');
 
