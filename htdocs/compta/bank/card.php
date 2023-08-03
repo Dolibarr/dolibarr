@@ -627,7 +627,13 @@ if ($action == 'create') {
 	if (isModEnabled('accounting')) {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
+		print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
 		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+		if ($formaccounting->nbaccounts == 0) {
+			$langs->load("errors");
+			$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
+			print $form->textwithpicto('', $htmltext);
+		}
 		print '</td></tr>';
 	} else {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
@@ -1076,7 +1082,13 @@ if ($action == 'create') {
 		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		if (isModEnabled('accounting')) {
+			print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
 			print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+			if ($formaccounting->nbaccounts == 0) {
+				$langs->load("errors");
+				$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
+				print $form->textwithpicto('', $htmltext);
+			}
 		} else {
 			print '<input type="text" name="account_number" value="'.(GETPOST("account_number") ? GETPOST("account_number") : $object->account_number).'">';
 		}
@@ -1111,7 +1123,7 @@ if ($action == 'create') {
 
 			// IBAN
 			print '<tr><td>';
-			$tooltip = $langs->trans("Example").':<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
+			$tooltip = $langs->trans("Example").':<br>CH93 0076 2011 6238 5295 7<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
 			print $form->textwithpicto($langs->trans($ibankey), $tooltip);
 			print '</td>';
 			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOSTISSET('iban') ? GETPOST('iban',  'alphanohtml') : $object->iban).'"></td></tr>';

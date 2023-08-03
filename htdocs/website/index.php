@@ -2921,7 +2921,7 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<span class="websiteselection">';
 			// Do not use ajax, we need a refresh of full page when we change status of a website
 			//print '<div class="inline-block marginrightonly">';
-			//print ajax_object_onoff($object, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle', 'statuswebsite');
+			//print ajax_object_onoff($object, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block', 'statuswebsite');
 			//print '</div>';
 			if ($website->status == $website::STATUS_DRAFT) {
 				$text_off = 'Offline';
@@ -3097,7 +3097,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</div>'; // Close current websitebar to open a new one
 
 		print '<!-- Toolbar for websitepage -->';
-		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'">';
+		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'>';
 
 		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
 		print $langs->trans("PageContainer").': ';
@@ -3147,7 +3147,7 @@ if (!GETPOST('hide_websitemenu')) {
 					print '<span class="valignmiddle disabled opacitymedium">'.img_picto($langs->trans($text_off), 'switch_on').'</span>';
 				}
 			} else {
-				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage');
+				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage');
 			}
 			//print '</div>';
 			print '</span>';
@@ -3303,6 +3303,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<div class="inline-block marginrightonly">';	// Button edit inline
 
 				print '<span id="switchckeditorinline">'."\n";
+				// Enable CKEditor inline with js on section and div with conteneditable=true
 				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
 				print '<script type="text/javascript">
 						$(document).ready(function() {
@@ -3321,25 +3322,52 @@ if (!GETPOST('hide_websitemenu')) {
 								if (! isEditingEnabled || forceenable)
 								{
 									console.log("Enable inline edit");
+
 									jQuery(\'section[contenteditable="true"],div[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
-										CKEDITOR.inline(idtouse, {
-											// Allow some non-standard markup that we used in the introduction.
-											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
-											//extraPlugins: \'sourcedialog\',
-											removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
-											// Show toolbar on startup (optional).
-											// startupFocus: true
-										});
+										if (idtouse !== undefined) {
+											var inlineditor = CKEDITOR.inline(idtouse, {
+												// Allow some non-standard markup that we used in the introduction.
+												// + a[target];div{float,display} ?
+												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+												//extraPlugins: \'sourcedialog\',
+												removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
+												// Show toolbar on startup (optional).
+												// startupFocus: true
+											});
+
+											// Custom bar tool
+											// Note the Source tool does not work on inline
+											inlineditor.config.toolbar = [
+											    [\'Templates\',\'NewPage\'],
+											    [\'Save\'],
+											    [\'Maximize\',\'Preview\'],
+											    [\'PasteText\'],
+											    [\'Undo\',\'Redo\',\'-\',\'Find\',\'Replace\',\'-\',\'SelectAll\',\'RemoveFormat\'],
+											    [\'CreateDiv\',\'ShowBlocks\'],
+											    [\'Form\', \'Checkbox\', \'Radio\', \'TextField\', \'Textarea\', \'Select\', \'Button\', \'ImageButton\', \'HiddenField\'],
+											    [\'Bold\',\'Italic\',\'Underline\',\'Strike\',\'Superscript\'],
+											    [\'NumberedList\',\'BulletedList\',\'-\',\'Outdent\',\'Indent\',\'Blockquote\'],
+											    [\'JustifyLeft\',\'JustifyCenter\',\'JustifyRight\',\'JustifyBlock\'],
+											    [\'Link\',\'Unlink\'],
+											    [\'Image\',\'Table\',\'HorizontalRule\'],
+											    [\'Styles\',\'Format\',\'Font\',\'FontSize\'],
+											    [\'TextColor\',\'BGColor\']
+											];
+
+											// Start editor
+											//inlineditor.on(\'instanceReady\', function () {
+											    // ...
+											//});
+
+										}
 									})
 
 									isEditingEnabled = true;
-								}
-								else {
+								} else {
 									console.log("Disable inline edit");
-									for(name in CKEDITOR.instances)
-									{
+									for(name in CKEDITOR.instances) {
 									    CKEDITOR.instances[name].destroy(true);
 									}
 									isEditingEnabled = false;
@@ -3369,6 +3397,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '</div>';
 
 				// Set page as homepage
+				print '<span class="websiteselection">';
 				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) {
 					//$disabled=' disabled="disabled"';
 					//print '<span class="button bordertransp disabled"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home"></span></span>';
@@ -3392,6 +3421,7 @@ if (!GETPOST('hide_websitemenu')) {
 					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&pageid='.((int) $websitepage->id).'&website='.urlencode($website->ref);	// action=delete for webpage, deletesite for website
 				}
 				print '<a href="'.$url.'" class="button buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
+				print '</span>';
 			}
 		}
 
@@ -4789,7 +4819,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<a class="editfielda  marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
 
 					print '<span class="marginleftonly marginrightonly"></span>';
-					print ajax_object_onoff($answerrecord, 'status', 'status', 'Enabled', 'Disabled', array(), 'valignmiddle');
+					print ajax_object_onoff($answerrecord, 'status', 'status', 'Enabled', 'Disabled', array(), 'valignmiddle inline-block');
 
 					print '</td>';
 

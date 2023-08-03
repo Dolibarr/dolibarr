@@ -1591,9 +1591,9 @@ class Form
 
 					if (empty($outputmode)) {
 						if (in_array($obj->rowid, $selected)) {
-							$out .= '<option value="' . $obj->rowid . '" selected data-html="' . dol_escape_htmltag($labelhtml) . '">' . $label . '</option>';
+							$out .= '<option value="' . $obj->rowid . '" selected data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
 						} else {
-							$out .= '<option value="' . $obj->rowid . '" data-html="' . dol_escape_htmltag($labelhtml) . '">' . $label . '</option>';
+							$out .= '<option value="' . $obj->rowid . '" data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
 						}
 					} else {
 						array_push($outarray, array('key' => $obj->rowid, 'value' => $label, 'label' => $label, 'labelhtml' => $labelhtml));
@@ -3547,7 +3547,25 @@ class Form
 					$label = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $label, 1);
 				}
 
-				$optlabel = $objp->ref;
+				switch ($objp->fk_product_type) {
+					case Product::TYPE_PRODUCT:
+						$picto = 'product';
+						break;
+					case Product::TYPE_SERVICE:
+						$picto = 'service';
+						break;
+					default:
+						$picto = '';
+						break;
+				}
+
+				if (empty($picto)) {
+					$optlabel = '';
+				} else {
+					$optlabel = img_object('', $picto, 'class="paddingright classfortooltip"', 0, 0, 1);
+				}
+
+				$optlabel .= $objp->ref;
 				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
 					$optlabel .= ' <span class="opacitymedium">(' . $objp->ref_fourn . ')</span>';
 				}
@@ -8120,19 +8138,23 @@ class Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
+					$labelhtml = '';
 					$tmparray = explode(',', $fieldstoshow);
 					$oldvalueforshowoncombobox = 0;
 					foreach ($tmparray as $key => $val) {
 						$val = preg_replace('/t\./', '', $val);
 						$label .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
+						$labelhtml .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
 						$label .= $obj->$val;
-						$oldvalueforshowoncombobox = !empty($objecttmp->fields[$val]['showoncombobox']) ? $objecttmp->fields[$val]['showoncombobox'] : 0;
+						$labelhtml .= $obj->$val;
+
+						$oldvalueforshowoncombobox = empty($objecttmp->fields[$val]['showoncombobox']) ? 0 : $objecttmp->fields[$val]['showoncombobox'];
 					}
 					if (empty($outputmode)) {
 						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
-							$out .= '<option value="' . $obj->rowid . '" selected>' . $label . '</option>';
+							$out .= '<option value="' . $obj->rowid . '" selected data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
 						} else {
-							$out .= '<option value="' . $obj->rowid . '">' . $label . '</option>';
+							$out .= '<option value="' . $obj->rowid . '" data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
 						}
 					} else {
 						array_push($outarray, array('key' => $obj->rowid, 'value' => $label, 'label' => $label));
@@ -8614,9 +8636,10 @@ class Form
 						$out .= ' selected';
 					}
 					if (!empty($tmplabelhtml)) {
-						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml) . '"';
+						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml, 0, 0, '', 0, 1) . '"';
 					} else {
-						$out .= ' data-html="' . dol_escape_htmltag(($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #' . $tmpcolor . '"') : '') . $newval) . '"';
+						$tmplabelhtml = ($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #' . $tmpcolor . '"') : '') . $newval;
+						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml, 0, 0, '', 0, 1) . '"';
 					}
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
@@ -8633,7 +8656,9 @@ class Form
 			if ($addjscombo == 1) {
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ? constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
 				$out .= 'function formatResult(record, container) {' . "\n";
-				$out .= '	if ($(record.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(record.element).attr("data-html"));		// If property html set, we decode html entities and use this' . "\n";
+				// If property html set, we decode html entities and use this.
+				// Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, '', 0, 1) when building the select option.
+				$out .= '	if ($(record.element).attr("data-html") != undefined) { return htmlEntityDecodeJs($(record.element).attr("data-html")); }'."\n";
 				$out .= '	return record.text;';
 				$out .= '}' . "\n";
 				$out .= 'function formatSelection(record) {' . "\n";

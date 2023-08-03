@@ -3210,7 +3210,7 @@ if ($action == 'create') {
 	} else {
 		print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 		print '<td colspan="2">';
-		$filter = '((s.client:=:1,3) AND (s.status:=:1))';
+		$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		// Option to reload page to retrieve customer informations.
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
@@ -3552,9 +3552,15 @@ if ($action == 'create') {
 					$tmp .= ' disabled';
 				}
 				$tmp .= '> ';
-				// Show credit note options only if we checked credit note
+				// Show credit note options only if we checked credit note and disable standard invoice if "create credit note" button is pressed
 				print '<script type="text/javascript">
     			jQuery(document).ready(function() {
+					if (jQuery("#radio_creditnote").is(":checked")) 
+                    {
+                        jQuery("#radio_standard").prop("disabled", true);
+                    } else {
+                        jQuery("#radio_standard").prop("disabled", false);
+                    }
     				if (! jQuery("#radio_creditnote").is(":checked"))
     				{
     					jQuery("#credit_note_options").hide();

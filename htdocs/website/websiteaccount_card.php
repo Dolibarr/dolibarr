@@ -66,11 +66,11 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-// Security check - Protection if external user
+// Security check
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'website', $id);
-if (empty($user->hasRight('website', 'read'))) {
+if (!$user->hasRight('website', 'read')) {
 	accessforbidden('NotAllowed');
 }
 

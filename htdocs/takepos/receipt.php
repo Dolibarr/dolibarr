@@ -136,7 +136,7 @@ if ($object->statut == Facture::STATUS_DRAFT) {
 } else {
 	print $object->ref;
 }
-if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
+if (!empty($conf->global->TAKEPOS_SHOW_CUSTOMER)) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
 		if ($object->socid > 0) {
@@ -146,6 +146,9 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 		}
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
+}
+if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
+	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 ?>
 </p>
@@ -256,14 +259,14 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 
 // Now show local taxes if company uses them
 
-if ($mysoc->useLocalTax(1) || price2num($object->total_localtax1, 'MU')) { ?>
+if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
 <?php } ?>
-<?php if ($mysoc->useLocalTax(2) || price2num($object->total_localtax2, 'MU')) { ?>
+<?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";

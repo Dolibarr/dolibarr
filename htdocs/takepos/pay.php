@@ -96,28 +96,34 @@ if (isModEnabled('stripe')) {
 	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
 	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
-	?>
+
+	$usestripeterminals = getDolGlobalString('STRIPE_LOCATION');
+
+	if ($usestripeterminals) {
+		?>
 <script src="https://js.stripe.com/terminal/v1/"></script>
 <script>
 var terminal = StripeTerminal.create({
   onFetchConnectionToken: fetchConnectionToken,
   onUnexpectedReaderDisconnect: unexpectedDisconnect,
 });
+
 function unexpectedDisconnect() {
   // In this function, your app should notify the user that the reader disconnected.
   // You can also include a way to attempt to reconnect to a reader.
   console.log("Disconnected from reader")
 }
+
 function fetchConnectionToken() {
-	<?php
-	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
-	if (!empty($conf->global->STRIPE_LOCATION)) {
-		$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
-	}
-	if (!empty($stripeacc)) {
-		$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
-	}
-	?>
+		<?php
+		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
+		if (!empty($conf->global->STRIPE_LOCATION)) {
+			$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
+		}
+		if (!empty($stripeacc)) {
+			$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
+		}
+		?>
   // Do not cache or hardcode the ConnectionToken. The SDK manages the ConnectionToken's lifecycle.
   return fetch('<?php echo $urlconnexiontoken; ?>', { method: "POST" })
 	.then(function(response) {
@@ -127,8 +133,11 @@ function fetchConnectionToken() {
 	  return data.secret;
 	});
 }
+
 </script>
-<?php }
+		<?php
+	}
+}
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
