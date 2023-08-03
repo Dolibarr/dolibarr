@@ -887,7 +887,8 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
-	 *	Create a payment order into prelevement_demande then send the payment order to Stripe (for a direct debit order or a credit transfer order).
+	 *  Create a direct debit order into prelevement_bons then
+	 *  Send the payment order to Stripe (for a direct debit order or a credit transfer order).
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$did			ID of unitary payment request to pay
@@ -895,7 +896,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *	@return     int         			<0 if KO, >0 if OK
 	 */
-	public function makeStripeSepaRequest($fuser, $did = 0, $type = 'direct-debit', $sourcetype = 'facture')
+	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture')
 	{
 		global $conf, $mysoc, $user, $langs;
 
@@ -932,7 +933,7 @@ abstract class CommonInvoice extends CommonObject
 			if ($type != 'direct-debit') {
 				$sql .= " AND fk_facture_fourn = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
 			}
-			$sql .= " AND traite = 0";	// Add a protection to not process twice. We select only pending requests with no credit transfer order created yet.
+			$sql .= " AND traite = 0";	// To not process payment request that were already converted into a direct debit or credit transfer order (Note: fk_prelevement_bons is also empty when traite = 0)
 
 			dol_syslog(get_class($this)."::makeStripeSepaRequest load requests to process", LOG_DEBUG);
 			$resql = $this->db->query($sql);
