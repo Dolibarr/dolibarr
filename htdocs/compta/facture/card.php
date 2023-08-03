@@ -3125,12 +3125,12 @@ if ($action == 'create') {
 	}
 
 	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
-	if ($socid > 0 && $fk_account) {	// A company has already been set and it has a default fk_account
-		$fk_account = !empty($fk_account) ? $fk_account : GETPOST("fk_account", 'int');
-	} else {	// No company forced
-		$fk_account = GETPOST("fk_account", 'int');
+	$selected_fk_account = $fk_account;
+	if ($socid > 0 && $fk_account) {
+		if (GETPOST('fk_account')!= -1 && $fk_account != GETPOST('fk_account', 'int')) {
+			$selected_fk_account = GETPOST('fk_account', 'int');
+		}
 	}
-
 	if (!empty($soc->id)) {
 		$absolute_discount = $soc->getAvailableDiscounts();
 	}
@@ -3682,7 +3682,7 @@ if ($action == 'create') {
 	// Payment term
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements((!empty('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? $cond_reglement_id : GETPOST('cond_reglement_id', 'int'), 'cond_reglement_id', -1, 1);
+	print $form->getSelectConditionsPaiements((!empty('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 
 
@@ -3739,14 +3739,20 @@ if ($action == 'create') {
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((!empty('mode_reglement_id') && GETPOST('mode_reglement_id') != 0)? $mode_reglement_id : GETPOST('mode_reglement_id'), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+
+	if (!empty(GETPOST('mode_reglement_id')) && $selected_mode_reglement_id != GETPOST('mode_reglement_id', 'int')) {
+		$selected_mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+	} else {
+		$selected_mode_reglement_id = $mode_reglement_id;
+	}
+	print $form->select_types_paiements($selected_mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
 	if (isModEnabled("banque")) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print $form->select_comptes(($selected_fk_account < 0 ? '' : $selected_fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
