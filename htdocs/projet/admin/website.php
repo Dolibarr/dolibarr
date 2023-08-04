@@ -147,8 +147,8 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 
 
 	// project visibility
-	$arrayofchoices = array('0' => $langs->trans("Everyone"), '1' => $langs->trans("AssignedContacts"));
-	print '<tr class="oddeven drag" id="trforcetype"><td>';
+	$arrayofchoices = array('0' => $langs->trans("AssignedContacts"), '1' => $langs->trans("Everyone"));
+	print '<tr class="oddeven drag"><td>';
 	print $langs->trans("Visibility");
 	print '</td><td class="right">';
 	print $form->selectarray('PROJET_VISIBILITY', $arrayofchoices, getDolGlobalInt('PROJET_VISIBILITY'), 0);

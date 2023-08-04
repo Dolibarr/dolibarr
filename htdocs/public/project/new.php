@@ -62,7 +62,6 @@ $errmsg = '';
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$visibility = getDolGlobalInt('PROJET_VISIBILITY');
 
 // Load translation files
 $langs->loadLangs(array("members", "companies", "install", "other", "projects"));
@@ -207,6 +206,8 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Project"))."<br>\n";
 	}
 
+	$visibility = getDolGlobalString('PROJET_VISIBILITY');
+
 	$proj = new Project($db);
 	$thirdparty = new Societe($db);
 
@@ -286,12 +287,12 @@ if (empty($reshook) && $action == 'add') {
 			$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
 		}
 
-		if (empty($visibility)) {
+		if ($visibility === "1") {
 			$proj->public = 1;
-		} elseif ($visibility = 1) {
-			$proj->public = 1;
-		} elseif ($visibility = 0) {
+		} elseif ($visibility === "0") {
 			$proj->public = 0;
+		} elseif (empty($visibility)) {
+			$proj->public = 1;
 		}
 
 		$proj->ref         = $defaultref;
