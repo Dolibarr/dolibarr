@@ -99,6 +99,7 @@ class Website extends CommonObject
 	 * @var integer|string date_modification
 	 */
 	public $date_modification;
+	public $tms;
 
 	/**
 	 * @var integer
@@ -109,6 +110,11 @@ class Website extends CommonObject
 	 * @var int User Create Id
 	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int User Modification Id
+	 */
+	public $fk_user_modif;
 
 	/**
 	 * @var string

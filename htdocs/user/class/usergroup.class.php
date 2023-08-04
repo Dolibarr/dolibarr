@@ -103,6 +103,8 @@ class UserGroup extends CommonObject
 	public $nb_rights; // Number of rights granted to the user
 	public $nb_users;  // Number of users in the group
 
+	public $rights;	// Permissions of the group
+
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
 
 	/**
