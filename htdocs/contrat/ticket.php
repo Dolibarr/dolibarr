@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2012-2023		Charlene BENKE		<charlie@patas-monkey.com>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2023		Charlene BENKE		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,27 +18,24 @@
  */
 
 /**
- *	  \file	   management/contrat/ticket.php
- *	  \ingroup	contrat
- *		\brief	  Page of associated ticket
+ *	  	\file	   	htdocs/contrat/ticket.php
+ *	  	\ingroup	contrat
+ *		\brief	 	Page of associated ticket
  */
 
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) 
-	$res=@include("../../main.inc.php");		// For root directory
-if (! $res && file_exists("../../../main.inc.php")) 
-	$res=@include("../../../main.inc.php");	// For "custom" directory
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
-require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
-require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 
-$langs->load("contracts");
-$langs->load("tickets");
+$langs->loadLangs(array('companies', 'contracts', 'tickets'));
 
 $socid=GETPOST('socid', 'int');
 $id=GETPOST('id', 'int');
@@ -63,11 +62,7 @@ $result=restrictedArea($user, 'contrat', $id);
 llxHeader("", $langs->trans("Tickets"), "Contrat");
 
 $form = new Form($db);
-
 $userstatic=new User($db);
-
-$object		= new Contrat($db);
-
 
 $object= new Contrat($db);
 $result=$object->fetch($id, $ref);
