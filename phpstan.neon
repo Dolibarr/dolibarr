@@ -2,17 +2,20 @@ parameters:
 	customRulesetUsed: true
 	fileExtensions:
 		- php
+	paths:
+	    - htdocs
 	excludePaths:
-		- 'htdocs/build/*'
-		- 'htdocs/custom/*'
-		- 'htdocs/dev/*'
-		- 'htdocs/doc/*'
-		- 'htdocs/documents/*'
-		- 'htdocs/includes/*'
-		- 'htdocs/install/doctemplates/*'
-		- 'htdocs/langs/*'
-		- 'htdocs/support/*'
-		- 'htdocs/test/*'
+		analyseAndScan:
+		- htdocs/custom
+		- htdocs/dev/*
+		- htdocs/doc/*
+		- htdocs/documents/*
+		- htdocs/install/doctemplates/*
+		- htdocs/langs/*
+		- htdocs/support/*
+		- htdocs/test/*
+		analyse:
+		- htdocs/includes/*
 	checkAlwaysTrueCheckTypeFunctionCall: false
 	checkAlwaysTrueInstanceof: false
 	checkAlwaysTrueStrictComparison: false

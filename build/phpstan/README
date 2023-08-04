@@ -14,4 +14,6 @@ composer require --dev phpstan/phpstan
 
 Execute:
 cd git/dolibarr
+mv htdocs/custom /tmp/
 php8.2 ../phpstan/htdocs/includes/bin/phpstan -v analyze -a build/phpstan/bootstrap.php htdocs/commande/class -l0 --memory-limit 12G
+mv /tmp/custom htdocs
