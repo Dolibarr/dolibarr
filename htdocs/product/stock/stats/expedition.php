@@ -95,7 +95,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 if ($id > 0 || !empty($ref)) {
-	$object = new ProductLot($db);
+	$object = new Productlot($db);
 	if ($ref) {
 		$tmp = explode('_', $ref);
 		$objectid = $tmp[0];
