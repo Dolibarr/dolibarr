@@ -4,6 +4,14 @@ https://phpstan.org
 
 PHPStan requires PHP >= 7.1
 
-Install:  composer require --dev phpstan/phpstan
-
 Config File:  phpstan.neon
+
+Install:  
+cd git
+mkdir phpstan
+cd phpstan
+composer require --dev phpstan/phpstan
+
+Execute:
+cd git/dolibarr
+php8.2 ../phpstan/htdocs/includes/bin/phpstan -v analyze -a build/phpstan/bootstrap.php htdocs/commande/class -l0 --memory-limit 2G

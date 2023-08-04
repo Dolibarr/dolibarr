@@ -2,6 +2,13 @@ parameters:
 	customRulesetUsed: true
 	fileExtensions:
 		- php
+	excludePaths:
+		- 'htdocs/build/*'
+		- 'htdocs/dev/*'
+		- 'htdocs/includes/*'
+		- 'htdocs/install/doctemplates/*'
+		- 'htdocs/langs/*'
+		- 'htdocs/test/*'
 	checkAlwaysTrueCheckTypeFunctionCall: false
 	checkAlwaysTrueInstanceof: false
 	checkAlwaysTrueStrictComparison: false
@@ -37,12 +44,10 @@ parameters:
 	    nodesByFileCountMax: 512
 	    nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: true
-	scopeClass: PHPStan\Analyser\Scope
 	universalObjectCratesClasses:
 		- stdClass
 		- SimpleXMLElement
 	earlyTerminatingMethodCalls: []
-	memoryLimitFile: %tmpDir%/.memory_limit
 	dynamicConstantNames:
 		- ICONV_IMPL
 		- PHP_VERSION
