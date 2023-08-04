@@ -167,7 +167,9 @@ abstract class CommonObject
 	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
-
+	/**
+	 * @var CommonObject To store old value of a modified ref
+	 */
 	public $oldref;
 
 	/**
