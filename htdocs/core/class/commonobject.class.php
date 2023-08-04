@@ -172,6 +172,8 @@ abstract class CommonObject
 	 */
 	public $oldref;
 
+	public $oldref;
+
 	/**
 	 * @var string		Column name of the ref field.
 	 */
