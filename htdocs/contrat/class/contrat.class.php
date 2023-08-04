@@ -2486,6 +2486,23 @@ class Contrat extends CommonObject
 		return $this->fetch_lines();
 	}
 
+	/**
+	 * 	Create an array of associated tickets
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
+	 */
+
+	public function getTicketsArray()
+	{
+		global $user;
+
+		$ticket = new Ticket($this->db);
+
+		$nbTicket =  $ticket->fetchAll($user,  'ASC', 't.datec',  '', 0, '', array('t.fk_contract' => $this->id));
+		$this->tickets = $ticket->lines;
+		return $nbTicket;
+	}
+
 
 	/**
 	 *  Create a document onto disk according to template module.
