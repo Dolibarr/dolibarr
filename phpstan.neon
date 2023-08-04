@@ -4,10 +4,14 @@ parameters:
 		- php
 	excludePaths:
 		- 'htdocs/build/*'
+		- 'htdocs/custom/*'
 		- 'htdocs/dev/*'
+		- 'htdocs/doc/*'
+		- 'htdocs/documents/*'
 		- 'htdocs/includes/*'
 		- 'htdocs/install/doctemplates/*'
 		- 'htdocs/langs/*'
+		- 'htdocs/support/*'
 		- 'htdocs/test/*'
 	checkAlwaysTrueCheckTypeFunctionCall: false
 	checkAlwaysTrueInstanceof: false
