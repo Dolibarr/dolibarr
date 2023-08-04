@@ -1,7 +1,8 @@
 <?php
 // Example to use PHPStan
 // cd git/dolibarr
-// /usr/bin/php7.2 ../phpstan.phar -l1 analyze htdocs/societe/website.php --memory-limit 2G
+// /usr/bin/php7.2 /pathtophpstan/phpstan.phar -l1 analyze htdocs/societe/website.php --memory-limit 2G
+// /usr/bin/php7.2 /pathtophpstan/phpstan analyze htdocs/societe/website.php --memory-limit 2G
 
 // Defined some constants and load Dolibarr env to reduce PHPStan bootstrap that fails to load a lot of things.
 define('DOL_DOCUMENT_ROOT', __DIR__ . '/../../htdocs');
