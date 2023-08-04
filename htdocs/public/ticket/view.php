@@ -339,7 +339,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</td></tr>';
 
 		// External contributors
-		if (!empty($conf->global->TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS)){
+		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')){
 			print '<tr><td>'.$langs->trans("ExternalContributors").'</td><td>';
 			if ($object->dao->id > 0) {
 				$contactlist = $object->dao->liste_contact(-1, 'external');
@@ -352,7 +352,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		// Add new external contributor
-		if (!empty($conf->global->TICKET_PUBLIC_SELECT_EXTERNAL_CONTRIBUTORS) && !empty($object->dao->fk_soc)){
+		if (getDolGlobalInt('TICKET_PUBLIC_SELECT_EXTERNAL_CONTRIBUTORS') && !empty($object->dao->fk_soc)){
 			print '<form method="post" id="form_view_add_contact" name="form_view_add_contact" action="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add_contact">';
