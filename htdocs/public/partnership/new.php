@@ -158,7 +158,7 @@ function llxFooterVierge()
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext ? '&'.$ext : '').'"></script>'."\n";
+		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 	}
 
 	print "</body>\n";
