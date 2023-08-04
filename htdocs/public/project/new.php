@@ -62,6 +62,7 @@ $errmsg = '';
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$visibility = getDolGlobalInt('PROJET_VISIBILITY');
 
 // Load translation files
 $langs->loadLangs(array("members", "companies", "install", "other", "projects"));
@@ -285,10 +286,17 @@ if (empty($reshook) && $action == 'add') {
 			$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
 		}
 
+		if (empty($visibility)) {
+			$proj->public = 1;
+		} elseif ($visibility = 1) {
+			$proj->public = 1;
+		} elseif ($visibility = 0) {
+			$proj->public = 0;
+		}
+
 		$proj->ref         = $defaultref;
 		$proj->statut      = $proj::STATUS_DRAFT;
 		$proj->status      = $proj::STATUS_DRAFT;
-		$proj->public      = 1;
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
 		$proj->description = GETPOST("description", "alphanohtml");
