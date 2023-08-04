@@ -36,6 +36,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
  */
 class Ticket extends CommonObject
 {
+
+	/**
+	 * @var db connector
+	 */
+	public $bd;
+	
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -628,6 +634,7 @@ class Ticket extends CommonObject
 		$sql .= " t.track_id,";
 		$sql .= " t.fk_soc,";
 		$sql .= " t.fk_project,";
+		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_assign,";
@@ -680,6 +687,7 @@ class Ticket extends CommonObject
 				$this->fk_soc = $obj->fk_soc;
 				$this->socid = $obj->fk_soc; // for fetch_thirdparty() method
 				$this->fk_project = $obj->fk_project;
+				$this->fk_contract = $obj->fk_contract;
 				$this->origin_email = $obj->origin_email;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_assign = $obj->fk_user_assign;
@@ -759,6 +767,7 @@ class Ticket extends CommonObject
 		$sql .= " t.track_id,";
 		$sql .= " t.fk_soc,";
 		$sql .= " t.fk_project,";
+		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
 		$sql .= " t.fk_user_create, uc.lastname as user_create_lastname, uc.firstname as user_create_firstname,";
 		$sql .= " t.fk_user_assign, ua.lastname as user_assign_lastname, ua.firstname as user_assign_firstname,";
@@ -778,8 +787,10 @@ class Ticket extends CommonObject
 		$sql .= " t.tms";
 		$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
 		// Add fields for extrafields
-		foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ",ef.".$key." as options_".$key : '');
+		if ($extrafields->attributes[$this->table_element]['count']> 0) {
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ",ef.".$key." as options_".$key : '');
+			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
@@ -788,8 +799,10 @@ class Ticket extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as uc ON uc.rowid=t.fk_user_create";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid=t.fk_user_assign";
-		if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
+		if ($extrafields->attributes[$this->table_element]['count']> 0) {
+			if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
+			}
 		}
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -810,6 +823,8 @@ class Ticket extends CommonObject
 					} else {
 						$sql .= " AND ".$key.' = '.((int) $value);
 					}
+				} elseif ($key == 't.fk_contract') {
+					$sql .= " AND ".$key.' = '.((int) $value);
 				} else {
 					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
@@ -847,6 +862,7 @@ class Ticket extends CommonObject
 					$line->track_id = $obj->track_id;
 					$line->fk_soc = $obj->fk_soc;
 					$line->fk_project = $obj->fk_project;
+					$line->fk_contract = $obj->fk_contract;
 					$line->origin_email = $obj->origin_email;
 
 					$line->fk_user_create = $obj->fk_user_create;
@@ -881,13 +897,14 @@ class Ticket extends CommonObject
 					$line->date_close = $this->db->jdate($obj->date_close);
 
 					// Extra fields
-					if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
-						foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-							$tmpkey = 'options_'.$key;
-							$line->{$tmpkey} = $obj->$tmpkey;
+					if ($extrafields->attributes[$this->table_element]['count']> 0) {
+						if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
+							foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+								$tmpkey = 'options_'.$key;
+								$line->{$tmpkey} = $obj->$tmpkey;
+							}
 						}
 					}
-
 					$this->lines[$i] = $line;
 					$i++;
 				}
@@ -2054,17 +2071,19 @@ class Ticket extends CommonObject
 	 */
 	public function setContract($contractid)
 	{
-		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setContract was called on objet with property table_element not defined", LOG_ERR);
-			return -1;
-		}
-
-		$result = $this->add_object_linked('contrat', $contractid);
-		if ($result) {
-			$this->fk_contract = $contractid;
-			return 1;
+		if ($this->id) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+			$sql .= " SET fk_contract = ".($contractid > 0 ? $contractid : "null");
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			dol_syslog(get_class($this).'::setContract sql='.$sql);
+			$resql = $this->db->query($sql);
+			print $sql;
+			if ($resql) {
+				return 1;
+			} else {
+				return -1;
+			}
 		} else {
-			dol_print_error($this->db);
 			return -1;
 		}
 	}
