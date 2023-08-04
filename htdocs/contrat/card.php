@@ -1514,7 +1514,7 @@ if ($action == 'create') {
 
 			// Area with common detail of line
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
+			print '<table class="notopnoleftnoright allwidth tableforservicepart1 centpercent">';
 
 			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.price_ht, cd.qty,";
 			$sql .= " cd.tva_tx, cd.vat_src_code, cd.remise_percent, cd.info_bits, cd.subprice, cd.multicurrency_subprice,";
@@ -1534,6 +1534,7 @@ if ($action == 'create') {
 
 				$objp = $db->fetch_object($result);
 
+				// Line title
 				print '<tr class="liste_titre'.($cursorline ? ' liste_titre_add' : '').'">';
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 				print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
@@ -1578,7 +1579,9 @@ if ($action == 'create') {
 					if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $objp->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') {
 						$moreparam = 'style="display: none;"';
 					}
+
 					print '<tr class="tdtop oddeven" '.$moreparam.'>';
+
 					// Label
 					if ($objp->fk_product > 0) {
 						$productstatic->id = $objp->fk_product;
@@ -1604,7 +1607,7 @@ if ($action == 'create') {
 							$description = ''; // Already added into main visible desc
 						}
 
-						echo $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+						print $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 3, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 
 						print '</td>';
 					} else {
@@ -1660,16 +1663,16 @@ if ($action == 'create') {
 
 					print "</tr>\n";
 
+					$colspan = 6;
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+						$colspan++;
+					}
+					if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+						$colspan++;
+					}
+
 					// Dates of service planed and real
 					if ($objp->subprice >= 0) {
-						$colspan = 6;
-
-						if (isModEnabled('margin') && getDolGlobalString('PRODUCT_USE_UNITS')) {
-							$colspan = 8;
-						} elseif (isModEnabled('margin') || getDolGlobalString('PRODUCT_USE_UNITS')) {
-							$colspan = 7;
-						}
-
 						print '<tr class="oddeven" '.$moreparam.'>';
 						print '<td colspan="'.$colspan.'">';
 
@@ -1826,8 +1829,17 @@ if ($action == 'create') {
 				if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $object->lines[$cursorline - 1]->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') {
 					$moreparam = 'style="display: none;"';
 				}
+
+				$colspan = 6;
+				if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+					$colspan++;
+				}
+				if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+					$colspan++;
+				}
+
 				print '<tr class="oddeven" '.$moreparam.'>';
-				print '<td class="tdhrthin" colspan="'.(isModEnabled('margin') ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
+				print '<td class="tdhrthin" colspan="'.$colspan.'"><hr class="opacitymedium tdhrthin"></td>';
 				print "</tr>\n";
 			}
 
