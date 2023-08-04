@@ -71,6 +71,9 @@ abstract class ModeleNumRefEvaluation
 	 */
 	public $error = '';
 
+	public $version;
+
+
 	/**
 	 *	Return if a module can be used or not
 	 *

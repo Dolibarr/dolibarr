@@ -91,6 +91,9 @@ abstract class ModeleNumRefPropales
 	 */
 	public $error = '';
 
+	public $version;
+
+
 	/**
 	 * Return if a module can be used or not
 	 *
