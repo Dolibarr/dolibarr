@@ -805,7 +805,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print '</form>'; */
 } elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'categories' || $action == 'reopen'
-	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
+	|| $action== 'contrat' || $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {
 		// or for unauthorized internals users
 		if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
@@ -1000,6 +1000,33 @@ if ($action == 'create' || $action == 'presend') {
 			}
 		}
 
+		// Contract
+		if (isModEnabled('contrat')) {
+			$langs->load('contracts');
+			$morehtmlref .=  '<br>';
+
+			$morehtmlref .=  $langs->trans('Contract');
+
+			if ($action != 'contrat') {
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+				$morehtmlref .=  img_edit($langs->trans('SetContract'), 1);
+				$morehtmlref .=  '</a>';
+			}
+			if ($action == 'contrat') {
+				$formcontract = new Formcontract($db);
+				$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1,1);
+			} else {
+				if ($object->fk_contract) {
+					$contratstatic = new Contrat($db);
+					$contratstatic->fetch($object->fk_contract);
+					//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+					$morehtmlref .= $contratstatic->getNomUrl(0, '', 1);
+				} else {
+					$morehtmlref .= "&nbsp;";
+				}
+			}
+		}
+		
 		$morehtmlref .= '</div>';
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php?restore_lastsearch_values=1"><strong>'.$langs->trans("BackToList").'</strong></a> ';
