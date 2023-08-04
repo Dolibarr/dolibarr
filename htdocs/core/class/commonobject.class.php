@@ -168,6 +168,8 @@ abstract class CommonObject
 	 */
 	public $oldcopy;
 
+	public $oldref;
+
 	/**
 	 * @var string		Column name of the ref field.
 	 */
