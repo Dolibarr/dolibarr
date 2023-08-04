@@ -240,6 +240,7 @@ if (empty($reshook)) {
 			}
 
 			$object->fk_project = $projectid;
+			$object->fk_contract = GETPOST('fk_contract','int');
 
 			$id = $object->create($user);
 			if ($id <= 0) {
