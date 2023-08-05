@@ -1655,7 +1655,7 @@ if (empty($reshook)) {
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->label);
 									if ($object->situation_counter == 1) {
 										$lines[$i]->situation_percent = 0;
 									}

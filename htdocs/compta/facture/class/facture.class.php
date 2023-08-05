@@ -1398,7 +1398,7 @@ class Facture extends CommonInvoice
 		for ($i = 0; $i < $num; $i++) {
 			$line = new FactureLigne($this->db);
 
-			$line->libelle = $object->lines[$i]->libelle; // deprecated
+			$line->libelle 			= $object->lines[$i]->libelle; // deprecated
 			$line->label			= $object->lines[$i]->label;
 			$line->desc				= $object->lines[$i]->desc;
 			$line->subprice			= $object->lines[$i]->subprice;
@@ -2350,7 +2350,7 @@ class Facture extends CommonInvoice
 				$line->ref              = $objp->product_ref; // Ref product
 				$line->product_ref      = $objp->product_ref; // Ref product
 				$line->libelle          = $objp->product_label; // deprecated
-				$line->product_label = $objp->product_label; // Label product
+				$line->product_label 	= $objp->product_label; // Label product
 				$line->product_desc     = $objp->product_desc; // Description product
 				$line->fk_product_type  = $objp->fk_product_type; // Type of product
 				$line->qty              = $objp->qty;

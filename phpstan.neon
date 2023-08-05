@@ -49,6 +49,7 @@ parameters:
 		- '#Undefined variable: \$errors#'
 		- '#Undefined variable: \$form#'
 		- '#Caught class Stripe#'
+		- '#Function llxHeaderVierge invoked with#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512

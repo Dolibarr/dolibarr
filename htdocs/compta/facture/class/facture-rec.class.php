@@ -701,7 +701,7 @@ class FactureRec extends CommonInvoice
 				$line->ref              = $objp->product_ref; // Ref product
 				$line->product_ref      = $objp->product_ref; // Ref product
 				$line->libelle          = $objp->product_label; // deprecated
-				$line->product_label = $objp->product_label; // Label product
+				$line->product_label 	= $objp->product_label; // Label product
 				$line->product_desc     = $objp->product_desc; // Description product
 				$line->product_type     = $objp->product_type; // Type of line
 				$line->fk_product_type  = $objp->fk_product_type; // Type of product

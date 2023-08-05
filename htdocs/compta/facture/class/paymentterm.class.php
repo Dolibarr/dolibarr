@@ -177,11 +177,9 @@ class PaymentTerm // extends CommonObject
 	 */
 	public function fetch($id, $code = '')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
-
 		$sql .= " t.code,";
 		$sql .= " t.sortorder,";
 		$sql .= " t.active,";
@@ -190,8 +188,6 @@ class PaymentTerm // extends CommonObject
 		$sql .= " t.type_cdr,";
 		$sql .= " t.nbjour,";
 		$sql .= " t.decalage";
-
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);

@@ -1594,12 +1594,14 @@ class User extends CommonObject
 			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && !empty($conf->global->STOCK_USERSTOCK_AUTOCREATE)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$langs->load("stocks");
+
 				$entrepot = new Entrepot($this->db);
 				$entrepot->label = $langs->trans("PersonalStock", $this->getFullName($langs));
 				$entrepot->libelle = $entrepot->label; // For backward compatibility
 				$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock", $this->getFullName($langs));
 				$entrepot->statut = 1;
 				$entrepot->country_id = $mysoc->country_id;
+
 				$warehouseid = $entrepot->create($user);
 
 				$this->fk_warehouse = $warehouseid;

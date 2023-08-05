@@ -1958,9 +1958,8 @@ class Expedition extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ExpeditionLigne($this->db);
-			$line->desc = $langs->trans("Description")." ".$xnbp;
-			$line->libelle = $langs->trans("Description")." ".$xnbp; // deprecated
-			$line->label = $langs->trans("Description")." ".$xnbp;
+			$line->product_desc = $langs->trans("Description")." ".$xnbp;
+			$line->product_label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 			$line->qty_asked = 5;
 			$line->qty_shipped = 4;
@@ -2745,8 +2744,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function insert($user, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		// Check parameters

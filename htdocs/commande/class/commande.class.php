@@ -1329,8 +1329,8 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-
 		$this->date_commande = dol_now();
+		$this->date = dol_now();
 		$this->source = 0;
 
 		$num = count($object->lines);
@@ -1357,7 +1357,7 @@ class Commande extends CommonOrder
 			$line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
 			$line->fk_unit = $object->lines[$i]->fk_unit;
 
-			$line->date_start = $object->lines[$i]->date_start;
+			$line->date_start 		= $object->lines[$i]->date_start;
 			$line->date_end    		= $object->lines[$i]->date_end;
 
 			$line->fk_fournprice	= $object->lines[$i]->fk_fournprice;
@@ -1810,8 +1810,9 @@ class Commande extends CommonOrder
 			$line->tva_tx = $tva_tx;
 			$line->localtax1_tx = $localtax1_tx;
 			$line->localtax2_tx = $localtax2_tx;
-			$line->ref = $prod->ref;
-			$line->libelle = $prod->label;
+
+			$line->product_ref = $prod->ref;
+			$line->product_label = $prod->label;
 			$line->product_desc = $prod->description;
 			$line->fk_unit = $prod->fk_unit;
 

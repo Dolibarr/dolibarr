@@ -108,6 +108,11 @@ class FactureFournisseur extends CommonInvoice
 	public $ref_supplier;
 
 	/**
+	 * @var string 	Label of invoice
+	 * @deprecated	Use $label
+	 */
+	public $libelle;
+	/**
 	 * @var string Label of invoice
 	 */
 	public $label;

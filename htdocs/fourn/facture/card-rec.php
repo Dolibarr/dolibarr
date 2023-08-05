@@ -191,6 +191,7 @@ if (empty($reshook)) {
 			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
 			$object->title = GETPOST('title', 'alphanohtml');
 			$object->libelle = GETPOST('libelle', 'alpha');
+			$object->label = GETPOST('libelle', 'alpha');
 			$object->fk_project = GETPOST('projectid', 'int');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 
@@ -365,6 +366,7 @@ if (empty($reshook)) {
 		// Set label
 		$object->fetch($id);
 		$object->libelle = GETPOST('libelle');
+		$object->label = GETPOST('libelle');
 		$result = $object->update($user);
 
 		if ($result < 0) {

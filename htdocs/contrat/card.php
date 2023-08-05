@@ -333,7 +333,7 @@ if (empty($reshook)) {
 									} else {
 										$label = $lines[$i]->product_label;
 									}
-									$desc = ($lines[$i]->desc && $lines[$i]->desc != $lines[$i]->libelle) ?dol_htmlentitiesbr($lines[$i]->desc) : '';
+									$desc = ($lines[$i]->desc && $lines[$i]->desc != $lines[$i]->label) ? dol_htmlentitiesbr($lines[$i]->desc) : '';
 								} else {
 									$desc = dol_htmlentitiesbr($lines[$i]->desc);
 								}

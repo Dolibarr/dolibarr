@@ -71,15 +71,28 @@ class FactureFournisseurRec extends CommonInvoice
 	protected $table_ref_field = 'titre';
 
 	/**
-	 * @var string The label of recurring invoice
+	 * @var string 	The label of recurring invoice
+	 * @deprecated	Use $title
 	 */
 	public $titre;
+	/**
+	 * @var string The label of recurring invoice
+	 */
+	public $title;
+
 	public $ref_supplier;
 	public $socid;
 
 	public $suspended; // status
 
+	/**
+	 * @var string		Label of invoice
+	 * @deprecated		Use $label
+	 */
 	public $libelle;
+	/**
+	 * @var string		Label of invoice
+	 */
 	public $label;
 
 	/**
@@ -1302,7 +1315,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$new_fac_fourn->type = self::TYPE_STANDARD;
-					$new_fac_fourn->statut = self::STATUS_DRAFT;
+					$new_fac_fourn->statut = self::STATUS_DRAFT;	// deprecated
 					$new_fac_fourn->status = self::STATUS_DRAFT;
 					$new_fac_fourn->date = empty($facturerec->date_when) ? $now : $facturerec->date_when; // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$new_fac_fourn->socid = $facturerec->socid;
@@ -1310,7 +1323,8 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->ref_supplier = $facturerec->ref_supplier;
 					$new_fac_fourn->model_pdf = $facturerec->model_pdf;
 					$new_fac_fourn->fk_project = $facturerec->fk_project;
-					$new_fac_fourn->libelle = $facturerec->libelle;
+					$new_fac_fourn->label = $facturerec->label;
+					$new_fac_fourn->libelle = $facturerec->label;	// deprecated
 
 					$invoiceidgenerated = $new_fac_fourn->create($user);
 					if ($invoiceidgenerated <= 0) {
