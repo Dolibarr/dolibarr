@@ -70,6 +70,11 @@ abstract class ModelePDFProductBatch extends CommonDocGenerator
 abstract class ModeleNumRefBatch
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';

@@ -48,6 +48,7 @@ parameters:
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
 		- '#Undefined variable: \$form#'
+		- '#Caught class Stripe#
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512

@@ -89,11 +89,14 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 abstract class ModeleNumRefSuppliersOrders
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
-	public $version;
 
 
 	/**  Return if a model can be used or not

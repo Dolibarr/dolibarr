@@ -67,11 +67,14 @@ abstract class ModelePDFEvaluation extends CommonDocGenerator
 abstract class ModeleNumRefEvaluation
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
-	public $version;
 
 
 	/**

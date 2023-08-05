@@ -68,11 +68,14 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 abstract class ModeleNumRefFicheinter
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
-	public $version;
 
 
 	/**

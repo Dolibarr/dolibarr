@@ -41,6 +41,11 @@ abstract class CommonDocGenerator
 	public $name = '';
 
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
