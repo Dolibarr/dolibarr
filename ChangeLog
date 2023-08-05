@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 17.0.3 compared to 17.0.2 *****
 FIX: #20304 propaldates update
 FIX: #24508 Label not reported when creating a supplier invoice template (#25340)
 FIX: #24569 filters on stockadate page
