@@ -878,7 +878,7 @@ class FactureRec extends CommonInvoice
 			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 		}
 
-		if ($this->suspended == self::STATUS_SUSPENDED) {
+		if ($this->suspended == self::STATUS_NOTSUSPENDED) {
 			// Clean parameters
 			$remise_percent = price2num($remise_percent);
 			if (empty($remise_percent)) {
