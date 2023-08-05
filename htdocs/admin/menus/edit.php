@@ -264,6 +264,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="border centpercent">';
 
 	// Id
@@ -371,6 +372,7 @@ if ($action == 'create') {
 	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -388,6 +390,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="border centpercent">';
 
 	$menu = new Menubase($db);
@@ -489,7 +492,8 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Target
-	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" id="target" name="target">';
+	print '<tr><td>'.$langs->trans('Target').'</td><td>';
+	print '<select class="flat" id="target" name="target">';
 	print '<option value=""'.($menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
 	print '<option value="_blank"'.($menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
 	print '</select>';
@@ -497,6 +501,7 @@ if ($action == 'create') {
 	print '</td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
