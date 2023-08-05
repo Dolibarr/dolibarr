@@ -591,7 +591,7 @@ while ($i < $imaxinloop) {
 		$object->date_eval = $obj->date_eval;
 
 		// TODO Use a cache on job
-		$job = new job($db);
+		$job = new Job($db);
 		$job->fetch($obj->fk_job);
 
 		// TODO Use a cache on user

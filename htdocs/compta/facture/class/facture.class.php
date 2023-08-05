@@ -3196,7 +3196,7 @@ class Facture extends CommonInvoice
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$productStatic = new Product($this->db);
 			$warehouseStatic = new Entrepot($this->db);
-			$productbatch = new ProductBatch($this->db);
+			$productbatch = new Productbatch($this->db);
 		}
 
 		$now = dol_now();
