@@ -340,7 +340,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->bom->dir_temp,

@@ -238,7 +238,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	}
 } elseif ($modulepart == 'mrp') {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
-	$object = new MO($db);
+	$object = new Mo($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
 		if ($result <= 0) {
