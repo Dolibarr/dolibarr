@@ -48,6 +48,7 @@ parameters:
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
 		- '#Undefined variable: \$form#'
+		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
 		- '#Function llxHeaderVierge invoked with#'
 	internalErrorsCountLimit: 50
