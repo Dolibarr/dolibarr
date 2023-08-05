@@ -239,7 +239,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
-				$object = new Bom($this->db);
+				$object = new BOM($this->db);
 				$result = $object->fetch($id);
 				if ($result < 0) {
 					dol_print_error($this->db, $object->error);

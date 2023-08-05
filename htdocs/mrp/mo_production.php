@@ -715,7 +715,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$bomcost = 0;
 		if ($object->fk_bom > 0) {
-			$bom = new Bom($db);
+			$bom = new BOM($db);
 			$res = $bom->fetch($object->fk_bom);
 			if ($res > 0) {
 				$bom->calculateCosts();
@@ -948,7 +948,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// Stock
 					if (isModEnabled('stock')) {
 						print '<td class="nowraponall right">';
-						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $tmpproduct->type != PRODUCT::TYPE_SERVICE) {
+						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $tmpproduct->type != Product::TYPE_SERVICE) {
 							if (!$line->disable_stock_change && $tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
 								print img_warning($langs->trans('StockTooLow')) . ' ';
 							}

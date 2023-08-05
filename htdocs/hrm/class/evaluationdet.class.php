@@ -163,7 +163,6 @@ class Evaluationline extends CommonObject
 	// public $lines = array();
 
 
-
 	/**
 	 * Constructor
 	 *
@@ -888,7 +887,7 @@ class Evaluationline extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new EvaluationLine($this->db);
+		$objectline = new Evaluationline($this->db);
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_evaluationdet = '.$this->id));
 
 		if (is_numeric($result)) {
