@@ -233,7 +233,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
-				$object = new MO($this->db);
+				$object = new Mo($this->db);
 				$result = $object->fetch($id);
 				if ($result < 0) {
 					dol_print_error($this->db, $object->error);
@@ -333,7 +333,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->mrp->dir_temp,

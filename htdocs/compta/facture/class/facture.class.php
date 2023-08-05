@@ -225,6 +225,7 @@ class Facture extends CommonInvoice
 
 	public $date_lim_reglement;
 	public $cond_reglement_code; // Code in llx_c_paiement
+	public $cond_reglement_doc; // Code in llx_c_paiement
 	public $mode_reglement_code; // Code in llx_c_paiement
 
 	/**
@@ -3195,7 +3196,7 @@ class Facture extends CommonInvoice
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$productStatic = new Product($this->db);
 			$warehouseStatic = new Entrepot($this->db);
-			$productbatch = new ProductBatch($this->db);
+			$productbatch = new Productbatch($this->db);
 		}
 
 		$now = dol_now();

@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Supplierproposals extends DolibarrApi
+class SupplierProposals extends DolibarrApi
 {
 
 	/**

@@ -596,7 +596,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 }
 
 
-$bom = new Bom($db);
+$bom = new BOM($db);
 $product = new Product($db);
 
 // Loop on record

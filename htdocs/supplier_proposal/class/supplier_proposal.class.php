@@ -2232,7 +2232,6 @@ class SupplierProposal extends CommonObject
 
 		$now = dol_now();
 
-		$this->nbtodo = $this->nbtodolate = 0;
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.date_cloture as datefin";

@@ -22,10 +22,12 @@
  * \brief   Example hook overload.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
+
 /**
  * Class ActionsDatapolicy
  */
-class ActionsDatapolicy
+class ActionsDatapolicy extends CommonHookActions
 {
 	/**
 	 * @var DoliDB Database handler.
