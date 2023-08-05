@@ -402,6 +402,7 @@ class PaymentTerm // extends CommonObject
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->statut = 0;
+		$object->status = 0;
 
 		// Clear fields
 		// ...

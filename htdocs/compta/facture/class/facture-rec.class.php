@@ -273,8 +273,6 @@ class FactureRec extends CommonInvoice
 		$facsrc = new Facture($this->db);
 		$result = $facsrc->fetch($facid);
 		if ($result > 0) {
-			// On positionne en mode brouillon la facture
-			$this->brouillon = 1;
 			$this->fk_soc = $facsrc->socid;
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (";
@@ -617,10 +615,6 @@ class FactureRec extends CommonInvoice
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
-
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
@@ -890,7 +884,7 @@ class FactureRec extends CommonInvoice
 			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 		}
 
-		if ($this->brouillon) {
+		if ($this->suspended == self::STATUS_SUSPENDED) {
 			// Clean parameters
 			$remise_percent = price2num($remise_percent);
 			if (empty($remise_percent)) {
@@ -1090,7 +1084,7 @@ class FactureRec extends CommonInvoice
 			return -1;
 		}
 
-		if ($this->brouillon) {
+		if ($this->suspended == self::STATUS_SUSPENDED) {
 			// Clean parameters
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
@@ -1338,8 +1332,7 @@ class FactureRec extends CommonInvoice
 					$facture->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$facture->type = self::TYPE_STANDARD;
-					$facture->brouillon = 1;
-					$facture->statut = self::STATUS_DRAFT;
+					$facture->statut = self::STATUS_DRAFT;	// deprecated
 					$facture->status = self::STATUS_DRAFT;
 					$facture->date = (empty($facturerec->date_when) ? $now : $facturerec->date_when); // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$facture->socid = $facturerec->socid;

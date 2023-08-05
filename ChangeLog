@@ -3,6 +3,17 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 1.0.0 compared to 18.0.0 *****
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
+
+
+
+
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
 For uses:

@@ -634,8 +634,6 @@ class SupplierProposal extends CommonObject
 					$this->db->commit();
 					return $this->line->id;
 				} else {
-					$this->error = $this->error();
-					$this->errors = $this->errors();
 					$this->db->rollback();
 					return -1;
 				}
@@ -1291,10 +1289,6 @@ class SupplierProposal extends CommonObject
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
-				if ($obj->fk_statut == 0) {
-					$this->brouillon = 1;
-				}
-
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
@@ -1492,10 +1486,11 @@ class SupplierProposal extends CommonObject
 				}
 
 				$this->ref = $num;
-				$this->brouillon = 0;
-				$this->statut = 1;
+				$this->statut = self::STATUS_VALIDATED;
+				$this->status = self::STATUS_VALIDATED;
 				$this->user_valid_id = $user->id;
 				$this->datev = $now;
+				$this->date_validation = $now;
 
 				$this->db->commit();
 				return 1;
@@ -1916,8 +1911,8 @@ class SupplierProposal extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_DRAFT;
-				$this->brouillon = 1;
+				$this->status = self::STATUS_DRAFT;
+				$this->statut = self::STATUS_DRAFT;	// dperecated
 				$this->db->commit();
 				return 1;
 			} else {

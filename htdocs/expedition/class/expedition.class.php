@@ -326,14 +326,12 @@ class Expedition extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
 		}
 
 		$this->user = $user;
-
 
 		$this->db->begin();
 
@@ -647,10 +645,6 @@ class Expedition extends CommonObject
 				$this->label_incoterms      = $obj->label_incoterms;
 
 				$this->db->free($result);
-
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
 
 				// Tracking url
 				$this->getUrlTrackingStatus($obj->tracking_number);

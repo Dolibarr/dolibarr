@@ -77,7 +77,8 @@ class FactureFournisseurRec extends CommonInvoice
 	public $ref_supplier;
 	public $socid;
 
-	public $suspended;
+	public $suspended; // status
+
 	public $libelle;
 	public $label;
 
@@ -111,6 +112,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $fk_multicurrency;
 	public $multicurrency_code;
 	public $multicurrency_tx;
+	public $multicurrency_subprice;
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
@@ -642,11 +644,6 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->auto_validate            = $obj->auto_validate;
 				$this->generate_pdf             = $obj->generate_pdf;
 
-
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
-
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
@@ -1078,7 +1075,7 @@ class FactureFournisseurRec extends CommonInvoice
 			return -1;
 		}
 
-		if ($this->brouillon) {
+		if ($this->status == self::STATUS_SUSPENDED) {
 			// Clean parameters
 			$fk_product = empty($fk_product) ? 0 : $fk_product;
 			$label = empty($label) ? '' : $label;
@@ -1305,7 +1302,6 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$new_fac_fourn->type = self::TYPE_STANDARD;
-					$new_fac_fourn->brouillon = 1;
 					$new_fac_fourn->statut = self::STATUS_DRAFT;
 					$new_fac_fourn->status = self::STATUS_DRAFT;
 					$new_fac_fourn->date = empty($facturerec->date_when) ? $now : $facturerec->date_when; // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
@@ -1992,23 +1988,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $fk_user_author;
 	public $fk_user_modif;
 	public $fk_multicurrency;
-	public $multicurrency_subprice;
-
-
-	/* Overrides fields in CommonObject
-	public $total_ht;
-	public $total_tva;
-	public $total_localtax1;
-	public $total_localtax2;
-	public $total_ttc;
-
-	public $fk_unit;
-	public $import_key;
-	public $multicurrency_code;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-	*/
 
 
 	/**

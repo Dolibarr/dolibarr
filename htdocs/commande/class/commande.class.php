@@ -608,8 +608,8 @@ class Commande extends CommonOrder
 		// Set new ref and current status
 		if (!$error) {
 			$this->ref = $num;
-			$this->statut = self::STATUS_VALIDATED;
-			$this->brouillon = 0;
+			$this->statut = self::STATUS_VALIDATED;	// deprecated
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {
@@ -909,7 +909,6 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		// Clean parameters
-		$this->brouillon = 1; // set command as draft
 
 		// Set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
@@ -1988,10 +1987,6 @@ class Commande extends CommonOrder
 				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->lines = array();
-
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
