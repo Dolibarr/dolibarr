@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class Documents extends DolibarrApi
 {
-
 	/**
 	 * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
 	 */

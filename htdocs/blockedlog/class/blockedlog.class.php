@@ -26,6 +26,11 @@
 class BlockedLog
 {
 	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+	/**
 	 * Id of the log
 	 * @var int
 	 */
