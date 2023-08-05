@@ -136,12 +136,6 @@ class FactureRec extends CommonInvoice
 	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
-	/**
-	 * @var int 1 if status is draft
-	 * @deprecated
-	 */
-	public $brouillon;
-
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')

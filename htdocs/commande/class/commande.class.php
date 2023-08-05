@@ -125,11 +125,6 @@ class Commande extends CommonOrder
 	public $billed;
 
 	/**
-	 * @var int Draft Status of the order
-	 */
-	public $brouillon;
-
-	/**
 	 * @var string Condition payment code
 	 */
 	public $cond_reglement_code;

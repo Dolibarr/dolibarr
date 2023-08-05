@@ -112,7 +112,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $ref_fourn;
 
-	public $brouillon;
 	/**
 	 * @var int
 	 */

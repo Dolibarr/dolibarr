@@ -77,7 +77,6 @@ class Reception extends CommonObject
 	public $socid;
 	public $ref_supplier;
 
-	public $brouillon;
 	public $entrepot_id;
 	public $tracking_number;
 	public $tracking_url;

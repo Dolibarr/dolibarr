@@ -114,8 +114,6 @@ class Expedition extends CommonObject
 	 */
 	public $ref_customer;
 
-	public $brouillon;
-
 	/**
 	 * @var int warehouse id
 	 */

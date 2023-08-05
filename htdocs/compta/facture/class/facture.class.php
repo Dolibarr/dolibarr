@@ -102,12 +102,6 @@ class Facture extends CommonInvoice
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int 1 if status is draft
-	 * @deprecated
-	 */
-	public $brouillon;
-
-	/**
 	 * @var int thirdparty ID
 	 */
 	public $socid;
