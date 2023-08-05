@@ -218,7 +218,7 @@ Following changes may create regressions for some external modules, but were nec
 * The method getCheckOption() and deleteCPUser() of class Holiday has been removed (it was not used)
 
 
-
+***** ChangeLog for 17.0.3 compared to 17.0.2 *****
 FIX: #20304 propaldates update
 FIX: #24508 Label not reported when creating a supplier invoice template (#25340)
 FIX: #24569 filters on stockadate page
