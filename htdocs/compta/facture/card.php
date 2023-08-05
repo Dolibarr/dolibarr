@@ -3555,7 +3555,7 @@ if ($action == 'create') {
 				// Show credit note options only if we checked credit note and disable standard invoice if "create credit note" button is pressed
 				print '<script type="text/javascript">
     			jQuery(document).ready(function() {
-					if (jQuery("#radio_creditnote").is(":checked")) 
+					if (jQuery("#radio_creditnote").is(":checked"))
                     {
                         jQuery("#radio_standard").prop("disabled", true);
                     } else {
@@ -3628,7 +3628,7 @@ if ($action == 'create') {
 		$jsListType = '';
 		foreach ($listtType as $type) {
 			$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
-			$curent = !empty($conf->global->{$thisTypeConfName}) ? $conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+			$curent = getDolGlobalString($thisTypeConfName, getDolGlobalString('FACTURE_ADDON_PDF'));
 			$jsListType .= (!empty($jsListType) ? ',' : '').'"'.$type.'":"'.$curent.'"';
 		}
 

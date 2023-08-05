@@ -110,7 +110,7 @@ if (empty($reshook)) {
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
-		$bank->fetch($conf->global->{$default_account});
+		$bank->fetch(getDolGlobalInt($default_account));
 		// ICS is not mandatory with payment by bank transfer
 		/*if ((empty($bank->ics) && $type !== 'bank-transfer')
 			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
