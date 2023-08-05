@@ -190,6 +190,10 @@ abstract class CommonObject
 	 */
 	public $context = array();
 
+	// Properties set and used by Agenda trigger
+	public $actionmsg;
+	public $actionmsg2;
+
 	/**
 	 * @var string		Contains canvas name if record is an alternative canvas record
 	 */

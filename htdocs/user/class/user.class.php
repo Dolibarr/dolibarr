@@ -2619,7 +2619,6 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->newgroupid = $group; // deprecated. Remove this.
 				$this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
 
 				// Call trigger
@@ -2675,7 +2674,6 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->oldgroupid = $group; // deprecated. Remove this.
 				$this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
 
 				// Call trigger
@@ -3293,8 +3291,8 @@ class User extends CommonObject
 			if ($this->email) {
 				$info["rfc822Mailbox"] = $this->email;
 			}
-			if ($this->phone_mobile) {
-				$info["phpgwCellTelephoneNumber"] = $this->phone_mobile;
+			if ($this->user_mobile) {
+				$info["phpgwCellTelephoneNumber"] = $this->user_mobile;
 			}
 		}
 
