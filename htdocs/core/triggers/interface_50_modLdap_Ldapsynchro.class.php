@@ -89,6 +89,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info = $object->_load_ldap_info();
 					$dn = $object->_load_ldap_dn($info);
 
+					//For compatibility with Samba 4 AD
+					if ($ldap->serverType == "activedirectory") {
+						$info['userAccountControl'] = $conf->global->LDAP_USERACCOUNTCONTROL;
+					}
+
 					$result = $ldap->add($dn, $info, $user);
 				}
 
@@ -210,6 +215,33 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_ENABLEDISABLE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			if (intval($conf->global->LDAP_SYNCHRO_ACTIVE) === Ldap::SYNCHRO_DOLIBARR_TO_LDAP && $conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+				$ldap = new Ldap();
+				$result = $ldap->connect_bind();
+				if ($result > 0) {
+					$info = $object->_load_ldap_info();
+					$dn = $object->_load_ldap_dn($info);
+					$search = "(" . $object->_load_ldap_dn($info, 2) . ")";
+					$uAC = $ldap->getAttributeValues($search, "userAccountControl");
+					if ($uAC["count"] == 1) {
+						$userAccountControl = intval($uAC[0]);
+						$enabledBitMask = 0x2;
+						$isEnabled = ($userAccountControl & $enabledBitMask) === 0;
+						if ($isEnabled && intval($object->statut) === 1) {
+							$userAccountControl += 2;
+						} elseif (!$isEnabled && intval($object->statut) === 0) {
+							$userAccountControl -= 2;
+						}
+						$info['userAccountControl'] = $userAccountControl;
+						$resUpdate = $ldap->update($dn, $info, $user, $dn);
+						if ($resUpdate < 0) {
+							$this->error = "ErrorLDAP " . $ldap->error;
+						}
+					}
+				} else {
+					$this->error = "ErrorLDAP " . $ldap->error;
+				}
+			}
 		} elseif ($action == 'USER_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
@@ -311,7 +343,16 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 
+					// Avoid Ldap error due to empty member
+					if (isset($info['member']) && empty($info['member'])) {
+						unset($info['member']);
+					}
+
 					$result = $ldap->add($dn, $info, $user);
+				}
+
+				if ($ldap->serverType == "activedirectory") {
+					$info['sAMAccountName'] = $object->name;
 				}
 
 				if ($result < 0) {

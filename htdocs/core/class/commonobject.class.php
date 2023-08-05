@@ -57,12 +57,12 @@ abstract class CommonObject
 	public $db;
 
 	/**
-	 * @var int The object identifier
+	 * @var int 		The object identifier
 	 */
 	public $id;
 
 	/**
-	 * @var int The environment ID when using a multicompany module
+	 * @var int 		The environment ID when using a multicompany module
 	 */
 	public $entity;
 
@@ -83,38 +83,38 @@ abstract class CommonObject
 	public $errors = array();
 
 	/**
-	 * @var array   To store error results of ->validateField()
+	 * @var array   	To store error results of ->validateField()
 	 */
 	private $validateFieldsErrors = array();
 
 	/**
-	 * @var string ID to identify managed object
+	 * @var string 		ID to identify managed object
 	 */
 	public $element;
 
 	/**
-	 * @var int The related element
+	 * @var int 		The related element
 	 */
 	public $fk_element;
 
 	/**
-	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
-	 * 				Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
+	 * @var string 		Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
+	 * 					Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
 	 */
 	public $element_for_permission;
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element;
 
 	/**
-	 * @var string    Name of subtable line
+	 * @var string 		Name of subtable line
 	 */
 	public $table_element_line = '';
 
 	/**
-	 * @var int 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var int 		0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged;
 
@@ -129,7 +129,7 @@ abstract class CommonObject
 	public $array_options = array();
 
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array  		Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -167,6 +167,10 @@ abstract class CommonObject
 	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
+	/**
+	 * @var CommonObject To store old value of a modified ref
+	 */
+	public $oldref;
 
 	/**
 	 * @var string		Column name of the ref field.
@@ -174,7 +178,7 @@ abstract class CommonObject
 	protected $table_ref_field = '';
 
 	/**
-	 * @var integer   0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 * @var integer 	0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 */
 	public $restrictiononfksoc = 0;
 
@@ -204,7 +208,7 @@ abstract class CommonObject
 	public $fk_project;
 
 	/**
-	 * @var Project The related project object
+	 * @var Project 	The related project object
 	 * @deprecated
 	 * @see project
 	 */
@@ -235,56 +239,57 @@ abstract class CommonObject
 	public $thirdparty;
 
 	/**
-	 * @var User A related user
+	 * @var User 		A related user
 	 * @see fetch_user()
 	 */
 	public $user;
 
 	/**
-	 * @var string 	The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
+	 * @var string 		The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
 	 * @see fetch_origin()
 	 */
 	public $origin;
 
 	/**
-	 * @var int 	The id of originating object
+	 * @var int 		The id of originating object
 	 * @see fetch_origin()
 	 */
 	public $origin_id;
 
 	/**
-	 * @var string The object's reference
+	 * @var string 		The object's reference
 	 */
 	public $ref;
 
 	/**
-	 * @var string An external reference for the object
+	 * @var string 		An external reference for the object
 	 */
 	public $ref_ext;
 
 	/**
-	 * @var string The object's previous reference
+	 * @var string 		The object's previous reference
 	 */
 	public $ref_previous;
 
 	/**
-	 * @var string The object's next reference
+	 * @var string 		The object's next reference
 	 */
 	public $ref_next;
 
 	/**
-	 * @var string Ref to store on object to save the new ref to use for example when making a validate() of an object
+	 * @var string 		Ref to store on object to save the new ref to use for example when making a validate() of an object
 	 */
 	public $newref;
 
 	/**
-	 * @var int The object's status. Prefer use of status.
+	 * @var int 		The object's status. Prefer use of status.
+	 * @deprecated
 	 * @see setStatut()
 	 */
 	public $statut;
 
 	/**
-	 * @var int The object's status
+	 * @var int 		The object's status
 	 * @see setStatut()
 	 */
 	public $status;
@@ -370,50 +375,50 @@ abstract class CommonObject
 	public $barcode_type_coder;
 
 	/**
-	 * @var int Payment method ID (cheque, cash, ...)
+	 * @var int 		Payment method ID (cheque, cash, ...)
 	 * @see setPaymentMethods()
 	 */
 	public $mode_reglement_id;
 
 	/**
-	 * @var int Payment terms ID
+	 * @var int 		Payment terms ID
 	 * @see setPaymentTerms()
 	 */
 	public $cond_reglement_id;
 
 	/**
-	 * @var int Demand reason ID
+	 * @var int 		Demand reason ID
 	 */
 	public $demand_reason_id;
 
 	/**
-	 * @var int Transport mode ID (For module intracomm report)
+	 * @var int 		Transport mode ID (For module intracomm report)
 	 * @see setTransportMode()
 	 */
 	public $transport_mode_id;
 
 	/**
-	 * @var int Payment terms ID
+	 * @var int 		Payment terms ID
 	 * @deprecated Kept for compatibility
 	 * @see cond_reglement_id;
 	 */
 	public $cond_reglement;
 
 	/**
-	 * @var int Delivery address ID
+	 * @var int 		Delivery address ID
 	 * @see setDeliveryAddress()
 	 * @deprecated
 	 */
 	public $fk_delivery_address;
 
 	/**
-	 * @var int Shipping method ID
+	 * @var int 		Shipping method ID
 	 * @see setShippingMethod()
 	 */
 	public $shipping_method_id;
 
 	/**
-	 * @var string Shipping method label
+	 * @var string 		Shipping method label
 	 * @see setShippingMethod()
 	 */
 	public $shipping_method;
@@ -448,31 +453,31 @@ abstract class CommonObject
 	public $last_main_doc;
 
 	/**
-	 * @var int Bank account ID sometimes, ID of record into llx_bank sometimes
+	 * @var int 		Bank account ID sometimes, ID of record into llx_bank sometimes
 	 * @deprecated
 	 * @see $fk_account
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int Bank account ID
+	 * @var int 		Bank account ID
 	 * @see SetBankAccount()
 	 */
 	public $fk_account;
 
 	/**
-	 * @var string	Open ID
+	 * @var string		Open ID
 	 */
 	public $openid;
 
 	/**
-	 * @var string Public note
+	 * @var string 		Public note
 	 * @see update_note()
 	 */
 	public $note_public;
 
 	/**
-	 * @var string Private note
+	 * @var string 		Private note
 	 * @see update_note()
 	 */
 	public $note_private;
@@ -484,31 +489,31 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var float Total amount before taxes
+	 * @var float 		Total amount before taxes
 	 * @see update_price()
 	 */
 	public $total_ht;
 
 	/**
-	 * @var float Total VAT amount
+	 * @var float 		Total VAT amount
 	 * @see update_price()
 	 */
 	public $total_tva;
 
 	/**
-	 * @var float Total local tax 1 amount
+	 * @var float 		Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
 
 	/**
-	 * @var float Total local tax 2 amount
+	 * @var float 		Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
 
 	/**
-	 * @var float Total amount with taxes
+	 * @var float 		Total amount with taxes
 	 * @see update_price()
 	 */
 	public $total_ttc;
@@ -525,22 +530,22 @@ abstract class CommonObject
 	public $comments = array();
 
 	/**
-	 * @var string The name
+	 * @var string 		The name
 	 */
 	public $name;
 
 	/**
-	 * @var string The lastname
+	 * @var string 		The lastname
 	 */
 	public $lastname;
 
 	/**
-	 * @var string The firstname
+	 * @var string 		The firstname
 	 */
 	public $firstname;
 
 	/**
-	 * @var string The civility code, not an integer
+	 * @var string 		The civility code, not an integer
 	 */
 	public $civility_id;
 
@@ -559,9 +564,10 @@ abstract class CommonObject
 	 * @var integer|string $date_modification;
 	 */
 	public $date_modification; // Date last change (tms field)
+
 	/**
 	 * @var integer|string $date_modification;
-	 * @deprecated Use date_modification
+	 * @deprecated 		Use date_modification
 	 */
 	public $date_update;
 
@@ -575,11 +581,13 @@ abstract class CommonObject
 	 * @TODO Merge with user_creation
 	 */
 	public $user_author;
+
 	/**
 	 * @var User|int	User author/creation
 	 * @TODO Remove type id
 	 */
 	public $user_creation;
+
 	/**
 	 * @var int			User id author/creation
 	 */
@@ -590,15 +598,18 @@ abstract class CommonObject
 	 * @TODO Merge with user_validation
 	 */
 	public $user_valid;
+
 	/**
 	 * @var User|int	User of validation
 	 * @TODO Remove type id
 	 */
 	public $user_validation;
+
 	/**
 	 * @var int			User id of validation
 	 */
 	public $user_validation_id;
+
 	/**
 	 * @var int			User id closing object
 	 */
@@ -609,6 +620,7 @@ abstract class CommonObject
 	 * @TODO Remove type id
 	 */
 	public $user_modification;
+
 	/**
 	 * @var int			User id last modifier
 	 */
@@ -623,26 +635,26 @@ abstract class CommonObject
 	public $specimen = 0;
 
 	/**
-	 * @var	int	Id of contact to send object (used by the trigger of module Agenda)
+	 * @var	int			Id of contact to send object (used by the trigger of module Agenda)
 	 */
 	public $sendtoid;
 
 	/**
-	 * @var	float	Amount already paid (used to show correct status)
+	 * @var	float		Amount already paid (used to show correct status)
 	 */
 	public $alreadypaid;
 
-
 	public $labelStatus;
+
 	protected $labelStatusShort;
 
 	/**
-	 * @var int showphoto_on_popup
+	 * @var int 		show photo on popup
 	 */
 	public $showphoto_on_popup;
 
 	/**
-	 * @var array nb used in load_stateboard
+	 * @var array 		nb used in load_stateboard
 	 */
 	public $nb = array();
 
@@ -652,12 +664,12 @@ abstract class CommonObject
 	public $output;
 
 	/**
-	 * @var array extraparams
+	 * @var array 		extra parameters
 	 */
 	public $extraparams = array();
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array		List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
 

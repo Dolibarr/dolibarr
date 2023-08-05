@@ -115,6 +115,9 @@ abstract class ModeleNumRefExpenseReport
 	 */
 	public $error = '';
 
+	public $version;
+
+
 	/**
 	 *	Return if a model can be used or not
 	 *

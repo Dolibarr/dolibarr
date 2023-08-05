@@ -110,7 +110,10 @@ if ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
  * View
  */
 
-llxHeader('', $langs->trans("Contract"), "");
+$title = $langs->trans("Contract");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

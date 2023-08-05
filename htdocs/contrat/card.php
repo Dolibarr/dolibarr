@@ -1064,10 +1064,14 @@ if (empty($reshook)) {
  * View
  */
 
-
 $help_url = 'EN:Module_Contracts|FR:Module_Contrat';
 
-llxHeader('', $langs->trans("Contract"), $help_url);
+$title = $object->ref." - ".$langs->trans('Contract');
+if ($action == 'create') {
+	$title = $langs->trans("NewContract");
+}
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1088,7 +1092,7 @@ if ($result > 0) {
 // Create
 if ($action == 'create') {
 	$objectsrc = null;
-	print load_fiche_titre($langs->trans('AddContract'), '', 'contract');
+	print load_fiche_titre($langs->trans('NewContract'), '', 'contract');
 
 	$soc = new Societe($db);
 	if ($socid > 0) {

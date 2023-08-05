@@ -99,6 +99,7 @@ class Website extends CommonObject
 	 * @var integer|string date_modification
 	 */
 	public $date_modification;
+	public $tms;
 
 	/**
 	 * @var integer
@@ -109,6 +110,11 @@ class Website extends CommonObject
 	 * @var int User Create Id
 	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int User Modification Id
+	 */
+	public $fk_user_modif;
 
 	/**
 	 * @var string
@@ -436,7 +442,7 @@ class Website extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		$this->records = array();
+		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -460,7 +466,7 @@ class Website extends CommonObject
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->records[$line->id] = $line;
+				$this->lines[$line->id] = $line;
 			}
 			$this->db->free($resql);
 
