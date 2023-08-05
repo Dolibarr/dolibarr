@@ -71,7 +71,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$mo = new MO($db);
+	$mo = new Mo($db);
 	$mo->initAsSpecimen();
 
 	// Search template files
@@ -244,7 +244,7 @@ foreach ($dirmodels as $reldir) {
 						}
 						print '</td>';
 
-						$mrp = new MO($db);
+						$mrp = new Mo($db);
 						$mrp->initAsSpecimen();
 
 						// Info

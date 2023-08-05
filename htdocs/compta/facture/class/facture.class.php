@@ -225,6 +225,7 @@ class Facture extends CommonInvoice
 
 	public $date_lim_reglement;
 	public $cond_reglement_code; // Code in llx_c_paiement
+	public $cond_reglement_doc; // Code in llx_c_paiement
 	public $mode_reglement_code; // Code in llx_c_paiement
 
 	/**

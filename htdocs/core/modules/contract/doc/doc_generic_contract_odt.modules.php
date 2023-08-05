@@ -362,7 +362,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->contrat->dir_temp,
