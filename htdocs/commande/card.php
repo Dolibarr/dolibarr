@@ -1963,7 +1963,7 @@ if ($action == 'create' && $usercancreate) {
 	if (empty($reshook)) {
 		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER) && !empty($soc->id)) {
 			// copy from thirdparty
-			$tpExtrafields = new Extrafields($db);
+			$tpExtrafields = new ExtraFields($db);
 			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
 			if ($soc->fetch_optionals() > 0) {
 				$object->array_options = array_merge($object->array_options, $soc->array_options);

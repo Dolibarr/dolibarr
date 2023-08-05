@@ -135,6 +135,11 @@ class Commande extends CommonOrder
 	public $cond_reglement_code;
 
 	/**
+	 * @var string Condition payment label
+	 */
+	public $cond_reglement_doc;
+
+	/**
 	 * @var double Deposit % for payment terms
 	 */
 	public $deposit_percent;
