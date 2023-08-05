@@ -1,9 +1,11 @@
 parameters:
 	customRulesetUsed: true
+	level: 0
 	fileExtensions:
 		- php
 	paths:
 	    - htdocs
+	    - scripts
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom
@@ -50,7 +52,7 @@ parameters:
 	cache:
 	    nodesByFileCountMax: 512
 	    nodesByStringCountMax: 512
-	reportUnmatchedIgnoredErrors: true
+	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass
 		- SimpleXMLElement
