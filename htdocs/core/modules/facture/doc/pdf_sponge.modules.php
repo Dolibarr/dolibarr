@@ -1591,7 +1591,7 @@ class pdf_sponge extends ModelePDFFactures
 				$facSign = $object->total_ht >= 0 ? '+' : ''; // management of a particular customer case
 			}
 
-			if ($fac->type === facture::TYPE_CREDIT_NOTE) {
+			if ($fac->type === Facture::TYPE_CREDIT_NOTE) {
 				$facSign = '-'; // les avoirs
 			}
 
