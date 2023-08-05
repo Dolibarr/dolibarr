@@ -316,7 +316,7 @@ if ($action == 'edit') {
 $moduledir = 'mymodule';
 $myTmpObjects = array();
 // TODO Scan list of objects
-$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0);
+$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
@@ -392,7 +392,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$nameofclass = ucfirst($myTmpObjectKey);
+								$nameofclass = $myTmpObjectArray['class'];
 								$mytmpinstance = new $nameofclass($db);
 								$mytmpinstance->initAsSpecimen();
 
