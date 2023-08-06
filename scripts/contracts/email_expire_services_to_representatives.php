@@ -186,7 +186,7 @@ if ($resql) {
  * @param string 	$userlang				Code lang to use for email output.
  * @param string 	$oldtarget				Target name of sale representative
  * @param int 		$duration_value			Duration value
- * @return int 								<0 if KO, >0 if OK
+ * @return int 								Int <0 if KO, >0 if OK
  */
 function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {

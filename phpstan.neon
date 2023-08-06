@@ -51,6 +51,11 @@ parameters:
 		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
 		- '#Function llxHeaderVierge invoked with#'
+		- '#If condition is always true#'
+		- '#always exists and is not falsy#'
+		- '#has no return type specified#'
+		- '#expression is always#'
+		- '#always exists and is not nullable#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512
