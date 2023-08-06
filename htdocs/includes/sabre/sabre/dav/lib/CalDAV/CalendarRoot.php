@@ -38,9 +38,7 @@ class CalendarRoot extends \Sabre\DAVACL\AbstractPrincipalCollection
      * actually located in a different path, use the $principalPrefix argument
      * to override this.
      *
-     * @param PrincipalBackend\BackendInterface $principalBackend
-     * @param Backend\BackendInterface          $caldavBackend
-     * @param string                            $principalPrefix
+     * @param string $principalPrefix
      */
     public function __construct(PrincipalBackend\BackendInterface $principalBackend, Backend\BackendInterface $caldavBackend, $principalPrefix = 'principals')
     {
@@ -67,8 +65,6 @@ class CalendarRoot extends \Sabre\DAVACL\AbstractPrincipalCollection
      * The passed array contains principal information, and is guaranteed to
      * at least contain a uri item. Other properties may or may not be
      * supplied by the authentication backend.
-     *
-     * @param array $principal
      *
      * @return \Sabre\DAV\INode
      */

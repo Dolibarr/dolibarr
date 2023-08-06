@@ -58,6 +58,11 @@ class Deplacement extends CommonObject
 	 */
 	public $ismultientitymanaged = 0;
 
+
+	public $fk_soc;
+	public $date;
+	public $type;
+
 	/**
 	 * Date creation record (datec)
 	 *

@@ -90,14 +90,11 @@ class ResourceType extends Element\Elements implements HtmlOutput
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
-     *
      * @return mixed
      */
     public static function xmlDeserialize(Reader $reader)
     {
-        return
-            new self(parent::xmlDeserialize($reader));
+        return new self(parent::xmlDeserialize($reader));
     }
 
     /**
@@ -110,8 +107,6 @@ class ResourceType extends Element\Elements implements HtmlOutput
      *
      * The baseUri parameter is a url to the root of the application, and can
      * be used to construct local links.
-     *
-     * @param HtmlOutputHelper $html
      *
      * @return string
      */

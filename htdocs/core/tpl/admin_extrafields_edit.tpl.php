@@ -172,9 +172,9 @@ $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
 $csslist = $extrafields->attributes[$elementtype]['csslist'][$attrname];
 
+$param_chain = '';
 if (is_array($param)) {
 	if (($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) {
-		$param_chain = '';
 		foreach ($param['options'] as $key => $value) {
 			if (strlen($key)) {
 				$param_chain .= $key.','.$value."\n";

@@ -364,6 +364,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				// Displays notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 
+				// Extrafields in note
+				if (!empty($conf->global->INVOICE_ADD_EXTRAFIELD_IN_NOTE)) {
+					$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+					if (!empty($extranote)) {
+						$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					}
+				}
+
 				if ($notetoshow) {
 					$tab_top -= 2;
 
@@ -1049,6 +1057,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

@@ -120,6 +120,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
 			}
 			$object->actionmsg = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+			// For merge event, we add a mention
+			if (!empty($object->context['mergefromname'])) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->trans("DataFromWasMerged", $object->context['mergefromname']));
+			}
 
 			$object->sendtoid = 0;
 			$object->socid = $object->id;
@@ -601,8 +605,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "orders"));
 
-			if (empty($object->actionmsg2)) {
+			if (empty($object->context['actionmsg2'])) {
 				$object->actionmsg2 = $langs->transnoentities("SupplierOrderReceivedInDolibarr", ($object->newref ? $object->newref : $object->ref));
+			} else {
+				$object->actionmsg2 = $object->context['actionmsg2'];
 			}
 			$object->actionmsg = $langs->transnoentities("SupplierOrderReceivedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 
@@ -943,8 +949,15 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Can also be a value defined by an external module like SENTBYSMS, COMPANY_SENTBYSMS, MEMBER_SENTBYSMS, ...
 			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
 			// Note that these key can be set in agenda setup, only if defined into llx_c_action_trigger
-			// Load translation files required by the page
+			if (!empty($object->context['actionmsg']) && empty($object->actionmsg)) {
+				$object->actionmsg = $object->context['actionmsg'];
+			}
+			if (!empty($object->context['actionmsg2']) && empty($object->actionmsg2)) {
+				$object->actionmsg2 = $object->context['actionmsg2'];
+			}
+
 			if (empty($object->actionmsg2)) {
+				// Load translation files required by the page
 				$langs->loadLangs(array("agenda", "other"));
 				if ($langs->transnoentities($action."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref)) != $action."InDolibarr") {	// specific translation key
 					$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref));
@@ -954,6 +967,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				}
 			}
 			if (empty($object->actionmsg)) {
+				// Load translation files required by the page
 				$langs->loadLangs(array("agenda", "other"));
 				if ($langs->transnoentities($action."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref)) != $action."InDolibarr") {	// specific translation key
 					$object->actionmsg = $langs->transnoentities($action."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref));
@@ -1077,8 +1091,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm = new ActionComm($this->db);
 		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
-		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note_private = $object->actionmsg;
+		$actioncomm->label       = $object->actionmsg2;		// Label of event
+		$actioncomm->note_private = $object->actionmsg;		// Description
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;

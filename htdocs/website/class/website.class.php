@@ -47,7 +47,8 @@ class Website extends CommonObject
 	public $table_element = 'website';
 
 	/**
-	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  	Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -91,17 +92,21 @@ class Website extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
+	 * @var integer date_creation
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string date_modification
+	 * @var integer	date_modification
 	 */
 	public $date_modification;
+	/**
+	 * @var integer date_modification
+	 */
+	public $tms;
 
 	/**
-	 * @var integer
+	 * @var integer Default home page
 	 */
 	public $fk_default_home;
 
@@ -111,24 +116,27 @@ class Website extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var string
+	 * @var int User Modification Id
+	 */
+	public $fk_user_modif;
+
+	/**
+	 * @var string Virtual host
 	 */
 	public $virtualhost;
 
 	/**
-	 * @var int
+	 * @var int Use a manifest file
 	 */
 	public $use_manifest;
 
 	/**
-	 * @var int
+	 * @var int	Postion
 	 */
 	public $position;
 
 	/**
-	 * List of containers
-	 *
-	 * @var array
+	 * @var array List of containers
 	 */
 	public $lines;
 
@@ -437,7 +445,7 @@ class Website extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		$this->records = array();
+		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -461,7 +469,7 @@ class Website extends CommonObject
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->records[$line->id] = $line;
+				$this->lines[$line->id] = $line;
 			}
 			$this->db->free($resql);
 

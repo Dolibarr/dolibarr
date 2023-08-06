@@ -118,8 +118,14 @@ class Contrat extends CommonObject
 	/**
 	 * Status of the contract
 	 * @var int
+	 * @deprecated
 	 */
-	public $statut = 0; // 0=Draft,
+	public $statut = 0;
+	/**
+	 * Status of the contract (0=Draft, 1=Validated)
+	 * @var int
+	 */
+	public $status = 0;
 
 	public $product;
 
@@ -570,8 +576,8 @@ class Contrat extends CommonObject
 			// Set new ref and define current statut
 			if (!$error) {
 				$this->ref = $num;
-				$this->statut = 1;
-				$this->brouillon = 0;
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->date_validation = $now;
 			}
 		} else {
@@ -632,8 +638,8 @@ class Contrat extends CommonObject
 
 		// Set new ref and define current status
 		if (!$error) {
-			$this->statut = 0;
-			$this->brouillon = 1;
+			$this->statut = self::STATUS_DRAFT;
+			$this->status = self::STATUS_DRAFT;
 			$this->date_validation = $now;
 		}
 
@@ -690,6 +696,7 @@ class Contrat extends CommonObject
 				$this->error = 'Fetch found several records.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
+				return 0;
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {

@@ -15,7 +15,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// This page return an image of a photo
+// This page return an image of public photos of a category or product.
+// Test to check image can be publically viewed is done inside the viewimage.php wrapper.
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -45,6 +46,9 @@ $w = GETPOST('w', 'int');
 $h = GETPOST('h', 'int');
 $query = GETPOST('query', 'alpha');
 
+if (!isModEnabled('takepos')) {
+	accessforbidden('Module not enabled');
+}
 
 
 /*

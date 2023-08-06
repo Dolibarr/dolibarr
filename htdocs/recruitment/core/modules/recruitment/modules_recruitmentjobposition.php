@@ -37,7 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // requir
  */
 abstract class ModelePDFRecruitmentJobPosition extends CommonDocGenerator
 {
-
 	/**
 	 * @var int page_largeur
 	 */

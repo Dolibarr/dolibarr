@@ -388,7 +388,7 @@ if ($event->type == 'payout.created') {
 		$paiement->ext_payment_site = $service;
 
 		$ispaymentdone = 0;
-		$sql = "SELECT p.id FROM llx_paiement as p";
+		$sql = "SELECT p.rowid FROM llx_paiement as p";
 		$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
 		$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 		$result = $db->query($sql);
@@ -398,7 +398,9 @@ if ($event->type == 'payout.created') {
 				dol_syslog('* Payment for ext_payment_id '.$paiement->ext_payment_id.' already done. We do not recreate the payment');
 			}
 		}
+
 		$db->begin();
+
 		if (!$error && !$ispaymentdone) {
 			dol_syslog('* Record payment for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document');
 
@@ -408,15 +410,19 @@ if ($event->type == 'payout.created') {
 				$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
 				$ispostactionok = -1;
 				$error++;
+
+				dol_syslog("Failed to create the payment for invoice id " . $invoice_id);
 			} else {
 				$postactionmessages[] = 'Payment created';
-			}
 
-			dol_syslog("The payment has been created for invoice id " . $invoice_id);
+				dol_syslog("The payment has been created for invoice id " . $invoice_id);
+			}
 		}
+
 		if (!$error && isModEnabled('banque')) {
+			// Search again the payment to see if it is already linked to a bank payment record (We should always find the payement now we have created before).
 			$ispaymentdone = 0;
-			$sql = "SELECT p.id, p.fk_bank FROM llx_paiement as p";
+			$sql = "SELECT p.rowid, p.fk_bank FROM llx_paiement as p";
 			$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
 			$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 			$sql .= " AND p.fk_bank <> 0";
@@ -425,13 +431,14 @@ if ($event->type == 'payout.created') {
 				if ($db->num_rows($result)) {
 					$ispaymentdone = 1;
 					$obj = $db->fetch_object($result);
-					dol_syslog('* Payment already linked to bank record '.$obj->fk_bank.' . We do not recrate the link');
+					dol_syslog('* Payment already linked to bank record '.$obj->fk_bank.' . We do not recreate the link');
 				}
 			}
 			if (!$ispaymentdone) {
 				dol_syslog('* Add payment to bank');
 
 				// The bank used is the one defined into Stripe setup
+				$paymentmethod = 'stripe';
 				$bankaccountid = getDolGlobalInt("STRIPE_BANK_ACCOUNT_FOR_PAYMENTS");
 
 				if ($bankaccountid > 0) {

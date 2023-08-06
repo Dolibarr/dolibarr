@@ -59,7 +59,7 @@ if ($module == 'propal') {
 } elseif ($module == 'project') {
 	$permission = $user->rights->projet->creer;
 } elseif ($module == 'action') {
-	$permission = $user->rights->agenda->myactions->create;
+	$permission = $user->hasRight('agenda', 'myactions', 'create');
 } elseif ($module == 'shipping') {
 	$permission = $user->rights->expedition->creer;
 } elseif ($module == 'reception') {
@@ -143,7 +143,8 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component
+			?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php

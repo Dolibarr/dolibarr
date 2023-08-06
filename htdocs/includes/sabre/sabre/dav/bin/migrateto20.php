@@ -72,7 +72,7 @@ switch ($driver) {
         break;
     default:
         echo 'Error: unsupported driver: '.$driver."\n";
-        die(-1);
+        exit(-1);
 }
 
 foreach (['calendar', 'addressbook'] as $itemType) {
@@ -130,7 +130,6 @@ foreach (['calendar', 'addressbook'] as $itemType) {
                 break;
 
             case 'sqlite':
-
                 $pdo->exec("ALTER TABLE $tableName RENAME TO $tableNameOld");
 
                 switch ($itemType) {
@@ -370,7 +369,6 @@ CREATE TABLE cards (
             break;
 
         case 'sqlite':
-
             $pdo->exec('
 CREATE TABLE cards (
     id integer primary key asc,
@@ -395,7 +393,6 @@ CREATE TABLE cards (
             break;
 
         case 'sqlite':
-
             $pdo->exec('
                 ALTER TABLE cards ADD etag text;
                 ALTER TABLE cards ADD size integer;

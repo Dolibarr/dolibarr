@@ -113,6 +113,9 @@ class WebsitePage extends CommonObject
 	 */
 	public $date_modification;
 
+	public $fk_user_creat;
+	public $fk_user_modif;
+
 	/**
 	 * @var string author_alias
 	 */

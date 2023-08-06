@@ -199,8 +199,6 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 	}
 }
-//var_dump($action);
-//$object->doActions($action);
 
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
 $triggersendname = 'TICKET_SENTBYMAIL';
@@ -426,8 +424,10 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 print "</div>";
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

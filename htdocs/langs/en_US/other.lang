@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = Are you sure you want to "%s" ?
 ConfirmBtnCommonTitle = Confirm your action
 CloseDialog = Close
 Autofill = Autofill
+OrPasteAnURL=or Paste an URL
 
 # externalsite
 ExternalSiteSetup=Setup link to external website

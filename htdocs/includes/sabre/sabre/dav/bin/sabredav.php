@@ -20,7 +20,7 @@ class CliLog
 $log = new CliLog();
 
 if ('cli-server' !== php_sapi_name()) {
-    die('This script is intended to run on the built-in php webserver');
+    exit('This script is intended to run on the built-in php webserver');
 }
 
 // Finding composer

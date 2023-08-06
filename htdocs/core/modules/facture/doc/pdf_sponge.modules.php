@@ -950,10 +950,18 @@ class pdf_sponge extends ModelePDFFactures
 
 					// retrieve global local tax
 					if ($localtax1_type && $localtax1ligne != 0) {
-						$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+						} else {
+							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						}
 					}
 					if ($localtax2_type && $localtax2ligne != 0) {
-						$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+						} else {
+							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						}
 					}
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
@@ -1583,7 +1591,7 @@ class pdf_sponge extends ModelePDFFactures
 				$facSign = $object->total_ht >= 0 ? '+' : ''; // management of a particular customer case
 			}
 
-			if ($fac->type === facture::TYPE_CREDIT_NOTE) {
+			if ($fac->type === Facture::TYPE_CREDIT_NOTE) {
 				$facSign = '-'; // les avoirs
 			}
 

@@ -589,7 +589,7 @@ class EcmFiles extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new EcmfilesLine();
+				$line = new EcmFilesLine();
 
 				$line->id = $obj->rowid;
 				$line->ref = $obj->rowid;
@@ -817,7 +817,7 @@ class EcmFiles extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
-		$object = new Ecmfiles($this->db);
+		$object = new EcmFiles($this->db);
 
 		$this->db->begin();
 
@@ -982,7 +982,7 @@ class EcmFiles extends CommonObject
 /**
  * Class of an index line of a document
  */
-class EcmfilesLine
+class EcmFilesLine
 {
 	/**
 	 * @var string ECM files line label

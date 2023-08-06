@@ -25,6 +25,7 @@ class ElementList extends ArrayIterator
      * @param int   $offset
      * @param mixed $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new LogicException('You can not add new objects to an ElementList');
@@ -37,6 +38,7 @@ class ElementList extends ArrayIterator
      *
      * @param int $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new LogicException('You can not remove objects from an ElementList');

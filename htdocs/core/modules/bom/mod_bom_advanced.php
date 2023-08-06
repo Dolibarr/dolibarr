@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/bom/modules_bom.php';
 /**
  *	Class to manage customer Bom numbering rules advanced
  */
-class mod_bom_advanced extends ModeleNumRefboms
+class mod_bom_advanced extends ModeleNumRefBoms
 {
 	/**
 	 * Dolibarr version of the loaded document
