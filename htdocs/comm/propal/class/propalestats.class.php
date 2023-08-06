@@ -62,8 +62,6 @@ class PropaleStats extends Stats
 	 */
 	public function __construct($db, $socid = 0, $userid = 0, $mode = 'customer', $typentid = 0, $categid = 0)
 	{
-		global $user, $conf;
-
 		$this->db = $db;
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;

@@ -34,6 +34,28 @@ abstract class Stats
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
+	 * @var string	To store the FROM part of the main table of the SQL request
+	 */
+	public $from;
+	/**
+	 * @var string	To store the FROM part of the line table of the SQL request
+	 */
+	public $from_line;
+	/**
+	 * @var string	To store the field of the date
+	 */
+	public $field_date;
+	/**
+	 * @var string	To store the field for total HT
+	 */
+	public $field;
+	/**
+	 * @var string	To store the FROM part of the line table of the SQL request
+	 */
+	public $field_line;
+
+
+	/**
 	 *  @param	int		$year 			number
 	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * 	@return int						value

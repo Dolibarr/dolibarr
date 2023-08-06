@@ -431,11 +431,22 @@ abstract class CommonObject
 	 * @var string multicurrency code
 	 */
 	public $multicurrency_code;
-
 	/**
 	 * @var string multicurrency tx
 	 */
 	public $multicurrency_tx;
+	/**
+	 * @var string multicurrency total_ht
+	 */
+	public $multicurrency_total_ht;
+	/**
+	 * @var string multicurrency total_tva
+	 */
+	public $multicurrency_total_tva;
+	/**
+	 * @var string multicurrency total_ttc
+	 */
+	public $multicurrency_total_ttc;
 
 	/**
 	 * @var string

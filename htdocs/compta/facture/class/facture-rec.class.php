@@ -263,7 +263,7 @@ class FactureRec extends CommonInvoice
 
 		$this->db->begin();
 
-		// Charge facture modele
+		// Load invoice template
 		$facsrc = new Facture($this->db);
 		$result = $facsrc->fetch($facid);
 		if ($result > 0) {
