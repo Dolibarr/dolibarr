@@ -47,7 +47,8 @@ class Website extends CommonObject
 	public $table_element = 'website';
 
 	/**
-	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  	Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -91,18 +92,21 @@ class Website extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
+	 * @var integer date_creation
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string date_modification
+	 * @var integer	date_modification
 	 */
 	public $date_modification;
+	/**
+	 * @var integer date_modification
+	 */
 	public $tms;
 
 	/**
-	 * @var integer
+	 * @var integer Default home page
 	 */
 	public $fk_default_home;
 
@@ -117,24 +121,22 @@ class Website extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var string
+	 * @var string Virtual host
 	 */
 	public $virtualhost;
 
 	/**
-	 * @var int
+	 * @var int Use a manifest file
 	 */
 	public $use_manifest;
 
 	/**
-	 * @var int
+	 * @var int	Postion
 	 */
 	public $position;
 
 	/**
-	 * List of containers
-	 *
-	 * @var array
+	 * @var array List of containers
 	 */
 	public $lines;
 
