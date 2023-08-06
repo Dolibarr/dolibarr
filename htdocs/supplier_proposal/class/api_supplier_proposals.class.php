@@ -47,7 +47,7 @@ class SupplierProposals extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->supplier_proposal = new SupplierProposal($this->db);
 	}
@@ -96,8 +96,6 @@ class SupplierProposals extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->supplier_proposal->lire) {
 			throw new RestException(401);
 		}
