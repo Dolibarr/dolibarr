@@ -70,11 +70,14 @@ abstract class ModelePDFSupplierProposal extends CommonDocGenerator
 abstract class ModeleNumRefSupplierProposal
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
-	public $version;
 
 
 	/**

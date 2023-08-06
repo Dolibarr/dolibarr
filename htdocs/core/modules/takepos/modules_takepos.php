@@ -34,12 +34,15 @@
 abstract class ModeleNumRefTakepos
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
-
-	public $version = '';
 
 	/**
 	 * Return if a module can be used or not

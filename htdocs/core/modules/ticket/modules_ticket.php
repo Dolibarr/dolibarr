@@ -61,11 +61,14 @@ abstract class ModelePDFTicket extends CommonDocGenerator
 abstract class ModeleNumRefTicket
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
-	public $version;
 
 
 	/**

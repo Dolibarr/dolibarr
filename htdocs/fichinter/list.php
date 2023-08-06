@@ -720,7 +720,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
 	$objectstatic->ref_client = $obj->ref_client;
-	$objectstatic->statut = $obj->status;
+	$objectstatic->statut = $obj->status;	// deprecated
 	$objectstatic->status = $obj->status;
 
 	$companystatic->name = $obj->name;

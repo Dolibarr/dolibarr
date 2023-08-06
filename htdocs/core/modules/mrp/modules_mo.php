@@ -68,11 +68,14 @@ abstract class ModelePDFMo extends CommonDocGenerator
 abstract class ModeleNumRefMos
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
-	public $version;
 
 
 	/**

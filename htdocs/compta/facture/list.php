@@ -417,7 +417,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					setEventMessage($facture->error, 'errors');
 					$errorpayment++;
 				} else {
-					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->statut == Facture::STATUS_VALIDATED && $facture->paye == 0) {
+					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->status == Facture::STATUS_VALIDATED && $facture->paye == 0) {
 						$paiementAmount = $facture->getSommePaiement();
 						$totalcreditnotes = $facture->getSumCreditNotesUsed();
 						$totaldeposits = $facture->getSumDepositsUsed();
@@ -487,7 +487,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
-				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
+				if ($objecttmp->status == Facture::STATUS_DRAFT) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
@@ -1906,7 +1906,7 @@ if ($resql) {
 			$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
-			if ($facturestatic->statut == Facture::STATUS_CLOSED && $facturestatic->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
+			if ($facturestatic->status == Facture::STATUS_CLOSED && $facturestatic->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 				$remaintopay = 0;
 				$multicurrency_remaintopay = 0;
 			}
@@ -2294,7 +2294,8 @@ if ($resql) {
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->user_email;
-				$userstatic->statut = $obj->user_statut;
+				$userstatic->statut = $obj->user_statut;	// deprecated
+				$userstatic->status = $obj->user_statut;
 				$userstatic->entity = $obj->entity;
 				$userstatic->photo = $obj->photo;
 				$userstatic->office_phone = $obj->office_phone;
@@ -2336,7 +2337,8 @@ if ($resql) {
 								$userstatic->lastname = $val['lastname'];
 								$userstatic->firstname = $val['firstname'];
 								$userstatic->email = $val['email'];
-								$userstatic->statut = $val['statut'];
+								$userstatic->statut = $val['statut'];	// deprecated
+								$userstatic->status = $val['statut'];
 								$userstatic->entity = $val['entity'];
 								$userstatic->photo = $val['photo'];
 								$userstatic->login = $val['login'];

@@ -24,9 +24,15 @@
 abstract class ModeleNumRefPayments
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
 
 	/**
 	 *	Return if a module can be used or not

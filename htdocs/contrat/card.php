@@ -333,7 +333,7 @@ if (empty($reshook)) {
 									} else {
 										$label = $lines[$i]->product_label;
 									}
-									$desc = ($lines[$i]->desc && $lines[$i]->desc != $lines[$i]->libelle) ?dol_htmlentitiesbr($lines[$i]->desc) : '';
+									$desc = ($lines[$i]->desc && $lines[$i]->desc != $lines[$i]->label) ? dol_htmlentitiesbr($lines[$i]->desc) : '';
 								} else {
 									$desc = dol_htmlentitiesbr($lines[$i]->desc);
 								}
@@ -1369,7 +1369,7 @@ if ($action == 'create') {
 
 
 		// Contract
-		if (!empty($object->brouillon) && $user->hasRight('contrat', 'creer')) {
+		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('contrat', 'creer')) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setremise">';
@@ -1467,7 +1467,7 @@ if ($action == 'create') {
 
 		print '</div>';
 
-		if (!empty($object->brouillon) && $user->hasRight('contrat', 'creer')) {
+		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('contrat', 'creer')) {
 			print '</form>';
 		}
 

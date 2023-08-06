@@ -22,48 +22,18 @@
  */
 
 // Put here all includes required by your class file
-//require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 
 
 /**
  * 	Class to manage dictionary Countries (used by imports)
  */
-class Ccountry // extends CommonObject
+class Ccountry extends Commondict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	public $element = 'ccountry'; //!< Id that identify managed objects
 	public $table_element = 'c_country'; //!< Name of table without prefix where object is stored
 
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	public $code;
 	public $code_iso;
-
-	/**
-	 * @var string Countries label
-	 */
-	public $label;
-
-	public $active;
 
 	public $fields = array(
 		'label' => array('type'=>'varchar(250)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>-1, 'showoncombobox'=>'1')
@@ -90,7 +60,6 @@ class Ccountry // extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -213,7 +182,6 @@ class Ccountry // extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -275,7 +243,6 @@ class Ccountry // extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_country";

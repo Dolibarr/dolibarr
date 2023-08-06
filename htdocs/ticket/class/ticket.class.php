@@ -83,6 +83,11 @@ class Ticket extends CommonObject
 	public $fk_project;
 
 	/**
+	 * @var int Contract ID
+	 */
+	public $fk_contract;
+
+	/**
 	 * @var string Person email who have create ticket
 	 */
 	public $origin_email;

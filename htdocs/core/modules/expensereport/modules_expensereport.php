@@ -111,11 +111,14 @@ function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $
 abstract class ModeleNumRefExpenseReport
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
-	public $version;
 
 
 	/**

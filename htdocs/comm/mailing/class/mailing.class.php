@@ -171,6 +171,11 @@ class Mailing extends CommonObject
 	public $date_validation;
 
 	/**
+	 * @var int date sending
+	 */
+	public $date_envoi;
+
+	/**
 	 * @var array extraparams
 	 */
 	public $extraparams = array();

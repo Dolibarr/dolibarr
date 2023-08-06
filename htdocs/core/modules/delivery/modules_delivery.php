@@ -71,6 +71,11 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 abstract class ModeleNumRefDeliveryOrder
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';

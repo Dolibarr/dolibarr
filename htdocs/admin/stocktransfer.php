@@ -227,7 +227,7 @@ print '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</
 
 $moduledir = 'stocktransfer';
 $myTmpObjects = array();
-$myTmpObjects[$moduledir]=array('includerefgeneration'=>1, 'includedocgeneration'=>1);
+$myTmpObjects[$moduledir]=array('includerefgeneration'=>1, 'includedocgeneration'=>1, 'class'=>'StockTransfer');
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey == 'MyObject') continue;
@@ -294,7 +294,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$nameofclass = ucfirst($myTmpObjectKey);
+								$nameofclass = $myTmpObjectArray['class'];
 								$mytmpinstance = new $nameofclass($db);
 								$mytmpinstance->initAsSpecimen();
 

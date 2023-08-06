@@ -2179,7 +2179,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 
 				// Define the constant in database if requested (not the default mode)
-				if (!empty($addtodatabase)) {
+				if (!empty($addtodatabase) && !empty($name)) {
 					$result = $this->insert_dirs($name, $dir);
 					if ($result) {
 						$err++;
