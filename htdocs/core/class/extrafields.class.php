@@ -959,7 +959,7 @@ class ExtraFields
 
 		$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
 		$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-		$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];
+		$size = (float) $this->attributes[$extrafieldsobjectkey]['size'][$key];
 		$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
 		$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
