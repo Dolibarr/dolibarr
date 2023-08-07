@@ -614,6 +614,51 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		return -1;
 	}
 }
+/**
+ * Converts a formatted properties string into an associative array.
+ *
+ * @param string $string The formatted properties string.
+ * @return array The resulting associative array.
+ */
+function parsePropertyString($string)
+{
+
+	$string = str_replace("'", '', $string);
+
+	// Uses a regular expression to capture keys and values
+	preg_match_all('/\s*([^\s=>]+)\s*=>\s*([^,]+),?/', $string, $matches, PREG_SET_ORDER);
+	$propertyArray = [];
+
+	foreach ($matches as $match) {
+		$key = trim($match[1]);
+		$value = trim($match[2]);
+
+		if (strpos($value, 'array(') === 0) {
+			$nestedArray = substr($value, 6);
+			$nestedArray = parsePropertyString($nestedArray);
+			$value = $nestedArray;
+		} elseif (strpos($value, '"Id")') !== false) {
+			$value = str_replace(')', '', $value);
+		} else {
+			if (is_numeric($value)) {
+				if (strpos($value, '.') !== false) {
+					$value = (float) $value;
+				} else {
+					$value = (int) $value;
+				}
+			} else {
+				if ($value === 'true') {
+					$value = true;
+				} elseif ($value === 'false') {
+					$value = false;
+				}
+			}
+		}
+		$propertyArray[$key] = $value;
+	}
+
+	return $propertyArray;
+}
 
 /**
  * Write all properties of the object in AsciiDoc format
@@ -624,8 +669,9 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
  */
 function writePropsInAsciiDoc($file, $objectname, $destfile)
 {
+
 	// stock all properties in array
-	$attributesUnique = array('label', 'type', 'arrayofkeyval', 'notnull', 'default', 'index', 'foreignkey', 'position', 'enabled', 'visible', 'noteditable', 'alwayseditable', 'searchall', 'isameasure', 'css', 'cssview', 'csslist', 'help', 'showoncombobox', 'validate', 'comment', 'picto');
+	$attributesUnique = array ('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
 
 	$start = "public \$fields=array(";
 	$end = ");";
@@ -647,8 +693,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// write the begin of table with specifics options
 	$table = "== DATA SPECIFICATIONS\n";
-	$table .= '== Table of fields and their properties for object *'.$objectname.'* : '."\n";
-	$table .= "__ begin table $objectname\n";
+	$table .= "=== Table of fields with properties for object *$objectname* : \n";
 	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
 	$table .= "|===\n";
 	$table .= "|code";
@@ -657,54 +702,61 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= "|".$attUnique;
 	}
 	$table .="\n";
-	$countKeys = count($keys);
-	for ($j=0;$j<$countKeys;$j++) {
-		$string = $keys[$j];
+	$valuesModif = array();
+	foreach ($keys as $string) {
 		$string = trim($string, "'");
 		$string = rtrim($string, ",");
 
-		$array = eval("return [$string];");
+		$array = parsePropertyString($string);
 
-		// check if is array after cleaning string
+		// Iterate through the array to merge all key to one array
+		$code = '';
+		foreach ($array as $key => $value) {
+			if (is_array($value)) {
+				$code = $key;
+				continue;
+			} else {
+				$array[$code][$key] = $value;
+				unset($array[$key]);
+			}
+		}
+		// check if is array after parsing the string
 		if (!is_array($array)) {
 			return -1;
 		}
-		// name of field
 		$field = array_keys($array);
-		// all values of each property
-		$values = array_values($array);
-
+		if ($field[0] === '') {
+			$field[0] = 'label';
+		}
+		$values = array_values($array)[0];
 
 		// check each field has all properties and add it if missed
-		if (count($values[0]) <=22) {
-			foreach ($attributesUnique as $cle) {
-				if (!in_array($cle, array_keys($values[0]))) {
-					$values[0][$cle] = '';
-				}
+		foreach ($attributesUnique as $attUnique) {
+			if ($attUnique == 'type' && $field[0] === 'label') {
+				$values[$attUnique] = 'varchar(255)';
+			}
+			if (!array_key_exists($attUnique, $values)) {
+				$valuesModif[$attUnique] = '';
+			} else {
+				$valuesModif[$attUnique] = $values[$attUnique];
 			}
 		}
-
-		//reorganize $values with order attributeUnique
-		$valuesRestructured = array();
-		foreach ($attributesUnique as $key) {
-			if (array_key_exists($key, $values[0])) {
-				$valuesRestructured[$key] = $values[0][$key];
-			}
-		}
-		// write all values of properties for each field
-		$table .= "|*".$field[0]."*|";
-		$table .= implode("|", array_values($valuesRestructured))."\n";
+		$table .= "|*" . $field[0] . "*|";
+		$table .= implode("|", $valuesModif) . "\n";
 	}
+
 	// end table
 	$table .= "|===\n";
 	$table .= "__ end table for object $objectname\n";
+
 	//write in file
-	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
+	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
 	return 1;
 }
+
 
 /**
  * Delete property and permissions from documentation if we delete object
