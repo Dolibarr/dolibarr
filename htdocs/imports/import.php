@@ -1508,7 +1508,7 @@ if ($step == 4 && $datatoimport) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			$tmpuser = new user($db);
+			$tmpuser = new User($db);
 
 			$i = 0;
 			while ($i < $num) {

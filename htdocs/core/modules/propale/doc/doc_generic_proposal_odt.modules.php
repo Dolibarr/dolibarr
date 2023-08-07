@@ -381,7 +381,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->propal->multidir_temp[$object->entity],

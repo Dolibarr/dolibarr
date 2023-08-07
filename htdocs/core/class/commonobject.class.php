@@ -167,6 +167,10 @@ abstract class CommonObject
 	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
+	/**
+	 * @var CommonObject To store old value of a modified ref
+	 */
+	public $oldref;
 
 	/**
 	 * @var string		Column name of the ref field.
@@ -185,6 +189,10 @@ abstract class CommonObject
 	 * @var array<string,mixed>		Can be used to pass information when only object is provided to method
 	 */
 	public $context = array();
+
+	// Properties set and used by Agenda trigger
+	public $actionmsg;
+	public $actionmsg2;
 
 	/**
 	 * @var string		Contains canvas name if record is an alternative canvas record
@@ -279,7 +287,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int 		The object's status. Prefer use of status.
-  	 * @deprecated
+	 * @deprecated
 	 * @see setStatut()
 	 */
 	public $statut;
@@ -423,11 +431,22 @@ abstract class CommonObject
 	 * @var string multicurrency code
 	 */
 	public $multicurrency_code;
-
 	/**
 	 * @var string multicurrency tx
 	 */
 	public $multicurrency_tx;
+	/**
+	 * @var string multicurrency total_ht
+	 */
+	public $multicurrency_total_ht;
+	/**
+	 * @var string multicurrency total_tva
+	 */
+	public $multicurrency_total_tva;
+	/**
+	 * @var string multicurrency total_ttc
+	 */
+	public $multicurrency_total_ttc;
 
 	/**
 	 * @var string
@@ -560,7 +579,7 @@ abstract class CommonObject
 	 * @var integer|string $date_modification;
 	 */
 	public $date_modification; // Date last change (tms field)
-	
+
 	/**
 	 * @var integer|string $date_modification;
 	 * @deprecated 		Use date_modification
@@ -577,13 +596,13 @@ abstract class CommonObject
 	 * @TODO Merge with user_creation
 	 */
 	public $user_author;
-	
+
 	/**
 	 * @var User|int	User author/creation
 	 * @TODO Remove type id
 	 */
 	public $user_creation;
-	
+
 	/**
 	 * @var int			User id author/creation
 	 */
@@ -594,18 +613,18 @@ abstract class CommonObject
 	 * @TODO Merge with user_validation
 	 */
 	public $user_valid;
-	
+
 	/**
 	 * @var User|int	User of validation
 	 * @TODO Remove type id
 	 */
 	public $user_validation;
-	
+
 	/**
 	 * @var int			User id of validation
 	 */
 	public $user_validation_id;
-	
+
 	/**
 	 * @var int			User id closing object
 	 */
@@ -616,7 +635,7 @@ abstract class CommonObject
 	 * @TODO Remove type id
 	 */
 	public $user_modification;
-	
+
 	/**
 	 * @var int			User id last modifier
 	 */
@@ -641,7 +660,7 @@ abstract class CommonObject
 	public $alreadypaid;
 
 	public $labelStatus;
-	
+
 	protected $labelStatusShort;
 
 	/**
@@ -1271,7 +1290,7 @@ abstract class CommonObject
 			$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
-		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
+		$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
 		$sql .= " ".$this->db->prefix()."element_contact ec";
 		if ($source == 'internal') {	// internal contact (user)
@@ -1314,7 +1333,7 @@ abstract class CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 					$tab[$i] = array(
 						'parentId' => $this->id,
 						'source' => $obj->source,
@@ -1359,7 +1378,7 @@ abstract class CommonObject
 	public function swapContactStatus($rowid)
 	{
 		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
-		$sql .= " tc.code, tc.libelle";
+		$sql .= " tc.code, tc.libelle as type_label";
 		$sql .= " FROM (".$this->db->prefix()."element_contact as ec, ".$this->db->prefix()."c_type_contact as tc)";
 		$sql .= " WHERE ec.rowid =".((int) $rowid);
 		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
@@ -1404,7 +1423,7 @@ abstract class CommonObject
 		}
 
 		$tab = array();
-		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position";
+		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
 		$sql .= " WHERE tc.element='".$this->db->escape($this->element)."'";
 		if ($activeonly == 1) {
@@ -1427,7 +1446,7 @@ abstract class CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-				$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+				$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 				if (empty($option)) {
 					$tab[$obj->rowid] = $libelle_type;
 				} else {
@@ -1462,7 +1481,7 @@ abstract class CommonObject
 
 		$tab = array();
 
-		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position, tc.element";
+		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position, tc.element";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
 
 		$sqlWhere = array();
@@ -1515,7 +1534,7 @@ abstract class CommonObject
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
 						$tmpelement = $obj->element;
 						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
-						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 						if (empty($option)) {
 							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
 						} else {

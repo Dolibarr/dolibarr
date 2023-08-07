@@ -353,14 +353,14 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 <br>
 <?php
 $constFreeText = 'TAKEPOS_FOOTER'.$_SESSION['takeposterminal'];
-if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeText})) {
+if (!empty($conf->global->TAKEPOS_FOOTER) || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->{$constFreeText})) {
-		$newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	if (getDolGlobalString($constFreeText)) {
+		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
 	if (!empty($conf->global->TAKEPOS_FOOTER)) {
-		$newfreetext .= make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_FOOTER'), $substitutionarray);
 	}
 	print $newfreetext;
 }

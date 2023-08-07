@@ -315,7 +315,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->ticket->dir_temp,

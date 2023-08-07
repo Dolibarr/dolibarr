@@ -158,11 +158,11 @@ if (empty($action)) {
 $object = new Website($db);
 $objectpage = new WebsitePage($db);
 
-$object->fetchAll('ASC', 'position'); // Init $object->records with list of websites
+$object->fetchAll('ASC', 'position'); // Init $object->lines with list of websites
 
 // If website not defined, we take first found
 if (!($websiteid > 0) && empty($websitekey) && $action != 'createsite') {
-	foreach ($object->records as $key => $valwebsite) {
+	foreach ($object->lines as $key => $valwebsite) {
 		$websitekey = $valwebsite->ref;
 		break;
 	}
@@ -1463,7 +1463,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$object->virtualhost = $tmpvirtualhost;
 				$object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 				$object->otherlang = join(',', $arrayotherlang);
-				$object->use_manifest = GETPOST('use_manifest', 'alpha');
+				$object->use_manifest = GETPOSTINT('use_manifest');
 
 				$result = $object->update($user);
 				if ($result < 0) {
@@ -2840,7 +2840,7 @@ if (!GETPOST('hide_websitemenu')) {
 	}
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
-	$websitepage = new WebSitePage($db);
+	$websitepage = new WebsitePage($db);
 	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
@@ -2870,13 +2870,13 @@ if (!GETPOST('hide_websitemenu')) {
 
 		$out = '';
 		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
-		if (empty($object->records)) {
+		if (empty($object->lines)) {
 			$out .= '<option value="-1">&nbsp;</option>';
 		}
 
 		// Loop on each sites
 		$i = 0;
-		foreach ($object->records as $key => $valwebsite) {
+		foreach ($object->lines as $key => $valwebsite) {
 			if (empty($websitekey)) {
 				if ($action != 'createsite') {
 					$websitekey = $valwebsite->ref;

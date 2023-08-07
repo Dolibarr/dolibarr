@@ -145,8 +145,10 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 				}
 				if (empty($multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]])) {
 					global $mc;
-					$mc->getInfo($extrafields->attributes[$elementtype]['entityid'][$key]);
-					$multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]] = $mc->label ? $mc->label : $extrafields->attributes[$elementtype]['entityid'][$key];
+					if (is_object($mc) && method_exist($mc, 'getInfo')) {
+						$mc->getInfo($extrafields->attributes[$elementtype]['entityid'][$key]);
+						$multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]] = $mc->label ? $mc->label : $extrafields->attributes[$elementtype]['entityid'][$key];
+					}
 				}
 				print $multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]];
 			}

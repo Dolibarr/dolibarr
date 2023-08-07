@@ -153,7 +153,9 @@ if (empty($reshook)) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				$country_code = $obj->code;
+				if ($obj) {
+					$country_code = $obj->code;
+				}
 			} else {
 				dol_print_error($db);
 			}
@@ -259,7 +261,7 @@ if (strlen(trim($search_account))) {
 			$search_account_tmp_clean = $search_account_tmp;
 			$search_account_clean = $search_account;
 			$startchar = '%';
-			if (strpos($search_account_tmp, '^') === 0) {
+			if (substr($search_account_tmp, 0, 1) === '^') {
 				$startchar = '';
 				$search_account_tmp_clean = preg_replace('/^\^/', '', $search_account_tmp);
 				$search_account_clean = preg_replace('/^\^/', '', $search_account);
@@ -390,11 +392,11 @@ if ($resql) {
 		print '<option value="-1">&nbsp;</option>';
 		while ($i < $numbis) {
 			$obj = $db->fetch_object($resqlchart);
-
-			print '<option value="'.$obj->rowid.'"';
-			print ($pcgver == $obj->rowid) ? ' selected' : '';
-			print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
-
+			if ($obj) {
+				print '<option value="'.$obj->rowid.'"';
+				print ($pcgver == $obj->rowid) ? ' selected' : '';
+				print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
+			}
 			$i++;
 		}
 	} else {

@@ -67,6 +67,11 @@ abstract class ModelePDFTask extends CommonDocGenerator
 abstract class ModeleNumRefTask
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';

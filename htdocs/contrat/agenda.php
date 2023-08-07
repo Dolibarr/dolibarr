@@ -148,7 +148,9 @@ if ($object->id > 0) {
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
 		$title = $object->ref." - ".$title;
 	}
-	llxHeader('', $title);
+	$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+	llxHeader('', $title, $help_url);
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

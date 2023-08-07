@@ -113,6 +113,14 @@ $urldolibarrmodules = 'https://www.dolistore.com/';
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
 
+// Execution Time
+$max_execution_time_for_deploy = (empty($conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME) ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_time = @ini_get("max_execution_time");
+if ($max_time && $max_time < $max_execution_time_for_deploy) {
+	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_deploy=".$max_execution_time_for_deploy.". We try to increase it dynamically.");
+	@ini_set("max_execution_time", $max_execution_time_for_deploy); // This work only if safe mode is off. also web servers has timeout of 300
+}
+
 
 /*
  * Actions

@@ -865,7 +865,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
-			$errorlabel = $order->error;
+			$errorlabel = 'Bad permission';
 		}
 	}
 

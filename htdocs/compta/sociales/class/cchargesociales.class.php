@@ -34,6 +34,10 @@
  */
 class Cchargesociales
 {
+	public $db;
+
+	public $id;
+
 	/**
 	 * @var string Id to identify managed objects
 	 */

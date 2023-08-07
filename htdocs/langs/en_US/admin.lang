@@ -2399,4 +2399,5 @@ DefaultForTypeDesc=Template used by default when creating a new email for the te
 OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
 OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AtBottomOfPage=At bottom of page
-FailedAuth=Failed authentications
+FailedAuth=failed authentications
+MaxNumberOfFailedAuth=Max number of failed authentication in 24h to disable login.

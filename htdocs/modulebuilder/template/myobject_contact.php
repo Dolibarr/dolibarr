@@ -140,7 +140,8 @@ if ($action == 'addcontact' && $permission) {
  * View
  */
 
-$title = $langs->trans('MyObject')." - ".$langs->trans('ContactsAddresses');
+$title = $langs->trans("MyObject")." - ".$langs->trans('ContactsAddresses');
+//$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
