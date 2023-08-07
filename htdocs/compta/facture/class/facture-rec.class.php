@@ -657,15 +657,6 @@ class FactureRec extends CommonInvoice
 
 		$this->lines = array();
 
-		// Retrieve all extrafield for line
-		// fetch optionals attributes and labels
-		/*if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-		$extrafields->fetch_name_optionals_label($this->table_element_line, true);
-		*/
-
 		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
@@ -2123,6 +2114,7 @@ class FactureLigneRec extends CommonInvoiceLine
 	public $fk_fournprice; // For backward compatibility
 
 	public $rang;
+	//public $situation_percent;	// Not supported on recurring invoice line
 
 	public $desc;
 	public $description;
