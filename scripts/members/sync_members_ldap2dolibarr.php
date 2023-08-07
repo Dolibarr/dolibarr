@@ -98,7 +98,7 @@ if (!isset($argv[2]) || !is_numeric($argv[2])) {
 	exit(-1);
 }
 
-$typeid = $argv[2];
+$typeid = (int) $argv[2];
 foreach ($argv as $key => $val) {
 	if ($val == 'commitiferror') {
 		$forcecommit = 1;
@@ -187,7 +187,8 @@ $ldap = new Ldap();
 $result = $ldap->connect_bind();
 if ($result >= 0) {
 	$justthese = array();
-
+	$pricefirst = 0;
+	$pricelast = 0;
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE = 0;
 

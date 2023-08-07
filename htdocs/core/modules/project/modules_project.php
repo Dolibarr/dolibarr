@@ -121,14 +121,14 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 abstract class ModeleNumRefProjects
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
-	/**
-	 * @var string $version
-	 */
-	public $version;
 
 	/**
 	 *  Return if a module can be used or not

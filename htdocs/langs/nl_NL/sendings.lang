@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - sendings
-RefSending=Referentie verzending
+RefSending=Ref. verzending
 Sending=Verzending
 Sendings=Verzendingen
 AllSendings=Alle zendingen
@@ -48,12 +48,12 @@ DateDeliveryPlanned=Verwachte leverdatum
 RefDeliveryReceipt=Ref-ontvangstbewijs
 StatusReceipt=Status ontvangstbevestiging
 DateReceived=Datum leveringsonvangst
-ClassifyReception=Classificeer ontvangst
+ClassifyReception=Ontvangen melden
 SendShippingByEMail=Verzend verzending per e-mail
 SendShippingRef=Indiening van de zending %s
 ActionsOnShipping=Acions op verzendkosten
 LinkToTrackYourPackage=Link naar uw pakket
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=Op dit moment wordt het aanmaken van een nieuwe zending gedaan vanuit het verkooporderrecord.
 ShipmentLine=Verzendingslijn
 ProductQtyInCustomersOrdersRunning=Producthoeveelheid van open verkooporders
 ProductQtyInSuppliersOrdersRunning=Producthoeveelheid van open inkooporders
@@ -74,3 +74,8 @@ SumOfProductWeights=Som van product-gewichten
 # warehouse details
 DetailWarehouseNumber= Magazijn informatie
 DetailWarehouseFormat= W: %s (Aantal: %d)
+
+ShipmentDistribution=Zending distributie
+
+ErrorTooManyCombinationBatchcode=Geen verzending voor regel %s omdat er te veel combinatiemagazijn-, product- en batchcode is gevonden (%s).
+ErrorNoCombinationBatchcode=Geen verzending voor regel %s omdat er geen combinatie van magazijn-, product- en batchcode is gevonden.

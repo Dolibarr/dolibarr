@@ -110,7 +110,7 @@ if (empty($reshook)) {
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
-		$bank->fetch($conf->global->{$default_account});
+		$bank->fetch(getDolGlobalInt($default_account));
 		// ICS is not mandatory with payment by bank transfer
 		/*if ((empty($bank->ics) && $type !== 'bank-transfer')
 			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
@@ -434,11 +434,11 @@ if ($resql) {
 
 	if ($num) {
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		$bac = new CompanyBankAccount($db);
 
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
 
+			$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
 			$bac->fetch(0, $obj->socid);
 
 			$invoicestatic->id = $obj->rowid;

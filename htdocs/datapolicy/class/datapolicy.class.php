@@ -32,6 +32,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 class DataPolicy
 {
 	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $error;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler

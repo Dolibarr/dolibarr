@@ -113,6 +113,14 @@ $urldolibarrmodules = 'https://www.dolistore.com/';
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
 
+// Execution Time
+$max_execution_time_for_deploy = (empty($conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME) ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_time = @ini_get("max_execution_time");
+if ($max_time && $max_time < $max_execution_time_for_deploy) {
+	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_deploy=".$max_execution_time_for_deploy.". We try to increase it dynamically.");
+	@ini_set("max_execution_time", $max_execution_time_for_deploy); // This work only if safe mode is off. also web servers has timeout of 300
+}
+
 
 /*
  * Actions
@@ -540,7 +548,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
 	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
-		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
+		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
+	}
+	if (!empty($conf->global->MAIN_SETUP_MODULES_INFO)) {	// Show a custom message
+		$deschelp .= '<div class="info">'.$langs->trans($conf->global->MAIN_SETUP_MODULES_INFO)."<br></div>\n";
+	}
+	if ($deschelp) {
+		$deschelp .= '<br>';
 	}
 }
 if ($mode == 'marketplace') {

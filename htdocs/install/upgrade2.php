@@ -144,7 +144,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$conf->db->user = $dolibarr_main_db_user;
 	$conf->db->pass = $dolibarr_main_db_pass;
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if (!$db->connected) {
 		print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td class="right">'.$langs->trans('Error').'</td></tr>';
@@ -2056,7 +2056,7 @@ function migrate_modeles($db, $langs, $conf)
 
 	if (isModEnabled("expedition")) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
-		$modellist = ModelePDFExpedition::liste_modeles($db);
+		$modellist = ModelePdfExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
 			// Aucun model par defaut.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('rouget','shipping')";
@@ -2523,7 +2523,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
- * @return	integer|null
+ * @return	integer				<0 if KO, 0=Bad version, >0 if OK
  */
 function migrate_restore_missing_links($db, $langs, $conf)
 {
@@ -2650,6 +2650,8 @@ function migrate_restore_missing_links($db, $langs, $conf)
 	}
 
 	print '</td></tr>';
+
+	return ($error ? -1 : 1);
 }
 
 /**
@@ -4240,6 +4242,33 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 
 	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".join(',', array_keys($listofmodule)));
 
+	$reloadactionformodules = array(
+		'MAIN_MODULE_AGENDA' => array('class' => 'modAgenda', 'remove'=> 1),
+		'MAIN_MODULE_API' => array('class' => 'modApi'),
+		'MAIN_MODULE_BARCODE' => array('class' => 'modBarcode', 'remove'=> 1),
+		'MAIN_MODULE_BLOCKEDLOG' => array('class' => 'modBlockedLog', 'deleteinsertmenus'=> 1),
+		'MAIN_MODULE_CRON' => array('class' => 'modCron', 'remove'=> 1),
+		'MAIN_MODULE_EXTERNALSITE' => array('class' => 'modExternalSite', 'remove'=> 1),
+		'MAIN_MODULE_SOCIETE' => array('class' => 'modSociete', 'remove'=> 1),
+		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),
+		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
+		'MAIN_MODULE_COMMANDE' => array('class' => 'modCommande'),
+		'MAIN_MODULE_FACTURE' => array('class' => 'modFacture'),
+		'MAIN_MODULE_FOURNISSEUR' => array('class' => 'modFournisseur'),
+		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove'=>1),
+		'MAIN_MODULE_EXPENSEREPORT' => array('class' => 'modExpenseReport'),
+		'MAIN_MODULE_DON' => array('class' => 'modDon'),
+		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove'=>1),
+		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove'=>1),
+		'MAIN_MODULE_EVENTORGANIZATION' => array('class' => 'modEventOrganization', 'remove'=>1),
+		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove'=>1),
+		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove'=>1),
+		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove'=>1),
+		'MAIN_MODULE_PRODUCTBATCH' => array('class' => 'modProductBatch', 'remove'=>1),
+		'MAIN_MODULE_TAKEPOS' => array('class' => 'modTakePos', 'remove'=>1),
+		'MAIN_MODULE_EMAILCOLLECTOR' => array('class' => 'modEmailCollector', 'remove'=>1),
+	);
+
 	foreach ($listofmodule as $moduletoreload => $reloadmode) {	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
 		if (empty($moduletoreload) || (empty($conf->global->$moduletoreload) && !$force)) {
 			continue; // Discard reload if module not enabled
@@ -4247,198 +4276,24 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 
 		$mod = null;
 
-		if ($moduletoreload == 'MAIN_MODULE_AGENDA') {
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Agenda module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php';
+		if (!empty($reloadactionformodules[$moduletoreload])) {
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreload." with mode ".$reloadmode);
+
+			$val = $reloadactionformodules[$moduletoreload];
+			$classformodule = $val['class'];
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/'.$classformodule.'.class.php';
 			if ($res) {
-				$mod = new modAgenda($db);
-				$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_API') {
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Rest API module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modApi.class.php';
-			if ($res) {
-				$mod = new modApi($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_BARCODE') {
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Barcode module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modBarcode.class.php';
-			if ($res) {
-				$mod = new modBarcode($db);
-				$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_BLOCKEDLOG') {
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate BlockedLog module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modBlockedLog.class.php';
-			if ($res) {
-				$mod = new modBlockedLog($db);
-				// For this module we only reload menus.
-				$mod->delete_menus();
-				$mod->insert_menus();
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_CRON') {
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Cron module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modCron.class.php';
-			if ($res) {
-				$mod = new modCron($db);
-				$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_EXTERNALSITE') {
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate ExternalSite module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modExternalSite.class.php';
-			if ($res) {
-				$mod = new modExternalSite($db);
-				$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_SOCIETE') {
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Societe module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
-			if ($res) {
-				$mod = new modSociete($db);
-				$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_PRODUIT') {    // Permission has changed into 2.7
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Produit module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
-			if ($res) {
-				$mod = new modProduct($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_SERVICE') {   // Permission has changed into 2.7
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Service module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
-			if ($res) {
-				$mod = new modService($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_COMMANDE') {   // Permission has changed into 2.9
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Commande module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
-			if ($res) {
-				$mod = new modCommande($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_FACTURE') {    // Permission has changed into 2.9
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Facture module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
-			if ($res) {
-				$mod = new modFacture($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR') {    // Permission has changed into 2.9
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Fournisseur module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
-			if ($res) {
-				$mod = new modFournisseur($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_HOLIDAY') {   // Permission and tabs has changed into 3.8
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Leave Request module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modHoliday.class.php';
-			if ($res) {
-				$mod = new modHoliday($db);
-				$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT') {   // Permission has changed into 3.0
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Deplacement module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
-			if ($res) {
-				$mod = new modDeplacement($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_EXPENSEREPORT') {
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Expense Report module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modExpenseReport.class.php';
-			if ($res) {
-				$mod = new modExpenseReport($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_DON') {   // Permission has changed into 3.0
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Don module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
-			if ($res) {
-				$mod = new modDon($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_ECM') {    // Permission has changed into 3.0 and 3.1
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate ECM module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
-			if ($res) {
-				$mod = new modECM($db);
-				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_KNOWLEDGEMANAGEMENT') {    // Permission has changed into 3.0 and 3.1
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Knowledge Management");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modKnowledgeManagement.class.php';
-			if ($res) {
-				$mod = new modKnowledgeManagement($db);
-				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_EVENTORGANIZATION') {    // Permission has changed into 3.0 and 3.1
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules EventOrganization");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modEventOrganization.class.php';
-			if ($res) {
-				$mod = new modEventOrganization($db);
-				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_PAYBOX') {    // Permission has changed into 3.0
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Paybox module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
-			if ($res) {
-				$mod = new modPaybox($db);
-				$mod->remove('noboxes'); // We need to remove because id of module has changed
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_SUPPLIERPROPOSAL') {		// Module after 3.5
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Supplier Proposal module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modSupplierProposal.class.php';
-			if ($res) {
-				$mod = new modSupplierProposal($db);
-				$mod->remove('noboxes'); // We need to remove because id of module has changed
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_OPENSURVEY') {   // Permission has changed into 3.0
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Opensurvey module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modOpenSurvey.class.php';
-			if ($res) {
-				$mod = new modOpenSurvey($db);
-				$mod->remove('noboxes'); // We need to remove because menu entries has changed
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_PRODUCTBATCH') {   // Permission has changed into 10.0
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules ProductBatch module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modProductBatch.class.php';
-			if ($res) {
-				$mod = new modProductBatch($db);
-				$mod->remove('noboxes'); // We need to remove because menu entries has changed
-				$mod->init($reloadmode);
-			}
-		} elseif ($moduletoreload == 'MAIN_MODULE_TAKEPOS') {   // Permission has changed into 10.0
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Takepos module");
-			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modTakePos.class.php';
-			if ($res) {
-				$mod = new modTakePos($db);
-				$mod->remove('noboxes'); // We need to remove because menu entries has changed
-				$mod->init($reloadmode);
+				$mod = new $classformodule($db);
+				if (!empty($val['remove'])) {
+					$mod->remove('noboxes');
+				}
+				if (!empty($val['deleteinsertmenus'])) {
+					// We only reload menus
+					$mod->delete_menus();
+					$mod->insert_menus();
+				} else {
+					$mod->init($reloadmode);
+				}
 			}
 		} else {	// Other generic cases/modules
 			$reg = array();
@@ -4451,7 +4306,8 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$moduletoreloadshort = $reg[1];
 				}
 
-				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode);
+				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode." (generic code)");
+
 				$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php';
 				if ($res) {
 					$classname = 'mod'.$moduletoreloadshort;
@@ -4555,11 +4411,14 @@ function migrate_user_photospath()
 		$user = $fuser; // To avoid error during migration
 	}
 
-	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user"; // Get list of all users
+	$sql = "SELECT rowid as uid, entity from ".MAIN_DB_PREFIX."user"; // Get list of all users
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			$fuser->fetch($obj->uid);
+			//$fuser->fetch($obj->uid);
+			$fuser->id = $obj->uid;
+			$fuser->entity = $obj->entity;
+
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
 			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
 			if ($entity > 1) {
@@ -4629,7 +4488,7 @@ function migrate_user_photospath()
  */
 function migrate_user_photospath2()
 {
-	global $conf, $db, $langs, $user;
+	global $db, $langs, $user;
 
 	print '<tr><td colspan="4">';
 
@@ -4641,11 +4500,15 @@ function migrate_user_photospath2()
 		$user = $fuser; // To avoid error during migration
 	}
 
-	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user"; // Get list of all users
+	$sql = "SELECT rowid as uid, entity, photo from ".MAIN_DB_PREFIX."user"; // Get list of all users
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			$fuser->fetch($obj->uid);
+			//$fuser->fetch($obj->uid);
+			$fuser->id = $obj->uid;
+			$fuser->entity = $obj->entity;
+			$fuser->photo = $obj->photo;
+
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
 			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
 			if ($entity > 1) {

@@ -39,6 +39,10 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 if ($id) {
 	// $user est le user qui edite, $id est l'id de l'utilisateur edite
 	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
@@ -193,7 +197,7 @@ $tmparray['index.php'] = array('label'=>'Dashboard', 'picto'=>'graph');
 if (isModEnabled("societe")) {
 	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = array('label'=>'ThirdPartiesArea', 'picto'=>'company');
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = array('label'=>'ProjectsArea', 'picto'=>'project');
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		$tmparray['projet/list.php?mainmenu=project&leftmenu=&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead'] = array('label'=>'ListOpenLeads', 'picto'=>'project');
@@ -208,8 +212,11 @@ if (isModEnabled("product") || isModEnabled("service")) {
 if (isModEnabled("propal") || isModEnabled('commande') || isModEnabled('ficheinter') || isModEnabled('contrat')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = array('label'=>'CommercialArea', 'picto'=>'commercial');
 }
+if (isModEnabled('facture')) {
+	$tmparray['compta/index.php?mainmenu=billing&leftmenu='] = array('label'=>'InvoicesArea', 'picto'=>'bill');
+}
 if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
-	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
+	$tmparray['compta/index.php?mainmenu=accountancy&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
 }
 if (isModEnabled('adherent')) {
 	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label'=>'MembersArea', 'picto'=>'member');
@@ -221,7 +228,7 @@ if (isModEnabled('ticket')) {
 	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = array('label'=>'Tickets', 'picto'=>'ticket');
 }
 // add bookmarks to available landing pages
-if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
+if (!getDolGlobalString('MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES')) {
 	$sql = "SELECT b.rowid, b.fk_user, b.url, b.title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 	$sql .= " WHERE b.entity IN (".getEntity('bookmark').")";
@@ -234,7 +241,7 @@ if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
 		$i = 0;
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0) {
-			$tmparray['sep'.$i] = '<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>';
+			$tmparray['sep'.$i] = array('data-html'=>'<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>', 'label'=>'--- '.$langs->trans("Bookmarks"));
 			while ($i < $num_rows) {
 				$obj = $db->fetch_object($resql);
 
@@ -255,6 +262,7 @@ if ($reshook < 0) {
 } elseif ($reshook == 0) {
 	$tmparray = array_merge($tmparray, $hookmanager->resArray);
 }
+
 foreach ($tmparray as $key => $val) {
 	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
 	$tmparray[$key]['label'] = $langs->trans($val['label']);

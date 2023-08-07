@@ -271,7 +271,7 @@ class Paiement extends CommonObject
 				continue;
 			}
 			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
-			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
+			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
@@ -306,6 +306,7 @@ class Paiement extends CommonObject
 
 		if (!empty($currencyofpayment)) {
 			// We must check that the currency of invoices is the same than the currency of the bank
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$bankaccount = new Account($this->db);
 			$bankaccount->fetch($this->fk_account);
 			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;

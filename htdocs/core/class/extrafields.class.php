@@ -425,6 +425,7 @@ class ExtraFields
 				return -1;
 			}
 		}
+		return -1;
 	}
 
 	/**
@@ -823,9 +824,9 @@ class ExtraFields
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load array this->attributes
+	 * 	Load the array of extrafields defintion $this->attributes
 	 *
-	 * 	@param	string		$elementtype		Type of element ('' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
+	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
@@ -848,6 +849,9 @@ class ExtraFields
 			$elementtype = 'commande_fournisseur';
 		}
 
+		// Test cache $this->attributes[$elementtype]['loaded'] to see if we must do something
+		// TODO
+
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
@@ -855,7 +859,7 @@ class ExtraFields
 		$sql .= " css, cssview, csslist";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
-		if ($elementtype) {
+		if ($elementtype && $elementtype != 'all') {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
 		}
 		$sql .= " ORDER BY pos";
@@ -906,7 +910,7 @@ class ExtraFields
 				}
 			}
 			if ($elementtype) {
-				$this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
+				$this->attributes[$elementtype]['loaded'] = 1; // Note: If nothing is found, we also set the key 'loaded' to 1.
 				$this->attributes[$elementtype]['count'] = $count;
 			}
 		} else {
@@ -995,9 +999,9 @@ class ExtraFields
 			} elseif ($type == 'radio') {
 				$morecss = 'width25';
 			} else {
-				if (empty($size) || round($size) < 12) {
+				if (empty($size) || round((float) $size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48) {
+				} elseif (round((float) $size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -2085,7 +2089,7 @@ class ExtraFields
 					continue;
 				}
 
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst')))) {
 					//when unticking boolean field, it's not set in POST
 					continue;
 				}
@@ -2112,14 +2116,16 @@ class ExtraFields
 				if (empty($enabled)
 					|| (
 						$onlykey === '@GETPOSTISSET'
-						&& in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst'))
+						&& in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst'))
 						&& in_array(abs($enabled), array(2, 5))
 						&& ! GETPOSTISSET('options_' . $key) // Update hidden checkboxes and multiselect only if they are provided
 					)
 				) {
 					continue;
 				}
-				if (empty($visibility) || $visibility == 5) {
+				$visibility_abs = abs($visibility);
+				// not modify if extra field is not in update form (0 : never, 2 or -2 : list only, 5 or - 5 : list and view only)
+				if (empty($visibility_abs) || $visibility_abs == 2 || $visibility_abs == 5) {
 					continue;
 				}
 				if (empty($perms)) {
@@ -2136,8 +2142,12 @@ class ExtraFields
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 
-						// Field is not defined. We mark this as a problem. We may fix it later if there is a default value and $todefaultifmissing is set.
+						// Field is not defined. We mark this as an error. We may fix it later if there is a default value and $todefaultifmissing is set.
+
 						$nofillrequired++;
+						if (!empty($this->attributes[$object->table_element]['langfile'][$key])) {
+							$langs->load($this->attributes[$object->table_element]['langfile'][$key]);
+						}
 						$error_field_required[$key] = $langs->transnoentitiesnoconv($value);
 					}
 				}
@@ -2166,7 +2176,14 @@ class ExtraFields
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, array('text'))) {
-					$value_key = GETPOST("options_".$key, 'alphanohtml');
+					$label_security_check = 'alphanohtml';
+					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
+					if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+						$label_security_check = 'nohtml';
+					} else {
+						$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+					}
+					$value_key = GETPOST("options_".$key, $label_security_check);
 				} else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') {

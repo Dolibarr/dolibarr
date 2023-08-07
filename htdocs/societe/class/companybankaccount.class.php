@@ -49,7 +49,7 @@ class CompanyBankAccount extends Account
 	public $default_rib;
 
 	/**
-	 * Value 'FRST' or 'RCUR' (For SEPA mandate). Warning, in database, we store 'RECUR'.
+	 * Value 'FRST' or 'RCUR' (For SEPA mandate)
 	 *
 	 * @var string
 	 */
@@ -94,7 +94,7 @@ class CompanyBankAccount extends Account
 
 		$this->socid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 		$this->default_rib = 0;
 	}
 

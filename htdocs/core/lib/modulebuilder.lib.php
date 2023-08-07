@@ -537,9 +537,9 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		} else {
 			$permsToadd = array();
 			$perms = array(
-				'read' => 'Read objects of '.ucfirst($module),
-				'write' => 'Create/Update objects of '.ucfirst($module),
-				'delete' => 'Delete objects of '.ucfirst($module)
+				'read' => 'Read '.$objectname.' object of '.ucfirst($module),
+				'write' => 'Create/Update '.$objectname.' object of '.ucfirst($module),
+				'delete' => 'Delete '.$objectname.' object of '.ucfirst($module)
 			);
 			$i = 0;
 			foreach ($perms as $index => $value) {
@@ -702,6 +702,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= "|".$attUnique;
 	}
 	$table .="\n";
+
 	$valuesModif = array();
 	foreach ($keys as $string) {
 		$string = trim($string, "'");
@@ -724,6 +725,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		if (!is_array($array)) {
 			return -1;
 		}
+
 		$field = array_keys($array);
 		if ($field[0] === '') {
 			$field[0] = 'label';
@@ -743,12 +745,12 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		}
 		$table .= "|*" . $field[0] . "*|";
 		$table .= implode("|", $valuesModif) . "\n";
+
 	}
 
 	// end table
 	$table .= "|===\n";
 	$table .= "__ end table for object $objectname\n";
-
 	//write in file
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
@@ -837,8 +839,7 @@ function writePermsInAsciiDoc($file, $destfile)
 	$string .= "\n";
 	//content table
 	$array = explode(";", $content);
-	$indexIgnored = 15;
-	$permissions = array_slice($array, $indexIgnored, null, true);
+	$permissions = array_filter($array);
 	// delete  occurrences "$r++" and ID
 	$permissions = str_replace('$r++', 1, $permissions);
 
@@ -863,21 +864,12 @@ function writePermsInAsciiDoc($file, $destfile)
 	array_pop($permsN);
 
 	// Group permissions by Object and add it to string
-	$temp_array = [];
 	$final_array = [];
-	$countRights = count($permsN);
-	for ($i = 0; $i < $countRights ; $i++) {
-		// Add current element to temporary array
-		$temp_array[] = $permsN[$i];
-		//  add them to the final array and empty the temporary array
-		if (count($temp_array) == 2) {
-			$final_array[] = $temp_array;
-			$temp_array = [];
-		}
-	}
-	//  add it to the final array
-	if (count($temp_array) > 0) {
+	$index = 0;
+	while ($index < count($permsN)) {
+		$temp_array = [$permsN[$index], $permsN[$index + 1]];
 		$final_array[] = $temp_array;
+		$index += 2;
 	}
 
 	$result = array();
@@ -1006,4 +998,100 @@ function removeObjectFromApiFile($file, $objectname, $modulename)
 		dolReplaceInFile($file, array($begin => '', $end => ''));
 	}
 	return 1;
+}
+
+
+/**
+ * @param    string         $file       path of filename
+ * @param    mixed          $menus      all menus for module
+ * @param    mixed|null     $menuWantTo  menu get for do actions
+ * @param    int|null       $key        key for the concerned menu
+ * @param    int            $action     for specify what action (0 = delete, 1 = add, 2 = update, -1 = when delete object)
+ * @return   int            1 if OK, -1 if KO
+ */
+function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
+{
+	$errors =0;
+	$counter = 0;
+	if (!file_exists($file)) {
+		return -1;
+	}
+	if ($action == 0 && !empty($key)) {
+		// delete menu manuelly
+		array_splice($menus, array_search($menus[$key], $menus), 1);
+	} elseif ($action == 1) {
+		// add menu manualy
+		array_push($menus, $menuWantTo);
+	} elseif ($action == 2 && !empty($key) && !empty($menuWantTo)) {
+		// update right from permissions array
+
+		// check if the values already exists
+		foreach ($menus as $index => $menu) {
+			if ($index !== $key) {
+				if ($menu['type'] === $menuWantTo['type']) {
+					if (strcasecmp(str_replace(' ', '', $menu['titre']), str_replace(' ', '', $menuWantTo['titre'])) === 0) {
+						$counter++;
+					}
+					if (strcasecmp(str_replace(' ', '', $menu['url']), str_replace(' ', '', $menuWantTo['url'])) === 0) {
+						$counter++;
+					}
+				}
+			}
+		}
+		if (!$counter) {
+			$menus[$key] = $menuWantTo;
+		} else {
+			$errors++;
+		}
+	} elseif ($action == -1 && !empty($menuWantTo)) {
+		// delete menus when delete Object
+		foreach ($menus as $index => $menu) {
+			if ((strpos(strtolower($menu['fk_menu']), strtolower($menuWantTo)) !== false) || (strpos(strtolower($menu['leftmenu']), strtolower($menuWantTo)) !== false)) {
+				array_splice($menus, array_search($menu, $menus), 1);
+			}
+		}
+	} else {
+		$errors++;
+	}
+	if (!$errors) {
+		// delete All LEFT Menus
+		$beginMenu = '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */';
+		$endMenu = '/* END MODULEBUILDER LEFTMENU MYOBJECT */';
+		$allMenus = getFromFile($file, $beginMenu, $endMenu);
+		dolReplaceInFile($file, array($allMenus => ''));
+
+		//prepare each menu and stock them in string
+		$str_menu = "";
+		foreach ($menus as $index =>$menu) {
+			$menu['position'] = "1000 + \$r";
+			if ($menu['type'] === 'left') {
+				$start = "\t\t".'/* LEFTMENU '.strtoupper($menu['titre']).' */';
+				$end   = "\t\t".'/* END LEFTMENU '.strtoupper($menu['titre']).' */';
+				$val_actuel = $menu;
+				$next_val = $menus[$index + 1];
+				$str_menu .= $start."\n";
+				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
+				$str_menu.= "\t\t\t 'fk_menu' =>'".$menu['fk_menu']."',\n";
+				$str_menu.= "\t\t\t 'type' =>'".$menu['type']."',\n";
+				$str_menu.= "\t\t\t 'titre' =>'".$menu['titre']."',\n";
+				$str_menu.= "\t\t\t 'mainmenu' =>'".$menu['mainmenu']."',\n";
+				$str_menu.= "\t\t\t 'leftmenu' =>'".$menu['leftmenu']."',\n";
+				$str_menu.= "\t\t\t 'url' =>'".$menu['url']."',\n";
+				$str_menu.= "\t\t\t 'langs' =>'".$menu['langs']."',\n";
+				$str_menu.= "\t\t\t 'position' =>".$menu['position'].",\n";
+				$str_menu.= "\t\t\t 'enabled' =>'".$menu['enabled']."',\n";
+				$str_menu.= "\t\t\t 'perms' =>'".$menu['perms']."',\n";
+				$str_menu.= "\t\t\t 'target' =>'".$menu['target']."',\n";
+				$str_menu.= "\t\t\t 'user' =>".$menu['user'].",\n";
+				$str_menu.= "\t\t);\n";
+
+				if ($val_actuel['leftmenu'] !== $next_val['leftmenu']) {
+					$str_menu .= $end."\n";
+				}
+			}
+		}
+
+		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
+		return 1;
+	}return -1;
 }

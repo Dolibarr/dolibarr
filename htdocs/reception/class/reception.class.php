@@ -77,7 +77,6 @@ class Reception extends CommonObject
 	public $socid;
 	public $ref_supplier;
 
-	public $brouillon;
 	public $entrepot_id;
 	public $tracking_number;
 	public $tracking_url;
@@ -206,7 +205,7 @@ class Reception extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $hookmanager;
+		global $conf;
 
 		$now = dol_now();
 
@@ -214,7 +213,6 @@ class Reception extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
@@ -436,10 +434,6 @@ class Reception extends CommonObject
 				$this->label_incoterms = $obj->label_incoterms;
 
 				$this->db->free($result);
-
-				if ($this->statut == 0) {
-					$this->brouillon = 1;
-				}
 
 				//$file = $conf->reception->dir_output."/".get_exdir(0, 0, 0, 1, $this, 'reception')."/".$this->id.".pdf";
 				//$this->pdf_filename = $file;
@@ -739,7 +733,9 @@ class Reception extends CommonObject
 			} else {
 				// build array with quantity received by product in all supplier orders (origin)
 				foreach ($supplierorderdispatch->lines as $dispatch_line) {
-					$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
+					if (array_key_exists($dispatch_line->fk_product, $qty_received)) {
+						$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
+					}
 				}
 
 				// qty wished in order supplier (origin)
@@ -1022,7 +1018,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		// Stock control
-		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
+		if (isModEnabled('stock') && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");

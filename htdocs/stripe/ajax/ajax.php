@@ -18,6 +18,11 @@
 /**
  *	\file       htdocs/stripe/ajax/ajax.php
  *	\brief      Ajax action for Stipe ie: Terminal
+ *
+ *  Calling with
+ *  action=getConnexionToken return a token of Stripe terminal
+ *  action=createPaymentIntent generates a payment intent
+ *  action=capturePaymentIntent generates a payment
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -49,7 +54,12 @@ $servicestatus = GETPOST('servicestatus', 'int');
 $amount = GETPOST('amount', 'int');
 
 if (empty($user->rights->takepos->run)) {
-	accessforbidden();
+	accessforbidden('Not allowed to use TakePOS');
+}
+
+$usestripeterminals = getDolGlobalString('STRIPE_LOCATION');
+if (! $usestripeterminals) {
+	accessforbidden('Feature to use Stripe terminals not enabled');
 }
 
 
@@ -68,7 +78,9 @@ if ($action == 'getConnexionToken') {
 		// The ConnectionToken's secret lets you connect to any Stripe Terminal reader
 		// and take payments with your Stripe account.
 		$array = array();
-		if (isset($location) && !empty($location))  $array['location'] = $location;
+		if (isset($location) && !empty($location)) {
+			$array['location'] = $location;
+		}
 		if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 			$connectionToken = \Stripe\Terminal\ConnectionToken::create($array);
 		} else {

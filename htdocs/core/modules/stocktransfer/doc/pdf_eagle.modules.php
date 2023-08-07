@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 /**
  *	Class to build sending documents with model Eagle
  */
-class pdf_eagle extends ModelePdfStockTransfer
+class pdf_eagle extends ModelePDFStockTransfer
 {
 	/**
 	 * @var DoliDb Database handler
@@ -58,12 +58,6 @@ class pdf_eagle extends ModelePdfStockTransfer
 	 * @var string document type
 	 */
 	public $type;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
-	 */
-	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document

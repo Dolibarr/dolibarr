@@ -1,14 +1,16 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Modulazonosító
 ModuleBuilderDesc=Ezt az eszközt csak tapasztalt felhasználók vagy fejlesztők használhatják. Segédprogramokat biztosít saját modul létrehozásához vagy szerkesztéséhez. Az alternatív <a href="%s" target="_blank" rel="noopener noreferrer">kézi fejlesztés dokumentációja itt</a> található.
 EnterNameOfModuleDesc=Írja be a létrehozandó modul/alkalmazás nevét szóközök nélkül. Használjon nagybetűket a szavak elválasztásához (például: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Írja be a létrehozandó objektum nevét szóközök nélkül. A szavak elválasztásához használjon nagybetűt (például: Saját tárgy, Tanuló, Tanár...). Létrejön a CRUD osztályfájl, de az API fájl, az objektumok listázásához/adásához/szerkesztéséhez/törléséhez szükséges oldalak és SQL-fájlok is.
+EnterNameOfObjectDesc=Írja be a létrehozandó objektum nevét szóközök nélkül. A szavak elválasztásához használjon nagybetűt (például: Saját tárgy, Tanuló, Tanár...). Létrejön a CRUD osztályfájl, az objektum listázásához/adásához/szerkesztéséhez/törléséhez szükséges oldalak és az SQL-fájlok.
 EnterNameOfDictionaryDesc=Írja be a létrehozandó szótár nevét szóközök nélkül. A szavak elválasztásához használjon nagybetűt (például: MyDico...). Létrejön az osztályfájl, de az SQL fájl is.
 ModuleBuilderDesc2=A modulok létrehozásának/szerkesztésének elérési útja (első könyvtár a külső modulok számára, a(z) %s-ben): <strong>%s</strong>
 ModuleBuilderDesc3=Létrehozott/szerkeszthető modulok találhatók: <strong>%s</strong>
-ModuleBuilderDesc4=A modul „szerkeszthetőként” észlelhető, ha a(z) <strong>%s</strong> fájl létezik a modul könyvtárának gyökérkönyvtárában
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=Új modul
 NewObjectInModulebuilder=Új objektum
 NewDictionary=Új szótár
+ModuleName=Modul neve
 ModuleKey=Modulkulcs
 ObjectKey=Objektumkulcs
 DicKey=Szótár kulcsa
@@ -48,11 +50,14 @@ PathToModulePackage=A modul/alkalmazáscsomag zip-jének elérési útja
 PathToModuleDocumentation=A modul/alkalmazás dokumentációjának elérési útja (%s)
 SpaceOrSpecialCharAreNotAllowed=Szóközök vagy speciális karakterek nem megengedettek.
 FileNotYetGenerated=A fájl még nem jött létre
+GenerateCode=Generate code
 RegenerateClassAndSql=.class és .sql fájlok kényszerített frissítése
 RegenerateMissingFiles=Hiányzó fájlok előállítása
 SpecificationFile=A dokumentáció fájlja
 LanguageFile=Fájl a nyelvhez
 ObjectProperties=Objektumtulajdonságok
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=Biztosan törölni szeretné a(z) <strong>%s</strong> tulajdonságot? Ez megváltoztatja a PHP osztály kódját, de egyben eltávolítja az oszlopot is az objektum tábladefiníciójából.
 NotNull=Nem NULL
 NotNullDesc=1=Állítsa be az adatbázist NEM NULL-ra, 0=Null értékek engedélyezése, -1=Null értékek engedélyezése az érték NULL-ra kényszerítésével, ha üres ('' vagy 0)
@@ -81,15 +86,16 @@ IsAMeasure=Mérték
 DirScanned=A könyvtár beolvasva
 NoTrigger=Nincs trigger
 NoWidget=Nincs widget
-GoToApiExplorer=API-böngésző
+ApiExplorer=API-böngésző
 ListOfMenusEntries=A menübejegyzések listája
 ListOfDictionariesEntries=Szótárbejegyzések listája
 ListOfPermissionsDefined=A meghatározott engedélyek listája
 SeeExamples=Példákat lásd itt
-EnabledDesc=Feltétel, hogy ez a mező aktív legyen (Példák: 1 vagy $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Látható a mező? (Példák: 0=soha nem látható, 1=látható a listán és az űrlapok létrehozása/frissítése/megtekintése, 2=csak a listán látható, 3=csak a létrehozási/frissítési/megtekintési űrlapon látható (nem listán), 4=látható a listán és csak frissítés/megtekintés űrlap (nem létrehozás), 5=Csak a lista végén látható űrlapon látható (nem létrehozás, nem frissítés).<br><br>A negatív érték használata azt jelenti, hogy a mező alapértelmezés szerint nem jelenik meg a listán, de kiválasztható megtekintésre).<br><br>Lehet egy kifejezés, például:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Ezt a mezőt kompatibilis PDF dokumentumokon jelenítse meg, a pozíciót a "Pozíció" mezővel kezelheti.<br>Jelenleg a következő ismert kompatibilis PDF modellek: eratosthene (rendelés), espadon (hajó), sponge (számlák), cyan (propal/ árajánlat), cornas (beszállítói rendelés)<br><br><strong>A dokumentumhoz:</strong><br>0 = nem jelenik meg <br>1 = kijelző<br>2 = csak akkor jelenjen meg, ha nem üres<br> <br><strong>Dokumentumsorokhoz:</strong><br>0 = nincs megjelenítve <br>1 = oszlopban jelenik meg<br>3 = megjelenítése a leírás utáni sorleíró oszlopban<br>4 = megjelenítése csak akkor a leírás után, ha nem üres
-DisplayOnPdf=Megjelenítés PDF-en
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=A mező értéke összesíthető, hogy a listába kerüljön az összeg? (Példák: 1 vagy 0)
 SearchAllDesc=Használják a mezőt a gyorskereső eszközből történő kereséshez? (Példák: 1 vagy 0)
 SpecDefDesc=Írja be ide az összes olyan dokumentációt, amelyet a modulhoz szeretne adni, és amelyet más lapok még nem definiáltak. Használhat .md vagy jobb, gazdag .asciidoc szintaxist.
@@ -130,27 +136,44 @@ UseSpecificEditorURL = Adott szerkesztő URL használata
 UseSpecificFamily = Adott család használata
 UseSpecificAuthor = Adott szerző használata
 UseSpecificVersion = Egy adott kezdeti verzió használata
-IncludeRefGeneration=Az objektum hivatkozását az egyéni számozási szabályoknak automatikusan létre kell hozniuk
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
 IncludeRefGenerationHelp=Jelölje be, ha kódot szeretne tartalmazni a referencia létrehozásának automatikus kezeléséhez egyéni számozási szabályok segítségével
-IncludeDocGeneration=Néhány dokumentumot szeretnék létrehozni az objektum sablonjaiból
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=Ha bejelöli ezt, akkor a rendszer egy kódot generál a "Dokumentum létrehozása" mező hozzáadásához.
-ShowOnCombobox=Érték megjelenítése a kombinált mezőben
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=Eszköztipp kulcsa
 CSSClass=CSS az űrlap szerkesztéséhez/létrehozásához
 CSSViewClass=CSS az olvasási űrlaphoz
 CSSListClass=CSS a listához
 NotEditable=Nem szerkeszthető
 ForeignKey=Idegen kulcs
-TypeOfFieldsHelp=Mezők típusa:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[ [
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Ascii-HTML konverter
 AsciiToPdfConverter=Ascii PDF konvertáló
 TableNotEmptyDropCanceled=A táblázat nem üres. Az eldobást törölték.
 ModuleBuilderNotAllowed=A modulkészítő elérhető, de nem engedélyezett a felhasználó számára.
 ImportExportProfiles=Profilok importálása és exportálása
-ValidateModBuilderDesc=Állítsa ezt 1-re, ha azt szeretné, hogy az objektum $this->validateField() metódusa legyen meghívva a mező tartalmának érvényesítésére a beszúrás vagy frissítés során. Állítson 0-t, ha nincs szükség érvényesítésre.
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
 WarningDatabaseIsNotUpdated=Figyelmeztetés: Az adatbázis nem frissül automatikusan, meg kell semmisíteni a táblákat, és le kell tiltani-engedélyezni a modult a táblák újbóli létrehozásához
 LinkToParentMenu=Szülőmenü (fk_xxxxmenu)
 ListOfTabsEntries=A lapbejegyzések listája
 TabsDefDesc=Itt határozhatja meg a modulja által biztosított füleket
 TabsDefDescTooltip=A modul/alkalmazás által biztosított lapok az <strong> $this->tabs </strong> tömbben vannak meghatározva a modulleíró fájlban. Ezt a fájlt manuálisan szerkesztheti, vagy használhatja a beágyazott szerkesztőt.
 BadValueForType=Rossz érték az %s típushoz
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object
+PermissionDeletedSuccesfuly=Permission has been successfully removed
+PermissionUpdatedSuccesfuly=Permission has been successfully updated
+PermissionAddedSuccesfuly=Permission has been successfully added
+MenuDeletedSuccessfuly=Menu has been successfully deleted
+MenuAddedSuccessfuly=Menu has been successfully added
+MenuUpdatedSuccessfuly=Menu has been successfully updated
+ApiObjectDeleted=API for object %s has been successfully deleted
+CRUDRead=Olvasás
+CRUDCreateWrite=Create or Update
+FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.

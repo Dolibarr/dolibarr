@@ -19,7 +19,6 @@ ALTER TABLE llx_bookcal_booking ADD INDEX idx_bookcal_booking_rowid (rowid);
 ALTER TABLE llx_bookcal_booking ADD INDEX idx_bookcal_booking_ref (ref);
 ALTER TABLE llx_bookcal_booking ADD INDEX idx_bookcal_booking_fk_soc (fk_soc);
 ALTER TABLE llx_bookcal_booking ADD INDEX idx_bookcal_booking_fk_project (fk_project);
-ALTER TABLE llx_bookcal_booking ADD CONSTRAINT llx_bookcal_booking_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_bookcal_booking ADD INDEX idx_bookcal_booking_status (status);
 -- END MODULEBUILDER INDEXES
 

@@ -78,7 +78,7 @@ class UserBankAccount extends Account
 
 		$this->userid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 	}
 
 
@@ -101,10 +101,12 @@ class UserBankAccount extends Account
 				$this->id = $this->db->last_insert_id($this->db->prefix()."user_rib");
 
 				return $this->update($user);
+			} else {
+				return 0;
 			}
 		} else {
 			print $this->db->error();
-			return 0;
+			return -1;
 		}
 	}
 
