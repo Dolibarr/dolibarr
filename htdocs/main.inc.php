@@ -2587,12 +2587,28 @@ function printDropdownQuickadd()
 				"position" => 90,
 			),
 			array(
+				"url" => "/ticket/card.php?action=create&amp;mainmenu=ticket",
+				"title" => "NewTicket@ticket",
+				"name" => "Ticket@ticket",
+				"picto" => "ticket",
+				"activation" => isModEnabled('ticket') && $user->hasRight("ticket", "write"), // vs hooking
+				"position" => 100,
+			),
+			array(
+				"url" => "/fichinter/card.php?action=create&mainmenu=commercial",
+				"title" => "NewIntervention@interventions",
+				"name" => "Intervention@interventions",
+				"picto" => "intervention",
+				"activation" => isModEnabled('ficheinter') && $user->hasRight("ficheinter", "creer"), // vs hooking
+				"position" => 110,
+			),
+			array(
 				"url" => "/product/card.php?action=create&amp;type=0&amp;mainmenu=products",
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
 				"activation" => !empty($conf->product->enabled) && $user->rights->produit->creer, // vs hooking
-				"position" => 100,
+				"position" => 400,
 			),
 			array(
 				"url" => "/product/card.php?action=create&amp;type=1&amp;mainmenu=products",
@@ -2600,7 +2616,15 @@ function printDropdownQuickadd()
 				"name" => "Service@products",
 				"picto" => "object_service",
 				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
-				"position" => 110,
+				"position" => 410,
+			),
+			array(
+				"url" => "/user/card.php?action=create&amp;type=1&amp;mainmenu=home",
+				"title" => "AddUser@users",
+				"name" => "User@users",
+				"picto" => "user",
+				"activation" => $user->hasRight("user", "user", "write"), // vs hooking
+				"position" => 500,
 			),
 		),
 	);
