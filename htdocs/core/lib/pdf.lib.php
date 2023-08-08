@@ -423,16 +423,18 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 /**
  *   	Return a string with full address formated for output on documents
  *
- * 		@param	Translate	          $outputlangs		    Output langs object
- *   	@param  Societe		          $sourcecompany		Source company object
- *   	@param  Societe|string|null   $targetcompany		Target company object
- *      @param  Contact|string|null	  $targetcontact	    Target contact object
- * 		@param	int			          $usecontact		    Use contact instead of company
- * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
- *      @param  Object                $object               Object we want to build document for
+ * 		@param	Translate	          $outputlangs		    	Output langs object
+ *   	@param  Societe		          $sourcecompany			Source company object
+ *   	@param  Societe|string|null   $targetcompany			Target company object
+ *      @param  Contact|string|null	  $targetcontact	    	Target contact object
+ * 		@param	int			          $usecontact		    	Use contact instead of company
+ * 		@param	string  	          $mode				    	Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ *      @param  Object                $object               	Object we want to build document for
+* 		@param  Origin                $origin               	Origin object
+ * 		@param  Contact|string|null	  $targetcontactdelivery	Target contact delivery address
  * 		@return	string					    		        String with full address
  */
-function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
+function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null, $origin = 'all', $targetcontactdelivery = '')
 {
 	global $conf, $hookmanager;
 
@@ -555,8 +557,14 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 							$targetcontact->fetch_thirdparty();
 							$companytouseforaddress = $targetcontact->thirdparty;
 						}
-
-						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+						
+						// Contact as delivery address
+						if (!empty($conf->global->PROPAL_ADDRESS_DELIVERY_CONTACT) && $origin == 'propale' && !empty($targetcontactdelivery->address)) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontactdelivery))."\n";
+						} else {
+							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+						}
+						
 					}
 					// Country
 					if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
