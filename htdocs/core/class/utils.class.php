@@ -1274,6 +1274,7 @@ class Utils
 	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '', $sizelimit = 100000000)
 	{
 		global $conf, $langs;
+		global $dolibarr_main_url_root;
 
 		$filepath = '';
 		$output = '';
