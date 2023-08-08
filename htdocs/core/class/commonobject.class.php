@@ -6976,7 +6976,7 @@ abstract class CommonObject
 				$value = price($value);
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
-		} elseif ($type == 'select') {
+		} elseif ($type == 'select') {	// combo list
 			$out = '';
 			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
@@ -7350,8 +7350,9 @@ abstract class CommonObject
 
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
-			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
-				if (!GETPOSTISSET('backtopage') && empty($val['disabled']) && empty($nonewbutton)) {	// To avoid to open several times the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
+			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
+				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
+					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
 					list($class, $classfile) = explode(':', $param_list[0]);
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
