@@ -999,9 +999,9 @@ class ExtraFields
 			} elseif ($type == 'radio') {
 				$morecss = 'width25';
 			} else {
-				if (empty($size) || round($size) < 12) {
+				if (empty($size) || round((float) $size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48) {
+				} elseif (round((float) $size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';

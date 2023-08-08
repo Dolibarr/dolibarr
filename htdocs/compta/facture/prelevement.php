@@ -500,7 +500,7 @@ if ($object->id > 0) {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateInvoice');
 	print '</td>';
-	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -523,7 +523,7 @@ if ($object->id > 0) {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editconditions' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editconditions' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -544,7 +544,7 @@ if ($object->id > 0) {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
-	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -574,7 +574,7 @@ if ($object->id > 0) {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($action != 'editmode' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+	if ($action != 'editmode' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -595,7 +595,7 @@ if ($object->id > 0) {
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('BankAccount');
 	print '<td>';
-	if (($action != 'editbankaccount') && $user->hasRight('commande', 'creer') && !empty($object->brouillon)) {
+	if (($action != 'editbankaccount') && $user->hasRight('commande', 'creer') && $object->status == $object::STATUS_DRAFT) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -680,7 +680,7 @@ if ($object->id > 0) {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('RevenueStamp');
 		print '</td>';
-		if ($action != 'editrevenuestamp' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+		if ($action != 'editrevenuestamp' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'), 1).'</a></td>';
 		}
 		print '</tr></table>';

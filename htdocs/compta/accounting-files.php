@@ -544,7 +544,7 @@ if ($result && $action == "dl" && !$error) {
  * View
  */
 
-$form = new form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $userstatic = new User($db);
 $invoice = new Facture($db);

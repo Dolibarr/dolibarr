@@ -2532,7 +2532,7 @@ img.photorefnoborder {
 }
 
 .tdhrthin {
-	margin: 0;
+	margin: 0 !important;
 	padding-bottom: 0 !important;
 }
 

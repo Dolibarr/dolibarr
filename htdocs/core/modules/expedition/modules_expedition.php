@@ -74,6 +74,9 @@ abstract class ModelNumRefExpedition
 	 */
 	public $error = '';
 
+	public $version;
+
+
 	/** Return if a model can be used or not
 	 *
 	 *  @return		boolean     true if model can be used

@@ -158,11 +158,11 @@ if (empty($action)) {
 $object = new Website($db);
 $objectpage = new WebsitePage($db);
 
-$object->fetchAll('ASC', 'position'); // Init $object->records with list of websites
+$object->fetchAll('ASC', 'position'); // Init $object->lines with list of websites
 
 // If website not defined, we take first found
 if (!($websiteid > 0) && empty($websitekey) && $action != 'createsite') {
-	foreach ($object->records as $key => $valwebsite) {
+	foreach ($object->lines as $key => $valwebsite) {
 		$websitekey = $valwebsite->ref;
 		break;
 	}
@@ -1463,7 +1463,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$object->virtualhost = $tmpvirtualhost;
 				$object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 				$object->otherlang = join(',', $arrayotherlang);
-				$object->use_manifest = GETPOST('use_manifest', 'alpha');
+				$object->use_manifest = GETPOSTINT('use_manifest');
 
 				$result = $object->update($user);
 				if ($result < 0) {
@@ -2840,7 +2840,7 @@ if (!GETPOST('hide_websitemenu')) {
 	}
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
-	$websitepage = new WebSitePage($db);
+	$websitepage = new WebsitePage($db);
 	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
@@ -2870,13 +2870,13 @@ if (!GETPOST('hide_websitemenu')) {
 
 		$out = '';
 		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
-		if (empty($object->records)) {
+		if (empty($object->lines)) {
 			$out .= '<option value="-1">&nbsp;</option>';
 		}
 
 		// Loop on each sites
 		$i = 0;
-		foreach ($object->records as $key => $valwebsite) {
+		foreach ($object->lines as $key => $valwebsite) {
 			if (empty($websitekey)) {
 				if ($action != 'createsite') {
 					$websitekey = $valwebsite->ref;
@@ -3303,6 +3303,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<div class="inline-block marginrightonly">';	// Button edit inline
 
 				print '<span id="switchckeditorinline">'."\n";
+				// Enable CKEditor inline with js on section and div with conteneditable=true
 				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
 				print '<script type="text/javascript">
 						$(document).ready(function() {
@@ -3321,25 +3322,52 @@ if (!GETPOST('hide_websitemenu')) {
 								if (! isEditingEnabled || forceenable)
 								{
 									console.log("Enable inline edit");
+
 									jQuery(\'section[contenteditable="true"],div[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
-										CKEDITOR.inline(idtouse, {
-											// Allow some non-standard markup that we used in the introduction.
-											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
-											//extraPlugins: \'sourcedialog\',
-											removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
-											// Show toolbar on startup (optional).
-											// startupFocus: true
-										});
+										if (idtouse !== undefined) {
+											var inlineditor = CKEDITOR.inline(idtouse, {
+												// Allow some non-standard markup that we used in the introduction.
+												// + a[target];div{float,display} ?
+												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+												//extraPlugins: \'sourcedialog\',
+												removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
+												// Show toolbar on startup (optional).
+												// startupFocus: true
+											});
+
+											// Custom bar tool
+											// Note the Source tool does not work on inline
+											inlineditor.config.toolbar = [
+											    [\'Templates\',\'NewPage\'],
+											    [\'Save\'],
+											    [\'Maximize\',\'Preview\'],
+											    [\'PasteText\'],
+											    [\'Undo\',\'Redo\',\'-\',\'Find\',\'Replace\',\'-\',\'SelectAll\',\'RemoveFormat\'],
+											    [\'CreateDiv\',\'ShowBlocks\'],
+											    [\'Form\', \'Checkbox\', \'Radio\', \'TextField\', \'Textarea\', \'Select\', \'Button\', \'ImageButton\', \'HiddenField\'],
+											    [\'Bold\',\'Italic\',\'Underline\',\'Strike\',\'Superscript\'],
+											    [\'NumberedList\',\'BulletedList\',\'-\',\'Outdent\',\'Indent\',\'Blockquote\'],
+											    [\'JustifyLeft\',\'JustifyCenter\',\'JustifyRight\',\'JustifyBlock\'],
+											    [\'Link\',\'Unlink\'],
+											    [\'Image\',\'Table\',\'HorizontalRule\'],
+											    [\'Styles\',\'Format\',\'Font\',\'FontSize\'],
+											    [\'TextColor\',\'BGColor\']
+											];
+
+											// Start editor
+											//inlineditor.on(\'instanceReady\', function () {
+											    // ...
+											//});
+
+										}
 									})
 
 									isEditingEnabled = true;
-								}
-								else {
+								} else {
 									console.log("Disable inline edit");
-									for(name in CKEDITOR.instances)
-									{
+									for(name in CKEDITOR.instances) {
 									    CKEDITOR.instances[name].destroy(true);
 									}
 									isEditingEnabled = false;

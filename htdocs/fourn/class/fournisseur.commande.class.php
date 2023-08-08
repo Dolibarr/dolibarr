@@ -112,7 +112,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $ref_fourn;
 
-	public $brouillon;
 	/**
 	 * @var int
 	 */
@@ -225,7 +224,6 @@ class CommandeFournisseur extends CommonOrder
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
-
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -376,14 +374,12 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($id) && empty($ref)) {
 			return -1;
 		}
 
-		$sql = "SELECT c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.total_tva,";
+		$sql = "SELECT c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut as status, c.amount_ht, c.total_ht, c.total_ttc, c.total_tva,";
 		$sql .= " c.localtax1, c.localtax2, ";
 		$sql .= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve, c.fk_user_approve2,";
@@ -429,8 +425,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->ref_supplier = $obj->ref_supplier;
 			$this->socid = $obj->fk_soc;
 			$this->fourn_id = $obj->fk_soc;
-			$this->statut = $obj->fk_statut;
-			$this->status = $obj->fk_statut;
+			$this->statut = $obj->status;	// deprecated
+			$this->status = $obj->status;
 			$this->billed = $obj->billed;
 			$this->user_author_id = $obj->fk_user_author;
 			$this->user_valid_id = $obj->fk_user_valid;
@@ -495,13 +491,7 @@ class CommandeFournisseur extends CommonOrder
 			// fetch optionals attributes and labels
 			$this->fetch_optionals();
 
-			if ($this->statut == 0) {
-				$this->brouillon = 1;
-			}
-
-			/*
-			 * Lines
-			 */
+			// Lines
 			$result = $this->fetch_lines();
 
 			if ($result < 0) {
@@ -690,11 +680,11 @@ class CommandeFournisseur extends CommonOrder
 
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
 				$sql .= " SET ref='".$this->db->escape($num)."',";
-				$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
+				$sql .= " fk_statut = ".((int) self::STATUS_VALIDATED).",";
 				$sql .= " date_valid='".$this->db->idate(dol_now())."',";
 				$sql .= " fk_user_valid = ".((int) $user->id);
 				$sql .= " WHERE rowid = ".((int) $this->id);
-				$sql .= " AND fk_statut = ".self::STATUS_DRAFT;
+				$sql .= " AND fk_statut = ".((int) self::STATUS_DRAFT);
 
 				$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -750,7 +740,8 @@ class CommandeFournisseur extends CommonOrder
 
 			if (!$error) {
 				$result = 1;
-				$this->statut = self::STATUS_VALIDATED;
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->ref = $num;
 			}
 
@@ -1446,8 +1437,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_tx = 1;
 		}
 
-		// We set order into draft status
-		$this->brouillon = 1;
+		$this->statut = self::STATUS_DRAFT;	// deprecated
+		$this->status = self::STATUS_DRAFT;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
 		$sql .= "ref";
@@ -1504,11 +1495,10 @@ class CommandeFournisseur extends CommonOrder
 
 				// insert products details into database
 				for ($i = 0; $i < $num; $i++) {
-										$line = $this->lines[$i];
+					$line = $this->lines[$i];
 					if (!is_object($line)) {
 						$line = (object) $line;
 					}
-
 
 					//$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
@@ -1545,6 +1535,7 @@ class CommandeFournisseur extends CommonOrder
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 				$sql .= " SET ref='(PROV".$this->id.")'";
 				$sql .= " WHERE rowid=".((int) $this->id);
+
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				if ($this->db->query($sql)) {
 					// Add link with price request and supplier order
@@ -2543,7 +2534,7 @@ class CommandeFournisseur extends CommonOrder
 					$result = 1;
 					$old_statut = $this->statut;
 					$this->statut = $statut;
-					$this->actionmsg2 = $comment;
+					$this->context['actionmsg2'] = $comment;
 
 					// Call trigger
 					$result_trigger = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
@@ -2834,7 +2825,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$error = 0;
 
-		if ($this->brouillon) {
+		if ($this->statut == self::STATUS_DRAFT) {
 			// Clean parameters
 			if (empty($qty)) {
 				$qty = 0;

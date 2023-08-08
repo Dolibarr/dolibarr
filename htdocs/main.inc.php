@@ -432,7 +432,7 @@ if (GETPOST('textbrowser', 'int') || (!empty($conf->browser->name) && $conf->bro
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
-if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')) {
+if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && !defined('NOHTTPSREDIRECT')) {
 	$newurl = '';
 	if (is_numeric($conf->file->main_force_https)) {
 		if ($conf->file->main_force_https == '1' && !empty($_SERVER["SCRIPT_URI"])) {	// If SCRIPT_URI supported by server
@@ -538,7 +538,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
-		// Few GET actions coded with a &token into url are processed as sensitive.
+		// Few GET actions coded with a &token into url are also processed as sensitive.
 		$arrayofactiontoforcetokencheck = array(
 			'activate',
 			'doprev', 'donext', 'dvprev', 'dvnext',
@@ -549,7 +549,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$sensitiveget = true;
 		}
 		// We also match for value with just a simple string that must match
-		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save)/', GETPOST('action', 'aZ09'))) {
+		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save|sepa)/', GETPOST('action', 'aZ09'))) {
 			$sensitiveget = true;
 		}
 	}

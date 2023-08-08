@@ -26,6 +26,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  */
 class Login
 {
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * Constructor of the class

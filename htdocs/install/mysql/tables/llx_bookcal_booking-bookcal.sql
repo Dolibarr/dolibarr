@@ -25,7 +25,7 @@ CREATE TABLE llx_bookcal_booking(
 	note_private text, 
 	date_creation datetime NOT NULL, 
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-	fk_user_creat integer NOT NULL, 
+	fk_user_creat integer, 
 	fk_user_modif integer, 
 	last_main_doc varchar(255), 
 	import_key varchar(14), 

@@ -53,6 +53,11 @@ abstract class ModeleBarCode
 abstract class ModeleNumRefBarCode
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';

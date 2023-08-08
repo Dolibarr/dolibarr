@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/bom/modules_bom.php';
 /**
  *	Class to manage the Standard numbering rule for BOM
  */
-class mod_bom_standard extends ModeleNumRefboms
+class mod_bom_standard extends ModeleNumRefBoms
 {
 	/**
 	 * Dolibarr version of the loaded document

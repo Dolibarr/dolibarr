@@ -350,18 +350,18 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$this->companytoremove = new Societe($this->db);
+		$companytoremove = new Societe($this->db);
 
-		$result = $this->companytoremove->fetch($idtodelete); // include the fetch of extra fields
+		$result = $companytoremove->fetch($idtodelete); // include the fetch of extra fields
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('societe', $this->companytoremove->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $companytoremove->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$soc_origin = $this->companytoremove;
+		$soc_origin = $companytoremove;
 		$object = $this->company;
 		$user = DolibarrApiAccess::$user;
 
@@ -476,7 +476,8 @@ class Thirdparties extends DolibarrApi
 		// External modules should update their ones too
 		if (!$error) {
 			$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $object->id);
-			$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $soc_dest, $action);
+			$action = '';
+			$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $object, $action);
 
 			if ($reshook < 0) {
 				//setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -509,7 +510,7 @@ class Thirdparties extends DolibarrApi
 		if ($error) {
 			$this->db->rollback();
 
-			throw new RestException(500, 'Error failed to merged thirdparty '.$this->companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
+			throw new RestException(500, 'Error failed to merged thirdparty '.$companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
 		} else {
 			$this->db->commit();
 		}

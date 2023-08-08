@@ -216,7 +216,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 			$sql .= " d.datefin,";
 			$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql .= " t.libelle as type, t.subscription";
+			$sql .= " t.libelle as type_label, t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE d.fk_soc = ".((int) $id);
@@ -280,8 +280,8 @@ if ($id > 0 || !empty($ref)) {
 
 						// Type
 						$membertypestatic->id = $objp->type_id;
-						$membertypestatic->libelle = $objp->type;
-						$membertypestatic->label = $objp->type;
+						$membertypestatic->libelle = $objp->type_label;	// deprecated
+						$membertypestatic->label = $objp->type_label;
 
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1, 32);

@@ -67,6 +67,10 @@ abstract class ModelePDFMember extends CommonDocGenerator
  */
 abstract class ModeleNumRefMembers
 {
+	/**
+	 * @var string Version
+	 */
+	public $version = '';
 
 	public $code_modifiable; // Editable code
 
