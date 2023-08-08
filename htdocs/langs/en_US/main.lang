@@ -346,6 +346,7 @@ MonthOfDay=Month of the day
 DaysOfWeek=Days of week
 HourShort=H
 MinuteShort=mn
+SecondShort=sec
 Rate=Rate
 CurrencyRate=Currency conversion rate
 UseLocalTax=Include tax
