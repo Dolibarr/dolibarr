@@ -331,7 +331,7 @@ if ($event->type == 'payout.created') {
 
 	dol_syslog("Try to find the payment in database for the payment id = ".$TRANSACTIONID);
 
-	$sql = "SELECT pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type";
+	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type";
 	$sql .= " FROM llx_prelevement_demande as pi";
 	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
 	$sql .= " AND pi.traite = '1'";
@@ -341,10 +341,15 @@ if ($event->type == 'payout.created') {
 	if ($result) {
 		$obj = $db->fetch_object($result);
 		if ($obj) {
+			$pdid = $obj->rowid;
 			$invoice_id = $obj->fk_facture;
-			$prelevement_bons_id = $obj->fk_prelevement_bons;
+			$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
 			$payment_amount = $obj->amount;
 			$paymentTypeId = $obj->type;
+
+			dol_syslog("Found a request to pay with direct debit pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id);
+		} else {
+			dol_syslog("Not found");
 		}
 	} else {
 		http_response_code(500);
