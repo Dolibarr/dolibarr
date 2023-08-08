@@ -83,6 +83,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $lineid = GETPOST('lineid', 'int');
 $contactid = GETPOST('contactid', 'int');
 $address_id = GETPOST('address_id', 'int');
+$delivery_contactid = GETPOST('delivery_contactid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
@@ -420,7 +421,7 @@ if (empty($reshook)) {
 					$object->delivery_date = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
-					$object->fk_delivery_address = GETPOST('fk_address', 'int');
+					$object->fk_delivery_address = GETPOST('address_id', 'int');
 					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 					$object->warehouse_id = GETPOST('warehouse_id', 'int');
 					$object->duree_validite = $duration;
@@ -453,7 +454,7 @@ if (empty($reshook)) {
 				$object->delivery_date = $date_delivery;
 				$object->availability_id = GETPOST('availability_id', 'int');
 				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
-				$object->fk_delivery_address = GETPOST('fk_address', 'int');
+				$object->fk_delivery_address = GETPOST('address_id', 'int');
 				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 				$object->warehouse_id = GETPOST('warehouse_id', 'int');
 				$object->duree_validite = price2num(GETPOST('duree_validite', 'alpha'));
@@ -632,6 +633,16 @@ if (empty($reshook)) {
 						if ($result < 0) {
 							$error++;
 							setEventMessages($langs->trans("ErrorFailedToAddContact"), null, 'errors');
+						}
+					}
+
+					if (!empty($conf->global->PROPAL_ADDRESS_DELIVERY_CONTACT)) {
+						if (GETPOST('delivery_contactid') > 0) {
+							$result = $object->add_contact(GETPOST('delivery_contactid'), 'SHIPPING', 'external');
+							if ($result < 0) {
+								$error++;
+								setEventMessages($langs->trans("ErrorFailedToAddContact"), null, 'errors');
+							}
 						}
 					}
 
@@ -1882,9 +1893,17 @@ if ($action == 'create') {
 
 		//Address management
 		if (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)) {
-			print '<tr class="field_address_id"><td class="titlefieldcreate">'.$langs->trans("DefaultAddress").'</td><td class="valuefieldcreate">';
+			print '<tr class="field_address_id"><td class="titlefieldcreate">'.$langs->trans("DeliveryAddress").'</td><td class="valuefieldcreate">';
 			print img_picto('', 'address');
 			print $form->select_address($address_id, $soc->id, 'address_id', 1);
+			print '</td></tr>';
+		}
+
+		// Use address from delivery contact
+		if (!empty($conf->global->PROPAL_ADDRESS_DELIVERY_CONTACT)) {
+			print '<tr class="field_contactid"><td class="titlefieldcreate">'.$langs->trans("DeliveryAddress").'</td><td class="valuefieldcreate">';
+			print img_picto('', 'contact');
+			print $form->selectcontacts($soc->id, $delivery_contactid, 'delivery_contactid', 1, '', '', 0, 'minwidth300');
 			print '</td></tr>';
 		}
 
