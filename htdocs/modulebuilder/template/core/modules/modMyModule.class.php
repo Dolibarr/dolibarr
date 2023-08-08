@@ -229,7 +229,7 @@ class modMyModule extends DolibarrModules
 			'tabhelp'=>array(array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip'), array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip'), ...),
 		);
 		*/
-
+		/*Begin dictionaries*/
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in mymodule/core/boxes that contains a class to show a widget.
 		$this->boxes = array(

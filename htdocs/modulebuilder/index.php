@@ -1553,12 +1553,39 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 
 // Add a dictionary
 if ($dirins && $action == 'initdic' && $module && $dicname) {
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+
 	if (!$error) {
 		$newdicname = $dicname;
 		if (!preg_match('/^c_/', $newdicname)) {
 			$newdicname = 'c_'.$dicname;
 		}
-		//createNewDictionnary($module, $file, $newdicname);
+		dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+
+		if (class_exists($class)) {
+			try {
+				$moduleobj = new $class($db);
+			} catch (Exception $e) {
+				$error++;
+				dol_print_error($db, $e->getMessage());
+			}
+		} else {
+			$error++;
+			$langs->load("errors");
+			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			exit;
+		}
+		$dictionaries = $moduleobj->dictionaries;
+		createNewDictionnary($module, $moduledescriptorfile, $newdicname, $dictionaries);
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
+		exit;
 	}
 }
 

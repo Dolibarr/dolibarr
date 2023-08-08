@@ -1022,68 +1022,132 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 }
 
 /**
- * function for create table for dictionnary
+ * Creates a new dictionary table.
+ *
+ * This function is responsible for creating a new dictionary table in Dolibarr. It generates the necessary SQL code to define the table structure,
+ * including columns such as 'rowid', 'code', 'label', 'position', 'use_default', 'active', etc. The table name is constructed based on the provided $namedic parameter.
+ *
+ * @param string $modulename The lowercase name of the module for which the dictionary table is being created.
+ * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
+ * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
+ * @param array|null $dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
+ * @param array|null $columns An optional array specifying the columns and their types for the new dictionary table.(Exemple array('field' => 'type constraint'))
+ * @return void
  */
-// function createNewDictionnary($modulename, $file, $namedic, $dictionnaires, $columns = null)
-// {
-// 	global $db, $error, $langs;
-// 	$newdicname = "llx_".$namedic;
+function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null, $columns = null)
+{
+	global $db, $langs;
+	$error = 0;
+	$modulename = strtolower($modulename);
+	if (empty($namedic)) {
+		$error++;
+	}
+	// check if have at least one dictionnary
+	if (empty($dictionnaires)) {
+		$tabname = array();
+		$tablib = array();
+		$tabsql = array();
+		$tabsqlsort = array();
+		$tabfield = array();
+		$tabfieldvalue = array();
+		$tabfieldinsert = array();
+		$tabrowid = array();
+		$tabcond = array();
+		$tabhelp = array();
+	} else {
+		$tabname = $dictionnaires['tabname'];
+		$tablib = $dictionnaires['tablib'];
+		$tabsql = $dictionnaires['tabsql'];
+		$tabsqlsort = $dictionnaires['tabsqlsort'];
+		$tabfield = $dictionnaires['tabfield'];
+		$tabfieldvalue = $dictionnaires['tabfieldvalue'];
+		$tabfieldinsert = $dictionnaires['tabfieldinsert'];
+		$tabrowid = $dictionnaires['tabrowid'];
+		$tabcond = $dictionnaires['tabcond'];
+		$tabhelp = $dictionnaires['tabhelp'];
+	}
+	// table fields by default
+	if ($columns === null) {
+		$columns = array(
+			'rowid' => array('type' => 'integer(11)'),
+			'code' => array('type' => 'varchar(255) NOT NULL'),
+			'label' => array('type' => 'varchar(255) NOT NULL'),
+			'position' => array('type' => 'integer(11) NULL'),
+			'use_default' => array('type' => 'varchar(255) DEFAULT 1'),
+			'active' => array('type' => 'integer')
+		);
+	}
 
-// 	if ($columns === null) {
-// 		$columns = array(
-// 			'rowid' => array('type' => 'integer(11)'),
-// 			'code' => array('type' => 'varchar(255) NOT NULL'),
-// 			'label' => array('type' => 'varchar(255) NOT NULL'),
-// 			'position' => array('type' => 'integer(11) NOT NULL'),
-// 			'use_default' => array('type' => 'varchar(255) DEFAULT 1'),
-// 			'status' => array('type' => 'integer')
-// 		);
-// 	}
+	$primaryKey = 'rowid';
+	foreach ($columns as $key => $value) {
+		if ($key === 'rowid') {
+			$primaryKey = 'rowid';
+			break;
+		}
+		if (!array_key_exists('rowid', $columns)) {
+			$primaryKey = array_key_first($columns);
+			break;
+		}
+	}
+	// fill in dictionaries arrays
+	$tabname[] = $namedic;
+	$tablib[] = ucfirst(substr($namedic, 2));
+	$tabsql[] = 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.$namedic.' as f';
+	$tabsqlsort[] = (array_key_exists('label', $columns) ? 'label ASC' : '');
+	$tabfield[] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$tabfieldvalue[] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$tabfieldinsert[] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$tabrowid[] = $primaryKey;
+	$tabcond[] = "isModEnabled('$modulename')";
+	$tabhelp[] = "array('code'=>\$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip')";
 
-// 	$primaryKey = 'rowid';
+	// add dictionnary in module builder
+	$dic = "\t\t\$this->dictionaries=array(\n";
+	$dic .= "\t\t\t'langs'=>'$modulename@$modulename',\n";
+	$dic .= "\t\t\t'tabname'=>array(" . implode(",", array_map(function ($val) {
+		return "'$val'"; }, $tabname)) . "),\n";
+	$dic .= "\t\t\t'tablib'=>array(" . implode(",", array_map(function ($val) {
+		return "'$val'"; }, $tablib)) . "),\n";
+	$dic .= "\t\t\t'tabsql'=>array(" . implode(",", array_map(function ($val) {
+		return "'$val'"; }, $tabsql)) . "),\n";
+	$dic .= "\t\t\t'tabsqlsort'=>array(" . implode(",", array_map(function ($val) {
+		return "'$val'"; }, $tabsqlsort)) . "),\n";
+	$dic .= "\t\t\t'tabfield'=>array(" . implode(",", array_map(function ($val) {
+		return "'$val'"; }, $tabfield)) . "),\n";
+	$dic .= "\t\t\t'tabfieldvalue'=>array(" . implode(",", array_map(function ($val) {
+		return "'$val'"; }, $tabfieldvalue)) . "),\n";
+	$dic .= "\t\t\t'tabfieldinsert'=>array(" . implode(",", array_map(function ($val) {
+		return "'$val'"; }, $tabfieldinsert)) . "),\n";
+	$dic .= "\t\t\t'tabrowid'=>array(" . implode(",", array_map(function ($val) {
+		return "'$val'"; }, $tabrowid)) . "),\n";
+	$dic .= "\t\t\t'tabcond'=>array(" . implode(",", array_map(function ($val) {
+		return $val; }, $tabcond)) . "),\n";
+	$dic .= "\t\t\t'tabhelp'=>array(" . implode(",", $tabhelp) . ")\n";
+	$dic .= "\t\t);";
 
-// 	foreach ($columns as $key => $value) {
-// 		if ($key === 'rowid') {
-// 			$primaryKey = 'rowid';
-// 			break;
-// 		} else {
-// 			$primaryKey = $key;
-// 			break;
-// 		}
-// 	}
-
-// 	if ($newdicname) {
-// 		$_results = $db->DDLCreateTable($newdicname, $columns, $primaryKey, "InnoDB");
-// 		if ($_results < 0) {
-// 			$error++;
-// 			dol_print_error($db);
-// 			$langs->load("errors");
-// 			setEventMessages($langs->trans("ErrorTableNotFound", $namedic), null, 'errors');
-// 		} else {
-// 			setEventMessages($langs->trans("TableCreated", $namedic), null);
-// 		}
-// 	}
-// 	$tabname = array();
-// 	$tablib = array();
-// 	$tabsql = array();
-
-// 	foreach ($dictionnaires as $dict) {
-// 	}
+	// Vérification pour le débogage
 
 
-// 	// add dictionnary in module builder
-// 	$dic = array(
-// 		'langs'=> "'.$modulename.'@'.$modulename.'",
-// 		'tabname' => "'.$tabname.'",
-// 		'tablib' => "'.$tablib.'",
-// 		'tabsql' => "'.$tabsql.'",
-// 		'tabsqlsort' => 'label ASC',
-// 		'tabfield' => 'code,label',
-// 		'tabfieldvalue' => 'code,label',
-// 		'tabfieldinsert' => 'code,label',
-// 		'tabrowid' => 'rowid',
-// 		'tabcond' => true,
-// 	);
+	$dict = dolReplaceInFile($file, array('/*Begin dictionaries*/' => '/*Begin dictionaries*/'."\n".$dic));
+	//var_dump($dic);exit;
 
-// 	var_dump($dic);exit;
-// }
+
+	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.$namedic . "'";
+	$checkTable = $db->query($query);
+	if ($checkTable && $db->num_rows($checkTable) > 0) {
+		$error++;
+		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
+	}
+
+	if (!$error) {
+		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.$namedic, $columns, $primaryKey, "InnoDB");
+		if ($_results < 0) {
+			$error++;
+			dol_print_error($db);
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorTableNotFound", $namedic), null, 'errors');
+		} else {
+			setEventMessages($langs->trans("TableCreated", $namedic), null);
+		}
+	}
+}
