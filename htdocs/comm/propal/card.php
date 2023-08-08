@@ -82,6 +82,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $lineid = GETPOST('lineid', 'int');
 $contactid = GETPOST('contactid', 'int');
+$address_id = GETPOST('address_id', 'int');
 $projectid = GETPOST('projectid', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
@@ -1878,6 +1879,14 @@ if ($action == 'create') {
 		print img_picto('', 'contact', 'class="pictofixedwidth"');
 		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
 		print '</td></tr>';
+
+		//Address management
+		if (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)) {
+			print '<tr class="field_address_id"><td class="titlefieldcreate">'.$langs->trans("DefaultAddress").'</td><td class="valuefieldcreate">';
+			print img_picto('', 'address');
+			print $form->select_address($address_id, $soc->id, 'address_id', 1);
+			print '</td></tr>';
+		}
 
 		// Third party discounts info line
 		print '<tr class="field_discount_info"><td class="titlefieldcreate">'.$langs->trans('Discounts').'</td><td class="valuefieldcreate">';
