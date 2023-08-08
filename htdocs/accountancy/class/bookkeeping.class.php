@@ -1480,15 +1480,16 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by importkey
 	 *
 	 * @param  string		$importkey		Import key
+     * @param string $mode Mode
 	 * @return int Result
 	 */
-	public function deleteByImportkey($importkey)
+	public function deleteByImportkey($importkey , $mode = '' )
 	{
 		$this->db->begin();
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE import_key = '".$this->db->escape($importkey)."'";
 
 		$resql = $this->db->query($sql);
@@ -1562,9 +1563,10 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
+     * @param string $mode Mode
 	 * @return 	int 				Result
 	 */
-	public function deleteMvtNum($piecenum)
+	public function deleteMvtNum($piecenum , $mode = '')
 	{
 		global $conf;
 
@@ -1572,7 +1574,7 @@ class BookKeeping extends CommonObject
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".(int) $piecenum;
 		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
