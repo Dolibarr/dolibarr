@@ -61,7 +61,8 @@ class Utils
 	 */
 	public function purgeFiles($choices = 'tempfilesold+logfiles', $nbsecondsold = 86400)
 	{
-		global $conf, $langs, $dolibarr_main_data_root;
+		global $conf, $langs, $user;
+		global $dolibarr_main_data_root;
 
 		$langs->load("admin");
 
@@ -75,6 +76,14 @@ class Utils
 		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
+
+		// For dangerous action, we check the user is admin
+		if (in_array($choices, array('allfiles', 'allfilesold'))) {
+			if (empty($user->admin)) {
+				$this->output = 'Error: to erase data files, user running the batch (currently '.$user->login.') must be an admin user';
+				return 1;
+			}
+		}
 
 		$count = 0;
 		$countdeleted = 0;

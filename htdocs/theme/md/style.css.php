@@ -1085,6 +1085,9 @@ textarea.centpercent {
 	word-break: break-word;
 }
 .wordbreak {
+	word-break: break-word;	/* cut fist between word, inside word if not possible */
+}
+.wordbreakall {
 	word-break: break-all;
 }
 td.wordbreak img {
@@ -2703,7 +2706,7 @@ img.photorefnoborder {
 	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 .tdhrthin {
-	margin: 0;
+	margin: 0 !important;
 	padding-bottom: 0 !important;
 }
 /* Payment Screen : Pointer cursor in the autofill image */
@@ -5642,6 +5645,10 @@ td.gtaskname {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+table.jPicker {
+	border-radius: 5px;
+	border: 1px solid #bbb !important;
+}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5716,6 +5723,9 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  font-size : 8pt;
  padding : 0px;
  margin : 0px;
+}
+.colorselector {
+	border: solid 1px #ddd !important;
 }
 
 

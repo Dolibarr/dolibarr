@@ -184,6 +184,10 @@ if (empty($reshook)) {
 		}
 
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (GETPOST('usage_opportunity') != '' && !(GETPOST('opp_status') > 0)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOppStatusRequiredIfUsage"), null, 'errors');
+			}
 			if (GETPOST('opp_amount') != '' && !(GETPOST('opp_status') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
@@ -191,7 +195,7 @@ if (empty($reshook)) {
 		}
 
 		// Create with status validated immediatly
-		if (!empty($conf->global->PROJECT_CREATE_NO_DRAFT)) {
+		if (!empty($conf->global->PROJECT_CREATE_NO_DRAFT) && !$error) {
 			$status = Project::STATUS_VALIDATED;
 		}
 
@@ -758,7 +762,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		// Opportunity status
-		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityStatus").'</td>';
+		print '<tr class="classuseopportunity"><td><span class="fieldrequired">'.$langs->trans("OpportunityStatus").'</span></td>';
 		print '<td class="maxwidthonsmartphone">';
 		print $formproject->selectOpportunityStatus('opp_status', GETPOSTISSET('opp_status') ? GETPOST('opp_status') : $object->opp_status, 1, 0, 0, 0, '', 0, 1);
 
@@ -1445,12 +1449,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(oldpercent); }
                         else { jQuery("#opp_percent").val(price2numjs(defaultpercent)); }
-                    }
-                    else
-                    {
+                    } else {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent);
-                    	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
-                        	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+                    	if (jQuery("#opp_percent").val() == \'\' || (parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
+                        	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
+								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+							}
                         	jQuery("#opp_percent").val(price2numjs(defaultpercent));
                     	}
                     }

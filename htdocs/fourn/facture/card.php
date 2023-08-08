@@ -758,7 +758,8 @@ if (empty($reshook)) {
 				$object->ref = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 				$object->socid = GETPOST('socid', 'int');
-				$object->libelle = GETPOST('label', 'alphanohtml');
+				$object->libelle = GETPOST('label', 'alphanohtml');	// deprecated
+				$object->label = GETPOST('label', 'alphanohtml');
 				$object->date = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -1618,11 +1619,11 @@ if (empty($reshook)) {
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
 				$type = $productsupplier->type;
-				if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
+				if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
 					$price_base_type = 'HT';
 					$pu = price2num($price_ht, 'MU');
 					$pu_devise = price2num($price_ht_devise, 'CU');
-				} elseif (GETPOST('price_ttc') != '' || GETPOST('price_ttc_devise') != '') {
+				} elseif (GETPOST('price_ttc') != '' || GETPOST('multicurrency_price_ttc') != '') {
 					$price_base_type = 'TTC';
 					$pu = price2num($price_ttc, 'MU');
 					$pu_devise = price2num($price_ttc_devise, 'CU');
@@ -1706,7 +1707,7 @@ if (empty($reshook)) {
 			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-			if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
+			if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			} else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');

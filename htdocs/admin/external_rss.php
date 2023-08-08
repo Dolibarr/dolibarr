@@ -302,7 +302,7 @@ if ($resql) {
 					$imageurl = $linkrss.$imageurl;
 				}
 			}
-			if ($imageurl && preg_match('/^http', $imageurl)) {
+			if ($imageurl && preg_match('/^http/', $imageurl)) {
 				print '<img height="32" src="'.$imageurl.'">';
 			} else {
 				print $langs->trans("None");

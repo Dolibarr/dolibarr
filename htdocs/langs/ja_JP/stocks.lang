@@ -320,4 +320,4 @@ StockTransferRightDelete=在庫移動を削除
 BatchNotFound=この製品のロット/シリアルが見つからない
 StockMovementWillBeRecorded=在庫の動きが記録される
 StockMovementNotYetRecorded=在庫の動きはこのステップの影響を受けない
-WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
+WarningThisWIllAlsoDeleteStock=警告、これにより、倉庫内の在庫もすべて破壊される

@@ -128,6 +128,8 @@ TicketsShowModuleLogo=Afficher le logo du module dans l'interface publique
 TicketsShowModuleLogoHelp=Activer cette option pour cacher le logo du module dans les pages de l'interface publique
 TicketsShowCompanyLogo=Afficher le logo de la société dans l'interface publique
 TicketsShowCompanyLogoHelp=Activez cette option pour masquer le logo de la société dans les pages de l'interface publique
+TicketsShowCompanyFooter=Afficher le pied de page de l'entreprise dans l'interface publique
+TicketsShowCompanyFooterHelp=Activez cette option pour masquer le pied de la page de la société dans les pages de l'interface publique
 TicketsEmailAlsoSendToMainAddress=Envoyer également une notification à l'adresse e-mail principale
 TicketsEmailAlsoSendToMainAddressHelp=Activer cette option pour envoyer aussi un email à l'adresse définie dans la configuration "%s" (Voir onglet "%s")
 TicketsLimitViewAssignedOnly=Limiter l'afficher des tickets assignés à l'utilisateur courant (non valable pour les utilisateurs externes, toujours limité par le tiers dont ils dépendent)
@@ -200,8 +202,8 @@ TicketAssigned=Le ticket est à présent assigné
 TicketChangeType=Changer le type
 TicketChangeCategory=Changer le code analytique
 TicketChangeSeverity=Changer la sévérité
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Ajouter ou envoyer un message
+TicketAddPrivateMessage=Ajouter un message privé
 MessageSuccessfullyAdded=Ticket créé
 TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
@@ -275,7 +277,7 @@ TicketsDelayForFirstResponseTooLong=Trop de temps écoulé entre l'ouverture du 
 TicketsDelayFromLastResponseTooLong=Trop de temps écoulé depuis la dernière réponse de ce ticket.
 TicketNoContractFoundToLink=Aucun contrat n'a été trouvé pour être automatiquement lié à ce ticket. Veuillez lier un contrat manuellement.
 TicketManyContractsLinked=De nombreux contrats ont été automatiquement liés à ce ticket. Assurez-vous de vérifier ce qui doit être choisi.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=La référence [%s] est déjà utilisée, votre nouvelle référence est [%s]
 
 #
 # Logs

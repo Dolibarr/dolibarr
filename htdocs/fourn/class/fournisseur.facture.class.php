@@ -108,6 +108,11 @@ class FactureFournisseur extends CommonInvoice
 	public $ref_supplier;
 
 	/**
+	 * @var string 	Label of invoice
+	 * @deprecated	Use $label
+	 */
+	public $libelle;
+	/**
 	 * @var string Label of invoice
 	 */
 	public $label;
@@ -481,9 +486,8 @@ class FactureFournisseur extends CommonInvoice
 			if (! $this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
 			}
-			$this->brouillon = 1;
 			$this->status = self::STATUS_DRAFT;
-			$this->statut = self::STATUS_DRAFT;
+			$this->statut = self::STATUS_DRAFT;	// deprecated
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
@@ -1012,10 +1016,6 @@ class FactureFournisseur extends CommonInvoice
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
-
 				$result = $this->fetch_lines();
 				if ($result < 0) {
 					$this->error = $this->db->lasterror();
@@ -1500,14 +1500,6 @@ class FactureFournisseur extends CommonInvoice
 					$error++;
 				}
 			} else {
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
 				$error++;
 			}
 		}

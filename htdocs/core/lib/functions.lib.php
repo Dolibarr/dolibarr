@@ -473,9 +473,10 @@ function getBrowserInfo($user_agent)
 		'browsername' => $name,
 		'browserversion' => $version,
 		'browseros' => $os,
-		'layout' => $layout,
-		'phone' => $phone,
-		'tablet' => $tablet
+		'browserua' => $user_agent,
+		'layout' => $layout,	// tablet, phone, classic
+		'phone' => $phone,		// deprecated
+		'tablet' => $tablet		// deprecated
 	);
 }
 
@@ -486,7 +487,7 @@ function getBrowserInfo($user_agent)
  */
 function dol_shutdown()
 {
-	global $conf, $user, $langs, $db;
+	global $user, $langs, $db;
 	$disconnectdone = false;
 	$depth = 0;
 	if (is_object($db) && !empty($db->connected)) {
@@ -954,8 +955,6 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
  */
 function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
-	global $conf;
-
 	// TODO : use class "Validate" to perform tests (and add missing tests) if needed for factorize
 	// Check is done after replacement
 	switch ($check) {
@@ -1043,8 +1042,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 		case 'nohtml':		// No html
 			$out = dol_string_nohtmltag($out, 0);
 			break;
-		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlnolink':
+		case 'restricthtml':		// Recommended for most html textarea
+		case 'restricthtmlallowclass':
 		case 'restricthtmlallowunvalid':
 			$out = dol_htmlwithnojs($out, 1, $check);
 			break;
@@ -1326,7 +1326,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
 	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
-	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
+	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '`');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
@@ -1351,7 +1351,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
-	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';');
+	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';', '`');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
@@ -1593,13 +1593,17 @@ function dol_escape_json($stringtoescape)
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
- *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
+ *  @see		dol_string_nohtmltag(), dol_string_onlythesehtmltags(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
 	if ($noescapetags == 'common') {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	}
+	if ($cleanalsojavascript) {
+		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
 	}
 
 	// escape quotes and backslashes, newlines, etc.
@@ -2539,7 +2543,7 @@ function dol_bc($var, $moreclass = '')
  *
  *      @param  Object		$object			A company or contact object
  * 	    @param	int			$withcountry	1=Add country into address string
- *      @param	string		$sep			Separator to use to build string
+ *      @param	string		$sep			Separator to use to separate info when building string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @param	int			$mode			0=Standard output, 1=Remove address
  *  	@param	string		$extralangcode	User extralanguage $langcode as values for address, town
@@ -2556,7 +2560,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
-		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : $object->address));
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : preg_replace('/[\n\r]/', $sep, $object->address)));
 	}
 	// Zip/Town/State
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
@@ -2586,7 +2590,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if (!empty($object->state)) {
-			$ret .= "\n".$object->state;
+			$ret .= $sep.$object->state;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('JP'))) {
 		// JP: In romaji, title firstname name\n address lines \n [state,] town zip \n country
@@ -2608,6 +2612,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
 	}
+
 	if (!is_object($outputlangs)) {
 		$outputlangs = $langs;
 	}
@@ -7350,7 +7355,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
- * @param	string	$check						'restricthtmlnolink' or 'restricthtml' or 'restricthtmlallowunvalid'
+ * @param	string	$check						'restricthtmlnolink' or 'restricthtml' or 'restricthtmlallowclass' or 'restricthtmlallowunvalid'
  * @return	string								HTML sanitized
  */
 function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
@@ -7409,7 +7414,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 			// Keep only some html tags and remove also some 'javascript:' strings
-			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+			$out = dol_string_onlythesehtmltags($out, 0, ($check == 'restricthtmlallowclass' ? 0 : 1), 1);
 
 			// We should also exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
 			if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
@@ -9645,7 +9650,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 									$function = $labeltemp[3];
 									if ($obj && $function && method_exists($obj, $function)) {
 										$nbrec = $obj->$function($object->id, $obj);
-										$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+										if (!empty($nbrec)) {
+											$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+										}
 									}
 								}
 							}
@@ -9709,7 +9716,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule);
-		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
+		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters, $object);
 		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
 		} else {				// Hook
@@ -10776,7 +10783,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$dictvalues[$obj->{$rowidfield}] = $obj;	// $obj is stdClass
+				$dictvalues[$obj->$rowidfield] = $obj;	// $obj is stdClass
 			}
 		} else {
 			dol_print_error($db);
@@ -12513,6 +12520,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 		$out .= '<tr class="liste_titre">';
 
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<th class="liste_titre width50 middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</th>';
+		}
+
 		$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, '')."\n";
 
 		$out .= '<th class="liste_titre"><strong class="hideonsmartphone">'.$langs->trans("Search").' : </strong></th>';
@@ -12528,10 +12543,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		$out .= '<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'" placeholder="'.$langs->trans("Label").'">';
 		$out .= '</th>';
 
-		$out .= '<th class="liste_titre width50 middle">';
-		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-		$out .= $searchpicto;
-		$out .= '</th>';
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<th class="liste_titre width50 middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</th>';
+		}
+
 		$out .= '</tr>';
 
 
@@ -12612,7 +12631,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			$out .= '</span>';
 			// Date
-			$out .= '<span class="time"><i class="fa fa-clock-o"></i> ';
+			$out .= '<span class="time"><i class="fa fa-clock-o valignmiddle"></i> <span class="valignmiddle">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
@@ -12639,13 +12658,13 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			if ($late) {
 				$out .= img_warning($langs->trans("Late")).' ';
 			}
-			$out .= "</span>\n";
+			$out .= "</span></span>\n";
 
 			// Ref
 			$out .= '<h3 class="timeline-header">';
 
 			// Author of event
-			$out .= '<div class="messaging-author inline-block">';
+			$out .= '<div class="messaging-author inline-block tdoverflowmax150 valignmiddle marginrightonly">';
 			if ($histo[$key]['userid'] > 0) {
 				if (!isset($userGetNomUrlCache[$histo[$key]['userid']])) { // is in cache ?
 					$userstatic->fetch($histo[$key]['userid']);

@@ -200,8 +200,8 @@ TicketAssigned=チケットが割り当てられました
 TicketChangeType=タイプを変更する
 TicketChangeCategory=分析コードを変更する
 TicketChangeSeverity=重大度の変更
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=メッセージを追加または送信する
+TicketAddPrivateMessage=プライベートメッセージを追加する
 MessageSuccessfullyAdded=チケット追加
 TicketMessageSuccessfullyAdded=メッセージが正常に追加された
 TicketMessagesList=メッセージリスト
@@ -275,7 +275,7 @@ TicketsDelayForFirstResponseTooLong=チケット開封で無回答のまま過�
 TicketsDelayFromLastResponseTooLong=このチケットの最後の回答から過大な時間が経過した。
 TicketNoContractFoundToLink=このチケットに自動的にリンクされている契約は見つからない。契約を手動でリンクすること。
 TicketManyContractsLinked=多くの契約がこのチケットに自動的にリンクされている。どちらを選択するかを必ず確認すること。
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=参照 [%s] はすでに使用されている。新しい参照は [%s]  。
 
 #
 # Logs

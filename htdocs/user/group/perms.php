@@ -68,7 +68,7 @@ if (!$canreadperms) {
 	accessforbidden();
 }
 
-$object = new Usergroup($db);
+$object = new UserGroup($db);
 $object->fetch($id);
 $object->getrights();
 
@@ -90,7 +90,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'addrights' && $caneditperms) {
-		$editgroup = new Usergroup($db);
+		$editgroup = new UserGroup($db);
 		$result = $editgroup->fetch($object->id);
 		if ($result > 0) {
 			$result = $editgroup->addrights($rights, $module, '', $entity);
@@ -106,7 +106,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'delrights' && $caneditperms) {
-		$editgroup = new Usergroup($db);
+		$editgroup = new UserGroup($db);
 		$result = $editgroup->fetch($id);
 		if ($result > 0) {
 			$result = $editgroup->delrights($rights, $module, '', $entity);
@@ -475,7 +475,7 @@ if ($object->id > 0) {
 			$(".permtohide_"+moduletohide).hide();
 			$("#idforbreakperms_"+moduletohide).val("1");
 		}
-	
+
 		// Now rebuild the value for cookie
 		var hideuserperm="";
 		$(".trforbreakperms").each(function(index) {

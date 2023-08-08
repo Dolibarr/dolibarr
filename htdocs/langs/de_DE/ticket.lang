@@ -200,8 +200,8 @@ TicketAssigned=Ticket ist nun zugewiesen
 TicketChangeType=Art ändern
 TicketChangeCategory=Analyse-Code ändern
 TicketChangeSeverity=Dringlichkeit ändern
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Nachricht hinzufügen oder versenden
+TicketAddPrivateMessage=Private Nachricht hinzufügen
 MessageSuccessfullyAdded=Ticket hinzugefügt
 TicketMessageSuccessfullyAdded=Mitteilung erfolgreich gespeichert
 TicketMessagesList=Liste der Mitteilungen
@@ -275,7 +275,7 @@ TicketsDelayForFirstResponseTooLong=Seit Ticketeröffnung ist zu viel Zeit ohne 
 TicketsDelayFromLastResponseTooLong=Seit der letzten Antwort auf dieses Ticket ist zu viel Zeit vergangen.
 TicketNoContractFoundToLink=Es wurde kein Vertrag gefunden, der automatisch mit diesem Ticket verknüpft werden könnte. Bitte verknüpfen Sie einen Vertrag manuell.
 TicketManyContractsLinked=Mehrere Verträge wurden automatisch mit diesem Ticket verknüpft. Vergewissern Sie sich, welche ausgewählt werden soll.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=Die Referenz [%s] wird bereits verwendet, Ihre neue Referenz ist [%s]
 
 #
 # Logs

@@ -37,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis
 abstract class ModeleNumRefChequeReceipts
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';

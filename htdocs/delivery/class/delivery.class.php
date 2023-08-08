@@ -851,17 +851,16 @@ class Delivery extends CommonObject
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
-				$line->description		= $obj->description;
-				$line->fk_product = $obj->fk_product;
-				$line->qty_asked = $obj->qty_asked;
-				$line->qty_shipped		= $obj->qty_shipped;
+				$line->description	= $obj->description;
+				$line->fk_product 	= $obj->fk_product;
+				$line->qty_asked 	= $obj->qty_asked;
+				$line->qty_shipped	= $obj->qty_shipped;
 
-				$line->ref = $obj->product_ref; // deprecated
-				$line->libelle = $obj->product_label; // deprecated
 				$line->product_label	= $obj->product_label; // Product label
-				$line->product_ref = $obj->product_ref; // Product ref
+				$line->product_ref 		= $obj->product_ref; // Product ref
 				$line->product_desc		= $obj->product_desc; // Product description
 				$line->product_type		= $obj->fk_product_type;
+
 				$line->fk_origin_line = $obj->fk_origin_line;
 
 				$line->price = $obj->subprice;

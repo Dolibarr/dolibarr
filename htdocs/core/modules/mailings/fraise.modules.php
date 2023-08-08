@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +98,7 @@ class mailing_fraise extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
+		global $conf;
 		$sql  = "SELECT count(distinct(a.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
@@ -236,7 +237,7 @@ class mailing_fraise extends MailingTargets
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $langs, $_POST;
+		global $conf, $langs, $_POST;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("members", "companies"));

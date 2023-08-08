@@ -49,6 +49,7 @@ $theme_bgcolor = array(hexdec('F4'), hexdec('F4'), hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'), hexdec('E7'), hexdec('EC'));
 
 // Colors
+$colorbackbody = '255,255,255';
 $colorbackhmenu1 = '38,60,92'; // topmenu
 $colorbackvmenu1 = '250,250,250'; // vmenu
 $colortopbordertitle1 = '215,215,215'; // top border of title
@@ -62,7 +63,6 @@ $colorbacklinepair2 = '252,252,252'; // line pair
 $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break
-$colorbackbody = '255,255,255';
 $colortexttitlenotab = '35,135,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitle = '40, 40, 60';

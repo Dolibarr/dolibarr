@@ -313,10 +313,10 @@ ErrorCoherenceMenu= <b> %s </b> は、<b> %s </b> が「左」の場合に必要
 ErrorUploadFileDragDrop=ファイル(s)のアップロード中にエラーが発生した
 ErrorUploadFileDragDropPermissionDenied=ファイル(s)のアップロード中にエラーが発生した: 許可されない
 ErrorFixThisHere= <a href="%s"> ここを修正すること </a>
-ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
-ErrorMenuExistValue=A Menu already exist with this Title or URL
-ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s
-ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=エラー: 現在のインスタンスの URL (%s) は、OAuth2 ログイン設定に定義されている URL (%s) と一致さない。このような構成で OAuth2 ログインを行うことは許可されていない。
+ErrorMenuExistValue=このタイトルまたは URL のメニューはすでに存在する
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
+ErrorTypeMenu=ナビゲーションバーに同じモジュールの別のメニューを追加することはできない。まだハンドルされていない
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。
@@ -358,12 +358,12 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=「請求書の検証�
 WarningModuleNeedRefrech = モジュール <b> %s </b> が無効になった。有効にすることを忘れないこと
 WarningPermissionAlreadyExist=このオブジェクトの既存の権限
 
-SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
-SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
-SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
-SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
-SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
-SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
+SwissQrOnlyVIR = SwissQR 請求書は、口座振替で支払うように設定された請求書にのみ追加できる。
+SwissQrCreditorAddressInvalid = 債権者の住所が無効  (郵便番号と都市は設定されているか? (%s)
+SwissQrCreditorInformationInvalid = 債権者情報が IBAN (%s) に対して無効 : %s
+SwissQrIbanNotImplementedYet = QR-IBANはまだ実装されていない
+SwissQrPaymentInformationInvalid = 支払情報が合計 %s に対して無効  : %s
+SwissQrDebitorAddressInvalid = 債務者情報が無効  (%s)
 
 # Validate
 RequireValidValue = 値が無効.

@@ -45,6 +45,12 @@ class FormAccounting extends Form
 	public $error = '';
 
 	/**
+	 * @var int Nb of accounts found
+	 */
+	public $nbaccounts;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param		DoliDB		$db      Database handler
@@ -434,7 +440,10 @@ class FormAccounting extends Form
 			}
 		}
 
+
 		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+
+		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
 
 		return $out;
 	}

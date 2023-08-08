@@ -299,7 +299,7 @@ DescClosure=Consulte aquí o número de movementos por mes aínda non validados 
 OverviewOfMovementsNotValidated=Visión xeral dos movementos non validados e bloqueados
 AllMovementsWereRecordedAsValidated=Todos os movementos rexistráronse como validados e bloqueados
 NotAllMovementsCouldBeRecordedAsValidated=Non se puideron rexistrar todos os movementos como validados e bloqueados
-ValidateMovements=Validate and lock movements
+ValidateMovements=Validar e bloquear movementos
 DescValidateMovements=Prohíbese calquera modificación ou eliminación de rexistros. Todas as entradas para un exercicio deben validarse doutro xeito ou non será posible pechalo
 
 ValidateHistory=Contabilizar automáticamente
@@ -486,7 +486,7 @@ FECFormatMulticurrencyAmount=Importe multidivisa (Importedivisa)
 FECFormatMulticurrencyCode=Código multidivisa (Idivisa) 
 
 DateExport=Data de exportación
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Aviso, este informe non está baseado no libro maior, polo que non contén transaccións modificadas manualmente no libro maior. Se o seu diario está actualizado, a vista contable é máis precisa.
 ExpenseReportJournal=Informe de gastos diario
 DocsAlreadyExportedAreIncluded=Inclúense os documentos xa exportados
 ClickToShowAlreadyExportedLines=Prema para amosar as liñas xa exportadas

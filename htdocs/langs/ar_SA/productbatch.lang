@@ -1,5 +1,5 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
-ManageLotSerial=استخدام حصة / الرقم التسلسلي
+ManageLotSerial=استخدم رقم الدُفعة/السيريال
 ProductStatusOnBatch=نعم (الحصة مطلوبة)
 ProductStatusOnSerial=نعم (رقم تسلسلي فريد من نوعه مطلوب)
 ProductStatusNotOnBatch=رقم (حصة / الرقم التسلسلي لم يستخدم)

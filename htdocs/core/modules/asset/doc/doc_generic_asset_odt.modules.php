@@ -332,7 +332,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->asset->dir_temp,

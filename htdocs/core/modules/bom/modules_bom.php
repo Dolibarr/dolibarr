@@ -68,6 +68,11 @@ abstract class ModelePDFBom extends CommonDocGenerator
 abstract class ModeleNumRefBoms
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';

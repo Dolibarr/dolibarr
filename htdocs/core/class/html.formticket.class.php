@@ -1377,6 +1377,7 @@ class FormTicket
 		// If constant set, allow to send private messages as email
 		if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
 			print 'jQuery("#send_msg_email").click(function() {
+					console.log("Click send_msg_email");
 					if(jQuery(this).is(":checked")) {
 						if (jQuery("#private_message").is(":checked")) {
 							jQuery("#private_message").prop("checked", false).trigger("change");
@@ -1389,6 +1390,7 @@ class FormTicket
 				});
 
 				jQuery("#private_message").click(function() {
+					console.log("Click private_message");
 					if (jQuery(this).is(":checked")) {
 						if (jQuery("#send_msg_email").is(":checked")) {
 							jQuery("#send_msg_email").prop("checked", false).trigger("change");
@@ -1444,7 +1446,12 @@ class FormTicket
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL')?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
-			$texttooltip = $langs->trans("TicketMessageSendEmailHelp", '{s1}');
+			$texttooltip = $langs->trans("TicketMessageSendEmailHelp");
+			if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2b");
+			} else {
+				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2a", '{s1}');
+			}
 			$texttooltip = str_replace('{s1}', $langs->trans('MarkMessageAsPrivate'), $texttooltip);
 			print ' '.$form->textwithpicto('', $texttooltip, 1, 'help');
 			print '</td></tr>';
@@ -1470,10 +1477,20 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
-
-			// Subject
+			// Subject/topic
+			$topic = "";
+			foreach ($formmail->lines_model as $line) {
+				if ($this->param['models_id'] == $line->id) {
+					$topic = $line->topic;
+					break;
+				}
+			}
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			if (empty($topic)) {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			} else {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
+			}
 			print '</td></tr>';
 
 			// Recipients / adressed-to

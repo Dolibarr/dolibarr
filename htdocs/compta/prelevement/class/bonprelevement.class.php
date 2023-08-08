@@ -540,11 +540,13 @@ class BonPrelevement extends CommonObject
 					} else {
 						if ($this->type == 'bank-transfer') {
 							$modeforaddpayment = 'payment_supplier';
+							$labelforaddpayment = '(BankTransferPayment)';
 						} else {
 							$modeforaddpayment = 'payment';
+							$labelforaddpayment = '(WithdrawalPayment)';
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $fk_bank_account, '', '');
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '');
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;
@@ -964,7 +966,7 @@ class BonPrelevement extends CommonObject
 								if ($format == 'FRST' && $bac->frstrecur != 'FRST') {
 									continue;
 								}
-								if ($format == 'RCUR' && ($bac->frstrecur != 'RCUR' && $bac->frstrecur != 'RECUR')) {
+								if ($format == 'RCUR' && $bac->frstrecur != 'RCUR') {
 									continue;
 								}
 							}

@@ -19,36 +19,36 @@
 /**
  *    \file       htdocs/core/modules/ticket/mod_ticket_universal.php
  *    \ingroup    ticket
- *    \brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
+ *    \brief      File with class to manage the numbering module Universal for Ticket references
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
 
 /**
- *     Classe du modele de numerotation de reference de projet Universal
+ *  Class to manage the numbering module Universal for Ticket references
  */
 class mod_ticket_universal extends ModeleNumRefTicket
 {
 	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
+	 *  Dolibarr version of the loaded document
+	 *  @var string
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr';  // 'development', 'experimental', 'dolibarr'
 
 	/**
-	 * @var string Error code (or message)
+	 *  @var string Error code (or message)
 	 */
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
+	 *  @var string Nom du modele
+	 *  @deprecated
+	 *  @see $name
 	 */
 	public $nom = 'Universal';
 
 	/**
-	 * @var string model name
+	 *  @var string model name
 	 */
 	public $name = 'Universal';
 
@@ -79,7 +79,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Ticket"), $langs->transnoentities("Ticket"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
-		// Parametrage du prefix
+		// Prefix settings
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 1).'</td>';
 
@@ -126,7 +126,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		// On defini critere recherche compteur
+		// We define criterion search counter
 		$mask = getDolGlobalString("TICKET_UNIVERSAL_MASK");
 
 		if (!$mask) {

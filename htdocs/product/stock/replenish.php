@@ -956,6 +956,21 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$i++;
 }
 
+if ($num == 0) {
+	$colspan = 9;
+	if (isModEnabled("service") && $type == 1) {
+		$colspan++;
+	}
+	if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+		$colspan++;
+	}
+	print '<tr><td colspan="'.$colspan.'">';
+	print '<span class="opacitymedium">';
+	print $langs->trans("None");
+	print '</span>';
+	print '</td></tr>';
+}
+
 $parameters = array('sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;

@@ -350,7 +350,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->user->dir_temp,

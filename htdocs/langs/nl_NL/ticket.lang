@@ -200,8 +200,8 @@ TicketAssigned=Ticket is nu toegewezen
 TicketChangeType=Verander type
 TicketChangeCategory=Wijzig analytische code
 TicketChangeSeverity=Wijzig de ernst
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Bericht toevoegen / versturen
+TicketAddPrivateMessage=Voeg een privébericht toe
 MessageSuccessfullyAdded=Ticket toegevoegd
 TicketMessageSuccessfullyAdded=Bericht succesvol toegevoegd
 TicketMessagesList=Berichtenlijst
@@ -275,7 +275,7 @@ TicketsDelayForFirstResponseTooLong=Er is te veel tijd verstreken sinds het open
 TicketsDelayFromLastResponseTooLong=Er is te veel tijd verstreken sinds het laatste antwoord op deze ticket.
 TicketNoContractFoundToLink=Er is geen contract gevonden dat automatisch aan deze ticket gekoppeld kan worden. Koppel  a.u.b. handmatig een contract.
 TicketManyContractsLinked=Veel contracten zijn automatisch aan dit ticket gekoppeld. Zorg ervoor dat u controleert welke moet worden gekozen.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=De referentie [%s] wordt al gebruikt, uw nieuwe referentie is [%s]
 
 #
 # Logs

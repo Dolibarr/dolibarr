@@ -2416,7 +2416,7 @@ class Adherent extends CommonObject
 		}
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs($withpictoimg) == 1) {
+			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
 				$morecss .= ' paddingrightonly';
 			}
 			// Only picto
@@ -2425,12 +2425,12 @@ class Adherent extends CommonObject
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';
-				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1);
+				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.(($withpictoimg == -3 || $withpictoimg == -4) ? 'small' : ''), 'mini', 0, 1);
 				$picto .= '</span>';
 			}
 			$result .= $picto;
 		}
-		if ($withpictoimg > -2 && $withpictoimg != 2) {
+		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
@@ -2823,11 +2823,11 @@ class Adherent extends CommonObject
 
 		// Member
 		foreach ($ldapkey as $constname => $varname) {
-			if (!empty($this->$varname) && !empty($conf->global->$constname)) {
-				$info[$conf->global->$constname] = $this->$varname;
+			if (!empty($this->$varname) && getDolGlobalString($constname)) {
+				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (!empty($conf->global->LDAP_KEY_MEMBERS) && $conf->global->LDAP_KEY_MEMBERS == $conf->global->$constname) {
+				if (!empty($conf->global->LDAP_KEY_MEMBERS) && $conf->global->LDAP_KEY_MEMBERS == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
@@ -2856,8 +2856,8 @@ class Adherent extends CommonObject
 			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
 		}
 		foreach ($socialnetworks as $key => $value) {
-			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_MEMBER_FIELD_'.strtoupper($value['label'])})) {
-				$info[$conf->global->{'LDAP_MEMBER_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
+			if ($this->socialnetworks[$value['label']] && getDolGlobalString('LDAP_MEMBER_FIELD_'.strtoupper($value['label']))) {
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_'.strtoupper($value['label']))] = $this->socialnetworks[$value['label']];
 			}
 		}
 		if ($this->phone && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE)) {

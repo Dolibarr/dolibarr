@@ -382,7 +382,7 @@ if (empty($reshook)) {
 	}
 
 	// Mark as Read
-	if ($action == "mark_ticket_read" && $permissiontoadd) {
+	if ($action == "set_read" && $permissiontoadd) {
 		$object->fetch('', '', GETPOST("track_id", 'alpha'));
 
 		if ($object->markAsRead($user) > 0) {
@@ -1131,7 +1131,7 @@ if ($action == 'create' || $action == 'presend') {
 			$foundinter = 0;
 			if ($num) {
 				foreach ($object->linkedObjects as $objecttype => $objects) {
-					if ($objecttype = "fichinter") {
+					if ($objecttype == "fichinter") {
 						foreach ($objects as $fichinter) {
 							$foundinter++;
 							$timing += $fichinter->duration;

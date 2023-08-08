@@ -1229,4 +1229,4 @@ PublicVirtualCard=Carte de vizită virtuală
 TreeView=Vizualizare arborescentă
 DropFileToAddItToObject=Aruncă un fișier pentru a-l adăuga la acest obiect
 UploadFileDragDropSuccess=Fișier(ele) au fost încărcate cu succes
-SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <= or >= before the value to filter using a mathematical comparison
+SearchSyntaxTooltipForStringOrNum=Pentru a căuta în interiorul câmpurilor text, poți folosi caracterele ^ sau $ pentru a efectua o căutare 'începe sau se termină cu' sau utilizează ! pentru 'nu conține'. Poți utiliza | între două șiruri de caractere în loc de spațiu, pentru o condiție 'OR' în loc de 'AND'. Pentru valori numerice, poți utiliza operatorul <, >, <=, >= sau != înainte de valoare pentru a filtra folosind o comparație matematică

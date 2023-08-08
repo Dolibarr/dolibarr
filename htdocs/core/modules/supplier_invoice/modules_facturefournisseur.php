@@ -67,9 +67,15 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 abstract class ModeleNumRefSuppliersInvoices
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
 
 	/**  Return if a model can be used or not
 	 *

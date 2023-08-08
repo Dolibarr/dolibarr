@@ -75,7 +75,7 @@ SumOfProductWeights=Somme des poids des produits
 DetailWarehouseNumber= Détail de l'entrepôt
 DetailWarehouseFormat= W:%s (Qté : %d)
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Répartition des expéditions
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=Pas de répartition pour la ligne %s car trop de combinaisons entrepôt, produit, code de lot ont été trouvées (%s).
+ErrorNoCombinationBatchcode=Pas de répartition pour la ligne %s car aucune combinaison entrepôt, produit, code de lot n'a été trouvée.

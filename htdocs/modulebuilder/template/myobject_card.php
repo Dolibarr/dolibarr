@@ -105,7 +105,7 @@ if (!empty($backtopagejsfields)) {
 $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectcard', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array($object->element.'card', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -227,8 +227,13 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("MyObject");
+$title = $langs->trans("MyObject")." - ".$langs->trans('Card');
+//$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewObject");
+}
 $help_url = '';
+
 llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code

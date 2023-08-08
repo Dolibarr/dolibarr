@@ -49,7 +49,7 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int  	Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
@@ -260,7 +260,7 @@ class MyObject extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRights->('mymodule', 'myobject', 'read')) {
+		/*if ($user->hasRight('mymodule', 'myobject', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/

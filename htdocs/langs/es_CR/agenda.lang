@@ -79,3 +79,4 @@ DateActionBegin=Iniciar la fecha del evento
 ConfirmCloneEvent=¿Seguro que quieres clonar el evento <b>%s</b>?
 DayOfMonth=Dia del mes
 DateStartPlusOne=Fecha de inicio + 1 hora
+DataFromWasMerged=Los datos de %s fueron fusionado

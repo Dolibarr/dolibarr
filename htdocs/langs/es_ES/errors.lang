@@ -313,10 +313,10 @@ ErrorCoherenceMenu= <b> %s </b> es necesario cuando <b> %s </b> es 'izquierda'
 ErrorUploadFileDragDrop=Hubo un error mientras se subían los archivos
 ErrorUploadFileDragDropPermissionDenied=Hubo un error mientras se subían los archivos: Permiso denegado
 ErrorFixThisHere= <a href="%s"> Arregla esto aquí </a>
-ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
-ErrorMenuExistValue=A Menu already exist with this Title or URL
-ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s
-ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: la URL de su instancia actual (%s) no coincide con la URL definida en su configuración de inicio de sesión de OAuth2 (%s). No se permite iniciar sesión en OAuth2 en dicha configuración.
+ErrorMenuExistValue=Ya existe un menú con este título o URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
+ErrorTypeMenu=Imposible agregar otro menú para el mismo módulo en la barra de navegación, aún no se maneja
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
@@ -358,12 +358,12 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validación automá
 WarningModuleNeedRefrech = El módulo <b> %s </b> ha sido deshabilitado. No olvides habilitarlo
 WarningPermissionAlreadyExist=Permisos existentes para este objeto
 
-SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
-SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
-SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
-SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
-SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
-SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
+SwissQrOnlyVIR = La factura SwissQR solo se puede agregar en facturas configuradas para pagarse con pagos de débito directo.
+SwissQrCreditorAddressInvalid = La dirección del acreedor no es válida (¿están configurados el código postal y la ciudad? (%s)
+SwissQrCreditorInformationInvalid = La información del acreedor no es válida para IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN aún no implementado
+SwissQrPaymentInformationInvalid = La información de pago no era válida para el total %s : %s
+SwissQrDebitorAddressInvalid = La información del deudor no era válida (%s)
 
 # Validate
 RequireValidValue = Valor no válido

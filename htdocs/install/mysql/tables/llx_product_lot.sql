@@ -27,7 +27,7 @@ CREATE TABLE llx_product_lot (
   eatby           date DEFAULT NULL,			-- Eatby date
   sellby          date DEFAULT NULL, 			-- Sellby date
   eol_date      datetime NULL,
-  manufacturing_date datetime NULL,                -- date when first manufacturing of this lot has started 
+  manufacturing_date datetime NULL,                -- date for first use of the lot
   scrapping_date datetime NULL,                    -- date when we decided to scrap all products of this lot
   barcode       varchar(180) DEFAULT NULL,         -- barcode
   fk_barcode_type   integer DEFAULT NULL,          -- barcode type
