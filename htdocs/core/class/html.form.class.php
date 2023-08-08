@@ -1757,9 +1757,10 @@ class Form
 	 * @param string 		$htmlid 			Html id to use instead of htmlname
 	 * @param bool 			$multiple 			add [] in the name of element and add 'multiple' attribut
 	 * @param integer 		$disableifempty 	Set tag 'disabled' on select if there is no choice
+  	 * @param string 		$type 				Type conditioned by firstname
 	 * @return     int|string                   <0 if KO, HTML with select string if OK.
 	 */
-	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
+	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $type = '')
 	{
 		global $conf, $langs, $hookmanager, $action;
 
@@ -1794,6 +1795,13 @@ class Form
 		$sql .= " WHERE sp.entity IN (" . getEntity('contact') . ")";
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND sp.fk_soc = " . ((int) $socid);
+		}
+		// Type conditioned by firstname
+		if ($type == 'contact') {
+			$sql .= " AND sp.firstname <> ''";
+			//$sql .= " AND sp.firstname IS NOT NULL";
+		} else if ($type == 'address') {
+			$sql .= " AND (sp.firstname IS NULL OR sp.firstname = '')";
 		}
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND sp.statut <> 0";
