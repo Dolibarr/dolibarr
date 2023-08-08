@@ -53,10 +53,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 't.status,t.priority';
+	$sortfield = 't.priority,t.status';
 }
 if (!$sortorder) {
-	$sortorder = 'DESC,ASC';
+	$sortorder = 'ASC,DESC';
 }
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
