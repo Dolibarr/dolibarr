@@ -1888,7 +1888,12 @@ if ($action == 'create') {
 		// Contacts (ask contact only if thirdparty already defined).
 		print '<tr class="field_contactid"><td class="titlefieldcreate">'.$langs->trans("DefaultContact").'</td><td class="valuefieldcreate">';
 		print img_picto('', 'contact', 'class="pictofixedwidth"');
-		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
+		//print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
+		if (!empty($conf->global->PROPAL_ADDRESS_DELIVERY_CONTACT)) {
+			print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), '', '', false, 0, 'contact');
+		} else {
+			print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
+		}
 		print '</td></tr>';
 
 		//Address management
@@ -1903,7 +1908,8 @@ if ($action == 'create') {
 		if (!empty($conf->global->PROPAL_ADDRESS_DELIVERY_CONTACT)) {
 			print '<tr class="field_contactid"><td class="titlefieldcreate">'.$langs->trans("DeliveryAddress").'</td><td class="valuefieldcreate">';
 			print img_picto('', 'contact');
-			print $form->selectcontacts($soc->id, $delivery_contactid, 'delivery_contactid', 1, '', '', 0, 'minwidth300');
+			//print $form->selectcontacts($soc->id, $delivery_contactid, 'delivery_contactid', 1, '', '', 0, 'minwidth300');
+			print $form->selectcontacts($soc->id, $delivery_contactid, 'delivery_contactid', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), '', '', false, 0, 'address');
 			print '</td></tr>';
 		}
 
