@@ -329,9 +329,9 @@ if ($event->type == 'payout.created') {
 	$paymentTypeId = "";
 	$payment_amount = 0;
 
-	dol_syslog("Try to find the payment in database for the payment id = ".$TRANSACTIONID);
+	dol_syslog("Try to find the payment in database for the payment_intent id = ".$TRANSACTIONID);
 
-	$sql = "SELECT pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type";
+	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type";
 	$sql .= " FROM llx_prelevement_demande as pi";
 	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
 	$sql .= " AND pi.traite = '1'";
@@ -341,16 +341,26 @@ if ($event->type == 'payout.created') {
 	if ($result) {
 		$obj = $db->fetch_object($result);
 		if ($obj) {
+			$pdid = $obj->rowid;
 			$invoice_id = $obj->fk_facture;
-			$prelevement_bons_id = $obj->fk_prelevement_bons;
+			$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
 			$payment_amount = $obj->amount;
 			$paymentTypeId = $obj->type;
+
+			dol_syslog("Found a request in database to pay with direct debit pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id);
+		} else {
+			dol_syslog("Not found");
+			print "Payment intent not found into database, so ignored.";
+			http_response_code(200);
+			return 1;
 		}
 	} else {
 		http_response_code(500);
 		print $db->lasterror();
 		return -1;
 	}
+
+	// Here a $invoice_id has been found.
 
 	$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
