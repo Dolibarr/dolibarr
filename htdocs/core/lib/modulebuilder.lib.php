@@ -1099,7 +1099,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
 
 	// Build the dictionary string
-	$dicData = (empty($dictionnaires) ? "\t\t\$this->dictionaries=array(\n" : ''."\n");
+	$dicData = "\t\t\$this->dictionaries=array(\n";
 
 	foreach ($dictionnaires as $key => $value) {
 		$dicData .= "\t\t\t'$key'=>";
@@ -1126,16 +1126,10 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 		}
 		$dicData .= ",\n";
 	}
-	$dicData .= (empty($dictionnaires) ? "\t\t);" : "\t\t".'');
-
-
-	if (empty($dictionnaires)) {
-		dolReplaceInFile($file, array('/*Begin dictionaries*/' => '/*Begin dictionaries*/' . "\n" . $dicData));
-	} else {
-		$fileContents = file_get_contents($file);
-		preg_match('/\t\t\$this->dictionaries=array\((.*?)\);/s', $fileContents, $matches);
-		$existingDict = $matches[1];
-		$newFileContents = str_replace($existingDict, $dicData, $fileContents);
-		file_put_contents($file, $newFileContents);
+	$dicData .= "\t\t);";
+	$stringDic = getFromFile($file, '/* BEGIN MODULEBUILDER DICTIONARIES */', '/* END MODULEBUILDER DICTIONARIES */');
+	$writeInfile = dolReplaceInFile($file, array($stringDic => $dicData."\n"));
+	if ($writeInfile > 0) {
+		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}
 }

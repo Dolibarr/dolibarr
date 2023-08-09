@@ -1580,10 +1580,10 @@ if ($dirins && $action == 'initdic' && $module && $dicname) {
 		}
 		$dictionaries = $moduleobj->dictionaries;
 		createNewDictionnary($module, $moduledescriptorfile, $newdicname, $dictionaries);
-		clearstatcache(true);
 		if (function_exists('opcache_invalidate')) {
 			opcache_reset();	// remove the include cache hell !
 		}
+		clearstatcache(true);
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
 		exit;
 	}
