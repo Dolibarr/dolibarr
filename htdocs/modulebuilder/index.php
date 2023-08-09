@@ -1935,6 +1935,87 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 	}
 }
 
+if ($dirins && $action == 'confirm_deletedictionary' && $dicname) {
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+
+	if (preg_match('/[^a-z0-9_]/i', $dicname)) {
+		$error++;
+		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+	}
+
+	$newdicname = $dicname;
+	if (!preg_match('/^c_/', $newdicname)) {
+		$newdicname = 'c_'.strtolower($dicname);
+	}
+
+	dol_include_once($pathtofile);
+	$class = 'mod'.$module;
+
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	} else {
+		$error++;
+		$langs->load("errors");
+		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+		exit;
+	}
+	$dicts = $moduleobj->dictionaries;
+
+	//chercher la table dicname
+	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.strtolower($newdicname) . "'";
+	$checkTable = $db->query($query);
+	if ($checkTable && $db->num_rows($checkTable) <= 0) {
+		$error++;
+	}
+
+	// search the key by name
+	$keyToDelete = null;
+	foreach ($dicts['tabname'] as $key => $table) {
+		//var_dump($table."  ///////  ".$newdicname);exit;
+		if (strtolower($table) === $newdicname) {
+			$keyToDelete = $key;
+			break;
+		}
+	}
+	// delete all dicname's key values from the dictionary
+	if ($keyToDelete !== null) {
+		$keysToDelete = ['tabname', 'tablib', 'tabsql', 'tabsqlsort', 'tabfield', 'tabfieldvalue', 'tabfieldinsert', 'tabrowid', 'tabcond', 'tabhelp'];
+		foreach ($keysToDelete as $key) {
+			unset($dicts[$key][$keyToDelete]);
+		}
+	} else {
+		$error++;
+		setEventMessages($langs->trans("ErrorDictionaryNotFound", ucfirst($dicname)), null, 'errors');
+	}
+	if (!$error) {
+		// delete table
+		$_results = $db->DDLDropTable(MAIN_DB_PREFIX.strtolower($newdicname));
+		if ($_results < 0) {
+			dol_print_error($db);
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorTableNotFound", $newdicname), null, 'errors');
+		}
+		// rebuild file after update dictionaries
+		$result = updateDictionaryInFile($module, $moduledescriptorfile, $dicts);
+		if ($result > 0) {
+			setEventMessages($langs->trans("DictionaryDeleted", ucfirst(substr($newdicname, 2))), null);
+		}
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
+		clearstatcache(true);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
+		exit;
+	}
+}
+
 if ($dirins && $action == 'generatedoc') {
 	$modulelowercase = strtolower($module);
 
@@ -4295,13 +4376,13 @@ if ($module == 'initmodule') {
 					// Delete dic tab
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<input type="hidden" name="action" value="confirm_deleteobject">';
+					print '<input type="hidden" name="action" value="confirm_deletedictionary">';
 					print '<input type="hidden" name="tab" value="dictionaries">';
 					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 
-					print $langs->trans("EnterNameOfObjectToDeleteDesc").'<br><br>';
+					print $langs->trans("EnterNameOfDictionnaryToDeleteDesc").'<br><br>';
 
-					print '<input type="text" name="objectname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
+					print '<input type="text" name="dicname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'">';
 					print '<input type="submit" class="button smallpaddingimp" name="delete" value="'.dol_escape_htmltag($langs->trans("Delete")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 					print '</form>';
 				} else {
