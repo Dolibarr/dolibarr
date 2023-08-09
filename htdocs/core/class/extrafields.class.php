@@ -2248,12 +2248,15 @@ class ExtraFields
 				if (in_array($key_type, array('date'))) {
 					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
-					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
-						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
-						$value_key = array(
-							'start' => dol_mktime(0, 0, 0, GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int')),
-							'end' => dol_mktime(23, 59, 59, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'))
-						);
+					if (GETPOSTISSET($dateparamname_start . 'year') || GETPOSTISSET($dateparamname_end . 'year')) {
+						$value_key = array();
+						// values provided as a component year, month, day, etc.
+						if (GETPOSTISSET($dateparamname_start . 'year')) {
+							$value_key['start'] = dol_mktime(0, 0, 0, GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'));
+						}
+						if (GETPOSTISSET($dateparamname_start . 'year')) {
+							$value_key['end'] = dol_mktime(23, 59, 59, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'));
+						}
 					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
 						$value_key = dol_mktime(12, 0, 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
