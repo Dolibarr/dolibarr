@@ -353,6 +353,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
+	if ($action == 'generate') {
+		print '<i> Link : </i> <strong> <a href="'. DOL_URL_ROOT.'/public/bookcal/index.php?id='.$object->id . '">Public page</a></strong>'		 ;
+	}
+
 	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
 	if ($action == 'xxx') {
 		$text = $langs->trans('ConfirmActionCalendar', $object->ref);
@@ -546,6 +550,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid)?'&socid='.$object->socid:'').'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
+			// Generate link
+			if ($object->status == Calendar::STATUS_VALIDATED) {
+				print dolGetButtonAction($langs->trans('generateLink'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=generate', '', $permissiontoadd);
+			}
 			/*
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
