@@ -54,6 +54,27 @@ abstract class CommonNumRefGenerator
 	protected $db;
 
 
+	/**     Return model name
+	 * 		TODO Replace with getName()
+	 *
+	 *		@param	Translate	$langs		Object langs
+	 *      @return string      			Model name
+	 */
+	public function getNom($langs)
+	{
+		return empty($this->name) ? get_class($this) : $this->name;
+	}
+
+	/**     Return model name
+	 *
+	 *		@param	Translate	$langs		Object langs
+	 *      @return string      			Model name
+	 */
+	public function getName($langs)
+	{
+		return empty($this->name) ? get_class($this) : $this->name;
+	}
+
 	/**
 	 *	Return if a module can be used or not
 	 *
