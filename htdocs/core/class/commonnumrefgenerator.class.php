@@ -97,17 +97,6 @@ abstract class CommonNumRefGenerator
 	}
 
 	/**
-	 *	Returns an example of numbering
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		return $langs->trans("NoExample");
-	}
-
-	/**
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
@@ -117,18 +106,6 @@ abstract class CommonNumRefGenerator
 	public function canBeActivated($object)
 	{
 		return true;
-	}
-
-	/**
-	 *	Returns next assigned value
-	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
 	}
 
 	/**

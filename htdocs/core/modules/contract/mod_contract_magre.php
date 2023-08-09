@@ -123,7 +123,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

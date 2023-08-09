@@ -60,9 +60,10 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@return     boolean     false if conflit, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
