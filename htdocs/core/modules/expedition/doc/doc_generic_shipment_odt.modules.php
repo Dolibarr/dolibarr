@@ -348,7 +348,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->expedition->dir_temp,
@@ -461,6 +461,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 				// Replace tags of object + external modules
 				$tmparray = array_merge($tmparray, $this->get_substitutionarray_shipment($object, $outputlangs));
+				$tmparray = array_merge($tmparray, $this->get_substitutionarray_other($outputlangs));
 
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook

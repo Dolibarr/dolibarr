@@ -758,7 +758,8 @@ if (empty($reshook)) {
 				$object->ref = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 				$object->socid = GETPOST('socid', 'int');
-				$object->libelle = GETPOST('label', 'alphanohtml');
+				$object->libelle = GETPOST('label', 'alphanohtml');	// deprecated
+				$object->label = GETPOST('label', 'alphanohtml');
 				$object->date = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');

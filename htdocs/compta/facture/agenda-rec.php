@@ -125,9 +125,9 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$title = $langs->trans("Agenda");
-	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	$title = $object->ref." - ".$langs->trans('Agenda');
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
+
 	llxHeader('', $title, $help_url);
 
 	if (isModEnabled('notification')) {

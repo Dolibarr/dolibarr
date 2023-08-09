@@ -68,9 +68,15 @@ abstract class ModelePDFStockTransfer extends CommonDocGenerator
 abstract class ModeleNumRefStockTransfer
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
 
 	/**
 	 *	Return if a module can be used or not

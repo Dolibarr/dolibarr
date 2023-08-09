@@ -461,7 +461,7 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 	foreach ($eventstolog as $key => $arr) {
 		if ($arr['id']) {
 			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+			$value = getDolGlobalString($key);
 			if ($value) {
 				if ($i > 0) {
 					$out .= ', ';

@@ -77,7 +77,6 @@ class Reception extends CommonObject
 	public $socid;
 	public $ref_supplier;
 
-	public $brouillon;
 	public $entrepot_id;
 	public $tracking_number;
 	public $tracking_url;
@@ -206,7 +205,7 @@ class Reception extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $hookmanager;
+		global $conf;
 
 		$now = dol_now();
 
@@ -214,7 +213,6 @@ class Reception extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
@@ -436,10 +434,6 @@ class Reception extends CommonObject
 				$this->label_incoterms = $obj->label_incoterms;
 
 				$this->db->free($result);
-
-				if ($this->statut == 0) {
-					$this->brouillon = 1;
-				}
 
 				//$file = $conf->reception->dir_output."/".get_exdir(0, 0, 0, 1, $this, 'reception')."/".$this->id.".pdf";
 				//$this->pdf_filename = $file;

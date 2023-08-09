@@ -95,9 +95,15 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 abstract class ModeleNumRefSupplierPayments
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
 
 	/**
 	 *	Return if a module can be used or not

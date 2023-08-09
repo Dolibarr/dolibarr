@@ -2532,7 +2532,7 @@ img.photorefnoborder {
 }
 
 .tdhrthin {
-	margin: 0;
+	margin: 0 !important;
 	padding-bottom: 0 !important;
 }
 
@@ -5500,7 +5500,8 @@ td.event-past span  {
 	opacity: 0.5;
 }
 
-
+.cal_available { background: #0060d450; }
+.cal_chosen { background: #0060d4; }
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */

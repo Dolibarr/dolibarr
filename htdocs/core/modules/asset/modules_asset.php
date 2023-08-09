@@ -102,6 +102,11 @@ abstract class ModelePDFAsset extends CommonDocGenerator
 abstract class ModeleNumRefAsset
 {
 	/**
+	 * @var string Version
+	 */
+	public $version = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';

@@ -608,7 +608,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
  */
 function updateContact($authentication, $contact)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -628,7 +628,7 @@ function updateContact($authentication, $contact)
 		$error++; $errorcode = 'KO'; $errorlabel = "Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
-	if (!$error && ($id && $ref_ext)) {
+	if (!$error && ($contact['id'] && $contact['ref_ext'])) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
 	}
