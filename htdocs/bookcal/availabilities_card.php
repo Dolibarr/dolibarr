@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       availabilities_card.php
- *		\ingroup    bookcal
- *		\brief      Page to create/edit/view availabilities
+ *   \file       htdocs/bookcal/availabilities_card.php
+ *   \ingroup    bookcal
+ *   \brief      Page to create/edit/view availabilities
  */
 
 // Load Dolibarr environment
@@ -36,7 +36,7 @@ $langs->loadLangs(array("agenda", "other"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid = GETPOST('lineid', 'int');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
