@@ -359,6 +359,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation i
 WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to enable it 
 WarningPermissionAlreadyExist=Existing permissions for this object
 WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.  
+WarningCorrectedInvoiceNotFound=Corrected invoice not found
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
