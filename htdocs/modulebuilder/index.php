@@ -1978,7 +1978,8 @@ if ($dirins && $action == 'confirm_deletedictionary' && $dicname) {
 	// search the key by name
 	$keyToDelete = null;
 	foreach ($dicts['tabname'] as $key => $table) {
-		if ($table === $newdicname) {
+		//var_dump($table."  ///////  ".$newdicname);exit;
+		if (strtolower($table) === $newdicname) {
 			$keyToDelete = $key;
 			break;
 		}

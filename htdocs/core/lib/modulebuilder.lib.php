@@ -1034,7 +1034,7 @@ function updateDictionaryInFile($module, $file, $dicts)
 
 	$isEmpty = false;
 	$dicData = "\t\t\$this->dictionaries=array(\n";
-
+	$module = strtolower($module);
 	foreach ($dicts as $key => $value) {
 		if (empty($value)) {
 			$isEmpty = true;
@@ -1140,7 +1140,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	}
 
 	// rewrite dictionnary if
-	$dictionnaires['tabname'][] = $namedic;
+	$dictionnaires['tabname'][] = strtolower($namedic);
 	$dictionnaires['tablib'][] = ucfirst(substr($namedic, 2));
 	$dictionnaires['tabsql'][] = 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.strtolower($namedic).' as f';
 	$dictionnaires['tabsqlsort'][] = (array_key_exists('label', $columns) ? 'label ASC' : '');
