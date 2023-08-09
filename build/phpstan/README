@@ -13,6 +13,7 @@ composer require --dev phpstan/phpstan
 Build report from CLI:
 cd git/dolibarr; mv htdocs/custom /tmp/
 php ../phpstan/htdocs/includes/bin/phpstan -v analyze -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=table htdocs/commande/class 
+php ../phpstan/htdocs/includes/bin/phpstan -v analyze -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=table 
 mv /tmp/custom htdocs
 
 Build HTML report from Cron:

@@ -106,6 +106,12 @@ ALTER TABLE llx_bordereau_cheque ADD COLUMN type VARCHAR(6) DEFAULT 'CHQ';
 
 -- Element time
 ALTER TABLE llx_projet_task_time RENAME TO llx_element_time;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+
 ALTER TABLE llx_element_time CHANGE COLUMN fk_task fk_element integer NOT NULL;
 ALTER TABLE llx_element_time CHANGE COLUMN task_date element_date date;
 ALTER TABLE llx_element_time CHANGE COLUMN task_datehour element_datehour datetime;
