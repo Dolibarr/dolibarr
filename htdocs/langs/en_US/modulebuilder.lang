@@ -179,3 +179,4 @@ CRUDRead=Read
 CRUDCreateWrite=Create or Update
 FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.
 DictionariesCreated=Dictionary <b>%s</b> created successfully
+DictionaryDeleted=Dictionary <b>%s</b> removed successfully
