@@ -6884,7 +6884,7 @@ abstract class CommonObject
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			$type = 'select';
+			$type = (($this->fields[$key]['type']=='checkbox')?$this->fields[$key]['type']:'select');
 		}
 
 		$label = $this->fields[$key]['label'];
@@ -7490,7 +7490,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			$type = 'select';
+			$type = (($this->fields[$key]['type']=='checkbox')?$this->fields[$key]['type']:'select');
 		}
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
@@ -7713,9 +7713,13 @@ abstract class CommonObject
 			if (is_array($value_arr) && count($value_arr) > 0) {
 				$toprint = array();
 				foreach ($value_arr as $keyval => $valueval) {
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					if (!empty($valueval)) {
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $param['options'][$valueval] . '</li>';
+					}
 				}
-				$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+				if (!empty($toprint)) {
+					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+				}
 			}
 		} elseif ($type == 'chkbxlst') {
 			$value_arr = explode(',', $value);
