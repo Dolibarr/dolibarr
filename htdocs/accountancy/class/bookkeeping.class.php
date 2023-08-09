@@ -716,11 +716,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int $id Id object
-	 * @param string $ref Ref
-	 * @param string $mode 	Mode
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int 	$id 	Id object
+	 * @param 	string 	$ref 	Ref (Not used. Does not exists on this table, same as rowid)
+	 * @param 	string 	$mode 	Mode
+	 * @return 	int 			Int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -761,7 +760,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (null !== $ref) {
-			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			$sql .= " AND t.rowid = ".((int) $ref);
 		} else {
 			$sql .= ' AND t.rowid = '.((int) $id);
 		}
@@ -1480,10 +1479,10 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by importkey
 	 *
 	 * @param  string		$importkey		Import key
-     * @param string $mode Mode
+	 * @param string $mode Mode
 	 * @return int Result
 	 */
-	public function deleteByImportkey($importkey , $mode = '' )
+	public function deleteByImportkey($importkey, $mode = '')
 	{
 		$this->db->begin();
 
@@ -1563,10 +1562,10 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
-     * @param string $mode Mode
+	 * @param string $mode Mode
 	 * @return 	int 				Result
 	 */
-	public function deleteMvtNum($piecenum , $mode = '')
+	public function deleteMvtNum($piecenum, $mode = '')
 	{
 		global $conf;
 
