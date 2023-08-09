@@ -3099,7 +3099,8 @@ if ($action == 'create') {
 				$facusing->fetch($object->fk_facture_source);
 				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 			} else {
-				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectedInvoiceNotFound").'</span>';
+				$langs->load("errors");
+				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("WarningCorrectedInvoiceNotFound").'</span>';
 			}
 		}
 
