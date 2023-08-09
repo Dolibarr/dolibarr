@@ -88,6 +88,8 @@ class User extends CommonObject
 	 */
 	public $statut;
 
+	public $status;
+
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;

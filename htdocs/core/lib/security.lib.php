@@ -1177,7 +1177,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		$langs->setDefaultLang();
 	}
 
-	$langs->load("errors");
+	$langs->loadLangs(array("main", "errors"));
 
 	if ($printheader) {
 		if (function_exists("llxHeader")) {
@@ -1185,6 +1185,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		} elseif (function_exists("llxHeaderVierge")) {
 			llxHeaderVierge('');
 		}
+		print '<div style="padding: 20px">';
 	}
 	print '<div class="error">';
 	if (empty($message)) {
@@ -1217,6 +1218,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		}
 	}
 	if ($printfooter && function_exists("llxFooter")) {
+		print '</div>';
 		llxFooter();
 	}
 
