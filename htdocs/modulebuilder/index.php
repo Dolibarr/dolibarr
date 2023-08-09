@@ -4270,13 +4270,13 @@ if ($module == 'initmodule') {
 					// Delete dic tab
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<input type="hidden" name="action" value="confirm_deleteobject">';
+					print '<input type="hidden" name="action" value="confirm_deletedictionary">';
 					print '<input type="hidden" name="tab" value="dictionaries">';
 					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 
-					print $langs->trans("EnterNameOfObjectToDeleteDesc").'<br><br>';
+					print $langs->trans("EnterNameOfDictionnaryToDeleteDesc").'<br><br>';
 
-					print '<input type="text" name="objectname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
+					print '<input type="text" name="dicname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'">';
 					print '<input type="submit" class="button smallpaddingimp" name="delete" value="'.dol_escape_htmltag($langs->trans("Delete")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 					print '</form>';
 				} else {

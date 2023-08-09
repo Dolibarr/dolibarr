@@ -28,6 +28,7 @@ ModuleBuilderDescwidgets=Cet onglet est dédié à la gestion/construction de wi
 ModuleBuilderDescbuildpackage=Vous pouvez générer ici un fichier de package "prêt à distribuer" (un fichier .zip normalisé) de votre module et un fichier de documentation "prêt à distribuer". Cliquez simplement sur le bouton pour créer le paquet ou le fichier de documentation.
 EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION: Tous les fichiers relatifs a ce module (générés ou créés manuellement) ET toutes les données et documentation seront supprimés!
 EnterNameOfObjectToDeleteDesc=Vous pouvez effacer un objet. ATTENTION : Tous les fichiers (générés ou créés manuellement) en rapport avec cet objet seront définitivement effacés !
+EnterNameOfDictionnaryToDeleteDesc=Vous pouvez supprimer votre dictionnaire. ATTENTION : Tous les fichiers (générés ou créés manuellement) en rapport avec ce dictionnaire seront définitivement effacés !
 DangerZone=Zone de danger
 BuildPackage=Construire le package
 BuildPackageDesc=Vous pouvez générer un package zip de votre application afin d'être prêt à le distribuer sur n’importe quel Dolibarr. Vous pouvez également le distribuer ou le vendre sur une place de marché, comme <a href="https://www.dolistore.com">DoliStore.com</a> .
