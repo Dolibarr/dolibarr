@@ -97,7 +97,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('companies', 'errors'));

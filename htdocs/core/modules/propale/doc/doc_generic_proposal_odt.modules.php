@@ -104,7 +104,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("errors", "companies"));

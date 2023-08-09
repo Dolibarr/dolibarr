@@ -58,9 +58,10 @@ class modPhpbarcode extends ModeleBarCode
 	/**
 	 * 	Return description
 	 *
-	 * 	@return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 

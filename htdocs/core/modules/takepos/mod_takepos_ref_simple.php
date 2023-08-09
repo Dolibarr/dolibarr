@@ -58,9 +58,10 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	/**
 	 *  Return description of numbering module
 	 *
-	 * @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 

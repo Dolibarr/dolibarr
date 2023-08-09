@@ -47,12 +47,11 @@ class modTcpdfbarcode extends ModeleBarCode
 	/**
 	 *	Return description of numbering model
 	 *
-	 *	@return		string		Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
-
 		return 'TCPDF-barcode';
 	}
 
