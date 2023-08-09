@@ -71,7 +71,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$mo = new MO($db);
+	$mo = new Mo($db);
 	$mo->initAsSpecimen();
 
 	// Search template files
@@ -218,7 +218,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -244,7 +244,7 @@ foreach ($dirmodels as $reldir) {
 						}
 						print '</td>';
 
-						$mrp = new MO($db);
+						$mrp = new Mo($db);
 						$mrp->initAsSpecimen();
 
 						// Info

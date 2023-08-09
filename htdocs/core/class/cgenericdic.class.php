@@ -23,18 +23,14 @@
  * \ingroup resource
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 /**
  * Class CGenericDic
- *
- * @see CommonObject
  */
-class CGenericDic
+class CGenericDic extends Commondict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	/**
 	 * @var string Id to identify managed objects
 	 */

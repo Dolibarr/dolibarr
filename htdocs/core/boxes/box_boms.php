@@ -78,7 +78,7 @@ class box_boms extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		$bomstatic = new Bom($this->db);
+		$bomstatic = new BOM($this->db);
 		$productstatic = new Product($this->db);
 		$userstatic = new User($this->db);
 

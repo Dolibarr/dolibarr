@@ -544,7 +544,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->project->dir_temp,

@@ -104,7 +104,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('companies', 'errors'));
@@ -370,7 +370,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->supplier_proposal->dir_temp,

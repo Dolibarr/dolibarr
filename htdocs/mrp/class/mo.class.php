@@ -694,7 +694,7 @@ class Mo extends CommonObject
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new Bom($this->db);
+				$bom = new BOM($this->db);
 				$bom->fetch($this->fk_bom);
 				if ($bom->bomtype == 1) {
 					$role = 'toproduce';

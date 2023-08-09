@@ -82,6 +82,7 @@ class Ticket extends CommonObject
 	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;
+	public $socid;
 
 	/**
 	 * @var int Project ID
@@ -117,6 +118,11 @@ class Ticket extends CommonObject
 	 * @var string Ticket message
 	 */
 	public $message;
+
+	/**
+	 * @var string Private message
+	 */
+	public $private;
 
 	/**
 	 * @var int  Ticket statut
@@ -184,6 +190,11 @@ class Ticket extends CommonObject
 	 * @var int Creation date
 	 */
 	public $datec = '';
+
+	/**
+	 * @var int Last modification date
+	 */
+	public $tms = '';
 
 	/**
 	 * @var int Read date
@@ -1613,8 +1624,8 @@ class Ticket extends CommonObject
 			dol_syslog(get_class($this)."::markAsRead");
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$this->actionmsg = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
-				$this->actionmsg2 = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
+				$this->context['actionmsg'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
+				$this->context['actionmsg2'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
 
 				if (!$error && !$notrigger) {
 					// Call trigger
@@ -2952,21 +2963,20 @@ class Ticket extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param          User	$user   Object user
-	 *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-	 *      @return         WorkboardResponse|int             <0 if KO, WorkboardResponse if OK
+	 *  @param          User	$user   Object user
+	 *  @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
+	 *  @return         WorkboardResponse|int             <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$now = dol_now();
 		$delay_warning = 0;
 
-		$this->nbtodo = $this->nbtodolate = 0;
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec";

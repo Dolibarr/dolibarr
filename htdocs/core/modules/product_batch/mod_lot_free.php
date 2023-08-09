@@ -83,9 +83,10 @@ class mod_lot_free extends ModeleNumRefBatch
 	/**
 	 *  Return description of module
 	 *
-	 *  @return string      		Description of module
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		$langs->load("companies");

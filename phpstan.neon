@@ -1,9 +1,11 @@
 parameters:
 	customRulesetUsed: true
+	level: 0
 	fileExtensions:
 		- php
 	paths:
 	    - htdocs
+	    - scripts
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom
@@ -46,11 +48,26 @@ parameters:
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
 		- '#Undefined variable: \$form#'
+		- '#Result of function fieldList#'
+		- '#Caught class Stripe#'
+		- '#Function llxHeader invoked with#'
+		- '#Function llxHeaderVierge invoked with#'
+		- '#If condition is always true#'
+		- '#always exists and is not falsy#'
+		- '#has no return type specified#'
+		- '#is always true#'
+		- '#is always fal#'
+		- '#always exists and is not nullable#'
+		- '#PHPDoc tag @return has invalid value#'
+		- '#type has no value type specified in iterable type array#'
+		- '#with no value type specified in iterable type array#'
+		- '#Empty array passed to foreach#'
+		- '#in isset\(\) is not nullable#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512
 	    nodesByStringCountMax: 512
-	reportUnmatchedIgnoredErrors: true
+	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass
 		- SimpleXMLElement

@@ -350,7 +350,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->commande->dir_temp,

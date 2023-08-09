@@ -246,7 +246,7 @@ if ($id > 0 || !empty($ref)) {
 						$supplierinvoicestatic->id = $objp->facid;
 						$supplierinvoicestatic->ref = $objp->ref;
 						$supplierinvoicestatic->ref_supplier = $objp->ref_supplier;
-						$supplierinvoicestatic->libelle = $objp->label;
+						$supplierinvoicestatic->libelle = $objp->label;	// deprecated
 						$supplierinvoicestatic->label = $objp->label;
 						$supplierinvoicestatic->total_ht = $objp->total_ht;
 						$supplierinvoicestatic->total_ttc = $objp->total_ttc;

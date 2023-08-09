@@ -199,8 +199,6 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 	}
 }
-//var_dump($action);
-//$object->doActions($action);
 
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
 $triggersendname = 'TICKET_SENTBYMAIL';

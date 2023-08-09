@@ -103,12 +103,14 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$tmparraykey = array_keys($object->param_list);
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
-		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type'])) {
+		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
 				$value = implode(',', $values_arr);
 			}
+			var_dump($value);
+			exit;
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09') ?GETPOST($key, 'aZ09') : "";
@@ -202,7 +204,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				continue;
 			}
 		} else {
-			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type']) && $object->fields[$key]['type']!=='checkbox') {
 				continue; // The field was not submited to be saved
 			}
 		}
@@ -247,7 +249,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
-		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
@@ -289,6 +291,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			}
 		}
 	}
+
 
 	// Fill array 'array_options' with data from add form
 	if (!$error) {

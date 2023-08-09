@@ -2706,7 +2706,7 @@ img.photorefnoborder {
 	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 .tdhrthin {
-	margin: 0;
+	margin: 0 !important;
 	padding-bottom: 0 !important;
 }
 /* Payment Screen : Pointer cursor in the autofill image */
@@ -5503,6 +5503,8 @@ td.cal_other_month {
 	opacity: 0.8;
 }
 
+.cal_available { background: #0060d450; }
+.cal_chosen { background: #0060d4; }
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */

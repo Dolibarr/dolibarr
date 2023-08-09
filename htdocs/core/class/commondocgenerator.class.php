@@ -31,7 +31,7 @@
 
 
 /**
- *	Parent class for documents generators
+ *	Parent class for documents (PDF, ODT, ...) generators
  */
 abstract class CommonDocGenerator
 {
@@ -39,6 +39,11 @@ abstract class CommonDocGenerator
 	 * @var string Model name
 	 */
 	public $name = '';
+
+	/**
+	 * @var string Version
+	 */
+	public $version = '';
 
 	/**
 	 * @var string Error code (or message)
@@ -116,6 +121,11 @@ abstract class CommonDocGenerator
 	 * @var array	Array of columns
 	 */
 	public $cols;
+
+	/**
+	 * @var array	Array with result of doc generation. content is array('fullpath'=>$file)
+	 */
+	public $result;
 
 
 	/**
@@ -292,7 +302,7 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_thirdparty($object, $outputlangs, $array_key = 'company')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
+		global $extrafields;
 
 		if (empty($object->country) && !empty($object->country_code)) {
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);

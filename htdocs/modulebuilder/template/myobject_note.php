@@ -144,9 +144,11 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
-$help_url = '';
 $title = $langs->trans('MyObject').' - '.$langs->trans("Notes");
+//$title = $object->ref." - ".$langs->trans("Notes");
+$help_url = '';
+//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
+
 llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
