@@ -1,11 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2012      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2023	Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,53 +17,42 @@
  */
 
 /**
- *  \file			htdocs/core/modules/recruitment/modules_recruitmentjobposition.php
- *  \ingroup		recruitment
- *  \brief			File that contains parent class for recruitmentjobpositions document models and parent class for recruitmentjobpositions numbering models
+ *	    \file       htdocs/core/class/commonnumrefgenerator.class.php
+ *		\ingroup    core
+ *		\brief      File of parent class for num ref generators
  */
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
 /**
- *	Parent class for documents models
+ *	Parent class for number ref generators
  */
-abstract class ModelePDFRecruitmentCandidature extends CommonDocGenerator
+abstract class CommonNumRefGenerator
 {
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return list of active generation modules
-	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 * @var string Model name
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
-		// phpcs:enable
-		$type = 'recruitmentjobcandidature';
-		$list = array();
+	public $name = '';
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($db, $type, $maxfilenamelength);
+	/**
+	 * @var string Version
+	 */
+	public $version = '';
 
-		return $list;
-	}
-}
-
-
-
-/**
- *  Parent class to manage numbering of RecruitmentCandidature
- */
-abstract class ModeleNumRefRecruitmentCandidature
-{
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var string[]    Array of error strings
+	 */
+	public $errors = array();
+
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	protected $db;
+
 
 	/**
 	 *	Return if a module can be used or not
@@ -89,7 +72,6 @@ abstract class ModeleNumRefRecruitmentCandidature
 	public function info()
 	{
 		global $langs;
-		$langs->load("recruitment");
 		return $langs->trans("NoDescription");
 	}
 
@@ -101,7 +83,6 @@ abstract class ModeleNumRefRecruitmentCandidature
 	public function getExample()
 	{
 		global $langs;
-		$langs->load("recruitment");
 		return $langs->trans("NoExample");
 	}
 
