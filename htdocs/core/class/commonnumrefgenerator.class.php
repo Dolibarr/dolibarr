@@ -88,9 +88,10 @@ abstract class CommonNumRefGenerator
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Descriptive text
+	 *	@param		Translate	$langs		Language
+	 *	@return     string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("NoDescription");
