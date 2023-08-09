@@ -79,6 +79,7 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		/* Actions */
 
+		$txt = $action;
 		$langs->load("users");
 
 		// USER_LOGIN
@@ -166,15 +167,6 @@ class InterfaceLogevents extends DolibarrTriggers
 			$text = $langs->transnoentities("GroupDeleted", $object->name);
 			$desc = $langs->transnoentities("GroupDeleted", $object->name);
 		}
-
-		// If not found
-		/*
-		else
-		{
-			dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
-			return 0;
-		}
-		*/
 
 		// Add more information into desc from the context property
 		if (!empty($desc) && !empty($object->context['audit'])) {
