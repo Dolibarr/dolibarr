@@ -761,7 +761,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (null !== $ref) {
-			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			$sql .= " AND t.doc_ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= ' AND t.rowid = '.((int) $id);
 		}
