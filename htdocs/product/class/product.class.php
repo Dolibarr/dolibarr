@@ -2677,18 +2677,18 @@ class Product extends CommonObject
 						if ($resql) {
 							$result = $this->db->fetch_array($resql);
 
-							$this->multiprices[$i] = $result["price"];
-							$this->multiprices_ttc[$i] = $result["price_ttc"];
-							$this->multiprices_min[$i] = $result["price_min"];
-							$this->multiprices_min_ttc[$i] = $result["price_min_ttc"];
-							$this->multiprices_base_type[$i] = $result["price_base_type"];
+							$this->multiprices[$i] = (!empty($result["price"]) ? $result["price"] : 0);
+							$this->multiprices_ttc[$i] = (!empty($result["price_ttc"]) ? $result["price_ttc"] : 0);
+							$this->multiprices_min[$i] = (!empty($result["price_min"]) ? $result["price_min"] : 0);
+							$this->multiprices_min_ttc[$i] = (!empty($result["price_min_ttc"]) ? $result["price_min_ttc"] : 0);
+							$this->multiprices_base_type[$i] = (!empty($result["price_base_type"]) ? $result["price_base_type"] : '');
 							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
-							$this->multiprices_tva_tx[$i] = $result["tva_tx"]; // TODO Add ' ('.$result['default_vat_code'].')'
-							$this->multiprices_recuperableonly[$i] = $result["recuperableonly"];
+							$this->multiprices_tva_tx[$i] = (!empty($result["tva_tx"]) ? $result["tva_tx"] : 0); // TODO Add ' ('.$result['default_vat_code'].')'
+							$this->multiprices_recuperableonly[$i] = (!empty($result["recuperableonly"]) ? $result["recuperableonly"] : 0);
 
 							// Price by quantity
-							$this->prices_by_qty[$i] = $result["price_by_qty"];
-							$this->prices_by_qty_id[$i] = $result["rowid"];
+							$this->prices_by_qty[$i] = (!empty($result["price_by_qty"]) ? $result["price_by_qty"] : 0);
+							$this->prices_by_qty_id[$i] = (!empty($result["rowid"]) ? $result["rowid"] : 0);
 							// Récuperation de la liste des prix selon qty si flag positionné
 							if ($this->prices_by_qty[$i] == 1) {
 								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
