@@ -822,15 +822,15 @@ if (empty($reshook)) {
 		// If status pending validation and validator = validator or user, or rights to do for others
 		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) &&
 			(!empty($user->admin) || $user->id == $object->fk_validator || $cancreate || $cancreateall)) {
-			$db->begin();
+				$db->begin();
 
-			$oldstatus = $object->statut;
-			$object->date_cancel = dol_now();
-			$object->fk_user_cancel = $user->id;
-			$object->statut = Holiday::STATUS_CANCELED;
-			$object->status = Holiday::STATUS_CANCELED;
+				$oldstatus = $object->statut;
+				$object->date_cancel = dol_now();
+				$object->fk_user_cancel = $user->id;
+				$object->statut = Holiday::STATUS_CANCELED;
+				$object->status = Holiday::STATUS_CANCELED;
 
-			$result = $object->update($user);
+				$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
 				// Call trigger
@@ -863,7 +863,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 
-			// If no SQL error, we redirect to the request form
+				// If no SQL error, we redirect to the request form
 			if (!$error && $result > 0) {
 				// To
 				$destinataire = new User($db);
@@ -920,20 +920,20 @@ if (empty($reshook)) {
 	}
 
 	/*
-	// Actions when printing a doc from card
-	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+	 // Actions when printing a doc from card
+	 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-	// Actions to send emails
-	$triggersendname = 'HOLIDAY_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
-	$trackid='leav'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	 // Actions to send emails
+	 $triggersendname = 'HOLIDAY_SENTBYMAIL';
+	 $autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
+	 $trackid='leav'.$object->id;
+	 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	// Actions to build doc
-	$upload_dir = $conf->holiday->dir_output;
-	$permissiontoadd = $user->rights->holiday->creer;
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	*/
+	 // Actions to build doc
+	 $upload_dir = $conf->holiday->dir_output;
+	 $permissiontoadd = $user->rights->holiday->creer;
+	 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	 */
 }
 
 
