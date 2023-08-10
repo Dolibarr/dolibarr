@@ -1478,19 +1478,10 @@ class pdf_azur extends ModelePDFPropales
 			if ($this->emetteur->logo)
 			{
 				$logodir = $conf->mycompany->dir_output;
-<<<<<<< HEAD
-				if (! empty($conf->mycompany->multidir_output[$object->entity])) $logodir = $conf->mycompany->multidir_output[$object->entity];
-				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
-				{
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				}
-				else {
-=======
 				if (!empty($conf->mycompany->multidir_output[$object->entity])) $logodir = $conf->mycompany->multidir_output[$object->entity];
 				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				} else {
->>>>>>> branch '10.0' of git@github.com:Dolibarr/dolibarr.git
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
 				if (is_readable($logo))
