@@ -109,8 +109,6 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			if (!empty($values_arr)) {
 				$value = implode(',', $values_arr);
 			}
-			var_dump($value);
-			exit;
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09') ?GETPOST($key, 'aZ09') : "";

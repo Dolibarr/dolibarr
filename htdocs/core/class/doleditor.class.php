@@ -163,7 +163,7 @@ class DolEditor
 				$pluginstodisable = 'elementspath,save,flash,div,anchor';
 				if (!getDolGlobalString('FCKEDITOR_ENABLE_SPECIALCHAR')) {
 					$pluginstodisable .= ',specialchar';
-					}
+				}
 				if (!empty($conf->dol_optimize_smallscreen)) {
 					$pluginstodisable .= ',scayt,wsc,find,undo';
 				}

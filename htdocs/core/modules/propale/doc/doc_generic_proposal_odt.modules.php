@@ -40,11 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
 	/**
-	 * @var Societe Issuer object that emits
-	 */
-	public $emetteur;
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
@@ -57,7 +52,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
