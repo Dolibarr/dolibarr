@@ -1722,11 +1722,12 @@ class ExtraFields
 							$translabel = '';
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $langs->trans($obj->$field_toshow);
-							}
-							if ($translabel != $obj->$field_toshow) {
-								$value .= dol_trunc($translabel, 24).' ';
-							} else {
-								$value .= $obj->$field_toshow.' ';
+
+								if ($translabel != $obj->$field_toshow) {
+									$value .= dol_trunc($translabel, 24).' ';
+								} else {
+									$value .= $obj->$field_toshow.' ';
+								}
 							}
 						}
 					} else {
@@ -2105,7 +2106,8 @@ class ExtraFields
 				) {
 					continue;
 				}
-				if (empty($visibility)) {
+				// O: never visible, 2: visible only in list, 5: no creation, no update
+				if (in_array($visibility, array(0, 2, 5))) {
 					continue;
 				}
 				if (empty($perms)) {
