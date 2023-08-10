@@ -38,12 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_product_odt extends ModelePDFProduct
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
