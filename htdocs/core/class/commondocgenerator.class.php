@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2016-2023  Charlene Benke           <charlene@patas-monkey.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
@@ -535,12 +535,6 @@ abstract class CommonDocGenerator
 
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
-			$array_key.'_bank_iban' => (!empty($bank_account) ? $bank_account->iban : ''),
-			$array_key.'_bank_bic' => (!empty($bank_account) ? $bank_account->bic : ''),
-			$array_key.'_bank_label' => (!empty($bank_account) ? $bank_account->label : ''),
-			$array_key.'_bank_number' => (!empty($bank_account) ? $bank_account->number : ''),
-			$array_key.'_bank_proprio' => (!empty($bank_account) ? $bank_account->proprio : ''),
-
 			$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
 			$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
 			$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
@@ -582,6 +576,14 @@ abstract class CommonDocGenerator
 			$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $already_payed_all, 'MT')
 		);
 
+		if ($object->fk_account > 0) {
+			$resarray[$array_key.'_bank_iban'] = $bank_account->iban;
+			$resarray[$array_key.'_bank_bic'] = $bank_account->bic;
+			$resarray[$array_key.'_bank_label'] = $bank_account->label;
+			$resarray[$array_key.'_bank_number'] = $bank_account->number;
+			$resarray[$array_key.'_bank_proprio'] = $bank_account->proprio;
+		}
+		
 		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
 			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
