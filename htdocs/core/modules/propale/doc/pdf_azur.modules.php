@@ -1482,11 +1482,9 @@ class pdf_azur extends ModelePDFPropales
 			{
 				$logodir = $conf->mycompany->dir_output;
 				if (!empty($conf->mycompany->multidir_output[$object->entity])) $logodir = $conf->mycompany->multidir_output[$object->entity];
-				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
-				{
+				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				}
-				else {
+				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
 				if (is_readable($logo))
