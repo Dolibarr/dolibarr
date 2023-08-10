@@ -2022,7 +2022,45 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		exit;
 	}
 }
+if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey')) {
+	$keydict = GETPOST('dictionnarykey') - 1 ;
 
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	} else {
+		$error++;
+		$langs->load("errors");
+		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+		exit;
+	}
+
+	$dicts = $moduleobj->dictionaries;
+	if (!empty(GETPOST('tablib')) && GETPOST('tablib') !== $dicts['tablib'][$keydict]) {
+		$dicts['tablib'][$keydict] = ucfirst(strtolower(GETPOST('tablib')));
+		$updateDict = updateDictionaryInFile($module, $moduledescriptorfile, $dicts);
+		if ($updateDict > 0) {
+			setEventMessages($langs->trans("DictionaryNameUpdated", ucfirst(GETPOST('tablib'))), null);
+		}
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
+		clearstatcache(true);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
+		exit;
+	}
+	//var_dump(GETPOST('tablib'));exit;
+}
 if ($dirins && $action == 'generatedoc') {
 	$modulelowercase = strtolower($module);
 
@@ -4279,7 +4317,8 @@ if ($module == 'initmodule') {
 					}
 				}
 
-				print load_fiche_titre($langs->trans("ListOfDictionariesEntries"), '', '');
+				$newdict = dolGetButtonTitle($langs->trans('NewDictionary'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.urlencode($module).'&tabdic=newdictionary');
+				print_barre_liste($langs->trans("ListOfDictionariesEntries"), '', $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 0, $newdict, '', '', 0, 0, 1);
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -4310,15 +4349,14 @@ if ($module == 'initmodule') {
 					$i = 0;
 					$maxi = count($dicts['tabname']);
 					while ($i < $maxi) {
-						if ($action == 'editdict' &&  array_search($dicts['tabname'][$i], $dicts['tabname']) == (int) GETPOST('dictionnarykey', 'int')) {
+						if ($action == 'editdict' && $i == (int) GETPOST('dictionnarykey', 'int')-1) {
 							print '<tr class="oddeven">';
 							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 							print '<input type="hidden" name="token" value="'.newToken().'">';
 							print '<input type="hidden" name="tab" value="dictionaries">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-							print '<input type="hidden" name="action" value="update_dict">';
-							print '<input type="hidden" name="counter" value="'.$i.'">';
-
+							print '<input type="hidden" name="action" value="updatedictionary">';
+							print '<input type="hidden" name="dictionnarykey" value="'.($i+1).'">';
 
 							print '<td class="tdsticky tdstickygray">';
 							print ($i + 1);
@@ -4414,7 +4452,7 @@ if ($module == 'initmodule') {
 							print '</td>';
 
 							print '<td class="center tdstickyright tdstickyghostwhite">';
-							print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editdict&token='.newToken().'&dictionnarykey='.urlencode(array_search($dicts['tabname'][$i], $dicts['tabname'])).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_edit().'</a>';
+							print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editdict&token='.newToken().'&dictionnarykey='.urlencode($i+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_edit().'</a>';
 							print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletedict&token='.newToken().'&dictionnarykey='.urlencode($i+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_delete().'</a>';
 							print '</td>';
 
