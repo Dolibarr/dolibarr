@@ -734,7 +734,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
 	 * @param 	array 								$accountingAccount 	Array of Accounting account
 	 * @param 	string 								$type 				Customer / Supplier
-	 * @return	array|int      											Accounting accounts suggested or < 0 if technical error.
+	 * @return	array|int      											Array of accounting accounts suggested or < 0 if technical error.
 	 * 																	'suggestedaccountingaccountbydefaultfor'=>Will be used for the label to show on tooltip for account by default on any product
 	 * 																	'suggestedaccountingaccountfor'=>Is the account suggested for this product
 	 */
@@ -941,5 +941,7 @@ class AccountingAccount extends CommonObject
 				return $hookmanager->resArray;
 			}
 		}
+
+		return -1;
 	}
 }

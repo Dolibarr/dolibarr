@@ -37,10 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_odt extends ModeleThirdPartyDoc
 {
 	/**
-	 * Issuer
-	 * @var Societe
+	 * @var string Dolibarr version of the loaded document
 	 */
-	public $emetteur;
+	public $version = 'dolibarr';
+
 
 	/**
 	 *	Constructor

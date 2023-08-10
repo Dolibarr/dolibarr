@@ -28,6 +28,7 @@ ModuleBuilderDescwidgets=This tab is dedicated to manage/build widgets.
 ModuleBuilderDescbuildpackage=You can generate here a "ready to distribute" package file (a normalized .zip file) of your module and a "ready to distribute" documentation file. Just click on button to build the package or documentation file.
 EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: All coding files of module (generated or created manually) AND structured data and documentation will be deleted!
 EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to object will be deleted!
+EnterNameOfObjectToDeleteDesc=You can delete your dictionary. WARNING: All coding files of module (generated or created manually) AND structured data and documentation will be deleted!
 DangerZone=Danger zone
 BuildPackage=Build package
 BuildPackageDesc=You can generate a zip package of your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -178,3 +179,4 @@ CRUDRead=Read
 CRUDCreateWrite=Create or Update
 FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.
 DictionariesCreated=Dictionary <b>%s</b> created successfully
+DictionaryDeleted=Dictionary <b>%s</b> removed successfully

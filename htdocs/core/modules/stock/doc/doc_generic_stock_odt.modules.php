@@ -38,15 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_stock_odt extends ModelePDFStock
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
+
 
 	/**
 	 *	Constructor

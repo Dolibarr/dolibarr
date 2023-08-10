@@ -88,23 +88,13 @@ abstract class CommonNumRefGenerator
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Descriptive text
+	 *	@param		Translate	$langs		Language
+	 *	@return     string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Returns an example of numbering
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		return $langs->trans("NoExample");
 	}
 
 	/**
@@ -117,18 +107,6 @@ abstract class CommonNumRefGenerator
 	public function canBeActivated($object)
 	{
 		return true;
-	}
-
-	/**
-	 *	Returns next assigned value
-	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
 	}
 
 	/**

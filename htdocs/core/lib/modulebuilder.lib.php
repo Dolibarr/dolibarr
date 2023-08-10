@@ -1022,6 +1022,59 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 }
 
 /**
+ * Updates a dictionary in a module descriptor file.
+ *
+ * @param string $module The name of the module.
+ * @param string $file The path to the module descriptor file.
+ * @param array $dicts The dictionary data to be updated.
+ * @return int Returns the number of replacements made in the file.
+ */
+function updateDictionaryInFile($module, $file, $dicts)
+{
+
+	$isEmpty = false;
+	$dicData = "\t\t\$this->dictionaries=array(\n";
+	$module = strtolower($module);
+	foreach ($dicts as $key => $value) {
+		if (empty($value)) {
+			$isEmpty = true;
+			$dicData = "\t\t\$this->dictionaries=array();";
+			break;
+		}
+
+		$dicData .= "\t\t\t'$key'=>";
+
+		if ($key === 'tabcond') {
+			$conditions = array_map(function ($val) use ($module) {
+				return ($val === true || $val === false) ? "isModEnabled('$module')" : $val;
+			}, $value);
+			$dicData .= "array(" . implode(",", $conditions) . ")";
+		} elseif ($key === 'tabhelp') {
+			$helpItems = array();
+			foreach ($value as $key => $helpValue) {
+				$helpItems[] = "array('code'=>\$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
+			}
+			$dicData .= "array(" . implode(",", $helpItems) . ")";
+		} else {
+			if (is_array($value)) {
+				$dicData .= "array(" . implode(",", array_map(function ($val) {
+					return "'$val'";
+				}, $value)) . ")";
+			} else {
+				$dicData .= "'$value'";
+			}
+		}
+		$dicData .= ",\n";
+	}
+	$dicData .= (!$isEmpty ? "\t\t);" : '');
+
+	$stringDic = getFromFile($file, '/* BEGIN MODULEBUILDER DICTIONARIES */', '/* END MODULEBUILDER DICTIONARIES */');
+	$writeInfile = dolReplaceInFile($file, array($stringDic => $dicData."\n"));
+
+	return $writeInfile;
+}
+
+/**
  * Creates a new dictionary table.
  *
  * for creating a new dictionary table in Dolibarr. It generates the necessary SQL code to define the table structure,
@@ -1071,7 +1124,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 			break;
 		}
 	}
-	// check if tablename exist in Database
+	// check if tablename exist in Database and create it if not
 	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.strtolower($namedic) . "'";
 	$checkTable = $db->query($query);
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
@@ -1087,7 +1140,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	}
 
 	// rewrite dictionnary if
-	$dictionnaires['tabname'][] = $namedic;
+	$dictionnaires['tabname'][] = strtolower($namedic);
 	$dictionnaires['tablib'][] = ucfirst(substr($namedic, 2));
 	$dictionnaires['tabsql'][] = 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.strtolower($namedic).' as f';
 	$dictionnaires['tabsqlsort'][] = (array_key_exists('label', $columns) ? 'label ASC' : '');
@@ -1099,36 +1152,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
 
 	// Build the dictionary string
-	$dicData = "\t\t\$this->dictionaries=array(\n";
-
-	foreach ($dictionnaires as $key => $value) {
-		$dicData .= "\t\t\t'$key'=>";
-
-		if ($key === 'tabcond') {
-			$conditions = array_map(function ($val) use ($modulename) {
-				return ($val === true || $val === false) ? "isModEnabled('$modulename')" : $val;
-			}, $value);
-			$dicData .= "array(" . implode(",", $conditions) . ")";
-		} elseif ($key === 'tabhelp') {
-			$helpItems = array();
-			foreach ($value as $helpValue) {
-				$helpItems[] = "array('code'=>\$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
-			}
-			$dicData .= "array(" . implode(",", $helpItems) . ")";
-		} else {
-			if (is_array($value)) {
-				$dicData .= "array(" . implode(",", array_map(function ($val) {
-					return "'$val'";
-				}, $value)) . ")";
-			} else {
-				$dicData .= "'$value'";
-			}
-		}
-		$dicData .= ",\n";
-	}
-	$dicData .= "\t\t);";
-	$stringDic = getFromFile($file, '/* BEGIN MODULEBUILDER DICTIONARIES */', '/* END MODULEBUILDER DICTIONARIES */');
-	$writeInfile = dolReplaceInFile($file, array($stringDic => $dicData."\n"));
+		$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
 	if ($writeInfile > 0) {
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}

@@ -109,6 +109,9 @@ abstract class CommonDocGenerator
 	public $option_escompte;
 	public $option_credit_note;
 
+	/**
+	 * @var Societe		Issuer of document
+	 */
 	public $emetteur;
 
 	/**
@@ -126,6 +129,12 @@ abstract class CommonDocGenerator
 	 * @var array	Array with result of doc generation. content is array('fullpath'=>$file)
 	 */
 	public $result;
+
+	public $posxref;
+	public $posxpicture;	// For picture
+	public $posxdesc;		// For description
+	public $posxqty;
+	public $posxpuht;
 
 
 	/**
@@ -302,7 +311,7 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_thirdparty($object, $outputlangs, $array_key = 'company')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
+		global $extrafields;
 
 		if (empty($object->country) && !empty($object->country_code)) {
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
