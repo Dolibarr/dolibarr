@@ -1123,7 +1123,7 @@ abstract class CommonObject
 	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
 	 *  @param  string		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 *  @param  int			$notrigger			Disable all triggers
-	 *  @return int         	        		<0 if KO, 0 if already added, >0 if OK
+	 *  @return int         	        		<0 if KO, 0 if already added or code not valid, >0 if OK
 	 */
 	public function add_contact($fk_socpeople, $type_contact, $source = 'external', $notrigger = 0)
 	{
@@ -1168,9 +1168,8 @@ abstract class CommonObject
 		}
 
 		if ($id_type_contact == 0) {
-			$this->error = 'CODE_NOT_VALID_FOR_THIS_ELEMENT';
 			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
-			return -3;
+			return 0;
 		}
 
 		$datecreate = dol_now();
