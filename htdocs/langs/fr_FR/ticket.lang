@@ -328,6 +328,9 @@ OldUser=Ancien utilisateur
 NewUser=Nouvel utilisateur
 NumberOfTicketsByMonth=Nombre de tickets par mois
 NbOfTickets=Nombre de tickets
+ExternalContributors=Contributeurs externes
+AddContributor=Ajouter un contributeur externe
+
 # notifications
 TicketCloseEmailSubjectCustomer=Billet fermé
 TicketCloseEmailBodyCustomer=Ceci est un message automatique pour vous avertir que le ticket %s vient d'être clôturé.

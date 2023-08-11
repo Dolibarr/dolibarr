@@ -489,7 +489,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					}
 					if ($foundtagforlines) {
 						foreach ($object->lines as $line) {
-							$tmparray = $this->get_substitutionarray_shipment_lines($line, $outputlangs);
+							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);

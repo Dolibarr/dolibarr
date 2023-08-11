@@ -11058,7 +11058,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
  * @param string    	$actionType 'default', 'delete', 'danger', 'email', ...
- * @param string|array 	$url        Url for link or array of subbutton description
+ * @param string|array 	$url        Url for link or array of subbutton description ('label'=>, 'url'=>, 'lang'=>, 'perm'=> )
  * @param string    	$id         Attribute id of button
  * @param int|boolean	$userRight  User action right
  * // phpcs:disable
@@ -11091,12 +11091,11 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$out .= '<a style="margin-right: auto;" class="dropdown-toggle butAction" data-toggle="dropdown">'.$label.'</a>';
 		$out .= '<div class="dropdown-content">';
 		foreach ($url as $subbutton) {
-			if ($subbutton['enabled'] && $subbutton['perm']) {
-				if (!empty($subbutton['lang'])) {
-					$langs->load($subbutton['lang']);
-				}
-				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage'])), '', 1, array('isDropDown' => true));
+			if (!empty($subbutton['lang'])) {
+				$langs->load($subbutton['lang']);
 			}
+			$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+			$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], array('isDropDown' => true));
 		}
 		$out .= "</div>";
 		$out .= "</div>";
@@ -11104,14 +11103,17 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		return $out;
 	}
 
-	// If $url is a simple link
+	// Here, $url is a simple link
+
 	if (!empty($params['isDropdown']))
 		$class = "dropdown-item";
 	else {
 		$class = 'butAction';
 		if ($actionType == 'danger' || $actionType == 'delete') {
 			$class = 'butActionDelete';
-			if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
+			if (!empty($url) && strpos($url, 'token=') === false) {
+				$url .= '&token='.newToken();
+			}
 		}
 	}
 	$attr = array(
