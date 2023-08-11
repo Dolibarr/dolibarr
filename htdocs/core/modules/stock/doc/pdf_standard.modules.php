@@ -64,12 +64,6 @@ class pdf_standard extends ModelePDFStock
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $wref;
 	public $posxdesc;
 	public $posxlabel;

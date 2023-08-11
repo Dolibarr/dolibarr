@@ -37,11 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_reception_odt extends ModelePdfReception
 {
 	/**
-	 * @var Societe Issuer object that emits
-	 */
-	public $emetteur; // Objet societe qui emet
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
