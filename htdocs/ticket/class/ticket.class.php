@@ -40,7 +40,7 @@ class Ticket extends CommonObject
 	/**
 	 * @var db connector
 	 */
-	public $bd;
+	public $db;
 	
 	/**
 	 * @var string ID to identify managed object
