@@ -260,7 +260,7 @@ class Ticket extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var TicketsLine[] array of TicketsLine
+	 * @var Tickets[] array of Tickets
 	 */
 	public $lines;
 
@@ -741,21 +741,18 @@ class Ticket extends CommonObject
 	/**
 	 * Load all objects in memory from database
 	 *
-	 * @param  User   $user      User for action
-	 * @param  string $sortorder Sort order
-	 * @param  string $sortfield Sort field
-	 * @param  int    $limit     page number
-	 * @param  int    $offset    Offset for query
-	 * @param  int    $arch      archive or not (not used)
-	 * @param  array  $filter    Filter for query
-	 *                           output
-	 * @return int <0 if KO, >0 if OK
+	 * @param  User   $user      	User for action
+	 * @param  string $sortorder 	Sort order
+	 * @param  string $sortfield 	Sort field
+	 * @param  int    $limit     	page number
+	 * @param  int    $offset    	Offset for query
+	 * @param  int    $arch      	archive or not (not used)
+	 * @param  array  $filter    	Filter for query
+	 * @return int 					<0 if KO, >0 if OK
 	 */
 	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
 	{
-		global $langs;
-
-		$extrafields = new ExtraFields($this->db);
+		global $langs, $extrafields;
 
 		// fetch optionals attributes and labels
 		$extrafields->fetch_name_optionals_label($this->table_element);
@@ -771,7 +768,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_user_assign, ua.lastname as user_assign_lastname, ua.firstname as user_assign_firstname,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.resolution,";
 		$sql .= " t.progress,";
 		$sql .= " t.timing,";
@@ -846,10 +843,10 @@ class Ticket extends CommonObject
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 
-					$line = new TicketsLine();
+					$line = new self($this->db);
 
 					$line->id = $obj->rowid;
-					$line->rowid = $obj->rowid;
+					//$line->rowid = $obj->rowid;
 					$line->ref = $obj->ref;
 					$line->track_id = $obj->track_id;
 					$line->fk_soc = $obj->fk_soc;
@@ -857,16 +854,12 @@ class Ticket extends CommonObject
 					$line->origin_email = $obj->origin_email;
 
 					$line->fk_user_create = $obj->fk_user_create;
-					$line->user_create_lastname = $obj->user_create_lastname;
-					$line->user_create_firstname = $obj->user_create_firstname;
-
 					$line->fk_user_assign = $obj->fk_user_assign;
-					$line->user_assign_lastname = $obj->user_assign_lastname;
-					$line->user_assign_firstname = $obj->user_assign_firstname;
 
 					$line->subject = $obj->subject;
 					$line->message = $obj->message;
-					$line->fk_statut = $obj->fk_statut;
+					$line->fk_statut = $obj->status;
+					$line->status = $obj->status;
 					$line->resolution = $obj->resolution;
 					$line->progress = $obj->progress;
 					$line->timing = $obj->timing;
@@ -917,7 +910,6 @@ class Ticket extends CommonObject
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
-		global $conf, $langs, $hookmanager;
 		$error = 0;
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
@@ -3092,137 +3084,4 @@ class Ticket extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
-}
-
-
-/**
- * Ticket line Class
- */
-class TicketsLine
-{
-	/**
-	 * @var int ID
-	 * @deprecated use id
-	 */
-	public $rowid;
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var string  $ref    Ticket reference
-	 */
-	public $ref;
-
-	/**
-	 * Hash to identify ticket
-	 */
-	public $track_id;
-
-	/**
-	 * @var int Thirdparty ID
-	 */
-	public $fk_soc;
-
-	/**
-	 * Project ID
-	 */
-	public $fk_project;
-
-	/**
-	 * Person email who have create ticket
-	 */
-	public $origin_email;
-
-	/**
-	 * User id who have create ticket
-	 */
-	public $fk_user_create;
-
-	/**
-	 * User id who have ticket assigned
-	 */
-	public $fk_user_assign;
-
-	/**
-	 * Ticket subject
-	 */
-	public $subject;
-
-	/**
-	 * Ticket message
-	 */
-	public $message;
-
-	/**
-	 * Ticket statut
-	 */
-	public $fk_statut;
-
-	/**
-	 * State resolution
-	 */
-	public $resolution;
-
-	/**
-	 * Progress in percent
-	 */
-	public $progress;
-
-	/**
-	 * Duration for ticket
-	 */
-	public $timing;
-
-	/**
-	 * Type code
-	 */
-	public $type_code;
-
-	/**
-	 * Category code
-	 */
-	public $category_code;
-
-	/**
-	 * Severity code
-	 */
-	public $severity_code;
-
-	/**
-	 * Type label
-	 */
-	public $type_label;
-
-	/**
-	 * Category label
-	 */
-	public $category_label;
-
-	/**
-	 * Severity label
-	 */
-	public $severity_label;
-
-	/**
-	 * Creation date
-	 */
-	public $datec = '';
-
-	/**
-	 * Read date
-	 */
-	public $date_read = '';
-
-	/**
-	 * @var int Last message date
-	 */
-	public $date_last_msg_sent = '';
-
-	/**
-	 * Close ticket date
-	 */
-	public $date_close = '';
 }

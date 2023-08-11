@@ -491,12 +491,6 @@ abstract class CommonDocGenerator
 			$sumdeposit = $object->getSumDepositsUsed();
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
-
-			if ($object->fk_account > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-				$bank_account = new Account($this->db);
-				$bank_account->fetch($object->fk_account);
-			}
 		}
 
 		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
@@ -556,7 +550,7 @@ abstract class CommonDocGenerator
 			$array_key.'_multicurrency_total_tva_locale' => price($object->multicurrency_total_tva, 0, $outputlangs),
 			$array_key.'_multicurrency_total_ttc_locale' => price($object->multicurrency_total_ttc, 0, $outputlangs),
 
-			$array_key.'_note_private'=>$object->note,
+			$array_key.'_note_private'=>$object->note_private,
 			$array_key.'_note_public'=>$object->note_public,
 			$array_key.'_note'=>$object->note_public, // For backward compatibility
 
@@ -576,12 +570,20 @@ abstract class CommonDocGenerator
 			$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $already_payed_all, 'MT')
 		);
 
-		if ($object->fk_account > 0) {
-			$resarray[$array_key.'_bank_iban'] = $bank_account->iban;
-			$resarray[$array_key.'_bank_bic'] = $bank_account->bic;
-			$resarray[$array_key.'_bank_label'] = $bank_account->label;
-			$resarray[$array_key.'_bank_number'] = $bank_account->number;
-			$resarray[$array_key.'_bank_proprio'] = $bank_account->proprio;
+		if (in_array($object->element, array('facture', 'invoice', 'supplier_invoice', 'facture_fournisseur'))) {
+			$bank_account = null;
+
+			if (property_exists($object, 'fk_account') && $object->fk_account > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+				$bank_account = new Account($this->db);
+				$bank_account->fetch($object->fk_account);
+			}
+
+			$resarray[$array_key.'_bank_iban'] = (empty($bank_account) ? '' : $bank_account->iban);
+			$resarray[$array_key.'_bank_bic'] = (empty($bank_account) ? '' : $bank_account->bic);
+			$resarray[$array_key.'_bank_label'] = (empty($bank_account) ? '' : $bank_account->label);
+			$resarray[$array_key.'_bank_number'] = (empty($bank_account) ? '' : $bank_account->number);
+			$resarray[$array_key.'_bank_proprio'] =(empty($bank_account) ? '' : $bank_account->proprio);
 		}
 
 		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
