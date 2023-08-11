@@ -144,12 +144,11 @@ $title=$langs->trans("ListTicketsLinkToContract");
 	print '</tr>';
 	// on récupère la totalité des tickets liés au contrat
 	$allticketarray = $object->getTicketsArray();
-	if ($allticketarray >0) {
-		//var_dump($object->tickets);
-		foreach ($object->tickets as $key => $value) {
+	if (is_array($allticketarray) && count($allticketarray) > 0) {
+		foreach ($allticketarray as $key => $value) {
 			$total_ht = 0;
 			$total_ttc = 0;
-			$num=count($object->tickets);
+			$num = count($allticketarray);
 			
 			for ($i = 0; $i < $num; $i++) {
 				$element = new Ticket($db);
