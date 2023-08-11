@@ -239,15 +239,15 @@ $pagetitle = $langs->trans("CronList");
 
 llxHeader('', $pagetitle);
 
-$sqlTest = 'SELECT DISTINCT test FROM '.MAIN_DB_PREFIX.'cronjob';
-$resultTest = $db->query($sqlTest);
 $TTestNotAllowed = array();
-if($resultTest) {
+$sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';
+$resultTest = $db->query($sqlTest);
+if ($resultTest) {
 	while ($objTest = $db->fetch_object($resultTest)) {
 		$veriftest = verifCond($objTest->test);
-			if (!$veriftest) {
-				$TTestNotAllowed[] = $db->escape($objTest->test);
-			}
+		if (!$veriftest) {
+			$TTestNotAllowed[$objTest->id] = $objTest->id;
+		}
 	}
 }
 
@@ -285,8 +285,8 @@ $sql .= " t.libname,";
 $sql .= " t.test";
 $sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql .= " WHERE entity IN (0,".$conf->entity.")";
-if(!empty($TTestNotAllowed)) {
-	$sql .= ' AND test NOT IN ("'.implode('","',$TTestNotAllowed).'")';
+if (!empty($TTestNotAllowed)) {
+	$sql .= ' AND t.rowid NOT IN ('.$db->sanitize(implode(',', $TTestNotAllowed)).')';
 }
 if ($search_status >= 0 && $search_status < 2 && $search_status != '') {
 	$sql .= " AND t.status = ".(empty($search_status) ? '0' : '1');
