@@ -3126,6 +3126,8 @@ class Facture extends CommonInvoice
 		if ($close_note) {
 			$sql .= ", close_note='".$this->db->escape($close_note)."'";
 		}
+		$sql .= ', fk_user_closing = '.((int) $user->id);
+		$sql .= ", date_closing = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
