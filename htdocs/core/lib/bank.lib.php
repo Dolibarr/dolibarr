@@ -280,7 +280,7 @@ function checkSwiftForAccount(Account $account = null, $swift = null)
 {
 	if ($account == null && $swift == null) {
 		return false;
-	} else {
+	} elseif ($swift == null) {
 		$swift = $account->bic;
 	}
 	if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
@@ -300,7 +300,7 @@ function checkIbanForAccount(Account $account = null, $ibantocheck = null)
 {
 	if ($account == null && $ibantocheck == null) {
 		return false;
-	} else {
+	} elseif ($ibantocheck == null) {
 		$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
 	}
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
