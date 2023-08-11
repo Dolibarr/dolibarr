@@ -42,7 +42,6 @@
 -- VAT multientity
 -- VMYSQL4.1 DROP INDEX uk_c_tva_id on llx_c_tva;
 -- VPGSQL8.2 DROP INDEX uk_c_tva_id;
-ALTER TABLE llx_c_tva DROP INDEX uk_c_tva_id;
 ALTER TABLE llx_c_tva ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (entity, fk_pays, code, taux, recuperableonly);
 
