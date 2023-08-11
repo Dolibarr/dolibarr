@@ -124,7 +124,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 
 llxHeader();
 
-$tva = new TVA($db);
+$tva = new Tva($db);
 $form = new Form($db);
 
 $h = 0;
@@ -287,8 +287,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
-		if ($user->rights->facture->paiement)
-		{
+		if ($user->hasRight('facture', 'paiement')) {
 			print '<a class="butAction" href="card.php?id='.GETPOST('id', 'int').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 		}
 	}

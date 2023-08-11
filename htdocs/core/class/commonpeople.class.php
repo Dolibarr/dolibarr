@@ -28,6 +28,39 @@
 trait CommonPeople
 {
 	/**
+	 * @var string Address
+	 */
+	public $address;
+
+	/**
+	 * @var string zip code
+	 */
+	public $zip;
+
+	/**
+	 * @var string town
+	 */
+	public $town;
+
+	/**
+	 * @var int		$state_id
+	 */
+	public $state_id; // The state/department
+	public $state_code;
+	public $state;
+
+	/**
+	 * @var string email
+	 */
+	public $email;
+
+	/**
+	 * @var string url
+	 */
+	public $url;
+
+
+	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)

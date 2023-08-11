@@ -11,7 +11,7 @@ if ($argc < 2) {
     echo "The process will be repeated 100 times to get accurate stats\n";
     echo "\n";
     echo 'Usage: '.$argv[0]." inputfile.ics\n";
-    die();
+    exit();
 }
 
 list(, $inputFile) = $argv;

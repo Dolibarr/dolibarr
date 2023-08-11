@@ -37,12 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class pdf_sepamandate extends ModeleBankAccountDoc
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -357,7 +351,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				$pdf->Rect(80, $posY, 5, 5);
 				$pdf->SetXY(80, $posY);
-				if ($object->frstrecur == 'RECUR') {
+				if ($object->frstrecur == 'RCUR') {
 					$pdf->MultiCell(5, 3, 'X', 0, 'L');
 				}
 				$pdf->SetXY(86, $posY);

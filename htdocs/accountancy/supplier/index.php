@@ -45,7 +45,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->bind->write)) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -82,7 +82,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -91,7 +91,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
-if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
+if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database
 	$db->begin();
 	$sql1 = "UPDATE ".$db->prefix()."facture_fourn_det as fd";

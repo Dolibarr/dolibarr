@@ -34,8 +34,6 @@ class PDO extends AbstractBackend
 
     /**
      * Constructor.
-     *
-     * @param \PDO $pdo
      */
     public function __construct(\PDO $pdo)
     {
@@ -111,8 +109,7 @@ class PDO extends AbstractBackend
     /**
      * Locks a uri.
      *
-     * @param string   $uri
-     * @param LockInfo $lockInfo
+     * @param string $uri
      *
      * @return bool
      */
@@ -161,8 +158,7 @@ class PDO extends AbstractBackend
     /**
      * Removes a lock from a uri.
      *
-     * @param string   $uri
-     * @param LockInfo $lockInfo
+     * @param string $uri
      *
      * @return bool
      */

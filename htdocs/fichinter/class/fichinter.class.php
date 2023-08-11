@@ -52,7 +52,6 @@ class Fichinter extends CommonObject
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>70),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
 		'dateo' =>array('type'=>'date', 'label'=>'Dateo', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'datee' =>array('type'=>'date', 'label'=>'Datee', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'datet' =>array('type'=>'date', 'label'=>'Datet', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
@@ -64,6 +63,7 @@ class Fichinter extends CommonObject
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>130),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
+		'fk_statut' =>array('type'=>'integer', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
 	);
 
 	/**
@@ -438,7 +438,7 @@ class Fichinter extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut,";
+		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
@@ -462,7 +462,8 @@ class Fichinter extends CommonObject
 				$this->ref_client   = $obj->ref_client;
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
-				$this->statut       = $obj->fk_statut;
+				$this->status       = $obj->status;
+				$this->statut       = $obj->status;	// deprecated
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->dateo        = $this->db->jdate($obj->dateo);
@@ -483,10 +484,6 @@ class Fichinter extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				$this->last_main_doc = $obj->last_main_doc;
-
-				if ($this->statut == 0) {
-					$this->brouillon = 1;
-				}
 
 				// Retrieve extrafields
 				$this->fetch_optionals();
@@ -573,7 +570,7 @@ class Fichinter extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut != 1) {
+		if ($this->status != self::STATUS_VALIDATED) {
 			$this->db->begin();
 
 			$now = dol_now();
@@ -653,8 +650,8 @@ class Fichinter extends CommonObject
 			// Set new ref and define current statut
 			if (!$error) {
 				$this->ref = $num;
-				$this->statut = 1;
-				$this->brouillon = 0;
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->date_validation = $now;
 				$this->db->commit();
 				return 1;
@@ -800,16 +797,22 @@ class Fichinter extends CommonObject
 	 *	@param		string	$option						Options
 	 *  @param	    int   	$notooltip					1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  	string  $morecss                    Add more css on link
 	 *	@return		string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '')
 	{
 		global $conf, $langs, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
+			'option' => $option,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -841,20 +844,32 @@ class Fichinter extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		$linkstart = '<a href="'.$url.'"';
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
 		$linkstart .= $linkclose.'>';
-		$linkend = '</a>';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
+
 		if ($withpicto != 2) {
 			$result .= $this->ref;
 		}
+
 		$result .= $linkend;
 
 		global $action;
@@ -1222,7 +1237,8 @@ class Fichinter extends CommonObject
 
 		$this->id = 0;
 		$this->ref = '';
-		$this->statut = 0;
+		$this->status = self::STATUS_DRAFT;
+		$this->statut = self::STATUS_DRAFT;	//  deprecated
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
@@ -1284,7 +1300,7 @@ class Fichinter extends CommonObject
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			// Insertion ligne
@@ -1828,49 +1844,44 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public function deleteline($user, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
-		if ($this->statut == 0) {
-			dol_syslog(get_class($this)."::deleteline lineid=".$this->id);
-			$this->db->begin();
+		dol_syslog(get_class($this)."::deleteline lineid=".$this->id);
 
-						$result = $this->deleteExtraFields();
-			if ($result < 0) {
-				$error++;
-				$this->db->rollback();
-				return -1;
-			}
+		$this->db->begin();
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".((int) $this->id);
-			$resql = $this->db->query($sql);
+		$result = $this->deleteExtraFields();
+		if ($result < 0) {
+			$error++;
+			$this->db->rollback();
+			return -1;
+		}
 
-			if ($resql) {
-				$result = $this->update_total();
-				if ($result > 0) {
-					if (!$notrigger) {
-						// Call trigger
-						$result = $this->call_trigger('LINEFICHINTER_DELETE', $user);
-						if ($result < 0) {
-							$error++; $this->db->rollback(); return -1;
-						}
-						// End call triggers
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$result = $this->update_total();
+			if ($result > 0) {
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('LINEFICHINTER_DELETE', $user);
+					if ($result < 0) {
+						$error++; $this->db->rollback(); return -1;
 					}
-
-					$this->db->commit();
-					return $result;
-				} else {
-					$this->db->rollback();
-					return -1;
+					// End call triggers
 				}
+
+				$this->db->commit();
+				return $result;
 			} else {
-				$this->error = $this->db->error()." sql=".$sql;
 				$this->db->rollback();
 				return -1;
 			}
 		} else {
-			return -2;
+			$this->error = $this->db->error()." sql=".$sql;
+			$this->db->rollback();
+			return -1;
 		}
 	}
 }

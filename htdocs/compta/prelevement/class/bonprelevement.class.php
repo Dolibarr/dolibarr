@@ -540,11 +540,13 @@ class BonPrelevement extends CommonObject
 					} else {
 						if ($this->type == 'bank-transfer') {
 							$modeforaddpayment = 'payment_supplier';
+							$labelforaddpayment = '(BankTransferPayment)';
 						} else {
 							$modeforaddpayment = 'payment';
+							$labelforaddpayment = '(WithdrawalPayment)';
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $fk_bank_account, '', '');
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '');
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;
@@ -838,7 +840,7 @@ class BonPrelevement extends CommonObject
 	 *  @param  string  $executiondate		Date to execute the transfer
 	 *  @param	int	    $notrigger			Disable triggers
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
-	 *  @param	int		$did				ID of an existing payment request. If $did is defined, no entry
+	 *  @param	int		$did				ID of an existing payment request. If $did is defined, we use the existing payment request.
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 *	@return	int							<0 if KO, No of invoice included into file if OK
 	 */
@@ -964,7 +966,7 @@ class BonPrelevement extends CommonObject
 								if ($format == 'FRST' && $bac->frstrecur != 'FRST') {
 									continue;
 								}
-								if ($format == 'RCUR' && ($bac->frstrecur != 'RCUR' && $bac->frstrecur != 'RECUR')) {
+								if ($format == 'RCUR' && $bac->frstrecur != 'RCUR') {
 									continue;
 								}
 							}
@@ -1061,7 +1063,12 @@ class BonPrelevement extends CommonObject
 						dol_mkdir($dir);
 					}
 
-					$this->filename = $dir.'/'.$ref.'.xml';
+					if (isModEnabled('multicompany')) {
+						$labelentity = $conf->entity;
+						$this->filename = $dir.'/'.$ref.'-'.$labelentity.'.xml';
+					} else {
+						$this->filename = $dir.'/'.$ref.'.xml';
+					}
 
 					// Create withdraw order in database
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
@@ -1170,7 +1177,7 @@ class BonPrelevement extends CommonObject
 					$this->factures = $factures_prev_id;
 					$this->context['factures_prev'] = $factures_prev;
 
-					// Generation of direct debit or credti transfer file $this->filename (May be a SEPA file for european countries)
+					// Generation of direct debit or credit transfer file $this->filename (May be a SEPA file for european countries)
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {

@@ -425,6 +425,7 @@ class ExtraFields
 				return -1;
 			}
 		}
+		return -1;
 	}
 
 	/**
@@ -998,9 +999,9 @@ class ExtraFields
 			} elseif ($type == 'radio') {
 				$morecss = 'width25';
 			} else {
-				if (empty($size) || round($size) < 12) {
+				if (empty($size) || round((float) $size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48) {
+				} elseif (round((float) $size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -1733,11 +1734,12 @@ class ExtraFields
 							$translabel = '';
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $langs->trans($obj->$field_toshow);
-							}
-							if ($translabel != $obj->$field_toshow) {
-								$value .= dol_trunc($translabel, 24).' ';
-							} else {
-								$value .= $obj->$field_toshow.' ';
+
+								if ($translabel != $obj->$field_toshow) {
+									$value .= dol_trunc($translabel, 24).' ';
+								} else {
+									$value .= $obj->$field_toshow.' ';
+								}
 							}
 						}
 					} else {
@@ -2088,7 +2090,7 @@ class ExtraFields
 					continue;
 				}
 
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst')))) {
 					//when unticking boolean field, it's not set in POST
 					continue;
 				}
@@ -2115,14 +2117,17 @@ class ExtraFields
 				if (empty($enabled)
 					|| (
 						$onlykey === '@GETPOSTISSET'
-						&& in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst'))
+						&& in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst'))
 						&& in_array(abs($enabled), array(2, 5))
 						&& ! GETPOSTISSET('options_' . $key) // Update hidden checkboxes and multiselect only if they are provided
 					)
 				) {
 					continue;
 				}
-				if (empty($visibility) || $visibility == 5) {
+
+				$visibility_abs = abs($visibility);
+				// not modify if extra field is not in update form (0 : never, 2 or -2 : list only, 5 or - 5 : list and view only)
+				if (empty($visibility_abs) || $visibility_abs == 2 || $visibility_abs == 5) {
 					continue;
 				}
 				if (empty($perms)) {
@@ -2173,7 +2178,14 @@ class ExtraFields
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, array('text'))) {
-					$value_key = GETPOST("options_".$key, 'alphanohtml');
+					$label_security_check = 'alphanohtml';
+					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
+					if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+						$label_security_check = 'nohtml';
+					} else {
+						$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+					}
+					$value_key = GETPOST("options_".$key, $label_security_check);
 				} else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') {
@@ -2237,12 +2249,15 @@ class ExtraFields
 				if (in_array($key_type, array('date'))) {
 					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
-					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
-						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
-						$value_key = array(
-							'start' => dol_mktime(0, 0, 0, GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int')),
-							'end' => dol_mktime(23, 59, 59, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'))
-						);
+					if (GETPOSTISSET($dateparamname_start . 'year') || GETPOSTISSET($dateparamname_end . 'year')) {
+						$value_key = array();
+						// values provided as a component year, month, day, etc.
+						if (GETPOSTISSET($dateparamname_start . 'year')) {
+							$value_key['start'] = dol_mktime(0, 0, 0, GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'));
+						}
+						if (GETPOSTISSET($dateparamname_start . 'year')) {
+							$value_key['end'] = dol_mktime(23, 59, 59, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'));
+						}
 					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
 						$value_key = dol_mktime(12, 0, 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));

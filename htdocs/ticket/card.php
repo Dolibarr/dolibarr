@@ -22,29 +22,31 @@
  */
 
 /**
- *    \file     htdocs/ticket/card.php
- *    \ingroup 	ticket
+ *   \file       htdocs/ticket/card.php
+ *   \ingroup    ticket
+ *   \brief      Page to create/edit/view Tickets
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 if (isModEnabled('project')) {
-	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 if (isModEnabled('contrat')) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
 
 // Load translation files required by the page
@@ -52,20 +54,22 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
 $id        = GETPOST('id', 'int');
-$socid     = GETPOST('socid', 'int');
-$track_id  = GETPOST('track_id', 'alpha', 3);
 $ref       = GETPOST('ref', 'alpha');
+$track_id  = GETPOST('track_id', 'alpha', 3);
+$socid     = GETPOST('socid', 'int');
+$contactid = GETPOST('contactid', 'int');
 $projectid = GETPOST('projectid', 'int');
-$cancel    = GETPOST('cancel', 'alpha');
+$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
+
 $action    = GETPOST('action', 'aZ09');
+$cancel    = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$contactid = GETPOST('contactid', 'int');
-
-$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma') ? GETPOST('sortfield', 'aZ09comma') : "a.datep";
 $sortorder = GETPOST('sortorder', 'aZ09comma') ? GETPOST('sortorder', 'aZ09comma') : "desc";
+$search_rowid = GETPOST('search_rowid');
+$search_agenda_label = GETPOST('search_agenda_label');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -75,8 +79,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
-$search_rowid = GETPOST('search_rowid');
-$search_agenda_label = GETPOST('search_agenda_label');
+
 
 // Initialize technical object to manage hooks of ticket. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ticketcard', 'globalcard'));
@@ -102,13 +105,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
 
-//Select mail models is same action as add_message
+// Select mail models is same action as add_message
 if (GETPOST('modelselected', 'alpha')) {
 	$action = 'presend';
 }
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id || $track_id || $ref) {
 	$res = $object->fetch($id, $ref, $track_id);
 	if ($res >= 0) {
@@ -129,8 +132,10 @@ if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id);
 
 $triggermodname = 'TICKET_MODIFY';
-$permissiontoread = $user->hasRight('ticket', 'read');
-$permissiontoadd = $user->hasRight('ticket', 'write');
+
+// Permissions
+$permissiontoread   = $user->hasRight('ticket', 'read');
+$permissiontoadd    = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
 
 $upload_dir = $conf->ticket->dir_output;
@@ -382,7 +387,7 @@ if (empty($reshook)) {
 	}
 
 	// Mark as Read
-	if ($action == "mark_ticket_read" && $permissiontoadd) {
+	if ($action == "set_read" && $permissiontoadd) {
 		$object->fetch('', '', GETPOST("track_id", 'alpha'));
 
 		if ($object->markAsRead($user) > 0) {
@@ -416,7 +421,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {    // Update list of contacts
-			// Si déjà un user assigné on le supprime des contacts
+			// If a user has already been assigned, we delete him from the contacts.
 			if ($useroriginassign > 0) {
 				$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 				foreach ($internal_contacts as $key => $contact) {
@@ -530,6 +535,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Set progress status
 	if ($action == 'set_progression' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setProgression(GETPOST('progress', 'alpha'));
@@ -540,6 +546,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Set categories
 	if ($action == 'set_categories' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCategories(GETPOST('categories', 'array'));
@@ -550,6 +557,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Set Subject
 	if ($action == 'setsubject' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'))) {
 			if ($action == 'setsubject') {
@@ -650,7 +658,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Action to update one extrafield
+	// Action to update an extrafield
 	if ($action == "update_extras" && $permissiontoadd) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 
@@ -910,7 +918,7 @@ if ($action == 'create' || $action == 'presend') {
 
 				print '</td></tr>';
 
-				// Statut
+				// Status
 				print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstat->getLibStatut(4).'</td></tr>';
 
 				print "</table>";
@@ -1131,7 +1139,7 @@ if ($action == 'create' || $action == 'presend') {
 			$foundinter = 0;
 			if ($num) {
 				foreach ($object->linkedObjects as $objecttype => $objects) {
-					if ($objecttype = "fichinter") {
+					if ($objecttype == "fichinter") {
 						foreach ($objects as $fichinter) {
 							$foundinter++;
 							$timing += $fichinter->duration;
@@ -1152,7 +1160,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</table>';
 
 
-		// Fin colonne gauche et début colonne droite
+		// End of left column and beginning of right column
 		print '</div><div class="fichehalfright">';
 
 
@@ -1222,7 +1230,7 @@ if ($action == 'create' || $action == 'presend') {
 		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
 			print '<input type="submit" class="button small" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
-			//    Button to edit Properties
+			// Button to edit Properties
 			if (isset($object->status) && $object->status < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {
 				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
@@ -1438,12 +1446,12 @@ if ($action == 'create' || $action == 'presend') {
 					print dolGetButtonAction('', $langs->trans('TicketAddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&token='.newToken().'&socid='. $object->fk_soc.'&origin=ticket_ticket&originid='. $object->id, '');
 				}
 
-				// Close ticket if statut is read
+				// Close ticket if status is read
 				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
 					print dolGetButtonAction('', $langs->trans('CloseTicket'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
-				// Abadon ticket if statut is read
+				// Abandon ticket if status is read
 				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
 					print dolGetButtonAction('', $langs->trans('AbandonTicket'), 'default', $_SERVER["PHP_SELF"].'?action=abandon&token='.newToken().'&track_id='.$object->track_id, '');
 				}
@@ -1522,7 +1530,7 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->param = array('fk_user_create' => $user->id);
 			$formticket->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
 
-			// Tableau des parametres complementaires du post
+			// Table of additional post parameters
 			$formticket->param['models'] = $modelmail;
 			$formticket->param['models_id'] = GETPOST('modelmailselected', 'int');
 			//$formticket->param['socid']=$object->fk_soc;

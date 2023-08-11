@@ -18,7 +18,7 @@ The iCalendar output goes to stdout. Other messages to stderr.
 
 HI
     );
-    die();
+    exit();
 }
 
 $events = 100;
@@ -77,7 +77,7 @@ $result = $calendar->validate();
 if ($result) {
     fwrite(STDERR, "Errors!\n");
     fwrite(STDERR, print_r($result, true));
-    die(-1);
+    exit(-1);
 }
 
 fwrite(STDERR, "Serializing this beast\n");

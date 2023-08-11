@@ -79,8 +79,6 @@ class Plugin extends ServerPlugin
      * addPlugin is called.
      *
      * This method should set up the required event subscriptions.
-     *
-     * @param Server $server
      */
     public function initialize(Server $server)
     {
@@ -139,9 +137,6 @@ class Plugin extends ServerPlugin
      * This event is triggered when properties are requested for nodes.
      *
      * This allows us to inject any sharings-specific properties.
-     *
-     * @param PropFind $propFind
-     * @param INode    $node
      */
     public function propFind(PropFind $propFind, INode $node)
     {
@@ -160,9 +155,6 @@ class Plugin extends ServerPlugin
 
     /**
      * We intercept this to handle POST requests on shared resources.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool|null
      */
@@ -187,7 +179,6 @@ class Plugin extends ServerPlugin
 
         switch ($documentType) {
             case '{DAV:}share-resource':
-
                 $this->shareResource($path, $message->sharees);
                 $response->setStatus(200);
                 // Adding this because sending a response body may cause issues,
@@ -207,9 +198,6 @@ class Plugin extends ServerPlugin
      * hat are supported on a particular node.
      *
      * We need to add a number of privileges for scheduling purposes.
-     *
-     * @param INode $node
-     * @param array $supportedPrivilegeSet
      */
     public function getSupportedPrivilegeSet(INode $node, array &$supportedPrivilegeSet)
     {
@@ -245,7 +233,6 @@ class Plugin extends ServerPlugin
      * This method is used to generate HTML output for the
      * DAV\Browser\Plugin.
      *
-     * @param INode  $node
      * @param string $output
      * @param string $path
      *

@@ -773,10 +773,10 @@ abstract class CommonInvoice extends CommonObject
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
-	 *  @param		float	$amount			Amount we request direct debit for
+	 *  @param		float	$amount			Amount we request direct debit or credit transfer for. If 0, the remain to pay will be calculated and used.
 	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@return     int         			<0 if KO, 0 if a request already exists, >0 if OK
 	 */
 	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture')
 	{
@@ -787,7 +787,7 @@ abstract class CommonInvoice extends CommonObject
 
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
-		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0) {
+		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
 			$bac->fetch(0, $this->socid);
@@ -870,24 +870,41 @@ abstract class CommonInvoice extends CommonObject
 					return 1;
 				} else {
 					$this->error = "A request already exists";
-					dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
+					dol_syslog(get_class($this).'::demandeprelevement Can t create a request to generate a direct debit, a request already exists.');
 					return 0;
 				}
 			} else {
 				$this->error = $this->db->error();
-				dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
+				dol_syslog(get_class($this).'::demandeprelevement Error -2');
 				return -2;
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";
-			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
+			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->status, $this->paye, $this->mode_reglement_id");
 			return -3;
 		}
 	}
 
 
 	/**
-	 *	Create a payment order into prelevement_demande then send the payment order to Stripe (for a direct debit order or a credit transfer order).
+	 *  Create a payment with Stripe card
+	 *  Must take amount using Stripe and record an event into llx_actioncomm
+	 *  Record bank payment
+	 *  Send email to customer ?
+	 *
+	 *	@param      User	$fuser      	User asking the direct debit transfer
+	 *  @param		int		$id				Invoice ID with remain to pay
+	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
+	 *	@return     int         			<0 if KO, >0 if OK
+	 */
+	public function makeStripeCardRequest($fuser, $id, $sourcetype = 'facture')
+	{
+		// TODO See in sellyoursaas
+	}
+
+	/**
+	 *  Create a direct debit order into prelevement_bons then
+	 *  Send the payment order to Stripe (for a direct debit order or a credit transfer order) and record an event in llx_actioncomm.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$did			ID of unitary payment request to pay
@@ -895,9 +912,9 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *	@return     int         			<0 if KO, >0 if OK
 	 */
-	public function makeStripeSepaRequest($fuser, $did = 0, $type = 'direct-debit', $sourcetype = 'facture')
+	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture')
 	{
-		global $conf, $mysoc, $user, $langs;
+		global $conf, $user, $langs;
 
 		if ($type != 'bank-transfer' && $type != 'credit-transfer' && empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
 			return 0;
@@ -910,7 +927,7 @@ abstract class CommonInvoice extends CommonObject
 
 		dol_syslog(get_class($this)."::makeStripeSepaRequest start", LOG_DEBUG);
 
-		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0) {
+		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			// Get the default payment mode for BAN payment of the third party
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);	// table societe_rib
@@ -922,7 +939,7 @@ abstract class CommonInvoice extends CommonObject
 				return -1;
 			}
 
-			// Load the request to process
+			// Load the pending payment request to process (with rowid=$did)
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_prelevement_bons";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " WHERE rowid = ".((int) $did);
@@ -932,7 +949,7 @@ abstract class CommonInvoice extends CommonObject
 			if ($type != 'direct-debit') {
 				$sql .= " AND fk_facture_fourn = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
 			}
-			$sql .= " AND traite = 0";	// Add a protection to not process twice
+			$sql .= " AND traite = 0";	// To not process payment request that were already converted into a direct debit or credit transfer order (Note: fk_prelevement_bons is also empty when traite = 0)
 
 			dol_syslog(get_class($this)."::makeStripeSepaRequest load requests to process", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1005,7 +1022,7 @@ abstract class CommonInvoice extends CommonObject
 					$bon = new BonPrelevement($this->db);
 					if (!$error) {
 						if (empty($obj->fk_prelevement_bons)) {
-							// This create record into llx_prelevment_bons and update link with llx_prelevement_demande
+							// This creates a record into llx_prelevement_bons and updates link with llx_prelevement_demande
 							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', '', 0, $type, $did, $fk_bank_account);
 							if ($nbinvoices <= 0) {
 								$error++;

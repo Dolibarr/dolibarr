@@ -310,6 +310,13 @@ ErrorFieldExist=Der Wert für <b>%s</b> existiert bereits
 ErrorEqualModule=Modul ungültig in <b>%s</b>
 ErrorFieldValue=Der Wert für <b>%s</b> ist falsch
 ErrorCoherenceMenu= <b>%s</b> ist erforderlich, wenn <b>%s</b> 'left' ist
+ErrorUploadFileDragDrop=Beim Hochladen der Datei(en) ist ein Fehler aufgetreten
+ErrorUploadFileDragDropPermissionDenied=Beim Hochladen der Datei(en) ist ein Fehler aufgetreten: Berechtigung verweigert
+ErrorFixThisHere= <a href="%s">Beheben Sie dies hier</a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Fehler: Die URL Ihrer aktuellen Instanz (%s) stimmt nicht mit der URL überein, die in Ihrem OAuth2-Anmeldesetup (%s) definiert ist. Eine OAuth2-Anmeldung ist in einer solchen Konfiguration nicht zulässig.
+ErrorMenuExistValue=Es existiert bereits ein Menü mit diesem Titel oder dieser URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG-Dateien sind ohne die Option %s nicht als externe Links zulässig
+ErrorTypeMenu=Es ist nicht möglich, ein weiteres Menü für dasselbe Modul in der Navigationsleiste hinzuzufügen (noch nicht unterstützt)
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
@@ -349,6 +356,14 @@ WarningThemeForcedTo=Warnung, das Theme wurde durch die versteckte Konstante MAI
 WarningPagesWillBeDeleted=Achtung: dadurch werden auch alle bestehenden Seiten/Container der Website gelöscht. Sie sollten Ihre Website vorher exportieren, damit Sie ein Backup haben, um sie später wieder zu importieren.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Die automatische Freigabe ist deaktiviert, wenn die Option zur Bestandsverringerung auf "Rechnungsfreigabe" eingestellt ist.
 WarningModuleNeedRefrech = Modul <b>%s</b> wurde deaktiviert. Vergessen Sie nicht, es zu aktivieren
+WarningPermissionAlreadyExist=Vorhandene Berechtigungen für dieses Objekt
+
+SwissQrOnlyVIR = Ein SwissQR-Code kann nur auf Rechnungen hinzugefügt werden, die per Lastschrift bezahlt werden sollen.
+SwissQrCreditorAddressInvalid = Die Kreditorenadresse ist ungültig (sind PLZ und Stadt festgelegt? (%s)
+SwissQrCreditorInformationInvalid = Die Kreditorendaten sind ungültig für die IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN noch nicht implementiert
+SwissQrPaymentInformationInvalid = Die Zahlungsinformationen waren für den Gesamtbetrag %s ungültig: %s
+SwissQrDebitorAddressInvalid = Debitoreninformationen waren ungültig (%s)
 
 # Validate
 RequireValidValue = Wert nicht gültig

@@ -33,8 +33,6 @@ interface ICalendarObjectContainer extends \Sabre\DAV\ICollection
      * The list of filters are specified as an array. The exact array is
      * documented by \Sabre\CalDAV\CalendarQueryParser.
      *
-     * @param array $filters
-     *
      * @return array
      */
     public function calendarQuery(array $filters);

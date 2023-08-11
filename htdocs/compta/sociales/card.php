@@ -63,7 +63,7 @@ $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), 
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
-$fk_user = GETPOST('userid', 'int');
+$fk_user = GETPOST('userid', 'int') > 0 ? GETPOST('userid', 'int') : 0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('taxcard', 'globalcard'));
@@ -348,7 +348,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfieldcreate">';
 
 	// Label
 	print "<tr>";
@@ -511,7 +511,7 @@ if ($id > 0) {
 
 		// Employee
 		if ($action != 'editfk_user') {
-			if ($object->getSommePaiement() > 0 && !empty($object->fk_user)) {
+			if ($object->getSommePaiement() > 0 && $object->fk_user > 0) {
 				$userstatic = new User($db);
 				$result = $userstatic->fetch($object->fk_user);
 				if ($result > 0) {
@@ -519,7 +519,7 @@ if ($id > 0) {
 				}
 			} else {
 				$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
-				if (!empty($object->fk_user)) {
+				if ($object->fk_user > 0) {
 					$userstatic = new User($db);
 					$result = $userstatic->fetch($object->fk_user);
 					if ($result > 0) {
@@ -573,7 +573,7 @@ if ($id > 0) {
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Type
 		print '<tr><td class="titlefield">';
@@ -628,7 +628,7 @@ if ($id > 0) {
 		// Bank account
 		if (isModEnabled("banque")) {
 			print '<tr><td class="nowrap">';
-			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+			print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
 			print $langs->trans('DefaultBankAccount');
 			print '<td>';
 			if ($action != 'editbankaccount' && $user->rights->tax->charges->creer) {

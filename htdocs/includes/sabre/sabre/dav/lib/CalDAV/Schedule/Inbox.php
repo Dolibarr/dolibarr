@@ -38,8 +38,7 @@ class Inbox extends DAV\Collection implements IInbox
     /**
      * Constructor.
      *
-     * @param Backend\SchedulingSupport $caldavBackend
-     * @param string                    $principalUri
+     * @param string $principalUri
      */
     public function __construct(Backend\SchedulingSupport $caldavBackend, $principalUri)
     {
@@ -175,8 +174,6 @@ class Inbox extends DAV\Collection implements IInbox
      *
      * The list of filters are specified as an array. The exact array is
      * documented by \Sabre\CalDAV\CalendarQueryParser.
-     *
-     * @param array $filters
      *
      * @return array
      */

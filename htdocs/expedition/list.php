@@ -633,7 +633,7 @@ if ($user->rights->user->user->lire) {
 	$moreforfilter .= '</div>';
 }
 // If the user can view prospects other than his'
-if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -644,7 +644,7 @@ if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->right
 
 	$moreforfilter .= '</div>';
 }
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
@@ -884,6 +884,7 @@ print "</tr>\n";
 
 $typenArray = $formcompany->typent_array(1);
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
@@ -902,7 +903,7 @@ while ($i < min($num, $limit)) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		$object->date_delivery = $obj->delivery_date;
@@ -1023,6 +1024,9 @@ while ($i < min($num, $limit)) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 			// Get code using getLabelFromKey
@@ -1030,6 +1034,9 @@ while ($i < min($num, $limit)) {
 			print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
 			if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Tracking number
 		if (!empty($arrayfields['e.tracking_number']['checked'])) {

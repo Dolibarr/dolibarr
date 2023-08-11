@@ -64,12 +64,6 @@ class pdf_standard extends ModelePDFStock
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $wref;
 	public $posxdesc;
 	public $posxlabel;
@@ -791,7 +785,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 
-		// Parent entrepot
+		// Parent warehouse
 		$e = new Entrepot($this->db);
 		$hasparent = (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0);
 

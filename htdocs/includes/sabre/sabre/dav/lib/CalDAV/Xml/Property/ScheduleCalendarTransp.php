@@ -76,8 +76,6 @@ class ScheduleCalendarTransp implements Element
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
      */
     public function xmlSerialize(Writer $writer)
     {
@@ -108,8 +106,6 @@ class ScheduleCalendarTransp implements Element
      *
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
-     *
-     * @param Reader $reader
      *
      * @return mixed
      */

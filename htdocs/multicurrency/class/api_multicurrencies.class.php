@@ -109,7 +109,7 @@ class MultiCurrencies extends DolibarrApi
 	 * Return an array with Currency informations
 	 *
 	 * @param 	int 		$id 	ID of Currency
-	 * @return 	array|mixed 		Data without useless information
+	 * @return  Object              Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */

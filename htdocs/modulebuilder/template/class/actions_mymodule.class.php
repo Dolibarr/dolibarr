@@ -23,10 +23,12 @@
  * Put detailed description here.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
+
 /**
  * Class ActionsMyModule
  */
-class ActionsMyModule
+class ActionsMyModule extends CommonHookActions
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -296,7 +298,7 @@ class ActionsMyModule
 		global $user;
 
 		if ($parameters['features'] == 'myobject') {
-			if ($user->rights->mymodule->myobject->read) {
+			if ($user->hasRight('mymodule', 'myobject', 'read')) {
 				$this->results['result'] = 1;
 				return 1;
 			} else {

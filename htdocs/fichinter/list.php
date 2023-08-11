@@ -720,7 +720,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
 	$objectstatic->ref_client = $obj->ref_client;
-	$objectstatic->statut = $obj->status;
+	$objectstatic->statut = $obj->status;	// deprecated
 	$objectstatic->status = $obj->status;
 
 	$companystatic->name = $obj->name;
@@ -733,7 +733,7 @@ while ($i < $imaxinloop) {
 	//mode kanban
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 

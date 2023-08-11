@@ -215,6 +215,7 @@ class CommActionRapport
 
 			return 1;
 		}
+		return 0;
 	}
 
 	/**

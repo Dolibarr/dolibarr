@@ -19,7 +19,7 @@ foreach ($paths as $path) {
 
 if (!class_exists('Sabre\\VObject\\Version')) {
     fwrite(STDERR, "Composer autoloader could not be loaded.\n");
-    die(1);
+    exit(1);
 }
 
 echo 'sabre/vobject ', Version::VERSION, " duplicate contact merge tool\n";
@@ -27,7 +27,7 @@ echo 'sabre/vobject ', Version::VERSION, " duplicate contact merge tool\n";
 if ($argc < 3) {
     echo "\n";
     echo 'Usage: ', $argv[0], " input.vcf output.vcf [debug.log]\n";
-    die(1);
+    exit(1);
 }
 
 $input = fopen($argv[1], 'r');

@@ -1275,7 +1275,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
 
-	if ($conf->tax->enabled && ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')) {
+	if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')) {
 		if ($modecompta == 'CREANCES-DETTES') {
 			// VAT to pay
 			$amount = 0;
