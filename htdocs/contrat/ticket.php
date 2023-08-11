@@ -130,61 +130,55 @@ print '<div class="underbanner clearboth"></div>';
 
 $title=$langs->trans("ListTicketsLinkToContract");
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td >'.$langs->trans("Ref").'</td>';
-	print '<td width="300">'.$langs->trans("Subject").'</td>';
-	print '<td align="left">'.$langs->trans("Type").'</td>';
-	print '<td align="left" nowrap >'.$langs->trans("TicketCategory").'</td>';
-	print '<td align="left">'.$langs->trans("Severity").'</td>';
-	print '<td  align="center">'.$langs->trans("Date").'</td>';
-	print '<td  align="center" nowrap >'.$langs->trans("DateEnd").'</td>';
-	print '<td  align="right">'.$langs->trans("Progress").'</td>';
-	print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
-	print '</tr>';
-	// on récupère la totalité des tickets liés au contrat
-	$allticketarray = $object->getTicketsArray();
-	if (is_array($allticketarray) && count($allticketarray) > 0) {
-		foreach ($allticketarray as $key => $value) {
-			$total_ht = 0;
-			$total_ttc = 0;
-			$num = count($allticketarray);
-			
-			for ($i = 0; $i < $num; $i++) {
-				$element = new Ticket($db);
-				$element->fetch($value->rowid);
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td >'.$langs->trans("Ref").'</td>';
+print '<td width="300">'.$langs->trans("Subject").'</td>';
+print '<td align="left">'.$langs->trans("Type").'</td>';
+print '<td align="left" nowrap >'.$langs->trans("TicketCategory").'</td>';
+print '<td align="left">'.$langs->trans("Severity").'</td>';
+print '<td  align="center">'.$langs->trans("Date").'</td>';
+print '<td  align="center" nowrap >'.$langs->trans("DateEnd").'</td>';
+print '<td  align="right">'.$langs->trans("Progress").'</td>';
+print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
+print '</tr>';
+// on récupère la totalité des tickets liés au contrat
+$allticketarray = $object->getTicketsArray();
+if (is_array($allticketarray) && count($allticketarray) > 0) {
+	foreach ($allticketarray as $key => $value) {
+		$total_ht = 0;
+		$total_ttc = 0;
 
-				print "<tr >";
+		$element = $value;
 
-				// Ref
-				print '<td align="left">';
-				print $element->getNomUrl(1);
-				print "</td>\n";
+		print "<tr>";
 
-				// Informaitons
-				print '<td align="left">'.$value->subject.'</td>';
-				print '<td align="left">'.$value->type_label.'</td>';
-				print '<td align="left">'.$value->category_label.'</td>';
-				print '<td align="left">'.$value->severity_label.'</td>';
+		// Ref
+		print '<td align="left">';
+		print $element->getNomUrl(1);
+		print "</td>\n";
 
-				// Date
-				print '<td align="center">'.dol_print_date($element->datec, 'day').'</td>';
-				print '<td align="center">'.dol_print_date($element->date_close, 'day').'</td>';
+		// Information
+		print '<td align="left">'.$value->subject.'</td>';
+		print '<td align="left">'.$value->type_label.'</td>';
+		print '<td align="left">'.$value->category_label.'</td>';
+		print '<td align="left">'.$value->severity_label.'</td>';
 
-				// Durée
-				print '<td align="right">';
-				print (isset($element->progress)?$element->progress:'&nbsp;'). '%';
-				print '</td>';
+		// Date
+		print '<td align="center">'.dol_print_date($element->datec, 'day').'</td>';
+		print '<td align="center">'.dol_print_date($element->date_close, 'day').'</td>';
 
-				// Status
-				print '<td align="right">'.$element->getLibStatut(5).'</td>';
-				print '</tr>';
+		// Duration
+		print '<td align="right">';
+		print (isset($element->progress) ? $element->progress.'%' : '');
+		print '</td>';
 
-			}
-			print "</table>";
-
-		}
+		// Status
+		print '<td align="right">'.$element->getLibStatut(5).'</td>';
+		print '</tr>';
 	}
+}
+print "</table>";
 
 
 llxFooter();
