@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- *
+ * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -93,7 +94,7 @@ if ($cancel) {
 	$action = 'view_ticket';
 }
 
-if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close" || $action == "add_message") {
+if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close" || $action == "add_message" || $action == "add_contact") {
 	$error = 0;
 	$display_ticket = false;
 	if (!strlen($track_id)) {
@@ -185,6 +186,15 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		$ret = $object->dao->newMessage($user, $action, 0, 1);
 
 
+		if (!$error) {
+			$action = 'view_ticket';
+		}
+	}
+
+	// Add a new external contributor to a ticket
+	if (!$error && $action == "add_contact" && $display_ticket && GETPOSTISSET('btn_add_contact')) {
+		$ret = $object->dao->add_contact(GETPOSTINT('contactid'), 'CONTRIBUTOR');
+		
 		if (!$error) {
 			$action = 'view_ticket';
 		}
@@ -327,6 +337,31 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			print $fuser->getFullName($langs, 1);
 		}
 		print '</td></tr>';
+
+		// External contributors
+		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')){
+			print '<tr><td>'.$langs->trans("ExternalContributors").'</td><td>';
+			if ($object->dao->id > 0) {
+				$contactlist = $object->dao->liste_contact(-1, 'external');
+				foreach($contactlist as $externalContributor) {
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $externalContributor["lastname"]." ".$externalContributor["firstname"]."<br>";
+				}
+			}
+			print '</td></tr>';
+		}
+
+		// Add new external contributor
+		if (getDolGlobalInt('TICKET_PUBLIC_SELECT_EXTERNAL_CONTRIBUTORS') && !empty($object->dao->fk_soc)){
+			print '<form method="post" id="form_view_add_contact" name="form_view_add_contact" action="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="add_contact">';
+			print '<input type="hidden" name="email" value="'.$_SESSION['email_customer'].'">';
+			print '<tr><td>'.$langs->trans("AddContributor").'</td><td>';
+			print $form->selectcontacts($object->dao->fk_soc, '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
+			print '<input type="submit" class="button smallpaddingimp reposition" name="btn_add_contact" value="'.$langs->trans('Add').'" />';
+			print '</td></tr></form>';
+		}
 
 		// Progression
 		if (!empty($conf->global->TICKET_SHOW_PROGRESSION)) {
