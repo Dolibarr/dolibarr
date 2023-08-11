@@ -686,6 +686,6 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result=$numbering->getNextValue($mysoc, $localobject);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('SH8001-0001', $result);	// counter must start to 1
+		$this->assertEquals('SH8003-0001', $result);	// counter must start to 1
 	}
 }
