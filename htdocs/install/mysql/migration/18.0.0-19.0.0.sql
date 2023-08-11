@@ -32,7 +32,12 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- V19
+-- v18
+
+
+
+
+-- v19
 
 CREATE TABLE llx_c_category
 (
@@ -73,8 +78,17 @@ ALTER TABLE llx_element_categorie RENAME TO llx_element_category;
 ALTER TABLE llx_element_category ADD UNIQUE INDEX idx_element_category_idx (fk_element, fk_category);
 ALTER TABLE llx_element_category ADD CONSTRAINT fk_element_category_fk_category FOREIGN KEY (fk_category) REFERENCES llx_categorie(rowid);
 
+-- VAT multientity
+-- VMYSQL4.1 DROP INDEX uk_c_tva_id on llx_c_tva;
+-- VPGSQL8.2 DROP INDEX uk_c_tva_id;
+ALTER TABLE llx_c_tva ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (entity, fk_pays, code, taux, recuperableonly);
+
 ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project;
 
 UPDATE llx_product_lot SET manufacturing_date = datec WHERE manufacturing_date IS NULL;
 
 UPDATE llx_societe_rib SET frstrecur = 'RCUR' WHERE frstrecur = 'RECUR';
+
+-- Tip to copy vat rate into entity 2.
+-- INSERT INTO llx_c_tva (entity, fk_pays, code, taux, localtax1, localtax1_type, localtax2, localtax2_type, use_default, recuperableonly, note, active, accountancy_code_sell, accountancy_code_buy) SELECT 2, fk_pays, code, taux, localtax1, localtax1_type, localtax2, localtax2_type, use_default, recuperableonly, note, active, accountancy_code_sell, accountancy_code_buy FROM llx_c_tva WHERE entity = 1;
