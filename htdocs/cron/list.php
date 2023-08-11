@@ -246,7 +246,7 @@ if ($resultTest) {
 	while ($objTest = $db->fetch_object($resultTest)) {
 		$veriftest = verifCond($objTest->test);
 		if (!$veriftest) {
-			$TTestNotAllowed[$objTest->id] = $objTest->id;
+			$TTestNotAllowed[$objTest->rowid] = $objTest->rowid;
 		}
 	}
 }
