@@ -583,7 +583,7 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_bank_number'] = $bank_account->number;
 			$resarray[$array_key.'_bank_proprio'] = $bank_account->proprio;
 		}
-		
+
 		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
 			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
