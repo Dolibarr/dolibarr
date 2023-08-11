@@ -314,7 +314,7 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int    $id              ID of account
 	 * @param array  $request_data    data
-	 * @return int
+	 * @return Object
 	 */
 	public function put($id, $request_data = null)
 	{
