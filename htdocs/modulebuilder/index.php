@@ -2726,6 +2726,77 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int')) {
 	}
 }
 
+// update properties description of module
+if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescription', 'alpha')) && empty($cancel)) {
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+	}
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+	$modulelogfile = $dirins.'/'.strtolower($module).'/ChangeLog.md';
+
+	dol_include_once($pathtofile);
+
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+
+	$keydescription = GETPOST('keydescription', 'alpha');
+	switch ($keydescription) {
+		case 'desc':
+			$propertyToUpdate = 'description';
+			break;
+		case 'version':
+			$propertyToUpdate = 'version';
+			break;
+		case 'family':
+			$propertyToUpdate = 'family';
+			break;
+		case 'editor_name':
+			$propertyToUpdate = 'editor_name';
+			break;
+		case 'editor_url':
+			$propertyToUpdate = 'editor_url';
+			break;
+		default:
+			$error = GETPOST('keydescription');
+			break;
+	}
+
+	if (isset($propertyToUpdate) && !empty(GETPOST('propsmodule'))) {
+		$newValue = GETPOST('propsmodule');
+		$lineToReplace = "\$this->$propertyToUpdate = '".$moduleobj->$propertyToUpdate."';";
+		$newLine = "\$this->$propertyToUpdate = '$newValue';";
+
+		//for change version in log file
+		if ($propertyToUpdate === 'version') {
+			dolReplaceInFile($modulelogfile, array("## ".$moduleobj->$propertyToUpdate => $newValue));
+		}
+
+		dolReplaceInFile($moduledescriptorfile, array($lineToReplace => $newLine));
+
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();
+		}
+		setEventMessages($langs->trans('PropertyModuleUpdated', $propertyToUpdate), null);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=description&module='.$module);
+		exit;
+	}
+}
+
 /*
  * View
  */
@@ -3192,7 +3263,12 @@ if ($module == 'initmodule') {
 				if (!empty($moduleobj)) {
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
-
+					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+					print '<input type="hidden" name="action" value="update_props_module">';
+					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+					print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
+					print '<input type="hidden" name="keydescription" value="'.dol_escape_htmltag(GETPOST('keydescription', 'alpha')).'">';
 					print '<table class="border centpercent">';
 					print '<tr class="liste_titre"><td class="titlefield">';
 					print $langs->trans("Parameter");
@@ -3220,20 +3296,59 @@ if ($module == 'initmodule') {
 					print '<tr><td>';
 					print $langs->trans("Description");
 					print '</td><td>';
-					print $moduleobj->getDesc();
+					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'desc') {
+						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->getDesc()).'">';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+					} else {
+						print $moduleobj->getDesc();
+						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_moduledescription&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=desc">'.img_edit().'</a>';
+					}
 					print '</td></tr>';
 
 					print '<tr><td>';
 					print $langs->trans("Version");
 					print '</td><td>';
-					print $moduleobj->getVersion();
+					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'version') {
+						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->getVersion()).'">';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+					} else {
+						print $moduleobj->getVersion();
+						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_moduledescription&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=version">'.img_edit().'</a>';
+					}
 					print '</td></tr>';
 
 					print '<tr><td>';
 					print $langs->trans("Family");
 					//print "<br>'crm','financial','hr','projects','products','ecm','technic','interface','other'";
 					print '</td><td>';
-					print $moduleobj->family;
+					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'family') {
+						print '<select name="propsmodule" id="family" class="minwidth400">';
+						$arrayoffamilies = array(
+							'hr' => "ModuleFamilyHr",
+							'crm' => "ModuleFamilyCrm",
+							'srm' => "ModuleFamilySrm",
+							'financial' => 'ModuleFamilyFinancial',
+							'products' => 'ModuleFamilyProducts',
+							'projects' => 'ModuleFamilyProjects',
+							'ecm' => 'ModuleFamilyECM',
+							'technic' => 'ModuleFamilyTechnic',
+							'portal' => 'ModuleFamilyPortal',
+							'interface' => 'ModuleFamilyInterface',
+							'base' => 'ModuleFamilyBase',
+							'other' => 'ModuleFamilyOther'
+						);
+						foreach ($arrayoffamilies as $key => $value) {
+							print '<option value="'.$key.'"'.($key == getDolGlobalString('MODULEBUILDER_SPECIFIC_FAMILY', 'other') ? ' selected="selected"' : '').' data-html="'.dol_escape_htmltag($langs->trans($value).' <span class="opacitymedium">- '.$key.'</span>').'">'.$langs->trans($value).'</option>';
+						}
+						print '</select>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+					} else {
+						print $moduleobj->family;
+						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_moduledescription&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=family">'.img_edit().'</a>';
+					}
 					print '</td></tr>';
 
 					print '<tr><td>';
@@ -3246,18 +3361,33 @@ if ($module == 'initmodule') {
 					print '<tr><td>';
 					print $langs->trans("EditorName");
 					print '</td><td>';
-					print $moduleobj->editor_name;
+					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_name') {
+						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_name).'">';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+					} else {
+						print $moduleobj->editor_name;
+						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_moduledescription&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=editor_name">'.img_edit().'</a>';
+					}
 					print '</td></tr>';
 
 					print '<tr><td>';
 					print $langs->trans("EditorUrl");
 					print '</td><td>';
-					if (!empty($moduleobj->editor_url)) {
-						print '<a href="'.$moduleobj->editor_url.'" target="_blank" rel="noopener">'.$moduleobj->editor_url.' '.img_picto('', 'globe').'</a>';
+					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_url') {
+						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_url).'">';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+					} else {
+						if (!empty($moduleobj->editor_url)) {
+							print '<a href="'.$moduleobj->editor_url.'" target="_blank" rel="noopener">'.$moduleobj->editor_url.' '.img_picto('', 'globe').'</a>';
+						}
+						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_moduledescription&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=editor_url">'.img_edit().'</a>';
 					}
 					print '</td></tr>';
 
 					print '</table>';
+					print '</form>';
 				} else {
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
 				}
