@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		Charlene BENKE		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,13 @@ function contract_prepare_head(Contrat $object)
 		$h++;
 	}
 
+	if (isModEnabled('ticket')) {
+		$head[$h][0] = DOL_URL_ROOT.'/contrat/ticket.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Tickets");
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+	
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
