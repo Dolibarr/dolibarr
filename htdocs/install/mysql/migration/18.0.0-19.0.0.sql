@@ -50,3 +50,6 @@ ALTER TABLE llx_ticket ADD COLUMN fk_contract integer DEFAULT 0 after fk_project
 UPDATE llx_product_lot SET manufacturing_date = datec WHERE manufacturing_date IS NULL;
 
 UPDATE llx_societe_rib SET frstrecur = 'RCUR' WHERE frstrecur = 'RECUR';
+
+-- Tip to copy vat rate into entity 2.
+-- INSERT INTO llx_c_tva (entity, fk_pays, code, taux, localtax1, localtax1_type, localtax2, localtax2_type, use_default, recuperableonly, note, active, accountancy_code_sell, accountancy_code_buy) SELECT 2, fk_pays, code, taux, localtax1, localtax1_type, localtax2, localtax2_type, use_default, recuperableonly, note, active, accountancy_code_sell, accountancy_code_buy FROM llx_c_tva WHERE entity = 1;  
