@@ -78,12 +78,6 @@ if (isModEnabled('expedition')) {
 class doc_generic_project_odt extends ModelePDFProjects
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
