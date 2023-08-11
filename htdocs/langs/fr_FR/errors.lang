@@ -309,6 +309,7 @@ WarningCreateSubAccounts=Attention, vous ne pouvez pas créer directement un com
 WarningAvailableOnlyForHTTPSServers=Disponible uniquement si une connexion sécurisée HTTPS est utilisée
 WarningModuleXDisabledSoYouMayMissEventHere=Le module %s n’a pas été activé. Par conséquent, il se peut que vous manquiez beaucoup d’événements ici.
 WarningPaypalPaymentNotCompatibleWithStrict=La valeur 'Strict' fait que les fonctionnalités de paiement en ligne ne fonctionnent pas correctement. Utilisez plutôt 'Lax'.
+WarningCorrectedInvoiceNotFound=Pas de correction de facture
 
 # Validate
 RequireValidValue = Valeur non valide
