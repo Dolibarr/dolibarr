@@ -157,7 +157,9 @@ if (GETPOST("cache", 'alpha')) {
 	// Add param cache=abcdef
 	if (empty($dolibarr_nocache)) {
 		header('Cache-Control: max-age=3600, public, must-revalidate');
-		header('Pragma: cache'); // This is to avoid having Pragma: no-cache
+		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+		header('Expires: '.gmdate('D, d M Y H:i:s', time() + 3600).' GMT');	// This is to avoid to have Expires set by proxy or web server
+		//header('Expires: '.strtotime('+1 hour');
 	} else {
 		header('Cache-Control: no-cache');
 	}

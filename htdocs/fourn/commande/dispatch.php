@@ -86,11 +86,11 @@ if ($id > 0 || !empty($ref)) {
 }
 
 if (empty($conf->reception->enabled)) {
-	$permissiontoreceive = $user->rights->fournisseur->commande->receptionner;
-	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->receptionner)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande_advance->check)));
+	$permissiontoreceive = $user->hasRight("fournisseur", "commande", "receptionner");
+	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "commande", "receptionner")) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "commande_advance", "check")));
 } else {
-	$permissiontoreceive = $user->rights->reception->creer;
-	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
+	$permissiontoreceive = $user->hasRight("reception", "creer");
+	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("reception", "creer")) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("reception", "reception_advance", "validate")));
 }
 
 // $id is id of a purchase order.
@@ -100,7 +100,7 @@ if (!isModEnabled('stock')) {
 	accessforbidden();
 }
 
-$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
@@ -663,7 +663,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($num) {
 				while ($i < $num) {
 					$objd = $db->fetch_object($resql);
-					$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
+					$products_dispatched[$objd->rowid] = price2num($objd->qty, 'MS');
 					$i++;
 				}
 			}
@@ -780,6 +780,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$conf->cache['product'] = array();
 
+			// Loop on each source order line (may be more or less than current number of lines in llx_commande_fournisseurdet)
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
@@ -873,7 +874,7 @@ if ($id > 0 || !empty($ref)) {
 							print '<td class="right">';
 							print '</td>'; // Qty to dispatch
 							print '<td>';
-							//print img_picto($langs->trans('AddDispatchBatchLine'), 'split.png', 'onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
+							//print img_picto($langs->trans('AddDispatchBatchLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
 							print '</td>'; // Dispatch column
 							print '<td></td>'; // Warehouse column
 
@@ -936,7 +937,7 @@ if ($id > 0 || !empty($ref)) {
 							print '<td class="right">';
 							print '</td>'; // Qty to dispatch
 							print '<td>';
-							//print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
+							//print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
 							print '</td>'; // Dispatch column
 							print '<td></td>'; // Warehouse column
 

@@ -122,7 +122,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')', LOG_DEBUG);
 	//if ($contenttype == 'html') { print $content;exit; }
 
-	// Replace php code. Note $content may come from database and does not contains body tags.
+	// Replace php code. Note $content may come from database and does not contain body tags.
 	$replacewith = '...php...';
 	if ($removephppart) {
 		$replacewith = '';
@@ -760,7 +760,7 @@ function getStructuredData($type, $data = array())
 			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		} else {
-			$ret .= '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
+			$ret = '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
 		}
 	} elseif ($type == 'product') {
 		$ret = '<!-- Add structured data for product -->'."\n";

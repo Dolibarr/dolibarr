@@ -118,8 +118,14 @@ class Contrat extends CommonObject
 	/**
 	 * Status of the contract
 	 * @var int
+	 * @deprecated
 	 */
-	public $statut = 0; // 0=Draft,
+	public $statut = 0;
+	/**
+	 * Status of the contract (0=Draft, 1=Validated)
+	 * @var int
+	 */
+	public $status = 0;
 
 	public $product;
 
@@ -569,8 +575,8 @@ class Contrat extends CommonObject
 			// Set new ref and define current statut
 			if (!$error) {
 				$this->ref = $num;
-				$this->statut = 1;
-				$this->brouillon = 0;
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->date_validation = $now;
 			}
 		} else {
@@ -631,8 +637,8 @@ class Contrat extends CommonObject
 
 		// Set new ref and define current status
 		if (!$error) {
-			$this->statut = 0;
-			$this->brouillon = 1;
+			$this->statut = self::STATUS_DRAFT;
+			$this->status = self::STATUS_DRAFT;
 			$this->date_validation = $now;
 		}
 
@@ -689,6 +695,7 @@ class Contrat extends CommonObject
 				$this->error = 'Fetch found several records.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
+				return 0;
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
@@ -738,6 +745,10 @@ class Contrat extends CommonObject
 					}
 
 					return $this->id;
+				} else {
+					dol_syslog(get_class($this)."::fetch Contract failed");
+					$this->error = "Fetch contract failed";
+					return -1;
 				}
 			} else {
 				dol_syslog(get_class($this)."::fetch Contract not found");
@@ -1664,7 +1675,7 @@ class Contrat extends CommonObject
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	string		$rang 				Position
-	 *  @return int              				< 0 si erreur, > 0 si ok
+	 *  @return int              				<0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = 0, $fk_unit = null, $rang = 0)
 	{
@@ -1819,6 +1830,9 @@ class Contrat extends CommonObject
 
 				$this->db->commit();
 				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
 			}
 		} else {
 			$this->db->rollback();
@@ -2856,7 +2870,7 @@ class Contrat extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];

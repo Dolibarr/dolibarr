@@ -33,6 +33,7 @@ DeleteATask=Delete a task
 ConfirmDeleteAProject=Are you sure you want to delete this project?
 ConfirmDeleteATask=Are you sure you want to delete this task?
 OpenedProjects=Open projects
+OpenedProjectsOpportunities=Open opportunities
 OpenedTasks=Open tasks
 OpportunitiesStatusForOpenedProjects=Leads amount of open projects by status
 OpportunitiesStatusForProjects=Leads amount of projects by status

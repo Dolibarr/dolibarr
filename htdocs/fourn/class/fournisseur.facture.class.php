@@ -108,6 +108,11 @@ class FactureFournisseur extends CommonInvoice
 	public $ref_supplier;
 
 	/**
+	 * @var string 	Label of invoice
+	 * @deprecated	Use $label
+	 */
+	public $libelle;
+	/**
 	 * @var string Label of invoice
 	 */
 	public $label;
@@ -481,9 +486,8 @@ class FactureFournisseur extends CommonInvoice
 			if (! $this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
 			}
-			$this->brouillon = 1;
 			$this->status = self::STATUS_DRAFT;
-			$this->statut = self::STATUS_DRAFT;
+			$this->statut = self::STATUS_DRAFT;	// deprecated
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
@@ -1003,7 +1007,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->socid  = $obj->socid;
 				$this->socnom = $obj->socnom;
@@ -1011,10 +1015,6 @@ class FactureFournisseur extends CommonInvoice
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
-
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
 
 				$result = $this->fetch_lines();
 				if ($result < 0) {
@@ -1500,14 +1500,6 @@ class FactureFournisseur extends CommonInvoice
 					$error++;
 				}
 			} else {
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
 				$error++;
 			}
 		}
@@ -2660,7 +2652,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut as status, ff.total_ht, ff.total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= ' WHERE ff.paye = 0';
@@ -3068,7 +3060,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3210,7 +3202,7 @@ class FactureFournisseur extends CommonInvoice
 	{
 		global $user;
 
-		return $user->rights->fournisseur->facture;
+		return $user->hasRight("fournisseur", "facture");
 	}
 
 	/**
@@ -3306,7 +3298,7 @@ class FactureFournisseur extends CommonInvoice
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (!empty($arraydata['thirdparty'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['thirdparty'].'</span>';

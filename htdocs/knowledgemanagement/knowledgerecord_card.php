@@ -211,7 +211,7 @@ if ($action == 'create') {
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
 	$out = $doleditor->Create(1);
 	print $out;
 
@@ -276,7 +276,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
 	$out = $doleditor->Create(1);
 	print $out;
 
@@ -453,7 +453,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%', 1);
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
 	$out = $doleditor->Create(1);
 	print $out;
 

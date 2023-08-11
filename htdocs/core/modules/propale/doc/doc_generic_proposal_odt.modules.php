@@ -40,17 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
 	/**
-	 * @var Societe Issuer object that emits
-	 */
-	public $emetteur;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
@@ -63,7 +52,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -110,7 +99,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("errors", "companies"));
@@ -318,8 +307,8 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -387,7 +376,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->propal->multidir_temp[$object->entity],

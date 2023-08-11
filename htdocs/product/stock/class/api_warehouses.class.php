@@ -55,8 +55,8 @@ class Warehouses extends DolibarrApi
 	 *
 	 * Return an array with warehouse informations
 	 *
-	 * @param 	int 	$id ID of warehouse
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of warehouse
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -71,7 +71,7 @@ class Warehouses extends DolibarrApi
 			throw new RestException(404, 'warehouse not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('warehouse', $this->warehouse->id)) {
+		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id, 'entrepot')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

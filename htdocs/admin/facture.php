@@ -342,7 +342,7 @@ foreach ($dirmodels as $reldir) {
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 
@@ -635,7 +635,7 @@ if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) { // Hidden conf
 
 	foreach ($listtype as $type => $trans) {
 		$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
-		$current = !empty($conf->global->{$thisTypeConfName}) ? $conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+		$current = getDolGlobalString($thisTypeConfName, getDolGlobalString('FACTURE_ADDON_PDF'));
 		print '<tr >';
 		print '<td>'.$trans.'</td>';
 		print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current, 0, 0, 0).'</td>';

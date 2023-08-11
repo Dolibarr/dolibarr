@@ -407,6 +407,8 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_user;
 	global $dolibarr_main_db_pass;
 	global $character_set_client;
+	global $dolibarr_main_instance_unique_id;
+	global $dolibarr_main_cookie_cryptkey;
 
 	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 	if (!$return) {
@@ -429,6 +431,8 @@ function conf($dolibarr_main_document_root)
 		$character_set_client = "UTF-8";
 	}
 	$conf->file->character_set_client = strtoupper($character_set_client);
+	// Unique id of instance
+	$conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id;
 	if (empty($dolibarr_main_db_character_set)) {
 		$dolibarr_main_db_character_set = ($conf->db->type == 'mysqli' ? 'utf8' : '');
 	}

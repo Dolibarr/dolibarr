@@ -27,6 +27,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -147,6 +148,7 @@ if ($id > 0 || $ref) {
 		print '<tr><td class="titlefieldcreate">';
 		print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
 		print '</td>';
+
 		print '<td>';
 		if ($acc->id > 0) {
 			print $acc->getNomUrl(1);
@@ -154,17 +156,34 @@ if ($id > 0 || $ref) {
 		print '</td>';
 		print '</tr>';
 
+		$modulepart = 'prelevement';
+		if ($object->type == 'bank-transfer') {
+			$modulepart = 'paymentbybanktransfer';
+		}
+
 		print '<tr><td class="titlefieldcreate">';
 		$labelfororderfield = 'WithdrawalFile';
 		if ($object->type == 'bank-transfer') {
 			$labelfororderfield = 'CreditTransferFile';
 		}
 		print $langs->trans($labelfororderfield).'</td><td>';
-		$relativepath = 'receipts/'.$object->ref.'.xml';
-		$modulepart = 'prelevement';
-		if ($object->type == 'bank-transfer') {
-			$modulepart = 'paymentbybanktransfer';
+
+		if (isModEnabled('multicompany')) {
+			$labelentity = $conf->entity;
+			$relativepath = 'receipts/'.$object->ref.'-'.$labelentity.'.xml';
+
+			if ($type != 'bank-transfer') {
+				$dir = $conf->prelevement->dir_output;
+			} else {
+				$dir = $conf->paymentbybanktransfer->dir_output;
+			}
+			if (!dol_is_file($dir.'/'.$relativepath)) {	// For backward compatibility
+				$relativepath = 'receipts/'.$object->ref.'.xml';
+			}
+		} else {
+			$relativepath = 'receipts/'.$object->ref.'.xml';
 		}
+
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
 		print img_picto('', 'download', 'class="paddingleft"');
 		print '</a>';
@@ -347,12 +366,12 @@ if ($resql) {
 		}
 		print '<td>&nbsp;</td>';
 		print '<td class="right">';
-		//if ($totalinvoices != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");		// It is normal to have total that differs. For an amount of invoice of 100, request to pay may be 50 only.
-		if ($totalamount_requested != $object->amount) {
-			print img_warning("AmountOfFileDiffersFromSumOfInvoices");
-		}
 		print "</td>\n";
 		print '<td class="right">';
+		// If the page show all record (no pagination) and total does not match total of file, we show a warning. Should not happen.
+		if (($nbtotalofrecords <= $num) && $totalamount_requested != $object->amount) {
+			print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+		}
 		print price($totalamount_requested);
 		print "</td>\n";
 		print '<td>&nbsp;</td>';

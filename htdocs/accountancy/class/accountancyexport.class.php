@@ -387,7 +387,7 @@ class AccountancyExport
 				$outputDir .= '/'.dol_sanitizePathName($formatexportset);
 				if (!dol_is_dir($outputDir)) {
 					if (dol_mkdir($outputDir) < 0) {
-						$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);;
+						$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);
 						return -1;
 					}
 				}
@@ -396,7 +396,7 @@ class AccountancyExport
 			if ($outputDir != '') {
 				if (!dol_is_dir($outputDir)) {
 					$langs->load('errors');
-					$this->errors[] = $langs->trans('ErrorDirNotFound', $outputDir);;
+					$this->errors[] = $langs->trans('ErrorDirNotFound', $outputDir);
 					return -1;
 				}
 
@@ -611,6 +611,7 @@ class AccountancyExport
 
 	/**
 	 * Export format : COGILOG
+	 * Last review for this format : 2022-07-12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
@@ -618,18 +619,39 @@ class AccountancyExport
 	 */
 	public function exportCogilog($objectLines, $exportFile = null)
 	{
-		$separator = ";";
+		$separator = "\t";
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
 			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
 
+			$refInvoice = '';
+			if ($line->doc_type == 'customer_invoice') {
+				// Customer invoice
+				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+				$invoice = new Facture($this->db);
+				$invoice->fetch($line->fk_doc);
+
+				$refInvoice = $invoice->ref;
+			} elseif ($line->doc_type == 'supplier_invoice') {
+				// Supplier invoice
+				require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+				$invoice = new FactureFournisseur($this->db);
+				$invoice->fetch($line->fk_doc);
+
+				$refInvoice = $invoice->ref_supplier;
+			}
+
 			$tab = array();
 
 			$tab[] = $line->code_journal;
 			$tab[] = $date_document;
-			$tab[] = $line->piece_num;
-			$tab[] = length_accountg($line->numero_compte);
+			$tab[] = $refInvoice;
+			if (empty($line->subledger_account)) {
+				$tab[] = length_accountg($line->numero_compte);
+			} else {
+				$tab[] = length_accounta($line->subledger_account);
+			}
 			$tab[] = "";
 			$tab[] = $line->label_operation;
 			$tab[] = $date_document;
@@ -2449,7 +2471,7 @@ class AccountancyExport
 	{
 		$retVal = dol_string_nohtmltag($str, 1, 'Windows-1251');
 		if ($retVal >= 0 && $size >= 0) {
-			$retVal = mb_substr($retVal, 0, $size, 'Windows-1251');
+			$retVal = dol_substr($retVal, 0, $size, 'Windows-1251');
 		}
 		return $retVal;
 	}

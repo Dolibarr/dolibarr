@@ -344,7 +344,7 @@ if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
 		$rowspan++; $sectionauto[] = array('position'=>100, 'level'=>1, 'module'=>'tax', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
 		$rowspan++; $sectionauto[] = array('position'=>110, 'level'=>1, 'module'=>'tax-vat', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("VAT"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
 	}
-	if (!empty($conf->salaries->enabled)) {
+	if (isModEnabled('salaries')) {
 		$langs->load("compta");
 		$rowspan++; $sectionauto[] = array('position'=>120, 'level'=>1, 'module'=>'salaries', 'test'=>isModEnabled('salaries'), 'label'=>$langs->trans("Salaries"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
 	}

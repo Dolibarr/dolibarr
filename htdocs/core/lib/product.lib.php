@@ -130,7 +130,7 @@ function product_prepare_head($object)
 	}
 
 	if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {    // If physical product we can stock (or service with option)
-		if (isModEnabled('stock') && $user->rights->stock->lire) {
+		if (isModEnabled('stock') && $user->hasRight('stock', 'lire')) {
 			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("Stock");
 			$head[$h][2] = 'stock';
@@ -219,7 +219,7 @@ function product_prepare_head($object)
 	// Log
 	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -457,7 +457,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier proposals
-	if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
+	if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_proposal_supplier($socid);
 		if ($ret < 0) {
@@ -495,7 +495,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier orders
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$nblines++;
 		$ret = $product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) {
@@ -552,7 +552,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier invoices
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$nblines++;
 		$ret = $product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) {
@@ -592,7 +592,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// BOM
-	if (isModEnabled('bom') && $user->rights->bom->read) {
+	if (isModEnabled('bom') && $user->hasRight('bom', 'read')) {
 		$nblines++;
 		$ret = $product->load_stats_bom($socid);
 		if ($ret < 0) {

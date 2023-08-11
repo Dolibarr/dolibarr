@@ -76,6 +76,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 			$userinfo_headers = array('Authorization: Bearer '.$token_content->access_token);
 			$userinfo_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_USERINFO_URL, 'GET', '', 1, $userinfo_headers);
 			$userinfo_content = json_decode($userinfo_response['content']);
+
 			dol_syslog("functions_openid_connect::check_user_password_openid_connect /userinfo=".print_r($userinfo_response, true), LOG_DEBUG);
 
 			// Get the user attribute (claim) matching the Dolibarr login
@@ -92,12 +93,13 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				$sql .= ' AND entity IN (0,'.(array_key_exists('dol_entity', $_SESSION) ? ((int) $_SESSION["dol_entity"]) : 1).')';
 
 				dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
+
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
-						// TODO I think we can remove this because this is done now natively by core after calling check_user_password_openid_connect()
-						$now = dol_now();
+						// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
+						/* $now = dol_now();
 						if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
 							// Load translation files required by the page
 							$langs->loadLangs(array('main', 'errors'));
@@ -109,8 +111,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 							$langs->loadLangs(array('main', 'errors'));
 							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 							return '--bad-login-validity--';
-						}
-
+						} */
 						$login = $obj->login;
 					}
 				}

@@ -79,8 +79,6 @@ class RemiseCheque extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->next_id = 0;
-		$this->previous_id = 0;
 	}
 
 	/**
@@ -812,47 +810,6 @@ class RemiseCheque extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Charge les proprietes ref_previous et ref_next
-	 *
-	 *  @return     int   <0 if KO, 0 if OK
-	 */
-	public function load_previous_next_id()
-	{
-		// phpcs:enable
-		global $conf;
-
-		$this->errno = 0;
-
-		$sql = "SELECT MAX(rowid)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid < ".((int) $this->id);
-		$sql .= " AND entity = ".$conf->entity;
-
-		$result = $this->db->query($sql);
-		if (!$result) {
-			$this->errno = -1035;
-		}
-		$row = $this->db->fetch_row($result);
-		$this->previous_id = $row[0];
-
-		$sql = "SELECT MIN(rowid)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid > ".((int) $this->id);
-		$sql .= " AND entity = ".$conf->entity;
-
-		$result = $this->db->query($sql);
-		if (!$result) {
-			$this->errno = -1035;
-		}
-		$row = $this->db->fetch_row($result);
-		$this->next_id = $row[0];
-
-		return $this->errno;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 *      Set the creation date
 	 *
 	 *      @param	User		$user           Object user
@@ -1052,7 +1009,7 @@ class RemiseCheque extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'date_bordereau')) {

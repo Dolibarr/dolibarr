@@ -483,15 +483,27 @@ function deletePerms($file)
 }
 
 /**
+ *  Compare two value
+ * @param int|string  $a value 1
+ * @param int|string  $b value 2
+ * @return int      less 0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
+*/
+function compareFirstValue($a, $b)
+{
+	return strcmp($a[0], $b[0]);
+}
+/**
  * Rewriting all permissions after any actions
  * @param string      $file            filename or path
  * @param array       $permissions     permissions existing in file
- * @param int|null         $key             key for permission needed
+ * @param int|null    $key             key for permission needed
  * @param array|null  $right           $right to update or add
- * @param int         $action          0 for delete, 1 for add, 2 for update
+ * @param string|null $objectname      name of object
+ * @param string|null $module          name of module
+ * @param int         $action          0 for delete, 1 for add, 2 for update, -1 when delete object completly, -2 for generate rights after add
  * @return int                         1 if OK,-1 if KO
  */
-function reWriteAllPermissions($file, $permissions, $key, $right, $action)
+function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
 {
 	$error = 0;
 	$rights = array();
@@ -503,6 +515,42 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 	} elseif ($action == 2 && !empty($right)) {
 		// update right from permissions array
 		array_splice($permissions, array_search($permissions[$key], $permissions), 1, $right);
+	} elseif ($action == -1 && !empty($objectname)) {
+		// when delete object
+		$key = null;
+		$right = null;
+		foreach ($permissions as $perms) {
+			if ($perms[4] === strtolower($objectname)) {
+				array_splice($permissions, array_search($perms, $permissions), 1);
+			}
+		}
+	} elseif ($action == -2 && !empty($objectname) && !empty($module)) {
+		$key= null;
+		$right = null;
+		$objectOfRights = array();
+		//check if object already declared in rights file
+		foreach ($permissions as $right) {
+			$objectOfRights[]= $right[4];
+		}
+		if (in_array(strtolower($objectname), $objectOfRights)) {
+			$error++;
+		} else {
+			$permsToadd = array();
+			$perms = array(
+				'read' => 'Read '.$objectname.' object of '.ucfirst($module),
+				'write' => 'Create/Update '.$objectname.' object of '.ucfirst($module),
+				'delete' => 'Delete '.$objectname.' object of '.ucfirst($module)
+			);
+			$i = 0;
+			foreach ($perms as $index => $value) {
+				$permsToadd[$i][0] = '';
+				$permsToadd[$i][1] = $value;
+				$permsToadd[$i][4] = strtolower($objectname);
+				$permsToadd[$i][5] = $index;
+				array_push($permissions, $permsToadd[$i]);
+				$i++;
+			}
+		}
 	} else {
 		$error++;
 	}
@@ -515,11 +563,46 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
 			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
 		}
+			// for group permissions by object
+			$perms_grouped = array();
+		foreach ($permissions as $perms) {
+			$object = $perms[4];
+			if (!isset($perms_grouped[$object])) {
+				$perms_grouped[$object] = [];
+			}
+			$perms_grouped[$object][] = $perms;
+		}
+		//$perms_grouped = array_values($perms_grouped);
+		$permissions = $perms_grouped;
+
+
+		// parcourir les objets
+		$o=0;
+		foreach ($permissions as &$object) {
+			// récupérer la permission de l'objet
+			$p = 1;
+			foreach ($object as &$obj) {
+				if (str_contains($obj[5], 'read')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 0 + 1)";
+				} elseif (str_contains($obj[5], 'write')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 1 + 1)";
+				} elseif (str_contains($obj[5], 'delete')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 2 + 1)";
+				} else {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + ".$p." + 1)";
+					$p++;
+				}
+			}
+			usort($object, 'compareFirstValue');
+			$o++;
+		}
 
 		//convert to string
 		foreach ($permissions as $perms) {
-			$rights[] = implode(";\n\t\t", $perms);
-			$rights[] = "\$r++;\n\t\t";
+			foreach ($perms as $per) {
+				$rights[] = implode(";\n\t\t", $per);
+				$rights[] = "\$r++;\n\t\t";
+			}
 		}
 		$rights_str = implode("", $rights);
 		// delete all permission from file
@@ -527,6 +610,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 		// rewrite all permission again
 		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n\t\t".$rights_str));
 		return 1;
+	} else {
+		return -1;
 	}
 }
 
@@ -563,7 +648,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// write the begin of table with specifics options
 	$table = "== DATA SPECIFICATIONS\n";
-	$table .= "== Table of fields and their properties for object *$objectname* : \n";
+	$table .= "=== Table of fields with properties for object *$objectname* : \n";
 	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
 	$table .= "|===\n";
 	$table .= "|code";
@@ -572,53 +657,55 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= "|".$attUnique;
 	}
 	$table .="\n";
-	$countKeys = count($keys);
-	for ($j=0;$j<$countKeys;$j++) {
-		$string = $keys[$j];
+	foreach ($keys as $string) {
 		$string = trim($string, "'");
 		$string = rtrim($string, ",");
-
-		$array = [];
-		eval("\$array = [$string];");
+		$array = eval("return [$string];");
 
 		// check if is array after cleaning string
 		if (!is_array($array)) {
 			return -1;
 		}
-		// name of field
-		$field = array_keys($array);
-		// all values of each property
-		$values = array_values($array);
 
+		$field = array_keys($array);
+		$values = array_values($array)[0];
 
 		// check each field has all properties and add it if missed
-		if (count($values[0]) <=22) {
-			foreach ($attributesUnique as $cle) {
-				if (!in_array($cle, array_keys($values[0]))) {
-					$values[0][$cle] = '';
-				}
+		foreach ($attributesUnique as $attUnique) {
+			if (!array_key_exists($attUnique, $values)) {
+				$values[$attUnique] = '';
 			}
 		}
 
-		//reorganize $values with order attributeUnique
-		$valuesRestructured = array();
-		foreach ($attributesUnique as $key) {
-			if (array_key_exists($key, $values[0])) {
-				$valuesRestructured[$key] = $values[0][$key];
-			}
-		}
-		// write all values of properties for each field
-		$table .= "|*".$field[0]."*|";
-		$table .= implode("|", array_values($valuesRestructured))."\n";
+		$table .= "|*" . $field[0] . "*|";
+		$table .= implode("|", $values) . "\n";
 	}
 	// end table
-	$table .= "|===";
+	$table .= "|===\n";
+	$table .= "__ end table for object $objectname\n";
 	//write in file
-	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
+	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
 	return 1;
+}
+
+/**
+ * Delete property from documentation if we delete object
+ * @param  string  $file         file or path
+ * @param  string  $objectname   name of object wants to deleted
+ * @return void
+ */
+function deletePropsFromDoc($file, $objectname)
+{
+
+	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
+	$end = "__ end table for object ".ucfirst($objectname);
+	$str = file_get_contents($file);
+	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
+	$new_contents = preg_replace($search, '', $str);
+	file_put_contents($file, $new_contents);
 }
 
 /**
@@ -677,8 +764,7 @@ function writePermsInAsciiDoc($file, $destfile)
 	$string .= "\n";
 	//content table
 	$array = explode(";", $content);
-	$indexIgnored = 15;
-	$permissions = array_slice($array, $indexIgnored, null, true);
+	$permissions = array_filter($array);
 	// delete  occurrences "$r++" and ID
 	$permissions = str_replace('$r++', 1, $permissions);
 
@@ -703,21 +789,12 @@ function writePermsInAsciiDoc($file, $destfile)
 	array_pop($permsN);
 
 	// Group permissions by Object and add it to string
-	$temp_array = [];
 	$final_array = [];
-	$countRights = count($permsN);
-	for ($i = 0; $i < $countRights ; $i++) {
-		// Add current element to temporary array
-		$temp_array[] = $permsN[$i];
-		//  add them to the final array and empty the temporary array
-		if (count($temp_array) == 2) {
-			$final_array[] = $temp_array;
-			$temp_array = [];
-		}
-	}
-	//  add it to the final array
-	if (count($temp_array) > 0) {
+	$index = 0;
+	while ($index < count($permsN)) {
+		$temp_array = [$permsN[$index], $permsN[$index + 1]];
 		$final_array[] = $temp_array;
+		$index += 2;
 	}
 
 	$result = array();
@@ -846,4 +923,237 @@ function removeObjectFromApiFile($file, $objectname, $modulename)
 		dolReplaceInFile($file, array($begin => '', $end => ''));
 	}
 	return 1;
+}
+
+
+/**
+ * @param    string         $file       path of filename
+ * @param    mixed          $menus      all menus for module
+ * @param    mixed|null     $menuWantTo  menu get for do actions
+ * @param    int|null       $key        key for the concerned menu
+ * @param    int            $action     for specify what action (0 = delete, 1 = add, 2 = update, -1 = when delete object)
+ * @return   int            1 if OK, -1 if KO
+ */
+function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
+{
+	$errors =0;
+	$counter = 0;
+	if (!file_exists($file)) {
+		return -1;
+	}
+	if ($action == 0 && !empty($key)) {
+		// delete menu manuelly
+		array_splice($menus, array_search($menus[$key], $menus), 1);
+	} elseif ($action == 1) {
+		// add menu manualy
+		array_push($menus, $menuWantTo);
+	} elseif ($action == 2 && !empty($key) && !empty($menuWantTo)) {
+		// update right from permissions array
+
+		// check if the values already exists
+		foreach ($menus as $index => $menu) {
+			if ($index !== $key) {
+				if ($menu['type'] === $menuWantTo['type']) {
+					if (strcasecmp(str_replace(' ', '', $menu['titre']), str_replace(' ', '', $menuWantTo['titre'])) === 0) {
+						$counter++;
+					}
+					if (strcasecmp(str_replace(' ', '', $menu['url']), str_replace(' ', '', $menuWantTo['url'])) === 0) {
+						$counter++;
+					}
+				}
+			}
+		}
+		if (!$counter) {
+			$menus[$key] = $menuWantTo;
+		} else {
+			$errors++;
+		}
+	} elseif ($action == -1 && !empty($menuWantTo)) {
+		// delete menus when delete Object
+		foreach ($menus as $index => $menu) {
+			if ((strpos(strtolower($menu['fk_menu']), strtolower($menuWantTo)) !== false) || (strpos(strtolower($menu['leftmenu']), strtolower($menuWantTo)) !== false)) {
+				array_splice($menus, array_search($menu, $menus), 1);
+			}
+		}
+	} else {
+		$errors++;
+	}
+	if (!$errors) {
+		// delete All LEFT Menus
+		$beginMenu = '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */';
+		$endMenu = '/* END MODULEBUILDER LEFTMENU MYOBJECT */';
+		$allMenus = getFromFile($file, $beginMenu, $endMenu);
+		dolReplaceInFile($file, array($allMenus => ''));
+
+		//prepare each menu and stock them in string
+		$str_menu = "";
+		foreach ($menus as $index =>$menu) {
+			$menu['position'] = "1000 + \$r";
+			if ($menu['type'] === 'left') {
+				$start = "\t\t".'/* LEFTMENU '.strtoupper($menu['titre']).' */';
+				$end   = "\t\t".'/* END LEFTMENU '.strtoupper($menu['titre']).' */';
+				$val_actuel = $menu;
+				$next_val = $menus[$index + 1];
+				$str_menu .= $start."\n";
+				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
+				$str_menu.= "\t\t\t 'fk_menu' =>'".$menu['fk_menu']."',\n";
+				$str_menu.= "\t\t\t 'type' =>'".$menu['type']."',\n";
+				$str_menu.= "\t\t\t 'titre' =>'".$menu['titre']."',\n";
+				$str_menu.= "\t\t\t 'mainmenu' =>'".$menu['mainmenu']."',\n";
+				$str_menu.= "\t\t\t 'leftmenu' =>'".$menu['leftmenu']."',\n";
+				$str_menu.= "\t\t\t 'url' =>'".$menu['url']."',\n";
+				$str_menu.= "\t\t\t 'langs' =>'".$menu['langs']."',\n";
+				$str_menu.= "\t\t\t 'position' =>".$menu['position'].",\n";
+				$str_menu.= "\t\t\t 'enabled' =>'".$menu['enabled']."',\n";
+				$str_menu.= "\t\t\t 'perms' =>'".$menu['perms']."',\n";
+				$str_menu.= "\t\t\t 'target' =>'".$menu['target']."',\n";
+				$str_menu.= "\t\t\t 'user' =>".$menu['user'].",\n";
+				$str_menu.= "\t\t);\n";
+
+				if ($val_actuel['leftmenu'] !== $next_val['leftmenu']) {
+					$str_menu .= $end."\n";
+				}
+			}
+		}
+
+		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
+		return 1;
+	}return -1;
+}
+
+/**
+ * Updates a dictionary in a module descriptor file.
+ *
+ * @param string $module The name of the module.
+ * @param string $file The path to the module descriptor file.
+ * @param array $dicts The dictionary data to be updated.
+ * @return int Returns the number of replacements made in the file.
+ */
+function updateDictionaryInFile($module, $file, $dicts)
+{
+
+	$isEmpty = false;
+	$dicData = "\t\t\$this->dictionaries=array(\n";
+	$module = strtolower($module);
+	foreach ($dicts as $key => $value) {
+		if (empty($value)) {
+			$isEmpty = true;
+			$dicData = "\t\t\$this->dictionaries=array();";
+			break;
+		}
+
+		$dicData .= "\t\t\t'$key'=>";
+
+		if ($key === 'tabcond') {
+			$conditions = array_map(function ($val) use ($module) {
+				return ($val === true || $val === false) ? "isModEnabled('$module')" : $val;
+			}, $value);
+			$dicData .= "array(" . implode(",", $conditions) . ")";
+		} elseif ($key === 'tabhelp') {
+			$helpItems = array();
+			foreach ($value as $key => $helpValue) {
+				$helpItems[] = "array('code'=>\$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
+			}
+			$dicData .= "array(" . implode(",", $helpItems) . ")";
+		} else {
+			if (is_array($value)) {
+				$dicData .= "array(" . implode(",", array_map(function ($val) {
+					return "'$val'";
+				}, $value)) . ")";
+			} else {
+				$dicData .= "'$value'";
+			}
+		}
+		$dicData .= ",\n";
+	}
+	$dicData .= (!$isEmpty ? "\t\t);" : '');
+
+	$stringDic = getFromFile($file, '/* BEGIN MODULEBUILDER DICTIONARIES */', '/* END MODULEBUILDER DICTIONARIES */');
+	$writeInfile = dolReplaceInFile($file, array($stringDic => $dicData."\n"));
+
+	return $writeInfile;
+}
+
+/**
+ * Creates a new dictionary table.
+ *
+ * for creating a new dictionary table in Dolibarr. It generates the necessary SQL code to define the table structure,
+ * including columns such as 'rowid', 'code', 'label', 'position', 'use_default', 'active', etc. The table name is constructed based on the provided $namedic parameter.
+ *
+ * @param string $modulename The lowercase name of the module for which the dictionary table is being created.
+ * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
+ * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
+ * @param array|null $dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
+ * @return void
+ */
+function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
+{
+	global $db, $langs;
+
+	if (empty($namedic)) {
+		setEventMessages($langs->trans("ErrorEmptyNameDic"), null, 'errors');
+		return;
+	}
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$modulename = strtolower($modulename);
+
+	if (empty($dictionnaires)) {
+		$dictionnaires = array('tabname' => array(), 'tablib' => array(), 'tabsql' => array(), 'tabsqlsort' => array(), 'tabfield' => array(), 'tabfieldvalue' => array(), 'tabfieldinsert' => array(), 'tabrowid' => array(), 'tabcond' => array(), 'tabhelp' => array());
+	}
+
+	$columns = array(
+		'rowid' => array('type' => 'integer(11)'),
+		'code' => array('type' => 'varchar(255) NOT NULL'),
+		'label' => array('type' => 'varchar(255) NOT NULL'),
+		'position' => array('type' => 'integer(11) NULL'),
+		'use_default' => array('type' => 'varchar(255) DEFAULT 1'),
+		'active' => array('type' => 'integer')
+	);
+
+
+	$primaryKey = 'rowid';
+	foreach ($columns as $key => $value) {
+		if ($key === 'rowid') {
+			$primaryKey = 'rowid';
+			break;
+		}
+		if (!array_key_exists('rowid', $columns)) {
+			$primaryKey = array_key_first($columns);
+			break;
+		}
+	}
+	// check if tablename exist in Database and create it if not
+	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.strtolower($namedic) . "'";
+	$checkTable = $db->query($query);
+	if ($checkTable && $db->num_rows($checkTable) > 0) {
+		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
+		return;
+	} else {
+		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "InnoDB");
+		if ($_results < 0) {
+			dol_print_error($db);
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorTableNotFound", $namedic), null, 'errors');
+		}
+	}
+
+	// rewrite dictionnary if
+	$dictionnaires['tabname'][] = strtolower($namedic);
+	$dictionnaires['tablib'][] = ucfirst(substr($namedic, 2));
+	$dictionnaires['tabsql'][] = 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.strtolower($namedic).' as f';
+	$dictionnaires['tabsqlsort'][] = (array_key_exists('label', $columns) ? 'label ASC' : '');
+	$dictionnaires['tabfield'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$dictionnaires['tabfieldvalue'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$dictionnaires['tabfieldinsert'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$dictionnaires['tabrowid'][] = $primaryKey;
+	$dictionnaires['tabcond'][] = isModEnabled('$modulename');
+	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
+
+	// Build the dictionary string
+		$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
+	if ($writeInfile > 0) {
+		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
+	}
 }

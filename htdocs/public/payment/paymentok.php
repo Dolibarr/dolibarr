@@ -122,7 +122,7 @@ if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg)) {
 }
 if (empty($paymentmethod)) {
 	dol_syslog("***** paymentok.php was called with a non valid parameter FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_payment');
-	dol_print_error(null, 'The callback url does not contains a parameter fulltag that should help us to find the payment method used');
+	dol_print_error(null, 'The callback url does not contain a parameter fulltag that should help us to find the payment method used');
 	exit;
 }
 
@@ -1496,7 +1496,7 @@ if ($ispaymentok) {
 							$error++;
 							setEventMessages(null, $booth->errors, "errors");
 						} else {
-							$booth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
+							$booth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 							$resultboothupdate = $booth->update($user);
 							if ($resultboothupdate<0) {
 								// Finding the thirdparty by getting the invoice

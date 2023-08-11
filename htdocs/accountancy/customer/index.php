@@ -96,14 +96,14 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
-	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as fd";
+	$sql1 = "UPDATE ".$db->prefix()."facturedet as fd";
 	$sql1 .= " SET fk_code_ventilation = 0";
 	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN';
 	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
-	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
+	$sql1 .= '	FROM '.$db->prefix().'accounting_account as accnt';
+	$sql1 .= '	INNER JOIN '.$db->prefix().'accounting_system as syst';
 	$sql1 .= "	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'))." AND accnt.entity = ".((int) $conf->entity).")";
-	$sql1 .= " AND fd.fk_facture IN (SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE entity = ".((int) $conf->entity).")";
+	$sql1 .= " AND fd.fk_facture IN (SELECT rowid FROM ".$db->prefix()."facture WHERE entity = ".((int) $conf->entity).")";
 	$sql1 .= " AND fk_code_ventilation <> 0";
 
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
@@ -144,23 +144,23 @@ if ($action == 'validatehistory') {
 	} else {
 		$sql .= " s.accountancy_code_sell as company_code_sell";	// accounting code for product but stored on thirdparty
 	}
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+	$sql .= " FROM ".$db->prefix()."facture as f";
+	$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = f.fk_soc";
 	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+		$sql .= " LEFT JOIN " . $db->prefix() . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 	}
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";	// the main table
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
+	$sql .= " LEFT JOIN ".$db->prefix()."c_country as co ON co.rowid = s.fk_pays ";
+	$sql .= " INNER JOIN ".$db->prefix()."facturedet as l ON f.rowid = l.fk_facture";	// the main table
+	$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = l.fk_product";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+		$sql .= " LEFT JOIN " . $db->prefix() . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	}
 	$alias_societe_perentity = empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED) ? "s" : "spe";
 	$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy

@@ -86,7 +86,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'position' => 10,
 		'id' => $id,
 		'idsel' => 'home',
-		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
+		'classname' =>  $classname = (empty($_SESSION["mainmenu"]) || $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '<span class="fa fa-home fa-fw paddingright"></span>',
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 0 : 1),
 		'loadLangs' => array(),
@@ -713,7 +713,6 @@ function print_end_menu_array()
  */
 function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
 {
-
 	global $user, $conf, $langs, $hookmanager;
 
 	//var_dump($tabMenu);
@@ -722,6 +721,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]);
 	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]));
+
+	if (is_null($mainmenu)) {
+		$mainmenu = 'home';
+	}
 
 	global $usemenuhider;
 	$usemenuhider = 0;
@@ -983,7 +986,14 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					} else {
 						print '<span class="vmenu">';
 					}
-					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
+					if (!empty($menu_array[$i]['prefix'])) {
+						if (preg_match('/^fa-[a-zA-Z0-9-_]+$/', $menu_array[$i]['prefix'])) {
+							print '<span class="fa '.$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
+						} else {
+							print $menu_array[$i]['prefix'];
+						}
+					}
+					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -994,7 +1004,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
 					print '<div class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled">';
-					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
+					if (!empty($menu_array[$i]['prefix'])) {
+						print $menu_array[$i]['prefix'];
+					}
+					print $menu_array[$i]['titre'];
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';
@@ -1095,7 +1108,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			// Load translation files required by the page
 			$langs->loadLangs(array("admin", "help"));
 			$warnpicto = '';
-			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) || !empty($conf->global->MAIN_INFO_SOCIETE_SETUP_TODO_WARNING)) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
@@ -1152,12 +1165,12 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
 			$newmenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"), 1);
 			$newmenu->add("/admin/system/security.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoSecurity"), 1);
+			$newmenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"), 1);
+			$newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"), 1);
 			$newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"), 1);
 			$newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"), 1);
 			$newmenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"), 1);
 			$newmenu->add("/admin/tools/purge.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Purge"), 1);
-			$newmenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"), 1);
-			$newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"), 1);
 			$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('ExternalResources'), 1);
 
 			if (isModEnabled('product') || isModEnabled('service')) {
@@ -1170,16 +1183,16 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if ($user->hasRight('user', 'user', 'read')) {
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "users") {
 				$newmenu->add("", $langs->trans("Users"), 1, $user->hasRight('user',  'user', 'lire') || $user->admin);
-				$newmenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"), 2, ($user->hasRight("user", "user", "write") || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE), '', 'home');
+				$newmenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"), 2, ($user->hasRight("user", "user", "write") || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)), '', 'home');
 				$newmenu->add("/user/list.php?leftmenu=users", $langs->trans("ListOfUsers"), 2, $user->hasRight('user',  'user', 'lire') || $user->admin);
 				$newmenu->add("/user/hierarchy.php?leftmenu=users", $langs->trans("HierarchicView"), 2, $user->hasRight('user',  'user', 'lire') || $user->admin);
 				if (isModEnabled('categorie')) {
 					$langs->load("categories");
 					$newmenu->add("/categories/index.php?leftmenu=users&type=7", $langs->trans("UsersCategoriesShort"), 2, $user->hasRight('categorie',  'lire'), '', $mainmenu, 'cat');
 				}
-				$newmenu->add("", $langs->trans("Groups"), 1, ($user->hasRight('user',  'user', 'lire') || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
-				$newmenu->add("/user/group/card.php?leftmenu=users&action=create", $langs->trans("NewGroup"), 2, ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) ? $user->hasRight("user", "group_advance", "create") : $user->hasRight("user", "user", "create")) || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
-				$newmenu->add("/user/group/list.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) ? $user->hasRight('user',  'group_advance', 'read') : $user->hasRight('user',  'user', 'lire')) || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
+				$newmenu->add("", $langs->trans("Groups"), 1, ($user->hasRight('user',  'user', 'lire') || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)));
+				$newmenu->add("/user/group/card.php?leftmenu=users&action=create", $langs->trans("NewGroup"), 2, ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) ? $user->hasRight("user", "group_advance", "create") : $user->hasRight("user", "user", "create")) || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)));
+				$newmenu->add("/user/group/list.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) ? $user->hasRight('user',  'group_advance', 'read') : $user->hasRight('user',  'user', 'lire')) || $user->admin) && !(isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)));
 			}
 		}
 	}
@@ -1678,7 +1691,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 			// Journals
 			if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') {
-				$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting',  'comptarapport', 'lire'), '', '', '');
+				$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting',  'comptarapport', 'lire'), '', $mainmenu, 'accountancy_journal');
 
 				// Multi journal
 				$sql = "SELECT rowid, code, label, nature";
@@ -2167,9 +2180,9 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 		if (isModEnabled('mrp')) {
 			$langs->load("mrp");
 
-			$newmenu->add("", $langs->trans("MenuMRP"), 0, $user->hasRight('mrp',  'read'), '', $mainmenu, 'mo', 0, '', '', '', img_picto('', 'mrp', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/mrp/mo_card.php?leftmenu=mo&amp;action=create", $langs->trans("NewMO"), 1, $user->hasRight('mrp',  'write'), '', $mainmenu, 'mo');
-			$newmenu->add("/mrp/mo_list.php?leftmenu=mo", $langs->trans("List"), 1, $user->hasRight('mrp',  'read'), '', $mainmenu, 'mo');
+			$newmenu->add("", $langs->trans("MenuMRP"), 0, $user->hasRight('mrp',  'read'), '', $mainmenu, 'mrp', 0, '', '', '', img_picto('', 'mrp', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/mrp/mo_card.php?leftmenu=mo&amp;action=create", $langs->trans("NewMO"), 1, $user->hasRight('mrp',  'write'), '', $mainmenu, '');
+			$newmenu->add("/mrp/mo_list.php?leftmenu=mo", $langs->trans("List"), 1, $user->hasRight('mrp',  'read'), '', $mainmenu, '');
 		}
 	}
 }

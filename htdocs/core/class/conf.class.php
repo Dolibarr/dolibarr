@@ -26,10 +26,10 @@
  *  				Config is stored into file conf.php
  */
 
-
 /**
  *  Class to stock current configuration
  */
+#[AllowDynamicProperties]
 class Conf
 {
 	/**
@@ -44,7 +44,7 @@ class Conf
 
 	//! To store properties found into database
 	public $global;
-	//! To store browser info
+	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	public $browser;
 
 	//! To store some setup of generic modules
@@ -864,9 +864,9 @@ class Conf
 				$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? (int) $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
 			}
 			if (isset($this->projet)) {
-				$this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? (int) $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 86400;
+				$this->projet->warning_delay = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
 				$this->projet->task = new StdClass();
-				$this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? (int) $this->global->MAIN_DELAY_TASKS_TODO : 7) * 86400;
+				$this->projet->task->warning_delay = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 			}
 
 			if (isset($this->commande)) {

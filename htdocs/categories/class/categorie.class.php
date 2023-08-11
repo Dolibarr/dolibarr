@@ -286,8 +286,8 @@ class Categorie extends CommonObject
 					$mapCode = $mapList['code'];
 					self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
 					$this->MAP_ID[$mapCode] = $mapId;
-					$this->MAP_CAT_FK[$mapCode] = $mapList['cat_fk'];
-					$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
+					$this->MAP_CAT_FK[$mapCode] = isset($mapList['cat_fk']) ? $mapList['cat_fk'] : null;
+					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
 					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
 					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
 				}
@@ -700,7 +700,7 @@ class Categorie extends CommonObject
 	public function add_type($obj, $type = '')
 	{
 		// phpcs:enable
-		global $user, $langs, $conf;
+		global $user, $conf;
 
 		$error = 0;
 
@@ -865,7 +865,7 @@ class Categorie extends CommonObject
 		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
 		$sql .= " AND c.fk_categorie = ".((int) $this->id);
 		// Compatibility with actioncomm table which has id instead of rowid
-		if ($this->MAP_OBJ_TABLE[$type] == "actioncomm" || $type == "actioncomm") {
+		if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
 			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
 		} else {
 			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
@@ -894,6 +894,7 @@ class Categorie extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($rec = $this->db->fetch_array($resql)) {

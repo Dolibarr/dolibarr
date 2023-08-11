@@ -44,6 +44,11 @@ class Import
 	 */
 	public $errors = array();
 
+	/**
+	 * @var string DB Error number
+	 */
+	public $errno;
+
 	public $array_import_module;
 	public $array_import_perms;
 	public $array_import_icon;

@@ -67,8 +67,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param 	int 	$id Id of third party to load
-	 * @return 	array|mixed Cleaned Societe object
+	 * @param 	int 	$id 			Id of third party to load
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -350,18 +350,18 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$this->companytoremove = new Societe($this->db);
+		$companytoremove = new Societe($this->db);
 
-		$result = $this->companytoremove->fetch($idtodelete); // include the fetch of extra fields
+		$result = $companytoremove->fetch($idtodelete); // include the fetch of extra fields
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('societe', $this->companytoremove->id)) {
+		if (!DolibarrApi::_checkAccessToResource('societe', $companytoremove->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$soc_origin = $this->companytoremove;
+		$soc_origin = $companytoremove;
 		$object = $this->company;
 		$user = DolibarrApiAccess::$user;
 
@@ -475,10 +475,9 @@ class Thirdparties extends DolibarrApi
 
 		// External modules should update their ones too
 		if (!$error) {
-			$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
-				'soc_origin' => $soc_origin->id,
-				'soc_dest' => $object->id
-			), $soc_dest, $action);
+			$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $object->id);
+			$action = '';
+			$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $object, $action);
 
 			if ($reshook < 0) {
 				//setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -511,7 +510,7 @@ class Thirdparties extends DolibarrApi
 		if ($error) {
 			$this->db->rollback();
 
-			throw new RestException(500, 'Error failed to merged thirdparty '.$this->companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
+			throw new RestException(500, 'Error failed to merged thirdparty '.$companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
 		} else {
 			$this->db->commit();
 		}
@@ -645,7 +644,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
 		}
 
-		if (is_numeric($arrayofcateg) && $arrayofcateg == 0) {	// To fix a return of 0 instead of empty array of method getListForItem
+		if (is_numeric($arrayofcateg) && $arrayofcateg >= 0) {	// To fix a return of 0 instead of empty array of method getListForItem
 			return array();
 		}
 
@@ -657,8 +656,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int		$id				Id of thirdparty
 	 * @param int       $category_id	Id of category
-	 *
-	 * @return mixed
+	 * @return Object|void
 	 *
 	 * @url POST {id}/categories/{category_id}
 	 */
@@ -696,7 +694,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int		$id				Id of thirdparty
 	 * @param int		$category_id	Id of category
 	 *
-	 * @return mixed
+	 * @return Object|void
 	 *
 	 * @url DELETE {id}/categories/{category_id}
 	 */
@@ -1087,7 +1085,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getInvoicesQualifiedForReplacement($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {
@@ -1130,7 +1128,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getInvoicesQualifiedForCreditNote($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {
@@ -1791,7 +1789,7 @@ class Thirdparties extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     Object to clean
-	 * @return  array|mixed         Object with cleaned properties
+	 * @return  Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

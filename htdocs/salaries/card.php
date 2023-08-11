@@ -31,6 +31,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -111,6 +112,8 @@ $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
+$upload_dir = $conf->salaries->multidir_output[$conf->entity];
+
 
 /*
  * Actions
@@ -150,12 +153,17 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
-		// Actions to send emails
-		$triggersendname = 'COMPANY_SENTBYMAIL';
-		$paramname = 'id';
-		$mode = 'emailfromthirdparty';
-		$trackid = 'thi'.$object->id;
-		include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	// Actions to send emails
+	$triggersendname = 'COMPANY_SENTBYMAIL';
+	$paramname = 'id';
+	$mode = 'emailfromthirdparty';
+	$trackid = 'sal'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	//var_dump($upload_dir);var_dump($permissiontoadd);var_dump($action);exit;
+	// Actions to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 // Link to a project
@@ -376,7 +384,9 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write)
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
+if ($action == 'confirm_clone' && $confirm != 'yes') {
+	$action = '';
+}
 
 if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries->write)) {
 	$db->begin();
@@ -725,9 +735,9 @@ if ($id > 0) {
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
-		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
+		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
 	}
 
 	if ($action == 'paid') {
@@ -758,7 +768,7 @@ if ($id > 0) {
 	print $formconfirm;
 
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary');
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -821,7 +831,7 @@ if ($id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, null, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -1057,7 +1067,7 @@ if ($id > 0) {
 			if (empty($user->socid)) {
 				$canSendMail = true;
 
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', $canSendMail, $params);
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', $canSendMail);
 			}
 		}
 

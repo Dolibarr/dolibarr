@@ -1580,6 +1580,10 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 		if (empty($amount) && !GETPOST('newamount', 'alpha')) {
 			$_GET['newamount'] = $member->last_subscription_amount;
+			$_GET['amount'] = $member->last_subscription_amount;
+		}
+		if (!empty($member->last_subscription_amount) && !GETPOSTISSET('newamount') && is_numeric($amount)) {
+			$amount = max($member->last_subscription_amount, $amount);
 		}
 	}
 

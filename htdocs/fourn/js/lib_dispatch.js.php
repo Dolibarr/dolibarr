@@ -62,20 +62,26 @@ if (empty($dolibarr_nocache)) {
  * Adds new table row for dispatching to multiple stock locations or multiple lot/serial
  *
  * @param	index	int		index of product line. 0 = first product line
- * @param	type	string	type of dispatch (batch = batch dispatch, dispatch = non batch dispatch)
+ * @param	type	string	type of dispatch ('batch' = batch dispatch, 'dispatch' = non batch dispatch)
  * @param	mode	string	'qtymissing' will create new line with qty missing, 'lessone' will keep 1 in old line and the rest in new one
  */
 function addDispatchLine(index, type, mode) {
 	mode = mode || 'qtymissing'
 
+	console.log("fourn/js/lib_dispatch.js.php addDispatchLine Split line type="+type+" index="+index+" mode="+mode);
+
 	var $row0 = $("tr[name='"+type+'_0_'+index+"']");
 	var $dpopt = $row0.find('.hasDatepicker').first().datepicker('option', 'all'); // get current datepicker options to apply the same to the cloned datepickers
 	var $row = $row0.clone(true); 		// clone first batch line to jQuery object
-	var nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length; // position of line for batch
+	var nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length; // count nb of tr line with attribute name that starts with 'batch_' or 'dispatch_', and end with _index
 	var qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()); 		// Qty ordered is same for all rows
-	var qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val());
 
-	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode+" qtyOrdered="+qtyOrdered+" qty="+qty);
+	var qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val());
+	if (isNaN(qty)) {
+		qty = '';
+	}
+
+	console.log("fourn/js/lib_dispatch.js.php addDispatchLine Split line nbrTrs="+nbrTrs+" qtyOrdered="+qtyOrdered+" qty="+qty);
 
 	var	qtyDispatched;
 
@@ -90,13 +96,13 @@ function addDispatchLine(index, type, mode) {
 			mode = 'lessone';
 		}
 	}
-	console.log("qtyDispatched=" + qtyDispatched + " qtyOrdered=" + qtyOrdered);
+	console.log("qtyDispatched=" + qtyDispatched + " qtyOrdered=" + qtyOrdered+ " qty=" + qty);
 
 	if (qty <= 1) {
 		window.alert("Remain quantity to dispatch is too low to be split");
 	} else {
-		oldlineqty = qtyDispatched;
-		newlineqty = qtyOrdered - qtyDispatched;
+		var oldlineqty = qtyDispatched;
+		var newlineqty = qtyOrdered - qtyDispatched;
 		if (newlineqty <= 0) {
 			newlineqty = qty - 1;
 			oldlineqty = 1;
@@ -187,7 +193,6 @@ function addDispatchLine(index, type, mode) {
  *
  * element requires arbitrary data qty (value before change), type (type of dispatch) and index (index of product line)
  */
-
 function onChangeDispatchLineQty(element) {
 	var type = $(element).data('type'),
 		qty = parseFloat($(element).data('expected')),
@@ -208,7 +213,8 @@ function onChangeDispatchLineQty(element) {
 		if ((qtyChanged) <= (qtyOrdered - (qtyDispatched + qtyDispatching))) {
 			$("#qty_dispatched_0_" + index).val(qtyDispatched + qtyChanged);
 		} else {
-			$(element).val($(element).data('expected'));
+			/*console.log("eee");
+			$(element).val($(element).data('expected'));*/
 		}
 		$(element).data('expected', $(element).val());
 	}
