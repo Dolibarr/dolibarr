@@ -1922,7 +1922,7 @@ abstract class CommonObject
 	 */
 	public function setValueFrom($field, $value, $table = '', $id = null, $format = '', $id_field = '', $fuser = null, $trigkey = '', $fk_user_field = 'fk_user_modif')
 	{
-		global $user, $langs, $conf;
+		global $user;
 
 		if (empty($table)) {
 			$table = $this->table_element;
@@ -1941,8 +1941,12 @@ abstract class CommonObject
 		if ($table == 'product' && $field == 'note_private') {
 			$field = 'note';
 		}
+
 		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
 			$fk_user_field = 'fk_user_mod';
+		}
+		if (in_array($table, array('prelevement_bons'))) {	// TODO Add a field fk_user_modif into llx_prelevement_bons
+			$fk_user_field = '';
 		}
 
 		if ($trigkey) {
