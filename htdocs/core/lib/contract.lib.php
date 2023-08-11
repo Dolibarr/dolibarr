@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		Charlene BENKE		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,13 @@ function contract_prepare_head(Contrat $object)
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		}
 		$head[$h][2] = 'contact';
+		$h++;
+	}
+
+	if (isModEnabled('ticket')) {
+		$head[$h][0] = DOL_URL_ROOT.'/contrat/ticket.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Tickets");
+		$head[$h][2] = 'ticket';
 		$h++;
 	}
 
