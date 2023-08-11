@@ -437,7 +437,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 	// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 	foreach ($valid_dashboardlines as $board) {
-		if ($board->nbtodolate > 0) {
+		if ($board->nbtodolate > 0 && is_numeric($board->nbtodo) && is_numeric($board->nbtodolate)) {
 			$totaltodo += $board->nbtodo;
 			$totallate += $board->nbtodolate;
 		}
