@@ -33,6 +33,10 @@
 
 -- v18
 
+-- v18
+
+
+
 
 -- v19
 
@@ -74,8 +78,6 @@ ALTER TABLE llx_element_categorie RENAME TO llx_element_category;
 
 ALTER TABLE llx_element_category ADD UNIQUE INDEX idx_element_category_idx (fk_element, fk_category);
 ALTER TABLE llx_element_category ADD CONSTRAINT fk_element_category_fk_category FOREIGN KEY (fk_category) REFERENCES llx_categorie(rowid);
-
-
 
 -- VAT multientity
 -- VMYSQL4.1 DROP INDEX uk_c_tva_id on llx_c_tva;
