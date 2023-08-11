@@ -546,7 +546,7 @@ class Ticket extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error);
+			dol_print_error('', get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 
@@ -2637,7 +2637,7 @@ class Ticket extends CommonObject
 								$assigned_user_dont_have_email = $assigned_user->getFullName($langs);
 							}
 						}
-						
+
 						foreach($internal_contacts as $key => $info_sendto) {
 							//Avoid duplicate notifications
 							if ($info_sendto['id'] == $user->id) {
@@ -2650,7 +2650,7 @@ class Ticket extends CommonObject
 								}
 							}
 						}
-						
+
 						if (empty($sendto)) {
 							if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL)) {
 								$sendto[$conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
