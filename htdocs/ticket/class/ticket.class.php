@@ -2080,7 +2080,6 @@ class Ticket extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setContract sql='.$sql);
 			$resql = $this->db->query($sql);
-			print $sql;
 			if ($resql) {
 				return 1;
 			} else {
