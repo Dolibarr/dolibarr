@@ -2495,18 +2495,16 @@ class Contrat extends CommonObject
 	/**
 	 * 	Create an array of associated tickets
 	 *
-	 * 	@return int		>0 if OK, <0 if KO
+	 * 	@return array|int		Array o tickets or <0 if KO
 	 */
-
 	public function getTicketsArray()
 	{
 		global $user;
 
 		$ticket = new Ticket($this->db);
-
 		$nbTicket =  $ticket->fetchAll($user,  'ASC', 't.datec',  '', 0, '', array('t.fk_contract' => $this->id));
-		$this->tickets = $ticket->lines;
-		return $nbTicket;
+
+		return ($nbTicket < 0 ? $nbTicket : $ticket->lines);
 	}
 
 
