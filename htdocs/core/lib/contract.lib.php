@@ -52,7 +52,8 @@ function contract_prepare_head(Contrat $object)
 		$h++;
 	}
 
-	if (isModEnabled('ticket')) {
+	/* deprecated. Contracts and tickets are already linked with the generic "Link to" feature */
+	if (isModEnabled('ticket') && getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
 		$head[$h][0] = DOL_URL_ROOT.'/contrat/ticket.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Tickets");
 		$head[$h][2] = 'ticket';

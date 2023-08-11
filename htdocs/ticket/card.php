@@ -1010,27 +1010,28 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		// Contract
-		if (isModEnabled('contrat')) {
-			$langs->load('contracts');
-			$morehtmlref .=  '<br>';
-			$morehtmlref .=  $langs->trans('Contract');
-
-			if ($action != 'edit_contrat') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
-				$morehtmlref .=  img_edit($langs->trans('SetContract'), 1);
-				$morehtmlref .=  '</a>';
-			}
-			if ($action == 'edit_contrat') {
-				$formcontract = new Formcontract($db);
-				$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
-			} else {
-				if ($object->fk_contract) {
-					$contratstatic = new Contrat($db);
-					$contratstatic->fetch($object->fk_contract);
-					//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-					$morehtmlref .= $contratstatic->getNomUrl(0, '', 1);
+		if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
+			// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
+			if (isModEnabled('contrat')) {
+				$langs->load('contracts');
+				$morehtmlref .= '<br>';
+				if ($permissiontoedit) {
+					$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
+					if ($action == 'edit_contrat') {
+						$formcontract = new Formcontract($db);
+						$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
+					} else {
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
+						$morehtmlref .=  img_edit($langs->trans('SetContract'));
+						$morehtmlref .=  '</a>';
+					}
 				} else {
-					$morehtmlref .= "&nbsp;";
+					if (!empty($object->fk_contract)) {
+						$contratstatic = new Contrat($db);
+						$contratstatic->fetch($object->fk_contract);
+						//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+						$morehtmlref .= $contratstatic->getNomUrl(0, '', 1);
+					}
 				}
 			}
 		}
