@@ -855,63 +855,6 @@ abstract class CommonDocGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Define array with couple substitution key => substitution value
-	 *  Note that vars into substitutions array are formatted.
-	 *
-	 *	@param  ExpeditionLigne	$line				Object line
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *	@return	array								Substitution array
-	 */
-	public function get_substitutionarray_shipment_lines($line, $outputlangs)
-	{
-		// phpcs:enable
-		dol_include_once('/core/lib/product.lib.php');
-
-		$resarray = array(
-			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
-			'line_product_ref'=>$line->product_ref,
-			'line_product_label'=>$line->product_label,
-			'line_desc'=>$line->desc,
-			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
-			'line_up'=>price($line->subprice),
-			'line_total_up'=>price($line->subprice * $line->qty),
-			'line_qty'=>$line->qty,
-			'line_qty_shipped'=>$line->qty_shipped,
-			'line_qty_asked'=>$line->qty_asked,
-			'line_discount_percent'=>($line->remise_percent ? $line->remise_percent.'%' : ''),
-			'line_price_ht'=>price($line->total_ht),
-			'line_price_ttc'=>price($line->total_ttc),
-			'line_price_vat'=>price($line->total_tva),
-			'line_weight'=>empty($line->weight) ? '' : $line->weight * $line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units),
-			'line_length'=>empty($line->length) ? '' : $line->length * $line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units),
-			'line_surface'=>empty($line->surface) ? '' : $line->surface * $line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units),
-			'line_volume'=>empty($line->volume) ? '' : $line->volume * $line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units),
-		);
-
-		// Retrieve extrafields
-		$extrafieldkey = $line->element;
-		$array_key = "line";
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($this->db);
-		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
-		$line->fetch_optionals();
-
-		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
-
-		// Load product data optional fields to the line -> enables to use "line_product_options_{extrafield}"
-		if (isset($line->fk_product) && $line->fk_product > 0) {
-			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($line->fk_product);
-			foreach ($tmpproduct->array_options as $key=>$label)
-				$resarray["line_product_".$key] = $label;
-		}
-
-		return $resarray;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 * Define array with couple substitution key => substitution value
 	 *
 	 * @param   Object		$object    		Dolibarr Object
