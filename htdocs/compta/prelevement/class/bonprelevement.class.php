@@ -973,19 +973,10 @@ class BonPrelevement extends CommonObject
 									continue;
 								}
 							}
-							$verif = false;
-							require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
 
-							$swift = $fac[10];
-							if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
-								$verif = true;
-							} else {
-								$verif = false;
-							}
+							$verif = checkSwiftForAccount(null, $fac[10]);
 							if ($verif) {
-								// if correct, also verify IBAN
-								$iban = new PHP_IBAN\IBAN($fac[11]);
-								$verif = $iban->Verify();
+								$verif = checkIbanForAccount(null, $fac[11]);
 							}
 
 							if ($verif) {
