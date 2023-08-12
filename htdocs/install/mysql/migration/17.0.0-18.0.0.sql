@@ -46,6 +46,9 @@ ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
 
 ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
 
+DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year');
+
 
 -- v18
 
