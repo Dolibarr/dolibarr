@@ -2858,7 +2858,7 @@ if ($module == 'initmodule') {
 
 	print '<div class="tagtable">';
 
-	print '<div class="tagtr"><div class="tagtd">';
+	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
@@ -2871,26 +2871,26 @@ if ($module == 'initmodule') {
 	print '</span>';
 	print '</div></div>';
 
-	print '<div class="tagtr"><div class="tagtd">';
-	print '<span class="opacitymedium">'.$langs->trans("ModuleName").'</span>';
+	print '<div class="tagtr"><div class="tagtd paddingright">';
+	print '<span class="opacitymedium fieldrequired">'.$langs->trans("ModuleName").'</span>';
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" autofocus>';
 	print ' '.$form->textwithpicto('', $langs->trans("EnterNameOfModuleDesc"));
 	print '</div></div>';
 
-	print '<div class="tagtr"><div class="tagtd">';
+	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("Description").'</span>';
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="description" value="" class="minwidth500"><br>';
 	print '</div></div>';
 
-	print '<div class="tagtr"><div class="tagtd">';
+	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("Version").'</span>';
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="version" class="width75" value="'.(GETPOSTISSET('version') ? GETPOST('version') : getDolGlobalString('MODULEBUILDER_SPECIFIC_VERSION', '1.0')).'" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'">';
 	print '</div></div>';
 
-	print '<div class="tagtr"><div class="tagtd">';
+	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("Family").'</span>';
 	print '</div><div class="tagtd">';
 	print '<select name="family" id="family" class="minwidth400">';
@@ -2915,20 +2915,20 @@ if ($module == 'initmodule') {
 	print ajax_combobox("family");
 	print '</div></div>';
 
-	print '<div class="tagtr"><div class="tagtd">';
+	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span>';
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="idpicto" value="'.(GETPOSTISSET('idpicto') ? GETPOST('idpicto') : getDolGlobalString('MODULEBUILDER_DEFAULTPICTO', 'fa-file-o')).'" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
 	print $form->textwithpicto('', $langs->trans("Example").': fa-file-o, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
 	print '</div></div>';
 
-	print '<div class="tagtr"><div class="tagtd">';
+	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("EditorName").'</span>';
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="editorname" value="'.(GETPOSTISSET('editorname') ? GETPOST('editorname') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME', $mysoc->name)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
 	print '</div></div>';
 
-	print '<div class="tagtr"><div class="tagtd">';
+	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("EditorUrl").'</span>';
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
