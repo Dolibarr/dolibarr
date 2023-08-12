@@ -1397,6 +1397,7 @@ if ($resql) {
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthee on tente recherche de traduction
 			if (!empty($reg[1]) && $langs->trans($reg[1]) != $reg[1]) {
+				// Example: $reg[1] = 'CustomerInvoicePayment', 'SupplierInvoicePayment', ... (or on old version: 'WithdrawalPayment', 'BankTransferPayment')
 				$labeltoshow = $langs->trans($reg[1]);
 			} else {
 				if ($objp->label == '(payment_salary)') {
