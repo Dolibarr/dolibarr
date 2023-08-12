@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -194,7 +194,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	// Add a new external contributor to a ticket
 	if (!$error && $action == "add_contact" && $display_ticket && GETPOSTISSET('btn_add_contact')) {
 		$ret = $object->dao->add_contact(GETPOSTINT('contactid'), 'CONTRIBUTOR');
-		
+
 		if (!$error) {
 			$action = 'view_ticket';
 		}
@@ -339,11 +339,11 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</td></tr>';
 
 		// External contributors
-		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')){
+		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')) {
 			print '<tr><td>'.$langs->trans("ExternalContributors").'</td><td>';
 			if ($object->dao->id > 0) {
 				$contactlist = $object->dao->liste_contact(-1, 'external');
-				foreach($contactlist as $externalContributor) {
+				foreach ($contactlist as $externalContributor) {
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
 					print $externalContributor["lastname"]." ".$externalContributor["firstname"]."<br>";
 				}
@@ -352,7 +352,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		// Add new external contributor
-		if (getDolGlobalInt('TICKET_PUBLIC_SELECT_EXTERNAL_CONTRIBUTORS') && !empty($object->dao->fk_soc)){
+		if (getDolGlobalInt('TICKET_PUBLIC_SELECT_EXTERNAL_CONTRIBUTORS') && !empty($object->dao->fk_soc)) {
 			print '<form method="post" id="form_view_add_contact" name="form_view_add_contact" action="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add_contact">';
