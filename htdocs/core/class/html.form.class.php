@@ -9410,16 +9410,6 @@ class Form
 			}
 		}
 
-		/*
-		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-			}
-		}*/
-
 		// Add where from hooks
 		if (is_object($hookmanager)) {
 			$parameters = array('showrefnav' => true);
@@ -9477,6 +9467,7 @@ class Form
 			$ret .= '</ul></div>';
 		}
 
+		// Status
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {

@@ -1234,3 +1234,5 @@ SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use 
 InProgress=In progress
 DateOfPrinting=Date of printing
 ClickFullScreenEscapeToLeave=Click here to swith in Full screen mode. Type ESCAPE to leave Full screen mode.
+UserNotYetValid=Not yet valid
+UserExpired=Expired
