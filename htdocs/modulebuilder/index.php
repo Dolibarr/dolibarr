@@ -5179,9 +5179,10 @@ if ($module == 'initmodule') {
 				}
 
 				$handle = opendir($newdir);
+
 				if (is_resource($handle)) {
 					while (($tmpfile = readdir($handle)) !== false) {
-						if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $tmpfile, $reg)) {
+						if (is_readable($newdir.'/'.$tmpfile) && preg_match('/^(.+)\.php/', $tmpfile, $reg)) {
 							if (preg_match('/\.back$/', $tmpfile)) {
 								continue;
 							}
