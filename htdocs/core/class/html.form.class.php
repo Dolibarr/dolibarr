@@ -352,9 +352,9 @@ class Form
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="checkbox" disabled id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($value ? ' checked' : '') . ($tmp[1] ? $tmp[1] : '') . '/>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata)) {
-					$ret .= dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($value), 1, 1, 1));
+					$ret .= dol_string_onlythesehtmltags(dol_htmlentitiesbr($value), 1, 1, 1);
 				} elseif (preg_match('/^(safehtmlstring|restricthtml)/', $typeofdata)) {	// 'restricthtml' is not an allowed type for editfieldval. Value is 'safehtmlstring'
-					$ret .= dol_htmlwithnojs(dol_string_onlythesehtmltags($value));
+					$ret .= dol_string_onlythesehtmltags($value);
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$ret .= '<span class="valuedate">' . dol_print_date($value, 'day', $gm) . '</span>';
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {
