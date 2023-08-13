@@ -632,7 +632,7 @@ class Form
 	 * 	@param 	string 	$tooltiptrigger 	''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
 	 * 	@param 	int 	$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return string                      Code html du tooltip (texte+picto)
-	 * 	@see    textwithpicto() 			Use thisfunction if you can.
+	 * 	@see    textwithpicto() 			Use textwithpicto() instead of textwithtooltip if you can.
 	 */
 	public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
@@ -9431,16 +9431,6 @@ class Form
 			}
 		}
 
-		/*
-		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-			}
-		}*/
-
 		// Add where from hooks
 		if (is_object($hookmanager)) {
 			$parameters = array('showrefnav' => true);
@@ -9498,6 +9488,7 @@ class Form
 			$ret .= '</ul></div>';
 		}
 
+		// Status
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
