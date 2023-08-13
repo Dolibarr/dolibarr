@@ -2237,11 +2237,11 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 
 			$phpfullcodestringold = dolKeepOnlyPhpCode($objectpage->content);
 
-			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');
+			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');	// any HTML content allowed
 
 			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
 
-			// Security analysis
+			// Security analysis (check PHP content and check permission website->writephp if php content is modified)
 			$error = checkPHPCode($phpfullcodestringold, $phpfullcodestring);
 
 			if ($error) {

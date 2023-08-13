@@ -247,7 +247,7 @@ class Form
 				$editaction = GETPOST('action', 'aZ09');
 			}
 			$editmode = ($editaction == 'edit' . $htmlname);
-			if ($editmode) {
+			if ($editmode) {	// edit mode
 				$ret .= "\n";
 				$ret .= '<form method="post" action="' . $_SERVER["PHP_SELF"] . ($moreparam ? '?' . $moreparam : '') . '">';
 				$ret .= '<input type="hidden" name="action" value="set' . $htmlname . '">';
@@ -281,7 +281,6 @@ class Form
 						$morealt = ' style="width: ' . $cols . '"';
 						$cols = '';
 					}
-
 					$valuetoshow = ($editvalue ? $editvalue : $value);
 					$ret .= '<textarea id="' . $htmlname . '" name="' . $htmlname . '" wrap="soft" rows="' . (empty($tmp[1]) ? '20' : $tmp[1]) . '"' . ($cols ? ' cols="' . $cols . '"' : 'class="quatrevingtpercent"') . $morealt . '" autofocus>';
 					// textarea convert automatically entities chars into simple chars.
@@ -340,7 +339,7 @@ class Form
 					$ret .= '</tr></table>' . "\n";
 				}
 				$ret .= '</form>' . "\n";
-			} else {
+			} else {		// view mode
 				if (preg_match('/^email/', $typeofdata)) {
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
 				} elseif (preg_match('/^phone/', $typeofdata)) {
@@ -353,9 +352,9 @@ class Form
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="checkbox" disabled id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($value ? ' checked' : '') . ($tmp[1] ? $tmp[1] : '') . '/>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata)) {
-					$ret .= dol_string_onlythesehtmltags(dol_htmlentitiesbr($value), 1, 1, 1);
+					$ret .= dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($value), 1, 1, 1));
 				} elseif (preg_match('/^(safehtmlstring|restricthtml)/', $typeofdata)) {	// 'restricthtml' is not an allowed type for editfieldval. Value is 'safehtmlstring'
-					$ret .= dol_string_onlythesehtmltags($value);
+					$ret .= dol_htmlwithnojs(dol_string_onlythesehtmltags($value));
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$ret .= '<span class="valuedate">' . dol_print_date($value, 'day', $gm) . '</span>';
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {

@@ -237,8 +237,8 @@ class Mailing extends CommonObject
 		global $conf, $langs;
 
 		// Check properties
-		if ($this->body === 'InvalidHTMLString') {
-			$this->error = 'InvalidHTMLString';
+		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
 
@@ -306,8 +306,8 @@ class Mailing extends CommonObject
 	public function update($user, $notrigger = 0)
 	{
 		// Check properties
-		if ($this->body === 'InvalidHTMLString') {
-			$this->error = 'InvalidHTMLString';
+		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
 
