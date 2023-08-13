@@ -70,7 +70,7 @@ AccountancyAreaDescActionOnce=Les accions següents s'executen normalment una so
 AccountancyAreaDescActionOnceBis=Cal fer els passos següents per a estalviar-vos temps en el futur suggerint-vos automàticament el compte comptable predeterminat correcte quan transferiu dades a la comptabilitat
 AccountancyAreaDescActionFreq=Les accions següents s'executen normalment cada mes, setmana o dia per empreses molt grans...
 
-AccountancyAreaDescJournalSetup=PAS %s: comproveu el contingut de la vostra llista de diari des del menú %s
+AccountancyAreaDescJournalSetup=PAS %s: comproveu el contingut de la vostra llista de diaris des del menú %s
 AccountancyAreaDescChartModel=PAS %s: Comproveu que existeix un model de pla comptable o creeu-ne un des del menú %s
 AccountancyAreaDescChart=PAS %s: Seleccioneu o completeu el vostre pla comptable al menú %s
 
@@ -295,7 +295,7 @@ DescVentilExpenseReportMore=Si poseu el compte comptable sobre les línies de l'
 DescVentilDoneExpenseReport=Consulteu aquí la llista de les línies d'informes de despeses i el seu compte comptable de comissions
 
 Closure=Tancament anual
-DescClosure=Consulta aquí el nombre de moviments per mes encara no validats i bloquejats
+DescClosure=Consulta aquí el nombre de moviments per mesos encara no validats i bloquejats
 OverviewOfMovementsNotValidated=Visió general dels moviments no validats i bloquejats
 AllMovementsWereRecordedAsValidated=Tots els moviments es van registrar com a validats i bloquejats
 NotAllMovementsCouldBeRecordedAsValidated=No tots els moviments es van poder registrar com a validats i bloquejats
@@ -443,7 +443,7 @@ ConfirmMassUnletteringAuto=Confirmació de desconciliació automàtica massiva
 ConfirmMassUnletteringManual=Confirmació de desconciliació manual massiva
 ConfirmMassUnletteringQuestion=Esteu segur que voleu anul·lar la conciliació dels registres seleccionats %s?
 ConfirmMassDeleteBookkeepingWriting=Confirmació d'esborrament massiu
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
+ConfirmMassDeleteBookkeepingWritingQuestion=Això suprimirà la transacció de la comptabilitat (s'eliminaran totes les entrades de línia relacionades amb la mateixa transacció). Esteu segur que voleu suprimir les %s entrades seleccionades?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=No s'han fet alguns passos obligatoris de configuració, si us plau, completeu-los
@@ -456,7 +456,7 @@ NoJournalDefined=Cap diari definit
 Binded=Línies comptabilitzades
 ToBind=Línies a comptabilitzar
 UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a href="%s">%s</a> per a fer l'enllaç manualment
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Nota: aquest mòdul o pàgina no és completament compatible amb la funció experimental de les factures de situació. Algunes dades poden ser incorrectes.
 AccountancyErrorMismatchLetterCode=No coincideix en el codi de conciliació
 AccountancyErrorMismatchBalanceAmount=El saldo (%s) no és igual a 0
 AccountancyErrorLetteringBookkeeping=S'han produït errors relacionats amb les transaccions: %s
