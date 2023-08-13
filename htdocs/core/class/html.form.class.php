@@ -199,7 +199,9 @@ class Form
 	 * @param string 	$value 			Value to show/edit
 	 * @param object 	$object 		Object (that we want to show)
 	 * @param boolean 	$perm 			Permission to allow button to edit parameter
-	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
+	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99',
+	 *                                  'text' or 'textarea:rows:cols%', 'safehtmlstring', 'restricthtml',
+	 *                                  'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param string 	$editvalue 		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value, or a select combo). Use '' to use same than $value
 	 * @param object 	$extObject 		External object ???
 	 * @param mixed 	$custommsg 		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -351,10 +353,8 @@ class Form
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="checkbox" disabled id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($value ? ' checked' : '') . ($tmp[1] ? $tmp[1] : '') . '/>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata)) {
-					$ret .= dol_htmlentitiesbr($value);
-				} elseif (preg_match('/^safehtmlstring/', $typeofdata)) {
-					$ret .= dol_string_onlythesehtmltags($value);
-				} elseif (preg_match('/^restricthtml/', $typeofdata)) {
+					$ret .= dol_string_onlythesehtmltags(dol_htmlentitiesbr($value), 1, 1, 1);
+				} elseif (preg_match('/^(safehtmlstring|restricthtml)/', $typeofdata)) {	// 'restricthtml' is not an allowed type for editfieldval. Value is 'safehtmlstring'
 					$ret .= dol_string_onlythesehtmltags($value);
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$ret .= '<span class="valuedate">' . dol_print_date($value, 'day', $gm) . '</span>';
