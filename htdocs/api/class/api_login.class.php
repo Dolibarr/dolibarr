@@ -167,6 +167,9 @@ class Login
 			}
 		} else {
 			$token = $tmpuser->api_key;
+			if (!utf8_check($token)) {
+				throw new RestException(500, 'Error, the API token of this user has a non valid value. Try to update it with a valid value.');
+			}
 		}
 
 		//return token
