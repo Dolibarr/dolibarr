@@ -2849,7 +2849,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 
 	//var_dump($objectpage);exit;
-	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hidden' : '').'">';
+	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hiddenforpopup' : '').'">';
 
 	//
 	// Toolbar for websites

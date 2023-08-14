@@ -5290,7 +5290,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {
