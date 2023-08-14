@@ -954,7 +954,7 @@ if ($object->id > 0) {
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
@@ -985,6 +985,8 @@ if ($object->id > 0) {
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
 			$tmpuser->statut = $obj->user_status;
+			$tmpuser->status = $obj->user_status;
+			$tmpuser->photo = $obj->user_photo;
 
 			print '<tr class="oddeven">';
 
@@ -993,7 +995,7 @@ if ($object->id > 0) {
 
 			// User
 			print '<td align="center">';
-			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
+			print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
 			// Amount
