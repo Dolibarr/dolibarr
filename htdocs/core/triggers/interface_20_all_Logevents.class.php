@@ -87,15 +87,9 @@ class InterfaceLogevents extends DolibarrTriggers
 			$langs->load("users");
 			// Initialisation donnees (date,duree,texte,desc)
 			$text = "(UserLogged,".$object->login.")";
-			$text .= (empty($object->trigger_mesg) ? '' : ' - '.$object->trigger_mesg);
 			$desc = "(UserLogged,".$object->login.")";
-			$desc .= (empty($object->trigger_mesg) ? '' : ' - '.$object->trigger_mesg);
 		} elseif ($action == 'USER_LOGIN_FAILED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-			// Initialisation donnees (date,duree,texte,desc)
-			$text = $object->trigger_mesg; // Message direct
-			$desc = $object->trigger_mesg; // Message direct
 		} elseif ($action == 'USER_LOGOUT') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
