@@ -440,7 +440,7 @@ if ($result) {
 			print '</td>';
 		}
 
-		// Date
+		// ID
 		print '<td class="nowrap left">'.dol_escape_htmltag($obj->rowid).'</td>';
 
 		// Date
