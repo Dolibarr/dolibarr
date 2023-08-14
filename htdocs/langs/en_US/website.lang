@@ -157,3 +157,6 @@ Booking=Booking
 Reservation=Reservation
 PagesViewedPreviousMonth=Pages viewed (previous month)
 PagesViewedTotal=Pages viewed (total)
+Visibility=Visibility
+Everyone=Everyone
+AssignedContacts=Assigned contacts

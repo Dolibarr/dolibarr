@@ -1945,7 +1945,7 @@ abstract class CommonObject
 	 */
 	public function setValueFrom($field, $value, $table = '', $id = null, $format = '', $id_field = '', $fuser = null, $trigkey = '', $fk_user_field = 'fk_user_modif')
 	{
-		global $user, $langs, $conf;
+		global $user;
 
 		if (empty($table)) {
 			$table = $this->table_element;
@@ -1964,8 +1964,12 @@ abstract class CommonObject
 		if ($table == 'product' && $field == 'note_private') {
 			$field = 'note';
 		}
+
 		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
 			$fk_user_field = 'fk_user_mod';
+		}
+		if (in_array($table, array('prelevement_bons'))) {	// TODO Add a field fk_user_modif into llx_prelevement_bons
+			$fk_user_field = '';
 		}
 
 		if ($trigkey) {
@@ -2991,8 +2995,13 @@ abstract class CommonObject
 		} else {
 			if (!$notrigger) {
 				// Call trigger
-				$this->context = array('bankaccountupdate'=>1);
-				$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $userused);
+				$this->context['bankaccountupdate'] = 1;
+				$triggerName = strtoupper(get_class($this)).'_MODIFY';
+				// Special cases
+				if ($triggerName == 'FACTUREREC_MODIFY') {
+					$triggerName = 'BILLREC_MODIFY';
+				}
+				$result = $this->call_trigger($triggerName, $userused);
 				if ($result < 0) {
 					$error++;
 				}
@@ -5806,7 +5815,7 @@ abstract class CommonObject
 			dol_print_error('', 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
 			exit;
 		}
-		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers.
+		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
 		}

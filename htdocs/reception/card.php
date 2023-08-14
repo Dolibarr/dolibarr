@@ -591,12 +591,18 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
 		}
 	} elseif ($action == 'classifyclosed' && $permissiontoread) {
 		$result = $object->setClosed();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
 		}
 	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoread) {
 		// delete a line

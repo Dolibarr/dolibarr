@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +172,8 @@ if (empty($reshook)) {
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 
-		if (!empty($idprod) && $conf->workstation->enabled) {
+		$fk_default_workstation = 0;
+		if (!empty($idprod) && isModEnabled('workstation')) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
 			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;

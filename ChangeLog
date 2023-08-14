@@ -10,7 +10,7 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
-
+* The method get_substitutionarray_shipment_lines() has been removed. Use the generic get_substitutionarray_lines() instead.
 
 
 
