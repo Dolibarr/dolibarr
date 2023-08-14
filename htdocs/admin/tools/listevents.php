@@ -57,7 +57,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = "dateevent";
+	$sortfield = "e.rowid";
 }
 if (!$sortorder) {
 	$sortorder = "DESC";
