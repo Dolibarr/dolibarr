@@ -77,6 +77,9 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		$date = dol_now();
 
+		$text = '';
+		$desc = '';
+
 		// Actions
 		if ($action == 'USER_LOGIN') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -170,8 +173,8 @@ class InterfaceLogevents extends DolibarrTriggers
 		*/
 
 		// Add more information into desc from the context property
-		if (!empty($desc) && !empty($object->context['audit'])) {
-			$desc .= ' - '.$object->context['audit'];
+		if (!empty($object->context['audit'])) {
+			$desc .= (empty($desc) ? '' : ' - ').$object->context['audit'];
 		}
 
 		// Add entry in event table
@@ -183,6 +186,7 @@ class InterfaceLogevents extends DolibarrTriggers
 		$event->label = $text;
 		$event->description = $desc;
 		$event->user_agent = (empty($_SERVER["HTTP_USER_AGENT"]) ? '' : $_SERVER["HTTP_USER_AGENT"]);
+		$event->authentication_method = (empty($object->context['authentication_method']) ? '' : $object->context['authentication_method']);
 
 		$result = $event->create($user);
 		if ($result > 0) {
