@@ -57,3 +57,5 @@ UPDATE llx_societe_rib SET frstrecur = 'RCUR' WHERE frstrecur = 'RECUR';
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_CREATE','Third party payment information created','Executed when a third party payment information is created','societe',1);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_MODIFY','Third party payment information updated','Executed when a third party payment information is updated','societe',1);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_DELETE','Third party payment information deleted','Executed when a third party payment information is deleted','societe',1);
+
+UPDATE llx_bank_url SET type = 'direct-debit' WHERE type = 'withdraw' AND url like '%compta/prelevement/card%';
