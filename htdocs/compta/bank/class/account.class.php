@@ -50,6 +50,12 @@ class Account extends CommonObject
 	public $table_element = 'bank_account';
 
 	/**
+	 * @var int  Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'account';

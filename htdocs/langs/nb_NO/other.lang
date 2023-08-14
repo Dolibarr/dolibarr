@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = Er du sikker på at du vil "%s"?
 ConfirmBtnCommonTitle = Bekreft handlingen din
 CloseDialog = Lukk
 Autofill = Autofyll
+OrPasteAnURL=eller Lim inn en URL
 
 # externalsite
 ExternalSiteSetup=Oppsett av lenke til ekstern nettside

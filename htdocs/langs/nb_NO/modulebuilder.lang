@@ -28,6 +28,7 @@ ModuleBuilderDescwidgets=Denne fanen er for å administrere/bygge widgeter.
 ModuleBuilderDescbuildpackage=Her kan du generere en "klar til å distribuere" pakkefil (en normalisert .zip-fil) av modulen din og en "klar til å distribuere" dokumentasjonsfil. Klikk på knappen for å bygge pakken eller dokumentasjonsfilen.
 EnterNameOfModuleToDeleteDesc=Du kan slette modulen din. ADVARSEL: Alle kodefiler tilhørende modulen (generert eller opprettet manuelt) OG strukturert data og dokumentasjon vil bli slettet!
 EnterNameOfObjectToDeleteDesc=Du kan slette et objekt. ADVARSEL: Alle kodingsfiler (generert eller opprettet manuelt) relatert til objekt blir slettet!
+EnterNameOfObjectToDeleteDesc=Du kan slette et objekt. ADVARSEL: Alle kodingsfiler (generert eller opprettet manuelt) relatert til objekt blir slettet!
 DangerZone=Faresone
 BuildPackage=Bygg pakke
 BuildPackageDesc=Du kan generere en zip-pakke med applikasjonen din, slik at du er klar til å distribuere den på en hvilken som helst Dolibarr. Du kan også distribuere den eller selge den på enmarkedsplass som <a href="https://www.dolistore.com">DoliStore.com</a> .
@@ -177,3 +178,5 @@ ApiObjectDeleted=API for objekt %s er slettet
 CRUDRead=Les
 CRUDCreateWrite=Opprett eller oppdater
 FailedToAddCodeIntoDescriptor=Kunne ikke legge til kode i beskrivelsen. Sjekk at strengkommentaren "%s" fortsatt er til stede i filen.
+DictionariesCreated=Ordbok <b> %s </b> opprettet 
+DictionaryDeleted=Ordbok <b> %s </b> ble fjernet
