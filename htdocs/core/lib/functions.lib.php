@@ -8979,6 +8979,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
  *
  *      @param	string	$str        String to check
  * 		@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
+ * 		@see utf8_valid()
  */
 function utf8_check($str)
 {
@@ -9016,6 +9017,7 @@ function utf8_check($str)
  *
  *      @param	string	$str        String to check
  * 		@return	boolean				True if string is valid UTF8 string, false if corrupted
+ * 		@see utf8_check()
  */
 function utf8_valid($str)
 {
