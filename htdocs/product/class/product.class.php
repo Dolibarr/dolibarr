@@ -2470,7 +2470,7 @@ class Product extends CommonObject
 			$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 			$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 			$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
-			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
+			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period,";
 			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 				$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			} else {
