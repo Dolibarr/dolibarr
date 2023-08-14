@@ -2777,15 +2777,21 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 
 	if (isset($propertyToUpdate) && !empty(GETPOST('propsmodule'))) {
 		$newValue = GETPOST('propsmodule');
-		$lineToReplace = "\$this->$propertyToUpdate = '".$moduleobj->$propertyToUpdate."';";
-		$newLine = "\$this->$propertyToUpdate = '$newValue';";
+		$lineToReplace = "\t\t\$this->$propertyToUpdate = ";
+		$newLine = "\t\t\$this->$propertyToUpdate = '$newValue';\n";
 
 		//for change version in log file
 		if ($propertyToUpdate === 'version') {
 			dolReplaceInFile($modulelogfile, array("## ".$moduleobj->$propertyToUpdate => $newValue));
 		}
 
-		dolReplaceInFile($moduledescriptorfile, array($lineToReplace => $newLine));
+		$fileLines = file($moduledescriptorfile);
+		foreach ($fileLines as &$line) {
+			if (strpos($line, $lineToReplace) === 0) {
+				dolReplaceInFile($moduledescriptorfile, array($line => $newLine));
+				break;
+			}
+		}
 
 		clearstatcache(true);
 		if (function_exists('opcache_invalidate')) {
@@ -3297,7 +3303,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("Description");
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'desc') {
-						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->getDesc()).'">';
+						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->description).'">';
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
@@ -3339,8 +3345,11 @@ if ($module == 'initmodule') {
 							'base' => 'ModuleFamilyBase',
 							'other' => 'ModuleFamilyOther'
 						);
+						print '<option value="'.$moduleobj->family.'" data-html="'.dol_escape_htmltag($langs->trans($arrayoffamilies[$moduleobj->family]).' <span class="opacitymedium">- '.$moduleobj->family.'</span>').'">'.$langs->trans($arrayoffamilies[$moduleobj->family]).'</option>';
 						foreach ($arrayoffamilies as $key => $value) {
-							print '<option value="'.$key.'"'.($key == getDolGlobalString('MODULEBUILDER_SPECIFIC_FAMILY', 'other') ? ' selected="selected"' : '').' data-html="'.dol_escape_htmltag($langs->trans($value).' <span class="opacitymedium">- '.$key.'</span>').'">'.$langs->trans($value).'</option>';
+							if ($key != $moduleobj->family) {
+								print '<option value="'.$key.'" data-html="'.dol_escape_htmltag($langs->trans($value).' <span class="opacitymedium">- '.$key.'</span>').'">'.$langs->trans($value).'</option>';
+							}
 						}
 						print '</select>';
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
