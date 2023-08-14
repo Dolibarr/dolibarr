@@ -2384,7 +2384,8 @@ if ($action == 'regeneratesite' && $usercanedit) {
 		dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 		$result = symlink($pathtomedias, $pathtomediasinwebsite);
 		if (!$result) {
-			setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
 			$action = 'preview';
 		}
 	}
@@ -2421,7 +2422,8 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 					dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
 					$result = symlink($pathtomedias, $pathtomediasinwebsite);
 					if (!$result) {
-						setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
 						$action = 'importsite';
 					}
 				}

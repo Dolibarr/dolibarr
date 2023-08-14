@@ -318,6 +318,7 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you 
 ErrorMenuExistValue=A Menu already exist with this Title or URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
+ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
