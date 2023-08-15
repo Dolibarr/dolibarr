@@ -4713,7 +4713,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print price($object->retained_warranty).'%';

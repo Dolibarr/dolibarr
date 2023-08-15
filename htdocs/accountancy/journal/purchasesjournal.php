@@ -654,7 +654,7 @@ if ($action == 'writebookkeeping') {
 			$error++;
 			$errorforline++;
 			$errorforinvoice[$key] = 'amountsnotbalanced';
-			setEventMessages('Try to insert a non balanced transaction in book for '.$invoicestatic->ref.'. Canceled. Surely a bug.', null, 'errors');
+			setEventMessages('We tried to insert a non balanced transaction in book for '.$invoicestatic->ref.'. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (!$errorforline) {
