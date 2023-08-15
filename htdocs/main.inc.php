@@ -321,18 +321,18 @@ if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
 	require_once 'core/lib/phpsessionin'.$php_session_save_handler.'.lib.php';
 }
 
-	// Init session. Name of session is specific to Dolibarr instance.
-	// Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
-	// Note: the function dol_getprefix() is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
-	$prefix = dol_getprefix('');
-	$sessionname = 'DOLSESSID_'.$prefix;
-	$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
+// Init session. Name of session is specific to Dolibarr instance.
+// Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
+// Note: the function dol_getprefix() is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
+$prefix = dol_getprefix('');
+$sessionname = 'DOLSESSID_'.$prefix;
+$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 }
 
-	// This create lock, released by session_write_close() or end of page.
-	// We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
+// This create lock, released by session_write_close() or end of page.
+// We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION')) {
 	if (PHP_VERSION_ID < 70300) {
 		session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
@@ -354,10 +354,10 @@ if (!defined('NOSESSION')) {
 }
 
 
-	// Init the 6 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager
-	require_once 'master.inc.php';
+// Init the 6 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager
+require_once 'master.inc.php';
 
-	// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
+// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
 if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 	$ok = 0;
 	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) {
@@ -387,10 +387,10 @@ if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 }
 
 
-	// Activate end of page function
-	register_shutdown_function('dol_shutdown');
+// Activate end of page function
+register_shutdown_function('dol_shutdown');
 
-	// Load debugbar
+// Load debugbar
 if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile'])) {
 	global $debugbar;
 	include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
@@ -404,7 +404,7 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
 }
 
-	// Detection browser
+// Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"])) {
 	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 	$conf->browser->name = $tmp['browsername'];
@@ -419,19 +419,19 @@ if (isset($_SERVER["HTTP_USER_AGENT"])) {
 	}
 }
 
-	// If theme is forced
+// If theme is forced
 if (GETPOST('theme', 'aZ09')) {
 	$conf->theme = GETPOST('theme', 'aZ09');
 	$conf->css = "/theme/".$conf->theme."/style.css.php";
 }
 
-	// Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
+// Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
 if (GETPOST('textbrowser', 'int') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks')) {   // If we must enable text browser
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 1;
 }
 
-	// Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
-	// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
+// Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
+// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
 if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && !defined('NOHTTPSREDIRECT')) {
 	$newurl = '';
 	if (is_numeric($conf->file->main_force_https)) {
@@ -474,7 +474,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 	}
 }
 
-	// Loading of additional presentation includes
+// Loading of additional presentation includes
 if (!defined('NOREQUIREHTML')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // Need 660ko memory (800ko in 2.2)
 }
@@ -482,13 +482,13 @@ if (!defined('NOREQUIREAJAX')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
 }
 
-	// If install or upgrade process not done or not completely finished, we call the install page.
+// If install or upgrade process not done or not completely finished, we call the install page.
 if (!empty($conf->global->MAIN_NOT_INSTALLED) || !empty($conf->global->MAIN_NOT_UPGRADED)) {
 	dol_syslog("main.inc: A previous install or upgrade was not complete. Redirect to install page.", LOG_WARNING);
 	header("Location: ".DOL_URL_ROOT."/install/index.php");
 	exit;
 }
-	// If an upgrade process is required, we call the install page.
+// If an upgrade process is required, we call the install page.
 if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
 		|| (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && !empty($conf->global->MAIN_VERSION_LAST_INSTALL) && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION))) {
 		$versiontocompare = empty($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE;
@@ -506,7 +506,7 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	}
 }
 
-		// Creation of a token against CSRF vulnerabilities
+// Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
 	// No token renewal on .css.php, .js.php and .json.php (even if the NOTOKENRENEWAL was not provided)
 	if (!preg_match('/\.(css|js|json)\.php$/', $_SERVER["PHP_SELF"])) {
@@ -526,9 +526,9 @@ if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
 	}
 }
 
-		//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
+//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
 
-		// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
+// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) || defined('CSRFCHECK_WITH_TOKEN')) {
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$sensitiveget = false;
@@ -585,12 +585,12 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 					print " into setup).\n";
 				}
 			}
-				die;
+			die;
 		}
 	}
 
-		$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
-		// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
+	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
+	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
 			//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
@@ -619,7 +619,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
-		// Disable modules (this must be after session_start and after conf has been loaded)
+// Disable modules (this must be after session_start and after conf has been loaded)
 if (GETPOSTISSET('disablemodules')) {
 	$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
 }
@@ -644,8 +644,8 @@ if (!empty($_SESSION["disablemodules"])) {
 	}
 }
 
-		// Set current modulepart
-		$modulepart = explode("/", $_SERVER["PHP_SELF"]);
+// Set current modulepart
+$modulepart = explode("/", $_SERVER["PHP_SELF"]);
 if (is_array($modulepart) && count($modulepart) > 0) {
 	foreach ($conf->modules as $module) {
 		if (in_array($module, $modulepart)) {
@@ -659,10 +659,10 @@ if (is_array($modulepart)) {
 }
 
 
-		/*
-		 * Phase authentication / login
-		 */
-		$login = '';
+/*
+ * Phase authentication / login
+ */
+$login = '';
 if (!defined('NOLOGIN')) {
 	// $authmode lists the different method of identification to be tested in order of preference.
 	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser', '...'
@@ -1234,13 +1234,13 @@ if (!defined('NOLOGIN')) {
 }
 
 
-		// Case forcing style from url
+// Case forcing style from url
 if (GETPOST('theme', 'aZ09')) {
 	$conf->theme = GETPOST('theme', 'aZ09', 1);
 	$conf->css = "/theme/".$conf->theme."/style.css.php";
 }
 
-		// Set javascript option
+// Set javascript option
 if (GETPOST('nojs', 'int')) {  // If javascript was not disabled on URL
 	$conf->use_javascript_ajax = 0;
 } else {
@@ -1249,15 +1249,15 @@ if (GETPOST('nojs', 'int')) {  // If javascript was not disabled on URL
 	}
 }
 
-		// Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
+// Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
 if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
 }
 
-		// set MAIN_OPTIMIZEFORCOLORBLIND for user
-		$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
+// set MAIN_OPTIMIZEFORCOLORBLIND for user
+$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
 
-		// Set terminal output option according to conf->browser.
+// Set terminal output option according to conf->browser.
 if (GETPOST('dol_hide_leftmenu', 'int') || !empty($_SESSION['dol_hide_leftmenu'])) {
 	$conf->dol_hide_leftmenu = 1;
 }
@@ -1273,12 +1273,12 @@ if (GETPOST('dol_no_mouse_hover', 'int') || !empty($_SESSION['dol_no_mouse_hover
 if (GETPOST('dol_use_jmobile', 'int') || !empty($_SESSION['dol_use_jmobile'])) {
 	$conf->dol_use_jmobile = 1;
 }
-		// If not on Desktop
+// If not on Desktop
 if (!empty($conf->browser->layout) && $conf->browser->layout != 'classic') {
 	$conf->dol_no_mouse_hover = 1;
 }
 
-		// If on smartphone or optmized for small screen
+// If on smartphone or optmized for small screen
 if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 			|| (!empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
 			|| (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400
@@ -1290,7 +1290,7 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 			$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
 	}
 }
-			// Replace themes bugged with jmobile with eldy
+// Replace themes bugged with jmobile with eldy
 if (!empty($conf->dol_use_jmobile) && in_array($conf->theme, array('bureau2crea', 'cameleo', 'amarok'))) {
 	$conf->theme = 'eldy';
 	$conf->css = "/theme/".$conf->theme."/style.css.php";
@@ -1328,28 +1328,28 @@ if (!defined('NOLOGIN')) {
 	$user->getrights();
 }
 
-			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').(defined('NOTOKENRENEWAL') ? ' NOTOKENRENEWAL='.constant('NOTOKENRENEWAL') : ''), LOG_NOTICE);
-			//Another call for easy debugg
-			//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' '.$_SERVER["HTTP_REFERER"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
+dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').(defined('NOTOKENRENEWAL') ? ' NOTOKENRENEWAL='.constant('NOTOKENRENEWAL') : ''), LOG_NOTICE);
+//Another call for easy debugg
+//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' '.$_SERVER["HTTP_REFERER"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
-			// Load main languages files
+// Load main languages files
 if (!defined('NOREQUIRETRAN')) {
 	// Load translation files required by page
 	$langs->loadLangs(array('main', 'dict'));
 }
 
-			// Define some constants used for style of arrays
-			$bc = array(0=>'class="impair"', 1=>'class="pair"');
-			$bcdd = array(0=>'class="drag drop oddeven"', 1=>'class="drag drop oddeven"');
-			$bcnd = array(0=>'class="nodrag nodrop nohover"', 1=>'class="nodrag nodrop nohoverpair"'); // Used for tr to add new lines
-			$bctag = array(0=>'class="impair tagtr"', 1=>'class="pair tagtr"');
+// Define some constants used for style of arrays
+$bc = array(0=>'class="impair"', 1=>'class="pair"');
+$bcdd = array(0=>'class="drag drop oddeven"', 1=>'class="drag drop oddeven"');
+$bcnd = array(0=>'class="nodrag nodrop nohover"', 1=>'class="nodrag nodrop nohoverpair"'); // Used for tr to add new lines
+$bctag = array(0=>'class="impair tagtr"', 1=>'class="pair tagtr"');
 
-			// Define messages variables
-			$mesg = ''; $warning = ''; $error = 0;
-			// deprecated, see setEventMessages() and dol_htmloutput_events()
-			$mesgs = array(); $warnings = array(); $errors = array();
+// Define messages variables
+$mesg = ''; $warning = ''; $error = 0;
+// deprecated, see setEventMessages() and dol_htmloutput_events()
+$mesgs = array(); $warnings = array(); $errors = array();
 
-			// Constants used to defined number of lines in textarea
+// Constants used to defined number of lines in textarea
 if (empty($conf->browser->firefox)) {
 	define('ROWS_1', 1);
 	define('ROWS_2', 2);
@@ -1372,9 +1372,9 @@ if (empty($conf->browser->firefox)) {
 	define('ROWS_9', 8);
 }
 
-			$heightforframes = 50;
+$heightforframes = 50;
 
-			// Init menu manager
+// Init menu manager
 if (!defined('NOREQUIREMENU')) {
 	if (empty($user->socid)) {    // If internal user or not defined
 		$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
@@ -1416,7 +1416,7 @@ if (!empty(GETPOST('seteventmessages', 'alpha'))) {
 	}
 }
 
-			// Functions
+// Functions
 
 if (!function_exists("llxHeader")) {
 	/**
@@ -2879,11 +2879,11 @@ function top_menu_bookmark()
 	return $html;
 }
 
-			/**
-			 * Build the tooltip on top menu tsearch
-			 *
-			 * @return  string                  HTML content
-			 */
+/**
+ * Build the tooltip on top menu tsearch
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_search()
 {
 	global $langs, $conf, $db, $user, $hookmanager;
@@ -3042,20 +3042,20 @@ function top_menu_search()
 	return $html;
 }
 
-			/**
-			 *  Show left menu bar
-			 *
-			 *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
-			 *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
-			 * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
-			 * 									         	For other external page: http://server/url
-			 *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
-			 *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
-			 *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
-			 *  @param  string	$title                      Title of web page
-			 *  @param  string  $acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
-			 *  @return	void
-			 */
+/**
+ *  Show left menu bar
+ *
+ *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
+ *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
+ * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ * 									         	For other external page: http://server/url
+ *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
+ *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
+ *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
+ *  @param  string	$title                      Title of web page
+ *  @param  string  $acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+ *  @return	void
+ */
 function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_array_after = '', $leftmenuwithoutmainarea = 0, $title = '', $acceptdelayedhtml = 0)
 {
 	global $user, $conf, $langs, $db, $form;
@@ -3300,12 +3300,12 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 }
 
 
-			/**
-			 *  Begin main area
-			 *
-			 *  @param	string	$title		Title
-			 *  @return	void
-			 */
+/**
+ *  Begin main area
+ *
+ *  @param	string	$title		Title
+ *  @return	void
+ */
 function main_area($title = '')
 {
 	global $conf, $langs, $hookmanager;
@@ -3361,13 +3361,13 @@ function main_area($title = '')
 }
 
 
-			/**
-			 *  Return helpbaseurl, helppage and mode
-			 *
-			 *  @param	string		$helppagename		Page name ('EN:xxx,ES:eee,FR:fff,DE:ddd...' or 'http://localpage')
-			 *  @param  Translate	$langs				Language
-			 *  @return	array		Array of help urls
-			 */
+/**
+ *  Return helpbaseurl, helppage and mode
+ *
+ *  @param	string		$helppagename		Page name ('EN:xxx,ES:eee,FR:fff,DE:ddd...' or 'http://localpage')
+ *  @param  Translate	$langs				Language
+ *  @return	array		Array of help urls
+ */
 function getHelpParamFor($helppagename, $langs)
 {
 	$helpbaseurl = '';
@@ -3412,25 +3412,25 @@ function getHelpParamFor($helppagename, $langs)
 }
 
 
-			/**
-			 *  Show a search area.
-			 *  Used when the javascript quick search is not used.
-			 *
-			 *  @param  string	$urlaction          Url post
-			 *  @param  string	$urlobject          Url of the link under the search box
-			 *  @param  string	$title              Title search area
-			 *  @param  string	$htmlmorecss        Add more css
-			 *  @param  string	$htmlinputname      Field Name input form
-			 *  @param	string	$accesskey			Accesskey
-			 *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
-			 *  @param	string	$img				Image to use
-			 *  @param	string	$showtitlebefore	Show title before input text instead of into placeholder. This can be set when output is dedicated for text browsers.
-			 *  @param	string	$autofocus			Set autofocus on field
-			 *  @return	string
-			 */
+/**
+ *  Show a search area.
+ *  Used when the javascript quick search is not used.
+ *
+ *  @param  string	$urlaction          Url post
+ *  @param  string	$urlobject          Url of the link under the search box
+ *  @param  string	$title              Title search area
+ *  @param  string	$htmlmorecss        Add more css
+ *  @param  string	$htmlinputname      Field Name input form
+ *  @param	string	$accesskey			Accesskey
+ *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
+ *  @param	string	$img				Image to use
+ *  @param	string	$showtitlebefore	Show title before input text instead of into placeholder. This can be set when output is dedicated for text browsers.
+ *  @param	string	$autofocus			Set autofocus on field
+ *  @return	string
+ */
 function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey = '', $prefhtmlinputname = '', $img = '', $showtitlebefore = 0, $autofocus = 0)
 {
-	global $conf, $langs, $user;
+	global $langs, $user;
 
 	$ret = '';
 	$ret .= '<form action="'.$urlaction.'" method="post" class="searchform nowraponall tagtr">';
