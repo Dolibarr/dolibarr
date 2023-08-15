@@ -118,13 +118,13 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -160,21 +160,21 @@ $arrayfields = array(
 	't.description'=>array('label'=>"Description", 'checked'=>0, 'position'=>80),
 	't.dateo'=>array('label'=>"DateStart", 'checked'=>1, 'position'=>100),
 	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>101),
-	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1),
-	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>0, 'csslist'=>'tdoverflowmax125'),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'csslist'=>'tdoverflowmax125'),
-	'p.fk_statut'=>array('label'=>"ProjectStatus", 'checked'=>1),
-	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>102),
-	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>103),
-	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>104),
-	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>105),
-	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>106),
-	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>107),
-	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>110),
-	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>151),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'position'=>152),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'csslist'=>'tdoverflowmax125', 'position'=>200),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>0, 'csslist'=>'tdoverflowmax125', 'position'=>201),
+	'p.fk_statut'=>array('label'=>"ProjectStatus", 'checked'=>1, 'position'=>205),
+	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>302),
+	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>303),
+	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>304),
+	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>305),
+	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>306),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>307),
+	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>310),
+	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>311),
 	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>501),
 	//'t.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -1303,12 +1303,12 @@ while ($i < $imaxinloop) {
 			}
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax125">';
+				$name_alias = '';
 				if ($obj->socid) {
-					print $socstatic->name_alias;
-				} else {
-					print '&nbsp;';
+					$name_alias = $socstatic->name_alias;
 				}
+				print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($name_alias).'">';
+				print dol_escape_htmltag($name_alias);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1600,7 +1600,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
-				print (!empty($totalarray['val'][$totalarray['pos'][$i]])?convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin'):0);
+				print (!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 			} else {
 				print price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0);
 			}
