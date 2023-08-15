@@ -3739,8 +3739,8 @@ class Commande extends CommonOrder
 
 	/**
 	 * getTooltipContentArray
+	 *
 	 * @param array $params params to construct tooltip data
-	 * @since v18
 	 * @return array
 	 */
 	public function getTooltipContentArray($params)
