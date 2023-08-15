@@ -1486,13 +1486,13 @@ if (!function_exists("llxHeader")) {
 }
 
 
-			/**
-			 *  Show HTTP header. Called by top_htmlhead().
-			 *
-			 *  @param  string  $contenttype    Content type. For example, 'text/html'
-			 *  @param	int		$forcenocache	Force disabling of cache for the page
-			 *  @return	void
-			 */
+/**
+ *  Show HTTP header. Called by top_htmlhead().
+ *
+ *  @param  string  $contenttype    Content type. For example, 'text/html'
+ *  @param	int		$forcenocache	Force disabling of cache for the page
+ *  @return	void
+ */
 function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 {
 	global $db, $conf, $hookmanager;
@@ -1609,21 +1609,21 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 	//header("anti-csrf-token: ".newToken());
 }
 
-			/**
-			 * Ouput html header of a page. It calls also top_httphead()
-			 * This code is also duplicated into security2.lib.php::dol_loginfunction
-			 *
-			 * @param 	string 	$head			 Optionnal head lines
-			 * @param 	string 	$title			 HTML title
-			 * @param 	int    	$disablejs		 Disable js output
-			 * @param 	int    	$disablehead	 Disable head output
-			 * @param 	array  	$arrayofjs		 Array of complementary js files
-			 * @param 	array  	$arrayofcss		 Array of complementary css files
-			 * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
-			 * @param   int     $disablenofollow Disable nofollow tag for meta robots
-			 * @param   int     $disablenoindex  Disable noindex tag for meta robots
-			 * @return	void
-			 */
+/**
+ * Ouput html header of a page. It calls also top_httphead()
+ * This code is also duplicated into security2.lib.php::dol_loginfunction
+ *
+ * @param 	string 	$head			 Optionnal head lines
+ * @param 	string 	$title			 HTML title
+ * @param 	int    	$disablejs		 Disable js output
+ * @param 	int    	$disablehead	 Disable head output
+ * @param 	array  	$arrayofjs		 Array of complementary js files
+ * @param 	array  	$arrayofcss		 Array of complementary css files
+ * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
+ * @param   int     $disablenofollow Disable nofollow tag for meta robots
+ * @param   int     $disablenoindex  Disable noindex tag for meta robots
+ * @return	void
+ */
 function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
 {
 	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
@@ -2019,22 +2019,22 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 }
 
 
-			/**
-			 *  Show an HTML header + a BODY + The top menu bar
-			 *
-			 *  @param      string	$head    			Lines in the HEAD
-			 *  @param      string	$title   			Title of web page
-			 *  @param      string	$target  			Target to use in menu links (Example: '' or '_top')
-			 *	@param		int		$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
-			 *	@param		int		$disablehead		Do not output head section
-			 *	@param		array	$arrayofjs			Array of js files to add in header
-			 *	@param		array	$arrayofcss			Array of css files to add in header
-			 *  @param		string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
-			 *  @param      string	$helppagename    	Name of wiki page for help ('' by default).
-			 * 				     		                Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
-			 * 						                    For other external page: http://server/url
-			 *  @return		void
-			 */
+/**
+ *  Show an HTML header + a BODY + The top menu bar
+ *
+ *  @param      string	$head    			Lines in the HEAD
+ *  @param      string	$title   			Title of web page
+ *  @param      string	$target  			Target to use in menu links (Example: '' or '_top')
+ *	@param		int		$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		int		$disablehead		Do not output head section
+ *	@param		array	$arrayofjs			Array of js files to add in header
+ *	@param		array	$arrayofcss			Array of css files to add in header
+ *  @param		string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ *  @param      string	$helppagename    	Name of wiki page for help ('' by default).
+ * 				     		                Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ * 						                    For other external page: http://server/url
+ *  @return		void
+ */
 function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $helppagename = '')
 {
 	global $user, $conf, $langs, $db;
@@ -2272,13 +2272,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 }
 
 
-			/**
-			 * Build the tooltip on user login
-			 *
-			 * @param	int			$hideloginname		Hide login name. Show only the image.
-			 * @param	string		$urllogout			URL for logout (Will use DOL_URL_ROOT.'/user/logout.php?token=...' if empty)
-			 * @return  string                  		HTML content
-			 */
+/**
+ * Build the tooltip on user login
+ *
+ * @param	int			$hideloginname		Hide login name. Show only the image.
+ * @param	string		$urllogout			URL for logout (Will use DOL_URL_ROOT.'/user/logout.php?token=...' if empty)
+ * @return  string                  		HTML content
+ */
 function top_menu_user($hideloginname = 0, $urllogout = '')
 {
 	global $langs, $conf, $db, $hookmanager, $user, $mysoc;
@@ -2556,11 +2556,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	return $btnUser;
 }
 
-			/**
-			 * Build the tooltip on top menu quick add
-			 *
-			 * @return  string                  HTML content
-			 */
+/**
+ * Build the tooltip on top menu quick add
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_quickadd()
 {
 	global $conf, $langs;
@@ -2617,11 +2617,11 @@ function top_menu_quickadd()
 	return $html;
 }
 
-			/**
-			 * Generate list of quickadd items
-			 *
-			 * @return string HTML output
-			 */
+/**
+ * Generate list of quickadd items
+ *
+ * @return string HTML output
+ */
 function printDropdownQuickadd()
 {
 	global $conf, $user, $langs, $hookmanager;
@@ -2796,11 +2796,11 @@ function printDropdownQuickadd()
 	return $dropDownQuickAddHtml;
 }
 
-			/**
-			 * Build the tooltip on top menu bookmark
-			 *
-			 * @return  string                  HTML content
-			 */
+/**
+ * Build the tooltip on top menu bookmark
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_bookmark()
 {
 	global $langs, $conf, $db, $user;
