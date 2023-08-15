@@ -845,7 +845,9 @@ if (!defined('NOLOGIN')) {
 						$dol_dst = 1;
 					}
 				}
-				//print $datefirst.'-'.$datesecond.'-'.$datenow.'-'.$dol_tz.'-'.$dol_tzstring.'-'.$dol_dst; exit;
+				$dol_screenheight = empty($_POST["screenheight"]) ? (empty($_SESSION["dol_screenheight"]) ? '' : $_SESSION["dol_screenheight"]) : $_POST["screenheight"];
+				$dol_screenwidth = empty($_POST["screenwidth"]) ? (empty($_SESSION["dol_screenwidth"]) ? '' : $_SESSION["dol_screenwidth"]) : $_POST["screenwidth"];
+				//print $datefirst.'-'.$datesecond.'-'.$datenow.'-'.$dol_tz.'-'.$dol_tzstring.'-'.$dol_dst.'-'.sdol_screenheight.'-'.sdol_screenwidth; exit;
 			}
 
 			if (!$login) {
