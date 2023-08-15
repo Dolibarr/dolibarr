@@ -458,6 +458,8 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
+$arrayofmassactions = array();
+
 $moreforfilter= '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
