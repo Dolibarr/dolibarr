@@ -493,7 +493,7 @@ if ($result && $action == "dl" && !$error) {
 		$log .= ','.$langs->transnoentitiesnoconv("TotalVAT");
 		$log .= ','.$langs->transcountrynoentities("TotalLT1", $mysoc->country_code);
 		$log .= ','.$langs->transcountrynoentities("TotalLT2", $mysoc->country_code);
-		$log .= ','.$langs->transnoentitiesnoconv("Revenuestamp");
+		$log .= ','.$langs->transnoentitiesnoconv("RevenueStamp");
 		$log .= ','.$langs->transnoentitiesnoconv("Paid");
 		$log .= ','.$langs->transnoentitiesnoconv("Document");
 		$log .= ','.$langs->transnoentitiesnoconv("ItemID");
@@ -856,6 +856,12 @@ if (!empty($date_start) && !empty($date_stop)) {
 			// Total INCT
 			print '<td align="right"><span class="amount">';
 			$tooltip = $langs->trans("TotalVAT").' : '.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'));
+			if (!empty($data['amount_localtax1'])) {
+				$tooltip .= '<br>'.$langs->transcountrynoentities("TotalLT1", $mysoc->country_code).' : '.price(price2num($data['sens'] ? $data['amount_localtax1'] : -$data['amount_localtax1'], 'MT'));
+			}
+			if (!empty($data['amount_localtax2'])) {
+				$tooltip .= '<br>'.$langs->transcountrynoentities("TotalLT2", $mysoc->country_code).' : '.price(price2num($data['sens'] ? $data['amount_localtax2'] : -$data['amount_localtax2'], 'MT'));
+			}
 			if (!empty($data['amount_revenuestamp'])) {
 				$tooltip .= '<br>'.$langs->trans("RevenueStamp").' : '.price(price2num($data['sens'] ? $data['amount_revenuestamp'] : -$data['amount_revenuestamp'], 'MT'));
 			}
