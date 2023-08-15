@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - companies
+NewProspect = New prospect
+ContactUsDesc= This form allows you to record your subscription as a new prospect of the foundation.
 ErrorCompanyNameAlreadyExists=Company name %s already exists. Choose another one.
 ErrorSetACountryFirst=Set the country first
 SelectThirdParty=Select a third party
