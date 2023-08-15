@@ -234,16 +234,17 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->client = GETPOST('client', 'int') ? GETPOST('client', 'int') : $societe->client;
 
-		$objectsoc->address	= GETPOST('address', 'alphanohtml');
+		$societe->address	= GETPOST('address', 'alphanohtml');
 
-		$objectsoc->country_id				= GETPOST('country_id', 'int');
+		$societe->country_id				= GETPOST('country_id', 'int');
 
-		$objectsoc->phone					= GETPOST('phone', 'alpha');
+		$societe->phone					= GETPOST('phone', 'alpha');
 
-		$objectsoc->fax				= GETPOST('fax', 'alpha');
+		$societe->fax				= GETPOST('fax', 'alpha');
 
-		$objectsoc->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+		$societe->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
 
+		$societe->client = 2 ; # our client is a prospect
 
 		$societe->code_client		= -1;
 
