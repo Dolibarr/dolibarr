@@ -343,6 +343,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 					foreach ($order->linkedObjects as $type => $shipping_array) {
 						if ($type == 'shipping' && is_array($shipping_array) && count($shipping_array) > 0) {
+							/** @var Expedition[] $shipping_array */
 							foreach ($shipping_array as $shipping) {
 								if ($shipping->statut <= 0) {
 									continue;
