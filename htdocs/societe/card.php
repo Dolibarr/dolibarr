@@ -120,7 +120,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $socialnetworks = getArrayOfSocialNetworks();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartycard', 'globalcard'));
+$hookmanager->initHooks(array('thirdpartycard', 'globalcard', 'customizeprospectcustomerfield'));
 
 if ($socid > 0) {
 	$object->fetch($socid);
@@ -1500,7 +1500,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		$selected = (GETPOSTISSET('client') ?GETPOST('client', 'int') : $object->client);
-		print $formcompany->selectProspectCustomerType($selected);
+		$reshook = $hookmanager->executeHooks('prospectcustomerfield');
+		if (empty($reshook)) {
+			print $formcompany->selectProspectCustomerType($selected);
+		}
 		print '</td>';
 
 		if ($conf->browser->layout == 'phone') {
@@ -2215,7 +2218,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Prospect/Customer
 			print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $formcompany->selectProspectCustomerType($object->client);
+			$reshook = $hookmanager->executeHooks('prospectcustomerfield');
+			if (empty($reshook)) {
+				print $formcompany->selectProspectCustomerType($object->client);
+			}
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
