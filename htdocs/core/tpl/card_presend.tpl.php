@@ -24,7 +24,7 @@
  *
  * $trackid must be defined
  * $modelmail
- * $defaulttopic
+ * $defaulttopic and $defaulttopiclang
  * $diroutput
  * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  */
@@ -77,6 +77,9 @@ if ($action == 'presend') {
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
+		if (!empty($defaulttopiclang)) {
+			$outputlangs->loadLangs(array($defaulttopiclang));
+		}
 	}
 
 	$topicmail = '';
