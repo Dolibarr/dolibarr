@@ -1289,6 +1289,7 @@ class FactureRec extends CommonInvoice
 		$parameters = array(
 			'restrictioninvoiceid' => $restrictioninvoiceid,
 			'forcevalidation' => $forcevalidation,
+            'element' => (new FactureRec($this->db))->element
 		);
 		$reshook = $hookmanager->executeHooks('beforeCreationOfRecurringInvoices', $parameters, $sql); // note that $sql might be modified by hooks
 
