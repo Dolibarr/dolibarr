@@ -772,13 +772,14 @@ abstract class CommonInvoice extends CommonObject
 	 *	Create a withdrawal request for a direct debit order or a credit transfer order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
-	 *	@param      User	$fuser      	User asking the direct debit transfer
-	 *  @param		float	$amount			Amount we request direct debit or credit transfer for. If 0, the remain to pay will be calculated and used.
-	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
-	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@param      User	$fuser      				User asking the direct debit transfer
+	 *  @param		float	$amount						Amount we request direct debit for
+	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
+	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
+	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *	@return     int         						<0 if KO, 0 if a request already exists, >0 if OK
 	 */
-	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture')
+	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -787,12 +788,12 @@ abstract class CommonInvoice extends CommonObject
 
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
-		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0) {
+		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
 			$bac->fetch(0, $this->socid);
 
-			$sql = "SELECT count(*)";
+			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			if ($type == 'bank-transfer') {
 				$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
@@ -800,13 +801,16 @@ abstract class CommonInvoice extends CommonObject
 				$sql .= " WHERE fk_facture = ".((int) $this->id);
 			}
 			$sql .= " AND type = 'ban'"; // To exclude record done for some online payments
-			$sql .= " AND traite = 0";
+			if (empty($checkduplicateamongall)) {
+				$sql .= " AND traite = 0";
+			}
 
 			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$row = $this->db->fetch_row($resql);
-				if ($row[0] == 0) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb == 0) {	// If no request found yet
 					$now = dol_now();
 
 					$totalpaid = $this->getSommePaiement();
@@ -870,17 +874,17 @@ abstract class CommonInvoice extends CommonObject
 					return 1;
 				} else {
 					$this->error = "A request already exists";
-					dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
+					dol_syslog(get_class($this).'::demandeprelevement Can t create a request to generate a direct debit, a request already exists.');
 					return 0;
 				}
 			} else {
 				$this->error = $this->db->error();
-				dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
+				dol_syslog(get_class($this).'::demandeprelevement Error -2');
 				return -2;
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";
-			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
+			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->status, $this->paye, $this->mode_reglement_id");
 			return -3;
 		}
 	}
@@ -927,7 +931,7 @@ abstract class CommonInvoice extends CommonObject
 
 		dol_syslog(get_class($this)."::makeStripeSepaRequest start", LOG_DEBUG);
 
-		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0) {
+		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			// Get the default payment mode for BAN payment of the third party
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);	// table societe_rib
@@ -939,7 +943,7 @@ abstract class CommonInvoice extends CommonObject
 				return -1;
 			}
 
-			// Load the pending payment requests to process
+			// Load the pending payment request to process (with rowid=$did)
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_prelevement_bons";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " WHERE rowid = ".((int) $did);
@@ -1022,7 +1026,7 @@ abstract class CommonInvoice extends CommonObject
 					$bon = new BonPrelevement($this->db);
 					if (!$error) {
 						if (empty($obj->fk_prelevement_bons)) {
-							// This create record into llx_prelevment_bons and update link with llx_prelevement_demande
+							// This creates a record into llx_prelevement_bons and updates link with llx_prelevement_demande
 							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', '', 0, $type, $did, $fk_bank_account);
 							if ($nbinvoices <= 0) {
 								$error++;

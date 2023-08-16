@@ -1974,6 +1974,9 @@ class Facture extends CommonInvoice
 			if (!empty($this->total_tva)) {
 				$datas['amountvat'] = '<br><b>'.$langs->trans('AmountVAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 			}
+			if (!empty($this->revenuestamp)) {
+				$datas['amountrevenustamp'] = '<br><b>'.$langs->trans('RevenueStamp').':</b> '.price($this->revenuestamp, 0, $langs, 0, -1, -1, $conf->currency);
+			}
 			if (!empty($this->total_localtax1) && $this->total_localtax1 != 0) {
 				// We keep test != 0 because $this->total_localtax1 can be '0.00000000'
 				$datas['amountlt1'] = '<br><b>'.$langs->transcountry('AmountLT1', $mysoc->country_code).':</b> '.price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
@@ -3126,6 +3129,8 @@ class Facture extends CommonInvoice
 		if ($close_note) {
 			$sql .= ", close_note='".$this->db->escape($close_note)."'";
 		}
+		$sql .= ', fk_user_closing = '.((int) $user->id);
+		$sql .= ", date_closing = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);

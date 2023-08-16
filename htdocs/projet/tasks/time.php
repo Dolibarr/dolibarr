@@ -67,8 +67,6 @@ $tab        = GETPOST('tab', 'aZ09');
 $search_day = GETPOST('search_day', 'int');
 $search_month = GETPOST('search_month', 'int');
 $search_year = GETPOST('search_year', 'int');
-$search_datehour = '';
-$search_datewithhour = '';
 $search_date_startday = GETPOST('search_date_startday', 'int');
 $search_date_startmonth = GETPOST('search_date_startmonth', 'int');
 $search_date_startyear = GETPOST('search_date_startyear', 'int');
@@ -173,14 +171,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_day = '';
 	$search_month = '';
 	$search_year = '';
-	$search_date = '';
-	$search_datehour = '';
-	$search_datewithhour = '';
 	$search_note = '';
 	$search_duration = '';
 	$search_value = '';
-	$search_date_creation = '';
-	$search_date_update = '';
 	$search_date_startday = '';
 	$search_date_startmonth = '';
 	$search_date_startyear = '';
@@ -257,7 +250,9 @@ if ($action == 'addtimespent' && $user->rights->projet->time) {
 				}
 				$object->timespent_fk_user = GETPOST("userid", 'int');
 				$object->timespent_fk_product = GETPOST("fk_product", 'int');
+
 				$result = $object->addTimeSpent($user);
+
 				if ($result >= 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				} else {

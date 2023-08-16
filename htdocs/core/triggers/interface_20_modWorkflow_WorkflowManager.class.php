@@ -344,6 +344,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					foreach ($order->linkedObjects as $type => $shipping_array) {
 						if ($type == 'shipping' && is_array($shipping_array) && count($shipping_array) > 0) {
 							foreach ($shipping_array as $shipping) {
+								if ($shipping->statut <= 0) {
+									continue;
+								}
 								if (is_array($shipping->lines) && count($shipping->lines) > 0) {
 									foreach ($shipping->lines as $shippingline) {
 										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;

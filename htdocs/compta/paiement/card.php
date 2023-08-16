@@ -421,7 +421,7 @@ print '</td></tr>';
 
 if (!empty($object->ext_payment_id)) {
 	// External payment ID
-	print '<tr><td class="tdtop">'.$langs->trans("StripeCustomerId").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td>';
 	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
 		$tmp1 = explode('@', $object->ext_payment_id);
 		if (!empty($tmp1[1])) {

@@ -144,7 +144,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 			return -1;
 		}
 
-		$date = time();
+		$date = $shipment->date_creation;
 		$yymm = strftime("%y%m", $date);
 
 		if ($max >= (pow(10, 4) - 1)) {

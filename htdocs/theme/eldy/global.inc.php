@@ -5292,7 +5292,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {
@@ -8014,6 +8014,7 @@ table.jPicker {
 	}
 }
 
+
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {
@@ -8055,3 +8056,6 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+
+
+

@@ -266,7 +266,8 @@ class Translate
 			$file_lang = $searchdir . ($modulename ? '/' . $modulename : '') . "/langs/" . $langofdir . "/" . $newdomain . ".lang";
 			$file_lang_osencoded = dol_osencode($file_lang);
 
-			$filelangexists = is_file($file_lang_osencoded);
+			//$filelangexists = is_file($file_lang_osencoded);
+			$filelangexists = @is_file($file_lang_osencoded);	// avoid [php:warn]
 
 			//dol_syslog(get_class($this).'::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' domain='.$domain.' newdomain='.$newdomain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
 			//print 'Try to read for alt='.$alt.' langofdir='.$langofdir.' domain='.$domain.' newdomain='.$newdomain.' modulename='.$modulename.' this->_tab_loaded[newdomain]='.$this->_tab_loaded[$newdomain].' file_lang='.$file_lang." => filelangexists=".$filelangexists."\n";

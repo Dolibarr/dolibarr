@@ -2130,7 +2130,7 @@ if ($action == 'create') {
 
 				// Send
 				if (empty($user->socid)) {
-					if ($object->statut == 1) {
+					if ($object->status == $object::STATUS_VALIDATED) {
 						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->contrat->creer)) {
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
@@ -2139,7 +2139,7 @@ if ($action == 'create') {
 					}
 				}
 
-				if ($object->statut == 0 && $nbofservices) {
+				if ($object->status == $object::STATUS_DRAFT && $nbofservices) {
 					if ($user->rights->contrat->creer) {
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
 					} else {
@@ -2147,7 +2147,7 @@ if ($action == 'create') {
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', '#', '', false, $params);
 					}
 				}
-				if ($object->statut == 1) {
+				if ($object->status == $object::STATUS_VALIDATED) {
 					if ($user->rights->contrat->creer) {
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 					} else {
@@ -2156,24 +2156,26 @@ if ($action == 'create') {
 					}
 				}
 
-				if (isModEnabled('commande') && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices) {
-					$langs->load("orders");
-					if ($user->hasRight('commande', 'creer')) {
-						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
-					} else {
-						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', '#', '', false, $params);
-					}
+				// Create ... buttons
+				$arrayofcreatebutton = array();
+				if (isModEnabled('commande') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
+					$arrayofcreatebutton[] = array(
+						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('CreateOrder'),
+						'lang' => 'orders',
+						'perm' => $user->hasRight('commande', 'creer')
+					);
 				}
-
-				if (isModEnabled('facture') && $object->statut > 0) {
-					$langs->load("bills");
-					if ($user->hasRight('facture', 'creer')) {
-						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
-					} else {
-						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', '#', '', false, $params);
-					}
+				if (isModEnabled('facture') && $object->status > 0) {
+					$arrayofcreatebutton[] = array(
+						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('CreateBill'),
+						'lang' => 'orders',
+						'perm' => $user->hasRight('facture', 'creer')
+					);
+				}
+				if (count($arrayofcreatebutton)) {
+					print dolGetButtonAction($langs->trans("Create"), '', 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {

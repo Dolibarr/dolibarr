@@ -22,14 +22,14 @@ PartnershipDescriptionLong= Module Partnership management
 Partnership=合伙
 Partnerships=Partnerships
 AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
+CancelPartnershipForExpiredMembers=合作伙伴：取消订阅已过期会员的合作伙伴关系
 PartnershipCheckBacklink=Partnership: Check referring backlink
 
 #
 # Menu
 #
 NewPartnership=New Partnership
-NewPartnershipbyWeb= Your partnership was added successfully.
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=List of partnership
 
 #
@@ -38,7 +38,7 @@ ListOfPartnerships=List of partnership
 PartnershipSetup=Partnership setup
 PartnershipAbout=About Partnership
 PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
+partnershipforthirdpartyormember=合作伙伴状态必须设置为“合作方”或“会员”
 PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
@@ -51,7 +51,7 @@ PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website 
 #
 DeletePartnership=Delete a partnership
 PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+PartnershipDedicatedToThisMember=致力于该会员的合作伙伴关系
 DatePartnershipStart=开始日期
 DatePartnershipEnd=结束日期
 ReasonDecline=Decline reason
@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Decline reason
 
 NewPartnershipRequest=New partnership request
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
 

@@ -74,6 +74,7 @@ $manifest->name = constant('DOL_APPLICATION_TITLE');
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$manifest->name = $conf->global->MAIN_APPLICATION_TITLE;
 }
+$manifest->short_name = $manifest->name;
 
 
 $manifest->theme_color = !empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR) ? $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR : '#F05F40';
@@ -81,6 +82,8 @@ $manifest->background_color = !empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR
 $manifest->display = "standalone";
 $manifest->splash_pages = null;
 $manifest->icons = array();
+$manifest->start_url = constant('DOL_MAIN_URL_ROOT');
+$manifest->id = constant('DOL_MAIN_URL_ROOT');
 
 if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 	$icon = new stdClass();

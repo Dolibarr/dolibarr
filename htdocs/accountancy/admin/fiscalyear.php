@@ -49,6 +49,18 @@ if (!$sortorder) {
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta"));
 
+$error = 0;
+$errors = array();
+
+// List of status
+static $tmpstatut2label = array(
+		'0' => 'OpenFiscalYear',
+		'1' => 'CloseFiscalYear'
+);
+
+$object = new Fiscalyear($db);
+
+
 // Security check
 if ($user->socid > 0) {
 	accessforbidden();
@@ -56,24 +68,6 @@ if ($user->socid > 0) {
 if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 }
-
-$error = 0;
-
-// List of status
-static $tmpstatut2label = array(
-		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear'
-);
-$statut2label = array(
-		''
-);
-foreach ($tmpstatut2label as $key => $val) {
-	$statut2label[$key] = $langs->trans($val);
-}
-
-$errors = array();
-
-$object = new Fiscalyear($db);
 
 
 /*
@@ -165,7 +159,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print '</table>';
 	print '</div>';

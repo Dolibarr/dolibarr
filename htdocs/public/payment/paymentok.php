@@ -1006,7 +1006,9 @@ if ($ispaymentok) {
 
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
 									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
@@ -1129,7 +1131,8 @@ if ($ispaymentok) {
 					}
 
 					if ($bankaccountid > 0) {
-						$result = $paiement->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', $bankaccountid, '', '');
+						$label = '(DonationPayment)';
+						$result = $paiement->addPaymentToBank($user, 'payment_donation', $label, $bankaccountid, '', '');
 						if ($result < 0) {
 							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
@@ -1663,7 +1666,9 @@ if ($ispaymentok) {
 
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
 									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
