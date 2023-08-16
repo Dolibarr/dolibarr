@@ -82,6 +82,8 @@ if ($type == 'bank-transfer') {
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {

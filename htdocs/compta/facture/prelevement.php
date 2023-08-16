@@ -833,7 +833,7 @@ if ($object->id > 0) {
 		print '<td>&nbsp;</td>';
 	}
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
-	print '<td class="center">'.$langs->trans("User").'</td>';
+	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 	if ($type == 'bank-transfer') {
@@ -899,8 +899,8 @@ if ($object->id > 0) {
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
 
 			// User
-			print '<td align="tdoverflowmax125">';
-			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
+			print '<td class="tdoverflowmax125">';
+			print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
 			// Amount
