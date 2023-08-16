@@ -180,3 +180,4 @@ CRUDCreateWrite=Créer ou mettre à jour
 FailedToAddCodeIntoDescriptor=Échec de l'ajout de code dans le descripteur. Vérifiez que le commentaire de chaîne "%s" est toujours présent dans le fichier.
 DictionariesCreated = Le dictionnaire <b>%s</b> a été créé avec succès
 DictionaryDeleted=Le dictionnaire <b>%s</b> a été supprimé avec succès
+PropertyModuleUpdated=Propriété <b>%s</b> a été modifiée avec succès
