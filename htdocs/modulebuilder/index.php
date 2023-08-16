@@ -812,6 +812,12 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		writePermsInAsciiDoc($moduledescriptorfile, $destfile);
 
+		// add api urls if file exist
+		if (file_exists($dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php')) {
+			$apiFile = $dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php';
+			writeApiUrlsInDoc($apiFile, $destfile);
+		}
+
 		// Delete old documentation files
 		$FILENAMEDOC = $modulelowercase.'.html';
 		$FILENAMEDOCPDF = $modulelowercase.'.pdf';
