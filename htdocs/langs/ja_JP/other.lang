@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = 「%s」を実行してもよいか？
 ConfirmBtnCommonTitle = アクションを確定する
 CloseDialog = 閉じる
 Autofill = オートフィル
+OrPasteAnURL=または URL を貼り付けます
 
 # externalsite
 ExternalSiteSetup=外部ウェブサイトへのリンクを設定

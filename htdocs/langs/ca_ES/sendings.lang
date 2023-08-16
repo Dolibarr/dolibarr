@@ -75,7 +75,7 @@ SumOfProductWeights=Suma del pes dels productes
 DetailWarehouseNumber= Detalls del magatzem
 DetailWarehouseFormat= Alm.:%s (Quant. : %d)
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Distribució de l'enviament
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=No hi ha enviament per a la línia %s ja que s'han trobat massa combinacions de codi de magatzem, producte i lot (%s).
+ErrorNoCombinationBatchcode=No hi ha enviament per a la línia %s ja que no s'ha trobat cap combinació de magatzem, producte i codi de lot.
