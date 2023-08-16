@@ -84,6 +84,7 @@ if ($type == 'bank-transfer') {
  * View
  */
 
+$form = new Form($db);
 $invoicetmp = new Facture($db);
 $thirdpartytmp = new Societe($db);
 
