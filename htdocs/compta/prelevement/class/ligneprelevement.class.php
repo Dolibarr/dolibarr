@@ -43,6 +43,12 @@ class LignePrelevement
 
 	public $statuts = array();
 
+	const STATUS_DRAFT = 0;
+	const STATUS_NOT_USED = 1;
+	const STATUS_CREDITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
+	const STATUS_DEBITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
+	const STATUS_REJECTED = 3;
+
 
 	/**
 	 *  Constructor
