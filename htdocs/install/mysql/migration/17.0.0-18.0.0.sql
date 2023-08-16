@@ -46,6 +46,9 @@ ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
 
 ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
 
+DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year');
+
 
 -- v18
 
@@ -106,6 +109,12 @@ ALTER TABLE llx_bordereau_cheque ADD COLUMN type VARCHAR(6) DEFAULT 'CHQ';
 
 -- Element time
 ALTER TABLE llx_projet_task_time RENAME TO llx_element_time;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+
 ALTER TABLE llx_element_time CHANGE COLUMN fk_task fk_element integer NOT NULL;
 ALTER TABLE llx_element_time CHANGE COLUMN task_date element_date date;
 ALTER TABLE llx_element_time CHANGE COLUMN task_datehour element_datehour datetime;

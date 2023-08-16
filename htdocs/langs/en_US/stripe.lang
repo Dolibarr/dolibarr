@@ -51,6 +51,7 @@ StripeAccount=Stripe account
 StripeChargeList=List of Stripe charges
 StripeTransactionList=List of Stripe transactions
 StripeCustomerId=Stripe customer id
+StripePaymentId=Stripe payment id
 StripePaymentModes=Stripe payment modes
 LocalID=Local ID
 StripeID=Stripe ID

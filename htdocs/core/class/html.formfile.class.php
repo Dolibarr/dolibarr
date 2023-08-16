@@ -500,7 +500,7 @@ class FormFile
 					$modellist = $genallowed;
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
-					$modellist = ModelePDFExpedition::liste_modeles($this->db);
+					$modellist = ModelePdfExpedition::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'reception') {
 				if (is_array($genallowed)) {

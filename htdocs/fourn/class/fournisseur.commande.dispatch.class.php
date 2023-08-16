@@ -514,7 +514,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	{
 		$error = 0;
 
-		$object = new Commandefournisseurdispatch($this->db);
+		$object = new CommandeFournisseurDispatch($this->db);
 
 		$this->db->begin();
 

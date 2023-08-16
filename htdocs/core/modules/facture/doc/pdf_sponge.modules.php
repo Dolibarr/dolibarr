@@ -77,42 +77,6 @@ class pdf_sponge extends ModelePDFFactures
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-
-	/**
 	 * @var int heightforinfotot
 	 */
 	public $heightforinfotot;
@@ -136,12 +100,6 @@ class pdf_sponge extends ModelePDFFactures
 	 * @var int tab_top_newpage
 	 */
 	public $tab_top_newpage;
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
 
 	/**
 	 * @var bool Situation invoice type
@@ -658,7 +616,7 @@ class pdf_sponge extends ModelePDFFactures
 
 							// Add footer
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-							$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs));
+							$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($i, $object, $outputlangs));
 
 							$i++;
 						}
@@ -1053,7 +1011,7 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 				// Pagefoot
-				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pageposbefore, $object, $langs));
+				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs));
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();
 				}
@@ -1591,7 +1549,7 @@ class pdf_sponge extends ModelePDFFactures
 				$facSign = $object->total_ht >= 0 ? '+' : ''; // management of a particular customer case
 			}
 
-			if ($fac->type === facture::TYPE_CREDIT_NOTE) {
+			if ($fac->type === Facture::TYPE_CREDIT_NOTE) {
 				$facSign = '-'; // les avoirs
 			}
 

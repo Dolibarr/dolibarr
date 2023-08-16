@@ -162,7 +162,8 @@ if (empty($reshook)) {
 			$object->fk_accountancy_journal = $fk_accountancy_journal;
 		}
 
-		$object->solde = price2num(GETPOST("solde"));
+		$object->solde = price2num(GETPOST("solde", 'alpha'));
+		$object->balance = price2num(GETPOST("solde", 'alpha'));
 		$object->date_solde = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST('reday', 'int'), GETPOST("reyear", 'int'));
 
 		$object->currency_code = trim(GETPOST("account_currency_code"));
@@ -202,8 +203,6 @@ if (empty($reshook)) {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-				$_GET["id"] = $id; // Force chargement page en mode visu
-
 				$action = '';
 			} else {
 				$error++;
@@ -218,7 +217,7 @@ if (empty($reshook)) {
 
 			$db->commit();
 
-			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = $backtopage ? str_replace('__ID__', $object->id, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 
 			if (empty($noback)) {

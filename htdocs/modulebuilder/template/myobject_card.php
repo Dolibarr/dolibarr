@@ -227,8 +227,13 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("MyObject");
+$title = $langs->trans("MyObject")." - ".$langs->trans('Card');
+//$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewObject");
+}
 $help_url = '';
+
 llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code

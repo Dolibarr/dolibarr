@@ -695,20 +695,6 @@ if (empty($reshook)) {
 
 		$tva_tx = GETPOST('tva_tx', 'alpha');
 
-		// Prepare a price equivalent for minimum price check
-		$pu_equivalent = $pu_ht;
-		$pu_equivalent_ttc = $pu_ttc;
-		$currency_tx = $object->multicurrency_tx;
-
-		// Check if we have a foreing currency
-		// If so, we update the pu_equiv as the equivalent price in base currency
-		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-			$pu_equivalent = $pu_ht_devise * $currency_tx;
-		}
-		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
-		}
-
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
 
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
@@ -999,6 +985,20 @@ if (empty($reshook)) {
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we muste keep this value
+
+			// Prepare a price equivalent for minimum price check
+			$pu_equivalent = $pu_ht;
+			$pu_equivalent_ttc = $pu_ttc;
+			$currency_tx = $object->multicurrency_tx;
+
+			// Check if we have a foreing currency
+			// If so, we update the pu_equiv as the equivalent price in base currency
+			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
+				$pu_equivalent = $pu_ht_devise * $currency_tx;
+			}
+			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
+				$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
+			}
 
 			// Local Taxes
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
@@ -1963,7 +1963,7 @@ if ($action == 'create' && $usercancreate) {
 	if (empty($reshook)) {
 		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER) && !empty($soc->id)) {
 			// copy from thirdparty
-			$tpExtrafields = new Extrafields($db);
+			$tpExtrafields = new ExtraFields($db);
 			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
 			if ($soc->fetch_optionals() > 0) {
 				$object->array_options = array_merge($object->array_options, $soc->array_options);

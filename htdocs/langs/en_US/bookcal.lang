@@ -28,7 +28,7 @@ ModuleBookCalDesc = Manage a Calendar to book appointments
 BookCalSetup = BookCal setup
 Settings = Settings
 BookCalSetupPage = BookCal setup page
-BOOKCAL_MYPARAM1 = My param 1
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
 BOOKCAL_MYPARAM1Tooltip = My param 1 tooltip
 BOOKCAL_MYPARAM2=My param 2
 BOOKCAL_MYPARAM2Tooltip=My param 2 tooltip
@@ -52,3 +52,7 @@ MyPageName = My page name
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description
+
+AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking as been saved
+BookingReservationHourAfter=We confirm the reservation of your meeting at the date %s

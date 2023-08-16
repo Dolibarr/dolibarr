@@ -41,12 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_shipment_odt extends ModelePdfExpedition
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -348,7 +342,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->expedition->dir_temp,
@@ -461,6 +455,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 				// Replace tags of object + external modules
 				$tmparray = array_merge($tmparray, $this->get_substitutionarray_shipment($object, $outputlangs));
+				$tmparray = array_merge($tmparray, $this->get_substitutionarray_other($outputlangs));
 
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
@@ -494,7 +489,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					}
 					if ($foundtagforlines) {
 						foreach ($object->lines as $line) {
-							$tmparray = $this->get_substitutionarray_shipment_lines($line, $outputlangs);
+							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);

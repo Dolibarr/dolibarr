@@ -137,7 +137,7 @@ CountryLV=拉脱维亚
 CountryLB=黎巴嫩
 CountryLS=莱索托
 CountryLR=利比里亚
-CountryLY=利比亚
+CountryLY=Libya
 CountryLI=列支敦士登
 CountryLT=立陶宛
 CountryLU=卢森堡
@@ -247,6 +247,7 @@ CountryJE=泽西
 CountryME=黑山
 CountryBL=圣巴泰勒米
 CountryMF=圣马丁
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=夫人
@@ -303,7 +304,7 @@ DemandReasonTypeSRC_CAMP_MAIL=发邮件
 DemandReasonTypeSRC_CAMP_EMAIL=通过电子邮件发送运动
 DemandReasonTypeSRC_CAMP_PHO=电话运动
 DemandReasonTypeSRC_CAMP_FAX=传真运动
-DemandReasonTypeSRC_COMM=商业联系人
+DemandReasonTypeSRC_COMM=商务联系人
 DemandReasonTypeSRC_SHOP=商店联系人
 DemandReasonTypeSRC_WOM=口碑
 DemandReasonTypeSRC_PARTNER=伙伴

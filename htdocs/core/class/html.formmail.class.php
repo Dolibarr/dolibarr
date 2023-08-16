@@ -369,7 +369,7 @@ class FormMail extends Form
 
 		// Required to show preview wof mail attachments
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-		$formfile = new Formfile($this->db);
+		$formfile = new FormFile($this->db);
 
 		if (!is_object($form)) {
 			$form = new Form($this->db);

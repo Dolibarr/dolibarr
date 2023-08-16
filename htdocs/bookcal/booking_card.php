@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       booking_card.php
- *		\ingroup    bookcal
- *		\brief      Page to create/edit/view booking
+ *   \file       htdocs/bookcal/booking_card.php
+ *   \ingroup    bookcal
+ *   \brief      Page to create/edit/view booking
  */
 
 // Load Dolibarr environment

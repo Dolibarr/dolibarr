@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = Sind Sie sicher, dass Sie "%s" möchten?
 ConfirmBtnCommonTitle = Aktion bestätigen
 CloseDialog = schließen
 Autofill = Automatisches Ausfüllen
+OrPasteAnURL=oder Fügen Sie eine URL ein
 
 # externalsite
 ExternalSiteSetup=Konfigurations-Link auf externe Website

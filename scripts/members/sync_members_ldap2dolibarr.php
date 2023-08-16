@@ -98,7 +98,7 @@ if (!isset($argv[2]) || !is_numeric($argv[2])) {
 	exit(-1);
 }
 
-$typeid = $argv[2];
+$typeid = (int) $argv[2];
 foreach ($argv as $key => $val) {
 	if ($val == 'commitiferror') {
 		$forcecommit = 1;
