@@ -1349,7 +1349,7 @@ while ($i < min($num, $limit)) {
 			$objsoc = new Societe($db);
 			$objsoc->fetch($obj->socid);
 			$option_link = 'customer';
-			if ($objsoc->client==0 && $objsoc->fournisseur >0) {
+			if ($objsoc->client == 0 && $objsoc->fournisseur > 0) {
 				$option_link = 'supplier';
 			}
 			print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
