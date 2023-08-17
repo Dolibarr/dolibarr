@@ -1998,7 +1998,8 @@ class Form
 			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " LEFT JOIN ".$this->db->prefix()."usergroup_user as ug";
 				$sql .= " ON ug.fk_user = u.rowid";
-				$sql .= " WHERE ug.entity = ".$conf->entity;
+				if(! empty($force_entity)) $sql .= ' WHERE ug.entity IN (1, '.$force_entity.')';
+				else $sql .= ' WHERE ug.entity IN (1, '.$conf->entity.')';
 			} else {
 				$sql .= " WHERE u.entity IN (0, ".$conf->entity.")";
 			}
