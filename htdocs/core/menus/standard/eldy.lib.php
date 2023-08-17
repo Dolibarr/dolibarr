@@ -130,7 +130,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Companies',
-		'link' => '/societe/index.php?mainmenu=companies&amp;leftmenu=',
+		'link' => '/societe/list.php?mainmenu=companies&amp;leftmenu=',
 		'title' => "ThirdParties",
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
@@ -1200,7 +1200,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 		// Societes
 		if (isModEnabled('societe')) {
 			$langs->load("companies");
-			$newmenu->add("/societe/index.php?leftmenu=thirdparties", $langs->trans("ThirdParty"), 0, $user->hasRight('societe',  'lire'), '', $mainmenu, 'thirdparties', 0, '', '', '', img_picto('', 'company', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/societe/list.php?leftmenu=thirdparties", $langs->trans("ThirdParty"), 0, $user->hasRight('societe',  'lire'), '', $mainmenu, 'thirdparties', 0, '', '', '', img_picto('', 'company', 'class="paddingright pictofixedwidth"'));
 
 			if ($user->hasRight('societe',  'creer')) {
 				$newmenu->add("/societe/card.php?action=create", $langs->trans("MenuNewThirdParty"), 1);
