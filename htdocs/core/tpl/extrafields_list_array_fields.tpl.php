@@ -19,7 +19,7 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 			$extrafieldsobjectprefix = 'ef.';
 		}
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
-			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['list'][$key])) {
+			if(! empty(dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1))) {
 				$arrayfields[$extrafieldsobjectprefix.$key] = array(
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'type'     => $extrafields->attributes[$extrafieldsobjectkey]['type'][$key],
