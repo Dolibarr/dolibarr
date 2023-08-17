@@ -346,6 +346,13 @@ if (empty($reshook)) {
 				}
 			}
 
+			// check qty shipped not greater than ordered
+			if (dolGetGlobalInt("ErrorTooMuchShipped") && $totalqty > $objectsrc->lines[$i]->qty) {
+				setEventMessages($langs->trans("", $i), null, 'errors');
+				$error++;
+				continue;
+			}
+
 			// Extrafields
 			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
 			// Unset extrafield
