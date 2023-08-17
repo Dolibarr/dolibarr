@@ -347,9 +347,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Accounting
 	$tmpentry = array(
-		'enabled'=>(isModEnabled('comptabilite') || isModEnabled('accounting') || isModEnabled('asset') || isModEnabled('intracommreport')),
-		'perms'=>($user->hasRight('compta',  'resultat', 'lire') || $user->hasRight('accounting',  'comptarapport', 'lire') || $user->hasRight('accounting',  'mouvements', 'lire') || $user->hasRight('asset',  'read') || $user->hasRight('intracommreport',  'read')),
-		'module'=>'comptabilite|accounting|asset|intracommreport'
+		'enabled'=> isModEnabled('comptabilite') || isModEnabled('accounting') || isModEnabled('asset') || isModEnabled('intracommreport') || isModEnabled('exportcompta'),
+		'perms'=> $user->hasRight('compta',  'resultat', 'lire') || $user->hasRight('accounting',  'comptarapport', 'lire') || $user->hasRight('accounting',  'mouvements', 'lire') || $user->hasRight('asset',  'read') || $user->hasRight('intracommreport',  'read') || $user->hasRight('exportcompta',  'read'),
+		'module'=>'comptabilite|accounting|asset|intracommreport|exportcompta'
 	);
 	$menu_arr[] = array(
 		'name' => 'Accounting',
