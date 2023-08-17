@@ -125,14 +125,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<table><tr><td>';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->COMPANY_ADDON_PDF_ODT_PATH;
+		$texte .= getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</td>';
 		$texte .= '<td class="center">&nbsp; ';
@@ -174,11 +175,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';

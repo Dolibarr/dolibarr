@@ -753,6 +753,8 @@ class Form
 		} elseif ($type == '1') {
 			$type = 'help';
 		}
+		// Clean parameters
+		$tooltiptrigger = preg_replace('/[^a-z0-9]/i', '', $tooltiptrigger);
 
 		if (preg_match('/onsmartphone$/', $tooltiptrigger) && empty($conf->dol_no_mouse_hover)) {
 			$tooltiptrigger = preg_replace('/^.*onsmartphone$/', '', $tooltiptrigger);
