@@ -36,6 +36,9 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('delay'));
+
 $action = GETPOST('action', 'aZ09');
 if (empty($action)) {
 	$action = 'edit';
@@ -135,6 +138,13 @@ $modules = array(
 		),
 	),
 );
+
+$object = new stdClass();
+$parameters = [];
+$reshook = $hookmanager->executeHooks('addDelay', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if($reshook == 0) {
+	$modules = array_merge($modules, $hookmanager->resArray);
+}
 
 $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
 
