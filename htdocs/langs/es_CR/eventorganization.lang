@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - eventorganization
+ModuleEventOrganizationName =Organización de Eventos
+EventOrganizationConferenceOrBoothMenuLeft =Conferencia o Puesto
+Settings=Configuración
+EventOrganizationConfOrBooth=Conferencia o stand
+ConferenceOrBooth =Conferencia o stand
+ConferenceOrBoothTab =Conferencia o stand
+EmailCompanyForInvoice=E-mail de la empresa (para la factura, si es diferente del e-mail del asistente)

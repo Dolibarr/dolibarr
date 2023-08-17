@@ -647,7 +647,7 @@ class ActionComm extends CommonObject
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
 					foreach ($this->socpeopleassigned as $id => $val) {
-						// Common value with new behavior is to have $val = iduser and $this->socpeopleassigned is an array of iduser => $val.
+						// Common value with new behavior is to have $this->socpeopleassigned an array of idcontact => dummyvalue
 						if (!empty($already_inserted[$id])) {
 							continue;
 						}

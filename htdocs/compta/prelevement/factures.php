@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'suppliers'));
 
 // Get supervariables
 $id = GETPOST('id', 'int');
@@ -84,6 +84,7 @@ if ($type == 'bank-transfer') {
  * View
  */
 
+$form = new Form($db);
 $invoicetmp = new Facture($db);
 $thirdpartytmp = new Societe($db);
 
@@ -230,7 +231,7 @@ if ($object->type != 'bank-transfer') {
 if ($object->id > 0) {
 	$sql .= " AND p.rowid = ".((int) $object->id);
 }
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= $db->order($sortfield, $sortorder);
@@ -311,17 +312,17 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 
-		print "<td>";
+		print '<td class="nowraponall">';
 		print $invoicetmp->getNomUrl(1);
 		print "</td>\n";
 
 		if ($object->type == 'bank-transfer') {
-			print '<td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($invoicetmp->ref_supplier).'">';
 			print dol_escape_htmltag($invoicetmp->ref_supplier);
 			print "</td>\n";
 		}
 
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		print $thirdpartytmp->getNomUrl(1);
 		print "</td>\n";
 
@@ -343,7 +344,7 @@ if ($resql) {
 				print $langs->trans("StatusCredited");
 			}
 		} elseif ($obj->statut == 3) {
-			print '<b>'.$langs->trans("StatusRefused").'</b>';
+			print '<span class="error">'.$langs->trans("StatusRefused").'</span>';
 		}
 
 		print "</td>";

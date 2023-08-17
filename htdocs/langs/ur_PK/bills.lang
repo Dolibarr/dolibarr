@@ -164,6 +164,7 @@ BillFrom=سے
 BillTo=کو
 ShippingTo=Shipping to
 ActionsOnBill=انوائس پر کارروائیاں
+ActionsOnBillRec=Actions on recurring invoice
 RecurringInvoiceTemplate=ٹیمپلیٹ / بار بار چلنے والی رسید
 NoQualifiedRecurringInvoiceTemplateFound=کوئی اعادی ٹیمپلیٹ انوائس جنریشن کے لیے اہل نہیں ہے۔
 FoundXQualifiedRecurringInvoiceTemplate=%s اعادی ٹیمپلیٹ انوائس جنریشن کے لیے اہل ملا۔
@@ -196,6 +197,7 @@ ConfirmClassifyPaidPartiallyReasonDiscount=بقیہ بلا معاوضہ <b> (%s 
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=بقیہ بلا معاوضہ <b> (%s %s) </b> دی گئی رعایت ہے کیونکہ ادائیگی مدت سے پہلے کی گئی تھی۔ میں اس رعایت پر VAT کھونا قبول کرتا ہوں۔
 ConfirmClassifyPaidPartiallyReasonDiscountVat=بقیہ بلا معاوضہ <b> (%s %s) </b> دی گئی رعایت ہے کیونکہ ادائیگی مدت سے پہلے کی گئی تھی۔ میں بغیر کریڈٹ نوٹ کے اس رعایت پر VAT وصول کرتا ہوں۔
 ConfirmClassifyPaidPartiallyReasonBadCustomer=برا گاہک
+ConfirmClassifyPaidPartiallyReasonBadSupplier=Bad vendor
 ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fee)
 ConfirmClassifyPaidPartiallyReasonWithholdingTax=Withholding tax
 ConfirmClassifyPaidPartiallyReasonProductReturned=مصنوعات جزوی طور پر واپس آ گئیں۔
@@ -208,6 +210,7 @@ ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=یہ انتخاب اس و�
 ConfirmClassifyPaidPartiallyReasonBankChargeDesc=غیر ادا شدہ رقم <b> انٹرمیڈیری بینک فیس ہے
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=The unpaid amount will never be paid as it is a withholding tax
 ConfirmClassifyPaidPartiallyReasonOtherDesc=اس انتخاب کو استعمال کریں اگر باقی سب موزوں نہیں ہیں، مثال کے طور پر درج ذیل صورت حال میں: <br> - ادائیگی مکمل نہیں ہوئی کیونکہ کچھ پروڈکٹس واپس بھیجے گئے تھے ایک کریڈٹ نوٹ بنا کر اکاؤنٹنسی سسٹم میں۔
+ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=A <b>bad supplier</b> is a supplier we refuse to pay.
 ConfirmClassifyAbandonReasonOther=دیگر
 ConfirmClassifyAbandonReasonOtherDesc=یہ انتخاب دیگر تمام معاملات میں استعمال کیا جائے گا۔ مثال کے طور پر کیونکہ آپ ایک بدلی انوائس بنانے کا ارادہ رکھتے ہیں۔
 ConfirmCustomerPayment=کیا آپ <b> %s </b> %s کے لیے اس ادائیگی کے ان پٹ کی تصدیق کرتے ہیں؟
@@ -330,8 +333,8 @@ DiscountFromExcessPaid=انوائس %s سے زیادہ ادائیگی
 AbsoluteDiscountUse=اس قسم کا کریڈٹ انوائس پر اس کی توثیق سے پہلے استعمال کیا جا سکتا ہے۔
 CreditNoteDepositUse=اس قسم کے کریڈٹ استعمال کرنے کے لیے انوائس کی توثیق ہونی چاہیے۔
 NewGlobalDiscount=نیا مطلق رعایت
-NewSupplierGlobalDiscount=New supplier absolute discount
-NewClientGlobalDiscount=New client absolute discount
+NewSupplierGlobalDiscount=New absolute supplier discount
+NewClientGlobalDiscount=New absolute client discount
 NewRelativeDiscount=نیا رشتہ دار رعایت
 DiscountType=ڈسکاؤنٹ کی قسم
 NoteReason=نوٹ/ وجہ
@@ -401,7 +404,7 @@ DateLastGenerationShort=تازہ ترین جنرل کی تاریخ۔
 MaxPeriodNumber=زیادہ سے زیادہ انوائس نسل کی تعداد
 NbOfGenerationDone=انوائس جنریشن کی تعداد پہلے ہی ہو چکی ہے۔
 NbOfGenerationOfRecordDone=ریکارڈ جنریشن کی تعداد پہلے ہی ہو چکی ہے۔
-NbOfGenerationDoneShort=مکمل ہونے والی نسل کی تعداد
+NbOfGenerationDoneShort=Number of generations done
 MaxGenerationReached=نسلوں کی زیادہ سے زیادہ تعداد تک پہنچ گئی۔
 InvoiceAutoValidate=انوائسز کی خود بخود توثیق کریں۔
 GeneratedFromRecurringInvoice=ٹیمپلیٹ ریکرنگ انوائس %s سے تیار کردہ

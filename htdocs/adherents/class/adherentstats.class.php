@@ -199,7 +199,7 @@ class AdherentStats extends Stats
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
 		$sql .= " AND t.statut = 1";
-		$sql .= " GROUP BY t.rowid";
+		$sql .= " GROUP BY t.rowid, t.libelle";
 
 		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -280,7 +280,8 @@ class AdherentStats extends Stats
 			$sql .= " AND d.datefin > '".$this->db->idate(dol_get_first_day($startYear))."'";
 		}
 		$sql .= " AND c.fk_parent = 0";
-		$sql .= " GROUP BY c.rowid ORDER BY label ASC";
+		$sql .= " GROUP BY c.rowid, c.label";
+		$sql .= " ORDER BY label ASC";
 
 		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
 		$result = $this->db->query($sql);
