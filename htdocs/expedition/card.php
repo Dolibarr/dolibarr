@@ -347,8 +347,8 @@ if (empty($reshook)) {
 			}
 
 			// check qty shipped not greater than ordered
-			if (dolGetGlobalInt("ErrorTooMuchShipped") && $totalqty > $objectsrc->lines[$i]->qty) {
-				setEventMessages($langs->trans("", $i), null, 'errors');
+			if (getDolGlobalInt("MAIN_DONT_SHIP_MORE_THAN_ORDERED") && $totalqty > $objectsrc->lines[$i]->qty) {
+				setEventMessages($langs->trans("ErrorTooMuchShipped", $i), null, 'errors');
 				$error++;
 				continue;
 			}
