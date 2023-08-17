@@ -334,6 +334,7 @@ if (empty($reshook)) {
 					$stockLine[$i][$j]['ix_l'] = GETPOST($idl, 'int');
 
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
+					$subtotalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
 
 					$j++;
 					$stockLocation = "ent1".$i."_".$j;
@@ -343,12 +344,13 @@ if (empty($reshook)) {
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty, 'int') > 0) {
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
+					$subtotalqty = price2num(GETPOST($qty, 'alpha'), 'MS');
 				}
 			}
 
 			// check qty shipped not greater than ordered
-			if (getDolGlobalInt("MAIN_DONT_SHIP_MORE_THAN_ORDERED") && $totalqty > $objectsrc->lines[$i]->qty) {
-				setEventMessages($langs->trans("ErrorTooMuchShipped", $i), null, 'errors');
+			if (getDolGlobalInt("MAIN_DONT_SHIP_MORE_THAN_ORDERED") && $subtotalqty > $objectsrc->lines[$i]->qty) {
+				setEventMessages($langs->trans("ErrorTooMuchShipped", $i+1), null, 'errors');
 				$error++;
 				continue;
 			}
