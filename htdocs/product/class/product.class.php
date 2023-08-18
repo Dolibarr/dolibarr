@@ -4648,12 +4648,10 @@ class Product extends CommonObject
 		$sql .= ", multicurrency_tx";
 		$sql .= ", multicurrency_price";
 		$sql .= ", multicurrency_price_ttc";
-		$sql .= " FROM ".$this->db->prefix()."product_price";
+		$sql .= " FROM ".$this->db->prefix()."product_price ps";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
+		$sql .= " AND date_price IN (SELECT MAX(pd.date_price) FROM ".$this->db->prefix()."product_price pd WHERE pd.fk_product = ".((int) $fromId)." AND pd.price_level = ps.price_level)";
 		$sql .= " ORDER BY date_price DESC";
-		if ($conf->global->PRODUIT_MULTIPRICES_LIMIT > 0) {
-			$sql .= " LIMIT ".$conf->global->PRODUIT_MULTIPRICES_LIMIT;
-		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
