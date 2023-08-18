@@ -242,13 +242,27 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && ($user->hasRight('societe', 'lire'))) {
+	if (
+		((isModEnabled('website') && !empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) || isModEnabled('webportal'))
+		&& $user->hasRight('societe', 'lire')
+	) {
+		$site_filter_list = array();
+		if (isModEnabled('website')) {
+			$site_filter_list[] = 'dolibarr_website';
+		}
+		if (isModEnabled('webportal')) {
+			$site_filter_list[] = 'dolibarr_portal';
+		}
+
 		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
-		$sql .= " WHERE fk_soc = ".((int) $object->id).' AND fk_website > 0';
+		$sql .= " WHERE fk_soc = ".((int) $object->id);
+		if (!empty($site_filter_list)) {
+			$sql .= " AND n.site IN (".$db->sanitize("'".implode("', '",$site_filter_list)."'", 1).")";
+		}
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);

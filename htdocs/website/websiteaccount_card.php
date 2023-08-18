@@ -70,15 +70,17 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'website', $id);
-if (!$user->hasRight('website', 'read')) {
+if (!isModEnabled('website') && !isModEnabled('webportal')) {
+	accessforbidden('NotAllowed');
+} elseif (!$user->hasRight('societe', 'read')) {
 	accessforbidden('NotAllowed');
 }
 
 // Permissions
-$permissionnote    = $user->hasRight('website', 'write');   //  Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->hasRight('website', 'write');   //  Used by the include of actions_dellink.inc.php
-$permissiontoadd   = $user->hasRight('website', 'write');   //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('website', 'delete');
+$permissionnote    = $user->hasRight('societe', 'write');   //  Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('societe', 'write');   //  Used by the include of actions_dellink.inc.php
+$permissiontoadd   = $user->hasRight('societe', 'write');   //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('societe', 'delete');
 
 
 /*
@@ -94,8 +96,8 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$permissiontoadd = $user->hasRight('website', 'write');
-	$permissiontodelete = $user->hasRight('website', 'delete');
+	$permissiontoadd = $user->hasRight('societe', 'write');
+	$permissiontodelete = $user->hasRight('societe', 'delete');
 	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php', 1);
 
 	// Actions cancel, add, update or delete
@@ -147,6 +149,26 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
+
+	if (!empty($object->fields['site']['visible']) && !empty($object->fields['fk_website']['visible'])) {
+		$out = '<script type"text/javascript">';
+		$out .= 'function siteTypeChange(site_type) {';
+		$out .= '		if (site_type == "dolibarr_website") {';
+		$out .= '			jQuery("tr.field_fk_website").show();';
+		$out .= '		} else {';
+		$out .= '			jQuery("select#fk_website").val("-1").change();';
+		$out .= '			jQuery("tr.field_fk_website").hide();';
+		$out .= '		}';
+		$out .= '}';
+		$out .= 'jQuery(document).ready(function(){';
+		$out .= '	siteTypeChange(jQuery("#site").val());';
+		$out .= '	jQuery("#site").change(function(){';
+		$out .= '		siteTypeChange(this.value);';
+		$out .= '	});';
+		$out .= '});';
+		$out .= '</script>';
+		print $out;
+	}
 }
 
 // Part to edit record
@@ -221,8 +243,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	/*
 	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('website', 'write'), 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('website', 'write'), 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('societe', 'write'), 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('societe', 'write'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
@@ -230,7 +252,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		if ($user->hasRight('website', 'write'))
+		if ($user->hasRight('societe', 'write'))
 		{
 			if ($action != 'classify')
 			{
@@ -305,7 +327,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>'."\n";
 			}
 
-			if ($user->hasRight('website', 'write')) {
+			if ($user->hasRight('societe', 'write')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
 
