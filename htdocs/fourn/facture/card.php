@@ -2825,9 +2825,14 @@ if ($action == 'create') {
 			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-			$facusing = new FactureFournisseur($db);
-			$facusing->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			if ($object->fk_facture_source > 0) {
+				$facusing = new FactureFournisseur($db);
+				$facusing->fetch($object->fk_facture_source);
+				print ' (' . $langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)) . ')';
+			} else {
+				$langs->load("errors");
+				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("WarningCorrectedInvoiceNotFound").'</span>';
+			}
 		}
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
