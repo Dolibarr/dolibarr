@@ -560,7 +560,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
-		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+		// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+		$objectutil = dol_clone($object, 1);
+		// We used native clone to keep this->db valid and allow to use later all the methods of object.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
 		// ...
 		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));

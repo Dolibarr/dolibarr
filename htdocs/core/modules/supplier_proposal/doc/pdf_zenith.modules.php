@@ -23,13 +23,13 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
+ *	\file       htdocs/core/modules/supplir_proposal/doc/pdf_zenith.modules.php
  *	\ingroup    fournisseur
- *	\brief      File of class to generate suppliers orders from cornas model
+ *	\brief      File of class to generate suppliers proposals from zenith model
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -37,9 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Class to generate the supplier orders with the cornas model
+ *	Class to generate the supplier proposals with the zenith model
  */
-class pdf_cornas extends ModelePDFSuppliersOrders
+class pdf_zenith extends ModelePDFSupplierProposal
 {
 	/**
 	 * @var DoliDb Database handler
@@ -86,8 +86,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
-		$this->name = "cornas";
-		$this->description = $langs->trans('SuppliersCommandModel');
+		$this->name = "zenith";
+		$this->description = $langs->trans('DocModelZenithDescription');
 		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
@@ -135,7 +135,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		CommandeFournisseur	$object				Id of object to generate
+	 *  @param		SupplierProposal	$object				Id of object to generate
 	 *  @param		Translate			$outputlangs		Lang output object
 	 *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int					$hidedetails		Do not show line details
@@ -157,14 +157,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
+		$outputlangs->loadLangs(array("main", "supplier_proposal", "companies", "bills", "dict", "products"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
-			$outputlangsbis->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
+			$outputlangsbis->loadLangs(array("main", "supplier_proposal", "companies", "bills", "dict", "products"));
 		}
 
 		$nblines = count($object->lines);
@@ -176,7 +176,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
-		if (!empty($conf->global->MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE)) {
+		if (!empty($conf->global->MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE)) {
 			for ($i = 0; $i < $nblines; $i++) {
 				if (empty($object->lines[$i]->fk_product)) {
 					continue;
@@ -217,7 +217,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$this->posxpicture = $this->posxtva;
 		}
 
-		if ($conf->fournisseur->commande->dir_output) {
+		if ($conf->supplier_proposal->dir_output) {
 			$object->fetch_thirdparty();
 
 			$deja_regle = 0;
@@ -228,12 +228,12 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = $conf->fournisseur->commande->dir_output;
+				$dir = $conf->supplier_proposal->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
-				$dir = $conf->fournisseur->commande->dir_output.'/'.$objectref;
+				$dir = $conf->supplier_proposal->dir_output.'/'.$objectref;
 				$file = $dir."/".$objectref.".pdf";
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) {
 					$file = $dir."/".$objectref.($objectrefsupplier ? "_".$objectrefsupplier : "").".pdf";
@@ -286,10 +286,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("Order"));
+				$pdf->SetSubject($outputlangs->transnoentities("SupplierProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("SupplierProposal")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -825,7 +825,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *  Show payments table
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  CommandeFournisseur		$object			Object order
+	 *  @param  SupplierProposal		$object			Object supplier propsal
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
@@ -842,7 +842,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		CommandeFournisseur		$object			Object to show
+	 *   @param		SupplierProposal		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	integer
@@ -1179,7 +1179,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings"));
+		$outputlangs->loadLangs(array("main", "supplier_proposal", "companies", "bills", "sendings"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1231,7 +1231,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("SupplierOrder")." ".$outputlangs->convToOutputCharset($object->ref);
+		$title = $outputlangs->transnoentities("SupplierProposal")." ".$outputlangs->convToOutputCharset($object->ref);
 		$pdf->MultiCell(100, 3, $title, '', 'R');
 		$posy += 1;
 
@@ -1268,21 +1268,21 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			}
 		}
 
-		if (!empty($object->date_commande)) {
+		if (!empty($object->date)) {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date_commande, "day", false, $outputlangs, true), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 		} else {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(255, 0, 0);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Draft"), '', 'R');
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
 		$usehourmin = 'day';
-		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
+		if (!empty($conf->global->SUPPLIER_PROPOSAL_USE_HOUR_FOR_DELIVERY_DATE)) {
 			$usehourmin = 'dayhour';
 		}
 		if (!empty($object->delivery_date)) {
@@ -1372,7 +1372,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 
 
-			// If CUSTOMER contact defined on order, we use it. Note: Even if this is a supplier object, the code for external contat that follow order is 'CUSTOMER'
+			// If CUSTOMER contact defined on proposal, we use it. Note: Even if this is a supplier object, the code for external contat that follow order is 'CUSTOMER'
 			$usecontact = false;
 			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
 			if (count($arrayidcontact) > 0) {
@@ -1438,7 +1438,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
-		return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
 
@@ -1520,7 +1520,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			'border-left' => false, // remove left line separator
 		);
 
-		if (!empty($conf->global->MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE)) {
+		if (!empty($conf->global->MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE)) {
 			$this->cols['photo']['status'] = true;
 		}
 
@@ -1551,7 +1551,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			'border-left' => true, // add left line separator
 		);
 
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE)) {
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE)) {
 			$this->cols['subprice']['status'] = true;
 		}
 
@@ -1605,7 +1605,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			'border-left' => true, // add left line separator
 		);
 
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN)) {
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN)) {
 			$this->cols['totalexcltax']['status'] = true;
 		}
 
