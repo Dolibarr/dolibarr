@@ -2401,4 +2401,4 @@ OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module
 OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AtBottomOfPage=At bottom of page
 FailedAuth=failed authentications
-MaxNumberOfFailedAuth=Max number of failed authentication in 24h to disable login.
+MaxNumberOfFailedAuth=Max number of failed authentication in 24h to deny login.

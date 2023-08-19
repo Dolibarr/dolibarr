@@ -1540,9 +1540,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
 	$newparam .= '&viewweek=1';
 
-	print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-	print '</div></div>';
+	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
@@ -1607,9 +1607,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$timestamp = dol_mktime(12, 0, 0, $month, $day, $year);
 	$arraytimestamp = dol_getdate($timestamp);
 
-	print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-	print '</div></div>';
+	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
 	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month noborderbottom" style="margin-bottom: 5px !important;">';
@@ -1672,7 +1672,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		print '</div>';
 	} else {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0);
 

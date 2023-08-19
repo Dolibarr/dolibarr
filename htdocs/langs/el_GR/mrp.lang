@@ -121,4 +121,5 @@ BOMProductsList=Προϊόντα BOM
 BOMServicesList=Υπηρεσίες BOM
 Manufacturing=Παραγωγή
 Disassemble=Αποσυναρμολόγηση
-ProducedBy=Produced by
+ProducedBy=Παράχθηκε από
+QtyTot=Σύνολο Ποσότητας

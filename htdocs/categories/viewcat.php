@@ -375,7 +375,7 @@ $cats = $object->get_filles();
 if ($cats < 0) {
 	dol_print_error($db, $object->error, $object->errors);
 } elseif (count($cats) < 1) {
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven nobottom">';
 	print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("NoSubCat").'</span></td>';
 	print '</tr>';
 } else {

@@ -7,7 +7,6 @@ WEBSITE_ALIASALTDesc=Utilice aquí la lista de otros nombres / alias para que ta
 WEBSITE_CSS_URL=URL del archivo CSS externo
 WEBSITE_ROBOT=Archivo Robot (robots.txt)
 WEBSITE_HTACCESS=Sitio web .htaccess archivo
-EnterHereLicenseInformation=Ingrese aquí metadatos o información de licencia para llenar un archivo README.md. si distribuye su sitio web como plantilla, el archivo se incluirá en el paquete temptate.
 PageNameAliasHelp=Nombre o alias de la página.<br> Este alias también se usa para forjar una URL SEO cuando el sitio web se ejecuta desde un host virtual de un servidor web (como Apacke, Nginx, ...). Use el botón "<strong>%s</strong>" para editar este alias.
 MediaFiles=Mediateca
 EditCss=Editar prop del sitio web
