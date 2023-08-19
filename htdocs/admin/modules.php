@@ -991,7 +991,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 
 			// Picto + Name of module
-			print '  <td class="tdoverflowmax300 maxwidth300" title="'.dol_escape_htmltag($objMod->getName()).'">';
+			print '  <td class="tdoverflowmax200 minwidth200imp" title="'.dol_escape_htmltag($objMod->getName()).'">';
 			$alttext = '';
 			//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
 			//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
@@ -1008,7 +1008,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Desc
-			print '<td class="valignmiddle tdoverflowmax300">';
+			print '<td class="valignmiddle tdoverflowmax300 minwidth200imp">';
 			print nl2br($objMod->getDesc());
 			print "</td>\n";
 
@@ -1019,7 +1019,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			// Version
-			print '<td class="center nowrap" width="150px" title="'.dol_escape_htmltag(dol_string_nohtmltag($versiontrans)).'">';
+			print '<td class="center nowrap width150" title="'.dol_escape_htmltag(dol_string_nohtmltag($versiontrans)).'">';
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
@@ -1029,7 +1029,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Link enable/disable
-			print '<td class="center valignmiddle left" width="60px">';
+			print '<td class="center valignmiddle left nowraponall" width="60px">';
 			print $codeenabledisable;
 			print "</td>\n";
 

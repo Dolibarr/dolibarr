@@ -88,6 +88,8 @@ class User extends CommonObject
 	 */
 	public $statut;
 
+	public $status;
+
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
@@ -3074,7 +3076,20 @@ class User extends CommonObject
 			$statusType = 'status4';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		$label = $this->labelStatus[$status];
+		$labelshort = $this->labelStatusShort[$status];
+
+		$now = dol_now();
+		if (!empty($this->datestartvalidity) && $now < $this->datestartvalidity) {
+			$statusType = 'status3';
+			$label .= ' ('.$langs->trans("UserNotYetValid").')';
+		}
+		if (!empty($this->dateendvalidity) && $now > ($this->dateendvalidity + 24 * 3600 - 1)) {
+			$statusType = 'status2';
+			$label .= ' ('.$langs->trans("UserExpired").')';
+		}
+
+		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
 

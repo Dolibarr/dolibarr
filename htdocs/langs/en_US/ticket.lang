@@ -329,6 +329,9 @@ OldUser=Old user
 NewUser=New user
 NumberOfTicketsByMonth=Number of tickets per month
 NbOfTickets=Number of tickets
+ExternalContributors=External contributors
+AddContributor=Add external contributor
+
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.

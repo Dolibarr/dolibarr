@@ -175,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=No hay acciones públicas abiertas al públic
 MaxNbOfAttendees=Número máximo de asistentes
 DateStartEvent=Fecha de inicio del evento
 DateEndEvent=Fecha de finalización del evento
+ModifyStatus=Modificar estado
+ConfirmModifyStatus=Confirmar modificación de estado
+ConfirmModifyStatusQuestion=¿Está seguro de que desea modificar el <span class='notranslate'>%s</span>? registro(s) seleccionado(s)?
+RecordsUpdated = %s Registros actualizados
+RecordUpdated = Registro actualizado
+NoRecordUpdated = Sin registro actualizado

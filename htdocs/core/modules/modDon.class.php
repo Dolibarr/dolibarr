@@ -121,7 +121,7 @@ class modDon extends DolibarrModules
 		$this->rights[1][0] = 701;
 		$this->rights[1][1] = 'Lire les dons';
 		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
+		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 702;

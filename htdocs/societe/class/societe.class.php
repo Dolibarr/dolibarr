@@ -2998,7 +2998,7 @@ class Societe extends CommonObject
 	/**
 	 *    Return list of contacts emails existing for third party
 	 *
-	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email
+	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email, 2=Same than 1 but add text ThirdParty in grey
 	 *    @return     array       					Array of contacts emails
 	 */
 	public function thirdparty_and_contact_email_array($addthirdparty = 0)
@@ -3011,7 +3011,7 @@ class Societe extends CommonObject
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
-			$contact_emails['thirdparty'] = $langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name, 16)." <".$this->email.">";
+			$contact_emails['thirdparty'] = ($addthirdparty == 2 ? '<span class="opacitymedium">' : '').$langs->transnoentitiesnoconv("ThirdParty").($addthirdparty == 2 ? '</span>' : '').': '.dol_trunc($this->name, 16)." <".$this->email.">";
 		}
 		//var_dump($contact_emails)
 		return $contact_emails;
@@ -4557,6 +4557,7 @@ class Societe extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND t.active = 1";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		if (empty($localTaxNum)) {
 			$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
 		} elseif ($localTaxNum == 1) {
@@ -4584,6 +4585,7 @@ class Societe extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND t.active = 1 AND t.recuperableonly = 1";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 
 		dol_syslog("useNPR", LOG_DEBUG);
 		$resql = $this->db->query($sql);

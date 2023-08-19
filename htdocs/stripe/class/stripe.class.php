@@ -1064,8 +1064,10 @@ class Stripe extends CommonObject
 
 								// Save the Stripe payment mode ID into the Dolibarr database
 								$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib";
-								$sql .= " SET stripe_card_ref = '".$this->db->escape($sepa->id)."', card_type = 'sepa_debit',";
-								$sql .= " stripe_account= '" . $this->db->escape($cu->id . "@" . $stripeacc) . "'";
+								$sql .= " SET stripe_card_ref = '".$this->db->escape($sepa->id)."',";
+								$sql .= " card_type = 'sepa_debit',";
+								$sql .= " stripe_account= '" . $this->db->escape($cu->id . "@" . $stripeacc) . "',";
+								$sql .= " ext_payment_site = '".$this->db->escape($service)."'";
 								$sql .= " WHERE rowid = ".((int) $object->id);
 								$sql .= " AND type = 'ban'";
 								$resql = $this->db->query($sql);

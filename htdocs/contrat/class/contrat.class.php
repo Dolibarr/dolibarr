@@ -663,7 +663,7 @@ class Contrat extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{
-		$sql = "SELECT rowid, statut, ref, fk_soc,";
+		$sql = "SELECT rowid, statut as status, ref, fk_soc,";
 		$sql .= " ref_supplier, ref_customer,";
 		$sql .= " ref_ext,";
 		$sql .= " entity,";
@@ -706,7 +706,8 @@ class Contrat extends CommonObject
 					$this->ref_supplier = $obj->ref_supplier;
 					$this->ref_ext = $obj->ref_ext;
 					$this->entity = $obj->entity;
-					$this->statut = $obj->statut;
+					$this->statut = $obj->status;
+					$this->status = $obj->status;
 
 					$this->date_contrat = $this->db->jdate($obj->datecontrat);
 					$this->date_creation = $this->db->jdate($obj->datecontrat);
@@ -794,7 +795,7 @@ class Contrat extends CommonObject
 
 		// Selects contract lines related to a product
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref, p.fk_product_type as product_type,";
-		$sql .= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql .= " d.total_ht,";
 		$sql .= " d.total_tva,";
 		$sql .= " d.total_localtax1,";
@@ -841,7 +842,8 @@ class Contrat extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
-				$line->statut = $objp->statut;
+				$line->statut = $objp->status;
+				$line->status = $objp->status;
 				$line->remise_percent	= $objp->remise_percent;
 				$line->price_ht			= $objp->price_ht;
 				$line->price = $objp->price_ht; // For backward compatibility
@@ -2491,6 +2493,21 @@ class Contrat extends CommonObject
 	public function getLinesArray()
 	{
 		return $this->fetch_lines();
+	}
+
+	/**
+	 * 	Create an array of associated tickets
+	 *
+	 * 	@return array|int		Array o tickets or <0 if KO
+	 */
+	public function getTicketsArray()
+	{
+		global $user;
+
+		$ticket = new Ticket($this->db);
+		$nbTicket =  $ticket->fetchAll($user,  'ASC', 't.datec',  '', 0, '', array('t.fk_contract' => $this->id));
+
+		return ($nbTicket < 0 ? $nbTicket : $ticket->lines);
 	}
 
 

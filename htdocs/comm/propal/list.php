@@ -1144,7 +1144,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view products
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read') && ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'))) {
 		$searchCategoryProductOperator = -1;
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -2130,7 +2130,7 @@ if ($resql) {
 
 			if (!empty($arrayfields['sale_representative']['checked'])) {
 				// Sales representatives
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->socid > 0) {
 					$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 					if ($listsalesrepresentatives < 0) {

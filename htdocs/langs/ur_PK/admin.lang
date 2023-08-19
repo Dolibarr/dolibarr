@@ -365,10 +365,10 @@ GenericMaskCodes=آپ کوئی بھی نمبرنگ ماسک درج کر سکتے
 GenericMaskCodes2= <b> {cccc} </b> n حروف پر کلائنٹ کا کوڈ گاہک کے لیے وقف یہ کاؤنٹر عالمی کاؤنٹر کے ساتھ ہی دوبارہ ترتیب دیا جاتا ہے۔ <br> <b> {tttt} </b> n حروف پر تیسری پارٹی کی قسم کا کوڈ (مینیو دیکھیں ہوم - سیٹ اپ - ڈکشنری - تھرڈ پارٹیز کی اقسام)۔ اگر آپ یہ ٹیگ شامل کرتے ہیں، تو کاؤنٹر ہر قسم کے تیسرے فریق کے لیے مختلف ہوگا۔ <br>
 GenericMaskCodes3=ماسک میں باقی تمام کردار برقرار رہیں گے۔ <br> خالی جگہوں کی اجازت نہیں ہے۔ <br>
 GenericMaskCodes3EAN=ماسک میں باقی تمام حروف برقرار رہیں گے (سوائے * یا ? EAN13 میں 13ویں پوزیشن پر)۔ <br> خالی جگہوں کی اجازت نہیں ہے۔ <br> EAN13 میں، 13ویں پوزیشن میں آخری } کے بعد آخری حرف * یا ؟ . اسے کیلکولیٹڈ کلید سے بدل دیا جائے گا۔ <br>
-GenericMaskCodes4a= <u> تیسری پارٹی TheCompany کی 99th %s پر مثال، تاریخ 2007-01-31 کے ساتھ: </u> <br>
-GenericMaskCodes4b= <u> تیسری پارٹی کی مثال جو 01-03-2007 کو بنائی گئی: </u> <br>
-GenericMaskCodes4c= <u> 2007-03-01 کو تخلیق کردہ پروڈکٹ کی مثال: </u> <br>
-GenericMaskCodes5= <b> ABC {YY} {میٹر} - {000000} </b> دے گا <b> ABC0701-000099 </b> <br> <b> {0000 + 100 @ 1} -ZZZ / {DD} / XXX </b> دے گا <b> 0199-ZZZ / 31 / XXX </b> <br> <b> IN{yy}{mm}-{0000}-{t} </b> دے گا <b> IN0701-0099-A a09a4b739f17f17f17f8z0 کے لئے کوڈ کی قسم' کے ساتھ 'کوڈ' کے ساتھ اسکرپٹ کے قابل ہے
+GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany, with date 2023-01-31:</u><br>
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
+GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=ایک متعین ماسک کے مطابق حسب ضرورت نمبر لوٹاتا ہے۔
 ServerAvailableOnIPOrPort=سرور <b> <b> %s </b> پورٹ <b> %s a09a4b739f17f80 پر دستیاب ہے۔
 ServerNotAvailableOnIPOrPort=پورٹ <b> <b> %s </b> پر سرور دستیاب نہیں ہے <b> %s a09a4b739f178
@@ -394,7 +394,7 @@ ListOfDirectoriesForModelGenODT=OpenDocument فارمیٹ کے ساتھ ٹیمپ
 NumberOfModelFilesFound=ان ڈائریکٹریوں میں پائی جانے والی ODT/ODS ٹیمپلیٹ فائلوں کی تعداد
 ExampleOfDirectoriesForModelGen=نحو کی مثالیں: <br> c:\\myapp\\mydocumentdir\\mysubdir <br> /home/myapp/mydocumentdir/mysubdir <br> DOL_DATA_ROOT/Mydocumentdir
 FollowingSubstitutionKeysCanBeUsed= <br> اپنے odt دستاویز کے سانچوں کو بنانے کا طریقہ جاننے کے لیے، ان ڈائریکٹریوں میں ذخیرہ کرنے سے پہلے، ویکی دستاویزات پڑھیں:
-FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
+FullListOnOnlineDocumentation=https://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=نام/آخری نام کی پوزیشن
 DescWeather=درج ذیل تصاویر ڈیش بورڈ پر دکھائی جائیں گی جب دیر سے ہونے والی کارروائیوں کی تعداد درج ذیل اقدار تک پہنچ جائے گی۔
 KeyForWebServicesAccess=ویب سروسز استعمال کرنے کی کلید (ویب سروسز میں پیرامیٹر "ڈولیبارکی")
@@ -542,7 +542,7 @@ DAV_ALLOW_PUBLIC_DIR=عام پبلک ڈائرکٹری کو فعال کریں (و
 DAV_ALLOW_PUBLIC_DIRTooltip=عام پبلک ڈائرکٹری ایک WebDAV ڈائرکٹری ہے جو کوئی بھی رسائی کر سکتا ہے (پڑھنے اور لکھنے کے موڈ میں)، بغیر کسی اجازت کے (لاگ ان/پاس ورڈ اکاؤنٹ)۔
 DAV_ALLOW_ECM_DIR=DMS/ECM نجی ڈائریکٹری کو فعال کریں (DMS/ECM ماڈیول کی روٹ ڈائرکٹری - لاگ ان درکار ہے)
 DAV_ALLOW_ECM_DIRTooltip=روٹ ڈائرکٹری جہاں DMS/ECM ماڈیول استعمال کرتے وقت تمام فائلیں دستی طور پر اپ لوڈ کی جاتی ہیں۔ اسی طرح ویب انٹرفیس سے رسائی کے طور پر، آپ کو اس تک رسائی کے لیے مناسب اجازت کے ساتھ ایک درست لاگ ان/پاس ورڈ کی ضرورت ہوگی۔
-# Modules
+##### Modules #####
 Module0Name=صارفین اور گروپس
 Module0Desc=صارفین / ملازمین اور گروپوں کا انتظام
 Module1Name=تیسرے فریقوں
@@ -650,7 +650,7 @@ Module2300Name=طے شدہ ملازمتیں۔
 Module2300Desc=طے شدہ ملازمتوں کا انتظام (عرف کرون یا کرونو ٹیبل)
 Module2400Name=تقریبات/ایجنڈا
 Module2400Desc=واقعات کو ٹریک کریں۔ ٹریکنگ کے مقاصد کے لیے خودکار ایونٹس کو لاگ کریں یا دستی ایونٹس یا میٹنگز کو ریکارڈ کریں۔ یہ اچھے کسٹمر یا وینڈر ریلیشن شپ مینجمنٹ کے لیے پرنسپل ماڈیول ہے۔
-Module2430Name=Booking Calendar System
+Module2430Name=Online Booking Calendar
 Module2430Desc=Provide an online calendar to allow anyone to book rendez-vous, according to predefined ranges or availabilities.
 Module2500Name=ڈی ایم ایس / ای سی ایم
 Module2500Desc=دستاویز مینجمنٹ سسٹم / الیکٹرانک مواد کا انتظام۔ آپ کے تیار کردہ یا ذخیرہ شدہ دستاویزات کی خودکار تنظیم۔ جب آپ کو ضرورت ہو تو ان کا اشتراک کریں۔
@@ -712,6 +712,7 @@ Module63000Desc=ایونٹس کو مختص کرنے کے لیے وسائل (پر
 Module66000Name=OAuth2 token management
 Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
 Module94160Name=Receptions
+##### Permissions #####
 Permission11=Read customer invoices (and payments)
 Permission12=کسٹمر انوائس بنائیں/ترمیم کریں۔
 Permission13=گاہک کی رسیدیں باطل کریں۔
@@ -1439,10 +1440,10 @@ MustBeUnique=منفرد ہونا ضروری ہے؟
 MustBeMandatory=تیسرے فریق بنانا لازمی ہے (اگر VAT نمبر یا کمپنی کی قسم کی وضاحت کی گئی ہے)؟
 MustBeInvoiceMandatory=انوائس کی توثیق کرنا لازمی ہے؟
 TechnicalServicesProvided=تکنیکی خدمات فراہم کی گئیں۔
-#####DAV #####
+##### WebDAV #####
 WebDAVSetupDesc=یہ WebDAV ڈائریکٹری تک رسائی کا لنک ہے۔ اس میں ایک "عوامی" ڈائرکٹری ہے جو کسی بھی صارف کے لیے کھلا ہے جو یو آر ایل کو جانتا ہے (اگر عوامی ڈائریکٹری تک رسائی کی اجازت ہے) اور ایک "نجی" ڈائریکٹری ہے جس تک رسائی کے لیے موجودہ لاگ ان اکاؤنٹ/ پاس ورڈ کی ضرورت ہے۔
 WebDavServer=%s سرور کا روٹ URL: %s
-##### Webcal setup #####
+##### WebCAL setup #####
 WebCalUrlForVCalExport=<b> %s </b> فارمیٹ کا ایکسپورٹ لنک درج ذیل لنک پر دستیاب ہے: %s
 ##### Invoices #####
 BillsSetup=انوائس ماڈیول سیٹ اپ
@@ -1641,9 +1642,9 @@ LDAPFieldEndLastSubscription=سبسکرپشن ختم ہونے کی تاریخ
 LDAPFieldTitle=عہدہ
 LDAPFieldTitleExample=مثال: عنوان
 LDAPFieldGroupid=گروپ آئی ڈی
-LDAPFieldGroupidExample=مثال: gidnumber
+LDAPFieldGroupidExample=Example : gidnumber
 LDAPFieldUserid=صارف کی شناخت
-LDAPFieldUseridExample=مثال: uidnumber
+LDAPFieldUseridExample=Example : uidnumber
 LDAPFieldHomedirectory=ہوم ڈائریکٹری
 LDAPFieldHomedirectoryExample=مثال: ہوم ڈائریکٹری
 LDAPFieldHomedirectoryprefix=ہوم ڈائریکٹری کا سابقہ
@@ -1834,26 +1835,26 @@ AccountancyCodeSell=سیل اکاؤنٹ۔ کوڈ
 AccountancyCodeBuy=خریداری اکاؤنٹ۔ کوڈ
 CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT=نیا ٹیکس بناتے وقت چیک باکس "خودکار طور پر ادائیگی بنائیں" کو بطور ڈیفالٹ خالی رکھیں
 ##### Agenda #####
-AgendaSetup=واقعات اور ایجنڈا ماڈیول سیٹ اپ
-PasswordTogetVCalExport=ایکسپورٹ لنک کو اجازت دینے کی کلید
-SecurityKey = سیکیورٹی کلید
+AgendaSetup = واقعات اور ایجنڈا ماڈیول سیٹ اپ
+AGENDA_DEFAULT_FILTER_TYPE = ایجنڈا ویو کے سرچ فلٹر میں اس قسم کے ایونٹ کو خودکار طور پر سیٹ کریں۔
+AGENDA_DEFAULT_FILTER_STATUS = ایجنڈا ویو کے سرچ فلٹر میں ایونٹس کے لیے خودکار طور پر یہ اسٹیٹس سیٹ کریں۔
+AGENDA_DEFAULT_VIEW = مینو ایجنڈا کو منتخب کرتے وقت آپ ڈیفالٹ کے ذریعے کون سا منظر کھولنا چاہتے ہیں۔
+AGENDA_EVENT_PAST_COLOR = Past event color
+AGENDA_EVENT_CURRENT_COLOR = Current event color
+AGENDA_EVENT_FUTURE_COLOR = Future event color
+AGENDA_REMINDER_BROWSER = صارف کے براؤزر </b> پر ایونٹ کی یاد دہانی کو فعال کریں
+AGENDA_REMINDER_BROWSER_SOUND = آواز کی اطلاع کو فعال کریں۔
+AGENDA_REMINDER_EMAIL = ای میلز </b> کے ذریعے ایونٹ کی یاد دہانی کو فعال کریں
+AGENDA_REMINDER_EMAIL_NOTE = نوٹ: طے شدہ کام %s کی فریکوئنسی اس بات کا یقین کرنے کے لیے کافی ہونی چاہیے کہ یاد دہانی صحیح وقت پر بھیجی گئی ہے۔
+AGENDA_SHOW_LINKED_OBJECT = ایجنڈا ویو میں منسلک آبجیکٹ دکھائیں۔
+AGENDA_USE_EVENT_TYPE = واقعات کی اقسام کا استعمال کریں (مینو سیٹ اپ میں منظم -> ڈکشنری -> ایجنڈا کے واقعات کی قسم)
+AGENDA_USE_EVENT_TYPE_DEFAULT = ایونٹ تخلیق فارم میں ایونٹ کی قسم کے لیے اس ڈیفالٹ ویلیو کو خودکار طور پر سیٹ کریں۔
+PasswordTogetVCalExport = ایکسپورٹ لنک کو اجازت دینے کی کلید
 PastDelayVCalExport=سے پرانا واقعہ برآمد نہ کریں۔
-AGENDA_USE_EVENT_TYPE=واقعات کی اقسام کا استعمال کریں (مینو سیٹ اپ میں منظم -> ڈکشنری -> ایجنڈا کے واقعات کی قسم)
-AGENDA_USE_EVENT_TYPE_DEFAULT=ایونٹ تخلیق فارم میں ایونٹ کی قسم کے لیے اس ڈیفالٹ ویلیو کو خودکار طور پر سیٹ کریں۔
-AGENDA_DEFAULT_FILTER_TYPE=ایجنڈا ویو کے سرچ فلٹر میں اس قسم کے ایونٹ کو خودکار طور پر سیٹ کریں۔
-AGENDA_DEFAULT_FILTER_STATUS=ایجنڈا ویو کے سرچ فلٹر میں ایونٹس کے لیے خودکار طور پر یہ اسٹیٹس سیٹ کریں۔
-AGENDA_EVENT_PAST_COLOR=Past event color
-AGENDA_EVENT_CURRENT_COLOR=Current event color
-AGENDA_EVENT_FUTURE_COLOR=Future event color
-AGENDA_DEFAULT_VIEW=مینو ایجنڈا کو منتخب کرتے وقت آپ ڈیفالٹ کے ذریعے کون سا منظر کھولنا چاہتے ہیں۔
-AGENDA_REMINDER_BROWSER=صارف کے براؤزر </b> پر ایونٹ کی یاد دہانی کو فعال کریں
-AGENDA_REMINDER_BROWSER_SOUND=آواز کی اطلاع کو فعال کریں۔
-AGENDA_REMINDER_EMAIL=ای میلز </b> کے ذریعے ایونٹ کی یاد دہانی کو فعال کریں
-AGENDA_REMINDER_EMAIL_NOTE=نوٹ: طے شدہ کام %s کی فریکوئنسی اس بات کا یقین کرنے کے لیے کافی ہونی چاہیے کہ یاد دہانی صحیح وقت پر بھیجی گئی ہے۔
-AGENDA_SHOW_LINKED_OBJECT=ایجنڈا ویو میں منسلک آبجیکٹ دکھائیں۔
-##### Clicktodial #####
+SecurityKey = سیکیورٹی کلید
+##### ClickToDial #####
 ClickToDialSetup=ماڈیول سیٹ اپ ڈائل کرنے کے لیے کلک کریں۔
-ClickToDialUrlDesc=فون پکٹو پر کلک کرنے پر یو آر ایل کو کال کیا جاتا ہے۔ URL میں، آپ استعمال کر سکتے ہیں ٹیگز <br> <b> __PHONETO__ </b> کہ <br> <b> __PHONEFROM__ </b> clicktodial کے ساتھ تبدیل کیا جائے گا کہ وہ شخص (تمہارا) بلا کے فون نمبر سے ہمیں <br> <b> __LOGIN__ </b> کے ساتھ تبدیل کیا جائے گا کہ کال کرنے کے لئے اس شخص کا فون نمبر کے ساتھ تبدیل کیا جائے گا لاگ ان (صارف کارڈ پر بیان کردہ) <br> <b> __PASS__ </b> جسے کلک ٹوڈیل پاس ورڈ (یوزر کارڈ پر بیان کردہ) سے تبدیل کیا جائے گا۔
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=یہ ماڈیول ڈیسک ٹاپ کمپیوٹر کا استعمال کرتے وقت فون نمبروں کو کلک کے قابل لنکس میں تبدیل کرتا ہے۔ ایک کلک نمبر پر کال کرے گا۔ یہ آپ کے ڈیسک ٹاپ پر سافٹ فون استعمال کرتے وقت یا مثال کے طور پر SIP پروٹوکول پر مبنی CTI سسٹم استعمال کرتے وقت فون کال شروع کرنے کے لیے استعمال کیا جا سکتا ہے۔ نوٹ: اسمارٹ فون استعمال کرتے وقت، فون نمبرز ہمیشہ کلک کے قابل ہوتے ہیں۔
 ClickToDialUseTelLink=فون نمبرز پر صرف ایک لنک "tel:" استعمال کریں۔
 ClickToDialUseTelLinkDesc=یہ طریقہ استعمال کریں اگر آپ کے صارفین کے پاس سافٹ فون یا سافٹ ویئر انٹرفیس ہے، جو براؤزر والے کمپیوٹر پر انسٹال ہے، اور جب آپ اپنے براؤزر میں "tel:" سے شروع ہونے والے لنک پر کلک کرتے ہیں تو اسے کال کیا جاتا ہے۔ اگر آپ کو کسی ایسے لنک کی ضرورت ہے جو "sip:" سے شروع ہو یا ایک مکمل سرور حل (مقامی سافٹ ویئر انسٹالیشن کی ضرورت نہیں)، آپ کو اسے "نہیں" پر سیٹ کرنا ہوگا اور اگلا فیلڈ بھرنا ہوگا۔
@@ -2066,6 +2067,7 @@ BaseCurrency=کمپنی کی حوالہ کرنسی (اسے تبدیل کرنے �
 WarningNoteModuleInvoiceForFrenchLaw=یہ ماڈیول %s فرانسیسی قوانین کے مطابق ہے (Loi Finance 2016)۔
 WarningNoteModulePOSForFrenchLaw=یہ ماڈیول %s فرانسیسی قوانین (Loi Finance 2016) کے مطابق ہے کیونکہ ماڈیول نان ریورسیبل لاگز خود بخود فعال ہو جاتا ہے۔
 WarningInstallationMayBecomeNotCompliantWithLaw=آپ ماڈیول %s انسٹال کرنے کی کوشش کر رہے ہیں جو ایک بیرونی ماڈیول ہے۔ ایک بیرونی ماڈیول کو چالو کرنے کا مطلب ہے کہ آپ اس ماڈیول کے ناشر پر بھروسہ کرتے ہیں اور آپ کو یقین ہے کہ یہ ماڈیول آپ کی درخواست کے رویے پر منفی اثر نہیں ڈالتا، اور آپ کے ملک کے قوانین کے مطابق ہے (%s)۔ اگر ماڈیول کوئی غیر قانونی خصوصیت متعارف کراتا ہے، تو آپ غیر قانونی سافٹ ویئر کے استعمال کے ذمہ دار ہو جاتے ہیں۔
+
 MAIN_PDF_MARGIN_LEFT=پی ڈی ایف پر بائیں مارجن
 MAIN_PDF_MARGIN_RIGHT=پی ڈی ایف پر دایاں مارجن
 MAIN_PDF_MARGIN_TOP=پی ڈی ایف پر ٹاپ مارجن
@@ -2110,7 +2112,7 @@ NewEmailCollector=نیا ای میل کلکٹر
 EMailHost=ای میل IMAP سرور کا میزبان
 EMailHostPort=Port of email IMAP server
 loginPassword=Login/Password
-oauthToken=Oauth2 token
+oauthToken=OAuth2 token
 accessType=Acces type
 oauthService=Oauth service
 TokenMustHaveBeenCreated=Module OAuth2 must be enabled and an oauth2 token must have been created with the correct permissions (for example scope "gmail_full" with OAuth for Gmail).
@@ -2336,9 +2338,9 @@ IconOnly=Icon only - Text on tooltip only
 INVOICE_ADD_ZATCA_QR_CODE=Show the ZATCA QR code on invoices
 INVOICE_ADD_ZATCA_QR_CODEMore=Some Arabic countries need this QR Code on their invoices
 INVOICE_ADD_SWISS_QR_CODE=Show the swiss QR-Bill code on invoices
-INVOICE_ADD_SWISS_QR_CODEMore=Switzerland's standard for invoices; make sure ZIP&City are filled and that the accounts have valid Swiss/Liechtenstein IBANs.
+INVOICE_ADD_SWISS_QR_CODEMore=Switzerland's standard for invoices; make sure ZIP & City are filled and that the accounts have valid Swiss/Liechtenstein IBANs.
 INVOICE_SHOW_SHIPPING_ADDRESS=Show shipping address
-INVOICE_SHOW_SHIPPING_ADDRESSMore=Compulsory mention for France
+INVOICE_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
 UrlSocialNetworksDesc=Url link of social network. Use {socialid} for the variable part that contains the social network ID.
 IfThisCategoryIsChildOfAnother=If this category is a child of another one
 DarkThemeMode=Dark theme mode
@@ -2366,12 +2368,12 @@ DefinedAPathForAntivirusCommandIntoSetup=Define a path for an antivirus program 
 TriggerCodes=Triggerable events
 TriggerCodeInfo=Enter here the trigger code(s) that must generate a post of a web request (only external URL are allowed). You can enter several trigger codes separated by a comma.
 EditableWhenDraftOnly=If unchecked, the value can only be modified when object has a draft status
-CssOnEdit=Css on edit pages
-CssOnView=Css on view pages
-CssOnList=Css on lists
-HelpCssOnEditDesc=The Css used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
-HelpCssOnViewDesc=The Css used when viewing the field.
-HelpCssOnListDesc=The Css used when field is inside a list table.<br>Example: "tdoverflowmax200"
+CssOnEdit=CSS on edit pages
+CssOnView=CSS on view pages
+CssOnList=CSS on lists
+HelpCssOnEditDesc=The CSS used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
+HelpCssOnViewDesc=The CSS used when viewing the field.
+HelpCssOnListDesc=The CSS used when field is inside a list table.<br>Example: "tdoverflowmax200"
 RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents for receptions
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions
 WarningDisabled=Warning disabled
@@ -2397,3 +2399,5 @@ DefaultForTypeDesc=Template used by default when creating a new email for the te
 OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
 OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AtBottomOfPage=At bottom of page
+FailedAuth=failed authentications
+MaxNumberOfFailedAuth=Max number of failed authentication in 24h to disable login.

@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       availabilities_agenda.php
+ *  \file       htdocs/bookcal/availabilities_agenda.php
  *  \ingroup    bookcal
  *  \brief      Tab of events on Availabilities
  */

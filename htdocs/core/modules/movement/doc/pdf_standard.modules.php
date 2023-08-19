@@ -43,11 +43,6 @@ class pdf_standard extends ModelePDFMovement
 	public $db;
 
 	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
 	 * @var string model description (short text)
 	 */
 	public $description;
@@ -67,13 +62,6 @@ class pdf_standard extends ModelePDFMovement
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
-
 
 	public $wref;
 	public $posxidref;

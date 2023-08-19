@@ -67,7 +67,6 @@ ExportDataset_ticket_1=Tickets
 # Status
 Read=Lu
 Assigned=Assigné
-InProgress=En cours
 NeedMoreInformation=Attente retour demandeur
 NeedMoreInformationShort=En attente de retour
 Answered=Répondu
@@ -252,8 +251,10 @@ TicketAssignedEmailBody=Vous avez été assigné au ticket #%s par %s
 TicketAssignedCustomerEmail=Votre ticket a été assigné pour traitement.
 TicketAssignedCustomerBody=Il s'agit d'un e-mail automatique pour confirmer que votre ticket a été assigné pour traitement.
 MarkMessageAsPrivate=Marquer message comme privé
-TicketMessageSendEmailHelp=Un email sera envoyé à tous les contacts assignés (contacts internes, mais aussi contacts externes sauf si l'option "%s" est cochée)
-TicketMessagePrivateHelp=Ce message ne s'affichera pas pour les utilisateurs externes
+TicketMessageSendEmailHelp=Un e-mail sera envoyé à tous les contacts assignés
+TicketMessageSendEmailHelp2a=(contacts internes, mais aussi contacts externes sauf si l'option "%s" est vérifiée)
+TicketMessageSendEmailHelp2b=(contacts internes, mais aussi contacts externes)
+TicketMessagePrivateHelp=Ce message ne sera pas visible pour les utilisateurs externes
 TicketMessageRecipientsHelp=Champ destinataire rempli avec les contacts actifs liés au ticket
 TicketEmailOriginIssuer=Émetteur à l'origine des tickets
 InitialMessage=Message initial
@@ -328,6 +329,9 @@ OldUser=Ancien utilisateur
 NewUser=Nouvel utilisateur
 NumberOfTicketsByMonth=Nombre de tickets par mois
 NbOfTickets=Nombre de tickets
+ExternalContributors=Contributeurs externes
+AddContributor=Ajouter un contributeur externe
+
 # notifications
 TicketCloseEmailSubjectCustomer=Billet fermé
 TicketCloseEmailBodyCustomer=Ceci est un message automatique pour vous avertir que le ticket %s vient d'être clôturé.

@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -199,7 +199,9 @@ class Form
 	 * @param string 	$value 			Value to show/edit
 	 * @param object 	$object 		Object (that we want to show)
 	 * @param boolean 	$perm 			Permission to allow button to edit parameter
-	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
+	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99',
+	 *                                  'text' or 'textarea:rows:cols%', 'safehtmlstring', 'restricthtml',
+	 *                                  'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param string 	$editvalue 		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value, or a select combo). Use '' to use same than $value
 	 * @param object 	$extObject 		External object ???
 	 * @param mixed 	$custommsg 		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -245,7 +247,7 @@ class Form
 				$editaction = GETPOST('action', 'aZ09');
 			}
 			$editmode = ($editaction == 'edit' . $htmlname);
-			if ($editmode) {
+			if ($editmode) {	// edit mode
 				$ret .= "\n";
 				$ret .= '<form method="post" action="' . $_SERVER["PHP_SELF"] . ($moreparam ? '?' . $moreparam : '') . '">';
 				$ret .= '<input type="hidden" name="action" value="set' . $htmlname . '">';
@@ -279,13 +281,12 @@ class Form
 						$morealt = ' style="width: ' . $cols . '"';
 						$cols = '';
 					}
-
 					$valuetoshow = ($editvalue ? $editvalue : $value);
 					$ret .= '<textarea id="' . $htmlname . '" name="' . $htmlname . '" wrap="soft" rows="' . (empty($tmp[1]) ? '20' : $tmp[1]) . '"' . ($cols ? ' cols="' . $cols . '"' : 'class="quatrevingtpercent"') . $morealt . '" autofocus>';
 					// textarea convert automatically entities chars into simple chars.
 					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwig is off.
 					$valuetoshow = str_replace('&', '&amp;', $valuetoshow);
-					$ret .= dol_string_neverthesehtmltags($valuetoshow, array('textarea'));
+					$ret .= dol_htmlwithnojs(dol_string_neverthesehtmltags($valuetoshow, array('textarea')));
 					$ret .= '</textarea>';
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$addnowlink = empty($moreoptions['addnowlink']) ? 0 : $moreoptions['addnowlink'];
@@ -338,7 +339,7 @@ class Form
 					$ret .= '</tr></table>' . "\n";
 				}
 				$ret .= '</form>' . "\n";
-			} else {
+			} else {		// view mode
 				if (preg_match('/^email/', $typeofdata)) {
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
 				} elseif (preg_match('/^phone/', $typeofdata)) {
@@ -351,11 +352,9 @@ class Form
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="checkbox" disabled id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($value ? ' checked' : '') . ($tmp[1] ? $tmp[1] : '') . '/>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata)) {
-					$ret .= dol_htmlentitiesbr($value);
-				} elseif (preg_match('/^safehtmlstring/', $typeofdata)) {
-					$ret .= dol_string_onlythesehtmltags($value);
-				} elseif (preg_match('/^restricthtml/', $typeofdata)) {
-					$ret .= dol_string_onlythesehtmltags($value);
+					$ret .= dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($value), 1, 1, 1));
+				} elseif (preg_match('/^(safehtmlstring|restricthtml)/', $typeofdata)) {	// 'restricthtml' is not an allowed type for editfieldval. Value is 'safehtmlstring'
+					$ret .= dol_htmlwithnojs(dol_string_onlythesehtmltags($value));
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$ret .= '<span class="valuedate">' . dol_print_date($value, 'day', $gm) . '</span>';
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {
@@ -632,7 +631,7 @@ class Form
 	 * 	@param 	string 	$tooltiptrigger 	''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
 	 * 	@param 	int 	$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return string                      Code html du tooltip (texte+picto)
-	 * 	@see    textwithpicto() 			Use thisfunction if you can.
+	 * 	@see    textwithpicto() 			Use textwithpicto() instead of textwithtooltip if you can.
 	 */
 	public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
@@ -754,6 +753,8 @@ class Form
 		} elseif ($type == '1') {
 			$type = 'help';
 		}
+		// Clean parameters
+		$tooltiptrigger = preg_replace('/[^a-z0-9]/i', '', $tooltiptrigger);
 
 		if (preg_match('/onsmartphone$/', $tooltiptrigger) && empty($conf->dol_no_mouse_hover)) {
 			$tooltiptrigger = preg_replace('/^.*onsmartphone$/', '', $tooltiptrigger);
@@ -6326,6 +6327,7 @@ class Form
 		$sql .= " FROM " . $this->db->prefix() . "c_tva as t, " . $this->db->prefix() . "c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " AND c.code IN (" . $this->db->sanitize($country_code, 1) . ")";
 		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
@@ -8235,7 +8237,7 @@ class Form
 		$idname = str_replace(array('[', ']'), array('', ''), $htmlname);
 		$out .= '<select id="' . preg_replace('/^\./', '', $idname) . '" ' . ($disabled ? 'disabled="disabled" ' : '') . 'class="flat ' . (preg_replace('/^\./', '', $htmlname)) . ($morecss ? ' ' . $morecss : '') . '"';
 		$out .= ' name="' . preg_replace('/^\./', '', $htmlname) . '" ' . ($moreparam ? $moreparam : '');
-		$out .= '>';
+		$out .= '>'."\n";
 
 		if ($show_empty) {
 			$textforempty = ' ';
@@ -8574,7 +8576,7 @@ class Form
 	 *    Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 * @param 	string 		$htmlname 		Name of select
-	 * @param 	array 		$array 			Array(key=>value) or Array(key=>array('id'=> , 'label'=> , 'color'=> , 'picto'=> , 'labelhtml'=> ))
+	 * @param 	array 		$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
 	 * @param 	array 		$selected 		Array of keys preselected
 	 * @param 	int 		$key_in_label 	1 to show key like in "[key] value"
 	 * @param 	int 		$value_as_key 	1 to use value as key
@@ -9430,16 +9432,6 @@ class Form
 			}
 		}
 
-		/*
-		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-			}
-		}*/
-
 		// Add where from hooks
 		if (is_object($hookmanager)) {
 			$parameters = array('showrefnav' => true);
@@ -9497,6 +9489,7 @@ class Form
 			$ret .= '</ul></div>';
 		}
 
+		// Status
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {

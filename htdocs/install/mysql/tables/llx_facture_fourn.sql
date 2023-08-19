@@ -49,12 +49,13 @@ create table llx_facture_fourn
 
   vat_reverse_charge    tinyint          DEFAULT 0,	      -- By default, supplier invoice not concerned by vat reverse charge
 
-  tva					double(24,8)     DEFAULT 0,
+  tva					double(24,8)     DEFAULT 0,				-- deprecated
+
+  total_tva				double(24,8)     DEFAULT 0,
   localtax1				double(24,8)     DEFAULT 0,
   localtax2				double(24,8)     DEFAULT 0,
-  total					double(24,8)     DEFAULT 0,
+  revenuestamp          double(24,8)     DEFAULT 0,				-- amount total revenuestamp
   total_ht				double(24,8)     DEFAULT 0,
-  total_tva				double(24,8)     DEFAULT 0,
   total_ttc				double(24,8)     DEFAULT 0,
 
   fk_statut				smallint DEFAULT 0 NOT NULL,

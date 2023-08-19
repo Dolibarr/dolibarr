@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
-SupplierProposal=供应商商业报价
+SupplierProposal=供应商报价单
 supplier_proposalDESC=管理供应商询价申请
 SupplierProposalNew=新建询价申请
 CommRequest=询价申请
@@ -7,7 +7,7 @@ CommRequests=询价申请
 SearchRequest=搜索申请
 DraftRequests=草稿
 SupplierProposalsDraft=供应商提案草案
-LastModifiedRequests=最近变更的 %s 份询价申请
+LastModifiedRequests=最近修改的 %s 份询价申请
 RequestsOpened=打开询价申请
 SupplierProposalArea=供应商提案区域
 SupplierProposalShort=供应商提案
@@ -51,7 +51,7 @@ ListOfSupplierProposals=供应商提案请求列表
 ListSupplierProposalsAssociatedProject=与项目关联的供应商提案列表
 SupplierProposalsToClose=供应商提案结束
 SupplierProposalsToProcess=供应商提议处理
-LastSupplierProposals=最新的%s价格要求
+LastSupplierProposals=最近新增的 %s 份询价申请
 AllPriceRequests=全部申请
 TypeContact_supplier_proposal_external_SHIPPING=供应商交货联系人
 TypeContact_supplier_proposal_external_BILLING=供应商开具账单联系人

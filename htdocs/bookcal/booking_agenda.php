@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       booking_agenda.php
- *  \ingroup    bookcal
- *  \brief      Tab of events on Booking
+ *   \file       htdocs/bookcal/booking_agenda.php
+ *   \ingroup    bookcal
+ *   \brief      Tab of events on Booking
  */
 
 // Load Dolibarr environment
