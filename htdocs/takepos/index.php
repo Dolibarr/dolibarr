@@ -1404,10 +1404,10 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 				<?php
 				if ($count == ($MAXCATEG - 2)) {
 					//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="catimg'.$count.'" />';
-					echo '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
+					echo '<span class="fa fa-chevron-left" style="font-size: 5em; cursor: pointer;"></span>';
 				} elseif ($count == ($MAXCATEG - 1)) {
 					//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
-					echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
+					echo '<span class="fa fa-chevron-right" style="font-size: 5em; cursor: pointer;"></span>';
 				} else {
 					if (!getDolGlobalString('TAKEPOS_HIDE_CATEGORY_IMAGES')) {
 						echo '<img class="imgwrapper" id="catimg'.$count.'" />';
@@ -1446,10 +1446,10 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
-						print '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
+						print '<span class="fa fa-chevron-left" style="font-size: 5em; cursor: pointer;"></span>';
 					} elseif ($count == ($MAXPRODUCT - 1)) {
 						//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
-						print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
+						print '<span class="fa fa-chevron-right" style="font-size: 5em; cursor: pointer;"></span>';
 					} else {
 						if (getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
