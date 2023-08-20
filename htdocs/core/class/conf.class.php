@@ -305,7 +305,7 @@ class Conf
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						$this->global->$key = dolDecrypt($value);
+						$this->global->$key = dolDecrypt($value);	// decrypt data excrypted with dolibarr_set_const($db, $name, $value)
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();
