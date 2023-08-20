@@ -208,6 +208,10 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Minimal PHP version is now PHP 7.1 instead of PHP 7.0
+* Sensitive datas like keys in setup pages that need encyption (for example, the API keys of users, or the keys into the Stripe module, or external modules 
+setup that store sensitive keys or password) are using the $dolibarr_main_instance_unique_id as part of the key for encryption. So if you restore or duplicate 
+the data from another instance dump, you must also update this parameter in ther conf.php file to allow decryption in the new instance, or better, you must
+reenter the sensitive data into the setup pages of the new instance to resave them correctly.  
 * The deprecated method "escapeunderscore()" of database handlers has been removed. You must use "escapeforlike()" instead.
 * The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
@@ -216,10 +220,6 @@ Following changes may create regressions for some external modules, but were nec
 * The module for WebService SOAP API have been deprecated. Use instead the Webservice REST API module.
 * The method htmlPrintOnlinePaymentFooter() used for public footer pages has been renamed into htmlPrintOnlineFooter() and moved into company.lib.php
 * The method getCheckOption() and deleteCPUser() of class Holiday has been removed (it was not used)
-* Sensitive datas like keys in setup pages that need encyption (for example, for the keys into the Stripe module, or external modules setup that store 
-sensitive keys or password) are using the $dolibarr_main_instance_unique_id as part of the key for encryption. So if you restore or duplicate the data
-from another instance dump, you must also update this parameter in ther conf.php file to allow decryption in the new instance, or better, you must
-reenter the sensitive data into the setup pages of the new instance to resave them correctly.  
 
 
 ***** ChangeLog for 17.0.3 compared to 17.0.2 *****
