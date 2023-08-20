@@ -216,10 +216,10 @@ Following changes may create regressions for some external modules, but were nec
 * The module for WebService SOAP API have been deprecated. Use instead the Webservice REST API module.
 * The method htmlPrintOnlinePaymentFooter() used for public footer pages has been renamed into htmlPrintOnlineFooter() and moved into company.lib.php
 * The method getCheckOption() and deleteCPUser() of class Holiday has been removed (it was not used)
-* Sensitive datas like keys that need reversible encyption are using the $dolibarr_main_instance_unique_id as part of the key for encryption. So if
-you restore or duplicate the data from another instance, you must also update this parameter in your conf.php file to allow decryption, or you must
-reenter the sensitive data into the setup page to resave them correctly (this is true, for exemple, for the keys into the Stripe module, or external modules
-that store sensitive data).  
+* Sensitive datas like keys in setup pages that need encyption (for example, for the keys into the Stripe module, or external modules setup that store 
+sensitive keys or password) are using the $dolibarr_main_instance_unique_id as part of the key for encryption. So if you restore or duplicate the data
+from another instance dump, you must also update this parameter in ther conf.php file to allow decryption in the new instance, or better, you must
+reenter the sensitive data into the setup pages of the new instance to resave them correctly.  
 
 
 ***** ChangeLog for 17.0.3 compared to 17.0.2 *****
