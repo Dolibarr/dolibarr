@@ -227,7 +227,7 @@ if (empty($conf->stripeconnect->enabled)) {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.getDolGlobalString('STRIPE_TEST_WEBHOOK_ID').'" placeholder="'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx">';
 		print '<br>';
 	}
@@ -241,7 +241,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= ajax_autoselect("onlinetestwebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($conf->global->STRIPE_TEST_WEBHOOK_KEY) && !empty($conf->global->STRIPE_TEST_SECRET_KEY) && !empty($conf->global->STRIPE_TEST_WEBHOOK_ID)) {
 			\Stripe\Stripe::setApiKey($conf->global->STRIPE_TEST_SECRET_KEY);
 			$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
@@ -292,7 +292,7 @@ if (empty($conf->stripeconnect->enabled)) {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID').'" placeholder="'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx">';
 		print '<br>';
 	}
@@ -305,7 +305,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID)) {
 			\Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
 			$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
@@ -377,7 +377,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// What is this for ?
 }
 
 // Card Present for Stripe Terminal
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current code
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_CARD_PRESENT").'</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -390,7 +390,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 }
 
 // Locations for Stripe Terminal
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current code
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("TERMINAL_LOCATION").'</td><td>';
 	$service = 'StripeTest';
@@ -453,7 +453,7 @@ print '</td></tr>';
 
 
 // Activate Klarna
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current code
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_KLARNA").'</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -467,7 +467,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 }
 
 // Activate Bancontact
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current code
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_BANCONTACT").'</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -481,7 +481,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 }
 
 // Activate iDEAL
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current code
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_IDEAL").'</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -495,7 +495,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 }
 
 // Activate Giropay
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current code
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_GIROPAY").'</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -509,7 +509,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 }
 
 // Activate Sofort
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current code
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_SOFORT").'</td><td>';
 	if ($conf->use_javascript_ajax) {
