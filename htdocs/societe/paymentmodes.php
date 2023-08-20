@@ -1542,7 +1542,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 				print '<td>'.dol_print_date($rib->date_rum, 'day').'</td>';
 
-				// FRSTRECUR
+				// FRST or RCUR
 				print '<td>'.$rib->frstrecur.'</td>';
 			}
 

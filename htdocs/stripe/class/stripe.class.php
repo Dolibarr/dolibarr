@@ -1053,9 +1053,12 @@ class Stripe extends CommonObject
 							// link customer and src
 							//$cs = $this->getSetupIntent($description, $soc, $cu, '', $status);
 							$dataforintent = array(['description'=> $description, 'payment_method_types' => ['sepa_debit'], 'customer' => $cu->id, 'payment_method' => $sepa->id], 'metadata'=>$metadata);
+
 							$cs = $s->setupIntents->create($dataforintent);
 							//$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
 							$cs = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
+							// note: $cs->mandate contians ID of mandate on Stripe side
+
 							if (!$cs) {
 								$this->error = 'Link SEPA <-> Customer failed';
 							} else {
@@ -1068,6 +1071,9 @@ class Stripe extends CommonObject
 								$sql .= " card_type = 'sepa_debit',";
 								$sql .= " stripe_account= '" . $this->db->escape($cu->id . "@" . $stripeacc) . "',";
 								$sql .= " ext_payment_site = '".$this->db->escape($service)."'";
+								if (!empty($cs->mandate)) {
+									$sql .= ", rum = '".$this->db->escape($cs->mandate)."'";
+								}
 								$sql .= " WHERE rowid = ".((int) $object->id);
 								$sql .= " AND type = 'ban'";
 								$resql = $this->db->query($sql);
