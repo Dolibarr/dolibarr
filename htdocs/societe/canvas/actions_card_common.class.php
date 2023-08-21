@@ -249,7 +249,7 @@ abstract class ActionsCardCommon
 
 			// Language
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				$this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang ? $this->object->default_lang : $conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1);
+				$this->tpl['select_lang'] = $formadmin->select_language((empty($this->object->default_lang) ? getDolGlobalString('MAIN_LANG_DEFAULT') : $this->object->default_lang), 'default_lang', 0, 0, 1);
 			}
 
 			// VAT

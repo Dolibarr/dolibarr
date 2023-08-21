@@ -1019,7 +1019,7 @@ if ($action == 'create' || $action == 'presend') {
 				if ($permissiontoedit) {
 					$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
 					if ($action == 'edit_contrat') {
-						$formcontract = new Formcontract($db);
+						$formcontract = new FormContract($db);
 						$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
 					} else {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
