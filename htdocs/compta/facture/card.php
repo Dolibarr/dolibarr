@@ -966,7 +966,8 @@ if (empty($reshook))
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
-				// We do not copy the private note
+
+				$object->note_private		= trim(GETPOST('note_private', 'restricthtml'));
 				$object->ref_client			= GETPOST('ref_client');
 				//$object->ref_int = $_POST['ref_int'];
 				$object->model_pdf = GETPOST('model');
@@ -1023,7 +1024,8 @@ if (empty($reshook))
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
-				// We do not copy the private note
+				$object->note_private		= trim(GETPOST('note_private', 'restricthtml'));
+
 				$object->ref_client			= GETPOST('ref_client');
 				$object->model_pdf = GETPOST('model');
 				$object->fk_project			= GETPOST('projectid', 'int');
