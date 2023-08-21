@@ -39,6 +39,7 @@ abstract class ActionsCardCommon
 
 	//! Template container
 	public $tpl = array();
+
 	//! Object container
 	public $object;
 
@@ -46,7 +47,6 @@ abstract class ActionsCardCommon
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
 
 	/**
 	 * @var string[] Error codes (or messages)
