@@ -313,7 +313,7 @@ abstract class ActionsCardCommon
 				//$s=picto_from_langcode($this->default_lang);
 				//print ($s?$s.' ':'');
 				$langs->load("languages");
-				$this->tpl['default_lang'] = ($this->default_lang ? $langs->trans('Language_'.$this->object->default_lang) : '');
+				$this->tpl['default_lang'] = (empty($this->object->default_lang) ? '' : $langs->trans('Language_'.$this->object->default_lang));
 			}
 
 			$this->tpl['image_edit'] = img_edit();
