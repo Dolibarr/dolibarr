@@ -494,18 +494,16 @@ class Dolresource extends CommonObject
 	/**
 	 *	Load resource objects into $this->lines
 	 *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	array		$filter    	  filter output
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @param	string		$sortorder    	sort order
+	 *  @param	string		$sortfield    	sort field
+	 *  @param	int			$limit		  	limit page
+	 *  @param	int			$offset    	  	page
+	 *  @param	array		$filter    	  	filter output
+	 *  @return int          				<0 if KO, Number of lines loaded if OK
 	 */
 	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
 	{
 		// phpcs:enable
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
@@ -541,14 +539,10 @@ class Dolresource extends CommonObject
 			}
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
-		$this->num_all = 0;
-		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-			$result = $this->db->query($sql);
-			$this->num_all = $this->db->num_rows($result);
-		}
 		if ($limit) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
+
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 
 		$this->lines = array();
@@ -773,7 +767,7 @@ class Dolresource extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load('resource');
 
@@ -782,8 +776,8 @@ class Dolresource extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		/*if (isset($this->status)) {
-			$datas['status'] = '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}*/
+		 $datas['status'] = '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		 }*/
 		if (isset($this->type_label)) {
 			$datas['label'] = '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
 		}
@@ -850,7 +844,7 @@ class Dolresource extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 		/*$linkstart = '<a href="'.DOL_URL_ROOT.'/resource/card.php?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend = '</a>';*/
+		 $linkend = '</a>';*/
 
 		$result .= $linkstart;
 		if ($withpicto) {
@@ -896,8 +890,6 @@ class Dolresource extends CommonObject
 	public static function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-
 		return '';
 	}
 
@@ -910,8 +902,6 @@ class Dolresource extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->nb = array();
 
 		$sql = "SELECT count(r.rowid) as nb";
