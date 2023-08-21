@@ -1156,7 +1156,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					if (is_resource($handle)) {
 						$dirfound++;
 
-						// Run llx_mytable.sql files, then llx_mytable_*.sql
+						// Run MAIN_DB_PREFIX_mytable.sql files, then MAIN_DB_PREFIX_mytable_*.sql
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
 							$files[] = $file;
@@ -1171,7 +1171,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+							if(preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, strlen(MAIN_DB_PREFIX)) == MAIN_DB_PREFIX){
 								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 								if ($result <= 0) {
 									$error++;
@@ -1181,7 +1181,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 						rewinddir($handle);
 
-						// Run llx_mytable.key.sql files (Must be done after llx_mytable.sql) then then llx_mytable_*.key.sql
+						// Run MAIN_DB_PREFIX_mytable.key.sql files (Must be done after MAIN_DB_PREFIX_mytable.sql) then then MAIN_DB_PREFIX_mytable_*.key.sql
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
 							$files[] = $file;
@@ -1196,7 +1196,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, strlen(MAIN_DB_PREFIX)) == MAIN_DB_PREFIX) {
 								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 								if ($result <= 0) {
 									$error++;
@@ -1206,7 +1206,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 						rewinddir($handle);
 
-						// Run functions-xxx.sql files (Must be done after llx_mytable.key.sql)
+						// Run functions-xxx.sql files (Must be done after MAIN_DB_PREFIX_mytable.key.sql)
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
 							$files[] = $file;
@@ -1231,7 +1231,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 						rewinddir($handle);
 
-						// Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+						// Run data_xxx.sql files (Must be done after MAIN_DB_PREFIX_mytable.key.sql)
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
 								   $files[] = $file;
