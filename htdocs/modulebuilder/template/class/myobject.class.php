@@ -442,8 +442,6 @@ class MyObject extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
