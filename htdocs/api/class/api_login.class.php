@@ -117,7 +117,12 @@ class Login
 			throw new RestException(403, "Bad value for entity, must be the numeric ID of company.");
 		}
 		if ($entity == '') {
-			$entity = 1;
+			if(! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $entity = 1;
+			else {
+				if(! function_exists('getEntityUser')) dol_include_once('/financement/lib/financement.lib.php');
+
+				$entity = getEntityUser($login);
+			}
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
