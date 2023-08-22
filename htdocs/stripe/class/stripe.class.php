@@ -881,10 +881,10 @@ class Stripe extends CommonObject
 								if ($status) {
 									$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$cu->id;
 								}
-								$urtoswitchonstripe = ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+								$urtoswitchonstripe = '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
 
 								//dol_syslog("Error: This case is not supported", LOG_ERR);
-								$this->error = $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', $urtoswitchonstripe);
+								$this->error = str_replace('{s1}', $urtoswitchonstripe, $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', '{s1}'));
 							}
 						} else {
 							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
@@ -902,10 +902,10 @@ class Stripe extends CommonObject
 								if ($status) {
 									$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$cu->id;
 								}
-								$urtoswitchonstripe = ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+								$urtoswitchonstripe = '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
 
 								//dol_syslog("Error: This case is not supported", LOG_ERR);
-								$this->error = $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', $urtoswitchonstripe);
+								$this->error = str_replace('{s1}', $urtoswitchonstripe, $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', '{s1}'));
 							}
 						}
 
