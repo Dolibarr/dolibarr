@@ -1277,7 +1277,7 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring invoice is an invoice with a frequency
-		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($today)."')";
+		$sql.= " AND (date_when IS NULL OR date_when <= '".$db->idate(strtotime('+'.$conf->global->GENERATE_INVOICE_AHEAD_OF_TIME.' days', $today))."')"; /* SPE KOESIO*/
 		$sql .= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql .= ' AND suspended = 0';
 		$sql .= ' AND entity = '.$conf->entity; // MUST STAY = $conf->entity here
