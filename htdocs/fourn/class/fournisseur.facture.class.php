@@ -1249,7 +1249,7 @@ class FactureFournisseur extends CommonInvoice
 			$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		}
 		$sql .= " libelle=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " paye=".(isset($this->paye) ? ((int) $this->paye) : "null").",";
+		$sql .= " paye=".(isset($this->paye) ? ((int) $this->paye) : "0").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
 		$sql .= " localtax1=".(isset($this->localtax1) ? ((float) $this->localtax1) : "null").",";
@@ -1261,7 +1261,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_user_author=".(isset($this->author) ? ((int) $this->author) : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? ((int) $this->fk_user_valid) : "null").",";
 		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_projet=".(! empty($this->fk_project) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen($this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
