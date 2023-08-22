@@ -240,6 +240,8 @@ if ($result) {
 			}
 		}
 
+		$revenuestamp = (double) price2num($obj->revenuestamp, 'MT');
+
 		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
 		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
@@ -247,7 +249,7 @@ if ($result) {
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->label_compte;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
-		$tabfac[$obj->rowid]["revenuestamp"] = $obj->revenuestamp;
+		$tabfac[$obj->rowid]["revenuestamp"] = $revenuestamp;
 		//$tabfac[$obj->rowid]["fk_facturedet"] = $obj->fdid;
 
 		// Avoid warnings
@@ -294,7 +296,7 @@ if ($result) {
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
 
-		if (empty($tabrevenuestamp[$obj->rowid][$compta_revenuestamp])) {
+		if (empty($tabrevenuestamp[$obj->rowid][$compta_revenuestamp]) && !empty($revenuestamp)) {
 			// The revenue stamp was never seen for this invoice id=$obj->rowid
 			$tabttc[$obj->rowid][$compta_soc] += $obj->revenuestamp;
 			$tabrevenuestamp[$obj->rowid][$compta_revenuestamp] = $obj->revenuestamp;
@@ -1170,7 +1172,7 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					$accountoshow = length_accountg($k);
 					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Sale").')</span>';
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("AccountingJournalType2").')</span>';
 					} else {
 						print $accountoshow;
 					}
