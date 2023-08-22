@@ -8064,7 +8064,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (is_object($object) && $object->element == 'project') {
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
 			}
-
+			if (is_object($object) && $object->element == 'propal' && !empty($object->fk_project)) {
+				$propalproject = new Project($db);
+				$propalproject->fetch($object->fk_project);
+				$substitutionarray['__PROJECT_ID__'] = $propalproject->id;
+				$substitutionarray['__PROJECT_REF__'] = $propalproject->ref;
+				$substitutionarray['__PROJECT_NAME__'] = $propalproject->title;
+			}
 			if (is_object($object) && $object->element == 'shipping') {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = $object->tracking_number;
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = $object->tracking_url;
