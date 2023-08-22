@@ -31,7 +31,6 @@
 -- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-
 -- v18
 
 
