@@ -1235,7 +1235,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 									if (!empty($stripeacc)) {
 										$connect = $stripeacc.'/';
 									}
-									if ($rib->ext_payment_site == 'StripeLive') {
+									if ($companypaymentmodetemp->ext_payment_site == 'StripeLive') {
 										$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
 									} else {
 										$url = 'https://dashboard.stripe.com/'.$connect.'test/search?query='.$companypaymentmodetemp->stripe_card_ref;
