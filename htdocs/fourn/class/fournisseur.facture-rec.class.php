@@ -2152,7 +2152,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec SET';
 		$sql .= ' fk_facture_fourn = ' . (int) $this->fk_facture_fourn;
-		$sql .= ', fk_parent_line = ' . (int) $this->fk_parent;
+		$sql .= ', fk_parent_line = ' . ($this->fk_parent ? "'".$this->db->escape($this->fk_parent)."'" : 'null');
 		$sql .= ', fk_product = ' . (int) $this->fk_product;
 		$sql .= ', ref = ' . (!empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'NULL');
 		$sql .= ", label = " . (!empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'NULL');
@@ -2161,7 +2161,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 		$sql .= ', pu_ttc = ' . price2num($this->pu_ttc);
 		$sql .= ', qty = ' . price2num($this->qty);
 		$sql .= ", remise_percent = '" . price2num($this->remise_percent) . "'";
-		$sql .= ', fk_remise_except = ' . (int) $this->fk_remise_except;
+		$sql .= ', fk_remise_except = ' . ($this->fk_remise_except ? "'".$this->db->escape($this->fk_remise_except)."'" : 'null');
 		$sql .= ", vat_src_code = '" . $this->db->escape($this->vat_src_code) . "'";
 		$sql .= ', tva_tx = ' . price2num($this->tva_tx);
 		$sql .= ', localtax1_tx = ' . price2num($this->localtax1_tx);
