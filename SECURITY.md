@@ -4,16 +4,15 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Supported Versions for security reports
 
-| Version    | Supported              |
-| ---------- | ---------------------- |
-| <= 17.0.0  | :x:                    |
-| >= 17.0.1  | :white_check_mark:     |
-| >= develop | :white_check_mark:     |
+Security report are valid only on current stable version (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, for a private report, please use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new) (if you have permissions).
-Alternatively send an email to security@dolibarr.org (for everybody)
+To report a vulnerability, for a private report, you can:
+
+- Send your report on [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
+- Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
+- Or send by email to security@dolibarr.org a clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary
 
 ## Hunting vulnerabilities on Dolibarr
 
@@ -39,24 +38,25 @@ We are happy to thank everyone who submits valid reports which help us improve t
 
 You must be the first reporter of the vulnerability (duplicate reports are closed).
 
-You must send a clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
-
 You must avoid tests that could cause degradation or interruption of our service (refrain from using automated tools, and limit yourself about requests per second), that's why we recommand to install software on your own platform.
 
 You must not leak, manipulate, or destroy any user data of third parties to find your vulnerability.
+
+Reports are processed around once a month.
 
 ## Scope for qualified vulnerabilities
 
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
+* The version to analyze must be the last version available into "develop" branch or into last stable "vX.Y" released version.  
 * $dolibarr_main_prod must be set to 1 into conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
-* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 into backoffice menu Home - Setup - Other (this protection should be set to 3 soon by default)
+* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 into backoffice menu Home - Setup - Other (this protection should be set to 3 soon by default). CSRF attacks are accepted but
+ double check that you have set MAIN_SECURITY_CSRF_WITH_TOKEN to value 3.
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles into "experimental", "developement" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so that only the documents directory is in write mode. The root directory called htdocs must be read-only.
-* CSRF attacks are accepted but double check that you have set MAIN_SECURITY_CSRF_WITH_TOKEN to value 3.
 * The modules DebugBar and ModuleBuilder must NOT be enabled. (by default, these modules are not enabled. They are developer tools)
 * Ability for a high level user to edit web site pages into the CMS by including HTML or Javascript is an expected feature. Vulnerabilities into the website module are validated only if HTML or Javascript injection can be done by a non allowed user.
 * Fail2ban rules for rate limit on the login page,password forgotten page, api calls and all public pages (/public/*) must be installed as recommendend into the section "About - Admin tools - Section Access limits and mitigation".

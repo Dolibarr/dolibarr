@@ -72,6 +72,9 @@ abstract class ModeleNumRefWorkstation
 	 */
 	public $error = '';
 
+	public $version;
+
+
 	/**
 	 *	Return if a module can be used or not
 	 *

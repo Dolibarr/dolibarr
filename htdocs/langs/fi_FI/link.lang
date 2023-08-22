@@ -8,4 +8,4 @@ LinkRemoved=%s linkki on poistettu
 ErrorFailedToDeleteLink= Linkin '<b>%s</b>' poisto ei onnistunut
 ErrorFailedToUpdateLink= Linkin '<b>%s</b>' päivitys ei onnistunut
 URLToLink=URL linkiksi
-OverwriteIfExists=Overwrite file if exists
+OverwriteIfExists=Korvaa tiedosto jos olemassa

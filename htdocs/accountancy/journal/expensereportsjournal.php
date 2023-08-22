@@ -380,7 +380,7 @@ if ($action == 'writebookkeeping') {
 		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
 			$error++;
 			$errorforline++;
-			setEventMessages('Try to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
+			setEventMessages('We tried to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (!$errorforline) {
@@ -469,6 +469,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print "\n";
 			}
 		}
+
 		// VAT
 		foreach ($tabtva[$key] as $k => $mt) {
 			if ($mt) {

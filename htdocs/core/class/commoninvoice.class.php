@@ -772,13 +772,14 @@ abstract class CommonInvoice extends CommonObject
 	 *	Create a withdrawal request for a direct debit order or a credit transfer order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
-	 *	@param      User	$fuser      	User asking the direct debit transfer
-	 *  @param		float	$amount			Amount we request direct debit for
-	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
-	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@param      User	$fuser      				User asking the direct debit transfer
+	 *  @param		float	$amount						Amount we request direct debit for
+	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
+	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
+	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *	@return     int         						<0 if KO, 0 if a request already exists, >0 if OK
 	 */
-	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture')
+	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -792,7 +793,7 @@ abstract class CommonInvoice extends CommonObject
 			$bac = new CompanyBankAccount($this->db);
 			$bac->fetch(0, $this->socid);
 
-			$sql = "SELECT count(*)";
+			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			if ($type == 'bank-transfer') {
 				$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
@@ -800,13 +801,16 @@ abstract class CommonInvoice extends CommonObject
 				$sql .= " WHERE fk_facture = ".((int) $this->id);
 			}
 			$sql .= " AND type = 'ban'"; // To exclude record done for some online payments
-			$sql .= " AND traite = 0";
+			if (empty($checkduplicateamongall)) {
+				$sql .= " AND traite = 0";
+			}
 
 			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$row = $this->db->fetch_row($resql);
-				if ($row[0] == 0) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb == 0) {	// If no request found yet
 					$now = dol_now();
 
 					$totalpaid = $this->getSommePaiement();

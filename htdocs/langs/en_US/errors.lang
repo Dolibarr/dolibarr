@@ -191,6 +191,7 @@ ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
 ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfUsage=You set you want to use this project to follow an opportunity, so you must also fill the initial Status of opportunity.
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter it's status.
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
@@ -317,6 +318,7 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you 
 ErrorMenuExistValue=A Menu already exist with this Title or URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
+ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -358,6 +360,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation i
 WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to enable it 
 WarningPermissionAlreadyExist=Existing permissions for this object
 WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.  
+WarningCorrectedInvoiceNotFound=Corrected invoice not found
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)

@@ -1040,6 +1040,7 @@ if (empty($reshook)) {
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private		= trim(GETPOST('note_private', 'restricthtml'));
 				$object->ref_client			= GETPOST('ref_client', 'alphanohtml');
+				$object->ref_customer		= GETPOST('ref_client', 'alphanohtml');
 				$object->model_pdf = GETPOST('model', 'alphanohtml');
 				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id', 'int');
@@ -1092,7 +1093,8 @@ if (empty($reshook)) {
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private		= trim(GETPOST('note_private', 'restricthtml'));
-				$object->ref_client			= GETPOST('ref_client');
+				$object->ref_client			= GETPOST('ref_client', 'alphanohtml');
+				$object->ref_customer		= GETPOST('ref_client', 'alphanohtml');
 				$object->model_pdf = GETPOST('model');
 				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= 0;		// No payment term for a credit note
@@ -1655,13 +1657,17 @@ if (empty($reshook)) {
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->label);
 									if ($object->situation_counter == 1) {
 										$lines[$i]->situation_percent = 0;
 									}
 
 									if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN)) {
 										// Negative line, we create a discount line
+										if (empty($desc)) {
+											$desc = $label ? $label : $langs->trans('Discount');
+										}
+
 										$discount = new DiscountAbsolute($db);
 										$discount->fk_soc = $object->socid;
 										$discount->amount_ht = abs($lines[$i]->total_ht);
@@ -3782,7 +3788,7 @@ if ($action == 'create') {
 	if (empty($reshook)) {
 		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_INVOICE) && !empty($soc->id)) {
 			// copy from thirdparty
-			$tpExtrafields = new Extrafields($db);
+			$tpExtrafields = new ExtraFields($db);
 			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
 			if ($soc->fetch_optionals() > 0) {
 				$object->array_options = array_merge($object->array_options, $soc->array_options);
@@ -4707,7 +4713,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print price($object->retained_warranty).'%';
@@ -4842,28 +4848,18 @@ if ($action == 'create') {
 		}
 	}
 
-	print '<tr>';
-	// Amount TTC
-	print '<td>' . $langs->trans('AmountTTC') . '</td>';
-	print '<td class="nowrap amountcard right">' . price($sign * $object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
-	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		// Multicurrency Amount TTC
-		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
-	}
-	print '</tr>';
 
-	print '</table>';
-
-	// Ajouter la première condition
+	// Add the revenu stamp
 	if ($selleruserevenustamp) {
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<tr><td class="titlefieldmiddle">';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('RevenueStamp');
 		print '</td>';
 		if ($action != 'editrevenuestamp' && !empty($object->brouillon) && $usercancreate) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td class="nowrap amountcard right">';
 		if ($action == 'editrevenuestamp') {
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -4872,7 +4868,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
 			print ' &rarr; <span id="revenuestamp_span"></span>';
-			print ' <input type="submit" class="button buttongen button-save" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button buttongen button-save small" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 			print " <script>
 	            $(document).ready(function(){
@@ -4905,6 +4901,18 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 	}
+
+	print '<tr>';
+	// Amount TTC
+	print '<td>' . $langs->trans('AmountTTC') . '</td>';
+	print '<td class="nowrap amountcard right">' . price($sign * $object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		// Multicurrency Amount TTC
+		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+	}
+	print '</tr>';
+
+	print '</table>';
 
 	$nbrows = 8;
 	$nbcols = 3;

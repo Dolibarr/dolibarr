@@ -28,6 +28,7 @@ ModuleBuilderDescwidgets=Esta guía está adicada a xestionar/construír widgets
 ModuleBuilderDescbuildpackage=Pode xerar aquí un ficheiro de paquete "listo para distribuír" (un ficheiro .zip normalizado) do seu módulo e un ficheiro de documentación "listo para distribuír". Só ten que facer clic no botón para crear o paquete ou o ficheiro de documentación.
 EnterNameOfModuleToDeleteDesc=Pode eliminar o seu módulo. AVISO: Eliminaranse todos os ficheiros de codificación do módulo (xerados ou creados manualmente) E os datos estruturados e a documentación.
 EnterNameOfObjectToDeleteDesc=Pode eliminar un obxecto. AVISO: Eliminaranse todos os ficheiros de codificación (xerados ou creados manualmente) relacionados co obxecto.
+EnterNameOfObjectToDeleteDesc=Pode eliminar un obxecto. AVISO: Eliminaranse todos os ficheiros de codificación (xerados ou creados manualmente) relacionados co obxecto.
 DangerZone=Zona de perigo
 BuildPackage=Construír o paquete
 BuildPackageDesc=Pode xerar un paquete zip da súa aplicación para que estea listo para distribuílo en calquera Dolibarr. Tamén podes distribuílo ou vendelo no mercado como <a href="https://www.dolistore.com"> DoliStore.com </a>.
@@ -177,3 +178,5 @@ ApiObjectDeleted=A API para o obxecto %s eliminouse correctamente
 CRUDRead=Ler
 CRUDCreateWrite=Crear ou actualizar
 FailedToAddCodeIntoDescriptor=Produciuse un erro ao engadir o código ao descritor. Comproba que o comentario de cadea "%s" aínda está presente no ficheiro.
+DictionariesCreated=Dicionario <b> %s </b> creado correctamente
+DictionaryDeleted=Dicionario <b> %s </b> eliminado correctamente

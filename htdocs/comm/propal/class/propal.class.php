@@ -212,8 +212,10 @@ class Propal extends CommonObject
 	public $total;
 
 	public $cond_reglement_code;
-	public $deposit_percent;
+	public $cond_reglement_doc;
 	public $mode_reglement_code;
+
+	public $deposit_percent;
 
 	/**
 	 * @deprecated

@@ -135,6 +135,11 @@ class Commande extends CommonOrder
 	public $cond_reglement_code;
 
 	/**
+	 * @var string Condition payment label
+	 */
+	public $cond_reglement_doc;
+
+	/**
 	 * @var double Deposit % for payment terms
 	 */
 	public $deposit_percent;
@@ -3734,8 +3739,8 @@ class Commande extends CommonOrder
 
 	/**
 	 * getTooltipContentArray
+	 *
 	 * @param array $params params to construct tooltip data
-	 * @since v18
 	 * @return array
 	 */
 	public function getTooltipContentArray($params)

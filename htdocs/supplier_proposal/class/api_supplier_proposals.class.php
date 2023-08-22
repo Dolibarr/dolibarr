@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Supplierproposals extends DolibarrApi
+class SupplierProposals extends DolibarrApi
 {
 
 	/**
@@ -73,7 +73,7 @@ class Supplierproposals extends DolibarrApi
 			throw new RestException(404, 'Supplier Proposal not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

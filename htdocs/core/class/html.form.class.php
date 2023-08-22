@@ -199,7 +199,9 @@ class Form
 	 * @param string 	$value 			Value to show/edit
 	 * @param object 	$object 		Object (that we want to show)
 	 * @param boolean 	$perm 			Permission to allow button to edit parameter
-	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
+	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99',
+	 *                                  'text' or 'textarea:rows:cols%', 'safehtmlstring', 'restricthtml',
+	 *                                  'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param string 	$editvalue 		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value, or a select combo). Use '' to use same than $value
 	 * @param object 	$extObject 		External object ???
 	 * @param mixed 	$custommsg 		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -245,7 +247,7 @@ class Form
 				$editaction = GETPOST('action', 'aZ09');
 			}
 			$editmode = ($editaction == 'edit' . $htmlname);
-			if ($editmode) {
+			if ($editmode) {	// edit mode
 				$ret .= "\n";
 				$ret .= '<form method="post" action="' . $_SERVER["PHP_SELF"] . ($moreparam ? '?' . $moreparam : '') . '">';
 				$ret .= '<input type="hidden" name="action" value="set' . $htmlname . '">';
@@ -279,7 +281,6 @@ class Form
 						$morealt = ' style="width: ' . $cols . '"';
 						$cols = '';
 					}
-
 					$valuetoshow = ($editvalue ? $editvalue : $value);
 					$ret .= '<textarea id="' . $htmlname . '" name="' . $htmlname . '" wrap="soft" rows="' . (empty($tmp[1]) ? '20' : $tmp[1]) . '"' . ($cols ? ' cols="' . $cols . '"' : 'class="quatrevingtpercent"') . $morealt . '" autofocus>';
 					// textarea convert automatically entities chars into simple chars.
@@ -338,7 +339,7 @@ class Form
 					$ret .= '</tr></table>' . "\n";
 				}
 				$ret .= '</form>' . "\n";
-			} else {
+			} else {		// view mode
 				if (preg_match('/^email/', $typeofdata)) {
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
 				} elseif (preg_match('/^phone/', $typeofdata)) {
@@ -351,10 +352,8 @@ class Form
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="checkbox" disabled id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($value ? ' checked' : '') . ($tmp[1] ? $tmp[1] : '') . '/>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata)) {
-					$ret .= dol_htmlentitiesbr($value);
-				} elseif (preg_match('/^safehtmlstring/', $typeofdata)) {
-					$ret .= dol_string_onlythesehtmltags($value);
-				} elseif (preg_match('/^restricthtml/', $typeofdata)) {
+					$ret .= dol_string_onlythesehtmltags(dol_htmlentitiesbr($value), 1, 1, 1);
+				} elseif (preg_match('/^(safehtmlstring|restricthtml)/', $typeofdata)) {	// 'restricthtml' is not an allowed type for editfieldval. Value is 'safehtmlstring'
 					$ret .= dol_string_onlythesehtmltags($value);
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$ret .= '<span class="valuedate">' . dol_print_date($value, 'day', $gm) . '</span>';
@@ -632,7 +631,7 @@ class Form
 	 * 	@param 	string 	$tooltiptrigger 	''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
 	 * 	@param 	int 	$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return string                      Code html du tooltip (texte+picto)
-	 * 	@see    textwithpicto() 			Use thisfunction if you can.
+	 * 	@see    textwithpicto() 			Use textwithpicto() instead of textwithtooltip if you can.
 	 */
 	public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
@@ -4337,20 +4336,20 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Return list of payment methods
-	 *      Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
+	 * Return list of payment methods
+	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 * @param string $selected Id or code or preselected payment mode
-	 * @param string $htmlname Name of select field
-	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 * @param int $format 0=id+label, 1=code+code, 2=code+label, 3=id+code
-	 * @param int $empty 1=can be empty, 0 otherwise
-	 * @param int $noadmininfo 0=Add admin info, 1=Disable admin info
-	 * @param int $maxlength Max length of label
-	 * @param int $active Active or not, -1 = all
-	 * @param string $morecss Add more CSS on select tag
-	 * @param int $nooutput 1=Return string, do not send to output
-	 * @return    string|void                String for the HTML select component
+	 * @param 	string 	$selected 		Id or code or preselected payment mode
+	 * @param 	string 	$htmlname 		Name of select field
+	 * @param 	string 	$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param 	int 	$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 * @param 	int 	$empty 			1=can be empty, 0 otherwise
+	 * @param 	int 	$noadmininfo 	0=Add admin info, 1=Disable admin info
+	 * @param 	int 	$maxlength 		Max length of label
+	 * @param 	int 	$active 		Active or not, -1 = all
+	 * @param 	string 	$morecss 		Add more CSS on select tag
+	 * @param 	int 	$nooutput 		1=Return string, do not send to output
+	 * @return  string|void             String for the HTML select component
 	 */
 	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
 	{
@@ -9410,16 +9409,6 @@ class Form
 			}
 		}
 
-		/*
-		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-			}
-		}*/
-
 		// Add where from hooks
 		if (is_object($hookmanager)) {
 			$parameters = array('showrefnav' => true);
@@ -9477,6 +9466,7 @@ class Form
 			$ret .= '</ul></div>';
 		}
 
+		// Status
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {

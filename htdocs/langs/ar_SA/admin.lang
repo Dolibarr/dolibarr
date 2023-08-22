@@ -365,10 +365,10 @@ GenericMaskCodes=يمكنك إدخال أي قناع ترقيم. في هذا ا�
 GenericMaskCodes2= <b> {cccc} </b> رمز العميل على أحرف n <br> <b> {cccc000} a09a4b739 هو الرمز المخصص للعميل a09a4b739 متبوعًا برمز العميل a09a4b739. يتم إعادة تعيين هذا العداد المخصص للعميل في نفس الوقت مع العداد العالمي. <br> <b> {tttt} </b> رمز نوع الطرف الثالث على أحرف n (انظر القائمة الصفحة الرئيسية - الإعداد - القاموس - أنواع الأطراف الثالثة). إذا أضفت هذه العلامة ، فسيكون العداد مختلفًا لكل نوع من أنواع الجهات الخارجية. <br>
 GenericMaskCodes3=جميع الشخصيات الاخرى في قناع سوف تظل سليمة. <br> المساحات غير مسموح بها. <br>
 GenericMaskCodes3EAN=ستبقى جميع الأحرف الأخرى في القناع سليمة (باستثناء * أو؟ في المركز الثالث عشر في EAN13). <br> غير مسموح بالمسافات. <br> في EAN13 ، يجب أن يكون الحرف الأخير بعد الأخير} في الموضع الثالث عشر * أو؟ . سيتم استبداله بالمفتاح المحسوب. <br>
-GenericMaskCodes4a= <u> مثال على رقم 99 %s للطرف الثالث TheCompany ، بتاريخ 2007-01-31: </u> <br>
-GenericMaskCodes4b=<u>ومثال على طرف ثالث على إنشاء 2007-03-01 :</u> <br>
-GenericMaskCodes4c=<u>Example on product created on 2007-03-01:</u><br>
-GenericMaskCodes5= <b> ABC{yy}{mm}-{000000} </b>  will give  <b> ABC0701-000099 </b>  <br>  <b> {0000+100@1}-ZZZ/{dd}/XXX </b>  will give  <b> 0199-ZZZ/31/XXX </b>  <br> <b> في {yy} {mm} - {0000} - {t} </b> ستعطي <b> IN0701-0099-A </b> إذا كان نوع الشركة هو "Responsable Inscripto" A0
+GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany, with date 2023-01-31:</u><br>
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
+GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=العودة للتخصيص وفقا لعدد محدد القناع.
 ServerAvailableOnIPOrPort=الخدمة متاحة في معالجة <b>٪ ق %s</b> على الميناء
 ServerNotAvailableOnIPOrPort=الخدمة غير متاحة في التصدي <b>٪ ق %s</b> على الميناء
@@ -394,7 +394,7 @@ ListOfDirectoriesForModelGenODT=قائمة الدلائل التي تحتوي ع
 NumberOfModelFilesFound=عدد ملفات قوالب ODT / ODS الموجودة في هذه الدلائل
 ExampleOfDirectoriesForModelGen=أمثلة على بناء الجملة: <br> c: \\ myapp \\ mydocumentdir \\ mysubdir <br> / home / myapp / mydocumentdir / mysubdir <br> DOL_DATA_ROOT / ecm / ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br> لمعرفة كيفية إنشاء قوالب المستند ODT، قبل تخزينها في تلك الدلائل، وقراءة وثائق ويكي:
-FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
+FullListOnOnlineDocumentation=https://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=موقف الإسم / اسم
 DescWeather=الصور التالية سيتم عرضها على لوحة المعلومات عندما يصل عدد الاجرائات المتأخرة للقيم التالية:
 KeyForWebServicesAccess=مفتاح لاستخدام خدمات الشبكة العالمية (المعلمة &quot;dolibarrkey&quot; في webservices)
@@ -542,7 +542,7 @@ DAV_ALLOW_PUBLIC_DIR=تمكين الدليل العام العام (يسمى د�
 DAV_ALLOW_PUBLIC_DIRTooltip=الدليل العام العام هو دليل WebDAV يمكن لأي شخص الوصول إليه (في وضع القراءة والكتابة) ، بدون إذن مطلوب (حساب تسجيل الدخول / كلمة المرور).
 DAV_ALLOW_ECM_DIR=تمكين الدليل الخاص DMS / ECM (الدليل الجذر لوحدة DMS / ECM - يلزم تسجيل الدخول)
 DAV_ALLOW_ECM_DIRTooltip=الدليل الجذر حيث يتم تحميل جميع الملفات يدويًا عند استخدام وحدة DMS / ECM. مثل الوصول من واجهة الويب ، ستحتاج إلى تسجيل دخول / كلمة مرور صالحة مع أذونات مخصصة للوصول إليها.
-# Modules
+##### Modules #####
 Module0Name=مجموعات المستخدمين
 Module0Desc=المستخدمون / الموظفون وإدارة المجموعات
 Module1Name=الأطراف الثالثة
@@ -650,7 +650,7 @@ Module2300Name=المهام المجدولة
 Module2300Desc=إدارة الوظائف المجدولة (الاسم المستعار كرون أو جدول كرونو)
 Module2400Name=الأحداث / الأجندة
 Module2400Desc=تتبع الأحداث. سجل الأحداث التلقائية لأغراض التتبع أو سجل الأحداث أو الاجتماعات اليدوية. هذه هي الوحدة الرئيسية للإدارة الجيدة لعلاقات العملاء أو البائعين.
-Module2430Name=Booking Calendar System
+Module2430Name=Online Booking Calendar
 Module2430Desc=Provide an online calendar to allow anyone to book rendez-vous, according to predefined ranges or availabilities.
 Module2500Name=DMS / ECM
 Module2500Desc=نظام إدارة الوثائق / إدارة المحتوى الإلكتروني. التنظيم التلقائي للمستندات التي تم إنشاؤها أو تخزينها. شاركهم عند الحاجة.
@@ -712,6 +712,7 @@ Module63000Desc=إدارة الموارد (طابعات ، سيارات ، غر�
 Module66000Name=OAuth2 token management
 Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
 Module94160Name=Receptions
+##### Permissions #####
 Permission11=Read customer invoices (and payments)
 Permission12=إنشاء / تعديل فواتير العملاء
 Permission13=إبطال فواتير العميل
@@ -1186,15 +1187,15 @@ SummaryConst=قائمة بجميع Dolibarr الإعداد البارامترا�
 MenuCompanySetup=الشركة | المؤسسة
 DefaultMenuManager= معيار مدير القائمة
 DefaultMenuSmartphoneManager=الهاتف الذكي القائمة مدير
-Skin=موضوع الجلد
-DefaultSkin=موضوع التقصير الجلد
+Skin=التصميم
+DefaultSkin=التصميم الإفتراضي
 MaxSizeList=الحد الأقصى لطول قائمة
 DefaultMaxSizeList=افتراضي الطول الاقصى للقوائم
 DefaultMaxSizeShortList=الطول الأقصى الافتراضي للقوائم القصيرة (أي في بطاقة العميل)
 MessageOfDay=رسالة اليوم
 MessageLogin=ادخل صفحة الرسالة
 LoginPage=صفحة تسجيل الدخول
-BackgroundImageLogin=الصورة الخلفية
+BackgroundImageLogin=صورة الخلفية
 PermanentLeftSearchForm=دائم البحث عن شكل القائمة اليمنى
 DefaultLanguage=اللغة الافتراضية
 EnableMultilangInterface=قم بتمكين دعم متعدد اللغات للعلاقات مع العملاء أو البائعين
@@ -1439,10 +1440,10 @@ MustBeUnique=هل يجب أن تكون فريدة من نوعها؟
 MustBeMandatory=إلزامي لإنشاء أطراف ثالثة (إذا تم تحديد رقم ضريبة القيمة المضافة أو نوع الشركة)؟
 MustBeInvoiceMandatory=إلزامي للتحقق من صحة الفواتير؟
 TechnicalServicesProvided=الخدمات الفنية المقدمة
-#####DAV #####
+##### WebDAV #####
 WebDAVSetupDesc=هذا هو الرابط للوصول إلى دليل WebDAV. يحتوي على dir "عام" مفتوح لأي مستخدم يعرف عنوان URL (إذا كان الوصول إلى الدليل العام مسموحًا به) ودليل "خاص" يحتاج إلى حساب تسجيل دخول موجود / كلمة مرور للوصول.
 WebDavServer=عنوان URL الجذر لخادم %s: %s
-##### Webcal setup #####
+##### WebCAL setup #####
 WebCalUrlForVCalExport=تصدير صلة <b>%s </b> شكل متاح على الوصلة التالية : %s
 ##### Invoices #####
 BillsSetup=وحدة إعداد الفواتير
@@ -1641,9 +1642,9 @@ LDAPFieldEndLastSubscription=تاريخ انتهاء الاكتتاب
 LDAPFieldTitle=الوظيفه
 LDAPFieldTitleExample=مثال: اللقب
 LDAPFieldGroupid=معرف مجموعة
-LDAPFieldGroupidExample=مثال: gidnumber
+LDAPFieldGroupidExample=Example : gidnumber
 LDAPFieldUserid=معرف المستخدم
-LDAPFieldUseridExample=مثال: uidnumber
+LDAPFieldUseridExample=Example : uidnumber
 LDAPFieldHomedirectory=الدليل الرئيسي
 LDAPFieldHomedirectoryExample=مثال: دليل منزلي
 LDAPFieldHomedirectoryprefix=بادئة الدليل الرئيسي
@@ -1834,26 +1835,26 @@ AccountancyCodeSell=حساب بيع. رمز
 AccountancyCodeBuy=شراء الحساب. رمز
 CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT=اترك مربع الاختيار "إنشاء الدفع تلقائيًا" فارغًا بشكل افتراضي عند إنشاء ضريبة جديدة
 ##### Agenda #####
-AgendaSetup=جدول الأعمال وحدة الإعداد
-PasswordTogetVCalExport=مفتاح ربط تصدير تأذن
-SecurityKey = مفتاح الامان
+AgendaSetup = جدول الأعمال وحدة الإعداد
+AGENDA_DEFAULT_FILTER_TYPE = عيِّن هذا النوع من الأحداث تلقائيًا في فلتر البحث لطريقة عرض الأجندة
+AGENDA_DEFAULT_FILTER_STATUS = عيّن هذه الحالة تلقائيًا للأحداث في فلتر البحث لعرض جدول الأعمال
+AGENDA_DEFAULT_VIEW = أي طريقة عرض تريد فتحها بشكل افتراضي عند تحديد جدول أعمال القائمة
+AGENDA_EVENT_PAST_COLOR = Past event color
+AGENDA_EVENT_CURRENT_COLOR = Current event color
+AGENDA_EVENT_FUTURE_COLOR = Future event color
+AGENDA_REMINDER_BROWSER = قم بتمكين تذكير الحدث <b> على متصفح المستخدم </b> (عند الوصول إلى تاريخ التذكير ، تظهر نافذة منبثقة بواسطة المتصفح. يمكن لكل مستخدم تعطيل هذه الإشعارات من إعداد إعلام المتصفح الخاص به).
+AGENDA_REMINDER_BROWSER_SOUND = تمكين الإعلام الصوتي
+AGENDA_REMINDER_EMAIL = تمكين تذكير الحدث <b> عن طريق رسائل البريد الإلكتروني </b> (يمكن تحديد خيار التذكير / التأخير في كل حدث).
+AGENDA_REMINDER_EMAIL_NOTE = ملاحظة: يجب أن يكون تكرار المهمة المجدولة %s كافيًا للتأكد من إرسال التذكير في اللحظة الصحيحة.
+AGENDA_SHOW_LINKED_OBJECT = إظهار الكائن المرتبط في عرض جدول الأعمال
+AGENDA_USE_EVENT_TYPE = استخدام أنواع الأحداث (المُدارة في إعداد القائمة -> القواميس -> نوع أحداث جدول الأعمال)
+AGENDA_USE_EVENT_TYPE_DEFAULT = قم بتعيين هذه القيمة الافتراضية تلقائيًا لنوع الحدث في نموذج إنشاء الحدث
+PasswordTogetVCalExport = مفتاح ربط تصدير تأذن
 PastDelayVCalExport=لا تصدر الحدث الأكبر من
-AGENDA_USE_EVENT_TYPE=استخدام أنواع الأحداث (المُدارة في إعداد القائمة -> القواميس -> نوع أحداث جدول الأعمال)
-AGENDA_USE_EVENT_TYPE_DEFAULT=قم بتعيين هذه القيمة الافتراضية تلقائيًا لنوع الحدث في نموذج إنشاء الحدث
-AGENDA_DEFAULT_FILTER_TYPE=عيِّن هذا النوع من الأحداث تلقائيًا في فلتر البحث لطريقة عرض الأجندة
-AGENDA_DEFAULT_FILTER_STATUS=عيّن هذه الحالة تلقائيًا للأحداث في فلتر البحث لعرض جدول الأعمال
-AGENDA_EVENT_PAST_COLOR=Past event color
-AGENDA_EVENT_CURRENT_COLOR=Current event color
-AGENDA_EVENT_FUTURE_COLOR=Future event color
-AGENDA_DEFAULT_VIEW=أي طريقة عرض تريد فتحها بشكل افتراضي عند تحديد جدول أعمال القائمة
-AGENDA_REMINDER_BROWSER=قم بتمكين تذكير الحدث <b> على متصفح المستخدم </b> (عند الوصول إلى تاريخ التذكير ، تظهر نافذة منبثقة بواسطة المتصفح. يمكن لكل مستخدم تعطيل هذه الإشعارات من إعداد إعلام المتصفح الخاص به).
-AGENDA_REMINDER_BROWSER_SOUND=تمكين الإعلام الصوتي
-AGENDA_REMINDER_EMAIL=تمكين تذكير الحدث <b> عن طريق رسائل البريد الإلكتروني </b> (يمكن تحديد خيار التذكير / التأخير في كل حدث).
-AGENDA_REMINDER_EMAIL_NOTE=ملاحظة: يجب أن يكون تكرار المهمة المجدولة %s كافيًا للتأكد من إرسال التذكير في اللحظة الصحيحة.
-AGENDA_SHOW_LINKED_OBJECT=إظهار الكائن المرتبط في عرض جدول الأعمال
-##### Clicktodial #####
+SecurityKey = مفتاح الامان
+##### ClickToDial #####
 ClickToDialSetup=انقر لإعداد وحدة الاتصال الهاتفي
-ClickToDialUrlDesc=يتم استدعاء عنوان Url عند النقر على الصورة على الهاتف. In URL, you can use tags <br>  <b> __PHONETO__ </b>  that will be replaced with the phone number of person to call <br>  <b> __PHONEFROM__ </b>  that will be replaced with phone number of calling person (yours) <br>  <b> __LOGIN__ </b>  that will be replaced with clicktodial تسجيل الدخول (معرف على بطاقة المستخدم) <br> <b> __PASS__ </b> التي سيتم استبدالها بكلمة مرور clicktodial (محددة في بطاقة المستخدم).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=تقوم هذه الوحدة بتغيير أرقام الهواتف ، عند استخدام جهاز كمبيوتر سطح المكتب ، إلى روابط قابلة للنقر. نقرة سوف تتصل بالرقم. يمكن استخدام هذا لبدء المكالمة الهاتفية عند استخدام هاتف ناعم على سطح المكتب أو عند استخدام نظام CTI القائم على بروتوكول SIP على سبيل المثال. ملاحظة: عند استخدام هاتف ذكي ، تكون أرقام الهواتف قابلة للنقر دائمًا.
 ClickToDialUseTelLink=مجرد استخدام الرابط "الهاتف:" على أرقام الهواتف
 ClickToDialUseTelLinkDesc=استخدم هذه الطريقة إذا كان المستخدمون لديهم هاتف softphone أو واجهة برمجية ، مثبتة على نفس جهاز الكمبيوتر مثل المتصفح ، ويتم الاتصال بها عند النقر فوق ارتباط يبدأ بـ "tel:" في متصفحك. إذا كنت بحاجة إلى ارتباط يبدأ بـ "sip:" أو حل خادم كامل (لا حاجة إلى تثبيت برنامج محلي) ، يجب عليك تعيين هذا على "لا" وملء الحقل التالي.
@@ -2066,6 +2067,7 @@ BaseCurrency=العملة المرجعية للشركة (انتقل إلى إع�
 WarningNoteModuleInvoiceForFrenchLaw=هذه الوحدة %s متوافقة مع القوانين الفرنسية (Loi Finance 2016).
 WarningNoteModulePOSForFrenchLaw=تتوافق هذه الوحدة %s مع القوانين الفرنسية (Loi Finance 2016) لأنه يتم تنشيط الوحدة النمطية السجلات غير القابلة للعكس تلقائيًا.
 WarningInstallationMayBecomeNotCompliantWithLaw=أنت تحاول تثبيت الوحدة النمطية %s وهي وحدة خارجية. يعني تنشيط وحدة خارجية أنك تثق في ناشر هذه الوحدة وأنك متأكد من أن هذه الوحدة لا تؤثر سلبًا على سلوك التطبيق الخاص بك ، وأنها متوافقة مع قوانين بلدك (%s). إذا قدمت الوحدة ميزة غير قانونية ، فإنك تصبح مسؤولاً عن استخدام البرامج غير القانونية.
+
 MAIN_PDF_MARGIN_LEFT=الهامش الايسر على ملفات صيغة المستندات المتنقلة
 MAIN_PDF_MARGIN_RIGHT=الهامش الايمن لملفات صيغة المستندات المتنقلة
 MAIN_PDF_MARGIN_TOP=الهامش العلوي لصيغة المستندات المتنقلة
@@ -2110,7 +2112,7 @@ NewEmailCollector=جامع البريد الإلكتروني الجديد
 EMailHost=مضيف خادم IMAP للبريد الإلكتروني
 EMailHostPort=منفذ خادم IMAP للبريد الإلكتروني
 loginPassword=Login/Password
-oauthToken=Oauth2 token
+oauthToken=OAuth2 token
 accessType=Acces type
 oauthService=Oauth service
 TokenMustHaveBeenCreated=Module OAuth2 must be enabled and an oauth2 token must have been created with the correct permissions (for example scope "gmail_full" with OAuth for Gmail).
@@ -2336,9 +2338,9 @@ IconOnly=رمز فقط - نص على تلميح الأداة فقط
 INVOICE_ADD_ZATCA_QR_CODE=إظهار رمز الاستجابة السريعة ZATCA على الفواتير
 INVOICE_ADD_ZATCA_QR_CODEMore=تحتاج بعض الدول العربية إلى رمز الاستجابة السريعة هذا على فواتيرها
 INVOICE_ADD_SWISS_QR_CODE=أظهر رمز QR-Bill السويسري على الفواتير
-INVOICE_ADD_SWISS_QR_CODEMore=Switzerland's standard for invoices; make sure ZIP&City are filled and that the accounts have valid Swiss/Liechtenstein IBANs.
+INVOICE_ADD_SWISS_QR_CODEMore=Switzerland's standard for invoices; make sure ZIP & City are filled and that the accounts have valid Swiss/Liechtenstein IBANs.
 INVOICE_SHOW_SHIPPING_ADDRESS=عرض عنوان الشحن
-INVOICE_SHOW_SHIPPING_ADDRESSMore=Compulsory mention for France
+INVOICE_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
 UrlSocialNetworksDesc=رابط URL للشبكة الاجتماعية. استخدم {socialid} للجزء المتغير الذي يحتوي على معرف الشبكة الاجتماعية.
 IfThisCategoryIsChildOfAnother=إذا كانت هذه الفئة تابعة لفئة أخرى
 DarkThemeMode=وضع المظهر الداكن
@@ -2366,12 +2368,12 @@ DefinedAPathForAntivirusCommandIntoSetup=Define a path for an antivirus program 
 TriggerCodes=أحداث قابله للاثارة 
 TriggerCodeInfo=Enter here the trigger code(s) that must generate a post of a web request (only external URL are allowed). You can enter several trigger codes separated by a comma.
 EditableWhenDraftOnly=If unchecked, the value can only be modified when object has a draft status
-CssOnEdit=Css on edit pages
-CssOnView=Css on view pages
-CssOnList=Css on lists
-HelpCssOnEditDesc=The Css used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
-HelpCssOnViewDesc=The Css used when viewing the field.
-HelpCssOnListDesc=The Css used when field is inside a list table.<br>Example: "tdoverflowmax200"
+CssOnEdit=CSS on edit pages
+CssOnView=CSS on view pages
+CssOnList=CSS on lists
+HelpCssOnEditDesc=The CSS used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
+HelpCssOnViewDesc=The CSS used when viewing the field.
+HelpCssOnListDesc=The CSS used when field is inside a list table.<br>Example: "tdoverflowmax200"
 RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents for receptions
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions
 WarningDisabled=التحذيرات معطلة
@@ -2397,3 +2399,5 @@ DefaultForTypeDesc=Template used by default when creating a new email for the te
 OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
 OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AtBottomOfPage=At bottom of page
+FailedAuth=failed authentications
+MaxNumberOfFailedAuth=Max number of failed authentication in 24h to disable login.

@@ -1345,7 +1345,7 @@ if (empty($reshook)) {
 								$tva_tx = $lines[$i]->tva_tx;
 
 								if ($origin == "commande") {
-									$soc = new societe($db);
+									$soc = new Societe($db);
 									$soc->fetch($socid);
 									$tva_tx = get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
 								}

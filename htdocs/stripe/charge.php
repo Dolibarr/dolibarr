@@ -142,7 +142,7 @@ if (!$rowid) {
 		$param .= '&starting_after_'.($page + 1).'='.$list->data[($limit - 1)]->id;
 		//$param.='&ending_before_'.($page+1).'='.$list->data[($limit-1)]->id;
 	} catch (Exception $e) {
-		print '<tr><td colspan="6">'.$e->getMessage().'</td></td>';
+		print '<tr><td colspan="8">'.$e->getMessage().'</td></td>';
 	}
 
 	//print $list;
