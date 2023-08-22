@@ -299,7 +299,6 @@ DateLastGeneration=Fecha de última generación
 DateLastGenerationShort=Fecha última generación.
 MaxPeriodNumber=máx. número de generación de facturas
 NbOfGenerationDone=Número de generación de facturas ya realizadas
-NbOfGenerationDoneShort=Número de generación realizada
 MaxGenerationReached=Número máximo de generaciones alcanzado
 GeneratedFromRecurringInvoice=Generado a partir de plantilla de factura recurrente %s
 DateIsNotEnough=Fecha aún no alcanzada

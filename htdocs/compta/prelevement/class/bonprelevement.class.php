@@ -540,13 +540,15 @@ class BonPrelevement extends CommonObject
 					} else {
 						if ($this->type == 'bank-transfer') {
 							$modeforaddpayment = 'payment_supplier';
-							$labelforaddpayment = '(BankTransferPayment)';
+							$labelforaddpayment = '(SupplierInvoicePayment)';
+							$addbankurl = 'credit-transfer';
 						} else {
 							$modeforaddpayment = 'payment';
-							$labelforaddpayment = '(WithdrawalPayment)';
+							$labelforaddpayment = '(CustomerInvoicePayment)';
+							$addbankurl = 'direct-debit';	// = 'directdebit'
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '');
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;

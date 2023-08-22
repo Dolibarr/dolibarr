@@ -936,7 +936,7 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Get the Stripe SEPA of a company payment mode
+	 * Get the Stripe SEPA of a company payment mode (create it if it doesn't exists and $createifnotlinkedtostripe is set)
 	 *
 	 * @param	\Stripe\Customer		$cu								Object stripe customer.
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
@@ -947,7 +947,7 @@ class Stripe extends CommonObject
 	 */
 	public function sepaStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
-		global $conf, $user, $langs;
+		global $conf;
 		$sepa = null;
 
 		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix as iban, sa.rum"; // stripe_card_ref is 'src_...' for Stripe SEPA
@@ -1053,13 +1053,17 @@ class Stripe extends CommonObject
 							// link customer and src
 							//$cs = $this->getSetupIntent($description, $soc, $cu, '', $status);
 							$dataforintent = array(['description'=> $description, 'payment_method_types' => ['sepa_debit'], 'customer' => $cu->id, 'payment_method' => $sepa->id], 'metadata'=>$metadata);
+
 							$cs = $s->setupIntents->create($dataforintent);
 							//$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
 							$cs = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
+							// note: $cs->mandate contians ID of mandate on Stripe side
+
 							if (!$cs) {
 								$this->error = 'Link SEPA <-> Customer failed';
 							} else {
 								dol_syslog("Update the payment mode of the customer");
+
 								// print json_encode($sepa);
 
 								// Save the Stripe payment mode ID into the Dolibarr database
@@ -1068,6 +1072,17 @@ class Stripe extends CommonObject
 								$sql .= " card_type = 'sepa_debit',";
 								$sql .= " stripe_account= '" . $this->db->escape($cu->id . "@" . $stripeacc) . "',";
 								$sql .= " ext_payment_site = '".$this->db->escape($service)."'";
+								if (!empty($cs->mandate)) {
+									$mandateservice = new \Stripe\Mandate($stripeacc);
+									$mandate = $mandateservice->retrieve($cs->mandate);
+									if (is_object($mandate) && is_object($mandate->payment_method_details) && is_object($mandate->payment_method_details->sepa_debit)) {
+										$refmandate = $mandate->payment_method_details->sepa_debit->reference;
+										//$urlmandate = $mandate->payment_method_details->sepa_debit->url;
+										$sql .= ", rum = '".$this->db->escape($refmandate)."'";
+									}
+									$sql .= ", comment = '".$this->db->escape($cs->mandate)."'";
+									$sql .= ", date_rum = '".$this->db->idate(dol_now())."'";
+								}
 								$sql .= " WHERE rowid = ".((int) $object->id);
 								$sql .= " AND type = 'ban'";
 								$resql = $this->db->query($sql);

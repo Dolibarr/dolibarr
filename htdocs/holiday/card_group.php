@@ -487,47 +487,45 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<table class="border centpercent">';
 		print '<tbody>';
 
-		// groupe
+		// Groups of users
 		print '<tr>';
 		print '<td class="titlefield fieldrequired">';
 		print $form->textwithpicto($langs->trans("groups"), $langs->trans("fusionGroupsUsers"));
-
 		print '</td>';
-
 		print '<td>';
-		//@todo  ajouter entity  !
-		$sql =' SELECT rowid, nom from '.MAIN_DB_PREFIX.'usergroup ';
+		print img_picto($langs->trans("groups"), 'group', 'class="pictofixedwidth"');
 
+		$sql =' SELECT rowid, nom from '.MAIN_DB_PREFIX.'usergroup WHERE entity IN ('.getEntity('usergroup').')';
 		$resql = $db->query($sql);
 		$Tgroup = array();
 		while ($obj = $db->fetch_object($resql)) {
 			$Tgroup[$obj->rowid] = $obj->nom;
 		}
+
 		print $form->multiselectarray('groups', $Tgroup, GETPOST('groups', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 
 		print '</td>';
 
-		// users
+		// Users
 		print '<tr>';
 		print '<td class="titlefield fieldrequired">';
 		print $form->textwithpicto($langs->trans("users"), $langs->trans("fusionGroupsUsers"));
 		print '<td>';
+		print img_picto($langs->trans("users"), 'user', 'class="pictofixedwidth"');
 
-		$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from '.MAIN_DB_PREFIX.'user as  u';
-		$sql .= ' WHERE  1=1 ';
+		$sql = ' SELECT u.rowid, u.lastname, u.firstname from '.MAIN_DB_PREFIX.'user as  u';
+		$sql .= ' WHERE 1=1';
 		$sql .= !empty($morefilter) ? $morefilter : '';
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$userlist[$obj->rowid] = $obj->firstname . ' '. $obj->lastname;
+				$userlist[$obj->rowid] = dolGetFirstLastname($obj->firstname, $obj->lastname);
 			}
 		}
 
 		print img_picto('', 'users') . $form->multiselectarray('users', $userlist, GETPOST('users', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print '</td>';
-
-
 
 		// Type
 		print '<tr>';

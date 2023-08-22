@@ -2130,7 +2130,7 @@ if ($resql) {
 
 			if (!empty($arrayfields['sale_representative']['checked'])) {
 				// Sales representatives
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->socid > 0) {
 					$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 					if ($listsalesrepresentatives < 0) {

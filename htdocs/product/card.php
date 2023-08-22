@@ -908,7 +908,9 @@ if (empty($reshook)) {
 		} else {
 			if ($object->id > 0) {
 				$error = 0;
-				$clone = dol_clone($object, 2);
+				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+				$clone = dol_clone($object, 1);
+				// We used native clone to keep this->db valid and allow to use later all the methods of object.
 
 				$clone->id = null;
 				$clone->ref = GETPOST('clone_ref', 'alphanohtml');

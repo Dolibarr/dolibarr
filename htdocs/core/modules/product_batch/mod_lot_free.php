@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2023 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +93,15 @@ class mod_lot_free extends ModeleNumRefBatch
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		return $this->getNextValue(null, null);
+	}
 
 	/**
 	 * Return an example of result returned by getNextValue
