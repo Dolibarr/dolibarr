@@ -61,3 +61,5 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 UPDATE llx_bank_url SET type = 'direct-debit' WHERE type = 'withdraw' AND url like '%compta/prelevement/card%';
 
 ALTER TABLE llx_facture_fourn ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_societe_rib ADD COLUMN extraparams    varchar(255);
