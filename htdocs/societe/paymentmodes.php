@@ -50,6 +50,7 @@ $langs->loadLangs(array("companies", "commercial", "banks", "bills", 'paypal', '
 // Get parameters
 $action = GETPOST("action", 'alpha', 3);
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage');
 
 $id = GETPOST("id", "int");
 $source = GETPOST("source", "alpha"); // source can be a source or a paymentmode
@@ -526,23 +527,37 @@ if (empty($reshook)) {
 
 	// Action for stripe
 	if (isModEnabled('stripe') && class_exists('Stripe')) {
-		if ($action == 'synccustomertostripe') {
+		if ($action == 'synccustomertostripe' || $action == 'synccustomertostripetest') {
 			if ($object->client == 0) {
 				$error++;
 				setEventMessages('ThisThirdpartyIsNotACustomer', null, 'errors');
 			} else {
+				if ($action == 'synccustomertostripe') {
+					$tmpservicestatus = 1;
+					$tmpservice = 'StripeLive';
+				} else {
+					$tmpservicestatus = 0;
+					$tmpservice = 'StripeTest';
+				}
+
+				$stripe = new Stripe($db);
+				$tmpstripeacc = $stripe->getStripeAccount($tmpservice); // Get Stripe OAuth connect account (no remote access to Stripe here)
+
 				// Creation of Stripe customer + update of societe_account
-				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus, 1);
-				if (!$cu) {
+				$tmpcu = $stripe->customerStripe($object, $tmpstripeacc, $tmpservicestatus, 1);
+
+				if (empty($tmpcu)) {
 					$error++;
 					setEventMessages($stripe->error, $stripe->errors, 'errors');
 				} else {
-					$stripecu = $cu->id;
+					if ($tmpservicestatus == $servicestatus) {
+						$stripecu = $tmpcu->id;
+					}
 				}
 			}
 		}
 		if ($action == 'synccardtostripe') {
-			// Create the credit card on Stripe
+			// Create the credit card on current Stripe env
 			$companypaymentmode = new CompanyPaymentMode($db);
 			$companypaymentmode->fetch($id);
 
@@ -570,7 +585,7 @@ if (empty($reshook)) {
 			}
 		}
 		if ($action == 'syncsepatostripe') {
-			// Create the bank account on Stripe side
+			// Create the bank account on current Stripe env
 			$companypaymentmode = new CompanyPaymentMode($db);	// Get record in llx_societe_rib
 			$companypaymentmode->fetch($id);
 
@@ -600,18 +615,34 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($action == 'setkey_account') {
+		// Set the customer Stripe account (for Live or Test env)
+		if ($action == 'setkey_account' || $action == 'setkey_accounttest') {
 			$error = 0;
 
-			$newcu = GETPOST('key_account', 'alpha');
+			$tmpservice = 'StripeTest';
+			$tmpservicestatus = 0;
+			if ($action == 'setkey_account') {
+				$tmpservice = 'StripeLive';
+				$tmpservicestatus = 1;
+			}
+
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+			$tmpsite_account = $stripearrayofkeysbyenv[$tmpservicestatus]['publishable_key'];
+
+			if ($action == 'setkey_account') {
+				$newcu = GETPOST('key_account', 'alpha');
+			} else {
+				$newcu = GETPOST('key_accounttest', 'alpha');
+			}
 
 			$db->begin();
 
 			if (empty($newcu)) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity;
 			} else {
 				$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 			}
 
 			$resql = $db->query($sql);
@@ -625,15 +656,15 @@ if (empty($reshook)) {
 					$societeaccount->site = 'stripe';
 					$societeaccount->status = $servicestatus;
 					$societeaccount->key_account = $newcu;
-					$societeaccount->site_account = $site_account;
+					$societeaccount->site_account = $tmpsite_account;
 					$result = $societeaccount->create($user);
 					if ($result < 0) {
 						$error++;
 					}
 				} else {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
-					$sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."', site_account = '".$db->escape($site_account)."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " SET key_account = '".$db->escape($newcu)."', site_account = '".$db->escape($tmpsite_account)."'";
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 					$resql = $db->query($sql);
 				}
 			}
@@ -642,34 +673,52 @@ if (empty($reshook)) {
 			//var_dump($num); exit;
 
 			if (!$error) {
-				$stripecu = $newcu;
+				if ($tmpservicestatus == $servicestatus) {
+					$stripecu = $newcu;
+				}
 				$db->commit();
 			} else {
 				$db->rollback();
 			}
 		}
 
-		if ($action == 'setkey_account_supplier') {
+		// Set the supplier Stripe account (for Live or Test env)
+		if ($action == 'setkey_account_supplier' || $action == 'setkey_account_suppliertest') {
 			$error = 0;
 
-			$newsup = GETPOST('key_account_supplier', 'alpha');
+			$tmpservice = 'StripeTest';
+			$tmpservicestatus = 0;
+			if ($action == 'setkey_account_supplier') {
+				$tmpservice = 'StripeLive';
+				$tmpservicestatus = 1;
+			}
+
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+			$tmpsite_account = $stripearrayofkeysbyenv[$tmpservicestatus]['publishable_key'];
+
+			if ($action == 'setkey_account_supplier') {
+				$newsup = GETPOST('key_account_supplier', 'alpha');
+			} else {
+				$newsup = GETPOST('key_account_suppliertest', 'alpha');
+			}
 
 			$db->begin();
 
 			if (empty($newsup)) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity;
 				// TODO Add site and site_account on oauth_token table
 				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
 			} else {
 				try {
-					$stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+					$stripesup = \Stripe\Account::retrieve($newsup);
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
 					$sql .= " SET tokenstring = '".$db->escape(json_encode($tokenstring))."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 					// TODO Add site and site_account on oauth_token table
-					$sql .= " WHERE fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE fk_soc = ".$object->id." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 				} catch (Exception $e) {
 					$error++;
 					setEventMessages($e->getMessage(), null, 'errors');
@@ -680,11 +729,11 @@ if (empty($reshook)) {
 			$num = $db->num_rows($resql);
 			if (empty($num) && !empty($newsup)) {
 				try {
-					$stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+					$stripesup = \Stripe\Account::retrieve($newsup);
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
-					$sql .= " VALUES ('".$db->escape($service)."', ".((int) $object->id).", ".((int) $conf->entity).", '".$db->escape(json_encode($tokenstring))."')";
+					$sql .= " VALUES ('".$db->escape($tmpservice)."', ".((int) $object->id).", ".((int) $conf->entity).", '".$db->escape(json_encode($tokenstring))."')";
 					// TODO Add site and site_account on oauth_token table
 				} catch (Exception $e) {
 					$error++;
@@ -694,7 +743,9 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$stripesupplieracc = $newsup;
+				if ($tmpservicestatus == $servicestatus) {
+					$stripesupplieracc = $newsup;
+				}
 				$db->commit();
 			} else {
 				$db->rollback();
@@ -926,24 +977,59 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 
 		if (isModEnabled('stripe')) {
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+
+			$tmpservice = 0;
+			$tmpsite_account = $stripearrayofkeysbyenv[$tmpservice]['publishable_key'];
+			$tmpstripeacc = $stripe->getStripeAccount($tmpservice); // Get Stripe OAuth connect account (no remote access to Stripe here)
+			$tmpstripecu = $stripe->getStripeCustomerAccount($object->id, $tmpservice, $tmpsite_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
+
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontoaddupdatepaymentinformation, 'string', '', 0, 2, 'socid');
+			print $form->editfieldkey($langs->trans("StripeCustomerId").' (Test)', 'key_accounttest', $tmpstripecu, $object, $permissiontoaddupdatepaymentinformation, 'string', '', 0, 2, 'socid');
 			print '</td><td>';
-			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontoaddupdatepaymentinformation, 'string', '', null, null, '', 2, '', 'socid');
-			if (isModEnabled('stripe') && $stripecu && $action != 'editkey_account') {
+			print $form->editfieldval($langs->trans("StripeCustomerId").' (Test)', 'key_accounttest', $tmpstripecu, $object, $permissiontoaddupdatepaymentinformation, 'string', '', null, null, '', 2, '', 'socid');
+			if ($tmpstripecu && $action != 'editkey_accounttest') {
 				$connect = '';
 				if (!empty($stripeacc)) {
 					$connect = $stripeacc.'/';
 				}
-				$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
-				if ($servicestatus) {
-					$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
-				}
-				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account, 'globe').'</a>';
+				$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$tmpstripecu;
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$tmpsite_account, 'globe').'</a>';
 			}
 			print '</td><td class="right">';
-			if (empty($stripecu)) {
+			if (empty($tmpstripecu)) {
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+				print '<input type="hidden" name="action" value="synccustomertostripetest">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="socid" value="'.$object->id.'">';
+				print img_picto($langs->trans("CreateCustomerOnStripe"), 'stripe');
+				print '<input type="submit" class="buttonlink nomargintop nomarginbottom noborderbottom nopaddingtopimp nopaddingbottomimp" name="syncstripecustomertest" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+				print '</form>';
+			}
+			print '</td></tr>';
+
+			$tmpservice = 1;
+			$tmpsite_account = $stripearrayofkeysbyenv[$tmpservice]['publishable_key'];
+			$tmpstripeacc = $stripe->getStripeAccount($tmpservice); // Get Stripe OAuth connect account (no remote access to Stripe here)
+			$tmpstripecu = $stripe->getStripeCustomerAccount($object->id, $tmpservice, $tmpsite_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
+
+			// Stripe customer key 'cu_....' stored into llx_societe_account
+			print '<tr><td class="titlefield">';
+			print $form->editfieldkey($langs->trans("StripeCustomerId").' (Live)', 'key_account', $tmpstripecu, $object, $permissiontoaddupdatepaymentinformation, 'string', '', 0, 2, 'socid');
+			print '</td><td>';
+			print $form->editfieldval($langs->trans("StripeCustomerId").' (Live)', 'key_account', $tmpstripecu, $object, $permissiontoaddupdatepaymentinformation, 'string', '', null, null, '', 2, '', 'socid');
+			if ($tmpstripecu && $action != 'editkey_account') {
+				$connect = '';
+				if (!empty($stripeacc)) {
+					$connect = $stripeacc.'/';
+				}
+				$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$tmpstripecu;
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$tmpsite_account, 'globe').'</a>';
+			}
+			print '</td><td class="right">';
+			if (empty($tmpstripecu)) {
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1142,7 +1228,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print dol_escape_htmltag($companypaymentmodetemp->label);
 							print '</td>';
 							// External card ID
-							print '<td class="tdoverflowmax150">';
+							print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companypaymentmodetemp->stripe_card_ref.' - Customer and Publishable key = '.$companypaymentmodetemp->stripe_account).'">';
 							if (!empty($companypaymentmodetemp->stripe_card_ref)) {
 								$connect = '';
 								if (!empty($stripeacc)) {
