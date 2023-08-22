@@ -1227,18 +1227,22 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companypaymentmodetemp->label).'">';
 							print dol_escape_htmltag($companypaymentmodetemp->label);
 							print '</td>';
-							// External card ID
-							print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companypaymentmodetemp->stripe_card_ref.' - Customer and Publishable key = '.$companypaymentmodetemp->stripe_account).'">';
-							if (!empty($companypaymentmodetemp->stripe_card_ref)) {
-								$connect = '';
-								if (!empty($stripeacc)) {
-									$connect = $stripeacc.'/';
+							// External system card ID
+							print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companypaymentmodetemp->stripe_card_ref.(empty($companypaymentmodetemp->stripe_account) ? '' : ' - '.$companypaymentmodetemp->stripe_account)).'">';
+							if (!empty($companypaymentmodetemp->stripe_card_ref) && !empty($companypaymentmodetemp->ext_payment_site)) {
+								if (isModEnabled('stripe') && in_array($companypaymentmodetemp->ext_payment_site, array('StripeTest', 'StripeLive'))) {
+									$connect = '';
+									if (!empty($stripeacc)) {
+										$connect = $stripeacc.'/';
+									}
+									if ($rib->ext_payment_site == 'StripeLive') {
+										$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
+									} else {
+										$url = 'https://dashboard.stripe.com/'.$connect.'test/search?query='.$companypaymentmodetemp->stripe_card_ref;
+									}
+									print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe').' - '.$companypaymentmodetemp->stripe_account, 'globe')."</a> ";
 								}
-								$url = 'https://dashboard.stripe.com/'.$connect.'test/search?query='.$companypaymentmodetemp->stripe_card_ref;
-								if ($servicestatus) {
-									$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
-								}
-								print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Customer and Publishable key = '.$companypaymentmodetemp->stripe_account, 'globe').'</a> ';
+								// TODO Add hook here for other payment services
 							}
 							print dol_escape_htmltag($companypaymentmodetemp->stripe_card_ref);
 							print '</td>';
@@ -1559,22 +1563,24 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<tr class="oddeven">';
 			// Label
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($rib->label).'">'.dol_escape_htmltag($rib->label).'</td>';
-			// Stripe ID
-			print '<td class="tdoverflowmax150">';
-			if ($rib->stripe_card_ref) {
-				$connect = '';
-				if (!empty($stripeacc)) {
-					$connect = $stripeacc.'/';
+			// External system ID
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($rib->stripe_card_ref.(empty($rib->stripe_account) ? '' : ' - '.$rib->stripe_account)).'">';
+			if (!empty($rib->stripe_card_ref) && !empty($rib->ext_payment_site)) {
+				if (isModEnabled('stripe') && in_array($rib->ext_payment_site, array('StripeTest', 'StripeLive'))) {
+					$connect = '';
+					if (!empty($stripeacc)) {
+						$connect = $stripeacc.'/';
+					}
+					if ($rib->ext_payment_site == 'StripeLive') {
+						$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$rib->stripe_card_ref;
+					} else {
+						$url = 'https://dashboard.stripe.com/'.$connect.'test/search?query='.$rib->stripe_card_ref;
+					}
+					print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')."</a> ";
 				}
-				//$url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
-				$url = 'https://dashboard.stripe.com/'.$connect.'test/search?query='.$rib->stripe_card_ref;
-				if ($servicestatus) {
-					//$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
-					$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$rib->stripe_card_ref;
-				}
-				print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')."</a> ";
+				// TODO Add hook here for other payment services
 			}
-			print $rib->stripe_card_ref;
+			print dol_escape_htmltag($rib->stripe_card_ref);
 			print '</td>';
 			// Bank name
 			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->bank).'">'.dol_escape_htmltag($rib->bank).'</td>';
