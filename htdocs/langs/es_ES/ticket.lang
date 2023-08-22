@@ -67,7 +67,6 @@ ExportDataset_ticket_1=Tickets
 # Status
 Read=Leido
 Assigned=Asignado
-InProgress=En progreso
 NeedMoreInformation=Esperando comentarios del remitente
 NeedMoreInformationShort=Esperando comentarios
 Answered=Contestado
@@ -127,7 +126,9 @@ TicketParams=Parámetros
 TicketsShowModuleLogo=Mostrar el logotipo del módulo en la interfaz pública
 TicketsShowModuleLogoHelp=Active esta opción para ocultar el logotipo en las páginas de la interfaz pública
 TicketsShowCompanyLogo=Mostrar el logotipo de la empresa en la interfaz pública
-TicketsShowCompanyLogoHelp=Active esta opción para ocultar el logotipo de la empresa principal en las páginas de la interfaz pública
+TicketsShowCompanyLogoHelp=Habilite esta opción para mostrar el logotipo de la empresa principal en las páginas de la interfaz pública
+TicketsShowCompanyFooter=Mostrar el pie de página de la empresa en la interfaz pública
+TicketsShowCompanyFooterHelp=Habilite esta opción para mostrar el pie de página de la empresa principal en las páginas de la interfaz pública
 TicketsEmailAlsoSendToMainAddress=También envíe una notificación a la dirección de correo electrónico principal
 TicketsEmailAlsoSendToMainAddressHelp=Habilite esta opción para enviar también un correo electrónico a la dirección definida en la configuración "%s" (consulte la pestaña "%s")
 TicketsLimitViewAssignedOnly=Restringir la visualización de los tickets asignados al usuario actual (no aplicable para usuarios externos, siempre estará limitada al tercero del que dependen)
@@ -200,8 +201,8 @@ TicketAssigned=El Ticket ha sido asignado
 TicketChangeType=Cambiar tipo
 TicketChangeCategory=Cambiar categoría
 TicketChangeSeverity=Cambiar gravedad
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Agregar o enviar un mensaje
+TicketAddPrivateMessage=Agregar un mensaje privado
 MessageSuccessfullyAdded=Ticket añadido
 TicketMessageSuccessfullyAdded=Mensaje añadido correctamente
 TicketMessagesList=Listado de mensajes
@@ -250,8 +251,10 @@ TicketAssignedEmailBody=Se le ha asignado el ticket #%s por %s
 TicketAssignedCustomerEmail=Su ticket ha sido asignado para su procesamiento.
 TicketAssignedCustomerBody=Este es un correo electrónico automático para confirmar que su ticket ha sido asignado para su procesamiento.
 MarkMessageAsPrivate=Marcar mensaje como privado
-TicketMessageSendEmailHelp=Se enviará un correo electrónico a todos los contactos asignados (contactos internos, pero también contactos externos, excepto si se marca la opción "%s")
-TicketMessagePrivateHelp=Este mensaje no se mostrará a los usuarios externos
+TicketMessageSendEmailHelp=Se enviará un correo electrónico a todos los contactos asignados.
+TicketMessageSendEmailHelp2a=(contactos internos, pero también contactos externos excepto si la opción "%s" está marcada)
+TicketMessageSendEmailHelp2b=(contactos internos, pero también contactos externos)
+TicketMessagePrivateHelp=Este mensaje no será visible para usuarios externos
 TicketMessageRecipientsHelp=Campo de destinatario completado con contactos activos vinculados al ticket
 TicketEmailOriginIssuer=Emisor al origen de los tickets
 InitialMessage=Mensaje inicial
@@ -275,7 +278,7 @@ TicketsDelayForFirstResponseTooLong=Ha transcurrido demasiado tiempo desde la ap
 TicketsDelayFromLastResponseTooLong=Ha transcurrido demasiado tiempo desde la última respuesta en este ticket.
 TicketNoContractFoundToLink=No se encontró ningún contrato vinculado automáticamente a este ticket. Vincule un contrato manualmente.
 TicketManyContractsLinked=Muchos contratos se han vinculado automáticamente a este ticket. Asegúrese de verificar cuál debe elegir.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+TicketRefAlreadyUsed=La referencia [%s] ya está en uso, su nueva referencia es [%s]
 
 #
 # Logs
@@ -326,6 +329,9 @@ OldUser=Usuario antiguo
 NewUser=Nuevo usuario
 NumberOfTicketsByMonth=Número de tickets por mes
 NbOfTickets=Número de tickets
+ExternalContributors=External contributors
+AddContributor=Add external contributor
+
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket cerrado
 TicketCloseEmailBodyCustomer=Este es un mensaje automático para notificarle que el ticket %s acaba de cerrarse.

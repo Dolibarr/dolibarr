@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,8 +145,10 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 				}
 				if (empty($multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]])) {
 					global $mc;
-					$mc->getInfo($extrafields->attributes[$elementtype]['entityid'][$key]);
-					$multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]] = $mc->label ? $mc->label : $extrafields->attributes[$elementtype]['entityid'][$key];
+					if (is_object($mc) && method_exists($mc, 'getInfo')) {
+						$mc->getInfo($extrafields->attributes[$elementtype]['entityid'][$key]);
+						$multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]] = $mc->label ? $mc->label : $extrafields->attributes[$elementtype]['entityid'][$key];
+					}
 				}
 				print $multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]];
 			}

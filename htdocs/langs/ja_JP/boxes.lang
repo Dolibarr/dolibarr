@@ -49,7 +49,7 @@ BoxOldestActions=行う最も古いイベント
 BoxLastExpiredServices=アクティブな期限切れのサービスを持つ最新の%s最も古い連絡先
 BoxTitleLastActionsToDo=実行する最新の%sアクション
 BoxTitleOldestActionsToDo=実行する最も古い %s イベント、未完了
-BoxTitleFutureActions=The next %s upcoming events
+BoxTitleFutureActions=次の %s 今後のイベント
 BoxTitleLastContracts=変更された最新の%s契約
 BoxTitleLastModifiedDonations=変更された最新の%s寄付
 BoxTitleLastModifiedExpenses=変更された最新の%s経費報告書s
@@ -113,7 +113,7 @@ NumberOfLinesInSuspenseAccount=仮勘定の行数
 SuspenseAccountNotDefined=一時停止アカウントが定義されていない
 BoxLastCustomerShipments=最後の顧客の出荷
 BoxTitleLastCustomerShipments=最近の顧客宛出荷：%s件
-BoxTitleLastLeaveRequests=Latest %s modified leave requests
+BoxTitleLastLeaveRequests=最新 %s 変更された休暇申請
 NoRecordedShipments=顧客の出荷は記録されていない
 BoxCustomersOutstandingBillReached=上限に達した顧客
 # Pages

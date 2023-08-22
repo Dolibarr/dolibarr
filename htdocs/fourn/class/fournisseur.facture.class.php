@@ -108,6 +108,11 @@ class FactureFournisseur extends CommonInvoice
 	public $ref_supplier;
 
 	/**
+	 * @var string 	Label of invoice
+	 * @deprecated	Use $label
+	 */
+	public $libelle;
+	/**
 	 * @var string Label of invoice
 	 */
 	public $label;
@@ -481,9 +486,8 @@ class FactureFournisseur extends CommonInvoice
 			if (! $this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
 			}
-			$this->brouillon = 1;
 			$this->status = self::STATUS_DRAFT;
-			$this->statut = self::STATUS_DRAFT;
+			$this->statut = self::STATUS_DRAFT;	// deprecated
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
@@ -1012,10 +1016,6 @@ class FactureFournisseur extends CommonInvoice
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
-
 				$result = $this->fetch_lines();
 				if ($result < 0) {
 					$this->error = $this->db->lasterror();
@@ -1500,14 +1500,6 @@ class FactureFournisseur extends CommonInvoice
 					$error++;
 				}
 			} else {
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
 				$error++;
 			}
 		}
@@ -2773,6 +2765,16 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (!empty($this->total_tva)) {
 			$datas['totaltva'] = '<br><b>'.$langs->trans('AmountVAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+		}
+		if (!empty($this->total_localtax1) && $this->total_localtax1 != 0) {
+			// We keep test != 0 because $this->total_localtax1 can be '0.00000000'
+			$datas['amountlt1'] = '<br><b>'.$langs->transcountry('AmountLT1', $mysoc->country_code).':</b> '.price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
+		}
+		if (!empty($this->total_localtax2) && $this->total_localtax2 != 0) {
+			$datas['amountlt2'] = '<br><b>'.$langs->transcountry('AmountLT2', $mysoc->country_code).':</b> '.price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
+		}
+		if (!empty($this->revenuestamp)) {
+			$datas['amountrevenustamp'] = '<br><b>'.$langs->trans('RevenueStamp').':</b> '.price($this->revenuestamp, 0, $langs, 0, -1, -1, $conf->currency);
 		}
 		if (!empty($this->total_ttc)) {
 			$datas['totalttc'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);

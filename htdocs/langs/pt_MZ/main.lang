@@ -381,7 +381,6 @@ FieldsWithIsForPublic=Os campos com <b> %s </ b> são exibidos na lista pública
 NotSupported=Não suportado
 RequiredField=Campo obrigatorio
 ValidateBefore=O item deve ser validado antes de usar este recurso
-Visibility=Visível
 TotalizableDesc=Este campo é totalizável na lista
 Hidden=Escondido
 Resources=Resorsas

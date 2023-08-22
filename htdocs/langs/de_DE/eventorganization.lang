@@ -146,7 +146,7 @@ OrganizationEventLinkToThirdParty=Verknüpfung mit Geschäftspartner (Kunde, Lie
 OrganizationEvenLabelName=Öffentlicher Name des Konferenzbeitrags oder des Standes
 
 NewSuggestionOfBooth=Bewerbung für einen Stand
-NewSuggestionOfConference=Application to hold a conference
+NewSuggestionOfConference=Bewerbung für einen Konferenzbeitrag
 
 #
 # Vote page
@@ -175,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Für diese Veranstaltung sind keine Aktionen 
 MaxNbOfAttendees=Maximale Teilnehmerzahl
 DateStartEvent=Startdatum der Veranstaltung
 DateEndEvent=Enddatum der Veranstaltung
+ModifyStatus=Status ändern
+ConfirmModifyStatus=Statusänderung bestätigen
+ConfirmModifyStatusQuestion=Sind Sie sicher, dass Sie die %s ausgewählten Datensätze ändern möchten?
+RecordsUpdated = %s Datensätze aktualisiert
+RecordUpdated = Datensatz aktualisiert
+NoRecordUpdated = Kein Datensatz aktualisiert

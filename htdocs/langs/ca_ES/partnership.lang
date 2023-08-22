@@ -16,9 +16,9 @@
 #
 # Generic
 #
-ModulePartnershipName=Gestió de la col·laboració
-PartnershipDescription=Mòdul Gestió de la col·laboració
-PartnershipDescriptionLong= Mòdul Gestió de la col·laboració
+ModulePartnershipName=Gestió d'associacions
+PartnershipDescription=Mòdul Gestió d'associacions
+PartnershipDescriptionLong= Mòdul Gestió d'associacions
 Partnership=Associació
 Partnerships=Col·laboracions
 AddPartnership=Afegiu associació
@@ -52,7 +52,7 @@ PublicFormRegistrationPartnerDesc=Dolibarr us pot proporcionar un URL/lloc web p
 DeletePartnership=Suprimiu una associació
 PartnershipDedicatedToThisThirdParty=Associació dedicada a aquest tercer
 PartnershipDedicatedToThisMember=Associació dedicada a aquest membre
-DatePartnershipStart=Data d'inici
+DatePartnershipStart=Data inicial
 DatePartnershipEnd=Data final
 ReasonDecline=Rebutjar la raó
 ReasonDeclineOrCancel=Rebutjar la raó
@@ -60,7 +60,7 @@ PartnershipAlreadyExist=L’associació ja existeix
 ManagePartnership=Gestioneu l'associació
 BacklinkNotFoundOnPartnerWebsite=Enllaç de retrocés no trobat al lloc web associat
 ConfirmClosePartnershipAsk=Esteu segur que voleu cancel·lar aquesta associació?
-PartnershipType=Tipus de col·laboració
+PartnershipType=Tipus d'associació
 PartnershipRefApproved=Associació %s aprovada
 KeywordToCheckInWebsite=Si voleu comprovar que una paraula clau determinada està present al lloc web de cada soci, definiu aquesta paraula clau aquí
 PartnershipDraft=Esborrany
@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Rebutjar la raó
 
 NewPartnershipRequest=Nova sol·licitud de col·laboració
 NewPartnershipRequestDesc=Aquest formulari us permet sol·licitar formar part d'un dels nostres programes d'associació. Si necessiteu ajuda per a omplir aquest formulari, poseu-vos en contacte amb el correu electrònic <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Aquesta pàgina ha de contenir almenys un enllaç a un dels dominis següents: %s
 

@@ -39,7 +39,7 @@ DestructionDate=Data di distruzione
 FirstUseDate=Data di primo utilizzo
 QCFrequency=Frequenza del controllo qualità (in giorni)
 ShowAllLots=Mostra tutti i lotti
-HideLots=Nascondi un sacco
+HideLots=Nascondi tutti i lotti
 #Traceability - qc status
 OutOfOrder=Fuori servizio
 InWorkingOrder=Funzionante

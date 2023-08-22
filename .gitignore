@@ -65,3 +65,5 @@ doc/install.lock
 .idea/workspace.xml
 .idea/inspectionProfiles/Project_Default.xml
 .idea/jsLinters/jshint.xml
+/composer.json
+/composer.lock

@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2015	Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2013-2016	Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador		 <csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2020	Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2023	Alexandre Spangaro	 <aspangaro@open-dsi.fr>
  * Copyright (C) 2014		Cédric Gross		 <c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	 <jfefe@aternatik.fr>
@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+
 
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -73,6 +73,9 @@ if (isModEnabled('accounting')) {
 }
 if (isModEnabled('bom')) {
 	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+}
+if (isModEnabled('workstation')) {
+	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
 
 // Load translation files required by the page
@@ -454,6 +457,30 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Quick edit for extrafields
+	if ($action == 'update_extras') {
+		$object->oldcopy = dol_clone($object);
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			// Actions on extra fields
+			$result = $object->insertExtraFields('PRODUCT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
+
 	// Add a product or service
 	if ($action == 'add' && $usercancreate) {
 		$error = 0;
@@ -512,6 +539,7 @@ if (empty($reshook)) {
 				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 				$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+				$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -666,10 +694,12 @@ if (empty($reshook)) {
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
 					if (preg_match('/\?/', $backtopage)) {
-						$backtopage .= '&socid='.$object->id; // Old method
+						$backtopage .= '&productid='.$object->id; // Old method
 					}
+
 					header("Location: ".$backtopage);
 					exit;
 				} else {
@@ -878,7 +908,9 @@ if (empty($reshook)) {
 		} else {
 			if ($object->id > 0) {
 				$error = 0;
-				$clone = dol_clone($object, 2);
+				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+				$clone = dol_clone($object, 1);
+				// We used native clone to keep this->db valid and allow to use later all the methods of object.
 
 				$clone->id = null;
 				$clone->ref = GETPOST('clone_ref', 'alphanohtml');
@@ -1463,7 +1495,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse', 'int'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
-			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create&token='.newToken()).'">';
+			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOST('type', 'int')).'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
 			print '</a>';
 			print '</td>';
@@ -2030,7 +2062,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses((GETPOSTISSET('fk_default_warehouse') ? GETPOST('fk_default_warehouse') : $object->fk_default_warehouse), 'fk_default_warehouse', 'warehouseopen', 1);
-				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&type='.GETPOST('type', 'int')).'">';
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=edit&id='.((int) $object->id)).'">';
 				print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 				/*

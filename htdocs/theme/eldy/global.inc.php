@@ -304,7 +304,7 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
+input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -843,6 +843,9 @@ textarea.centpercent {
 	word-break: break-word;
 }
 .wordbreak {
+	word-break: break-word;	/* cut fist between word, inside word if not possible */
+}
+.wordbreakall {
 	word-break: break-all;
 }
 td.wordbreak img {
@@ -1986,8 +1989,8 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
-	padding-top: 8px;
+	<?php if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) { ?>
+	padding-top: 18px;
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
@@ -2529,7 +2532,7 @@ img.photorefnoborder {
 }
 
 .tdhrthin {
-	margin: 0;
+	margin: 0 !important;
 	padding-bottom: 0 !important;
 }
 
@@ -3471,6 +3474,8 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
+}
+div.tabBar {
 	background: var(--colorbacktabcard1);
 }
 div.tabBar tr.titre td {
@@ -5287,7 +5292,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {
@@ -5495,7 +5500,8 @@ td.event-past span  {
 	opacity: 0.5;
 }
 
-
+.cal_available { background: #0060d450; }
+.cal_chosen { background: #0060d4; }
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -5635,6 +5641,10 @@ td.event-past span  {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+table.jPicker {
+	border-radius: 5px;
+	border: 1px solid #bbb !important;
+}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5710,7 +5720,9 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  padding : 0px;
  margin : 0px;
 }
-
+.colorselector {
+	border: solid 1px #ddd !important;
+}
 
 /* Style to overwrites JQuery styles */
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
@@ -7172,6 +7184,14 @@ div.tabsElem a.tab {
 	color: #666;
 }
 
+@media only screen and (max-width: 767px)
+{
+	.publicnewmemberform div.tabBarWithBottom {
+		padding: 10px;
+	}
+}
+
+
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
@@ -7994,6 +8014,7 @@ table.jPicker {
 	}
 }
 
+
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {
@@ -8035,3 +8056,6 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+
+
+

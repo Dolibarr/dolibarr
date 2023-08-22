@@ -140,7 +140,7 @@ InvoiceLinesDone=Kontierte Rechnungspositionen
 ExpenseReportLines=Noch nicht zugeordnete Zeilen aus Spesenabrechnungen
 ExpenseReportLinesDone=Kontierte Positionen aus Spesenabrechnungen
 IntoAccount=Position kontieren
-TotalForAccount=Buchungskonto Summe
+TotalForAccount=Summen Buchungskonto 
 
 
 Ventilate=Kontieren
@@ -216,7 +216,7 @@ Docdate=Datum
 Docref=Referenz
 LabelAccount=Kontobezeichnung
 LabelOperation=Buchungstext
-Sens=Richtung
+Sens=Buchungsseite
 AccountingDirectionHelp=Verwenden Sie für ein Buchungskonto eines Kunden "Haben", um eine Zahlung zu erfassen, die Sie erhalten haben. <br> Verwenden Sie für ein Buchungskonto eines Lieferanten "Soll", um eine von Ihnen geleistete Zahlung zu erfassen
 LetteringCode=Code zum Kontenabgleich
 Lettering=Kontenabgleich
@@ -299,7 +299,7 @@ DescClosure=Informieren Sie sich hier über die Anzahl der Buchungen pro Monat, 
 OverviewOfMovementsNotValidated=Übersicht der noch nicht festgeschriebenen Buchungen
 AllMovementsWereRecordedAsValidated=Alle Buchungen wurden als freigegeben und festgeschrieben registriert
 NotAllMovementsCouldBeRecordedAsValidated=Nicht alle Buchungen konnten als freigegeben und festgeschrieben registriert werden
-ValidateMovements=Validate and lock movements
+ValidateMovements=Buchungen freigeben und festschreiben
 DescValidateMovements=Es sind danach keinerlei Änderungen oder Löschungen mehr möglich. Alle Buchungssätze müssen festgeschrieben werden, andernfalls ist kein Abschluss möglich
 
 ValidateHistory=Automatisch kontieren
@@ -333,7 +333,7 @@ NewAccountingJournal=Neues Buchhaltungsjournal
 ShowAccountingJournal=Buchhaltungsjournal anzeigen
 NatureOfJournal=Art des Journals
 AccountingJournalType1=Sonstige Buchungen
-AccountingJournalType2=Verkäufe/Umsatz
+AccountingJournalType2=Verkäufe
 AccountingJournalType3=Einkäufe
 AccountingJournalType4=Bank
 AccountingJournalType5=Spesenabrechnungen
@@ -341,7 +341,7 @@ AccountingJournalType8=Bestand
 AccountingJournalType9=Eröffnungsbuchungen
 GenerationOfAccountingEntries=Erstellung von Buchhaltungseinträgen
 ErrorAccountingJournalIsAlreadyUse=Dieses Journal wird bereits verwendet
-AccountingAccountForSalesTaxAreDefinedInto=Hinweis: Buchaltungskonten für Steuern sind im Menü <b>%s</b> - <b>%s</b> definiert
+AccountingAccountForSalesTaxAreDefinedInto=Hinweis: Buchaltungskonten für Steuern werden im Menü <b>%s</b> - <b>%s</b> definiert
 NumberOfAccountancyEntries=Anzahl der Einträge
 NumberOfAccountancyMovements=Anzahl der Buchungen
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung bei Verkäufen (Kundenrechnungen werden in der Buchhaltung nicht berücksichtigt).
@@ -447,7 +447,7 @@ ConfirmMassDeleteBookkeepingWritingQuestion=Dadurch wird die Transaktion aus der
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Einige obligatorische Einstellungen wurden noch nicht vorgenommen, bitte vervollständigen Sie die Einrichtung.
-ErrorNoAccountingCategoryForThisCountry=Keine Buchhaltung Kategorie für das Land %s verfügbar (siehe Startseite - Einstellungen - Stammdaten)
+ErrorNoAccountingCategoryForThisCountry=Keine Buchhaltung Kategorie für das Land %s verfügbar (siehe Start - Einstellungen - Stammdaten)
 ErrorInvoiceContainsLinesNotYetBounded=Sie versuchen einige Rechnungspositionen der Rechnung <strong>%s</strong> zu journalisieren, aber einige Postionen sind keinem Buchungskonto zugewiesen. Alle Rechnungspositionen dieser Rechnung werden ignoriert.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Einige Rechnungspositionen sind unkontiert.
 ExportNotSupported=Das eingestellte Exportformat wird von deiser Seite nicht unterstützt
@@ -486,7 +486,7 @@ FECFormatMulticurrencyAmount=Mehrwährungs-Betrag (Montantdevise)
 FECFormatMulticurrencyCode=Mehrwährungs-Code (Idevise)
 
 DateExport=Exportdatum
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Achtung: Dieser Bericht basiert nicht auf dem Hauptbuch und enthält daher keine Transaktionen, die manuell im Hauptbuch geändert wurden. Wenn Ihre Journalisierung aktuell ist, ist die Buchhaltungsansicht genauer.
 ExpenseReportJournal=Spesenabrechnung Journal
 DocsAlreadyExportedAreIncluded=Bereits exportierte Dokumente sind enthalten
 ClickToShowAlreadyExportedLines=Klicken Sie hier, um bereits exportierte Zeilen anzuzeigen

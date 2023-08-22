@@ -716,7 +716,7 @@ function getFormeJuridiqueLabel($code)
 		return '';
 	}
 
-	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
 	$sql .= " WHERE code = '".$db->escape($code)."'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
@@ -727,7 +727,7 @@ function getFormeJuridiqueLabel($code)
 		if ($num) {
 			$obj = $db->fetch_object($resql);
 
-			$label = ($obj->libelle != '-' ? $obj->libelle : '');
+			$label = ($obj->label != '-' ? $obj->label : '');
 
 			return $langs->trans($label);
 		} else {
@@ -1672,8 +1672,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+			&& $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
+		} elseif (is_object($filterobj)) {
+			return 'Bad value for $filterobj';
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
@@ -1724,12 +1728,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
-				// Generic case
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+				&& $filterobj->table_element && $filterobj->element) {
+				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
+			} elseif (is_object($filterobj)) {
+				return 'Bad value for $filterobj';
 			}
 		}
 
@@ -1906,6 +1914,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<table class="noborder centpercent">';
 
 		$out .= '<tr class="liste_titre">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<th class="liste_titre width50 middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</th>';
+		}
+
 		if ($donetodo) {
 			$out .= '<td class="liste_titre"></td>';
 		}
@@ -1923,13 +1940,19 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		// Action column
-		$out .= '<td class="liste_titre" align="middle">';
-		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-		$out .= $searchpicto;
-		$out .= '</td>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<td class="liste_titre" align="middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</td>';
+		}
 		$out .= '</tr>';
 
 		$out .= '<tr class="liste_titre">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		}
 		if ($donetodo) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
@@ -1952,7 +1975,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= getTitleFieldOfList("RelatedObjects", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out .= getTitleFieldOfList("ActionOnContact", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'tdoverflowmax125 ', 0, '', 0);
 		$out .= getTitleFieldOfList("Status", 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, '', $sortfield, $sortorder, 'center ');
-		$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		}
 		$out .= '</tr>';
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
@@ -1966,6 +1992,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$actionstatic->type_code = $histo[$key]['acode'];
 
 			$out .= '<tr class="oddeven">';
+
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				$out .= '<td></td>';
+			}
 
 			// Done or todo
 			if ($donetodo) {
@@ -2025,8 +2056,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '<td class="tdoverflowmax300"';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
-				//$actionstatic->libelle=$libelle;
+				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				$libelle = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
@@ -2127,8 +2157,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			// Status
 			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
 
-			// Actions
-			$out .= '<td></td>';
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				$out .= '<td></td>';
+			}
 
 			$out .= "</tr>\n";
 			$i++;

@@ -158,11 +158,11 @@ if (empty($action)) {
 $object = new Website($db);
 $objectpage = new WebsitePage($db);
 
-$object->fetchAll('ASC', 'position'); // Init $object->records with list of websites
+$object->fetchAll('ASC', 'position'); // Init $object->lines with list of websites
 
 // If website not defined, we take first found
 if (!($websiteid > 0) && empty($websitekey) && $action != 'createsite') {
-	foreach ($object->records as $key => $valwebsite) {
+	foreach ($object->lines as $key => $valwebsite) {
 		$websitekey = $valwebsite->ref;
 		break;
 	}
@@ -420,48 +420,48 @@ if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core
 	$action = 'file_manager';
 }
 
-if ($action == 'setwebsiteonline') {
+if ($action == 'setwebsiteonline' && $usercanedit) {
 	$website->setStatut($website::STATUS_VALIDATED, null, '', 'WEBSITE_MODIFY', 'status');
 
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('websitepage', 'int'));
 	exit;
 }
-if ($action == 'setwebsiteoffline') {
+if ($action == 'setwebsiteoffline' && $usercanedit) {
 	$result = $website->setStatut($website::STATUS_DRAFT, null, '', 'WEBSITE_MODIFY', 'status');
 
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('websitepage', 'int'));
 	exit;
 }
-if ($action == 'seteditinline') {
+if ($action == 'seteditinline') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
 	exit;
 }
-if ($action == 'unseteditinline') {
+if ($action == 'unseteditinline') {	// No need of write permission
 	dolibarr_del_const($db, 'WEBSITE_EDITINLINE');
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
 	exit;
 }
-if ($action == 'setshowsubcontainers') {
+if ($action == 'setshowsubcontainers') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1);
 	//dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 0); // Force disable of edit inline
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
 	exit;
 }
-if ($action == 'unsetshowsubcontainers') {
+if ($action == 'unsetshowsubcontainers') {	// No need of write permission
 	dolibarr_del_const($db, 'WEBSITE_SUBCONTAINERSINLINE');
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
 	exit;
 }
 
-if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searchkey) {
+if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searchkey && $usercanedit) {
 	$mode = 'replacesite';
 	$massaction = '';
 }
 
-if ($action == 'deletetemplate') {
+if ($action == 'deletetemplate' && $usercanedit) {
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application
 		foreach ($conf->modules_parts['websitetemplates'] as $reldir) {
@@ -1463,7 +1463,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$object->virtualhost = $tmpvirtualhost;
 				$object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 				$object->otherlang = join(',', $arrayotherlang);
-				$object->use_manifest = GETPOST('use_manifest', 'alpha');
+				$object->use_manifest = GETPOSTINT('use_manifest');
 
 				$result = $object->update($user);
 				if ($result < 0) {
@@ -2237,11 +2237,11 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 
 			$phpfullcodestringold = dolKeepOnlyPhpCode($objectpage->content);
 
-			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');
+			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');	// any HTML content allowed
 
 			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
 
-			// Security analysis
+			// Security analysis (check PHP content and check permission website->writephp if php content is modified)
 			$error = checkPHPCode($phpfullcodestringold, $phpfullcodestring);
 
 			if ($error) {
@@ -2384,7 +2384,8 @@ if ($action == 'regeneratesite' && $usercanedit) {
 		dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 		$result = symlink($pathtomedias, $pathtomediasinwebsite);
 		if (!$result) {
-			setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
 			$action = 'preview';
 		}
 	}
@@ -2421,7 +2422,8 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 					dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
 					$result = symlink($pathtomedias, $pathtomediasinwebsite);
 					if (!$result) {
-						setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
 						$action = 'importsite';
 					}
 				}
@@ -2840,14 +2842,14 @@ if (!GETPOST('hide_websitemenu')) {
 	}
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
-	$websitepage = new WebSitePage($db);
+	$websitepage = new WebsitePage($db);
 	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
 
 
 	//var_dump($objectpage);exit;
-	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hidden' : '').'">';
+	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hiddenforpopup' : '').'">';
 
 	//
 	// Toolbar for websites
@@ -2870,13 +2872,13 @@ if (!GETPOST('hide_websitemenu')) {
 
 		$out = '';
 		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
-		if (empty($object->records)) {
+		if (empty($object->lines)) {
 			$out .= '<option value="-1">&nbsp;</option>';
 		}
 
 		// Loop on each sites
 		$i = 0;
-		foreach ($object->records as $key => $valwebsite) {
+		foreach ($object->lines as $key => $valwebsite) {
 			if (empty($websitekey)) {
 				if ($action != 'createsite') {
 					$websitekey = $valwebsite->ref;
@@ -2921,7 +2923,7 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<span class="websiteselection">';
 			// Do not use ajax, we need a refresh of full page when we change status of a website
 			//print '<div class="inline-block marginrightonly">';
-			//print ajax_object_onoff($object, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle', 'statuswebsite');
+			//print ajax_object_onoff($object, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block', 'statuswebsite');
 			//print '</div>';
 			if ($website->status == $website::STATUS_DRAFT) {
 				$text_off = 'Offline';
@@ -3097,7 +3099,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</div>'; // Close current websitebar to open a new one
 
 		print '<!-- Toolbar for websitepage -->';
-		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'">';
+		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'>';
 
 		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
 		print $langs->trans("PageContainer").': ';
@@ -3147,7 +3149,7 @@ if (!GETPOST('hide_websitemenu')) {
 					print '<span class="valignmiddle disabled opacitymedium">'.img_picto($langs->trans($text_off), 'switch_on').'</span>';
 				}
 			} else {
-				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage');
+				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage');
 			}
 			//print '</div>';
 			print '</span>';
@@ -3303,6 +3305,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<div class="inline-block marginrightonly">';	// Button edit inline
 
 				print '<span id="switchckeditorinline">'."\n";
+				// Enable CKEditor inline with js on section and div with conteneditable=true
 				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
 				print '<script type="text/javascript">
 						$(document).ready(function() {
@@ -3321,25 +3324,52 @@ if (!GETPOST('hide_websitemenu')) {
 								if (! isEditingEnabled || forceenable)
 								{
 									console.log("Enable inline edit");
+
 									jQuery(\'section[contenteditable="true"],div[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
-										CKEDITOR.inline(idtouse, {
-											// Allow some non-standard markup that we used in the introduction.
-											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
-											//extraPlugins: \'sourcedialog\',
-											removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
-											// Show toolbar on startup (optional).
-											// startupFocus: true
-										});
+										if (idtouse !== undefined) {
+											var inlineditor = CKEDITOR.inline(idtouse, {
+												// Allow some non-standard markup that we used in the introduction.
+												// + a[target];div{float,display} ?
+												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+												//extraPlugins: \'sourcedialog\',
+												removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
+												// Show toolbar on startup (optional).
+												// startupFocus: true
+											});
+
+											// Custom bar tool
+											// Note the Source tool does not work on inline
+											inlineditor.config.toolbar = [
+											    [\'Templates\',\'NewPage\'],
+											    [\'Save\'],
+											    [\'Maximize\',\'Preview\'],
+											    [\'PasteText\'],
+											    [\'Undo\',\'Redo\',\'-\',\'Find\',\'Replace\',\'-\',\'SelectAll\',\'RemoveFormat\'],
+											    [\'CreateDiv\',\'ShowBlocks\'],
+											    [\'Form\', \'Checkbox\', \'Radio\', \'TextField\', \'Textarea\', \'Select\', \'Button\', \'ImageButton\', \'HiddenField\'],
+											    [\'Bold\',\'Italic\',\'Underline\',\'Strike\',\'Superscript\'],
+											    [\'NumberedList\',\'BulletedList\',\'-\',\'Outdent\',\'Indent\',\'Blockquote\'],
+											    [\'JustifyLeft\',\'JustifyCenter\',\'JustifyRight\',\'JustifyBlock\'],
+											    [\'Link\',\'Unlink\'],
+											    [\'Image\',\'Table\',\'HorizontalRule\'],
+											    [\'Styles\',\'Format\',\'Font\',\'FontSize\'],
+											    [\'TextColor\',\'BGColor\']
+											];
+
+											// Start editor
+											//inlineditor.on(\'instanceReady\', function () {
+											    // ...
+											//});
+
+										}
 									})
 
 									isEditingEnabled = true;
-								}
-								else {
+								} else {
 									console.log("Disable inline edit");
-									for(name in CKEDITOR.instances)
-									{
+									for(name in CKEDITOR.instances) {
 									    CKEDITOR.instances[name].destroy(true);
 									}
 									isEditingEnabled = false;
@@ -3369,6 +3399,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '</div>';
 
 				// Set page as homepage
+				print '<span class="websiteselection">';
 				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) {
 					//$disabled=' disabled="disabled"';
 					//print '<span class="button bordertransp disabled"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home"></span></span>';
@@ -3392,6 +3423,7 @@ if (!GETPOST('hide_websitemenu')) {
 					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&pageid='.((int) $websitepage->id).'&website='.urlencode($website->ref);	// action=delete for webpage, deletesite for website
 				}
 				print '<a href="'.$url.'" class="button buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
+				print '</span>';
 			}
 		}
 
@@ -4789,7 +4821,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<a class="editfielda  marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
 
 					print '<span class="marginleftonly marginrightonly"></span>';
-					print ajax_object_onoff($answerrecord, 'status', 'status', 'Enabled', 'Disabled', array(), 'valignmiddle');
+					print ajax_object_onoff($answerrecord, 'status', 'status', 'Enabled', 'Disabled', array(), 'valignmiddle inline-block');
 
 					print '</td>';
 

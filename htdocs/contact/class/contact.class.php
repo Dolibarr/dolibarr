@@ -470,12 +470,13 @@ class Contact extends CommonObject
 	/**
 	 *  Add a contact into database
 	 *
-	 *  @param      User	$user       Object user that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @param      User	$user           Object user that create
+	 *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *  @return     int      			    <0 if KO, >0 if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 		$now = dol_now();
@@ -551,7 +552,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CONTACT_CREATE', $user);
 				if ($result < 0) {
@@ -1551,8 +1552,11 @@ class Contact extends CommonObject
 		if ($withpicto) {
 			if ($withpicto < 0) {
 				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+				if ($withpicto != 2 && $withpicto != -2) {
+					$result .= ' ';
+				}
 			} else {
-				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="pictofixedwidth"' : '') : 'class="'.(($withpicto != 2) ? 'pictofixedwidth ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 			}
 		}
 		if ($withpicto != 2 && $withpicto != -2) {
@@ -2190,8 +2194,6 @@ class Contact extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs;
-
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
@@ -2209,7 +2211,7 @@ class Contact extends CommonObject
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
-			$return .= '<div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		/*if (property_exists($this, 'phone_pro') && !empty($this->phone_pro)) {
 			$return .= '<br>'.img_picto($langs->trans("Phone"), 'phone');

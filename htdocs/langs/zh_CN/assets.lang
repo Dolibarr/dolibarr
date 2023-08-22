@@ -36,7 +36,7 @@ ModuleAssetsDesc=资产描述
 #
 AssetSetup=资产设置
 AssetSetupPage=资产设置页面
-ExtraFieldsAssetModel=互补属性 (资产的模型)
+ExtraFieldsAssetModel=自定义属性（资产的模型）
 
 AssetsType=资产模型
 AssetsTypeId=资产模型 ID
@@ -141,7 +141,7 @@ AssetAccountancyCodeAsset=资产
 AssetAccountancyCodeDepreciationAsset=折旧
 AssetAccountancyCodeDepreciationExpense=Depreciation expense
 AssetAccountancyCodeValueAssetSold=Value of asset disposed
-AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
+AssetAccountancyCodeReceivableOnAssignment=待处置应收账款
 AssetAccountancyCodeProceedsFromSales=Proceeds from disposal
 AssetAccountancyCodeVatCollected=Collected VAT
 AssetAccountancyCodeVatDeductible=Recovered VAT on assets

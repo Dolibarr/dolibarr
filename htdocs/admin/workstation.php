@@ -272,7 +272,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -299,7 +299,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$nameofclass = ucfirst($myTmpObjectKey);
+								$mytmpinstance = new $nameofclass($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info

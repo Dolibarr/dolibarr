@@ -29,3 +29,5 @@ LDAPPasswordHashType=Passordhash-type
 LDAPPasswordHashTypeExample=Type passordhash som brukes på serveren
 SupportedForLDAPExportScriptOnly=Støttes kun av et ldap-eksportskript
 SupportedForLDAPImportScriptOnly=Støttes kun av et ldap-importskript
+LDAPUserAccountControl = userAccountControl ved opprettelse (active directory)
+LDAPUserAccountControlExample = 512 Normal Account / 546 Normal Account + No Passwd + Disabled (se: https://fr.wikipedia.org/wiki/Active_Directory)

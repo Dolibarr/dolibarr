@@ -299,7 +299,7 @@ DescClosure=Consultez ici le nombre de mouvements par mois non encore validés &
 OverviewOfMovementsNotValidated=Aperçu des mouvements non validés et verrouillés
 AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés comme validés et ont été verrouillés
 NotAllMovementsCouldBeRecordedAsValidated=Certains mouvements n'ont pas pu être enregistrés comme validés et n'ont pas été verrouillés
-ValidateMovements=Validate and lock movements
+ValidateMovements=Valider et verrouiller les mouvements
 DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
 
 ValidateHistory=Lier automatiquement
@@ -348,7 +348,7 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Désactiver la liaison et le transfert en co
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert en comptabilité des factures d'achats (les factures fournisseurs ne seront pas prises en compte en comptabilité).
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
 ACCOUNTING_ENABLE_LETTERING=Activer la fonction de lettrage dans la comptabilité
-ACCOUNTING_ENABLE_LETTERING_DESC=Lorsque cette option est activée, vous pouvez définir, pour chaque écriture, un code permettant de regrouper différents mouvements comptables. Auparavant, lorsque les différents journaux étaient gérés de manière indépendante, cette fonctionnalité était nécessaire pour regrouper les lignes de mouvements entre journaux. Cependant, avec la comptabilité Dolibarr, un  code de suivi, nommé "<b>%s</b>" est enregistré automatiquement, donc un lettrage automatique est déjà fait, sans risque d'erreur, donc cette fonctionnalité est devenue inutile pour un usage courant. La fonction de lettrage manuel est fournie aux utilisateurs finaux qui ne font vraiment pas confiance à l'informatique et aux transferts de données en comptabilité.
+ACCOUNTING_ENABLE_LETTERING_DESC=Lorsque cette option est activée, vous pouvez définir, pour chaque écriture, un code permettant de regrouper différents mouvements comptables. Auparavant, lorsque les différents journaux étaient gérés de manière indépendante, cette fonctionnalité était nécessaire pour regrouper les lignes de mouvements entre journaux. Cependant, avec la comptabilité Dolibarr, un  tel code de suivi, nommé "<b>%s</b>" est déjà enregistré automatiquement, donc un lettrage automatique est déjà fait, sans risque d'erreur, donc cette fonctionnalité est devenue inutile pour un usage standard. La fonction de lettrage manuel est fournie aux utilisateurs finaux qui ne font vraiment pas confiance à l'informatique et aux transferts de données en comptabilité.
 EnablingThisFeatureIsNotNecessary=L'activation de cette fonctionnalité n'est plus nécessaire pour une gestion comptable rigoureuse.
 ACCOUNTING_ENABLE_AUTOLETTERING=Activer le lettrage automatique lors du transfert en comptabilité
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Le code du lettrage est automatiquement généré et incrémenté et non choisi par l'utilisateur final
@@ -486,7 +486,7 @@ FECFormatMulticurrencyAmount=Montant multidevise (Montantdevise)
 FECFormatMulticurrencyCode=Code multidevise (Idevise)
 
 DateExport=Date d'export
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Attention : ce rapport n'est pas basé sur le grand livre et ne contient donc pas les écritures manuelles qui lui ont été ajoutées. Si votre journalisation est à jour, la vue depuis le grand livre sera plus précise.
 ExpenseReportJournal=Journal des notes de frais
 DocsAlreadyExportedAreIncluded=Les documents déjà exportés sont inclus
 ClickToShowAlreadyExportedLines=Cliquez pour afficher les lignes déjà exportées

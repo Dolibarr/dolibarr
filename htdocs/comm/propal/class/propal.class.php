@@ -212,8 +212,10 @@ class Propal extends CommonObject
 	public $total;
 
 	public $cond_reglement_code;
-	public $deposit_percent;
+	public $cond_reglement_doc;
 	public $mode_reglement_code;
+
+	public $deposit_percent;
 
 	/**
 	 * @deprecated
@@ -1641,7 +1643,6 @@ class Propal extends CommonObject
 
 				$this->status               = (int) $obj->fk_statut;
 				$this->statut               = $this->status; // deprecated
-				$this->statut_libelle       = $obj->statut_label;
 
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
@@ -1692,10 +1693,6 @@ class Propal extends CommonObject
 				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
 				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
-
-				if ($obj->fk_statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -2070,10 +2067,11 @@ class Propal extends CommonObject
 			}
 
 			$this->ref = $num;
-			$this->brouillon = 0;
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 			$this->user_valid_id = $user->id;
 			$this->datev = $now;
+			$this->date_validation = $now;
 
 			$this->db->commit();
 			return 1;
@@ -2900,7 +2898,7 @@ class Propal extends CommonObject
 
 		if (!$error) {
 			$this->statut = self::STATUS_DRAFT;
-			$this->brouillon = 1;
+			$this->status = self::STATUS_DRAFT;
 
 			$this->db->commit();
 			return 1;
@@ -3449,7 +3447,7 @@ class Propal extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param          User	$user   Object user
-	 *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
+	 *      @param          string	$mode   "opened" for proposal to close, "signed" for proposal to invoice
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)

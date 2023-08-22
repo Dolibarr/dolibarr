@@ -103,7 +103,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$tmparraykey = array_keys($object->param_list);
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
-		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type'])) {
+		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
@@ -202,7 +202,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				continue;
 			}
 		} else {
-			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type']) && $object->fields[$key]['type']!=='checkbox') {
 				continue; // The field was not submited to be saved
 			}
 		}
@@ -247,7 +247,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
-		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
@@ -289,6 +289,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			}
 		}
 	}
+
 
 	// Fill array 'array_options' with data from add form
 	if (!$error) {
@@ -559,7 +560,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
-		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+		// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+		$objectutil = dol_clone($object, 1);
+		// We used native clone to keep this->db valid and allow to use later all the methods of object.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
 		// ...
 		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));

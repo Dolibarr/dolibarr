@@ -875,10 +875,11 @@ class Societe extends CommonObject
 	 *    Create third party in database.
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
 	 *
-	 *    @param	User	$user       Object of user that ask creation
-	 *    @return   int         		>=0 if OK, <0 if KO
+	 *    @param	User	$user           Object of user that ask creation
+	 *    @param    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *    @return   int         		    >=0 if OK, <0 if KO
 	 */
-	public function create(User $user)
+	public function create(User $user, $notrigger = 0)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -1016,7 +1017,7 @@ class Societe extends CommonObject
 					$this->add_commercial($user, $user->id);
 				}
 
-				if ($ret >= 0) {
+				if ($ret >= 0 && !$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('COMPANY_CREATE', $user);
 					if ($result < 0) {
@@ -1059,12 +1060,13 @@ class Societe extends CommonObject
 	/**
 	 * Create a contact/address from thirdparty
 	 *
-	 * @param 	User	$user		Object user
-	 * @param 	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
-	 * @param 	array	$tags		Array of tag to affect to contact
-	 * @return 	int					<0 if KO, >0 if OK
+	 * @param 	User	$user		    Object user
+	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to recieve mailling
+	 * @param 	array	$tags		    Array of tag to affect to contact
+	 * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 * @return 	int					    <0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user, $no_email = 0, $tags = array())
+	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
 		global $conf;
 
@@ -1092,7 +1094,7 @@ class Societe extends CommonObject
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
 
-		$contactId = $contact->create($user);
+		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
 			$error++;
 			$this->error = $contact->error;
@@ -2175,7 +2177,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		if ($this->id) {
 			$newclient = 1;
-			if ($this->client == 2 || $this->client == 3) {
+			if (($this->client == 2 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
@@ -2623,12 +2625,8 @@ class Societe extends CommonObject
 		$option = $params['option'] ?? '';
 		$nofetch = !empty($params['nofetch']);
 
-		$name = $this->name;
 		$noaliasinname = (empty($params['noaliasinname']) ? 0 : $params['noaliasinname']);
 
-		if (!empty($this->name_alias) && empty($noaliasinname)) {
-			$name .= ' ('.$this->name_alias.')';
-		}
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowCompany")];
 		}
@@ -2674,9 +2672,9 @@ class Societe extends CommonObject
 		if (isset($this->client) && isset($this->fournisseur)) {
 			$datas['type'] = ' &nbsp; ' . $this->getTypeUrl(1);
 		}
-		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
-		if (!empty($this->name_alias)) {
-			$datas['namealias'] = ' ('.dol_escape_htmltag($this->name_alias).')';
+		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag(dol_string_nohtmltag($this->name));
+		if (!empty($this->name_alias) && empty($noaliasinname)) {
+			$datas['namealias'] = ' ('.dol_escape_htmltag(dol_string_nohtmltag($this->name_alias)).')';
 		}
 		if (!empty($this->email)) {
 			$datas['email'] = '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
@@ -2999,7 +2997,7 @@ class Societe extends CommonObject
 	/**
 	 *    Return list of contacts emails existing for third party
 	 *
-	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email
+	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email, 2=Same than 1 but add text ThirdParty in grey
 	 *    @return     array       					Array of contacts emails
 	 */
 	public function thirdparty_and_contact_email_array($addthirdparty = 0)
@@ -3012,7 +3010,7 @@ class Societe extends CommonObject
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
-			$contact_emails['thirdparty'] = $langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name, 16)." <".$this->email.">";
+			$contact_emails['thirdparty'] = ($addthirdparty == 2 ? '<span class="opacitymedium">' : '').$langs->transnoentitiesnoconv("ThirdParty").($addthirdparty == 2 ? '</span>' : '').': '.dol_trunc($this->name, 16)." <".$this->email.">";
 		}
 		//var_dump($contact_emails)
 		return $contact_emails;
@@ -4558,6 +4556,7 @@ class Societe extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND t.active = 1";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		if (empty($localTaxNum)) {
 			$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
 		} elseif ($localTaxNum == 1) {
@@ -4585,6 +4584,7 @@ class Societe extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND t.active = 1 AND t.recuperableonly = 1";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 
 		dol_syslog("useNPR", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -5271,7 +5271,7 @@ class Societe extends CommonObject
 		$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
 
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
-		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
+		$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
 		$sql .= ", ".$this->db->prefix()."societe_contacts sc";
 
@@ -5301,7 +5301,7 @@ class Societe extends CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 					$tab[$i] = array(
 						'source' => $obj->source,
 						'socid' => $obj->socid,

@@ -146,7 +146,7 @@ OrganizationEventLinkToThirdParty=サードパーティ（顧客、サプライ�
 OrganizationEvenLabelName=会議またはブースの公開名
 
 NewSuggestionOfBooth=ブース申請
-NewSuggestionOfConference=Application to hold a conference
+NewSuggestionOfConference=カンファレンスの開催申し込み
 
 #
 # Vote page
@@ -175,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=このイベントの公開アクションは
 MaxNbOfAttendees=参加者の最大数
 DateStartEvent=イベント開始日
 DateEndEvent=イベント終了日
+ModifyStatus=ステータスの変更
+ConfirmModifyStatus=ステータス変更の確定
+ConfirmModifyStatusQuestion=%s 選択されたレコード(s) を変更してよいか?
+RecordsUpdated = %s 記録が更新済
+RecordUpdated = 記録更新済
+NoRecordUpdated = 更新済レコードなし

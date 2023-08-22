@@ -662,7 +662,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$resql = $db->query($sql);
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
-		if (!preg_match('/^MAIN_LOGEVENTS/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $name))) {
+		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $name))) {
 			// This seems a sensitive constant, we encrypt its value
 			// To list all sensitive constant, you can make a
 			// WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' or name like '%\_SERVERKEY' or name like '%\_PASS' or name like '%\_PASSWORD' or name like '%\_SECRET'

@@ -83,3 +83,4 @@ PublicAuthorAlias=Alias ​​do autor público
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Os idiomas disponíveis são definidos nas propriedades do site
 ReplacementDoneInXPages=Substituição feita em %s páginas ou contêineres
 RSSFeedDesc=Você pode obter um feed RSS dos artigos mais recentes com o tipo 'blogpost' usando este URL
+Visibility=Visível

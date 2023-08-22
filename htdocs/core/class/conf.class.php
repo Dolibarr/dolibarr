@@ -44,7 +44,7 @@ class Conf
 
 	//! To store properties found into database
 	public $global;
-	//! To store browser info
+	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	public $browser;
 
 	//! To store some setup of generic modules
@@ -305,7 +305,7 @@ class Conf
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						$this->global->$key = dolDecrypt($value);
+						$this->global->$key = dolDecrypt($value);	// decrypt data excrypted with dolibarr_set_const($db, $name, $value)
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();
