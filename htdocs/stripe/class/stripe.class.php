@@ -1028,7 +1028,7 @@ class Stripe extends CommonObject
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
 					try {
-						dol_syslog("Try to create sepa_debit 0");
+						dol_syslog("Try to create sepa_debit");
 
 						$service = 'StripeTest';
 						$servicestatus = 0;
@@ -1093,8 +1093,8 @@ class Stripe extends CommonObject
 						}
 					} catch (Exception $e) {
 						$sepa = null;
-						$this->error = $e->getMessage();
-						dol_syslog($this->error, LOG_WARNING);
+						$this->error = 'Stripe error: '.getMessage().'. Check the BAN information.';
+						dol_syslog($this->error, LOG_WARNING);	// Error from Stripe, so a warning on Dolibarr
 					}
 				}
 			}
