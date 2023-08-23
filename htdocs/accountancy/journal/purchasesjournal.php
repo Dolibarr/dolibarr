@@ -1139,7 +1139,7 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					$accountoshow = length_accountg($k);
 					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Purchase").')</span>';
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("AccountingJournalType3").')</span>';
 					} else {
 						print $accountoshow;
 					}

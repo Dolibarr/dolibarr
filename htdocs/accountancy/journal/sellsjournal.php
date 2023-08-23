@@ -125,6 +125,9 @@ if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 } else {
 	$sql .= " p.accountancy_code_sell";
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -136,6 +139,9 @@ $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).')'; // We don't share object for accountancy, we use source object sharing
 $sql .= " AND f.fk_statut > 0";
@@ -161,6 +167,9 @@ if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY f.datef, f.ref";
 //print $sql;
 
@@ -231,6 +240,8 @@ if ($result) {
 			}
 		}
 
+		$revenuestamp = (double) price2num($obj->revenuestamp, 'MT');
+
 		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
 		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
@@ -238,7 +249,7 @@ if ($result) {
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->label_compte;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
-		$tabfac[$obj->rowid]["revenuestamp"] = $obj->revenuestamp;
+		$tabfac[$obj->rowid]["revenuestamp"] = $revenuestamp;
 		//$tabfac[$obj->rowid]["fk_facturedet"] = $obj->fdid;
 
 		// Avoid warnings
@@ -285,7 +296,7 @@ if ($result) {
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
 
-		if (empty($tabrevenuestamp[$obj->rowid][$compta_revenuestamp])) {
+		if (empty($tabrevenuestamp[$obj->rowid][$compta_revenuestamp]) && !empty($revenuestamp)) {
 			// The revenue stamp was never seen for this invoice id=$obj->rowid
 			$tabttc[$obj->rowid][$compta_soc] += $obj->revenuestamp;
 			$tabrevenuestamp[$obj->rowid][$compta_revenuestamp] = $obj->revenuestamp;
@@ -1161,7 +1172,7 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					$accountoshow = length_accountg($k);
 					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Sale").')</span>';
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("AccountingJournalType2").')</span>';
 					} else {
 						print $accountoshow;
 					}

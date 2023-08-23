@@ -5012,7 +5012,7 @@ table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 
-div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; }
+div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; text-align: center; }
 .backgreypublicpayment a { color: #222 !important; }
 .poweredbypublicpayment {
 	float: right;
