@@ -173,6 +173,8 @@ foreach (array('proj', 'dep') as $source) {
  */
 
 $html = '<html>';
+$html .= '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />';
+$html .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>';
 $html .= '
 <style>
 body {
@@ -220,6 +222,9 @@ th,td {
 .centpercent {
 	width: 100%;
 }
+.hidden {
+	display: none;
+}
 .trgroup {
 	background-color: #EEE;
 }
@@ -249,41 +254,42 @@ $html .= '</th>';
 foreach (array('proj', 'dep') as $source) {
 	$html .= '<tr class="trgroup" id="source'.$source.'">';
 	if ($source == 'proj') {
-		$html .= '<td>All files from project only</td>';
+		$html .= '<td>All files from project only';
 	} elseif ($source == 'dep') {
-		$html .= '<td>All files from dependencies</td>';
+		$html .= '<td>All files from dependencies';
 	}
-	$html .= '<td class="right">'.$arrayofmetrics[$source]['Bytes'].'</td>';
-	$html .= '<td class="right">'.$arrayofmetrics[$source]['Files'].'</td>';
-	$html .= '<td class="right">'.$arrayofmetrics[$source]['Lines'].'</td>';
-	$html .= '<td class="right">'.$arrayofmetrics[$source]['Blanks'].'</td>';
-	$html .= '<td class="right">'.$arrayofmetrics[$source]['Comments'].'</td>';
-	$html .= '<td class="right">'.$arrayofmetrics[$source]['Code'].'</td>';
-	$html .= '<td>See detail per file type...</td>';
+	$html .= ' &nbsp; &nbsp; <span class="seedetail" data-source="'.$source.'">(See detail per file type...)</span>';
+	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Bytes']).'</td>';
+	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Files']).'</td>';
+	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Lines']).'</td>';
+	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Blanks']).'</td>';
+	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Comments']).'</td>';
+	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Code']).'</td>';
+	$html .= '<td>TODO graph here...</td>';
 	$html .= '</tr>';
 	foreach ($arrayoflineofcode[$source] as $key => $val) {
-		$html .= '<tr class="loc source'.$source.' language'.str_replace(' ', '', $key).'">';
+		$html .= '<tr class="loc hidden source'.$source.' language'.str_replace(' ', '', $key).'">';
 		$html .= '<td>'.$key.'</td>';
 		$html .= '<td class="right"></td>';
-		$html .= '<td class="right">'.(empty($val['Files']) ? '' : $val['Files']).'</td>';
-		$html .= '<td class="right">'.(empty($val['Lines']) ? '' : $val['Lines']).'</td>';
-		$html .= '<td class="right">'.(empty($val['Blanks']) ? '' : $val['Blanks']).'</td>';
-		$html .= '<td class="right">'.(empty($val['Comments']) ? '' : $val['Comments']).'</td>';
-		$html .= '<td class="right">'.(empty($val['Code']) ? '' : $val['Code']).'</td>';
+		$html .= '<td class="right">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
+		$html .= '<td class="right">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
+		$html .= '<td class="right">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
+		$html .= '<td class="right">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
+		$html .= '<td class="right">'.(empty($val['Code']) ? '' : formatNumber($val['Code'])).'</td>';
 		//$html .= '<td class="right">'.(empty($val['Complexity']) ? '' : $val['Complexity']).'</td>';
-		$html .= '<td>graph here...</td>';
+		$html .= '<td>TODO graph here...</td>';
 		$html .= '</tr>';
 	}
 }
 
 $html .= '<tr class="trgroup">';
 $html .= '<td class="left">Total</td>';
-$html .= '<td class="right">'.($arrayofmetrics['proj']['Bytes'] + $arrayofmetrics['dep']['Bytes']).'</td>';
-$html .= '<td class="right">'.($arrayofmetrics['proj']['Files'] + $arrayofmetrics['dep']['Files']).'</td>';
-$html .= '<td class="right">'.($arrayofmetrics['proj']['Lines'] + $arrayofmetrics['dep']['Lines']).'</td>';
-$html .= '<td class="right">'.($arrayofmetrics['proj']['Blanks'] + $arrayofmetrics['dep']['Blanks']).'</td>';
-$html .= '<td class="right">'.($arrayofmetrics['proj']['Comments'] + $arrayofmetrics['dep']['Comments']).'</td>';
-$html .= '<td class="right">'.($arrayofmetrics['proj']['Code'] + $arrayofmetrics['dep']['Code']).'</td>';
+$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Bytes'] + $arrayofmetrics['dep']['Bytes']).'</td>';
+$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Files'] + $arrayofmetrics['dep']['Files']).'</td>';
+$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Lines'] + $arrayofmetrics['dep']['Lines']).'</td>';
+$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Blanks'] + $arrayofmetrics['dep']['Blanks']).'</td>';
+$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Comments'] + $arrayofmetrics['dep']['Comments']).'</td>';
+$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Code'] + $arrayofmetrics['dep']['Code']).'</td>';
 //$html .= '<td>'.$arrayofmetrics['Complexity'].'</td>';
 $html .= '<td></td>';
 $html .= '</tr>';
@@ -292,16 +298,27 @@ $html .= '</table>';
 $html .= '</section>';
 
 $html .= '<section class="chapter">';
-$html .= '<h2>Project value:</h2><br>';
-$html .= 'CODOMO (Basic organic model) value: $'.($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency']).'<br>';
-$html .= 'CODOMO (Basic organic model) effort: '.($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']).' Month people<br>';
+$html .= '<h2>Project value</h2><br>';
+$html .= 'COCOMO (Basic organic model) value: $'.formatNumber($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency'], 2).'<br>';
+$html .= 'COCOMO (Basic organic model) effort: '.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']).' monthes people<br>';
 $html .= '</section>';
 
 $html .= '<section class="chapter">';
-$html .= '<h2>Technical debt: ('.count($output_arrtd).')</h2><br>';
+$html .= '<h2>Technical debt ('.count($output_arrtd).')</h2><br>';
 $html .= join('<br>'."\n", $output_arrtd);
 $html .= '</section>';
 
+$html .= '
+<script>
+$(document).ready(function() {
+$( ".seedetail" ).on( "click", function() {
+	var source = $(this).attr("data-source");
+  	console.log("Click on "+source);
+	jQuery(".source"+source).toggle();
+} );
+});
+</script>
+';
 $html .= '</boby>';
 $html .= '</html>';
 
@@ -313,4 +330,17 @@ if ($fh) {
 	print 'Generation of output file '.$outputfile.' done.'."\n";
 } else {
 	print 'Failed to open '.$outputfile.' for ouput.'."\n";
+}
+
+
+/**
+ * function to format a number
+ *
+ * @param	string|int		$number			Number to format
+ * @param	int				$nbdec			Number of decimal digits
+ * @return	string							Formated string
+ */
+function formatNumber($number, $nbdec = 0)
+{
+	return number_format($number, 0, '.', ' ');
 }
