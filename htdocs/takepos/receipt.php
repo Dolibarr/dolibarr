@@ -111,12 +111,12 @@ if (!empty($hookmanager->resPrint)) {
 <br>
 <p class="left">
 <?php
-$constFreeText = 'TAKEPOS_HEADER'.($_SESSION['takeposterminal'] ?? '0');
-if (!empty($conf->global->TAKEPOS_HEADER) || getDolGlobalString($constFreeText)) {
+$constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
+if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->TAKEPOS_HEADER)) {
-		$newfreetext .= make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+	if (getDolGlobalString('TAKEPOS_HEADER')) {
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_HEADER'), $substitutionarray);
 	}
 	if (getDolGlobalString($constFreeText)) {
 		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
@@ -352,15 +352,15 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 <br>
 <br>
 <?php
-$constFreeText = 'TAKEPOS_FOOTER'.($_SESSION['takeposterminal'] ?? '0');
-if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeText})) {
+$constFreeText = 'TAKEPOS_FOOTER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
+if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->{$constFreeText})) {
-		$newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	if (getDolGlobalString($constFreeText)) {
+		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
-	if (!empty($conf->global->TAKEPOS_FOOTER)) {
-		$newfreetext .= make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+	if (getDolGlobalString('TAKEPOS_FOOTER')) {
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_FOOTER'), $substitutionarray);
 	}
 	print $newfreetext;
 }
