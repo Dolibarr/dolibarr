@@ -111,7 +111,7 @@ if (!empty($hookmanager->resPrint)) {
 <br>
 <p class="left">
 <?php
-$constFreeText = 'TAKEPOS_HEADER'.($_SESSION['takeposterminal'] ?? '0');
+$constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
 if (!empty($conf->global->TAKEPOS_HEADER) || !empty($conf->global->{$constFreeText})) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
@@ -316,7 +316,7 @@ if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
 <br>
 <br>
 <?php
-$constFreeText = 'TAKEPOS_FOOTER'.($_SESSION['takeposterminal'] ?? '0');
+$constFreeText = 'TAKEPOS_FOOTER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
 if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeText})) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
