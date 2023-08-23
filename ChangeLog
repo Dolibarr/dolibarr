@@ -2,6 +2,69 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 17.0.3 compared to 17.0.2 *****
+FIX: #20304 propaldates update
+FIX: #24508 Label not reported when creating a supplier invoice template (#25340)
+FIX: #24569 filters on stockadate page
+FIX: #24631 Filter on categories of warehouses faulty
+FIX: #24695
+FIX: #24756 Total sum on annual report bank
+FIX: #24918
+FIX: #24985 Societe - Function thirdparty merging not working with module whose tables are not deployed by default
+FIX: #24991
+FIX: #24997 Update slovakia vat rate
+FIX: #25223
+FIX: ability to disable forcing focus on select2 to avoid side effects
+FIX: Add hidden conf to add extrafields in canelle template : INVOICE_ADD_EXTRAFIELD_IN_NOTE
+FIX: Add/Update required modules for thirdparties (by categ) & partnership
+FIX: ajax on off setup type
+FIX: avoid php8 warning
+FIX: Bad management of localtax on TakePOS due to typo error in var name
+FIX: can define empty qty by default when create object line
+FIX: can not remove the last selected value with checkbox
+FIX: case special char for password in email admin page
+FIX: Change $key into $tmpkey
+FIX: CommonObject::getRights()
+FIX: commonobject: getRights() did not find rights correctly for objects built using modulebuilder
+FIX: CVE reported by BELABED Skander (Akerva)
+FIX: CVE XSS on company name reported by Belabed Skander from Akerva
+FIX: decimal values were not possible on shipment quantities (introduced by #24882)
+FIX: default value for condition of payment on proposal
+FIX: default values were not set for specimen objects
+FIX: Delete of bank of a thirdparty must need the edit thirdparty perm
+FIX: display project tasks list columns (#24557)
+FIX: dol_print_error parameters on ticket fetch method (#25318)
+FIX: dol_trunc may not have the desired behaviour for truncating a cryptographic initialiszation vector, for instance when MAIN_DISABLE_TRUNC is used
+FIX: Donation - Missing Language key
+FIX: error expedition qty 0
+FIX: extrafield quick edit not working on products
+FIX: fatal error on Stripe setup page and security when terminal not used
+FIX: Fatal Error PHP 8 : division by 0 (#25384)
+FIX|Fix  Change strpos for expedition and receipt in files.lib.php $haystack and $needle inversion
+FIX: Fix main and left menu info for the root menu of the list of accountancy journal
+FIX: Homogenise handling of null extrafield value in create/update
+FIX: Langs was not loaded for extrafields error
+FIX: Missing localtaxes on receipt in TakePOS
+FIX: no change on thirdparties.modules.php required modules
+FIX: OAUth2 module for Google with scopes for people and calendar
+FIX: php8.1 warning on lists with total due to unset array key (#25460)
+FIX: quickedit code missing on product card
+FIX: Selection of customer on second or more parallel sell in TakePOS
+FIX: Showing bank account on list for direct debit
+FIX: SQL migration file
+FIX: String was compared to an integer
+FIX: to avoid wrong path of file (#25320)
+FIX: Total sum on annual report bank
+FIX: translation extrafield mass action #24080
+FIX: Try to fix the date of invoice on TakePOS on eastern timezone
+FIX: TVA calc option must be the same on update line as on create line
+FIX: Update mouvementstock.class.php (#25396)
+FIX: update product on translation update
+FIX: use dol_substr instead of dol_trunc for truncating openssl initialization vector
+FIX: We should always be able to filter on action type no matter if we can't read actions of others (#24462)
+FIX: wrong var name
+
 ***** ChangeLog for 17.0.2 compared to 17.0.1 *****
 FIX: Change strpos for expedition and receipt in files.lib $haystack and $needle inversion
 FIX: Add hidden conf to add extrafields in canelle template : INVOICE_ADD_EXTRAFIELD_IN_NOTE
