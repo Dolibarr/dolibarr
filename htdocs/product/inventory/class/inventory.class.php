@@ -256,9 +256,10 @@ class Inventory extends CommonObject
 	/**
 	 * Validate inventory (start it)
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  	User 	$user      				User that creates
+	 * @param	bool 	$notrigger 				false=launch triggers after, true=disable triggers
+	 * @param	int		$include_sub_warehouse	Include sub warehouses
+	 * @return 	int             				<0 if KO, Id of created object if OK
 	 */
 	public function validate(User $user, $notrigger = false, $include_sub_warehouse = 0)
 	{
@@ -293,7 +294,7 @@ class Inventory extends CommonObject
 			}
 			if ($this->fk_warehouse > 0) {
 				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
-				if (!empty($include_sub_warehouse) && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE) {
+				if (!empty($include_sub_warehouse) && getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE')) {
 					$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
 					$sql .= " OR ps.fk_entrepot IN (".filter_var(implode(',', $TChildWarehouses), FILTER_SANITIZE_STRING).")";
 				}
