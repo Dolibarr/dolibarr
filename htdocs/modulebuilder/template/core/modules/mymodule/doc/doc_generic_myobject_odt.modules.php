@@ -321,7 +321,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && ) {
+					if ($object->contact->socid != $object->thirdparty->id) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
