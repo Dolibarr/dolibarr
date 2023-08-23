@@ -265,12 +265,12 @@ foreach (array('proj', 'dep') as $source) {
 		$html .= '<tr class="loc source'.$source.' language'.str_replace(' ', '', $key).'">';
 		$html .= '<td>'.$key.'</td>';
 		$html .= '<td class="right"></td>';
-		$html .= '<td class="right">'.$val['Files'].'</td>';
-		$html .= '<td class="right">'.$val['Lines'].'</td>';
-		$html .= '<td class="right">'.$val['Blanks'].'</td>';
-		$html .= '<td class="right">'.$val['Comments'].'</td>';
-		$html .= '<td class="right">'.$val['Code'].'</td>';
-		//$html .= '<td class="right">'.$val['Complexity'].'</td>';
+		$html .= '<td class="right">'.(empty($val['Files']) ? '' : $val['Files']).'</td>';
+		$html .= '<td class="right">'.(empty($val['Lines']) ? '' : $val['Lines']).'</td>';
+		$html .= '<td class="right">'.(empty($val['Blanks']) ? '' : $val['Blanks']).'</td>';
+		$html .= '<td class="right">'.(empty($val['Comments']) ? '' : $val['Comments']).'</td>';
+		$html .= '<td class="right">'.(empty($val['Code']) ? '' : $val['Code']).'</td>';
+		//$html .= '<td class="right">'.(empty($val['Complexity']) ? '' : $val['Complexity']).'</td>';
 		$html .= '<td>graph here...</td>';
 		$html .= '</tr>';
 	}
@@ -293,8 +293,8 @@ $html .= '</section>';
 
 $html .= '<section class="chapter">';
 $html .= '<h2>Project value:</h2><br>';
-$html .= 'CODOMO (Basic model) value: $'.($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency']).'<br>';
-$html .= 'CODOMO (Basic model) effort: '.($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']).' Month people<br>';
+$html .= 'CODOMO (Basic organic model) value: $'.($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency']).'<br>';
+$html .= 'CODOMO (Basic organic model) effort: '.($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']).' Month people<br>';
 $html .= '</section>';
 
 $html .= '<section class="chapter">';
