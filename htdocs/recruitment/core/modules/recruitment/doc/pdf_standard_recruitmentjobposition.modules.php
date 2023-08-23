@@ -99,7 +99,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 * @var array defaultContentsFieldsStyle
 	 */
-	public $defaultContentsFieldsStyle = array()
+	public $defaultContentsFieldsStyle = array();
 
 	/**
 	 * @var array defaultTitlesFieldsStyle
