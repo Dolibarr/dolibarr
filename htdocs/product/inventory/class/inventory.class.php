@@ -260,7 +260,7 @@ class Inventory extends CommonObject
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 * @return int             <0 if KO, Id of created object if OK
 	 */
-	public function validate(User $user, $notrigger = false)
+	public function validate(User $user, $notrigger = false, $include_sub_warehouse = 0)
 	{
 		global $conf;
 		$this->db->begin();
@@ -292,7 +292,12 @@ class Inventory extends CommonObject
 				$sql .= " AND ps.fk_product = ".((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= " AND ps.fk_entrepot = ".((int) $this->fk_warehouse);
+				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
+				if (!empty($include_sub_warehouse) && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE) {
+					$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
+					$sql .= " OR ps.fk_entrepot IN (".filter_var(implode(',', $TChildWarehouses), FILTER_SANITIZE_STRING).")";
+				}
+				$sql .= ')';
 			}
 			if (!empty($this->categories_product)) {
 				$sql .= " AND EXISTS (";
@@ -744,6 +749,29 @@ class Inventory extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 		$this->title = '';
+	}
+
+	/**
+	 * Return the child warehouse of the current one
+	 * @param int $id Id of warehouse
+	 * @param $TChildWarehouse  child warehouses
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function getchildWarehouse($id, &$TChildWarehouse)
+	{
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'entrepot';
+		$sql.= ' WHERE fk_parent='.(int) $id;
+		$sql.= ' ORDER BY rowid';
+		$resql = $this->db->query($sql);
+		if ($resql && $this->db->num_rows($resql)>0) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$TChildWarehouse[] = $obj->rowid;
+				$this->getchildWarehouse($obj->rowid, $TChildWarehouse);
+			}
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 }
 
