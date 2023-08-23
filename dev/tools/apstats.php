@@ -135,7 +135,7 @@ foreach (array('proj', 'dep') as $source) {
 		//print $line."<br>\n";
 
 		if (preg_match('/^Estimated Cost.*\$(.*)/i', $line, $reg)) {
-			$arraycocomo[$source]['currency'] = preg_replace('/[^\d\.]/', '', str_replace(array(',', ' '), array('.', ''), $reg[1]));
+			$arraycocomo[$source]['currency'] = preg_replace('/[^\d\.]/', '', str_replace(array(',', ' '), array('', ''), $reg[1]));
 		}
 		if (preg_match('/^Estimated Schedule Effort.*\s([\d\s,]+)/i', $line, $reg)) {
 			$arraycocomo[$source]['effort'] = str_replace(array(',', ' '), array('.', ''), $reg[1]);
