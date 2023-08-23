@@ -262,11 +262,14 @@ if (isModEnabled('accounting')) {
 	print $boxlist;
 
 	print '</div>';
-} else {
+} elseif (isModEnabled('compta')) {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
 	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
 	print "<br>";
+} else {
+	// This case can happen mode no accounting module is on but module "intracommreport" is on
+	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 }
 
 // End of page

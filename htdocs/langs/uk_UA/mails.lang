@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=Електронні листи, введені 
 MailingModuleDescDolibarrUsers=Користувачі з електронною поштою
 MailingModuleDescThirdPartiesByCategories=Third parties
 SendingFromWebInterfaceIsNotAllowed=Відправлення з веб-інтерфейсу заборонено.
-EmailCollectorFilterDesc=Усі фільтри мають збігатися, щоб отримати електронний лист
+EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Рядок %s у файлі
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=Значення за замовчуванням �
 DefaultStatusEmptyMandatory=Порожній, але обов’язковий
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
 NoMoreRecipientToSendTo=No more recipient to send the email to
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)

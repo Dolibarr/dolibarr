@@ -59,9 +59,11 @@ class FormContract
 	 *	@param	int		$maxlength	Maximum length of label
 	 *	@param	int		$showempty	Show empty line
 	 *	@param	int		$showRef	Show customer and supplier reference on each contract (when found)
-	 *	@return int         		Nbr of project if OK, <0 if KO
+	 *  @param	int		$noouput	1=Return the output instead of display
+	 *  @param	string	$morecss	More CSS
+	 *	@return int         		Nbr of contract if OK, <0 if KO
 	 */
-	public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0)
+	public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0, $morecss = 'minwidth150')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
@@ -70,6 +72,8 @@ class FormContract
 		if (!empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) {
 			$hideunselectables = true;
 		}
+
+		$ret = '';
 
 		// Search all contacts
 		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut,";
@@ -94,9 +98,9 @@ class FormContract
 		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			print '<select class="flat" name="'.$htmlname.'">';
+			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			if ($showempty) {
-				print '<option value="0">&nbsp;</option>';
+				$ret .= '<option value="0">&nbsp;</option>';
 			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -121,7 +125,7 @@ class FormContract
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0) {
-							print '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
+							$ret .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						} else {
 							$disabled = 0;
 							if ($obj->statut == 0) {
@@ -145,20 +149,26 @@ class FormContract
 								$resultat .= '>'.$labeltoshow;
 								$resultat .= '</option>';
 							}
-							print $resultat;
+							$ret .= $resultat;
 						}
 					}
 					$i++;
 				}
 			}
-			print '</select>';
+			$ret .= '</select>';
 			$this->db->free($resql);
 
 			if (!empty($conf->use_javascript_ajax)) {
 				// Make select dynamic
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				print ajax_combobox($htmlname);
+				$ret .= ajax_combobox($htmlname);
 			}
+
+			if ($noouput) {
+				return $ret;
+			}
+
+			print $ret;
 
 			return $num;
 		} else {
@@ -177,18 +187,28 @@ class FormContract
 	 *  @param  int     $maxlength	Maximum length of label
 	 *  @param  int     $showempty	Show empty line
 	 *  @param  int     $showRef    Show customer and supplier reference on each contract (when found)
+	 *  @param	int		$noouput	1=Return the output instead of display
 	 *  @return int                 Nbr of project if OK, <0 if KO
 	 */
-	public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0)
+	public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
 	{
 		global $langs;
 
-		print "\n";
-		print '<form method="post" action="'.$page.'">';
-		print '<input type="hidden" name="action" value="setcontract">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		$this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef);
-		print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
-		print '</form>';
+		$ret = '';
+
+		$ret .= '<form method="post" action="'.$page.'">';
+		$ret .= '<input type="hidden" name="action" value="setcontract">';
+		$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$ret .= $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef, 1);
+		$ret .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
+		$ret .= '</form>';
+
+		if ($noouput) {
+			return $ret;
+		}
+
+		print $ret;
+
+		return $result;
 	}
 }

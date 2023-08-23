@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2023  Juanjo Menent           <jmenent@2byte.es>
@@ -202,7 +202,6 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
 			$object->title = GETPOST('title', 'alphanohtml');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -280,21 +279,23 @@ if (empty($reshook)) {
 
 
 	// Update field
-	// Set condition
 	if ($action == 'setconditions' && $user->hasRight('facture', 'creer')) {
+		// Set condition
+		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentTerm"));
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	} elseif ($action == 'setmode' && $user->hasRight('facture', 'creer')) {
 		// Set mode
+		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentMode"));
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	} elseif ($action == 'classin' && $user->hasRight('facture', 'creer')) {
 		// Set project
+		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Project"));
 		$object->setProject(GETPOST('projectid', 'int'));
 	} elseif ($action == 'setref' && $user->hasRight('facture', 'creer')) {
 		// Set bank account
-		//var_dump(GETPOST('ref', 'alpha'));exit;
+		$object->context['actionmsg'] = $langs->trans("FieldXModifiedFromYToZ", $langs->transnoentitiesnoconv("Title"), $object->title, $ref);
 		$result = $object->setValueFrom('titre', $ref, '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($result > 0) {
-			$object->titre = $ref; // deprecated
 			$object->title = $ref;
 			$object->ref = $object->title;
 		} else {
@@ -308,9 +309,11 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setbankaccount' && $user->hasRight('facture', 'creer')) {
 		// Set bank account
+		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Bank"));
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	} elseif ($action == 'setfrequency' && $user->hasRight('facture', 'creer')) {
 		// Set frequency and unit frequency
+		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Frequency"));
 		$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
 	} elseif ($action == 'setdate_when' && $user->hasRight('facture', 'creer')) {
 		// Set next date of execution
@@ -334,9 +337,9 @@ if (empty($reshook)) {
 		// Set status disabled
 		$db->begin();
 
-		$object->fetch($id);
+		$object->context['actionmsg'] = $langs->trans("RecordDisabled");
 
-		$res = $object->setValueFrom('suspended', 1);
+		$res = $object->setValueFrom('suspended', 1, '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($res <= 0) {
 			$error++;
 		}
@@ -351,9 +354,9 @@ if (empty($reshook)) {
 		// Set status enabled
 		$db->begin();
 
-		$object->fetch($id);
+		$object->context['actionmsg'] = $langs->trans("RecordEnabled");
 
-		$res = $object->setValueFrom('suspended', 0);
+		$res = $object->setValueFrom('suspended', 0, '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($res <= 0) {
 			$error++;
 		}
@@ -933,8 +936,10 @@ if (empty($reshook)) {
  *	View
  */
 
+$title = $object->ref." - ".$langs->trans('Card');
 $help_url = '';
-llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -1224,26 +1229,17 @@ if ($action == 'create') {
 		//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('facture', 'creer'), 'string', '', 0, 1);
 		//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('facture', 'creer'), 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+			$morehtmlref .= '<br>';
 			if ($user->hasRight('facture', 'creer')) {
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref .= '</form>';
-				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
-				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -1340,7 +1336,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
-			if ($usercancreate && $action != 'editmulticurrencycode' && !empty($object->brouillon)) {
+			if ($usercancreate && $action != 'editmulticurrencycode' && $object->suspended == $object::STATUS_SUSPENDED) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -1356,7 +1352,7 @@ if ($action == 'create') {
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 				print '</td>';
-				if ($usercancreate && $action != 'editmulticurrencyrate' && !empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+				if ($usercancreate && $action != 'editmulticurrencyrate' && $object->suspended == $object::STATUS_SUSPENDED && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 				}
 				print '</tr></table>';
@@ -1482,7 +1478,6 @@ if ($action == 'create') {
 		 * Recurrence
 		 */
 		$title = $langs->trans("Recurrence");
-		//print load_fiche_titre($title, '', 'calendar');
 
 		print '<table class="border centpercent tableforfield">';
 

@@ -161,7 +161,7 @@ class modAdherent extends DolibarrModules
 
 		$this->const[$r][0] = "ADHERENT_ETIQUETTE_TEXT";
 		$this->const[$r][1] = "texte";
-		$this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY%";
+		$this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
 		$this->const[$r][3] = "Text to print on member address sheets";
 		$this->const[$r][4] = 0;
 		$r++;

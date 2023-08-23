@@ -60,11 +60,6 @@ class pdf_beluga extends ModelePDFProjects
 	public $db;
 
 	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
 	 * @var string model description (short text)
 	 */
 	public $description;
@@ -85,52 +80,11 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	public $version = 'dolibarr';
 
-	 /**
-	  * @var int page_largeur
-	  */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
 	/**
 	 * Page orientation
 	 * @var string 'P' or 'Portait' (default), 'L' or 'Landscape'
 	 */
 	private $orientation;
-
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
 
 	public $posxref;
 	public $posxdate;
@@ -427,7 +381,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'fichinter',
 						'datefieldname'=>'date_valid',
 						'disableamount'=>1,
-						'test'=>$conf->ficheinter->enabled && $user->hasRight('ficheinter', 'lire'),
+						'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
 						'lang'=>'interventions'),
 					'trip'=>array(
 						'name'=>"TripsAndExpenses",
@@ -437,7 +391,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire,
+						'test'=>isModEnabled('deplacement') && $user->rights->deplacement->lire,
 						'lang'=>'trip'),
 					'expensereport'=>array(
 						'name'=>"ExpensesReports",
@@ -447,7 +401,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire,
+						'test'=>isModEnabled('expensereport') && $user->rights->expensereport->lire,
 						'lang'=>'trip'),
 					'agenda'=>array(
 						'name'=>"Agenda",

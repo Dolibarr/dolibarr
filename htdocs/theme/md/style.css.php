@@ -1085,6 +1085,9 @@ textarea.centpercent {
 	word-break: break-word;
 }
 .wordbreak {
+	word-break: break-word;	/* cut fist between word, inside word if not possible */
+}
+.wordbreakall {
 	word-break: break-all;
 }
 td.wordbreak img {
@@ -2703,7 +2706,7 @@ img.photorefnoborder {
 	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 .tdhrthin {
-	margin: 0;
+	margin: 0 !important;
 	padding-bottom: 0 !important;
 }
 /* Payment Screen : Pointer cursor in the autofill image */
@@ -4054,6 +4057,10 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	padding: 4px 6px 4px 6px;			/* t r b l */
 	height: 22px;
 }
+table.liste tr.trkanban td {
+	padding: 10px 14px 10px 14px;			/* t r b l */
+}
+
 form.tagtable {
 	padding: unset !important;
 	border: unset !important;
@@ -5005,7 +5012,7 @@ table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 
-div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; }
+div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; text-align: center; }
 .backgreypublicpayment a { color: #222 !important; }
 .poweredbypublicpayment {
 	float: right;
@@ -5305,7 +5312,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 
@@ -5496,6 +5503,8 @@ td.cal_other_month {
 	opacity: 0.8;
 }
 
+.cal_available { background: #0060d450; }
+.cal_chosen { background: #0060d4; }
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -5638,6 +5647,10 @@ td.gtaskname {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+table.jPicker {
+	border-radius: 5px;
+	border: 1px solid #bbb !important;
+}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5712,6 +5725,9 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  font-size : 8pt;
  padding : 0px;
  margin : 0px;
+}
+.colorselector {
+	border: solid 1px #ddd !important;
 }
 
 
@@ -7585,6 +7601,14 @@ div.clipboardCPValue.hidewithsize {
 	transform: translate(-50%, -50%);
 	text-align:center;
 	font-size: 2em;
+}
+
+/* ============================================================================== */
+/* CSS style used for color jPicker                                               */
+/* ============================================================================== */
+
+table.jPicker {
+	border: 1px solid #bbb !important;
 }
 
 /* ============================================================================== */

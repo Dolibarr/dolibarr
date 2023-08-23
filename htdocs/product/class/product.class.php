@@ -193,8 +193,14 @@ class Product extends CommonObject
 	//! Default VAT rate of product
 	public $tva_tx;
 
-	//! French VAT NPR (0 or 1)
+	/**
+	 * int	French VAT NPR (0 or 1)
+	 */
 	public $tva_npr = 0;
+	/**
+	 * @deprecated
+	 */
+	public $recuperableonly;
 
 	//! Default discount percent
 	public $remise_percent;
@@ -258,20 +264,23 @@ class Product extends CommonObject
 	 */
 	public $desiredstock = 0;
 
-	/*
+	/**
 	 * Service expiration
 	 */
 	public $duration_value;
+	/**
+	 * Serivce expiration unit
+	 */
+	public $duration_unit;
+	/**
+	 * Service expiration label (value + unit)
+	 */
+	public $duration;
 
-	/*
+	/**
 	 * Service Workstation
 	 */
 	public $fk_default_workstation;
-
-	/**
-	 * Exoiration unit
-	 */
-	public $duration_unit;
 
 	/**
 	 * Status indicates whether the product is on sale '1' or not '0'
@@ -394,6 +403,7 @@ class Product extends CommonObject
 	public $stats_commande = array();
 	public $stats_contrat = array();
 	public $stats_facture = array();
+	public $stats_proposal_supplier = array();
 	public $stats_commande_fournisseur = array();
 	public $stats_expedition = array();
 	public $stats_reception = array();
@@ -479,6 +489,19 @@ class Product extends CommonObject
 	public $supplierprices;
 
 	/**
+	 * Array with list of sub-products for Kits
+	 *
+	 * @var array
+	 */
+	public $sousprods;
+
+	/**
+	 * Path of subproducts. Build from ->sousprods with get_arbo_each_prod()
+	 */
+	public $res;
+
+
+	/**
 	 * Property set to save result of isObjectUsed(). Used for example by Product API.
 	 *
 	 * @var boolean
@@ -487,8 +510,6 @@ class Product extends CommonObject
 
 
 	/**
-	 *
-	 *
 	 *
 	 */
 	 public $mandatory_period;
@@ -1211,8 +1232,8 @@ class Product extends CommonObject
 			$sql .= ", surface_units = ".($this->surface_units != '' ? "'".$this->db->escape($this->surface_units)."'" : 'null');
 			$sql .= ", volume = ".($this->volume != '' ? "'".$this->db->escape($this->volume)."'" : 'null');
 			$sql .= ", volume_units = ".($this->volume_units != '' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
-			$sql .= ", fk_default_warehouse = ".($this->fk_default_warehouse > 0 ? $this->db->escape($this->fk_default_warehouse) : 'null');
-			$sql .= ", fk_default_workstation = ".($this->fk_default_workstation > 0 ? $this->db->escape($this->fk_default_workstation) : 'null');
+			$sql .= ", fk_default_warehouse = ".($this->fk_default_warehouse > 0 ? ((int) $this->fk_default_warehouse) : 'null');
+			$sql .= ", fk_default_workstation = ".($this->fk_default_workstation > 0 ? ((int) $this->fk_default_workstation) : 'null');
 			$sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && is_numeric($this->seuil_stock_alerte)) ? (float) $this->seuil_stock_alerte : 'null');
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
 			$sql .= ", url = ".($this->url ? "'".$this->db->escape($this->url)."'" : 'null');
@@ -2449,7 +2470,7 @@ class Product extends CommonObject
 			$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 			$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 			$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
-			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
+			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period,";
 			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 				$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			} else {
@@ -2517,8 +2538,8 @@ class Product extends CommonObject
 				$this->fk_default_bom = $obj->fk_default_bom;
 
 				$this->duration = $obj->duration;
-				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
-				$this->duration_unit = substr($obj->duration, -1);
+				$this->duration_value = $obj->duration ? substr($obj->duration, 0, dol_strlen($obj->duration) - 1) : null;
+				$this->duration_unit = $obj->duration ? substr($obj->duration, -1) : null;
 				$this->canvas = $obj->canvas;
 				$this->net_measure = $obj->net_measure;
 				$this->net_measure_units = $obj->net_measure_units;
@@ -2700,18 +2721,18 @@ class Product extends CommonObject
 						if ($resql) {
 							$result = $this->db->fetch_array($resql);
 
-							$this->multiprices[$i] = $result["price"];
-							$this->multiprices_ttc[$i] = $result["price_ttc"];
-							$this->multiprices_min[$i] = $result["price_min"];
-							$this->multiprices_min_ttc[$i] = $result["price_min_ttc"];
-							$this->multiprices_base_type[$i] = $result["price_base_type"];
+							$this->multiprices[$i] = (!empty($result["price"]) ? $result["price"] : 0);
+							$this->multiprices_ttc[$i] = (!empty($result["price_ttc"]) ? $result["price_ttc"] : 0);
+							$this->multiprices_min[$i] = (!empty($result["price_min"]) ? $result["price_min"] : 0);
+							$this->multiprices_min_ttc[$i] = (!empty($result["price_min_ttc"]) ? $result["price_min_ttc"] : 0);
+							$this->multiprices_base_type[$i] = (!empty($result["price_base_type"]) ? $result["price_base_type"] : '');
 							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
-							$this->multiprices_tva_tx[$i] = $result["tva_tx"]; // TODO Add ' ('.$result['default_vat_code'].')'
-							$this->multiprices_recuperableonly[$i] = $result["recuperableonly"];
+							$this->multiprices_tva_tx[$i] = (!empty($result["tva_tx"]) ? $result["tva_tx"] : 0); // TODO Add ' ('.$result['default_vat_code'].')'
+							$this->multiprices_recuperableonly[$i] = (!empty($result["recuperableonly"]) ? $result["recuperableonly"] : 0);
 
 							// Price by quantity
-							$this->prices_by_qty[$i] = $result["price_by_qty"];
-							$this->prices_by_qty_id[$i] = $result["rowid"];
+							$this->prices_by_qty[$i] = (!empty($result["price_by_qty"]) ? $result["price_by_qty"] : 0);
+							$this->prices_by_qty_id[$i] = (!empty($result["rowid"]) ? $result["rowid"] : 0);
 							// Récuperation de la liste des prix selon qty si flag positionné
 							if ($this->prices_by_qty[$i] == 1) {
 								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
@@ -4627,12 +4648,10 @@ class Product extends CommonObject
 		$sql .= ", multicurrency_tx";
 		$sql .= ", multicurrency_price";
 		$sql .= ", multicurrency_price_ttc";
-		$sql .= " FROM ".$this->db->prefix()."product_price";
+		$sql .= " FROM ".$this->db->prefix()."product_price ps";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
+		$sql .= " AND date_price IN (SELECT MAX(pd.date_price) FROM ".$this->db->prefix()."product_price pd WHERE pd.fk_product = ".((int) $fromId)." AND pd.price_level = ps.price_level)";
 		$sql .= " ORDER BY date_price DESC";
-		if ($conf->global->PRODUIT_MULTIPRICES_LIMIT > 0) {
-			$sql .= " LIMIT ".$conf->global->PRODUIT_MULTIPRICES_LIMIT;
-		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4720,7 +4739,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
+	 *  Function recursive, used only by get_arbo_each_prod(), to build tree of subproducts into ->res
 	 *  Define value of this->res
 	 *
 	 * @param  array  $prod       			Products array
@@ -4788,12 +4807,12 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Build the tree of subproducts into an array ->res and return it.
+	 *  Build the tree of subproducts and return it.
 	 *  this->sousprods must have been loaded by this->get_sousproduits_arbo()
 	 *
 	 * @param  int 		$multiply 			Because each sublevel must be multiplicated by parent nb
 	 * @param  int    	$ignore_stock_load 	Ignore stock load
-	 * @return array                    	$this->res
+	 * @return array                    	Array with tree
 	 */
 	public function get_arbo_each_prod($multiply = 1, $ignore_stock_load = 0)
 	{
@@ -4802,11 +4821,11 @@ class Product extends CommonObject
 		if (isset($this->sousprods) && is_array($this->sousprods)) {
 			foreach ($this->sousprods as $prod_name => $desc_product) {
 				if (is_array($desc_product)) {
-					$this->fetch_prod_arbo($desc_product, "", $multiply, 1, $this->id, $ignore_stock_load);
+					$this->fetch_prod_arbo($desc_product, "", $multiply, 1, $this->id, $ignore_stock_load);	// This set $this->res
 				}
 			}
 		}
-		//var_dump($this->res);
+		//var_dump($res);
 		return $this->res;
 	}
 

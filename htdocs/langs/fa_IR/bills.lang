@@ -13,10 +13,12 @@ BillsStatistics=آمار صورت‌حساب‌های مشتریان
 BillsStatisticsSuppliers=آمار صورت‌حساب‌های فروشنده‌ها
 DisabledBecauseDispatchedInBookkeeping=غیرفعال است، زیر صورت‌حساب به دفترداری ارسال شده است
 DisabledBecauseNotLastInvoice=غیرفعال است، زیرا صورت‌حساب غیرقابل پاک کردن است. برخی از صورت‌حساب‌ها بعد از این صورت‌حساب ثبت شده است و این باعث ایجاد حفره در شمارشگر خواهد شد.
+DisabledBecauseNotLastSituationInvoice=Disabled because invoice is not erasable. This invoice is not the last one in situation invoice cycle.
 DisabledBecauseNotErasable=غیرفعال است، زیرا امکان پاک‌کردن آن نیست
 InvoiceStandard=صورت‌حساب استاندارد
 InvoiceStandardAsk=صورت‌حساب استاندارد
 InvoiceStandardDesc=این نوع از صورت‌حساب، صورت‌حساب معمولی است.
+InvoiceStandardShort=Standard
 InvoiceDeposit=صورت‌حساب پیش‌پرداخت
 InvoiceDepositAsk=صورت‌حساب پیش‌پرداخت
 InvoiceDepositDesc=این نوع از پیش‌پرداخت هنگامی صادر می‌شود که یک پیش‌پرداخت دریافت می‌شود.
@@ -24,6 +26,7 @@ InvoiceProForma=پیش‌صور‌ت‌حساب
 InvoiceProFormaAsk=پیش‌صورت‌حساب
 InvoiceProFormaDesc=<b>پیش‌صورت‌حساب</b> تصویری درست از یک صورت‌حساب است اما ارزش حساب‌داری ندارد.
 InvoiceReplacement=صورت‌حساب تعویض
+InvoiceReplacementShort=Replacement
 InvoiceReplacementAsk=صورت‌حساب تعویض برای صورت‌حساب
 InvoiceReplacementDesc=<b>فاکتور تعویض</b> در هنگام جایگزینی یک صورت‌حساب که هرگز برای آن پرداختی وجود ندارد استفاده می‌شود. <br><br> توجه: تنها صورت‌حساب‌های بدون پرداخت قابلیت جایگزین شدن دارند. در صورتی که صورت‌حسابی که جایگزین می‌کنید هنوز بسته نشده باشد، به طور خودکار به شکل "معلق" بسته خواهد شد.
 InvoiceAvoir=یادداشت اعتباری
@@ -156,9 +159,12 @@ ErrorInvoiceAvoirMustBeNegative=خطا! صورت‌حساب صحیح باید ی
 ErrorInvoiceOfThisTypeMustBePositive=Error, this type of invoice must have an amount excluding tax positive (or null)
 ErrorCantCancelIfReplacementInvoiceNotValidated=خطا! امکان لغو یک صورت‌حساب که با صورت‌حساب دیگر ی جایگزین شده که هنوز در حالت پیش‌نویس است وجود ندارد
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=این بخش یا بخش‌دیگر قبلا استفاده شده بنابراین سری تخفیف قابل حذف نیست.
+ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 BillFrom=از
 BillTo=به
+ShippingTo=Shipping to
 ActionsOnBill=کنش‌های مربوط به صورت‌حساب
+ActionsOnBillRec=Actions on recurring invoice
 RecurringInvoiceTemplate=صورت‌حساب تکرارشدنی/قالبی
 NoQualifiedRecurringInvoiceTemplateFound=هیچ صورت‌حساب قالبی تکرارشدنی واجد شرایط ساخته‌شدن نیست.
 FoundXQualifiedRecurringInvoiceTemplate=(%s) صورت‌حساب قالبی‌تکرارشدنی مناسب ساخته‌شدن پیدا شد.
@@ -191,7 +197,9 @@ ConfirmClassifyPaidPartiallyReasonDiscount=پرداخت نشده باقی‌ما
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=پرداخت‌نشده باقی‌ماندن<b>( %s %s)</b> تخفیفی است که اعطا شده، زیرا پرداخت قبل از موعد انجام شده است. من قبول می‌کنم مبلغ م.ب.ا.ا. را به‌واسطۀ این تخفیف ضرر کنم.
 ConfirmClassifyPaidPartiallyReasonDiscountVat=پرداخت‌نشده باقی‌ماندن <b>(%s %s) </b> تخفیفی است که اعطا شده، زیرا پرداخت قبل از موعد انجام شده است. من م.ب.ا.ا. را بدون یادداشت اعتباری بازیابی می‌کنم.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=مشتری بدحساب
-ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fees)
+ConfirmClassifyPaidPartiallyReasonBadSupplier=Bad vendor
+ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fee)
+ConfirmClassifyPaidPartiallyReasonWithholdingTax=Withholding tax
 ConfirmClassifyPaidPartiallyReasonProductReturned=برخی‌از محصولات برگشت‌خورده
 ConfirmClassifyPaidPartiallyReasonOther=مبلغ به دلیل دیگری معلق شده است
 ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=این گزینه در صورتی ممکن است که صورت‌حساب شما با توضیحات مناسب همراه باشد. (مثلا «تنها مالیاتی متناظر با مبلغی که واقعا پرداخت شده، امکان کسر شدن دارد»)
@@ -200,7 +208,9 @@ ConfirmClassifyPaidPartiallyReasonAvoirDesc=این گزینه را در شرای
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=یک <b>مشتری بد‌حساب</b> مشتری‌ای است که بدهی خود را پرداخت نمی‌کند.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=این گزینه در هنگام عدم پرداخت کامل به دلیل بازگشت برخی از محصولات مورد استفاده قرار می‌گیرد
 ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
+ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=The unpaid amount will never be paid as it is a withholding tax
 ConfirmClassifyPaidPartiallyReasonOtherDesc=این گزینه را در صورتی که سایر گزینه‌ها مناسب نباشد انتخاب کنید، برای مثال برای شرایط زیر: <br>- پرداخت کامل نشده به‌این علت که برخی محصولات پس‌داده شده‌اند <br>- مبلغ ادعا شده بسیار مهم است چون تخفیف فراموش شده است <br> در همۀ احوال، مبلغ ادعاشده باید در سامانۀ حساب‌داری با یک یادداشت اعتباری تصحیح شود
+ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=A <b>bad supplier</b> is a supplier we refuse to pay.
 ConfirmClassifyAbandonReasonOther=سایر
 ConfirmClassifyAbandonReasonOtherDesc=این گزینه در شرایطی غیر از این استفاده می‌شود. برای مثال به دلیل این‌که می‌خواهید یک صورت‌حساب جایگزین بسازید.
 ConfirmCustomerPayment=آیا واردشدن این پرداخت برای <b>%s</b> %s را تائید می‌کنید؟
@@ -280,8 +290,11 @@ SetRevenuStamp=تنظیم تمبر مالیاتی
 Billed=صورت‌حساب صادرشده
 RecurringInvoices=صورت‌حساب‌های تکرارشدنی
 RecurringInvoice=Recurring invoice
+RecurringInvoiceSource=Source recurring invoice
 RepeatableInvoice=صورت‌حساب قالبی
 RepeatableInvoices=صورت‌حساب‌های قالبی
+RecurringInvoicesJob=Generation of recurring invoices (sales invoices)
+RecurringSupplierInvoicesJob=Generation of recurring invoices (purchase invoices)
 Repeatable=قالب
 Repeatables=قالب‌ها
 ChangeIntoRepeatableInvoice=تبدیل به صورت‌حساب قالبی
@@ -320,6 +333,8 @@ DiscountFromExcessPaid=پرداخت‌های اضافی صورت‌حساب %s
 AbsoluteDiscountUse=این نوع از اعتبار می‌تواند قبل از تائید در صورت‌حساب به‌حساب آید
 CreditNoteDepositUse=برای استفاده از این نوع اعتبارها صورت‌حساب باید تائید شده باشد
 NewGlobalDiscount=ایجاد تخفیف‌مطلق‌جدید
+NewSupplierGlobalDiscount=New absolute supplier discount
+NewClientGlobalDiscount=New absolute client discount
 NewRelativeDiscount=ایجاد تخفیف‌نسبی‌جدید
 DiscountType=نوع تخفیف
 NoteReason=توضیح/علت
@@ -389,7 +404,7 @@ DateLastGenerationShort=تاریخ آخرین تولید
 MaxPeriodNumber=حداکثر تعداد تولید صورت‌حساب
 NbOfGenerationDone=تعداد صورت‌حساب‌هائی که تا کنون تولید شده
 NbOfGenerationOfRecordDone=Number of record generation already done
-NbOfGenerationDoneShort=تعداد تولیدهای انجام شده
+NbOfGenerationDoneShort=Number of generations done
 MaxGenerationReached=حداکثر تعداد قابل تولید به‌سررسیده
 InvoiceAutoValidate=تائید خودکار صورت‌حساب‌ها
 GeneratedFromRecurringInvoice=تولیدشده از صورت‌حساب تکرارشدنی قالبی %s
@@ -426,14 +441,24 @@ PaymentConditionShort14D=14 روزه
 PaymentCondition14D=14 روزه
 PaymentConditionShort14DENDMONTH=14 روز از آخر ماه
 PaymentCondition14DENDMONTH=ظرف  14 روز پس از آخرماه
+PaymentConditionShortDEP30PCTDEL=__DEPOSIT_PERCENT__%% deposit
+PaymentConditionDEP30PCTDEL=__DEPOSIT_PERCENT__%% deposit, remainder on delivery
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=مبلغ متغیر ( %% کل )
 VarAmountOneLine=مبلغ متغیر ( %% کل ) - 1 سطر با برچسب "%s"
 VarAmountAllLines=Variable amount (%% tot.) - all lines from origin
+DepositPercent=Deposit %%
+DepositGenerationPermittedByThePaymentTermsSelected=This is permitted by the payment terms selected
+GenerateDeposit=Generate a %s%% deposit invoice
+ValidateGeneratedDeposit=Validate the generated deposit
+DepositGenerated=Deposit generated
+ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=You can only automatically generate a deposit from a proposal or an order
+ErrorPaymentConditionsNotEligibleToDepositCreation=The chose payment conditions are not eligible for automatic deposit generation
 # PaymentType
 PaymentTypeVIR=انتقال بانکی
 PaymentTypeShortVIR=انتقال بانکی
 PaymentTypePRE=سفارش پرداخت مستقیم
+PaymentTypePREdetails=(on account %s...)
 PaymentTypeShortPRE=سفارش پرداخت مستقیم
 PaymentTypeLIQ=پول‌نقد
 PaymentTypeShortLIQ=پول‌نقد
@@ -482,6 +507,7 @@ PaymentByChequeOrderedToShort=پرداخت‌های چکی (شامل مالیا�
 SendTo=ارسال شده به
 PaymentByTransferOnThisBankAccount=پرداخت از طریق انتقال به حساب بانکی زیر
 VATIsNotUsedForInvoice=* م.ب.ا.ا غیرقابل انتساب  art-293B از CGI
+VATIsNotUsedForInvoiceAsso=* Non applicable VAT art-261-7 of CGI
 LawApplicationPart1=با استفاده از قانون 80.335 از 12/05/80
 LawApplicationPart2=کالاها باقی خواهد ماند به‌عنوان دارائی:
 LawApplicationPart3=فروشنده تا زمان پرداخت کامل
@@ -491,13 +517,14 @@ UseLine=درخواست
 UseDiscount=استفاده از تخفیف
 UseCredit=استفاده از اعتبار
 UseCreditNoteInInvoicePayment=کاهش مبلغ با استفاده از این اعتبار
-MenuChequeDeposits=به‌حساب‌گذاشتن چک‌ها
+MenuChequeDeposits=Deposits slips
 MenuCheques=چک‌ها
-MenuChequesReceipts=رسید چک‌ها
-NewChequeDeposit=به‌حساب‌گذاشتن جدید
-ChequesReceipts=رسید چک‌ها
-ChequesArea=بخش به‌حساب‌گذاشتن چک
-ChequeDeposits=به‌حساب‌گذاشتن چک‌ه
+MenuChequesReceipts=Deposit slips
+NewChequeDeposit=New deposit slip
+ChequesReceipts=Cheque deposit slips
+DocumentsDepositArea=Deposit slip area
+ChequesArea=Deposit slips area
+ChequeDeposits=Deposit slips
 Cheques=چک‌ها
 DepositId=شناسۀ به‌حساب‌گذاشتن
 NbCheque=تعداد چک‌ها
@@ -599,11 +626,18 @@ BILL_SUPPLIER_DELETEInDolibarr=Supplier invoice deleted
 UnitPriceXQtyLessDiscount=Unit price x Qty - Discount
 CustomersInvoicesArea=Customer billing area
 SupplierInvoicesArea=Supplier billing area
-FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
 SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
+SearchValidatedInvoicesWithDate=Search unpaid invoices with a validation date = %s
 NoPaymentAvailable=No payment available for %s
 PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to paid
-SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for unpaid invoices
+SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for validated and unpaid invoices
+MakePaymentAndClassifyPayed=Record payment
+BulkPaymentNotPossibleForInvoice=Bulk payment is not possible for invoice %s (bad type or status)
+MentionVATDebitOptionIsOn=Option to pay tax based on debits
+MentionCategoryOfOperations=Category of operations
+MentionCategoryOfOperations0=Delivery of goods
+MentionCategoryOfOperations1=Provision of services
+MentionCategoryOfOperations2=Mixed - Delivery of goods & provision of services

@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - stocks
+Location=Ubicaciòn
+inventoryEdit=Editar
+inventoryValidate=Validada
+inventoryDraft=En ejecución
+ListInventory=Lista
+AlwaysShowFullArbo=Display the full path of a warehouse (parent warehouses) on the popup of warehouse links (Warning: This may decrease dramatically performances)
+InventoryStartedShort=Iniciado

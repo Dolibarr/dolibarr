@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - languages
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+LinkANewFile=鏈接新文件/文檔
+LinkedFiles=鏈接的文件和文檔
+NoLinkFound=沒有註冊鏈接
+LinkComplete=文件已鏈接成功
+ErrorFileNotLinked=該文件無法鏈接
+LinkRemoved=鏈接%s 已被刪除
+ErrorFailedToDeleteLink= 無法刪除鏈接“<span class='notranslate'><b></span>”\n %s </b> '
+ErrorFailedToUpdateLink= 無法更新鏈接“<span class='notranslate'><b></span>”\n %s </b> '
 URLToLink=URL to link
 OverwriteIfExists=Overwrite file if exists

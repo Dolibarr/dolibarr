@@ -43,11 +43,6 @@ class pdf_standard extends ModelePDFMovement
 	public $db;
 
 	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
 	 * @var string model description (short text)
 	 */
 	public $description;
@@ -67,13 +62,6 @@ class pdf_standard extends ModelePDFMovement
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
-
 
 	public $wref;
 	public $posxidref;
@@ -236,7 +224,7 @@ class pdf_standard extends ModelePDFMovement
 		$extrafields->fetch_name_optionals_label('movement');
 		$search_array_options = $extrafields->getOptionalsFromPost('movement', '', 'search_');
 
-		$productlot = new ProductLot($this->db);
+		$productlot = new Productlot($this->db);
 		$productstatic = new Product($this->db);
 		$warehousestatic = new Entrepot($this->db);
 		$movement = new MouvementStock($this->db);

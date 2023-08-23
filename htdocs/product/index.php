@@ -249,7 +249,7 @@ if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PR
 				$i++;
 			}
 			if ($i > $nbmax) {
-				$dataseries[] = array($langs->trans("Other"), round($rest));
+				$dataseries[] = array($langs->transnoentitiesnoconv("Other"), round($rest));
 			}
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';

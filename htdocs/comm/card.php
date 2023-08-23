@@ -1093,7 +1093,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list, $sendingstatic->table_element, $relativepath, 0, $param);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
@@ -1458,6 +1458,9 @@ if ($object->id > 0) {
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;
+				$facturestatic->status = $objp->status;
+				$facturestatic->paye = $objp->paye;
+				$facturestatic->alreadypaid = $objp->am;
 				$facturestatic->date = $db->jdate($objp->df);
 				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
 

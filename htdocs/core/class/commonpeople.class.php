@@ -49,6 +49,16 @@ trait CommonPeople
 	public $state_code;
 	public $state;
 
+	/**
+	 * @var string email
+	 */
+	public $email;
+
+	/**
+	 * @var string url
+	 */
+	public $url;
+
 
 	/**
 	 *	Return full name (civility+' '+name+' '+lastname)

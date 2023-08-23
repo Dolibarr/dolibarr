@@ -33,10 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_squille extends ModelePdfReception
 {
 	/**
-	 * Issuer
-	 * @var Societe object that emits
+	 * @var string Dolibarr version of the loaded document
 	 */
-	public $emetteur;
+	public $version = 'dolibarr';
 
 
 	/**

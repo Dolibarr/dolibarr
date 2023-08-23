@@ -700,7 +700,7 @@ class Categorie extends CommonObject
 	public function add_type($obj, $type = '')
 	{
 		// phpcs:enable
-		global $user, $langs, $conf;
+		global $user, $conf;
 
 		$error = 0;
 
@@ -865,7 +865,7 @@ class Categorie extends CommonObject
 		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
 		$sql .= " AND c.fk_categorie = ".((int) $this->id);
 		// Compatibility with actioncomm table which has id instead of rowid
-		if ($this->MAP_OBJ_TABLE[$type] == "actioncomm" || $type == "actioncomm") {
+		if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
 			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
 		} else {
 			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
@@ -894,6 +894,7 @@ class Categorie extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($rec = $this->db->fetch_array($resql)) {

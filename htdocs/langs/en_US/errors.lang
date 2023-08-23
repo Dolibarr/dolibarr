@@ -191,6 +191,7 @@ ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
 ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfUsage=You set you want to use this project to follow an opportunity, so you must also fill the initial Status of opportunity.
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter it's status.
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
@@ -304,7 +305,7 @@ ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
-ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, status or dates of validity. Please relogin.
+ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, email, status or dates of validity. Please relogin.
 ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
 ErrorFieldExist=The value for <b>%s</b> already exist 
 ErrorEqualModule=Module invalid in <b>%s</b>
@@ -315,8 +316,11 @@ ErrorUploadFileDragDropPermissionDenied=There was an error while the file(s) upl
 ErrorFixThisHere=<a href="%s">Fix this here</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
 ErrorMenuExistValue=A Menu already exist with this Title or URL
-ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without option %s 
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
+ErrorTableExist=Table <b>%s</b> already exist
+ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
+ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -357,8 +361,10 @@ WarningPagesWillBeDeleted=Warning, this will also delete all existing pages/cont
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation is disabled when option to decrease stock is set on "Invoice validation".
 WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to enable it 
 WarningPermissionAlreadyExist=Existing permissions for this object
+WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.  
+WarningCorrectedInvoiceNotFound=Corrected invoice not found
 
-SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with direct debit payments.
+SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
 SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
@@ -385,3 +391,4 @@ BadSetupOfField = Error bad setup of field
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
+ErrorTooManyAttempts= Too many attempts, please try again later

@@ -50,6 +50,12 @@ class Account extends CommonObject
 	public $table_element = 'bank_account';
 
 	/**
+	 * @var int  Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'account';
@@ -1002,7 +1008,7 @@ class Account extends CommonObject
 		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
-		$sql .= " ba.datec as date_creation, ba.tms as date_update, ba.ics, ba.ics_transfer,";
+		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
 		$sql .= ' c.code as country_code, c.label as country,';
 		$sql .= ' d.code_departement as state_code, d.nom as state,';
 		$sql .= ' aj.code as accountancy_journal';
@@ -1069,7 +1075,8 @@ class Account extends CommonObject
 				$this->comment        = $obj->comment;
 
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
-				$this->date_update    = $this->db->jdate($obj->date_update);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->date_update    = $this->date_modification;	// For compatibility
 
 				$this->ics           = $obj->ics;
 				$this->ics_transfer  = $obj->ics_transfer;
@@ -1538,25 +1545,19 @@ class Account extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-		$this->error_number = 0;
+		$error = 0;
 
-		// Call function to check BAN
-
+		// Call functions to check BAN
 		if (!checkIbanForAccount($this)) {
-			$this->error_number = 12;
+			$error++;
 			$this->error_message = 'IBANNotValid';
 		}
 		if (!checkSwiftForAccount($this)) {
-			$this->error_number = 12;
+			$error++;
 			$this->error_message = 'SwiftNotValid';
 		}
-		/*if (! checkBanForAccount($this))
-		{
-			$this->error_number = 12;
-			$this->error_message = 'BANControlError';
-		}*/
 
-		if ($this->error_number == 0) {
+		if (! $error) {
 			return 1;
 		} else {
 			return 0;

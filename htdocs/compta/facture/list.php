@@ -233,8 +233,8 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
-	'f.module_source'=>array('label'=>"POSModule", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
-	'f.pos_source'=>array('label'=>"POSTerminal", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
+	'f.module_source'=>array('label'=>"POSModule", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>"(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position'=>90),
+	'f.pos_source'=>array('label'=>"POSTerminal", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>"(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position'=>91),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
 	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
@@ -417,7 +417,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					setEventMessage($facture->error, 'errors');
 					$errorpayment++;
 				} else {
-					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->statut == Facture::STATUS_VALIDATED && $facture->paye == 0) {
+					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->status == Facture::STATUS_VALIDATED && $facture->paye == 0) {
 						$paiementAmount = $facture->getSommePaiement();
 						$totalcreditnotes = $facture->getSumCreditNotesUsed();
 						$totaldeposits = $facture->getSumDepositsUsed();
@@ -487,7 +487,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
-				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
+				if ($objecttmp->status == Facture::STATUS_DRAFT) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
@@ -566,6 +566,8 @@ $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $companyparent = new Societe($db);
 $company_url_list = array();
+
+$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : '');
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -1229,7 +1231,7 @@ if ($resql) {
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-	print_barre_liste($langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendBillRef";
 	$modelmail = "facture_send";
@@ -1906,7 +1908,7 @@ if ($resql) {
 			$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
-			if ($facturestatic->statut == Facture::STATUS_CLOSED && $facturestatic->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
+			if ($facturestatic->status == Facture::STATUS_CLOSED && $facturestatic->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 				$remaintopay = 0;
 				$multicurrency_remaintopay = 0;
 			}
@@ -1931,7 +1933,7 @@ if ($resql) {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
@@ -2294,7 +2296,8 @@ if ($resql) {
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->user_email;
-				$userstatic->statut = $obj->user_statut;
+				$userstatic->statut = $obj->user_statut;	// deprecated
+				$userstatic->status = $obj->user_statut;
 				$userstatic->entity = $obj->entity;
 				$userstatic->photo = $obj->photo;
 				$userstatic->office_phone = $obj->office_phone;
@@ -2336,7 +2339,8 @@ if ($resql) {
 								$userstatic->lastname = $val['lastname'];
 								$userstatic->firstname = $val['firstname'];
 								$userstatic->email = $val['email'];
-								$userstatic->statut = $val['statut'];
+								$userstatic->statut = $val['statut'];	// deprecated
+								$userstatic->status = $val['statut'];
 								$userstatic->entity = $val['entity'];
 								$userstatic->photo = $val['photo'];
 								$userstatic->login = $val['login'];
