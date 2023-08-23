@@ -1693,6 +1693,9 @@ class Propal extends CommonObject
 				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
 				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
+				
+				// Project
+				$this->fetch_project();
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
