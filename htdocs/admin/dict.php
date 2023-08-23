@@ -1643,6 +1643,8 @@ if ($id > 0) {
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
 
+		$colspan = 0;
+
 		// Title line with search input fields
 		print '<!-- line title to search record -->'."\n";
 		print '<tr class="liste_titre_filter">';
@@ -1658,7 +1660,6 @@ if ($id > 0) {
 			$colspan++;
 		}
 
-		$colspan = 0;
 		foreach ($fieldlist as $field => $value) {
 			if ($value == 'entity') {
 				continue;
