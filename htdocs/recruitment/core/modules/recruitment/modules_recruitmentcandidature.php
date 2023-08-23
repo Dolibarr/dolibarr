@@ -65,7 +65,7 @@ abstract class ModelePDFRecruitmentCandidature extends CommonDocGenerator
 /**
  *  Parent class to manage numbering of RecruitmentCandidature
  */
-abstract class ModeleNumRefRecruitmentCandidature
+abstract class ModeleNumRefRecruitmentCandidature extends CommonNumRefGenerator
 {
 	// No overloaded code
 }
