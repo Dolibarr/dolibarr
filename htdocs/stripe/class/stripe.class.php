@@ -1093,7 +1093,7 @@ class Stripe extends CommonObject
 						}
 					} catch (Exception $e) {
 						$sepa = null;
-						$this->error = 'Stripe error: '.getMessage().'. Check the BAN information.';
+						$this->error = 'Stripe error: '.$e->getMessage().'. Check the BAN information.';
 						dol_syslog($this->error, LOG_WARNING);	// Error from Stripe, so a warning on Dolibarr
 					}
 				}

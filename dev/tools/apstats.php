@@ -110,7 +110,10 @@ exec($commandcheck, $output_arrtd, $resexectd);
 
 $arrayoflineofcode = array();
 $arraycocomo = array();
-$arrayofmetrics = array('Bytes'=>0, 'Files'=>0, 'Lines'=>0, 'Blanks'=>0, 'Comments'=>0, 'Code'=>0, 'Complexity'=>0);
+$arrayofmetrics = array(
+	'proj'=>array('Bytes'=>0, 'Files'=>0, 'Lines'=>0, 'Blanks'=>0, 'Comments'=>0, 'Code'=>0, 'Complexity'=>0),
+	'dep'=>array('Bytes'=>0, 'Files'=>0, 'Lines'=>0, 'Blanks'=>0, 'Comments'=>0, 'Code'=>0, 'Complexity'=>0)
+);
 
 // Analyse $output_arrproj
 foreach (array('proj', 'dep') as $source) {
@@ -153,6 +156,15 @@ foreach (array('proj', 'dep') as $source) {
 			$arrayoflineofcode[$source][$reg[1]]['Complexity'] = $reg[7];
 		}
 	}
+
+	foreach ($arrayoflineofcode[$source] as $key => $val) {
+		$arrayofmetrics[$source]['Files'] += $val['Files'];
+		$arrayofmetrics[$source]['Lines'] += $val['Lines'];
+		$arrayofmetrics[$source]['Blanks'] += $val['Blanks'];
+		$arrayofmetrics[$source]['Comments'] += $val['Comments'];
+		$arrayofmetrics[$source]['Code'] += $val['Code'];
+		$arrayofmetrics[$source]['Complexity'] += $val['Complexity'];
+	}
 }
 
 
@@ -165,6 +177,8 @@ $html .= '
 <style>
 body {
 	margin: 10px;
+	margin-left: 50px;
+	margin-right: 50px;
 }
 
 h1 {
@@ -176,12 +190,24 @@ h1 {
 	margin-bottom: 5px;
 }
 
+header {
+	text-align: center;
+}
 header, section.chapter {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	padding: 10px;
 }
 
+table {
+	border-collapse: collapse;
+}
+th,td {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
 .left {
 	text-align: left;
 }
@@ -190,6 +216,12 @@ header, section.chapter {
 }
 .opacity {
 	opacity: 0.5;
+}
+.centpercent {
+	width: 100%;
+}
+.trgroup {
+	background-color: #EEE;
 }
 </style>';
 
@@ -203,9 +235,10 @@ $html .= '</header>';
 
 $html .= '<section class="chapter">';
 $html .= '<h2>Lines of code</h2>';
-$html .= '<table>';
+$html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
 $html .= '<th class="left">Language</td>';
+$html .= '<th class="right">Bytes</th>';
 $html .= '<th class="right">Files</th>';
 $html .= '<th class="right">Lines</th>';
 $html .= '<th class="right">Blanks</th>';
@@ -214,42 +247,47 @@ $html .= '<th class="right">Code</th>';
 //$html .= '<td class="right">'.$val['Complexity'].'</td>';
 $html .= '</th>';
 foreach (array('proj', 'dep') as $source) {
+	$html .= '<tr class="trgroup" id="source'.$source.'">';
 	if ($source == 'proj') {
-		$html .= '<tr><td colspan="7">Written by project team only:</td></tr>';
+		$html .= '<td>All files from project only</td>';
 	} elseif ($source == 'dep') {
-		$html .= '<tr><td colspan="7">Dependencies:</td></tr>';
+		$html .= '<td>All files from dependencies</td>';
 	}
+	$html .= '<td class="right">'.$arrayofmetrics[$source]['Bytes'].'</td>';
+	$html .= '<td class="right">'.$arrayofmetrics[$source]['Files'].'</td>';
+	$html .= '<td class="right">'.$arrayofmetrics[$source]['Lines'].'</td>';
+	$html .= '<td class="right">'.$arrayofmetrics[$source]['Blanks'].'</td>';
+	$html .= '<td class="right">'.$arrayofmetrics[$source]['Comments'].'</td>';
+	$html .= '<td class="right">'.$arrayofmetrics[$source]['Code'].'</td>';
+	$html .= '<td>See detail per file type...</td>';
+	$html .= '</tr>';
 	foreach ($arrayoflineofcode[$source] as $key => $val) {
 		$html .= '<tr class="loc source'.$source.' language'.str_replace(' ', '', $key).'">';
 		$html .= '<td>'.$key.'</td>';
+		$html .= '<td class="right"></td>';
 		$html .= '<td class="right">'.$val['Files'].'</td>';
 		$html .= '<td class="right">'.$val['Lines'].'</td>';
 		$html .= '<td class="right">'.$val['Blanks'].'</td>';
 		$html .= '<td class="right">'.$val['Comments'].'</td>';
 		$html .= '<td class="right">'.$val['Code'].'</td>';
 		//$html .= '<td class="right">'.$val['Complexity'].'</td>';
+		$html .= '<td>graph here...</td>';
 		$html .= '</tr>';
-		$arrayofmetrics['Files'] += $val['Files'];
-		$arrayofmetrics['Lines'] += $val['Lines'];
-		$arrayofmetrics['Blanks'] += $val['Blanks'];
-		$arrayofmetrics['Comments'] += $val['Comments'];
-		$arrayofmetrics['Code'] += $val['Code'];
-		$arrayofmetrics['Complexity'] += $val['Complexity'];
 	}
 }
 
-$html .= '<tr>';
-$html .= '<tr><td colspan="7">Total:</td></tr>';
-$html .= '<tr>';
-$html .= '<td class="right">'.$arrayofmetrics['Bytes'].' octets</td>';
-$html .= '<td class="right">'.$arrayofmetrics['Files'].'</td>';
-$html .= '<td class="right">'.$arrayofmetrics['Lines'].'</td>';
-$html .= '<td class="right">'.$arrayofmetrics['Blanks'].'</td>';
-$html .= '<td class="right">'.$arrayofmetrics['Comments'].'</td>';
-$html .= '<td class="right">'.$arrayofmetrics['Code'].'</td>';
+$html .= '<tr class="trgroup">';
+$html .= '<td class="left">Total</td>';
+$html .= '<td class="right">'.($arrayofmetrics['proj']['Bytes'] + $arrayofmetrics['dep']['Bytes']).'</td>';
+$html .= '<td class="right">'.($arrayofmetrics['proj']['Files'] + $arrayofmetrics['dep']['Files']).'</td>';
+$html .= '<td class="right">'.($arrayofmetrics['proj']['Lines'] + $arrayofmetrics['dep']['Lines']).'</td>';
+$html .= '<td class="right">'.($arrayofmetrics['proj']['Blanks'] + $arrayofmetrics['dep']['Blanks']).'</td>';
+$html .= '<td class="right">'.($arrayofmetrics['proj']['Comments'] + $arrayofmetrics['dep']['Comments']).'</td>';
+$html .= '<td class="right">'.($arrayofmetrics['proj']['Code'] + $arrayofmetrics['dep']['Code']).'</td>';
 //$html .= '<td>'.$arrayofmetrics['Complexity'].'</td>';
+$html .= '<td></td>';
 $html .= '</tr>';
-$html .= '<table>';
+$html .= '</table>';
 
 $html .= '</section>';
 
