@@ -907,16 +907,18 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *  Create a direct debit order into prelevement_bons then
-	 *  Send the payment order to Stripe (for a direct debit order or a credit transfer order) and record an event in llx_actioncomm.
+	 *  Create a direct debit order into prelevement_bons for a given prelevement_request, then
+	 *  Send the payment order to the service (for a direct debit order or a credit transfer order) and record an event in llx_actioncomm.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$did			ID of unitary payment request to pay
 	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
+	 *  @param		string	$service		'StripeTest', 'StripeLive', ...
+	 *  @param		string	$forcestripe	To force another stripe env
 	 *	@return     int         			<0 if KO, >0 if OK
 	 */
-	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture')
+	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture', $service = '', $forcestripe = '')
 	{
 		global $conf, $user, $langs;
 
@@ -925,6 +927,13 @@ abstract class CommonInvoice extends CommonObject
 		}
 		if ($type != 'direct-debit' && empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
 			return 0;
+		}
+		// Set a default value for service if not provided
+		if (empty($service)) {
+			$service = 'StripeTest';
+			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+				$service = 'StripeLive';
+			}
 		}
 
 		$error = 0;
@@ -972,16 +981,7 @@ abstract class CommonInvoice extends CommonObject
 					$companypaymentmode = new CompanyPaymentMode($this->db);	// table societe_rib
 					$companypaymentmode->fetch($bac->id);
 
-					// Start code for Stripe
-					// TODO We may have this coming as a parameter from the caller.
-					$service = 'StripeTest';
-					$servicestatus = 0;
-					if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
-						$service = 'StripeLive';
-						$servicestatus = 1;
-					}
-
-					dol_syslog("makeStripeSepaRequest amount = ".$amount." service=" . $service . " servicestatus=" . $servicestatus . " thirdparty_id=" . $this->socid." did=".$did);
+					dol_syslog("makeStripeSepaRequest amount = ".$amount." service=" . $service . " thirdparty_id=" . $this->socid." did=".$did);
 
 					$this->stripechargedone = 0;
 					$this->stripechargeerror = 0;
@@ -989,8 +989,6 @@ abstract class CommonInvoice extends CommonObject
 					$now = dol_now();
 
 					$currency = $conf->currency;
-
-					global $stripearrayofkeysbyenv;
 
 					$errorforinvoice = 0;     // We reset the $errorforinvoice at each invoice loop
 
@@ -1059,6 +1057,13 @@ abstract class CommonInvoice extends CommonObject
 					if (!$error) {
 						if ($amountstripe > 0) {
 							try {
+								global $savstripearrayofkeysbyenv;
+								global $stripearrayofkeysbyenv;
+								$servicestatus = 0;
+								if ($service == 'StripeLive') {
+									$servicestatus = 1;
+								}
+
 								//var_dump($companypaymentmode);
 								dol_syslog("We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
 
@@ -1069,19 +1074,72 @@ abstract class CommonInvoice extends CommonObject
 								// So it inits or erases the $stripearrayofkeysbyenv
 								$stripe = new Stripe($this->db);
 
+								if (empty($savstripearrayofkeysbyenv)) $savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
 								dol_syslog("makeStripeSepaRequest Current Stripe environment is " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key']);
+								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
-								$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
-								\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+								$foundalternativestripeaccount = '';
 
+								// Force stripe to another value (by default this value is empty)
+								if (! empty($forcestripe)) {
+									dol_syslog("makeStripeSepaRequest A dedicated stripe account was forced, so we switch to it.");
 
-								dol_syslog("makeStripeSepaRequest get stripe connet account", LOG_DEBUG);
+									$tmparray = explode('@', $forcestripe);
+									if (! empty($tmparray[1])) {
+										$tmparray2 = explode(':', $tmparray[1]);
+										if (! empty($tmparray2[3])) {
+											$stripearrayofkeysbyenv = array(
+												0=>array(
+													"publishable_key" => $tmparray2[0],
+													"secret_key"      => $tmparray2[1]
+												),
+												1=>array(
+													"publishable_key" => $tmparray2[2],
+													"secret_key"      => $tmparray2[3]
+												)
+											);
+
+											$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
+											\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+
+											$foundalternativestripeaccount = $tmparray[0];    // Store the customer id
+
+											dol_syslog("makeStripeSepaRequest We use now customer=".$foundalternativestripeaccount." publishable_key=".$stripearrayofkeys['publishable_key'], LOG_DEBUG);
+										}
+									}
+
+									if (! $foundalternativestripeaccount) {
+										$stripearrayofkeysbyenv = $savstripearrayofkeysbyenv;
+
+										$stripearrayofkeys = $savstripearrayofkeysbyenv[$servicestatus];
+										\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+										dol_syslog("makeStripeSepaRequest We found a bad value for Stripe Account for thirdparty id=".$thirdparty->id.", so we ignore it and keep using the global one, so ".$stripearrayofkeys['publishable_key'], LOG_WARNING);
+									}
+								} else {
+									$stripearrayofkeysbyenv = $savstripearrayofkeysbyenv;
+
+									$stripearrayofkeys = $savstripearrayofkeysbyenv[$servicestatus];
+									\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+									dol_syslog("makeStripeSepaRequest No dedicated Stripe Account requested, so we use global one, so ".$stripearrayofkeys['publishable_key'], LOG_DEBUG);
+								}
+
 								$stripeacc = $stripe->getStripeAccount($service, $this->socid);								// Get Stripe OAuth connect account if it exists (no network access here)
-								dol_syslog("makeStripeSepaRequest get stripe connect account return " . json_encode($stripeacc), LOG_DEBUG);
 
-								$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
-								if (empty($customer) && !empty($stripe->error)) {
-									$this->errors[] = $stripe->error;
+								if ($foundalternativestripeaccount) {
+									if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+										$customer = \Stripe\Customer::retrieve(array('id'=>"$foundalternativestripeaccount", 'expand[]'=>'sources'));
+									} else {
+										$customer = \Stripe\Customer::retrieve(array('id'=>"$foundalternativestripeaccount", 'expand[]'=>'sources'), array("stripe_account" => $stripeacc));
+									}
+								} else {
+									$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
+									if (empty($customer) && ! empty($stripe->error)) {
+										$this->errors[] = $stripe->error;
+									}
+									/*if (!empty($customer) && empty($customer->sources)) {
+									 $customer = null;
+									 $this->errors[] = '\Stripe\Customer::retrieve did not returned the sources';
+									 }*/
 								}
 
 								// $nbhoursbetweentries = (empty($conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES) ? 49 : $conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES);				// Must have more that 48 hours + 1 between each try (so 1 try every 3 daily batch)
