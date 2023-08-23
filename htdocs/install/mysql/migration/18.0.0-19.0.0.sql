@@ -62,4 +62,7 @@ UPDATE llx_bank_url SET type = 'direct-debit' WHERE type = 'withdraw' AND url li
 
 ALTER TABLE llx_facture_fourn ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
 
-ALTER TABLE llx_societe_rib ADD COLUMN extraparams    varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN extraparams varchar(255);
+
+ALTER TABLE llx_c_type_container ADD COLUMN position integer DEFAULT 0;
+
