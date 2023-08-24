@@ -129,7 +129,9 @@ class DolibarrApiAccess implements iAuthenticate
 						// We must also reload global conf to get params from the entity
 						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity.") and we have to reload configuration.", LOG_WARNING);
 
+                        $oldSyslogLevel = $conf->global->SYSLOG_LEVEL;
                         $conf->global = new stdClass();
+                        $conf->global->SYSLOG_LEVEL = $oldSyslogLevel;
                         $conf->setValues($db);
                         $mysoc->setMysoc($conf);
 					}
