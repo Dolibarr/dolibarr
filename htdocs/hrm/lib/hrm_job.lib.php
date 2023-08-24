@@ -50,7 +50,7 @@ function jobPrepareHead($object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/hrm/position.php?fk_job=".$object->id;
-	$head[$h][1] = $langs->trans("EmployeesInThisPosition");
+	$head[$h][1] = $langs->trans("PositionsWithThisProfile");
 	$head[$h][2] = 'position';
 	$h++;
 

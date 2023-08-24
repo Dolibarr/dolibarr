@@ -47,6 +47,7 @@ ValidateEvaluation=Validate evaluation
 ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with reference <b>%s</b>?
 EvaluationCard=Evaluation card
 RequiredRank=Required rank for the job profile
+PositionsWithThisProfile=Positions with this job profiles
 EmployeeRank=Employee rank for this skill
 EmployeePosition=Employee position
 EmployeePositions=Employee positions
