@@ -57,18 +57,21 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
-MainAccountForCustomersNotDefined=未在设置中定义的顾客的主要会计科目
-MainAccountForSuppliersNotDefined=未在设置中定义的供应商的主要会计科目
-MainAccountForUsersNotDefined=未在设置中定义的用户的主要会计科目
-MainAccountForVatPaymentNotDefined=未在设置中定义的税款支付的主要会计科目
-MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=会计区
 AccountancyAreaDescIntro=会计模块的使用分几步完成：
-AccountancyAreaDescActionOnce=以下动作通常只执行一次，或每年执行一次......
+AccountancyAreaDescActionOnce=下列操作通常仅执行一次，或每年一次......
 AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
-AccountancyAreaDescActionFreq=对于非常大的公司，通常每月，每周或每天执行以下操作......
+AccountancyAreaDescActionFreq=对于非常大的公司来说，通常每月、每周或每天执行下列操作......
 
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
@@ -81,7 +84,7 @@ AccountancyAreaDescSal=步骤%s：定义支付工资的默认会计科目，使�
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=步骤%s：定义默认的捐献会计科目。为此，请使用菜单项 %s。
 AccountancyAreaDescSubscription=步骤 %s ：定义会员订阅的默认会计帐户。为此，请使用菜单项 %s。
-AccountancyAreaDescMisc=步骤%s：为杂项交易定义强制性默认帐户和默认会计科目，使用菜单%s。
+AccountancyAreaDescMisc=步骤 %s：定义杂项交易的强制默认帐户和默认会计科目。为此，请使用菜单条目 %s。
 AccountancyAreaDescLoan=步骤%s：定义贷款的默认会计科目，使用菜单%s。
 AccountancyAreaDescBank=步骤%s：为每个银行和财务帐户定义会计科目和日常报表代码，使用菜单%s。
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
@@ -127,7 +130,7 @@ ExpenseReportsVentilation=费用报告绑定
 CreateMvts=创建新交易
 UpdateMvts=修改交易
 ValidTransaction=验证交易
-WriteBookKeeping=Record transactions in accounting
+WriteBookKeeping=在会计中记录交易
 Bookkeeping=分类帐
 BookkeepingSubAccount=Subledger
 AccountBalance=账目平衡
@@ -168,7 +171,7 @@ ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of a
 BANK_DISABLE_DIRECT_INPUT=禁止在银行帐户中直接记录交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日记帐上启用草稿导出
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
-ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DATE_START_BINDING=定义开始绑定和转移会计的日期。在此日期之前，交易将不会转入会计。
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
@@ -223,7 +226,7 @@ Lettering=Lettering
 Codejournal=日记帐
 JournalLabel=Journal label
 NumPiece=件数
-TransactionNumShort=Num. transaction
+TransactionNumShort=交易编号
 AccountingCategory=Custom group of accounts
 AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Group by general ledger account
@@ -239,7 +242,7 @@ DelMonth=Month to delete
 DelYear=删除整年
 DelJournal=日记帐删除
 ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
+ConfirmDeleteMvtPartial=这将从会计中删除该交易（与同一交易相关的所有行都将被删除）
 FinanceJournal=财务账
 ExpenseReportsJournal=费用报告日常报表
 InventoryJournal=盘点日记帐
@@ -252,8 +255,8 @@ FeeAccountNotDefined=未定义费用的帐户
 BankAccountNotDefined=银行帐户未定义
 CustomerInvoicePayment=付款发票的客户
 ThirdPartyAccount=Third-party account
-NewAccountingMvt=新交易
-NumMvts=Numero的交易
+NewAccountingMvt=新建交易
+NumMvts=交易数量
 ListeMvts=调拨清单
 ErrorDebitCredit=借记卡和信用卡在同一时间不能有一个值
 AddCompteFromBK=将会计科目添加到组中
@@ -267,9 +270,9 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unkno
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=付款未与任何产品/服务相关联
-OpeningBalance=Opening balance
-ShowOpeningBalance=Show opening balance
-HideOpeningBalance=Hide opening balance
+OpeningBalance=期初余额
+ShowOpeningBalance=显示期初余额
+HideOpeningBalance=隐藏期初余额
 ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=帐户组
@@ -310,7 +313,7 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this accoun
 MvtNotCorrectlyBalanced=调拨未正确平衡。借方 = %s & 贷方 = %s
 Balancing=平衡
 FicheVentilation=绑定卡
-GeneralLedgerIsWritten=交易是在Ledger中写的
+GeneralLedgerIsWritten=交易已记录在账目中
 GeneralLedgerSomeRecordWasNotRecorded=某些交易无法记录。如果没有其他错误消息，这可能是因为它们已经被记录。
 NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=List of products not bound to any account of chart of account
@@ -358,7 +361,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedExportDate=将尚未导出的行标记为已导出<span class="warning">（要修改被标记为已导出的行，您需要删除整个交易并将其重新传输到会计中）</span>
 NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
@@ -377,7 +380,7 @@ Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
-Modelcsv_openconcerto=Export for OpenConcerto (Test)
+Modelcsv_openconcerto=导出 OpenConcerto（测试）
 Modelcsv_configurable=导出CSV可配置
 Modelcsv_FEC=Export FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
@@ -418,8 +421,8 @@ SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
-ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
-ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
+ForbiddenTransactionAlreadyExported=禁止：交易已验证和/或已导出。
+ForbiddenTransactionAlreadyValidated=禁止：交易已被验证。
 ## Dictionary
 Range=会计科目范围
 Calculated=计算
@@ -443,7 +446,7 @@ ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=批量删除确认
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
+ConfirmMassDeleteBookkeepingWritingQuestion=这将从会计中删除该交易（与同一交易相关的所有行条目都将被删除）。您确定要删除选定的条目 %s 吗？
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=一些强制性的安装步骤没有完成，请完成它们
@@ -459,7 +462,7 @@ UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to 
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
-AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+AccountancyErrorLetteringBookkeeping=交易发生错误：%s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
 
@@ -486,7 +489,7 @@ FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
 FECFormatMulticurrencyCode=Multicurrency code (Idevise)
 
 DateExport=Date export
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=警告，该报告不是基于账目的，因此不包含在账目中手动修改的交易。如果您的日记帐是最新的，则簿记视图会更准确。
 ExpenseReportJournal=费用报告日常报表
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines

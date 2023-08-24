@@ -318,8 +318,10 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=エラー: 現在の�
 ErrorMenuExistValue=このタイトルまたは URL のメニューはすでに存在する
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG ファイルは、オプション %s を指定しないと外部リンクとして許可されない。
 ErrorTypeMenu=ナビゲーションバーに同じモジュールの別のメニューを追加することはできない。まだハンドルされていない
-ErrorTableExist=Table <b>%s</b> already exist
-ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
+ErrorTableExist=テーブル <b> %s </b> はすでに存在する
+ErrorDictionaryNotFound=辞書 <b> %s </b> が見つからない
+ErrorFailedToCreateSymLinkToMedias= シンボリックリンク  %s その指定先は %s を作成できず
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。
 WarningPasswordSetWithNoAccount=この構成員にパスワードが設定された。ただし、ユーザアカウントは作成されなかった。したがって、このパスワードは保存されるが、Dolibarrへのログインには使用できない。外部モジュール/インターフェースで使用できるが、構成員のログインやパスワードを定義する必要がない場合は、構成員モジュールの設定から "各構成員のログインを管理する" オプションを無効にすることができる。ログインを管理する必要があるがパスワードは必要ない場合は、このフィールドを空のままにして、この警告を回避できる。注：構成員がユーザにリンクされている場合は、電子メールをログインとして使用することもできる。
@@ -360,7 +362,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=「請求書の検証�
 WarningModuleNeedRefrech = モジュール <b> %s </b> が無効になった。有効にすることを忘れないこと
 WarningPermissionAlreadyExist=このオブジェクトの既存の権限
 WarningGoOnAccountancySetupToAddAccounts=このリストが空の場合、メニュー %s - %s - %s に移動し、勘定科目表の科目をロードまたは作成する。
-WarningCorrectedInvoiceNotFound=Corrected invoice not found
+WarningCorrectedInvoiceNotFound=修正された請求書が見つからない
 
 SwissQrOnlyVIR = SwissQR 請求書は、クレジット振替で支払うように設定された請求書にのみ追加できる。
 SwissQrCreditorAddressInvalid = 債権者の住所が無効  (郵便番号と都市は設定されているか? (%s)
