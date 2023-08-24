@@ -357,6 +357,9 @@ if (!defined('NOSESSION')) {
 // Init the 6 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager
 require_once 'master.inc.php';
 
+// Uncomment this and set session.save_handler = user to use local session storing
+// include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php
+
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
 if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 	$ok = 0;
