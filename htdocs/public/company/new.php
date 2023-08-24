@@ -24,19 +24,10 @@
  */
 
 /**
- *	\file       htdocs/public/members/new.php
- *	\ingroup    member
- *	\brief      Example of form to add a new member
+ *	\file       htdocs/public/company/new.php
+ *	\ingroup    prospect
+ *	\brief      Example of form to add a new prospect
  *
- *  Note that you can add following constant to change behaviour of page
- *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
- *  MEMBER_MIN_AMOUNT                   Minimum amount
- *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
- *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
- *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once registration form has been submitted (hidden option, by default we just show a message on same page or redirect to the payment page)
- *  MEMBER_NEWFORM_FORCETYPE            Force type of member
- *  MEMBER_NEWFORM_FORCEMORPHY          Force nature of member (mor/phy)
- *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
  */
 
 if (!defined('NOLOGIN')) {
@@ -81,15 +72,10 @@ $error = 0;
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
 // Security check
-if (!isModEnabled('adherent')) {
-	httponly_accessforbidden('Module Membership not enabled');
+if (!isModEnabled('societe')) {
+	httponly_accessforbidden('Module Thirdparty not enabled');
 }
 
-/*
-if (empty($conf->global->PROSPECT_ENABLE_PUBLIC)) {
-	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
-}
-*/
 //permissions 
 
 $permissiontoadd 	= $user->hasRight('societe', 'creer');
@@ -105,7 +91,7 @@ $user->loadDefaultValues();
 
 
 /**
- * Show header for new member
+ * Show header for new prospect
  *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
@@ -160,7 +146,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 }
 
 /**
- * Show footer for new member
+ * Show footer for new societe
  *
  * @return	void
  */
@@ -284,9 +270,9 @@ if (empty($reshook) && $action == 'add') {
 	}
 }
 
-// Action called after a submitted was send and member created successfully
+// Action called after a submitted was send and prospect created successfully
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
-// backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
+// backtopage parameter with an url was set on prospect submit page, we never go here because a redirect was done to this url.
 
 if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge("newSocieteAdded");
