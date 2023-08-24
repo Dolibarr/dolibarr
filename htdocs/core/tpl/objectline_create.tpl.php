@@ -927,7 +927,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						}
 						options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 					});
-					options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice").'...'; ?></option>';
+					options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dol_escape_js($langs->trans("InputPrice").'...'); ?></option>';
 
 					console.log("finally selected defaultkey="+defaultkey+" defaultprice for buying price="+defaultprice);
 
@@ -1103,7 +1103,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			$('#tva_tx option').removeAttr('selected');
 			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
 			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
-
 			<?php
 			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {

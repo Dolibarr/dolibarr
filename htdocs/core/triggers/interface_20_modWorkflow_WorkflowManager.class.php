@@ -268,7 +268,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['reception'] as $element) {
-						if ($element->statut == Reception::STATUS_VALIDATED) {
+						if ($element->statut == Reception::STATUS_VALIDATED || $element->statut == Reception::STATUS_CLOSED) {
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}

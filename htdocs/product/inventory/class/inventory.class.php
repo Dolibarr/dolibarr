@@ -295,8 +295,9 @@ class Inventory extends CommonObject
 			if ($this->fk_warehouse > 0) {
 				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
 				if (!empty($include_sub_warehouse) && getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE')) {
-					$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
-					$sql .= " OR ps.fk_entrepot IN (".filter_var(implode(',', $TChildWarehouses), FILTER_SANITIZE_STRING).")";
+					$TChildWarehouses = array();
+					$this->getChildWarehouse($this->fk_warehouse, $TChildWarehouses);
+					$sql .= " OR ps.fk_entrepot IN (".$this->db->sanitize(join(',', $TChildWarehouses)).")";
 				}
 				$sql .= ')';
 			}
@@ -754,11 +755,12 @@ class Inventory extends CommonObject
 
 	/**
 	 * Return the child warehouse of the current one
-	 * @param int $id Id of warehouse
-	 * @param $TChildWarehouse  child warehouses
-	 * @return int             <0 if KO, >0 if OK
+	 *
+	 * @param int 	$id 				Id of warehouse
+	 * @param array	$TChildWarehouse  	Array of child warehouses
+	 * @return int             			<0 if KO, >0 if OK
 	 */
-	public function getchildWarehouse($id, &$TChildWarehouse)
+	public function getChildWarehouse($id, &$TChildWarehouse)
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'entrepot';
 		$sql.= ' WHERE fk_parent='.(int) $id;
@@ -767,7 +769,7 @@ class Inventory extends CommonObject
 		if ($resql && $this->db->num_rows($resql)>0) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				$TChildWarehouse[] = $obj->rowid;
-				$this->getchildWarehouse($obj->rowid, $TChildWarehouse);
+				$this->getChildWarehouse($obj->rowid, $TChildWarehouse);
 			}
 			return 1;
 		} else {
