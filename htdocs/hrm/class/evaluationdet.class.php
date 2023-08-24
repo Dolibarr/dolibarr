@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for Evaluationline
+ * Class for EvaluationLine
  */
-class Evaluationline extends CommonObject
+class EvaluationLine extends CommonObjectLine
 {
 	/**
 	 * @var string ID of module.
@@ -887,7 +887,7 @@ class Evaluationline extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new Evaluationline($this->db);
+		$objectline = new EvaluationLine($this->db);
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_evaluationdet = '.$this->id));
 
 		if (is_numeric($result)) {

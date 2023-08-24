@@ -154,7 +154,7 @@ class Evaluation extends CommonObject
 	/**
 	 * @var string    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'Evaluationline';
+	public $class_element_line = 'EvaluationLine';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
@@ -166,10 +166,10 @@ class Evaluation extends CommonObject
 	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	protected $childtablesoncascade = array('@Evaluationline:hrm/class/evaluationdet.class.php:fk_evaluation');
+	protected $childtablesoncascade = array('@EvaluationLine:hrm/class/evaluationdet.class.php:fk_evaluation');
 
 	/**
-	 * @var Evaluationline[]     Array of subtable lines
+	 * @var EvaluationLine[]     Array of subtable lines
 	 */
 	public $lines = array();
 
@@ -237,7 +237,7 @@ class Evaluation extends CommonObject
 			if (is_array($TRequiredRanks) && !empty($TRequiredRanks)) {
 				$this->lines = array();
 				foreach ($TRequiredRanks as $required) {
-					$line = new Evaluationline($this->db);
+					$line = new EvaluationLine($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
 					$line->required_rank = $required->rankorder;
@@ -919,7 +919,7 @@ class Evaluation extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new Evaluationline($this->db);
+		$objectline = new EvaluationLine($this->db);
 		$result = $objectline->fetchAll('ASC', '', 0, 0, array('customsql'=>'fk_evaluation = '.$this->id));
 
 		if (is_numeric($result)) {
