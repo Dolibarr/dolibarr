@@ -1892,10 +1892,10 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::fetchObjectFrom', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$row = $this->db->fetch_row($resql);
+			$obj = $this->db->fetch_object($resql);
 			// Test for avoid error -1
-			if ($row[0] > 0) {
-				$result = $this->fetch($row[0]);
+			if ($obj) {
+				$result = $this->fetch($obj->rowid);
 			}
 		}
 
