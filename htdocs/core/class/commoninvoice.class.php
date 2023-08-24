@@ -533,6 +533,18 @@ abstract class CommonInvoice extends CommonObject
 		return 0;
 	}
 
+	/**
+	 * Return next reference of invoice not already used (or last reference)
+	 *
+	 * @param	 Societe	$soc		Thirdparty object
+	 * @param    string		$mode		'next' for next value or 'last' for last value
+	 * @return   string					free ref or last ref
+	 */
+	public function getNextNumRef($soc, $mode = 'next')
+	{
+		// TODO Must be implemented into main class
+		return '';
+	}
 
 	/**
 	 *	Return label of type of invoice
