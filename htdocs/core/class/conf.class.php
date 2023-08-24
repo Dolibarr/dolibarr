@@ -109,6 +109,7 @@ class Conf
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
+
 	// TODO Remove this part.
 	public $fournisseur;
 	public $product;
@@ -400,9 +401,8 @@ class Conf
 			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-				if ($ret) {
+				if ($ret && class_exists('ActionsMulticompany')) {
 					$mc = new ActionsMulticompany($db);
-					$this->mc = $mc;
 				}
 			}
 
