@@ -81,12 +81,9 @@ $fk_job 	= GETPOST('fk_job', 'int');
 // Initialize technical objects
 $object = new Job($db);
 $objectposition = new Position($db);
-
 $extrafields = new ExtraFields($db);
-
 $diroutputmassaction = $conf->hrm->dir_output . '/temp/massgeneration/' . $user->id;
-
-$hookmanager->initHooks(array('jobpositionlist', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('jobpositioncard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 
 // Fetch optionals attributes and labels
@@ -163,8 +160,12 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*
@@ -176,7 +177,6 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
 if (empty($reshook)) {
 	$error = 0;
 
@@ -230,6 +230,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_massactions.inc.php';
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
+
 	$object = $job;
 }
 
@@ -275,12 +276,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-
-	print '<input type="submit" class="button" name="add" value="' . dol_escape_htmltag($langs->trans("Create")) . '">';
-	print '&nbsp; ';
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 
@@ -742,7 +738,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
 
@@ -1304,7 +1300,7 @@ function DisplayPositionList()
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
 

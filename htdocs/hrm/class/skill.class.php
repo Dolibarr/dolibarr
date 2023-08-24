@@ -553,7 +553,7 @@ class Skill extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -887,6 +887,10 @@ class Skill extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
+		if (empty($status)) {
+			$status = 0;
+		}
+
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
