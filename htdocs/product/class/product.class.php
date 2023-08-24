@@ -1943,7 +1943,7 @@ class Product extends CommonObject
 			// If price per customer
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-			$prodcustprice = new Productcustomerprice($this->db);
+			$prodcustprice = new ProductCustomerPrice($this->db);
 
 			$filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
 

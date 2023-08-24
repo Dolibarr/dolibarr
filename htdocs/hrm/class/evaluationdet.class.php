@@ -143,7 +143,7 @@ class EvaluationLine extends CommonObjectLine
 	// /**
 	//  * @var string    Name of subtable class that manage subtable lines
 	//  */
-	// public $class_element_line = 'Evaluationline';
+	// public $class_element_line = 'EvaluationLine';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.

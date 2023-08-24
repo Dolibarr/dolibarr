@@ -1069,7 +1069,7 @@ if (empty($reshook)) {
 			} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-				$prodcustprice = new Productcustomerprice($db);
+				$prodcustprice = new ProductCustomerPrice($db);
 
 				$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $soc->id);
 
