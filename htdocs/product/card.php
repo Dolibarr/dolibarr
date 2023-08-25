@@ -904,7 +904,7 @@ if (empty($reshook)) {
 		} else {
 			if ($object->id > 0) {
 				$error = 0;
-				$clone = dol_clone($object, 2);
+				$clone = dol_clone($object, 1);
 
 				$clone->id = null;
 				$clone->ref = GETPOST('clone_ref', 'alphanohtml');
