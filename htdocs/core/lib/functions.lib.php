@@ -10245,7 +10245,7 @@ function showSimpleOrderTable($outputlangs, $object)
 		$price = price($order_position->price, 0, $outputlangs, 0, -1, -1, $conf->currency);
 		$unit = measuringUnitString($order_position->fk_unit,'','',1);
 		$total = price($order_position->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency);
-		$discount = $discountIsAvailable ? `<td style="text-align:center">{$discount}</td>` : "";
+		$discount = $discountIsAvailable ? `<td style="text-align:center">{$order_position->remise_percent}%</td>` : "";
 
 
 		$table .= <<<ORDERPOSITION
