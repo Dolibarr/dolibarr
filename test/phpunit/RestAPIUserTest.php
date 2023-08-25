@@ -219,7 +219,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($result['curl_error_no'], '');
 		$object=json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must no be null");
-		$this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+		$this->assertEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), (string) $object['error']['message']);
 
 		// create regular user
 		unset($result);
@@ -238,8 +238,8 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 
 		$this->assertNotNull($object, "Parsing of json result must no be null");
-		$this->assertNotEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
-		$this->assertGreaterThan(0, $object, $object['error']['code'].' '.$object['error']['message']);
+		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), (string) $object['error']['message']);
+		$this->assertGreaterThan(0, $object, 'ID returned is no > 0');
 
 		// attempt to create duplicated user
 		print __METHOD__." Request POST url=".$url."\n";
@@ -249,6 +249,6 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($result['curl_error_no'], '');
 		$object=json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must no be null");
-		$this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+		$this->assertEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), (string) $object['error']['message']);
 	}
 }
