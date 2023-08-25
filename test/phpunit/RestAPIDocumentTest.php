@@ -118,22 +118,9 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 
 		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
 
-		$login = 'admin';
-		$password = 'admin';
-		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
-		// Call the API login method to save api_key for this test class
-		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-		echo __METHOD__.' result = '.var_export($result, true)."\n";
-		echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
-		$object = json_decode($result['content'], true);
-		$this->assertNotNull($object, 'Parsing of json result must no be null');
-		$this->assertEquals('200', $object['success']['code']);
+		$this->api_key = 'admin';	// Test on API to get this token is inside RestAPIUserTest.php
 
-		$this->api_key = $object['success']['token'];
 		echo __METHOD__." api_key: $this->api_key \n";
-
-		echo __METHOD__."\n";
 	}
 
 	/**

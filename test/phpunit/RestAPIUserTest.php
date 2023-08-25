@@ -139,8 +139,6 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 
 		$this->api_key = $object['success']['token'];
 		print __METHOD__." api_key: $this->api_key \n";
-
-		print __METHOD__."\n";
 	}
 
 	/**
@@ -185,12 +183,17 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$object=json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertEquals(1, $object['statut']);
+
+		return $object['id'];
 	}
 
 	/**
 	 * testRestCreateUser
 	 *
 	 * @return void
+	 *
+	 * @depends testRestGetUser
+	 * The depends says test is run only if previous is ok
 	 */
 	public function testRestCreateUser()
 	{
