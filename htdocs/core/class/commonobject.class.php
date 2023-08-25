@@ -5343,7 +5343,9 @@ abstract class CommonObject
 		if (isset($this->lines) && is_array($this->lines)) {
 			$nboflines = count($this->lines);
 			for ($i = 0; $i < $nboflines; $i++) {
-				$this->lines[$i] = clone $this->lines[$i];
+				if (is_object($this->lines[$i])) {
+					$this->lines[$i] = clone $this->lines[$i];
+				}
 			}
 		}
 	}
