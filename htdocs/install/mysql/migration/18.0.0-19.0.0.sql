@@ -66,3 +66,5 @@ ALTER TABLE llx_societe_rib ADD COLUMN extraparams varchar(255);
 
 ALTER TABLE llx_c_type_container ADD COLUMN position integer DEFAULT 0;
 
+ALTER TABLE llx_product_lot ADD COLUMN qc_frequency integer DEFAULT NULL;
+ALTER TABLE llx_product_lot ADD COLUMN lifetime integer DEFAULT NULL;
