@@ -10242,7 +10242,7 @@ function showSimpleOrderTable($outputlangs, $object)
 	foreach($object->lines as $index => $order_position) { 
 
 		$position = $index + 1;
-		$price = price($order_position->price, 0, $outputlangs, 0, -1, -1, $conf->currency);
+		$op_price = price($order_position->price, 0, $outputlangs, 0, -1, -1, $conf->currency);
 		$unit = measuringUnitString($order_position->fk_unit,'','',1);
 		$total = price($order_position->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency);
 		$discount = $discountIsAvailable ? `<td style="text-align:center">{$order_position->remise_percent}%</td>` : "";
@@ -10252,7 +10252,7 @@ function showSimpleOrderTable($outputlangs, $object)
 			<tr>
 				<td>$position</td>
 				<td>$order_position->description</td>
-				<td style="text-align:right">$price</td>
+				<td style="text-align:right">$op_price</td>
 				<td style="text-align:right">$order_position->qty</td>
 				<td style="text-align:right">$unit</td>
 				{$discount}
