@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
-MainAccountForCustomersNotDefined=Основна счетоводна сметка за клиенти, която не е дефинирана в настройката
-MainAccountForSuppliersNotDefined=Основна счетоводна сметка за доставчици, която не е дефинирана в настройката
-MainAccountForUsersNotDefined=Основна счетоводна сметка за потребители, която не е дефинирана в настройката
-MainAccountForVatPaymentNotDefined=Основна счетоводна сметка за плащане на ДДС, която не е дефинирана в настройката
-MainAccountForSubscriptionPaymentNotDefined=Основна счетоводна сметка за плащане на абонамент, която не е дефинирана в настройката
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Секция за счетоводство

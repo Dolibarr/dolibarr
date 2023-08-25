@@ -76,7 +76,6 @@ $dol_hide_leftmenu = GETPOST('dol_hide_leftmenu', 'int');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 $type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
-
 $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
 $replacesite = GETPOST('replacesite', 'alpha');
@@ -130,7 +129,7 @@ if (GETPOST('createpagefromclone', 'alpha')) {
 if (empty($action) && $file_manager) {
 	$action = 'file_manager';
 }
-if (empty($action) && $replacesite) {
+if ($action == 'replacesite' || (empty($action) && $replacesite)) {
 	$mode = 'replacesite';
 }
 if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x')) {
@@ -332,7 +331,7 @@ if (empty($sortfield)) {
 
 $searchkey = GETPOST('searchstring', 'restricthtml');
 
-if ($mode == 'replacesite') {
+if ($action == 'replacesite' || $mode == 'replacesite') {
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 	$langcode = GETPOST('optionlanguage', 'aZ09');
 	$otherfilters = array();
@@ -458,6 +457,7 @@ if ($action == 'unsetshowsubcontainers') {	// No need of write permission
 
 if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searchkey && $usercanedit) {
 	$mode = 'replacesite';
+	$action = 'replacesite';
 	$massaction = '';
 }
 
@@ -1423,6 +1423,7 @@ if (!GETPOSTISSET('pageid')) {
 
 	if ($action == 'delete') {
 		$mode = 'replacesite';
+		$action = 'replacesite';
 
 		$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 		$langcode = GETPOST('optionlanguage', 'aZ09');
@@ -2994,7 +2995,7 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmgeneratesitemaps&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"></span></a>';
 
 			// Find / replace tool
-			print '<a href="'.$_SERVER["PHP_SELF"].'?mode=replacesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=replacesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
 		}
 
 		print '</span>';
@@ -3095,7 +3096,7 @@ if (!GETPOST('hide_websitemenu')) {
 	// Toolbar for pages
 	//
 
-	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesiteconfirm'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
+	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
 		print '</div>'; // Close current websitebar to open a new one
 
 		print '<!-- Toolbar for websitepage -->';

@@ -126,9 +126,9 @@ TicketParams=Paramètres
 TicketsShowModuleLogo=Afficher le logo du module dans l'interface publique
 TicketsShowModuleLogoHelp=Activer cette option pour cacher le logo du module dans les pages de l'interface publique
 TicketsShowCompanyLogo=Afficher le logo de la société dans l'interface publique
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Activez cette option pour afficher le logo de l'entreprise principale dans les pages de l'interface publique
 TicketsShowCompanyFooter=Afficher le pied de page de l'entreprise dans l'interface publique
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsShowCompanyFooterHelp=Activez cette option pour afficher le pied de page de l'entreprise principale dans les pages de l'interface publique
 TicketsEmailAlsoSendToMainAddress=Envoyer également une notification à l'adresse e-mail principale
 TicketsEmailAlsoSendToMainAddressHelp=Activer cette option pour envoyer aussi un email à l'adresse définie dans la configuration "%s" (Voir onglet "%s")
 TicketsLimitViewAssignedOnly=Limiter l'afficher des tickets assignés à l'utilisateur courant (non valable pour les utilisateurs externes, toujours limité par le tiers dont ils dépendent)
@@ -329,8 +329,8 @@ OldUser=Ancien utilisateur
 NewUser=Nouvel utilisateur
 NumberOfTicketsByMonth=Nombre de tickets par mois
 NbOfTickets=Nombre de tickets
-ExternalContributors=External contributors
-AddContributor=Add external contributor
+ExternalContributors=Contributeurs externes
+AddContributor=Ajouter un contributeur externe
 
 # notifications
 TicketCloseEmailSubjectCustomer=Billet fermé

@@ -68,6 +68,7 @@ DateConciliating=Conciliar fecha
 BankLineConciliated=Entrada conciliada con recibo bancario
 BankLineReconciled=Conciliado
 SupplierInvoicePayment=Pago de proveedor
+WithdrawalPayment=Pago por domiciliación bancaria
 SocialContributionPayment=Pago de impuestos sociales / fiscales
 BankTransfer=Transferencia de crédito
 BankTransfers=Transferencia de crédito

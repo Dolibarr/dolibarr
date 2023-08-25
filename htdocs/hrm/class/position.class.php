@@ -687,12 +687,12 @@ class Position extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 * @param int $withpicto Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 * @param string $option On what the link point to ('nolink', ...)
-	 * @param int $notooltip 1=Disable tooltip
-	 * @param string $morecss Add more css on link
-	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @return    string                              String with URL
+	 * @param 	int 		$withpicto 				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 * @param 	string 		$option 				On what the link point to ('nolink', ...)
+	 * @param 	int 		$notooltip 				1=Disable tooltip
+	 * @param 	string 		$morecss 				Add more css on link
+	 * @param 	int 		$save_lastsearch_value 	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return  string      						String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -1140,13 +1140,12 @@ class Position extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_user') && !(empty($this->fk_user))) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Employee").'</span> : ';
-			$return .= '<span class="info-box-label ">'.$this->fk_user.'</span>';
+		if (!empty($arraydata['user'])) {
+			$return .= '<br><span class="info-box-label ">'.$arraydata['user'].'</span>';
 		}
-		if (property_exists($this, 'fk_job') && !(empty($this->fk_job))) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Job").'</span> : ';
-			$return .= '<span class="info-box-label ">'.$this->fk_job.'</span>';
+		if (!empty($arraydata['job'])) {
+			//$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("JobProfile").'</span> : ';
+			$return .= '<br><span class="info-box-label ">'.$arraydata['job'].'</span>';
 		}
 		if (property_exists($this, 'date_start') && property_exists($this, 'date_end')) {
 			$return .= '<br><div class ="margintoponly"><span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_start), 'day').'</span>';

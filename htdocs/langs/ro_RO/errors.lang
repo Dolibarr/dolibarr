@@ -318,8 +318,10 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Eroare: Adresa URL a i
 ErrorMenuExistValue=Există deja un Meniu cu acest titlu sau această adresă URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Fișierele SVG nu sunt permise ca legături externe fără opțiunea %s
 ErrorTypeMenu=Imposibil de adăugat un alt meniu pentru același modul în bara de navigare, nu poate fi gestionat încă 
-ErrorTableExist=Table <b>%s</b> already exist
-ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
+ErrorTableExist=Tabelul <b>%s</b> există deja
+ErrorDictionaryNotFound=Dicționarul <b>%s</b> nu a fost găsit
+ErrorFailedToCreateSymLinkToMedias=Eșec la crearea symlink-urilor %s care să direcționeze către %s
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
 WarningPasswordSetWithNoAccount= O parolă a fost trimisă către acest membru. Cu toate acestea, nu a fost creat nici un cont de utilizator. Astfel, această parolă este stocată, dar nu poate fi utilizată pentru autentificare. Poate fi utilizată de către un modul / interfată externă, dar dacă nu aveți nevoie să definiți un utilizator sau o parolă pentru un membru, puteți dezactiva opțiunea "Gestionați o conectare pentru fiecare membru" din modul de configurare membri. În cazul în care aveți nevoie să gestionați un utilizator, dar nu este nevoie de parolă, aveți posibilitatea să păstrați acest câmp gol pentru a evita acest avertisment. Notă: Adresa de e-mail poate fi utilizată ca utilizator la autentificare, în cazul în care membrul este legat de un utilizator. 
@@ -360,7 +362,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Validarea automată es
 WarningModuleNeedRefrech = Modulul <b>%s</b> a fost dezavtivat. Nu uita să-l activezi
 WarningPermissionAlreadyExist=Permisiuni existente pentru acest obiect
 WarningGoOnAccountancySetupToAddAccounts=Dacă această listă este goală, accesează meniul %s - %s - %s pentru a încărca sau crea conturi pentru planul de conturi.
-WarningCorrectedInvoiceNotFound=Corrected invoice not found
+WarningCorrectedInvoiceNotFound=Factura de corecție nu a fost găsită
 
 SwissQrOnlyVIR = Factura SwissQR poate fi adăugată numai pe facturile setate să fie plătite cu plăți prin transfer de credit. 
 SwissQrCreditorAddressInvalid = Adresa creditorului este invalidă (este setat codul poștal și județul? (%s)

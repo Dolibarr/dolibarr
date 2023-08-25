@@ -233,8 +233,8 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
-	'f.module_source'=>array('label'=>"POSModule", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
-	'f.pos_source'=>array('label'=>"POSTerminal", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
+	'f.module_source'=>array('label'=>"POSModule", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>"(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position'=>90),
+	'f.pos_source'=>array('label'=>"POSTerminal", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>"(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position'=>91),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
 	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
@@ -566,6 +566,8 @@ $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $companyparent = new Societe($db);
 $company_url_list = array();
+
+$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : '');
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -1229,7 +1231,7 @@ if ($resql) {
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-	print_barre_liste($langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendBillRef";
 	$modelmail = "facture_send";
