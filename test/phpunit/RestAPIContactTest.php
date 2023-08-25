@@ -123,24 +123,26 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$this->api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
+		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
 
 		$login='admin';
-		$password='adminadmin';
+		$password='admin';
 		$url=$this->api_url.'/login?login='.$login.'&password='.$password;
-		// Call the API login method to save api_key for this test class
+		// Call the API login method to save api_key for this test class.
+		// At first call, if token is not defined a random value is generated and returned.
 		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 		print __METHOD__." result = ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
-		$object=json_decode($result['content'], true);
+		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
+
 		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertNotEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
 		$this->assertEquals('200', $object['success']['code']);
 
 		$this->api_key = $object['success']['token'];
-		print __METHOD__." api_key: $this->api_key \n";
 
-		print __METHOD__."\n";
+		print __METHOD__." api_key: $this->api_key \n";
 	}
 
 	/**
@@ -155,32 +157,32 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testRestGetUser
+	 * testRestGetContact
 	 *
 	 * @return int
 	 */
 	public function testRestGetContact()
 	{
 		global $conf,$user,$langs,$db;
-        //fetch Non-Existent contact
+		//fetch Non-Existent contact
 		$url = $this->api_url.'/contacts/123456789?api_key='.$this->api_key;
 		//$addheaders=array('Content-Type: application/json');
 
 		print __METHOD__." Request GET url=".$url."\n";
-		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-		//print __METHOD__." result for get on unexisting user: ".var_export($result, true)."\n";
+		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		print __METHOD__." result for get on unexisting contact: ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
 		$object=json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertEquals(404, $object['error']['code'], 'Error code is not 404');
 
-        //fetch an existent contact
+		//fetch an existent contact
 		$url = $this->api_url.'/contacts/1?api_key='.$this->api_key;
 
 		print __METHOD__." Request GET url=".$url."\n";
 		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-		print __METHOD__." result for get on an existing user: ".var_export($result, true)."\n";
+		print __METHOD__." result for get on an existing contact: ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
 		$object=json_decode($result['content'], true);
@@ -188,13 +190,21 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(1, $object['statut']);
 	}
 
+	/**
+	 * testRestCreateContact
+	 *
+	 * @return int
+	 *
+	 * @depends testRestGetContact
+	 * The depends says test is run only if previous is ok
+	 */
 	public function testRestCreateContact()
 	{
 		global $conf,$user,$langs,$db;
 		// attempt to create without mandatory fields
 		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
 		$addheaders=array('Content-Type: application/json');
- 
+
 		$bodyobj= array(
 			"firstname" => "firstname"
 		);
@@ -206,9 +216,11 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		//print __METHOD__." Result for creating incomplete contact".var_export($result, true)."\n";
 		//print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
-		$object=json_decode($result['content'], true);
+		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 		$this->assertNotNull($object, "Parsing of json result must no be null");
 		$this->assertEquals(400, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+
+		$idofcontactcreated = (int) $object;
 
 		// create regular contact
 		unset($result);
@@ -217,50 +229,63 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 			"firstname" => "testRestContact" . mt_rand(),
 			"lastname" => "testRestContact",
 		);
-		
+
 		$body = json_encode($bodyobj);
-        
+
 		$result = getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
 
 		$this->assertEquals($result['curl_error_no'], '');
 
-		$resid = json_decode($result['content'], true);
-		$this->assertNotNull($resid, "Parsing of json result must not be null");
-		$this->assertGreaterThan(0, $resid, $object['error']['code'].' '.$object['error']['message']);
+		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
+		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertNotEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+		$this->assertGreaterThan(0, $object, $object['error']['code'].' '.$object['error']['message']);
+
+		return $idofcontactcreated;
+	}
+
+	/**
+	 * testRestUpdateContact
+	 *
+	 * @param	int		$objid		Id of object created at previous test
+	 * @return 	int
+	 *
+	 * @depends testRestCreateContact
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testRestUpdateContact($objid)
+	{
+		global $conf,$user,$langs,$db;
+		// attempt to create without mandatory fields
+		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
+		$addheaders=array('Content-Type: application/json');
 
 		//update the contact
 
 		// Update the firstname of the contact
-        /*
 		$updateBody = array(
 			"firstname" => "UpdatedFirstName",
 		);
-        
+
 		$updateRequestBody = json_encode($updateBody);
-		$updateUrl = $this->api_url . '/contacts/' . $resid. '?api_key=' . $this->api_key;
-		$updateResult = getURLContent($updateUrl, 'PUT', $updateRequestBody, 1, $addheaders, array('http', 'https'), 2);
+		$updateUrl = $this->api_url . '/contacts/' . $objid. '?api_key=' . $this->api_key;
+		$updateResult = getURLContent($updateUrl, 'PUTALREADYFORMATED', $updateRequestBody, 1, $addheaders, array('http', 'https'), 2);
 		$this->assertEquals($updateResult['curl_error_no'], '');
 
 		$updateResponse = json_decode($updateResult['content'], true);
-        
+
 		$this->assertNotNull($updateResponse, "Parsing of JSON result must not be null");
-        print_r($updateResponse);
-		
-        // Check if the updated fields match the changes you made
-        if ($updateResponse['firstname'] === $updateBody['firstname']) {
-            // Update was successful
-            $this->assertTrue(true);
-        } else {
-            // Update might have failed
-            $this->assertTrue(false, "Update might have failed");
-        }
+		print_r($updateResponse);
+
+		// Check if the updated fields match the changes you made
+		$this->assertTrue($updateResponse['firstname'] === $updateBody['firstname'], 'Update might have failed');
 
 		// Deleting the Contact
-
-		$deleteUrl = $this->api_url . '/contacts/' . $resid . '?api_key=' . $this->api_key;
+		/*
+		$deleteUrl = $this->api_url . '/contacts/' . $objid . '?api_key=' . $this->api_key;
 
 		$deleteResult = getURLContent($deleteUrl, 'DELETE', '', 1, $addheaders, array('http', 'https'), 2);
-		
+
 		$this->assertEquals($deleteResult['curl_error_no'], '');
 
 		$deleteResponse = json_decode($deleteResult['content'], true);
@@ -269,14 +294,15 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 
 
 
-    // Update Non-Existent Contact
-    
+		// Update Non-Existent Contact
 
 
-    // Delete Non-Existent Contact
+
+		// Delete Non-Existent Contact
 
 
 		*/
+
+		return 0;
 	}
-    
 }
