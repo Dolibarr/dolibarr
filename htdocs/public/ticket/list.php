@@ -234,6 +234,8 @@ if ($action == "view_ticketlist") {
 			$param .= '&entity='.((int) $entity);
 		}
 
+		$param .= '&token='.newToken();
+
 		// Definition of fields for list
 		$arrayfields = array(
 			't.datec' => array('label' => $langs->trans("Date"), 'checked' => 1),
@@ -419,6 +421,7 @@ if ($action == "view_ticketlist") {
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -500,7 +503,7 @@ if ($action == "view_ticketlist") {
 				$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
-				// Status
+				// Status ticket
 				if (!empty($arrayfields['t.fk_statut']['checked'])) {
 					print '<td class="liste_titre">';
 					$selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
@@ -763,8 +766,10 @@ if ($action == "view_ticketlist") {
 	print "</div>";
 }
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

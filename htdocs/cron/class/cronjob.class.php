@@ -370,8 +370,8 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->unitfrequency) ? 'NULL' : "'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql .= " ".(!isset($this->frequency) ? '0' : ((int) $this->frequency)).",";
 		$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
-		$sql .= " ".((int) $user->id).",";
-		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
+		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
 		$sql .= " ".(!isset($this->nbrun) ? '0' : ((int) $this->nbrun)).",";
 		$sql .= " ".(empty($this->maxrun) ? '0' : ((int) $this->maxrun)).",";
@@ -900,6 +900,11 @@ class Cronjob extends CommonObject
 		// Clear fields
 		$object->status = self::STATUS_DISABLED;
 		$object->label = $langs->trans("CopyOf").' '.$langs->trans($object->label);
+		$object->datelastrun = null;
+		$object->lastresult = '';
+		$object->datelastresult = null;
+		$object->lastoutput = '';
+		$object->nbrun = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -908,6 +913,7 @@ class Cronjob extends CommonObject
 		// Other options
 		if ($result < 0) {
 			$this->error = $object->error;
+			$this->errors = $object->errors;
 			$error++;
 		}
 
@@ -1171,7 +1177,7 @@ class Cronjob extends CommonObject
 			return -1;
 		} else {
 			if (empty($user->id)) {
-				$this->error = " User user login:".$userlogin." do not exists";
+				$this->error = "User login: ".$userlogin." does not exist";
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				$conf->setEntityValues($this->db, $savcurrententity);
 				return -1;
@@ -1264,7 +1270,7 @@ class Cronjob extends CommonObject
 			}
 
 			if (!$error) {
-				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); !!! Log for job may be into a different log file...", LOG_DEBUG);
 
 				// Create Object for the called module
 				$nameofclass = $this->objectname;

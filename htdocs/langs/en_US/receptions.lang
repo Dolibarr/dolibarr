@@ -54,4 +54,4 @@ ReceptionClassifyClosedInDolibarr=Reception %s classified Closed
 ReceptionUnClassifyCloseddInDolibarr=Reception %s re-open
 RestoreWithCurrentQtySaved=Fill quantities with latest saved values
 ReceptionUpdated=Reception sucessfully updated
-DispatchCard=Reception distribution
+ReceptionDistribution=Reception distribution

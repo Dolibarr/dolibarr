@@ -31,7 +31,7 @@ create table llx_projet_task
   datev					datetime,						-- date validation
   label					varchar(255) NOT NULL,
   description			text,
-  duration_effective	real DEFAULT 0,
+  duration_effective	real DEFAULT 0,					-- total of time spent on the task. A denormalized value of total of lines into llx_element_time
   planned_workload		real DEFAULT 0,
   progress				integer DEFAULT 0,				-- percentage increase
   priority				integer DEFAULT 0,				-- priority

@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Charlene Benke     		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,10 +97,10 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // fetch optionals attributes lines and labels
 $extralabelslines = $extrafields->fetch_name_optionals_label($object->table_element_line);
 
-$permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->contrat->creer; // Used by the include of actions_dellink.inc.php
-$permissiontodelete = ($user->rights->contrat->creer && $object->statut == $object::STATUS_DRAFT) || $user->rights->contrat->supprimer;
-$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('contrat', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('contrat', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->statut == $object::STATUS_DRAFT) || $user->hasRight('contrat', 'supprimer');
+$permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontoedit = $permissiontoadd;
 $error = 0;
 
@@ -332,7 +333,7 @@ if (empty($reshook)) {
 									} else {
 										$label = $lines[$i]->product_label;
 									}
-									$desc = ($lines[$i]->desc && $lines[$i]->desc != $lines[$i]->libelle) ?dol_htmlentitiesbr($lines[$i]->desc) : '';
+									$desc = ($lines[$i]->desc && $lines[$i]->desc != $lines[$i]->label) ? dol_htmlentitiesbr($lines[$i]->desc) : '';
 								} else {
 									$desc = dol_htmlentitiesbr($lines[$i]->desc);
 								}
@@ -441,6 +442,11 @@ if (empty($reshook)) {
 			$idprod = 0;
 		} else {
 			$idprod = GETPOST('idprod', 'int');
+
+			if (!empty($conf->global->MAIN_DISABLE_FREE_LINES) && $idprod <= 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
+				$error++;
+			}
 		}
 
 		$tva_tx = GETPOST('tva_tx', 'alpha');
@@ -507,7 +513,7 @@ if (empty($reshook)) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-					$prodcustprice = new Productcustomerprice($db);
+					$prodcustprice = new ProductCustomerPrice($db);
 
 					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
 
@@ -860,7 +866,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer) {
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('contrat', 'supprimer')) {
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: list.php?restore_lastsearch_values=1");
@@ -988,7 +994,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->contrat->multidir_output[$object->entity];
+	$upload_dir = $conf->contrat->multidir_output[!empty($object->entity)?$object->entity:$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
@@ -1058,10 +1064,14 @@ if (empty($reshook)) {
  * View
  */
 
-
 $help_url = 'EN:Module_Contracts|FR:Module_Contrat';
 
-llxHeader('', $langs->trans("Contract"), $help_url);
+$title = $object->ref." - ".$langs->trans('Contract');
+if ($action == 'create') {
+	$title = $langs->trans("NewContract");
+}
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1081,7 +1091,8 @@ if ($result > 0) {
 
 // Create
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans('AddContract'), '', 'contract');
+	$objectsrc = null;
+	print load_fiche_titre($langs->trans('NewContract'), '', 'contract');
 
 	$soc = new Societe($db);
 	if ($socid > 0) {
@@ -1358,7 +1369,7 @@ if ($action == 'create') {
 
 
 		// Contract
-		if (!empty($object->brouillon) && $user->hasRight('contrat', 'creer')) {
+		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('contrat', 'creer')) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setremise">';
@@ -1456,7 +1467,7 @@ if ($action == 'create') {
 
 		print '</div>';
 
-		if (!empty($object->brouillon) && $user->hasRight('contrat', 'creer')) {
+		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('contrat', 'creer')) {
 			print '</form>';
 		}
 
@@ -1509,7 +1520,7 @@ if ($action == 'create') {
 
 			// Area with common detail of line
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
+			print '<table class="notopnoleftnoright allwidth tableforservicepart1 centpercent">';
 
 			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.price_ht, cd.qty,";
 			$sql .= " cd.tva_tx, cd.vat_src_code, cd.remise_percent, cd.info_bits, cd.subprice, cd.multicurrency_subprice,";
@@ -1529,6 +1540,7 @@ if ($action == 'create') {
 
 				$objp = $db->fetch_object($result);
 
+				// Line title
 				print '<tr class="liste_titre'.($cursorline ? ' liste_titre_add' : '').'">';
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 				print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
@@ -1573,7 +1585,9 @@ if ($action == 'create') {
 					if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $objp->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') {
 						$moreparam = 'style="display: none;"';
 					}
+
 					print '<tr class="tdtop oddeven" '.$moreparam.'>';
+
 					// Label
 					if ($objp->fk_product > 0) {
 						$productstatic->id = $objp->fk_product;
@@ -1599,7 +1613,7 @@ if ($action == 'create') {
 							$description = ''; // Already added into main visible desc
 						}
 
-						echo $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+						print $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 3, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 
 						print '</td>';
 					} else {
@@ -1655,16 +1669,16 @@ if ($action == 'create') {
 
 					print "</tr>\n";
 
+					$colspan = 6;
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+						$colspan++;
+					}
+					if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+						$colspan++;
+					}
+
 					// Dates of service planed and real
 					if ($objp->subprice >= 0) {
-						$colspan = 6;
-
-						if (isModEnabled('margin') && getDolGlobalString('PRODUCT_USE_UNITS')) {
-							$colspan = 8;
-						} elseif (isModEnabled('margin') || getDolGlobalString('PRODUCT_USE_UNITS')) {
-							$colspan = 7;
-						}
-
 						print '<tr class="oddeven" '.$moreparam.'>';
 						print '<td colspan="'.$colspan.'">';
 
@@ -1821,8 +1835,17 @@ if ($action == 'create') {
 				if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $object->lines[$cursorline - 1]->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') {
 					$moreparam = 'style="display: none;"';
 				}
+
+				$colspan = 6;
+				if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+					$colspan++;
+				}
+				if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+					$colspan++;
+				}
+
 				print '<tr class="oddeven" '.$moreparam.'>';
-				print '<td class="tdhrthin" colspan="'.(isModEnabled('margin') ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
+				print '<td class="tdhrthin" colspan="'.$colspan.'"><hr class="opacitymedium tdhrthin"></td>';
 				print "</tr>\n";
 			}
 
@@ -1862,7 +1885,7 @@ if ($action == 'create') {
 
 			// Area with status and activation info of line
 			if ($object->statut > 0) {
-				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
+				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').' centpercent">';
 
 				print '<tr class="oddeven" '.$moreparam.'>';
 				print '<td><span class="valignmiddle hideonsmartphone">'.$langs->trans("ServiceStatus").':</span> '.$object->lines[$cursorline - 1]->getLibStatut(4).'</td>';
@@ -1933,7 +1956,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="ligne" value="'.GETPOST('ligne', 'int').'">';
 				print '<input type="hidden" name="confirm" value="yes">';
 
-				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
+				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').' centpercent">';
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_start;
@@ -1990,7 +2013,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="action" value="confirm_closeline">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
+				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').' centpercent">';
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_start_real;
@@ -2107,7 +2130,7 @@ if ($action == 'create') {
 
 				// Send
 				if (empty($user->socid)) {
-					if ($object->statut == 1) {
+					if ($object->status == $object::STATUS_VALIDATED) {
 						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->contrat->creer)) {
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
@@ -2116,7 +2139,7 @@ if ($action == 'create') {
 					}
 				}
 
-				if ($object->statut == 0 && $nbofservices) {
+				if ($object->status == $object::STATUS_DRAFT && $nbofservices) {
 					if ($user->rights->contrat->creer) {
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
 					} else {
@@ -2124,7 +2147,7 @@ if ($action == 'create') {
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', '#', '', false, $params);
 					}
 				}
-				if ($object->statut == 1) {
+				if ($object->status == $object::STATUS_VALIDATED) {
 					if ($user->rights->contrat->creer) {
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 					} else {
@@ -2133,24 +2156,26 @@ if ($action == 'create') {
 					}
 				}
 
-				if (isModEnabled('commande') && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices) {
-					$langs->load("orders");
-					if ($user->hasRight('commande', 'creer')) {
-						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
-					} else {
-						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', '#', '', false, $params);
-					}
+				// Create ... buttons
+				$arrayofcreatebutton = array();
+				if (isModEnabled('commande') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
+					$arrayofcreatebutton[] = array(
+						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('CreateOrder'),
+						'lang' => 'orders',
+						'perm' => $user->hasRight('commande', 'creer')
+					);
 				}
-
-				if (isModEnabled('facture') && $object->statut > 0) {
-					$langs->load("bills");
-					if ($user->rights->facture->creer) {
-						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
-					} else {
-						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', '#', '', false, $params);
-					}
+				if (isModEnabled('facture') && $object->status > 0) {
+					$arrayofcreatebutton[] = array(
+						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('CreateBill'),
+						'lang' => 'orders',
+						'perm' => $user->hasRight('facture', 'creer')
+					);
+				}
+				if (count($arrayofcreatebutton)) {
+					print dolGetButtonAction($langs->trans("Create"), '', 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
@@ -2205,8 +2230,8 @@ if ($action == 'create') {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->contrat->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->contrat->lire;
-			$delallowed = $user->rights->contrat->creer;
+			$genallowed = $user->hasRight('contrat', 'lire');
+			$delallowed = $user->hasRight('contrat', 'creer');
 
 
 			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);

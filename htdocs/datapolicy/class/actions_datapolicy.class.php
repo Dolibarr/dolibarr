@@ -22,10 +22,12 @@
  * \brief   Example hook overload.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
+
 /**
  * Class ActionsDatapolicy
  */
-class ActionsDatapolicy
+class ActionsDatapolicy extends CommonHookActions
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -116,7 +118,7 @@ class ActionsDatapolicy
 				$object->state_id = '';
 				$object->socialnetworks = '';
 				$object->country_id = '';
-				$object->note_private = $object->note_private.'<br>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
+				$object->note_private = dol_concatdesc($object->note_private, $langs->trans('ANONYMISER_AT', dol_print_date(dol_now())));
 
 				if ($object->update($object->id, $user, 0)) {
 					// On supprime les contacts associé
@@ -157,7 +159,7 @@ class ActionsDatapolicy
 	}
 
 	/**
-	 * Overloading the doActions function : replacing the parent's function with the one below
+	 * Overloading the doMassActions function : replacing the parent's function with the one below
 	 *
 	 * @param   array           $parameters     Hook metadatas (context, etc...)
 	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
@@ -366,7 +368,7 @@ class ActionsDatapolicy
 			}
 		}
 
-		$this->resprint = $jsscript;
+		$this->resprints = $jsscript;
 
 		return 0;
 	}

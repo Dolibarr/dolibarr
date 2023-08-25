@@ -16,10 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
- require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 
 /**
  * API class for projects
@@ -29,7 +30,6 @@
  */
 class Tasks extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -372,7 +372,7 @@ class Tasks extends DolibarrApi
 	*/
 
 	// /**
-	//  * Update a task to given project
+	//  * Update a task of a given project
 	//  *
 	//  * @param int   $id             Id of project to update
 	//  * @param int   $taskid         Id of task to update
@@ -570,7 +570,7 @@ class Tasks extends DolibarrApi
 	 * { "date": "2016-12-31 23:15:00", "duration": 1800, "user_id": 1, "note": "My time test" }
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
@@ -619,7 +619,7 @@ class Tasks extends DolibarrApi
 	 * Delete time spent for a task of a project.
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 *
 	 * @url DELETE    {id}/timespent/{timespent_id}
 	 *
@@ -653,7 +653,7 @@ class Tasks extends DolibarrApi
 	 * Loads the selected task & timespent records.
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 *
 	 * @return void
 	 */

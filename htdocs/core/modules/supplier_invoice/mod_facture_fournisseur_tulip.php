@@ -63,11 +63,12 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	/**
 	 *  Returns the description of the model numbering
 	 *
-	 * 	@return     string      Description Text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("bills", "admin"));

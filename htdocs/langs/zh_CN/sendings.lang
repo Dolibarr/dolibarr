@@ -6,11 +6,11 @@ AllSendings=全部运输
 Shipment=运输
 Shipments=运输
 ShowSending=显示运输
-Receivings=送货单
+Receivings=交货回单
 SendingsArea=出货区
 ListOfSendings=运输列表
 SendingMethod=运输方式
-LastSendings=最近的 %s 次出货
+LastSendings=最近新增的 %s 份发运单
 StatisticsOfSendings=统计出货量
 NbOfSendings=出货数量
 NumberOfShipmentsByMonth=每月的出货数量
@@ -27,7 +27,7 @@ QtyInOtherShipments=数量（其他运输）
 KeepToShip=继续发货
 KeepToShipShort=保留
 OtherSendingsForSameOrder=这个订单的其他运输
-SendingsAndReceivingForSameOrder=此订单的发货和收货
+SendingsAndReceivingForSameOrder=此订单的发运和收货
 SendingsToValidate=运输验证
 StatusSendingCanceled=取消
 StatusSendingCanceledShort=已取消
@@ -45,10 +45,10 @@ DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=警告，没有产品等待装运。
 StatsOnShipmentsOnlyValidated=统计数据只针对已验证的发货。使用的日期是确认发货的日期（计划交货日期并不总是知道）
 DateDeliveryPlanned=计划运输日期
-RefDeliveryReceipt=参考送货收据
-StatusReceipt=状态交货收据
+RefDeliveryReceipt=交货回单编号
+StatusReceipt=交货回单状态
 DateReceived=交货日期收到
-ClassifyReception=分类接收
+ClassifyReception=归类到已收货
 SendShippingByEMail=通过电子邮件发送
 SendShippingRef=提交运输 %s
 ActionsOnShipping=运输活动
@@ -59,18 +59,23 @@ ProductQtyInCustomersOrdersRunning=开放销售订单的产品数量
 ProductQtyInSuppliersOrdersRunning=开放采购订单的产品数量
 ProductQtyInShipmentAlreadySent=开放销售订单的产品数量已发送
 ProductQtyInSuppliersShipmentAlreadyRecevied=开放采购订单的产品数量已收到
-NoProductToShipFoundIntoStock=仓库<b>%s</b>中找不到要运输的产品，更正库存或返回以选择另一个仓库。
+NoProductToShipFoundIntoStock=仓库 <b> %s </b> 中找不到要发货的产品。纠正库存或返回选择另一个仓库。
 WeightVolShort=重量/体积
 ValidateOrderFirstBeforeShipment=您必须先验证订单才能发货。
 
 # Sending methods
 # ModelDocument
-DocumentModelTyphon=更多的送货单(logo. ..完整的文档模板)
-DocumentModelStorm=更完整的交货凭证和额外字段兼容性的文档模型（标识...）
+DocumentModelTyphon=更完整的交货回单文档模型（logo...）
+DocumentModelStorm=更完整的交货回单和自定义属性兼容性的文档模型（logo...）
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义的常数EXPEDITION_ADDON_NUMBER
 SumOfProductVolumes=产品总数
 SumOfProductWeights=产品总重
 
 # warehouse details
-DetailWarehouseNumber= 仓库明细
+DetailWarehouseNumber= 仓库详情
 DetailWarehouseFormat= W：%s(数量：%d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=%s 行未调度，因为发现了太多组合仓库、产品、批次代码 (%s)。
+ErrorNoCombinationBatchcode=%s 行未调度，因为未找到组合仓库、产品、批次代码。

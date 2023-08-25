@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       booking_card.php
- *		\ingroup    bookcal
- *		\brief      Page to create/edit/view booking
+ *   \file       htdocs/bookcal/booking_card.php
+ *   \ingroup    bookcal
+ *   \brief      Page to create/edit/view booking
  */
 
 // Load Dolibarr environment
@@ -342,7 +342,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled)) {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {

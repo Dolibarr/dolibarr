@@ -119,6 +119,12 @@ if ($id) {
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
+if (!$user->hasRight('adherent', 'creer') && $action == 'edit') {
+	accessforbidden('Not enough permission');
+}
+
+$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
+
 
 /*
  * 	Actions
@@ -291,7 +297,9 @@ if (empty($reshook)) {
 			$object->lastname    = trim(GETPOST("lastname", 'alphanohtml'));
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
 			$object->login       = trim(GETPOST("login", 'alphanohtml'));
-			$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
+			if (GETPOSTISSET('pass')) {
+				$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
+			}
 
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
 			$object->company     = trim(GETPOST("societe", 'alphanohtml'));
@@ -316,7 +324,7 @@ if (empty($reshook)) {
 			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid = GETPOST("typeid", 'int');
-			//$object->note = trim(GETPOST("comment","alpha"));
+			//$object->note = trim(GETPOST("comment", "restricthtml"));
 			$object->morphy = GETPOST("morphy", 'alpha');
 
 			if (GETPOST('deletephoto', 'alpha')) {
@@ -327,6 +335,7 @@ if (empty($reshook)) {
 
 			// Get status and public property
 			$object->statut = GETPOST("statut", 'alpha');
+			$object->status = GETPOST("statut", 'alpha');
 			$object->public = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
@@ -344,10 +353,19 @@ if (empty($reshook)) {
 			}
 
 			// Check if we need to also synchronize password information
-			$nosyncuserpass = 0;
-			if ($object->user_id) {	// If linked to a user
-				if ($user->id != $object->user_id && !$user->hasRight('user', 'user', 'password')) {
-					$nosyncuserpass = 1; // Disable synchronizing
+			$nosyncuserpass = 1;	// no by default
+			if (GETPOSTISSET('pass')) {
+				if ($object->user_id) {	// If member is linked to a user
+					$nosyncuserpass = 0;	// We may try to sync password
+					if ($user->id == $object->user_id) {
+						if (!$user->hasRight('user', 'self', 'password')) {
+							$nosyncuserpass = 1; // Disable synchronizing
+						}
+					} else {
+						if (!$user->hasRight('user', 'user', 'password')) {
+							$nosyncuserpass = 1; // Disable synchronizing
+						}
+					}
 				}
 			}
 
@@ -566,7 +584,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			// Email about right and login does not exist
+			// Create the member
 			$result = $object->create($user);
 			if ($result > 0) {
 				// Foundation categories
@@ -574,13 +592,15 @@ if (empty($reshook)) {
 				$object->setCategories($memcats);
 
 				$db->commit();
+
 				$rowid = $object->id;
 				$id = $object->id;
 
 				$backtopage = preg_replace('/__ID__/', $id, $backtopage);
 			} else {
-				$error++;
 				$db->rollback();
+
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 
@@ -994,6 +1014,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberType").'</td><td>';
 		$listetype = $adht->liste_array(1);
+		print img_picto('', $adht->picto, 'class="pictofixedwidth"');
 		if (count($listetype)) {
 			print $form->selectarray("typeid", $listetype, (GETPOST('typeid', 'int') ? GETPOST('typeid', 'int') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
 		} else {
@@ -1105,7 +1126,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>\n";
 
 		// Public profil
-		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+		print "<tr><td>".$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist)."</td><td>\n";
 		print $form->selectyesno("public", $object->public, 1);
 		print "</td></tr>\n";
 
@@ -1212,7 +1233,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : $object->pass).'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : '').'"></td></tr>';
 		}
 
 		// Type
@@ -1336,7 +1357,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (!$value['active']) {
 					break;
 				}
-				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'"></td></tr>';
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (isset($object->socialnetworks[$key])? $object->socialnetworks[$key] : null)).'"></td></tr>';
 			}
 		}
 
@@ -1354,7 +1375,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Public profil
-		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+		print "<tr><td>".$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist)."</td><td>\n";
 		print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1);
 		print "</td></tr>\n";
 
@@ -1809,7 +1830,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Public
-		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

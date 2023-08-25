@@ -36,9 +36,24 @@
 class CSMSFile
 {
 	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var string[] Array of Error code (or message)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string end of line character
+	 */
+	public $eol;
 
 	public $addr_from;
 	public $addr_to;
@@ -82,7 +97,7 @@ class CSMSFile
 		// If ending method not defined
 		if (empty($conf->global->MAIN_SMS_SENDMODE)) {
 			$this->error = 'No SMS Engine defined';
-			return -1;
+			throw new Exception('No SMS Engine defined');
 		}
 
 		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".$conf->global->MAIN_SMS_SENDMODE." charset=".$conf->file->character_set_client." from=".$from.", to=".$to.", msg length=".strlen($msg), LOG_DEBUG);
@@ -124,8 +139,9 @@ class CSMSFile
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_SMS)) {
 			// Action according to choosed sending method
-			if ($conf->global->MAIN_SMS_SENDMODE == 'ovh') {    // Backward compatibility    @deprecated
+			if (getDolGlobalString('MAIN_SMS_SENDMODE') == 'ovh') {    // Backward compatibility    @deprecated
 				dol_include_once('/ovh/class/ovhsms.class.php');
+				/** @phpstan-ignore-next-line */
 				$sms = new OvhSms($this->db);
 				$sms->expe = $this->addr_from;
 				$sms->dest = $this->addr_to;

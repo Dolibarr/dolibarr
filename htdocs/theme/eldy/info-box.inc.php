@@ -95,8 +95,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
-.info-box-sm .info-box-icon {
-	height: 96px;		/* must match height of info-box-sm .info-box-content */
+.info-box-sm .info-box-icon, .info-box-sm .info-box-img {
+	height: 98px !important;		/* must match height of info-box-sm .info-box-content */
 	width: 78px;
 	font-size: 25px;
 	line-height: 92px;
@@ -239,7 +239,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 .info-box-sm .info-box-content {
 	margin-left: 80px;
-	height: 86px;   /* 96 - margins of .info-box-sm .info-box-content */
+	height: 88px;   /* 96 - margins of .info-box-sm .info-box-content */
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
@@ -570,5 +570,4 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.info-box {
 		border: 1px solid #e0e0e0;
 	}
-}
 }

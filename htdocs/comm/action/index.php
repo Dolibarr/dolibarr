@@ -91,13 +91,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (empty($user->rights->agenda->myactions->read)) {
+if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
-if (empty($user->rights->agenda->allactions->read)) {
+if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
-if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // If no permission to see all, we show only affected to me
+if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -584,8 +584,16 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	// Local calendar
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
 
-	// Holiday calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"'.($check_holiday ? ' checked' : '').'><label for="check_holiday"> <span class="check_holiday_text">'.$langs->trans("Holidays").'</span></label> &nbsp; </div>';
+	if ($user->hasRight("holiday", "read")) {
+		// Holiday calendar
+		$s .= '
+            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday
+					? ' checked' : '') . '>
+                <label for="check_holiday">
+                    <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
+                </label> &nbsp;
+            </div>';
+	}
 
 	// External calendars
 	if (is_array($showextcals) && count($showextcals) > 0) {
@@ -1003,80 +1011,82 @@ if ($showbirthday) {
 	}
 }
 
-// LEAVE-HOLIDAY CALENDAR
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
-$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE u.rowid = x.fk_user";
-$sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
-$sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+if ($user->hasRight("holiday", "read")) {
+	// LEAVE-HOLIDAY CALENDAR
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+	$sql .= " WHERE u.rowid = x.fk_user";
+	$sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
+	$sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
 
-if ($mode == 'show_day') {
-	// Request only leaves for the current selected day
-	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
-} elseif ($mode == 'show_week') {
-	// Restrict on current month (we get more, but we will filter later)
-	$sql .= " AND date_debut < '".$db->idate(dol_get_last_day($year, $month))."'";
-	$sql .= " AND date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
-} elseif ($mode == 'show_month') {
-	// Restrict on current month
-	$sql .= " AND date_debut <= '".$db->idate(dol_get_last_day($year, $month))."'";
-	$sql .= " AND date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
-}
+	if ($mode == 'show_day') {
+		// Request only leaves for the current selected day
+		$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
+	} elseif ($mode == 'show_week') {
+		// Restrict on current month (we get more, but we will filter later)
+		$sql .= " AND date_debut < '".$db->idate(dol_get_last_day($year, $month))."'";
+		$sql .= " AND date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
+	} elseif ($mode == 'show_month') {
+		// Restrict on current month
+		$sql .= " AND date_debut <= '".$db->idate(dol_get_last_day($year, $month))."'";
+		$sql .= " AND date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
+	}
 
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i   = 0;
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i   = 0;
 
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
 
-		$event = new ActionComm($db);
+			$event = new ActionComm($db);
 
-		// Need the id of the leave object for link to it
-		$event->id                      = $obj->rowid;
-		$event->ref                     = $event->id;
+			// Need the id of the leave object for link to it
+			$event->id                      = $obj->rowid;
+			$event->ref                     = $event->id;
 
-		$event->type_code = 'HOLIDAY';
-		$event->type_label = '';
-		$event->type_color = '';
-		$event->type = 'holiday';
-		$event->type_picto = 'holiday';
+			$event->type_code = 'HOLIDAY';
+			$event->type_label = '';
+			$event->type_color = '';
+			$event->type = 'holiday';
+			$event->type_picto = 'holiday';
 
-		$event->datep                   = $db->jdate($obj->date_start) + (empty($halfday) || $halfday == 1 ? 0 : 12 * 60 * 60 - 1);
-		$event->datef                   = $db->jdate($obj->date_end) + (empty($halfday) || $halfday == -1 ? 24 : 12) * 60 * 60 - 1;
-		$event->date_start_in_calendar  = $event->datep;
-		$event->date_end_in_calendar    = $event->datef;
+			$event->datep                   = $db->jdate($obj->date_start) + (empty($halfday) || $halfday == 1 ? 0 : 12 * 60 * 60 - 1);
+			$event->datef                   = $db->jdate($obj->date_end) + (empty($halfday) || $halfday == -1 ? 24 : 12) * 60 * 60 - 1;
+			$event->date_start_in_calendar  = $event->datep;
+			$event->date_end_in_calendar    = $event->datef;
 
-		if ($obj->status == 3) {
-			// Show no symbol for leave with state "leave approved"
-			$event->percentage = -1;
-		} elseif ($obj->status == 2) {
-			// Show TO-DO symbol for leave with state "leave wait for approval"
-			$event->percentage = 0;
+			if ($obj->status == 3) {
+				// Show no symbol for leave with state "leave approved"
+				$event->percentage = -1;
+			} elseif ($obj->status == 2) {
+				// Show TO-DO symbol for leave with state "leave wait for approval"
+				$event->percentage = 0;
+			}
+
+			if ($obj->halfday == 1) {
+				$event->label = $obj->lastname.' ('.$langs->trans("Morning").')';
+			} elseif ($obj->halfday == -1) {
+				$event->label = $obj->lastname.' ('.$langs->trans("Afternoon").')';
+			} else {
+				$event->label = $obj->lastname;
+			}
+
+			$daycursor = $event->date_start_in_calendar;
+			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+
+			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+			do {
+				$eventarray[$daykey][] = $event;
+
+				$daykey += 60 * 60 * 24;
+			} while ($daykey <= $event->date_end_in_calendar);
+
+			$i++;
 		}
-
-		if ($obj->halfday == 1) {
-			$event->label = $obj->lastname.' ('.$langs->trans("Morning").')';
-		} elseif ($obj->halfday == -1) {
-			$event->label = $obj->lastname.' ('.$langs->trans("Afternoon").')';
-		} else {
-			$event->label = $obj->lastname;
-		}
-
-		$daycursor = $event->date_start_in_calendar;
-		$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-		$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-		$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
-
-		$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
-		do {
-			$eventarray[$daykey][] = $event;
-
-			$daykey += 60 * 60 * 24;
-		} while ($daykey <= $event->date_end_in_calendar);
-
-		$i++;
 	}
 }
 
@@ -1530,9 +1540,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
 	$newparam .= '&viewweek=1';
 
-	print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-	print '</div></div>';
+	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
@@ -1597,9 +1607,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$timestamp = dol_mktime(12, 0, 0, $month, $day, $year);
 	$arraytimestamp = dol_getdate($timestamp);
 
-	print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-	print '</div></div>';
+	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
 	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month noborderbottom" style="margin-bottom: 5px !important;">';
@@ -1662,7 +1672,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		print '</div>';
 	} else {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0);
 
@@ -1865,7 +1875,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						}
 					} else {
 						if ($user->hasRight('agenda', 'allactions', 'create') ||
-							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
+							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
 								$cssclass .= " movable cursormove";
 						} else {
 							$cssclass .= " unmovable";

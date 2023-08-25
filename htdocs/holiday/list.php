@@ -511,7 +511,7 @@ if ($id > 0) {		// For user tab
 
 		print '<br>';
 
-		showMyBalance($object, $user_id);
+		print showMyBalance($object, $user_id);
 	}
 
 	print dol_get_fiche_end();
@@ -843,8 +843,8 @@ if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) 
 		$holidaystatic->id = $obj->rowid;
 		$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 		$holidaystatic->statut = $obj->status;
-		$holidaystatic->date_debut = $obj->date_debut;
-		$holidaystatic->date_fin = $obj->date_fin;
+		$holidaystatic->date_debut = $db->jdate($obj->date_debut);
+		$holidaystatic->date_fin = $db->jdate($obj->date_fin);
 
 		// User
 		$userstatic->id = $obj->fk_user;
@@ -877,7 +877,7 @@ if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) 
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="'.$savnbfield.'">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 
@@ -1109,9 +1109,9 @@ $db->close();
  */
 function showMyBalance($holiday, $user_id)
 {
-	global $conf, $langs;
+	global $langs;
 
-	$alltypeleaves = $holiday->getTypes(1, -1); // To have labels
+	//$alltypeleaves = $holiday->getTypes(1, -1); // To have labels
 
 	$out = '';
 	$nb_holiday = 0;
@@ -1121,6 +1121,7 @@ function showMyBalance($holiday, $user_id)
 		$nb_holiday += $nb_type;
 		$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 	}
-	print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
-	print $out;
+	$out = $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>'.$out;
+
+	return $out;
 }

@@ -297,7 +297,7 @@ if (empty($reshook)) {
 						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
 						$resultupdate = $inventoryline->update($user);
 					}
-				} else {
+				} elseif (GETPOSTISSET('id_' . $lineid)) {
 					// Delete record
 					$result = $inventoryline->fetch($lineid);
 					if ($result > 0) {
@@ -468,6 +468,17 @@ if ($action == 'confirm_cancel') {
 	$action = 'view';
 }
 
+if ($action == 'validate') {
+	$form = new Form($db);
+	$formquestion = '';
+	if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+		$formquestion = array(
+			array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10'),
+		);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $langs->trans('IncludeSubWarehouseExplanation'), 'confirm_validate', $formquestion, '', 1);
+	}
+}
+
 // Call Hook formConfirm
 $parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -493,7 +504,7 @@ $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $
 // Thirdparty
 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 // Project
-if (!empty($conf->project->enabled))
+if (isModEnabled('project'))
 {
 	$langs->load("projects");
 	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -573,7 +584,11 @@ if ($action != 'record') {
 	if (empty($reshook)) {
 		if ($object->status == Inventory::STATUS_DRAFT) {
 			if ($permissiontoadd) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
+				if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+				} else {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
 			}

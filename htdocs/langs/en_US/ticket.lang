@@ -67,7 +67,6 @@ ExportDataset_ticket_1=Tickets
 # Status
 Read=Read
 Assigned=Assigned
-InProgress=In progress
 NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Answered
@@ -127,7 +126,9 @@ TicketParams=Params
 TicketsShowModuleLogo=Display the logo of the module in the public interface
 TicketsShowModuleLogoHelp=Enable this option to hide the logo module in the pages of the public interface
 TicketsShowCompanyLogo=Display the logo of the company in the public interface
-TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
+TicketsShowCompanyFooter=Display the footer of the company in the public interface
+TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
 TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
 TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
@@ -200,7 +201,8 @@ TicketAssigned=Ticket is now assigned
 TicketChangeType=Change type
 TicketChangeCategory=Change analytic code
 TicketChangeSeverity=Change severity
-TicketAddMessage=Add private message
+TicketAddMessage=Add or send a message
+TicketAddPrivateMessage=Add a private message
 MessageSuccessfullyAdded=Ticket added
 TicketMessageSuccessfullyAdded=Message successfully added
 TicketMessagesList=Message list
@@ -249,8 +251,10 @@ TicketAssignedEmailBody=You have been assigned the ticket #%s by %s
 TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
 TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
 MarkMessageAsPrivate=Mark message as private
-TicketMessageSendEmailHelp=An email will be sent to all assigned contact (internal contacts, but also external contacts except if the option "%s" is checked)
-TicketMessagePrivateHelp=This message will not display to external users
+TicketMessageSendEmailHelp=An email will be sent to all assigned contact
+TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
+TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
+TicketMessagePrivateHelp=This message will not be visible to external users
 TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
 TicketEmailOriginIssuer=Issuer at origin of the tickets
 InitialMessage=Initial Message
@@ -274,6 +278,7 @@ TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening w
 TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
+TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
 
 #
 # Logs
@@ -324,6 +329,9 @@ OldUser=Old user
 NewUser=New user
 NumberOfTicketsByMonth=Number of tickets per month
 NbOfTickets=Number of tickets
+ExternalContributors=External contributors
+AddContributor=Add external contributor
+
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.

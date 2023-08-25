@@ -92,7 +92,27 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !emp
 		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
 			$link = 'http://'.$link;
 		}
-		dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
+
+		// Parse $newUrl
+		$newUrlArray = parse_url($link);
+
+		// Allow external links to svg ?
+		if (!getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS')) {
+			if (!empty($newUrlArray['path']) && preg_match('/\.svg$/i', $newUrlArray['path'])) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorSVGFilesNotAllowedAsLinksWithout', 'MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS'), null, 'errors');
+			}
+		}
+		// Check URL is external (must refuse local link by default)
+		if (!getDolGlobalString('MAIN_ALLOW_LOCAL_LINKS_AS_EXTERNAL_LINKS')) {
+			// Test $newUrlAray['host'] to check link is external using isIPAllowed() and if not refuse the local link
+			// TODO
+		}
+
+		if (!$error) {
+			dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
+		}
 	}
 }
 

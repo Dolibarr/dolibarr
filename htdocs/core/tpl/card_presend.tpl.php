@@ -24,7 +24,7 @@
  *
  * $trackid must be defined
  * $modelmail
- * $defaulttopic
+ * $defaulttopic and $defaulttopiclang
  * $diroutput
  * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  */
@@ -77,6 +77,9 @@ if ($action == 'presend') {
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
+		if (!empty($defaulttopiclang)) {
+			$outputlangs->loadLangs(array($defaulttopiclang));
+		}
 	}
 
 	$topicmail = '';
@@ -205,6 +208,7 @@ if ($action == 'presend') {
 		$fuser->fetch($object->fk_user);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
+		// For exemple if element is project
 		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
@@ -269,7 +273,7 @@ if ($action == 'presend') {
 	if (is_object($object) && is_object($object->thirdparty)) {
 		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
 		$checkRead.='?tag='.(!empty($object->thirdparty->tag)?urlencode($object->thirdparty->tag):"");
-		$checkRead.='&securitykey='.(!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)?urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY):"");
+		$checkRead.='&securitykey='.(!empty(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'))?urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')):"");
 		$checkRead.='" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 		$substitutionarray['__CHECK_READ__'] = $checkRead;
 	}
