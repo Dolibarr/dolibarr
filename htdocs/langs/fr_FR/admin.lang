@@ -302,6 +302,7 @@ MAIN_DISABLE_ALL_MAILS=Désactiver globalement tout envoi d'emails (pour mode te
 MAIN_MAIL_FORCE_SENDTO=Envoyer tous les emails à (au lieu des vrais destinataires, à des fins de test)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=Proposer les courriels des employés (si définis) dans la liste des destinataires prédéfinis lors de la rédaction d'un nouveau courriel
 MAIN_MAIL_NO_WITH_TO_SELECTED=Ne pas sélectionner de destinataire par défaut même si choix unique
+MAIN_EMAIL_SUPPORT_ACK=Ajouter la case à coché "Accusé de réception"
 MAIN_MAIL_SENDMODE=Méthode d'envoi d'email
 MAIN_MAIL_SMTPS_ID=ID SMTP (si le serveur d'envoi nécessite une authentification)
 MAIN_MAIL_SMTPS_PW=Mot de passe SMTP (si le serveur d'envoi nécessite une authentification)
