@@ -38,8 +38,8 @@ $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1)
 
 $total = 0;
 $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink) {
-	$ilink++;
+usort($linkedObjectBlock, function ($a, $b) { return $b->id - $a->id; });
+foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -69,8 +69,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '</td>';
 	echo "</tr>\n";
 }
-if (count($linkedObjectBlock) > 1) {
-	echo '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
+if (count($linkedObjectBlock)) {	echo '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
 	echo '<td>'.$langs->trans("Total").'</td>';
 	echo '<td></td>';
 	echo '<td class="center"></td>';

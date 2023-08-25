@@ -37,8 +37,8 @@ $langs->load("bills");
 
 $total = 0;
 $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink) {
-	$ilink++;
+usort($linkedObjectBlock, function ($a, $b) { return $b->id - $a->id; });
+foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -61,8 +61,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 </tr>
 	<?php
 }
-if (count($linkedObjectBlock) > 1) {
-	?>
+if (count($linkedObjectBlock)) {	?>
 	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>

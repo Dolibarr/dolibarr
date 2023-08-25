@@ -31,8 +31,8 @@ $langs->load("donations");
 
 $total = 0;
 $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink) {
-	$ilink++;
+usort($linkedObjectBlock, function ($a, $b) { return $b->id - $a->id; });
+foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -51,8 +51,7 @@ print '</td>';
 print '<td class="right">'.$objectlink->getLibStatut(3).'</td>';
 print '</tr>';
 
-if (count($linkedObjectBlock) > 1) {
-	?>
+if (count($linkedObjectBlock)) {	?>
 	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>

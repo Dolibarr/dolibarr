@@ -32,8 +32,8 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("members");
 
 $total = 0;
-foreach ($linkedObjectBlock as $key => $objectlink) {
-	echo '<tr class="oddeven">';
+usort($linkedObjectBlock, function ($a, $b) { return $b->id - $a->id; });
+foreach ($linkedObjectBlock as $key => $objectlink) {	echo '<tr class="oddeven">';
 	echo '<td>'.$langs->trans("Subscription").'</td>';
 	echo '<td class="nowraponall">'.$objectlink->getNomUrl(1).'</td>';
 	echo '<td class="center"></td>';
