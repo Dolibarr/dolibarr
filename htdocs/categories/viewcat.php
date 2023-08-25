@@ -488,7 +488,7 @@ $typeid = $type;
 
 // List of products or services (type is type of category)
 if ($type == Categorie::TYPE_PRODUCT) {
-	if ($user->hasRight("product", "read")) {
+	if ($user->hasRight("product", "read") || $user->hasRight("service", "read")) {
 		$permission = ($user->rights->produit->creer || $user->rights->service->creer);
 
 		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);

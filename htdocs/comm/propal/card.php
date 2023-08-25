@@ -700,6 +700,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'closeas';
 		} elseif (GETPOST('statut', 'int') == $object::STATUS_SIGNED || GETPOST('statut', 'int') == $object::STATUS_NOTSIGNED) {
+			$locationTarget = '';
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == $object::STATUS_VALIDATED || ( ! empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) && $object->statut == $object::STATUS_DRAFT)) {
 				$db->begin();
@@ -708,10 +709,12 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				} else {
+					// Needed if object linked modified by trigger (because linked objects can't be fetched two times : linkedObjectsFullLoaded)
+					$locationTarget = DOL_URL_ROOT . '/comm/propal/card.php?id=' . $object->id;
 				}
 
 				$deposit = null;
-				$locationTarget = '';
 
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
@@ -1651,9 +1654,18 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');
 
+	$cond_reglement_id = $mode_reglement_id = 0;
+
 	$soc = new Societe($db);
 	if ($socid > 0) {
 		$res = $soc->fetch($socid);
+
+		if (GETPOSTINT('cond_reglement_id') == 0) {
+			$cond_reglement_id = $soc->cond_reglement_id;
+		}
+		if (GETPOSTINT('mode_reglement_id') == 0) {
+			$mode_reglement_id = $soc->mode_reglement_id;
+		}
 	}
 
 	// Load objectsrc
@@ -1723,6 +1735,15 @@ if ($action == 'create') {
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
 		}
+	}
+
+	// when payment term is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if (empty($cond_reglement_id)) {
+		$cond_reglement_id = GETPOST("cond_reglement_id", 'int');
+	}
+	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if (empty($mode_reglement_id)) {
+		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
 
 	//Warehouse default if null
@@ -1825,13 +1846,13 @@ if ($action == 'create') {
 	// Terms of payment
 	print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'paiment');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
+	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id', 'int') != 0) ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
