@@ -179,7 +179,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
-		if (!empty(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			global $outputlangsbis;
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
@@ -189,7 +189,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$nblines = (is_array($object->lines) ? count($object->lines) : 0);
 
 		$hidetop = 0;
-		if (!empty(getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE'))) {
+		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
 			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
