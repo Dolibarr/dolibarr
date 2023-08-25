@@ -66,7 +66,7 @@ class Cpaiement
 	public $libelle;
 
 	/**
- 	 * @var string
+	 * @var string
 	 */
 	public $label;
 
