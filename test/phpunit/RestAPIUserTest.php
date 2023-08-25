@@ -137,7 +137,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 
 		$this->assertNotNull($object, "Parsing of json result must not be null");
-		$this->assertNotEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), (string) $object['error']['message']);
 		$this->assertEquals('200', $object['success']['code']);
 
 		$this->api_key = $object['success']['token'];
