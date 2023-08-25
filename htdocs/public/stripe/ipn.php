@@ -459,7 +459,7 @@ if ($event->type == 'payout.created') {
 						$ispostactionok = -1;
 						$error++;
 					} else {
-						$postactionmessages[] = 'Bank transaction of payment created (by makeStripeSepaRequest)';
+						$postactionmessages[] = 'Bank transaction of payment created (by ipn.php file)';
 					}
 				} else {
 					$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';

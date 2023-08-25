@@ -927,7 +927,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *  @param		string	$service		'StripeTest', 'StripeLive', ...
-	 *  @param		string	$forcestripe	To force another stripe env
+	 *  @param		string	$forcestripe	To force another stripe env: 'cus_account@pk_...:sk_...'
 	 *	@return     int         			<0 if KO, >0 if OK
 	 */
 	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture', $service = '', $forcestripe = '')
@@ -1097,17 +1097,9 @@ abstract class CommonInvoice extends CommonObject
 									$tmparray = explode('@', $forcestripe);
 									if (! empty($tmparray[1])) {
 										$tmparray2 = explode(':', $tmparray[1]);
-										if (! empty($tmparray2[3])) {
-											$stripearrayofkeysbyenv = array(
-												0=>array(
-													"publishable_key" => $tmparray2[0],
-													"secret_key"      => $tmparray2[1]
-												),
-												1=>array(
-													"publishable_key" => $tmparray2[2],
-													"secret_key"      => $tmparray2[3]
-												)
-											);
+										if (! empty($tmparray2[1])) {
+											$stripearrayofkeysbyenv[$servicestatus]["publishable_key"] = $tmparray2[0];
+											$stripearrayofkeysbyenv[$servicestatus]["secret_key"] = $tmparray2[1];
 
 											$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
 											\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
