@@ -106,6 +106,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 
 	/**
 	 * Init phpunit tests.
+	 *
 	 * @return void
 	 */
 	protected function setUp(): void
@@ -118,13 +119,29 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 
 		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
 
-		$this->api_key = 'admin';	// Test on API to get this token is inside RestAPIUserTest.php
+		$login='admin';
+		$password='admin';
+		$url=$this->api_url.'/login?login='.$login.'&password='.$password;
+		// Call the API login method to save api_key for this test class.
+		// At first call, if token is not defined a random value is generated and returned.
+		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		print __METHOD__." result = ".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
+
+		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertNotEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+		$this->assertEquals('200', $object['success']['code']);
+
+		$this->api_key = $object['success']['token'];
 
 		echo __METHOD__." api_key: $this->api_key \n";
 	}
 
 	/**
 	 * End phpunit tests.
+	 *
 	 * @return void
 	 */
 	protected function tearDown(): void
@@ -235,5 +252,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 
 
 		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
+
+		return 0;
 	}
 }

@@ -123,9 +123,24 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$this->api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
+		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
 
-		$this->api_key = 'admin';	// Test on API to get this token is inside RestAPIUserTest.php
+		$login='admin';
+		$password='admin';
+		$url=$this->api_url.'/login?login='.$login.'&password='.$password;
+		// Call the API login method to save api_key for this test class.
+		// At first call, if token is not defined a random value is generated and returned.
+		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		print __METHOD__." result = ".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
+
+		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertNotEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+		$this->assertEquals('200', $object['success']['code']);
+
+		$this->api_key = $object['success']['token'];
 
 		print __METHOD__." api_key: $this->api_key \n";
 	}
@@ -201,9 +216,11 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		//print __METHOD__." Result for creating incomplete contact".var_export($result, true)."\n";
 		//print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
-		$object=json_decode($result['content'], true);
+		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 		$this->assertNotNull($object, "Parsing of json result must no be null");
 		$this->assertEquals(400, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+
+		$idofcontactcreated = (int) $object;
 
 		// create regular contact
 		unset($result);
@@ -219,21 +236,40 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 
 		$this->assertEquals($result['curl_error_no'], '');
 
-		$resid = json_decode($result['content'], true);
-		$this->assertNotNull($resid, "Parsing of json result must not be null");
-		$this->assertGreaterThan(0, $resid, $object['error']['code'].' '.$object['error']['message']);
+		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
+		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertNotEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+		$this->assertGreaterThan(0, $object, $object['error']['code'].' '.$object['error']['message']);
+
+		return $idofcontactcreated;
+	}
+
+	/**
+	 * testRestUpdateContact
+	 *
+	 * @param	int		$objid		Id of object created at previous test
+	 * @return 	int
+	 *
+	 * @depends testRestCreateContact
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testRestUpdateContact($objid)
+	{
+		global $conf,$user,$langs,$db;
+		// attempt to create without mandatory fields
+		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
+		$addheaders=array('Content-Type: application/json');
 
 		//update the contact
 
 		// Update the firstname of the contact
-		/*
 		$updateBody = array(
 			"firstname" => "UpdatedFirstName",
 		);
 
 		$updateRequestBody = json_encode($updateBody);
-		$updateUrl = $this->api_url . '/contacts/' . $resid. '?api_key=' . $this->api_key;
-		$updateResult = getURLContent($updateUrl, 'PUT', $updateRequestBody, 1, $addheaders, array('http', 'https'), 2);
+		$updateUrl = $this->api_url . '/contacts/' . $objid. '?api_key=' . $this->api_key;
+		$updateResult = getURLContent($updateUrl, 'PUTALREADYFORMATED', $updateRequestBody, 1, $addheaders, array('http', 'https'), 2);
 		$this->assertEquals($updateResult['curl_error_no'], '');
 
 		$updateResponse = json_decode($updateResult['content'], true);
@@ -242,17 +278,11 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		print_r($updateResponse);
 
 		// Check if the updated fields match the changes you made
-		if ($updateResponse['firstname'] === $updateBody['firstname']) {
-			// Update was successful
-			$this->assertTrue(true);
-		} else {
-			// Update might have failed
-			$this->assertTrue(false, "Update might have failed");
-		}
+		$this->assertTrue($updateResponse['firstname'] === $updateBody['firstname'], 'Update might have failed');
 
 		// Deleting the Contact
-
-		$deleteUrl = $this->api_url . '/contacts/' . $resid . '?api_key=' . $this->api_key;
+		/*
+		$deleteUrl = $this->api_url . '/contacts/' . $objid . '?api_key=' . $this->api_key;
 
 		$deleteResult = getURLContent($deleteUrl, 'DELETE', '', 1, $addheaders, array('http', 'https'), 2);
 
