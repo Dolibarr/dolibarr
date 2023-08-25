@@ -950,7 +950,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$error = 0;
 
-		dol_syslog(get_class($this)."::makeStripeSepaRequest start", LOG_DEBUG);
+		dol_syslog(get_class($this)."::makeStripeSepaRequest start did=".$did." type=".$type." service=".$service." sourcetype=".$sourcetype." forcestripe=".$forcestripe, LOG_DEBUG);
 
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			// Get the default payment mode for BAN payment of the third party
@@ -993,8 +993,6 @@ abstract class CommonInvoice extends CommonObject
 					$companypaymentmode = new CompanyPaymentMode($this->db);	// table societe_rib
 					$companypaymentmode->fetch($bac->id);
 
-					dol_syslog("makeStripeSepaRequest amount = ".$amount." service=" . $service . " thirdparty_id=" . $this->socid." did=".$did);
-
 					$this->stripechargedone = 0;
 					$this->stripechargeerror = 0;
 
@@ -1006,7 +1004,7 @@ abstract class CommonInvoice extends CommonObject
 
 					$this->fetch_thirdparty();
 
-					dol_syslog("--- Process payment request thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
+					dol_syslog("--- Process payment request amount=".$amount." thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
 
 					//$alreadypayed = $this->getSommePaiement();
 					//$amount_credit_notes_included = $this->getSumCreditNotesUsed();
