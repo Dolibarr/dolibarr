@@ -2406,3 +2406,4 @@ OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>
 AtBottomOfPage=At bottom of page
 FailedAuth=failed authentications
 MaxNumberOfFailedAuth=Max number of failed authentication in 24h to deny login.
+AllowPasswordResetBySendingANewPassByEmail=If a user A has this permission, and if the user A is not an "admin" user is allowed to reset the password of any other user B, the new password will be send to the email of the other user B but it won't be visible to A. If the user A has the "admin" flag, he will also be able to know what is the new generated password of B so he will be able to take control of the B user account.

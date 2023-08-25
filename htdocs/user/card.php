@@ -134,7 +134,8 @@ if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
 	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"));
 	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
-	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
+	$caneditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin));
+	$caneditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
 
 
@@ -439,10 +440,10 @@ if (empty($reshook)) {
 					$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
 				}
 				$object->gender = GETPOST("gender", 'aZ09');
-				if ($caneditpassword) {
+				if ($caneditpasswordandsee) {
 					$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
 				}
-				if ($caneditpassword || $user->hasRight("api", "apikey", "generate")) {
+				if ($caneditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
 					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
 				}
 				if (!empty($user->admin) && $user->id != $id) {
@@ -654,7 +655,7 @@ if (empty($reshook)) {
 				}
 			}
 		} else {
-			if ($caneditpassword) {    // Case we can edit only password
+			if ($caneditpasswordandsee) {    // Case we can edit only password
 				dol_syslog("Not allowed to change fields, only password");
 
 				$object->fetch($id);
@@ -672,8 +673,8 @@ if (empty($reshook)) {
 	}
 
 	// Change password with a new generated one
-	if ((($action == 'confirm_password' && $confirm == 'yes')
-			|| ($action == 'confirm_passwordsend' && $confirm == 'yes')) && $caneditpassword
+	if ((($action == 'confirm_password' && $confirm == 'yes' && $caneditpasswordandsee)
+			|| ($action == 'confirm_passwordsend' && $confirm == 'yes' && $caneditpasswordandsend))
 	) {
 		$object->fetch($id);
 
@@ -1965,7 +1966,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					} else {
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&token='.newToken(), '', true, $params);
 					}
-				} elseif ($caneditpassword && !$object->ldap_sid &&
+				} elseif ($caneditpasswordandsee && !$object->ldap_sid &&
 				(!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
 					$params = array(
 						'attr' => array(
@@ -1976,26 +1977,26 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit', '', true, $params);
 				}
 
-				// Si on a un gestionnaire de generation de mot de passe actif
+				// If we have a password generator engine enabled
 				$params = array(
 					'attr' => array(
 						'title' => '',
 						'class' => 'classfortooltip'
 					)
 				);
-				if ($conf->global->USER_PASSWORD_GENERATED != 'none') {
-					if ($object->statut == 0) {
+				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
+					if ($object->status == $object::STATUS_DISABLED) {
 						$params['attr']['title'] = $langs->trans('UserDisabled');
 						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
-					} elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+					} elseif (($user->id != $id && $caneditpasswordandsee) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
 						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=password&token='.newToken(), '', true, $params);
 					}
 
-					if ($object->statut == 0) {
+					if ($object->status == $object::STATUS_DISABLED) {
 						$params['attr']['title'] = $langs->trans('UserDisabled');
 						print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
-					} elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+					} elseif (($user->id != $id && $caneditpasswordandsend) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
 						if ($object->email) {
 							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=passwordsend&token='.newToken(), '', true, $params);
@@ -2142,7 +2143,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		/*
 		 * Card in edit mode
 		 */
-		if ($action == 'edit' && ($canedituser || $caneditpassword)) {
+		if ($action == 'edit' && ($canedituser || $caneditpasswordandsee)) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
@@ -2444,7 +2445,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$form->textwithpicto($text, $langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless", $dolibarr_main_authentication), 1, 'warning');
 			}
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
-				if ($caneditpassword) {
+				if ($caneditpasswordandsee) {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
 					if (!empty($conf->use_javascript_ajax)) {
 						$valuetoshow .= img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->trans('NoPasswordGenerationRuleConfigured') : $langs->trans('Generate')), 'refresh', 'id="generate_password" class="paddingleft'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' opacitymedium' : ' linkobject').'"');
@@ -2454,7 +2455,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 			// Other form for user password
-			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpassword' => $caneditpassword);
+			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpasswordandsee' => $caneditpasswordandsee, 'caneditpasswordandsend' => $caneditpasswordandsend);
 			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
 				$valuetoshow = $hookmanager->resPrint; // to replace
@@ -2469,7 +2470,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (isModEnabled('api')) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
-				if ($caneditpassword || $user->hasRight("api", "apikey", "generate")) {
+				if ($caneditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
 					print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
 					if (!empty($conf->use_javascript_ajax)) {
 						print img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
