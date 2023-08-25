@@ -8261,7 +8261,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$already_payed_all = $object->sumpayed + $object->sumdeposit + $object->sumcreditnote;
 		}
 
-		$substitutionarray['__SIMPLE_ORDER_TABLE__'] = showSimpleOrderTable($outputlangs, $object);
+		$substitutionarray['__SIMPLE_ORDER_TABLE__'] = is_object($object) ? showSimpleOrderTable($outputlangs, $object) : "";
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
 
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
