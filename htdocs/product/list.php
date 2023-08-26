@@ -626,7 +626,7 @@ if (isModEnabled('workstation')) {
 	$sql .= ', p.fk_default_workstation, ws.status, ws.ref ';
 }
 
-if (isModEnabled('variants') && !$show_childproducts)) {
+if (isModEnabled('variants')) {
 	$sql .= ', pac.rowid';
 	$sql .= ', pac.fk_product_parent';
 }
