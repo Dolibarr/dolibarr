@@ -2,6 +2,7 @@
 name: "Exakat analysis"
 
 on:
+  # execute once a month, the 1st
   schedule:
   - cron: "0 20 1 * *"
   workflow_dispatch:
