@@ -42,17 +42,22 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 $langs->loadLangs(array('hrm', 'other'));
 
 // Get Parameters
-$id = GETPOST('id', 'int');
-$TSkillsToAdd = GETPOST('fk_skill', 'array');
-$objecttype = GETPOST('objecttype', 'alpha');
-$TNote = GETPOST('TNote', 'array');
-$lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'skillcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
+$id = GETPOST('id', 'int');
+$TSkillsToAdd = GETPOST('fk_skill', 'array');
+$objecttype = GETPOST('objecttype', 'alpha');
+$TNote = GETPOST('TNote', 'array');
+$lineid = GETPOST('lineid', 'int');
+
+if (empty($objecttype)) {
+	$objecttype = 'job';
+}
 
 $TAuthorizedObjects = array('job', 'user');
 $skill = new SkillRank($db);

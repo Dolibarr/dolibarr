@@ -554,6 +554,7 @@ class ExtraFields
 	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		global $hookmanager;
+		global $action;
 
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';

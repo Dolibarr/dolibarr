@@ -105,7 +105,6 @@ class Ldap
 	public $firstname;
 	public $login;
 	public $phone;
-	public $skype;
 	public $fax;
 	public $mail;
 	public $mobile;
@@ -177,7 +176,6 @@ class Ldap
 		$this->attr_firstname  = getDolGlobalString('LDAP_FIELD_FIRSTNAME');
 		$this->attr_mail       = getDolGlobalString('LDAP_FIELD_MAIL');
 		$this->attr_phone      = getDolGlobalString('LDAP_FIELD_PHONE');
-		$this->attr_skype      = getDolGlobalString('LDAP_FIELD_SKYPE');
 		$this->attr_fax        = getDolGlobalString('LDAP_FIELD_FAX');
 		$this->attr_mobile     = getDolGlobalString('LDAP_FIELD_MOBILE');
 	}
