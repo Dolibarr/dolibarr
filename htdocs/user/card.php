@@ -696,27 +696,32 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Action initialisation donnees depuis record LDAP
+	// Action to initialize data from a LDAP record
 	if ($action == 'adduserldap' && $canadduser) {
 		$selecteduser = GETPOST('users');
 
 		$required_fields = array(
-			$conf->global->LDAP_KEY_USERS,
-			$conf->global->LDAP_FIELD_NAME,
-			$conf->global->LDAP_FIELD_FIRSTNAME,
-			$conf->global->LDAP_FIELD_LOGIN,
-			$conf->global->LDAP_FIELD_LOGIN_SAMBA,
-			$conf->global->LDAP_FIELD_PASSWORD,
-			$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-			$conf->global->LDAP_FIELD_PHONE,
-			$conf->global->LDAP_FIELD_FAX,
-			$conf->global->LDAP_FIELD_MOBILE,
-			$conf->global->LDAP_FIELD_SKYPE,
-			$conf->global->LDAP_FIELD_MAIL,
-			$conf->global->LDAP_FIELD_TITLE,
-			$conf->global->LDAP_FIELD_DESCRIPTION,
-			$conf->global->LDAP_FIELD_SID
+			getDolGlobalString('LDAP_KEY_USERS'),
+			getDolGlobalString('LDAP_FIELD_NAME'),
+			getDolGlobalString('LDAP_FIELD_FIRSTNAME'),
+			getDolGlobalString('LDAP_FIELD_LOGIN'),
+			getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA'),
+			getDolGlobalString('LDAP_FIELD_PASSWORD'),
+			getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED'),
+			getDolGlobalString('LDAP_FIELD_PHONE'),
+			getDolGlobalString('LDAP_FIELD_FAX'),
+			getDolGlobalString('LDAP_FIELD_MOBILE'),
+			getDolGlobalString('LDAP_FIELD_MAIL'),
+			getDolGlobalString('LDAP_FIELD_TITLE'),
+			getDolGlobalString('LDAP_FIELD_DESCRIPTION'),
+			getDolGlobalString('LDAP_FIELD_SID')
 		);
+		if (isModEnabled('socialnetworks')) {
+			$arrayofsocialnetworks = array('skype', 'twitter', 'facebook', 'linkedin');
+			foreach ($arrayofsocialnetworks as $socialnetwork) {
+				$required_fields[] = getDolGlobalString('LDAP_FIELD_'.strtoupper($socialnetwork));
+			}
+		}
 
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
@@ -738,12 +743,15 @@ if (empty($reshook)) {
 					$ldap_phone = $attribute[$conf->global->LDAP_FIELD_PHONE];
 					$ldap_fax = $attribute[$conf->global->LDAP_FIELD_FAX];
 					$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
-					$ldap_social['skype'] = $attribute[$conf->global->LDAP_FIELD_SKYPE];
-					$ldap_social['twitter'] = $attribute[$conf->global->LDAP_FIELD_TWITTER];
-					$ldap_social['facebook'] = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
-					$ldap_social['linkedin'] = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
 					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
 					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
+
+					if (isModEnabled('socialnetworks')) {
+						$arrayofsocialnetworks = array('skype', 'twitter', 'facebook', 'linkedin');
+						foreach ($arrayofsocialnetworks as $socialnetwork) {
+							$ldap_social[$socialnetwork] = $attribute[getDolGlobalString('LDAP_FIELD_'.strtoupper($socialnetwork))];
+						}
+					}
 				}
 			}
 		} else {

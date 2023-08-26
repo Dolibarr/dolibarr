@@ -4514,10 +4514,10 @@ class Societe extends CommonObject
 		$this->country_code = 'FR';
 		$this->email = 'specimen@specimen.com';
 		$this->socialnetworks = array(
-			'skype' => 'tom.hanson',
-			'twitter' => 'tomhanson',
-			'facebook' => 'tomhanson',
-			'linkedin' => 'tomhanson',
+			'skype' => 'skypepseudo',
+			'twitter' => 'twitterpseudo',
+			'facebook' => 'facebookpseudo',
+			'linkedin' => 'linkedinpseudo',
 		);
 		$this->url = 'http://www.specimen.com';
 
