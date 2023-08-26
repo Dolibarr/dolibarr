@@ -105,7 +105,7 @@ $mode = GETPOST('mode', 'alpha');
 
 
 //Show/hide child products
-if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {	// PRODUIT_ATTRIBUTES_HIDECHILD means: show the checkbox to show/hide child
 	$show_childproducts = GETPOST('search_show_childproducts');
 } else {
 	$show_childproducts = '';
