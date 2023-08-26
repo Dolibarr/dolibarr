@@ -909,8 +909,8 @@ if (empty($reshook)) {
 			if ($object->id > 0) {
 				$error = 0;
 				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+				// We use native clone to keep this->db valid and allow to use later all the methods of object.
 				$clone = dol_clone($object, 1);
-				// We used native clone to keep this->db valid and allow to use later all the methods of object.
 
 				$clone->id = null;
 				$clone->ref = GETPOST('clone_ref', 'alphanohtml');
@@ -1069,7 +1069,7 @@ if (empty($reshook)) {
 			} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-				$prodcustprice = new Productcustomerprice($db);
+				$prodcustprice = new ProductCustomerPrice($db);
 
 				$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $soc->id);
 

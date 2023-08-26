@@ -320,6 +320,8 @@ ErrorSVGFilesNotAllowedAsLinksWithout=Os ficheiros SVG non están permitidos com
 ErrorTypeMenu=Imposible engadir outro menú para o mesmo módulo na barra de navegación, aínda non operativo
 ErrorTableExist=A táboa <b> %s </b> xa existe
 ErrorDictionaryNotFound=Non se atopou o dicionario <b> %s </b>
+ErrorFailedToCreateSymLinkToMedias=Produciuse un erro ao crear as ligazóns simbólicas %s para apuntar a %s
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.
 WarningPasswordSetWithNoAccount=Estableceuse un contrasinal para este membro. En calquera caso, non se creou ningunha conta de usuario. Polo tanto, este contrasinal está almacenado pero non se pode usar para iniciar sesión en Dolibarr. Pode ser usado por un módulo/interface externo, pero se non precisa definir ningún login ou contrasinal para un membro, pode desactivar a opción "Xestionar un inicio de sesión para cada membro" desde a configuración do módulo Membros. Se precisa xestionar un inicio de sesión pero non precisa ningún contrasinal, pode manter este campo baleiro para evitar este aviso. Nota: o correo electrónico tamén pode ser usado como inicio de sesión se o membro está ligado a un usuario.
