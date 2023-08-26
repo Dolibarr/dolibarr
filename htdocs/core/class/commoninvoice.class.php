@@ -927,7 +927,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *  @param		string	$service		'StripeTest', 'StripeLive', ...
-	 *  @param		string	$forcestripe	To force another stripe env
+	 *  @param		string	$forcestripe	To force another stripe env: 'cus_account@pk_...:sk_...'
 	 *	@return     int         			<0 if KO, >0 if OK
 	 */
 	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture', $service = '', $forcestripe = '')
@@ -950,7 +950,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$error = 0;
 
-		dol_syslog(get_class($this)."::makeStripeSepaRequest start", LOG_DEBUG);
+		dol_syslog(get_class($this)."::makeStripeSepaRequest start did=".$did." type=".$type." service=".$service." sourcetype=".$sourcetype." forcestripe=".$forcestripe, LOG_DEBUG);
 
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			// Get the default payment mode for BAN payment of the third party
@@ -993,8 +993,6 @@ abstract class CommonInvoice extends CommonObject
 					$companypaymentmode = new CompanyPaymentMode($this->db);	// table societe_rib
 					$companypaymentmode->fetch($bac->id);
 
-					dol_syslog("makeStripeSepaRequest amount = ".$amount." service=" . $service . " thirdparty_id=" . $this->socid." did=".$did);
-
 					$this->stripechargedone = 0;
 					$this->stripechargeerror = 0;
 
@@ -1006,7 +1004,7 @@ abstract class CommonInvoice extends CommonObject
 
 					$this->fetch_thirdparty();
 
-					dol_syslog("--- Process payment request thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
+					dol_syslog("--- Process payment request amount=".$amount." thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
 
 					//$alreadypayed = $this->getSommePaiement();
 					//$amount_credit_notes_included = $this->getSumCreditNotesUsed();
@@ -1099,17 +1097,9 @@ abstract class CommonInvoice extends CommonObject
 									$tmparray = explode('@', $forcestripe);
 									if (! empty($tmparray[1])) {
 										$tmparray2 = explode(':', $tmparray[1]);
-										if (! empty($tmparray2[3])) {
-											$stripearrayofkeysbyenv = array(
-												0=>array(
-													"publishable_key" => $tmparray2[0],
-													"secret_key"      => $tmparray2[1]
-												),
-												1=>array(
-													"publishable_key" => $tmparray2[2],
-													"secret_key"      => $tmparray2[3]
-												)
-											);
+										if (! empty($tmparray2[1])) {
+											$stripearrayofkeysbyenv[$servicestatus]["publishable_key"] = $tmparray2[0];
+											$stripearrayofkeysbyenv[$servicestatus]["secret_key"] = $tmparray2[1];
 
 											$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
 											\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);

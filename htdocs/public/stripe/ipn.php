@@ -111,7 +111,7 @@ $event = null;
 if (getDolGlobalString('STRIPE_DEBUG')) {
 	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripeipn_payload.log', 'w+');
 	if ($fh) {
-		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' IPN Called. HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
+		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' IPN Called. service='.$service.' HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
 		fwrite($fh, $payload);
 		fclose($fh);
 		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripeipn_payload.log');
@@ -126,7 +126,7 @@ try {
 	// Invalid payload
 	httponly_accessforbidden('Invalid payload', 400);
 } catch (\Stripe\Exception\SignatureVerificationException $e) {
-	httponly_accessforbidden('Invalid signature', 400);
+	httponly_accessforbidden('Invalid signature. May be a hook for an event created by another Stripe env ? Check setup of your keys whsec_...', 400);
 } catch (Exception $e) {
 	httponly_accessforbidden('Error '.$e->getMessage(), 400);
 }
@@ -459,7 +459,7 @@ if ($event->type == 'payout.created') {
 						$ispostactionok = -1;
 						$error++;
 					} else {
-						$postactionmessages[] = 'Bank transaction of payment created (by makeStripeSepaRequest)';
+						$postactionmessages[] = 'Bank transaction of payment created (by ipn.php file)';
 					}
 				} else {
 					$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';
@@ -540,6 +540,51 @@ if ($event->type == 'payout.created') {
 	}
 } elseif ($event->type == 'payment_intent.payment_failed') {
 	dol_syslog("A try to make a payment has failed");
+
+	$db->begin();
+
+	$object = $event->data->object;
+	$ipaddress = $object->metadata->ipaddress;
+	$now = dol_now();
+	$currencyCodeType = strtoupper($object->currency);
+	$paymentmethodstripeid = $object->payment_method;
+	$customer_id = $object->customer;
+
+	$chargesdata = $object->charges->data;
+	$objpayid = $chargesdata->id;
+	$objpaydesc = $chargesdata->description;
+	$objinvoiceid = 0;
+	if ($chargesdata->metadata->dol_type == 'facture') {
+		$objinvoiceid = $chargesdata->metadata->dol_id;
+	}
+	$objerrcode = $chargesdata->outcome->reason;
+	$objerrmessage = $chargesdata->outcome->seller_message;
+
+	$objpaymentmodetype = $chargesdata->payment_method_details->type;
+
+	// If this is a differed payment for SEPA, add a line into agenda events
+	if ($objpaymentmodetype == 'sepa_debit') {
+		require_once DOL_DOCUMENT_ROOT.'/comm/class/actioncomm.class.php';
+		$actioncomm = new ActionComm($db);
+
+		if ($objinvoiceid > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$invoice = new Facture($db);
+			$invoice->fetch($objinvoiceid);
+
+			$actioncomm->socid = $invoice->fk_soc;
+			$actioncomm->fk_project = $invoice->fk_project;
+			$actioncomm->elementid = $invoice->id;
+			$actioncomm->elementtype = $invoice->type;
+		}
+
+		$actioncomm->actionmsg = 'Error returned on payment id '.$objpayid.' after request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
+		$actioncomm->actionmsg2 = 'Payment error returned';
+
+		$actioncomm->create($user);
+	}
+
+	$db->commit();
 } elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
 } elseif ($event->type == 'payment_method.attached') {

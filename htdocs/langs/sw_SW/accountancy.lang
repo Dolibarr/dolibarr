@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Onyo, orodha hii ina maingizo ya uhasibu
 VueByAccountAccounting=Tazama kwa akaunti ya uhasibu
 VueBySubAccountAccounting=Tazama kwa akaunti ndogo ya uhasibu
 
-MainAccountForCustomersNotDefined=Akaunti kuu ya uhasibu kwa wateja ambayo haijafafanuliwa katika usanidi
-MainAccountForSuppliersNotDefined=Akaunti kuu ya uhasibu kwa wachuuzi haijafafanuliwa katika usanidi
-MainAccountForUsersNotDefined=Akaunti kuu ya uhasibu kwa watumiaji ambayo haijafafanuliwa katika usanidi
-MainAccountForVatPaymentNotDefined=Akaunti kuu ya uhasibu kwa malipo ya VAT haijafafanuliwa katika usanidi
-MainAccountForSubscriptionPaymentNotDefined=Akaunti kuu ya uhasibu kwa malipo ya usajili haijafafanuliwa katika usanidi
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Akaunti ya uhasibu kwa mtumiaji haijafafanuliwa katika usanidi
 
 AccountancyArea=Eneo la uhasibu

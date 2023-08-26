@@ -320,7 +320,7 @@ ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external link
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
 ErrorTableExist=Table <b>%s</b> already exist
 ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
-ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s 
+ErrorFailedToCreateSymLinkToMedias=Failed to create the symbolic link %s to point to %s 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

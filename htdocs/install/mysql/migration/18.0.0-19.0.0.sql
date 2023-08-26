@@ -66,3 +66,23 @@ ALTER TABLE llx_societe_rib ADD COLUMN extraparams varchar(255);
 
 ALTER TABLE llx_c_type_container ADD COLUMN position integer DEFAULT 0;
 
+ALTER TABLE llx_user DROP COLUMN skype;
+ALTER TABLE llx_user DROP COLUMN twitter;
+ALTER TABLE llx_user DROP COLUMN facebook;
+ALTER TABLE llx_user DROP COLUMN instagram;
+ALTER TABLE llx_user DROP COLUMN snapchat;
+ALTER TABLE llx_user DROP COLUMN googleplus;
+ALTER TABLE llx_user DROP COLUMN youtube;
+ALTER TABLE llx_user DROP COLUMN whatsapp;
+
+ALTER TABLE llx_adherent DROP COLUMN skype;
+ALTER TABLE llx_adherent DROP COLUMN twitter;
+ALTER TABLE llx_adherent DROP COLUMN facebook;
+ALTER TABLE llx_adherent DROP COLUMN instagram;
+ALTER TABLE llx_adherent DROP COLUMN snapchat;
+ALTER TABLE llx_adherent DROP COLUMN googleplus;
+ALTER TABLE llx_adherent DROP COLUMN youtube;
+ALTER TABLE llx_adherent DROP COLUMN whatsapp;
+
+ALTER TABLE llx_societe DROP COLUMN skype;
+

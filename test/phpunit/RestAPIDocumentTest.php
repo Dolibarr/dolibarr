@@ -131,7 +131,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 
 		$this->assertNotNull($object, "Parsing of json result must not be null");
-		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), (string) $object['error']['message']);
+		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Error'.(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
 		$this->assertEquals('200', $object['success']['code']);
 
 		$this->api_key = $object['success']['token'];
@@ -189,7 +189,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, 'Parsing of json result must not be null');
 		$this->assertEquals('401', $result['http_code'], 'Return code is not 401');
-		$this->assertEquals('401', empty($object['error']['code']) ? '' : $object['error']['code'], 'Error code is not 401');
+		$this->assertEquals('401', (empty($object['error']['code']) ? '' : $object['error']['code']), 'Error code is not 401');
 
 
 		// Send to existent directory
