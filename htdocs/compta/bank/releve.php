@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
- * Copyright (C) 2019	  Nicolas ZABOURI       <info@inovea-conseil.com>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2017       Patrick Delcroix        <pmpdelcroix@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
  *		\brief      Page to show a bank statement report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -57,15 +59,11 @@ $ve = GETPOST("ve", 'alpha');
 $brref = GETPOST('brref', 'alpha');
 $oldbankreceipt = GETPOST('oldbankreceipt', 'alpha');
 $newbankreceipt = GETPOST('newbankreceipt', 'alpha');
+$rel = GETPOST("rel", 'alphanohtml');
+$backtopage = GETPOST('backtopage', 'alpha');
 
-// Security check
-$fieldid = (!empty($ref) ? $ref : $id);
-$fieldname = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-
-$result = restrictedArea($user, 'banque', $fieldid, 'bank_account', '', '', $fieldname);
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
 if ($user->rights->banque->consolidate && $action == 'dvnext' && !empty($dvid)) {
 	$al = new AccountLine($db);
@@ -102,7 +100,8 @@ if (!$sortfield) {
 $object = new Account($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
-	$account = $object->id; // Force the search field on id of account
+	// if fetch from ref, $id may be empty
+	$id = $object->id; // Force the search field on id of account
 }
 
 
@@ -110,14 +109,25 @@ if ($id > 0 || !empty($ref)) {
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
 
 
+// Security check
+$fieldid = (!empty($ref) ? $ref : $id);
+$fieldname = (!empty($ref) ? 'ref' : 'rowid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+$result = restrictedArea($user, 'banque', $fieldid, 'bank_account', '', '', $fieldname);
+
+
 // Define number of receipt to show (current, previous or next one ?)
 $found = false;
-if ($_GET["rel"] == 'prev') {
+if ($rel == 'prev') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
 	$sql .= " AND b.fk_account = ".((int) $object->id);
+	$sql .= " AND d.entity IN (".getEntity($object->element).")";
 	$sql .= " ORDER BY b.num_releve DESC";
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -130,12 +140,13 @@ if ($_GET["rel"] == 'prev') {
 			$found = true;
 		}
 	}
-} elseif ($_GET["rel"] == 'next') {
+} elseif ($rel == 'next') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
 	$sql .= " AND b.fk_account = ".((int) $object->id);
+	$sql .= " AND d.entity IN (".getEntity($object->element).")";
 	$sql .= " ORDER BY b.num_releve ASC";
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -162,16 +173,16 @@ $sql .= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= ", ".MAIN_DB_PREFIX."bank as b";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
-$sql .= " WHERE b.num_releve='".$db->escape($numref)."'";
+$sql .= " WHERE b.num_releve = '".$db->escape($numref)."'";
 if (empty($numref)) {
 	$sql .= " OR b.num_releve is null";
 }
 $sql .= " AND b.fk_account = ".((int) $object->id);
 $sql .= " AND b.fk_account = ba.rowid";
+$sql .= " AND ba.entity IN (".getEntity($object->element).")";
 $sql .= $db->order("b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
 
 $sqlrequestforbankline = $sql;
-
 
 
 /*
@@ -182,6 +193,7 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 	// TODO Add a test to check newbankreceipt does not exists yet
 	$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."bank SET num_releve = '".$db->escape($newbankreceipt)."'";
 	$sqlupdate .= " WHERE num_releve = '".$db->escape($oldbankreceipt)."' AND fk_account = ".((int) $id);
+	$sqlupdate .= " AND entity IN (".getEntity($object->element).")";
 	$result = $db->query($sqlupdate);
 	if ($result < 0) {
 		dol_print_error($db);
@@ -194,11 +206,6 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
@@ -225,6 +232,17 @@ if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
 
+if (empty($numref)) {
+	$title = $object->ref.' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+} else {
+	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+}
+
+
+llxHeader('', $title, $helpurl);
+
 
 if (empty($numref)) {
 	$sortfield = 'numr';
@@ -237,10 +255,10 @@ if (empty($numref)) {
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
-	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	$totalnboflines = 0;
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
-		$nbtotalofrecords = $db->num_rows($result);
+		$totalnboflines = $db->num_rows($result);
 	}
 
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
@@ -276,7 +294,7 @@ if (empty($numref)) {
 
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
-				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
+				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
 			} else {
 				$buttonreconcile = '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
 			}
@@ -287,7 +305,7 @@ if (empty($numref)) {
 				if ($user->rights->banque->consolidate) {
 					$newparam = $param;
 					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
+					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
 				} else {
 					$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
 				}
@@ -399,9 +417,8 @@ if (empty($numref)) {
 
 	$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
 	print load_fiche_titre($title, $morehtmlright, '');
-	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'bank_account', 0, '', '', 0, 1);
 
-	print "<form method=\"post\" action=\"releve.php\">";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -649,6 +666,8 @@ if (empty($numref)) {
 			$i++;
 		}
 		$db->free($result);
+	} else {
+		dol_print_error($db);
 	}
 
 	// Line Total

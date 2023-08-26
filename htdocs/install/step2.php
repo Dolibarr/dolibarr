@@ -109,7 +109,7 @@ if ($action == "set") {
 	print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
 	$error = 0;
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->connected) {
 		print "<tr><td>";
@@ -147,10 +147,10 @@ if ($action == "set") {
 
 	// To disable some code, so you can call step2 with url like
 	// http://localhost/dolibarrnew/install/step2.php?action=set&token='.newToken().'&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
-	$createtables = isset($_GET['createtables']) ?GETPOST('createtables') : 1;
-	$createkeys = isset($_GET['createkeys']) ?GETPOST('createkeys') : 1;
-	$createfunctions = isset($_GET['createfunctions']) ?GETPOST('createfunction') : 1;
-	$createdata = isset($_GET['createdata']) ?GETPOST('createdata') : 1;
+	$createtables = GETPOSTISSET('createtables') ? GETPOST('createtables') : 1;
+	$createkeys = GETPOSTISSET('createkeys') ? GETPOST('createkeys') : 1;
+	$createfunctions = GETPOSTISSET('createfunctions') ? GETPOST('createfunction') : 1;
+	$createdata = GETPOSTISSET('createdata') ? GETPOST('createdata') : 1;
 
 
 	// To say sql requests are escaped for mysql so we need to unescape them
@@ -295,8 +295,8 @@ if ($action == "set") {
 					 // MySQL
 					if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
-						//print var_dump($versioncommande);
-						//print var_dump($versionarray);
+						//var_dump($versioncommande);
+						//var_dump($versionarray);
 						if (count($versioncommande) && count($versionarray)
 						&& versioncompare($versioncommande, $versionarray) <= 0) {
 							// Version qualified, delete SQL comments
@@ -307,8 +307,8 @@ if ($action == "set") {
 					 // PGSQL
 					if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
-						//print var_dump($versioncommande);
-						//print var_dump($versionarray);
+						//var_dump($versioncommande);
+						//var_dump($versionarray);
 						if (count($versioncommande) && count($versionarray)
 						&& versioncompare($versioncommande, $versionarray) <= 0) {
 							// Version qualified, delete SQL comments

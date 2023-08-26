@@ -9,12 +9,13 @@ HasAccessToken=Một token đã được tạo và lưu vào cơ sở dữ liệ
 NewTokenStored=Token đã nhận và lưu
 ToCheckDeleteTokenOnProvider=Nhấn vào đây để kiểm tra / xóa ủy quyền được lưu bởi nhà cung cấp %s OAuth
 TokenDeleted=Token đã bị xóa
-RequestAccess=Nhấp vào đây để yêu cầu / gia hạn quyền truy cập và nhận token mới để lưu
+RequestAccess=Click here to request/renew access and receive a new token
 DeleteAccess=Nhấn vào đây để xóa token
 UseTheFollowingUrlAsRedirectURI=Sử dụng URL sau đây làm URI chuyển hướng khi tạo thông tin đăng nhập với nhà cung cấp OAuth của bạn:
-ListOfSupportedOauthProviders=Nhập thông tin đăng nhập được cung cấp bởi nhà cung cấp OAuth2 của bạn. Chỉ các nhà cung cấp OAuth2 được hỗ trợ được liệt kê ở đây. Các dịch vụ này có thể được sử dụng bởi các mô-đun khác cần xác thực OAuth2.
-OAuthSetupForLogin=Trang để tạo token OAuth
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
 SeePreviousTab=Xem tab trước
+OAuthProvider=OAuth provider
 OAuthIDSecret=ID OAuth và bảo mật
 TOKEN_REFRESH=Làm mới token
 TOKEN_EXPIRED=Token đã hết hạn
@@ -23,10 +24,13 @@ TOKEN_DELETE=Xóa token đã lưu
 OAUTH_GOOGLE_NAME=Dịch vụ Google OAuth
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=Bảo mật Google OAuth
-OAUTH_GOOGLE_DESC=Chuyển đến <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">trang này</a> sau đó "Thông tin xác thực" để tạo thông tin xác thực OAuth
 OAUTH_GITHUB_NAME=Dịch vụ OAuth GitHub
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=Bảo mật của OAuth GitHub
-OAUTH_GITHUB_DESC=Chuyển đến <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">trang này</a> sau đó "Đăng ký ứng dụng mới" để tạo thông tin đăng nhập OAuth
-OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
-OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Thử nghiệm
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe chạy thực tế
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

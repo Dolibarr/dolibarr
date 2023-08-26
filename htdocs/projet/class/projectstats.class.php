@@ -27,7 +27,14 @@ class ProjectStats extends Stats
 	private $project;
 	public $userid;
 	public $socid;
-	public $year;
+	public $status;
+	public $opp_status;
+
+	//SQL stat
+	public $field;
+	public $from;
+	public $where;
+
 
 	/**
 	 * Constructor
@@ -42,6 +49,18 @@ class ProjectStats extends Stats
 
 		require_once 'project.class.php';
 		$this->project = new Project($this->db);
+
+		$this->from = MAIN_DB_PREFIX.$this->project->table_element;
+		$this->field = 'opp_amount';
+		$this->where = " entity = ".$conf->entity;
+		if ($this->socid > 0) {
+			$this->where .= " AND fk_soc = ".((int) $this->socid);
+		}
+		if (is_array($this->userid) && count($this->userid) > 0) {
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+		} elseif ($this->userid > 0) {
+			$this->where .= " AND fk_user = ".((int) $this->userid);
+		}
 	}
 
 
@@ -77,7 +96,7 @@ class ProjectStats extends Stats
 
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__METHOD__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -172,15 +191,33 @@ class ProjectStats extends Stats
 		if (!empty($this->socid)) {
 			$sqlwhere[] = ' t.fk_soc = '.((int) $this->socid);
 		}
-		if (!empty($this->year) && empty($this->yearmonth)) {
-			$sqlwhere[] = " date_format(t.datec,'%Y') = '".$this->db->escape($this->year)."'";
+		if (!empty($this->year) && empty($this->month)) {
+			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->year, 1))."' AND '".$this->db->idate(dol_get_last_day($this->year, 12))."'";
 		}
-		if (!empty($this->yearmonth)) {
-			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->yearmonth))."' AND '".$this->db->idate(dol_get_last_day($this->yearmonth))."'";
+		if (!empty($this->year) && !empty($this->month)) {
+			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->year, $this->month))."' AND '".$this->db->idate(dol_get_last_day($this->year, $this->month))."'";
 		}
 
 		if (!empty($this->status)) {
-			$sqlwhere[] = " t.fk_opp_status IN (".$this->db->sanitize($this->status).")";
+			$sqlwhere[] = " t.fk_statut IN (".$this->db->sanitize($this->status).")";
+		}
+
+		if (!empty($this->opp_status)) {
+			if (is_numeric($this->opp_status) && $this->opp_status > 0) {
+				$sqlwhere[] = " t.fk_opp_status = ".((int) $this->opp_status);
+			}
+			if ($this->opp_status == 'all') {
+				$sqlwhere[] = " (t.fk_opp_status IS NOT NULL AND t.fk_opp_status <> -1)";
+			}
+			if ($this->opp_status == 'openedopp') {
+				$sqlwhere[] = " (t.fk_opp_status IS NOT NULL AND t.fk_opp_status <> -1 AND t.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST')))";
+			}
+			if ($this->opp_status == 'notopenedopp') {
+				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1 OR t.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code = 'WON'))";
+			}
+			if ($this->opp_status == 'none') {
+				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1)";
+			}
 		}
 
 		if (empty($user->rights->projet->all->lire)) {
@@ -203,9 +240,7 @@ class ProjectStats extends Stats
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
-		global $user;
-
-		$this->yearmonth = $year;
+		$this->year = $year;
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
@@ -215,8 +250,6 @@ class ProjectStats extends Stats
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
-
-		$this->yearmonth = 0;
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';
@@ -232,9 +265,7 @@ class ProjectStats extends Stats
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		global $user;
-
-		$this->yearmonth = $year;
+		$this->year = $year;
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, SUM(t.opp_amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
@@ -244,7 +275,6 @@ class ProjectStats extends Stats
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
-		$this->yearmonth = 0;
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';
@@ -259,7 +289,7 @@ class ProjectStats extends Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return 	array					Array of values
+	 * @return 	array|int				Array of values or <0 if error
 	 */
 	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{
@@ -327,10 +357,7 @@ class ProjectStats extends Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					$newmask = $conf->global->MAIN_UMASK;
-				}
-				@chmod($newpathofdestfile, octdec($newmask));
+				dolChmod($newpathofdestfile);
 			} else {
 				dol_syslog("Failed to write cache file", LOG_ERR);
 			}
@@ -350,9 +377,7 @@ class ProjectStats extends Stats
 	 */
 	public function getWeightedAmountByMonth($year, $wonlostfilter = 1)
 	{
-		global $user;
-
-		$this->yearmonth = $year;
+		$this->year = $year;
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, SUM(t.opp_amount * ".$this->db->ifsql("t.opp_percent IS NULL".($wonlostfilter ? " OR cls.code IN ('WON','LOST')" : ""), '0', 't.opp_percent')." / 100)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t LEFT JOIN ".MAIN_DB_PREFIX.'c_lead_status as cls ON t.fk_opp_status = cls.rowid';
@@ -362,7 +387,6 @@ class ProjectStats extends Stats
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
-		$this->yearmonth = 0;
 
 		$res = $this->_getAmountByMonth($year, $sql);
 		// var_dump($res);print '<br>';
@@ -372,10 +396,10 @@ class ProjectStats extends Stats
 	/**
 	 * Return amount of elements by month for several years
 	 *
-	 * @param int $endyear		End year
-	 * @param int $startyear	Start year
-	 * @param int $cachedelay accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @return array of values
+	 * @param 	int 		$endyear		End year
+	 * @param 	int 		$startyear		Start year
+	 * @param 	int 		$cachedelay 	accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 * @return 	array|int					Array of values or <0 if error
 	 */
 	public function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
 	{
@@ -440,12 +464,11 @@ class ProjectStats extends Stats
 				dol_mkdir($conf->user->dir_temp);
 			}
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, json_encode($data));
-			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				$newmask = $conf->global->MAIN_UMASK;
+			if ($fp) {
+				fwrite($fp, json_encode($data));
+				fclose($fp);
+				dolChmod($newpathofdestfile);
 			}
-			@chmod($newpathofdestfile, octdec($newmask));
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -462,9 +485,7 @@ class ProjectStats extends Stats
 	 */
 	public function getTransformRateByMonth($year, $format = 0)
 	{
-		global $user;
-
-		$this->yearmonth = $year;
+		$this->year = $year;
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, count(t.opp_amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
@@ -489,7 +510,6 @@ class ProjectStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$this->status = 0;
-		$this->yearmonth = 0;
 
 		$res_only_wined = $this->_getNbByMonth($year, $sql, $format);
 
@@ -505,5 +525,22 @@ class ProjectStats extends Stats
 		}
 		// var_dump($res);print '<br>';
 		return $res;
+	}
+
+	/**
+	 * Return average of entity by month
+	 * @param	int     $year           year number
+	 * @return 	array
+	 */
+	protected function getAverageByMonth($year)
+	{
+		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		return $this->_getAverageByMonth($year, $sql);
 	}
 }

@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 $langs->loadLangs(array("website", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id         = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -43,7 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->website->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('websiteaccountcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('websiteaccountcard'));   //  Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -63,18 +63,22 @@ if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'website', $id);
-
-$permissionnote = $user->rights->websiteaccount->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->websiteaccount->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Security check
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$result = restrictedArea($user, 'website', $id);
+if (!$user->hasRight('website', 'read')) {
+	accessforbidden('NotAllowed');
+}
+
+// Permissions
+$permissionnote    = $user->hasRight('website', 'write');   //  Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('website', 'write');   //  Used by the include of actions_dellink.inc.php
+$permissiontoadd   = $user->hasRight('website', 'write');   //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('website', 'delete');
 
 
 /*
@@ -90,8 +94,8 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$permissiontoadd = $user->rights->website->write;
-	$permissiontodelete = $user->rights->website->delete;
+	$permissiontoadd = $user->hasRight('website', 'write');
+	$permissiontodelete = $user->hasRight('website', 'delete');
 	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php', 1);
 
 	// Actions cancel, add, update or delete
@@ -217,16 +221,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	/*
 	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('website', 'write'), 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('website', 'write'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (isModEnabled('project'))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		if ($user->rights->website->creer)
+		if ($user->hasRight('website', 'write'))
 		{
 			if ($action != 'classify')
 			{
@@ -244,7 +248,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
@@ -301,7 +305,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>'."\n";
 			}
 
-			if ($user->rights->website->write) {
+			if ($user->hasRight('website', 'write')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
 
@@ -319,8 +323,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			*/
 
-			if ($user->rights->website->delete) {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>'."\n";
+			if ($permissiontodelete) {
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 			}
 		}
 		print '</div>'."\n";

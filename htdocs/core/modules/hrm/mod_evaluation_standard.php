@@ -26,7 +26,7 @@ dol_include_once('/core/modules/hrm/modules_evaluation.php');
 
 
 /**
- *	Class to manage customer order numbering rules standard
+ *	Class to manage the Standard numbering rule for HR evaluation
  */
 class mod_evaluation_standard extends ModeleNumRefEvaluation
 {
@@ -52,9 +52,10 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);

@@ -17,45 +17,46 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+ModuleEventOrganizationName = Organizace události
+EventOrganizationDescription = Organizace událostí prostřednictvím modulu Projekt
+EventOrganizationDescriptionLong= Správa organizace události (výstavy, konference, účastníci nebo řečníci, s veřejnými stránkami pro návrhy, hlasování nebo registraci).
 #
 # Menu
 #
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+EventOrganizationMenuLeft = Organizované akce
+EventOrganizationConferenceOrBoothMenuLeft = Konference nebo stánek
 
-PaymentEvent=Payment of event
+PaymentEvent=Platba akce
 
 #
 # Admin page
 #
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
+NewRegistration=Registrace
+EventOrganizationSetup=Nastavení organizace události
+EventOrganization=Organizace události
 Settings=Nastavení
 EventOrganizationSetupPage = Event Organization setup page
 EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Šablona e-mailu, který se odešle po obdržení návrhu konference.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Ve formuláři pro vytvoření/přidání účastníka omezuje seznam subjektů na subjekt v dané kategorii.
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
 
 #
 # Object
 #
-EventOrganizationConfOrBooth= Conference Or Booth
+EventOrganizationConfOrBooth= Konference nebo stánek
 ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
+ConferenceOrBooth = Konference nebo stánek
+ConferenceOrBoothTab = Konference nebo stánek
 AmountPaid = Amount paid
 DateOfRegistration = Date of registration
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
@@ -130,7 +131,7 @@ ConferenceIsNotConfirmed=Registration not available, conference is not confirmed
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 
-NewSubscription=Registration
+NewSubscription=Registrace
 OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
 OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
 OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
@@ -165,3 +166,4 @@ EmailCompanyForInvoice=Company email (for invoice, if different of attendee emai
 ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+MaxNbOfAttendees=Max number of attendees

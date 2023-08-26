@@ -42,6 +42,8 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public $db;
 
+	public $enabled = 'isModEnabled("societe")';
+
 
 	/**
 	 *	Constructor
@@ -80,6 +82,9 @@ class mailing_advthirdparties extends MailingTargets
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(implode(',', $socid)).")";
+				if (empty($this->evenunsubscribe)) {
+					$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+				}
 				$sql .= " ORDER BY email";
 
 				// Stock recipients emails into targets table
@@ -129,6 +134,9 @@ class mailing_advthirdparties extends MailingTargets
 				}
 				if (count($socid) > 0) {
 					$sql .= " AND socp.fk_soc IN (".$this->db->sanitize(implode(',', $socid)).")";
+				}
+				if (empty($this->evenunsubscribe)) {
+					$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = socp.email and mu.entity = ".((int) $conf->entity).")";
 				}
 				$sql .= " ORDER BY email";
 
@@ -198,8 +206,8 @@ class mailing_advthirdparties extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param	string	$sql 		Not use here
-	 *	@return	    int			          Nb of recipients
+	 *  @param		string			$sql 		Not use here
+	 * 	@return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -209,9 +217,11 @@ class mailing_advthirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email != ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -243,7 +253,7 @@ class mailing_advthirdparties extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (empty($conf->categorie->enabled)) {
+			if (!isModEnabled("categorie")) {
 				$num = 0; // Force empty list if category module is not enabled
 			}
 
@@ -298,5 +308,6 @@ class mailing_advthirdparties extends MailingTargets
 			$contactstatic->fetch($id);
 			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
+		return "";
 	}
 }

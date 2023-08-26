@@ -35,8 +35,10 @@ function dolStripPhpCode($str, $replacewith = '')
 
 	$newstr = '';
 
-	//split on each opening tag
-	$parts = explode('<?php', $str);
+	// Split on each opening tag
+	//$parts = explode('<?php', $str);
+	$parts = preg_split('/'.preg_quote('<?php', '/').'/i', $str);
+
 	if (!empty($parts)) {
 		$i = 0;
 		foreach ($parts as $part) {
@@ -69,7 +71,7 @@ function dolStripPhpCode($str, $replacewith = '')
  *
  * @param 	string	$str			String to clean
  * @return 	string					Result string with php code only
- * @see dolStripPhpCode()
+ * @see dolStripPhpCode(), checkPHPCode()
  */
 function dolKeepOnlyPhpCode($str)
 {
@@ -77,8 +79,10 @@ function dolKeepOnlyPhpCode($str)
 
 	$newstr = '';
 
-	//split on each opening tag
-	$parts = explode('<?php', $str);
+	// Split on each opening tag
+	//$parts = explode('<?php', $str);
+	$parts = preg_split('/'.preg_quote('<?php', '/').'/i', $str);
+
 	if (!empty($parts)) {
 		$i = 0;
 		foreach ($parts as $part) {
@@ -118,7 +122,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')', LOG_DEBUG);
 	//if ($contenttype == 'html') { print $content;exit; }
 
-	// Replace php code. Note $content may come from database and does not contains body tags.
+	// Replace php code. Note $content may come from database and does not contain body tags.
 	$replacewith = '...php...';
 	if ($removephppart) {
 		$replacewith = '';
@@ -212,6 +216,53 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 
 	return $content;
 }
+
+/**
+ * Converts smiley string into the utf8 sequence.
+ * @param	string		$content			Content to replace
+ * @return	string							Replacement of all smiley strings with their utf8 code
+ * @see dolWebsiteOutput()
+ */
+function dolReplaceSmileyCodeWithUTF8($content)
+{
+	$map = array(
+		":face_with_tears_of_joy:" => "\xF0\x9F\x98\x82",
+		":grinning_face_with_smiling_eyes:" => "\xF0\x9F\x98\x81",
+		":smiling_face_with_open_mouth:" => "\xF0\x9F\x98\x83",
+		":smiling_face_with_open_mouth_and_cold_sweat:" => "\xF0\x9F\x98\x85",
+		":smiling_face_with_open_mouth_and_tightly_closed_eyes:" => "\xF0\x9F\x98\x86",
+		":winking_face:" => "\xF0\x9F\x98\x89",
+		":smiling_face_with_smiling_eyes:" => "\xF0\x9F\x98\x8A",
+		":face_savouring_delicious_food:" => "\xF0\x9F\x98\x8B",
+		":relieved_face:" => "\xF0\x9F\x98\x8C",
+		":smiling_face_with_heart_shaped_eyes:" => "\xF0\x9F\x98\x8D",
+		":smiling_face_with_sunglasses:" => "\xF0\x9F\x98\x8E",
+		":smirking_face:" => "\xF0\x9F\x98\x8F",
+		":neutral_face:" => "\xF0\x9F\x98\x90",
+		":expressionless_face:" => "\xF0\x9F\x98\x91",
+		":unamused_face:" => "\xF0\x9F\x98\x92",
+		":face_with_cold_sweat:" => "\xF0\x9F\x98\x93",
+		":pensive_face:" => "\xF0\x9F\x98\x94",
+		":confused_face:" => "\xF0\x9F\x98\x95",
+		":confounded_face:" => "\xF0\x9F\x98\x96",
+		":kissing_face:" => "\xF0\x9F\x98\x97",
+		":face_throwing_a_kiss:" => "\xF0\x9F\x98\x98",
+		":kissing_face_with_smiling_eyes:" => "\xF0\x9F\x98\x99",
+		":kissing_face_with_closed_eyes:" => "\xF0\x9F\x98\x9A",
+		":face_with_stuck_out_tongue:" => "\xF0\x9F\x98\x9B",
+		":face_with_stuck_out_tongue_and_winking_eye:" => "\xF0\x9F\x98\x9C",
+		":face_with_stuck_out_tongue_and_tightly_closed_eyes:" => "\xF0\x9F\x98\x9D",
+		":disappointed_face:" => "\xF0\x9F\x98\x9E",
+		":worried_face:" => "\xF0\x9F\x98\x9F",
+		":angry_face:" => "\xF0\x9F\x98\xA0",
+		":face_with_symbols_on_mouth:" => "\xF0\x9F\x98\xA1",
+	);
+	foreach ($map as $key => $value) {
+		$content = str_replace($key, $value, $content);
+	}
+	return $content;
+}
+
 
 /**
  * Render a string of an HTML content and output it.
@@ -369,9 +420,45 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
 	}
 
+	$content = dolReplaceSmileyCodeWithUTF8($content);
+
 	dol_syslog("dolWebsiteOutput end");
 
 	print $content;
+}
+
+/**
+ * Increase the website counter of page access.
+ *
+ * @param   int		$websiteid			ID of website
+ * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
+ * @param	int		$websitepageid		ID of page
+ * @return  int							<0 if KO, >0 if OK
+ */
+function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
+{
+	if (!getDolGlobalInt('WEBSITE_PERF_DISABLE_COUNTERS')) {
+		//dol_syslog("dolWebsiteIncrementCounter websiteid=".$websiteid." websitepagetype=".$websitepagetype." websitepageid=".$websitepageid);
+		if (in_array($websitepagetype, array('blogpost', 'page'))) {
+			global $db;
+
+			$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
+
+			$sql = "UPDATE ".$db->prefix()."website SET ";
+			$sql .= " pageviews_total = pageviews_total + 1,";
+			$sql .= " pageviews_month = pageviews_month + 1,";
+			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
+			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
+			$sql .= " WHERE rowid = ".((int) $websiteid);
+			$resql = $db->query($sql);
+			if (! $resql) {
+				return -1;
+			}
+		}
+	}
+
+	return 1;
 }
 
 
@@ -499,7 +586,7 @@ function includeContainer($containerref)
 		$containerref .= '.php';
 	}
 
-	$fullpathfile = DOL_DATA_ROOT.'/website/'.$websitekey.'/'.$containerref;
+	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
 
 	if (empty($includehtmlcontentopened)) {
 		$includehtmlcontentopened = 0;
@@ -549,7 +636,7 @@ function getStructuredData($type, $data = array())
 
 	if ($type == 'software') {
 		$ret = '<!-- Add structured data for entry in a software annuary -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
@@ -577,7 +664,7 @@ function getStructuredData($type, $data = array())
 		$url = $mysoc->url;
 
 		$ret = '<!-- Add structured data for organization -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
@@ -629,7 +716,7 @@ function getStructuredData($type, $data = array())
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
 			$ret = '<!-- Add structured data for blog post -->'."\n";
-			$ret .= '<script type="application/ld+json">'."\n";
+			$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 			$ret .= '{
 				  "@context": "https://schema.org",
 				  "@type": "NewsArticle",
@@ -673,11 +760,11 @@ function getStructuredData($type, $data = array())
 			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		} else {
-			$ret .= '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
+			$ret = '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
 		}
 	} elseif ($type == 'product') {
 		$ret = '<!-- Add structured data for product -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "Product",
@@ -712,7 +799,7 @@ function getStructuredData($type, $data = array())
 		$ret .= '</script>'."\n";
 	} elseif ($type == 'qa') {
 		$ret = '<!-- Add structured data for QA -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "QAPage",
@@ -835,7 +922,7 @@ function getSocialNetworkSharingLinks()
 		// Twitter
 		$out .= '<div class="dol-social-share-tw">'."\n";
 		$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-		$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+		$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
 		$out .= '</div>'."\n";
 
 		// Reddit
@@ -848,7 +935,7 @@ function getSocialNetworkSharingLinks()
 		// Facebook
 		$out .= '<div class="dol-social-share-fbl">'."\n";
 		$out .= '<div id="fb-root"></div>'."\n";
-		$out .= '<script>(function(d, s, id) {
+		$out .= '<script nonce="'.getNonce().'">(function(d, s, id) {
 				  var js, fjs = d.getElementsByTagName(s)[0];
 				  if (d.getElementById(id)) return;
 				  js = d.createElement(s); js.id = id;
@@ -887,7 +974,7 @@ function getSocialNetworkSharingLinks()
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @param	array		$otherfilters		Other filters
  * @param	int			$status				0 or 1, or -1 for both
- * @return  string							HTML content
+ * @return  array							Array with results of search
  */
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
 {
@@ -925,6 +1012,8 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	$found = 0;
 
 	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo))) {
+		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+
 		$sql = 'SELECT wp.rowid FROM '.MAIN_DB_PREFIX.'website_page as wp';
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
@@ -934,7 +1023,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= " AND wp.status = ".((int) $status);
 		}
 		if ($langcode) {
-			$sql .= " AND wp.lang ='".$db->escape($langcode)."'";
+			$sql .= " AND wp.lang = '".$db->escape($langcode)."'";
 		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
@@ -947,11 +1036,11 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%' OR wp.description LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escapeunderscore($db->escape($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escapeunderscore($db->escape($searchstring))."%'"; // TODO Use a better way to scan keywords
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'"; // TODO Use a better way to scan keywords
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escapeunderscore($db->escape($searchstring))."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		$sql .= $searchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
@@ -963,6 +1052,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		//print $sql;
 
 		$resql = $db->query($sql);
+
 		if ($resql) {
 			$i = 0;
 			while (($obj = $db->fetch_object($resql)) && ($i < $max || $max == 0)) {
@@ -988,7 +1078,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/sitefiles/', $algo))) {
 		global $dolibarr_main_data_root;
 
-		$pathofwebsite = $dolibarr_main_data_root.'/website/'.$website->ref;
+		$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$website->ref;
 		$filehtmlheader = $pathofwebsite.'/htmlheader.html';
 		$filecss = $pathofwebsite.'/styles.css.php';
 		$filejs = $pathofwebsite.'/javascript.js.php';
@@ -1124,9 +1214,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$fp = fopen($filetosave, "w");
 					fputs($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
-					}
+					dolChmod($filetosave);
 				}
 			}
 		}
@@ -1195,9 +1283,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$fp = fopen($filetosave, "w");
 					fputs($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
-					}
+					dolChmod($filetosave);
 				}
 			}
 		}

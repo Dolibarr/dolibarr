@@ -57,21 +57,21 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (!empty($conf->societe->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
+	if (isModEnabled("societe") && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
 		$head[$h][1] = $langs->trans("LDAPContactsSynchro");
 		$head[$h][2] = 'contacts';
 		$h++;
 	}
 
-	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_ACTIVE)) {
+	if (isModEnabled('adherent') && !empty($conf->global->LDAP_MEMBER_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");
 		$head[$h][2] = 'members';
 		$h++;
 	}
 
-	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE)) {
+	if (isModEnabled('adherent') && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
 		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
 		$head[$h][2] = 'memberstypes';

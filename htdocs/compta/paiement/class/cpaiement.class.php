@@ -3,6 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,11 @@
 class Cpaiement
 {
 	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cpaiement';
@@ -43,10 +49,25 @@ class Cpaiement
 	public $code;
 
 	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var string[] array of errors messages
+	 */
+	public $errors;
+
+	/**
+	 * @var string
 	 * @deprecated
 	 * @see $label
 	 */
 	public $libelle;
+
+	/**
+	 * @var string
+	 */
 	public $label;
 
 	public $type;

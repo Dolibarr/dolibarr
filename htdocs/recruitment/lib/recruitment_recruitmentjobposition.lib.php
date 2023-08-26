@@ -41,12 +41,23 @@ function recruitmentjobpositionPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
-		$head[$h][0] = dol_buildpath("/recruitment/recruitmentjobposition_applications.php", 1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("Candidatures");
-		$head[$h][2] = 'candidatures';
-		$h++;
+	$head[$h][0] = dol_buildpath("/recruitment/recruitmentcandidature_list.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("RecruitmentCandidatures");
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature WHERE fk_recruitmentjobposition = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$nCandidature = $obj->nb;
+			if ($nCandidature > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nCandidature.'</span>';
+			}
+		}
+	} else {
+		dol_print_error($db);
 	}
+	$head[$h][2] = 'candidatures';
+	$h++;
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
@@ -132,7 +143,7 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 	}*/
 
 	// For multicompany
-	if (!empty($out) && !empty($conf->multicompany->enabled)) {
+	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 	}
 

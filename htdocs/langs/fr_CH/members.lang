@@ -10,7 +10,6 @@ ListOfValidatedPublicMembers=Liste des membres publics validés
 ErrorThisMemberIsNotPublic=Ce membre n'est pas public
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Un autre membre (nom: <b> %s</b>, connexion: <b>%s</b>) est déjà lié à un tiers <b>%s</b>. Supprimez ce lien en premier parce qu'un tiers ne peut être lié qu'à un membre (et vice versa).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Pour des raisons de sécurité, vous devez être autorisé à modifier tous les utilisateurs pour pouvoir lier un membre à un utilisateur qui n'est pas le vôtre.
-MembersCards=Cartes de visite pour les membres
 MembersList=Liste des membres
 MembersListToValid=Liste des brouillons de membres (à valider)
 MembersListValid=Liste des membres validés

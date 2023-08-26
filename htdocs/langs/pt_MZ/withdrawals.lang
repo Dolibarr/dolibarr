@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - withdrawals
+StandingOrderPayment=Pedido com pagamento em Débito direto
+StandingOrderToProcess=A processar
+StatusPaid=Pago

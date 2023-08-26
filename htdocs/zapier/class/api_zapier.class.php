@@ -13,18 +13,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file    htdocs/zapier/class/api_zapier.class.php
+ * \ingroup zapier
+ * \brief   File for API management of Zapier hooks.
  */
 
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 
-/**
- * \file    htdocs/zapier/class/api_zapier.class.php
- * \ingroup zapier
- * \brief   File for API management of hook.
- */
 
 /**
  * API class for zapier hook
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class ZapierApi extends DolibarrApi
+class Zapier extends DolibarrApi
 {
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
@@ -65,8 +66,8 @@ class ZapierApi extends DolibarrApi
 	 *
 	 * Return an array with hook informations
 	 *
-	 * @param   int             $id ID of hook
-	 * @return  array|mixed     data without useless information
+	 * @param   int             $id 	ID of hook
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url GET /hooks/{id}
 	 * @throws  RestException
@@ -197,11 +198,10 @@ class ZapierApi extends DolibarrApi
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -239,7 +239,7 @@ class ZapierApi extends DolibarrApi
 	 * Create hook object
 	 *
 	 * @param array $request_data   Request datas
-	 * @return int  ID of hook
+	 * @return array  ID of hook
 	 *
 	 * @url	POST /hook/
 	 */
@@ -260,7 +260,7 @@ class ZapierApi extends DolibarrApi
 			$this->hook->$field = $value;
 		}
 		$this->hook->fk_user = DolibarrApiAccess::$user->id;
-		// on crée le hook dans la base
+		// we create the hook into database
 		if (!$this->hook->create(DolibarrApiAccess::$user)) {
 			throw new RestException(500, "Error creating Hook", array_merge(array($this->hook->error), $this->hook->errors));
 		}
@@ -353,13 +353,6 @@ class ZapierApi extends DolibarrApi
 	{
 		// phpcs:disable
 		$object = parent::_cleanObjectDatas($object);
-
-		/*unset($object->note);
-        unset($object->address);
-        unset($object->barcode_type);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_coder);*/
 
 		return $object;
 	}

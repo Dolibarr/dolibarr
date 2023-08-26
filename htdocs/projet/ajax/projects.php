@@ -38,13 +38,11 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
+if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
@@ -64,7 +62,7 @@ dol_syslog("Call ajax projet/ajax/projects.php");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-top_httphead();
+top_httphead('application/json');
 
 if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
 	return;

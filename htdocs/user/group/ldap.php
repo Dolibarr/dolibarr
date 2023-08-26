@@ -23,6 +23,7 @@
  *       \brief      Page fiche LDAP groupe
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -41,12 +42,12 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$object = new Usergroup($db);
+$object = new UserGroup($db);
 $object->fetch($id);
 $object->getrights();
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	accessforbidden();
 }
 
@@ -92,7 +93,9 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-llxHeader();
+$title = $object->name." - ".$langs->trans('LDAP');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 $head = group_prepare_head($object);
 
@@ -105,7 +108,7 @@ dol_banner_tab($object, 'id', $linkback, (!empty($user->rights->user->user->lire
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 if (!empty($conf->mutlicompany->enabled)) {

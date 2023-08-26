@@ -23,7 +23,7 @@ create table llx_loan_schedule
   fk_loan			integer,
   datec				datetime,         -- creation date
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  datep				datetime,         -- payment date
+  datep				datetime,         -- payment date expected
   amount_capital	double(24,8) DEFAULT 0,
   amount_insurance	double(24,8) DEFAULT 0,
   amount_interest	double(24,8) DEFAULT 0,

@@ -23,6 +23,7 @@
  *      \brief      Page to add payment of a tax
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
@@ -69,7 +70,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -194,7 +195,7 @@ if ($action == 'create') {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free();
+		$db->free($resql);
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
@@ -207,14 +208,15 @@ if ($action == 'create') {
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype", "int") : $tva->paiementtype, "paiementtype");
+	print $form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype", "int") : $tva->paiementtype, "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	$form->select_comptes(GETPOST("accountid") ? GETPOST("accountid", "int") : $tva->accountid, "accountid", 0, '', 1); // Show opend bank account list
+	print img_picto('', 'bank_account', 'pictofixedwidth');
+	$form->select_comptes(GETPOST("accountid", "int") ? GETPOST("accountid", "int") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
@@ -225,7 +227,7 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td class="tdtop"><textarea name="note" class="quatrevingtpercent" wrap="soft" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
 	print '</table>';
@@ -238,6 +240,7 @@ if ($action == 'create') {
 	$num = 1;
 	$i = 0;
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
@@ -259,14 +262,14 @@ if ($action == 'create') {
 		if ($objp->datev > 0) {
 			print '<td class="left">'.dol_print_date($objp->datev, 'day').'</td>'."\n";
 		} else {
-			print "<td align=\"center\"><b>!!!</b></td>\n";
+			print '<td class="center"><b>!!!</b></td>'."\n";
 		}
 
-		print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>";
+		print '<td class="right nowraponall"><span class="amount">'.price($objp->amount)."</span></td>";
 
-		print '<td class="right"><span class="amount">'.price($sumpaid)."</span></td>";
+		print '<td class="right nowraponall"><span class="amount">'.price($sumpaid)."</span></td>";
 
-		print '<td class="right"><span class="amount">'.price($objp->amount - $sumpaid)."</span></td>";
+		print '<td class="right nowraponall"><span class="amount">'.price($objp->amount - $sumpaid)."</span></td>";
 
 		print '<td class="center">';
 
@@ -279,7 +282,7 @@ if ($action == 'create') {
 			} */
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" class="right width100" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
+			print '<input type="text" class="right width75" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
 		} else {
 			print '-';
 		}
@@ -288,7 +291,7 @@ if ($action == 'create') {
 		print "</tr>\n";
 		$total += $objp->total;
 		$total_ttc += $objp->total_ttc;
-		$totalrecu += $objp->am;
+		$totalrecu += $objp->amount;
 		$i++;
 	}
 	if ($i > 1) {
@@ -303,6 +306,7 @@ if ($action == 'create') {
 	}
 
 	print "</table>";
+	print '</div>';
 
 	// Bouton Save payment
 	print '<br><div class="center"><input type="checkbox" checked name="closepaidvat"> '.$langs->trans("ClosePaidVATAutomatically");

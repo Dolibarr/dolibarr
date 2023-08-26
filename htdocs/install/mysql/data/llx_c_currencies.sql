@@ -7,6 +7,7 @@
 -- Copyright (C) 2007 	    Patrick Raguin        <patrick.raguin@gmail.com>
 -- Copyright (C) 2011 	    Juanjo Menent         <jmenent@2byte.es>
 -- Copyright (C) 2020 	    Udo Tamm              <dev@dolibit.de>
+-- Copyright (C) 2022 	    Éric Seigne           <eric.seigne@cap-rel.fr>
 -- Copyright (C) 2021 	    Lenin Rivas           <lenin@leninrivas.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -57,6 +58,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BWP'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BGN', '[1083,1074]', 1,			'Bulgaria Lev');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BRL', '[82,36]', 1,				  'Brazil Real');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BND', '[36]', 1,				    'Brunei Darussalam Dollar');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BIF', NULL, 1,				    'Burundi Franc');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KHR', '[6107]', 1,			  	'Cambodia Riel');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CAD', '[36]', 1,				    'Canada Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CVE', '[4217]', 1,          'Cap Verde Escudo');
@@ -114,6 +116,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MRO'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MUR', '[8360]', 1,	  			'Mauritius Rupee');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MXN', '[36]', 1,	    			'Mexico Peso');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MDL', NULL, 1,	  	        'Moldova Leu');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MMK', '[75]', 1,	  			'Myanmar Kyat');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MNT', '[8366]', 1,	  			'Mongolia Tughrik');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MAD', NULL, 1,			    		'Morocco Dirham');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MZN', '[77,84]', 1,	  			'Mozambique Metical');
@@ -151,7 +154,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'TWD'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'THB', '[3647]', 1,			  	'Thailand Baht');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'TTD', '[84,84,36]', 1,			'Trinidad and Tobago Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'TND', NULL, 1,				    	'Tunisia Dinar');
-INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'TRY', '[8356]', 1,		  		'Turkey Lira');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'TRY', '[8378]', 1,		  		'Turkey Lira');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'TVD', '[36]', 1,		    		'Tuvalu Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'UAH', '[8372]', 1,	  			'Ukraine Hryvna');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'AED', NULL, 1,			     		'United Arab Emirates Dirham');

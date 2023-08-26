@@ -19,22 +19,22 @@
  */
 
 /**
- * \file       htdocs/core/boxes/box_supplier_orders.php
+ * \file       htdocs/core/boxes/box_supplier_orders_awaiting_reception.php
  * \ingroup    fournisseurs
  * \brief      Module that generates the latest supplier orders box
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 /**
- * Class that manages the box showing latest supplier orders
+ * Class to manage the box to show last supplier orders awaiting reception
  */
 class box_supplier_orders_awaiting_reception extends ModeleBoxes
 {
 
-	public $boxcode = "supplierordersawaitingreception";
-	public $boximg = "object_order";
+	public $boxcode  = "supplierordersawaitingreception";
+	public $boximg   = "object_order";
 	public $boxlabel = "BoxLatestSupplierOrdersAwaitingReception";
-	public $depends = array("fournisseur");
+	public $depends  = array("fournisseur");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -58,7 +58,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->fournisseur->commande->lire);
+		$this->hidden = !($user->hasRight('fournisseur', 'commande', 'lire'));
 	}
 
 	/**
@@ -172,7 +172,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center"',
-						'text' => $langs->trans("NoSupplierOrder"),
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</span>',
 					);
 				}
 
@@ -187,7 +187,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 		} else {
 			$this->info_box_contents[0][] = array(
 				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

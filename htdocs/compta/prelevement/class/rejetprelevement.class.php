@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
+ * Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,27 @@ class RejetPrelevement
 	public $db;
 
 	public $type; //prelevement or bank transfer
+	public $bon_id;
+	public $user;
+	public $date_rejet;
 
+	/**
+	 * @var array	Reason of error
+	 */
+	public $motif;
+	/**
+	 * @var array	Label status of invoicing
+	 */
+	public $invoicing;
+
+	/**
+	 * @var array	Labels of reason
+	 */
+	public $motifs;
+	/**
+	 * @var array	Labels of invoicing status
+	 */
+	public $labelsofinvoicing;
 
 	/**
 	 *  Constructor
@@ -59,7 +80,7 @@ class RejetPrelevement
 		$this->type = $type;
 
 		$this->motifs = array();
-		$this->facturer = array();
+		$this->labelsofinvoicing = array();
 
 		$this->motifs[0] = ""; //$langs->trans("StatusMotif0");
 		$this->motifs[1] = $langs->trans("StatusMotif1");
@@ -71,8 +92,8 @@ class RejetPrelevement
 		$this->motifs[7] = $langs->trans("StatusMotif7");
 		$this->motifs[8] = $langs->trans("StatusMotif8");
 
-		$this->facturer[0] = $langs->trans("NoInvoiceRefused");
-		$this->facturer[1] = $langs->trans("InvoiceRefused");
+		$this->labelsofinvoicing[0] = $langs->trans("NoInvoiceRefused");
+		$this->labelsofinvoicing[1] = $langs->trans("InvoiceRefused");
 	}
 
 	/**
@@ -221,7 +242,7 @@ class RejetPrelevement
 		$userid = 0;
 
 		$sql = "SELECT fk_user_demande";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE pfd.fk_prelevement_bons = ".((int) $this->bon_id);
 		$sql .= " AND pfd.fk_facture".($this->type == 'bank-transfer' ? '_fourn' : '').' = '.((int) $fac->id);
 
@@ -289,7 +310,7 @@ class RejetPrelevement
 
 		 //Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid, pl.amount";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as pf";
 		if ($this->type == 'bank-transfer') {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON (pf.fk_facture_fourn = f.rowid)";
 		} else {
@@ -334,7 +355,6 @@ class RejetPrelevement
 	 */
 	public function fetch($rowid)
 	{
-
 		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 		$sql .= " WHERE pr.fk_prelevement_lignes =".((int) $rowid);
@@ -347,7 +367,7 @@ class RejetPrelevement
 				$this->id = $rowid;
 				$this->date_rejet = $this->db->jdate($obj->dr);
 				$this->motif = $this->motifs[$obj->motif];
-				$this->invoicing = $this->facturer[$obj->afacturer];
+				$this->invoicing = $this->labelsofinvoicing[$obj->afacturer];
 
 				$this->db->free($resql);
 

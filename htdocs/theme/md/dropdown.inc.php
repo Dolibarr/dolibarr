@@ -21,17 +21,23 @@ button.dropdown-item.global-search-item {
 }
 
 
-#topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
+#topmenu-global-search-dropdown a.login-dropdown-a, #topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
 	color: #fff;
+}
+
+div#topmenu-global-search-dropdown {
+	position: fixed;
+	<?php echo $right; ?>: 90px;
+	top: 0px;
 }
 div#topmenu-quickadd-dropdown {
 	position: fixed;
-	right: 65px;
+	<?php echo $right; ?>: 55px;
 	top: 0px;
 }
 div#topmenu-bookmark-dropdown {
 	position: fixed;
-	right: 20px;
+	<?php echo $right; ?>: 20px;
 	top: 0px;
 }
 
@@ -40,7 +46,7 @@ div#topmenu-bookmark-dropdown {
 	display: none;
 }
 
-#topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu {
+#topmenu-global-search-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu {
 	min-width: 300px;
 	max-width: 360px;
 }
@@ -124,6 +130,15 @@ button.dropdown-item.global-search-item {
 }
 
 
+/* CSS to hide the arrow to show open/close */
+div#topmenu-global-search-dropdown, , div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+	padding-right: 2px;
+}
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+	display: none;
+}
+
+
 .dropdown-toggle{
 	text-decoration: none !important;
 }
@@ -153,8 +168,9 @@ button.dropdown-item.global-search-item {
 }
 
 /*
-* MENU Dropdown
-*/
+ * MENU Dropdown
+ */
+
 .login_block.usedropdown .logout-btn{
 	/* display: none; */
 }
@@ -201,7 +217,7 @@ button.dropdown-item.global-search-item {
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	line-height: 46px;
+	line-height: <?php echo (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '35' : '46' ); ?>px;
 }
 a.top-menu-dropdown-link {
 	padding: 8px;
@@ -221,7 +237,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	background: rgb(--colorbackhmenu1);
 }
 
 
@@ -244,13 +260,14 @@ a.top-menu-dropdown-link {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
 	padding: 10px;
+	text-align: start;
 }
 
 
 .dropdown-menu > .user-body, .dropdown-body{
 	padding: 15px;
 	border-bottom: 1px solid #f4f4f4;
-	border-top: 1px solid #dddddd;
+	border-top: 1px solid #f0f0f0;
 	white-space: normal;
 }
 
@@ -293,7 +310,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-align: right;
+	text-align: start;
 	color:#666;
 	cursor: pointer;
 }
@@ -302,6 +319,10 @@ a.top-menu-dropdown-link {
 	display: none;
 	clear: both;
 	font-size: 0.95em;
+}
+
+a.dropdown-item {
+	text-align: start;
 }
 
 .button-top-menu-dropdown {
@@ -386,15 +407,15 @@ a.top-menu-dropdown-link {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus, .dropdown-item:focus span::before  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
 /*
-* SEARCH
-*/
+ * SEARCH
+ */
 
 .dropdown-search-input {
 	width: 100%;
@@ -420,6 +441,127 @@ a.top-menu-dropdown-link {
 
 }
 
+.search-dropdown-body {
+	padding: unset;
+}
+
+.global-search-item {
+	font-size: 1em;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.global-search-item:before {
+	content: none;
+}
+
+.global-search-header {
+	color: #444 !important;
+}
+
+
+/*
+ * QUICK ADD
+ */
+
+#topmenu-quickadd-dropdown .dropdown-menu {
+	width: 310px !important;
+	color: #444;
+}
+
+.quickadd-body.dropdown-body {
+	padding: unset;
+}
+
+.quickadd-item {
+	font-size: 1em;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.quickadd-item:before {
+	content: none;
+}
+
+.quickadd-header {
+	color: #444 !important;
+}
+
+div.quickadd {
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	-webkit-justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-align-content: center;
+	-ms-flex-line-pack: center;
+	align-content: center;
+	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
+	align-items: flex-start;
+}
+
+div.quickadd a {
+	color: #444;
+}
+
+div.quickadd a:hover, div.quickadd a:active {
+	color: #000000;
+}
+
+div.quickaddblock {
+	width: 95px;
+	height: 80px;
+}
+
+div.quickaddblock:hover,
+div.quickaddblock:active,
+div.quickaddblock:focus {
+	background: <?php print $colorbacklinepair1; ?>;
+}
+
+
+/* for the dropdown on action buttons */
+dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:10px;	/* will be set with js */
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>
+}
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #000 !important;
+}
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	text-decoration: underline;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
 
 /* smartphone */
 @media only screen and (max-width: 767px)
@@ -433,18 +575,24 @@ a.top-menu-dropdown-link {
 		max-width: 360px;
 	}
 
+	#topmenu-quickadd-dropdown a.login-dropdown-a,
 	#topmenu-bookmark-dropdown a.login-dropdown-a {
 		color: #000;
 	}
+	#topmenu-quickadd-dropdown .dropdown-menu,
 	#topmenu-bookmark-dropdown .dropdown-menu {
 		width: 230px;
 	}
 
+	div#topmenu-global-search-dropdown,
+	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown {
 		position: unset;
 	}
 
-	div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+	div#topmenu-global-search-dropdown,
+	div#topmenu-quickadd-dropdown,
+	div#topmenu-bookmark-dropdown {
 		line-height: unset;
 	}
 

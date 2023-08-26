@@ -1,0 +1,12 @@
+{
+  "name": "globalcitizen/php-iban",
+  "description": "php-iban is a library for parsing and validating IBAN (and IIBAN) bank account information.",
+  "license": "LGPL-3.0-only",
+  "require": {
+    "php": "^5.4 || ^5.5 || ^5.6 || ^7.0 || ^7.4 || ^8.0 || ^8.1"
+  },
+  "autoload": {
+    "files": ["oophp-iban.php","php-iban.php"]
+  }
+}
+

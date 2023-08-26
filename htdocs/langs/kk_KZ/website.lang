@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Код
+WebsiteName=Name of the website
 WebsiteSetupDesc=Қолданғыңыз келетін веб -сайттарды осы жерден жасаңыз. Содан кейін оларды өңдеу үшін веб -сайттар мәзіріне өтіңіз.
 DeleteWebsite=Веб -сайтты жою
 ConfirmDeleteWebsite=Бұл веб -сайтты шынымен жойғыңыз келе ме? Оның барлық беттері мен мазмұны жойылады. Жүктелген файлдар (мысалы медиа каталогында, ECM модулінде ...) қалады.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=HTML тақырыбының төменгі жағындағ�
 WEBSITE_ROBOT=Роботтық файл (robots.txt)
 WEBSITE_HTACCESS=Веб -сайт .htaccess файлы
 WEBSITE_MANIFEST_JSON=Manifest.json веб -сайты
-WEBSITE_README=README.md файлы
 WEBSITE_KEYWORDSDesc=Мәндерді ажырату үшін үтірді қолданыңыз
-EnterHereLicenseInformation=Мұнда README.md файлын толтыру үшін мета деректерді немесе лицензия ақпаратын енгізіңіз. егер сіз веб -сайтыңызды шаблон ретінде таратсаңыз, онда файл азғырылған пакетке қосылады.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=HTML тақырыбы (тек осы бетке тән)
 PageNameAliasHelp=Беттің аты немесе бүркеншік аты. <br> Бұл бүркеншік атау веб -сервердің виртуалды хостынан (Apacke, Nginx, ... сияқты) жұмыс жасағанда, SEO URL мекенжайын жасау үшін де қолданылады. Бұл бүркеншік атты өңдеу үшін «<strong> %s </strong>» түймесін пайдаланыңыз.
 EditTheWebSiteForACommonHeader=Ескерту: Егер сіз барлық беттерге арналған дербес тақырыпты анықтағыңыз келсе, тақырыпты бетте/контейнерде емес, сайт деңгейінде өңдеңіз.
@@ -42,10 +43,12 @@ ViewPageInNewTab=Бетті жаңа қойындыда қарау
 SetAsHomePage=Басты бет ретінде орнату
 RealURL=Нақты URL
 ViewWebsiteInProduction=Негізгі URL мекенжайларын пайдаланып веб -сайтты қараңыз
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Apache виртуалды хостын орнатуда қолданылатын мысал:
 YouCanAlsoTestWithPHPS=<u>Use with PHP embedded server</u><br>On develop environment, you may prefer to test the site with the PHP embedded web server (PHP 5.5 required) by running<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP= <u> Веб -сайтыңызды басқа Dolibarr хостинг провайдерімен іске қосыңыз </u> <br> Егер сізде Интернетте Apache немесе NGinx сияқты веб -сервер жоқ болса, сіз өзіңіздің веб -сайтыңызды басқа Dolibarr хостинг провайдерімен қамтамасыз ететін басқа Dolibarr данасына экспорттауға және импорттауға болады. веб -сайт модулімен біріктіру. <a href="https://saas.dolibarr.org" target="_blank"> сайтында кейбір Dolibarr хостинг провайдерлерінің тізімін таба аласыз https://saas.dolibarr.org </a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Оқыңыз
 WritePerm=Жазу
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=Редактордағы «Дереккөз» ба�
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Сіз PHP кодын <strong> &lt;? php? a0012c7d7f00770 Келесі жаһандық айнымалылар қол жетімді: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Сондай -ақ, келесі синтаксисі бар басқа бет/контейнер мазмұнын қосуға болады: <br> a0e784c0fc04 ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Сіз келесі синтаксис (: істей емес шығыс нөмірге дейін кез келген мазмұн Ескерту): басқа бет / контейнерлерде бағытын өзгерту енгізе аласыз <br> <strong> &lt; PHP redirectToContainer ( 'alias_of_container_to_redirect_to'); ? <strong> құжаттарына сақталған файлға </strong> жүктеуге үшін <strong> сілтемені қамтуы үшін <br> <strong> &lt;a HREF = «alias_of_page_to_link_to.php» &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span>: &gt; </strong> <br> <br> <span class="fa fa-link"> </span> синтаксисті пайдаланыңыз, басқа бетке сілтеме қосу үшін </strong> каталог, пайдалану <strong> document.php </strong> Қабық: <br> Мысал, құжаттар / ECM (кіруіңіз қажет) ішіне файл үшін, синтаксис:? <br> <strong> &lt;a HREF = «/ document.php modulepart = ECM & файл = [relative_dir / ] filename.ext «&gt; </strong> <br> Құжаттарға/медиаларға файл үшін (жалпыға қол жетімді каталог), синтаксис: <br> a0e7843947c09bz0 «/document.php?modulepart=medias&file=itorialre_dir/] /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span>, каталогына </strong> <strong> құжаттарына сақталған </strong> бір <strong> суретті қамтиды <strong> viewimage.php </strong> тасымалын пайдалану үшін: мысал <br>, сурет үшін құжаттар / бұқаралық ақпарат құралдарының (ашық жалпыға қол жетімді каталог), синтаксис: <br> <strong> &lt;img src = «/viewimage.php? modulepart = medias&amp;file
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Бөлісу сілтемесімен бөлісілген кескін үшін (файлдың ортақ хэш кілтін қолдана отырып, ашық қатынас), синтаксис: <br> <strong> &lt;img src = «/viewimage.php? Hashp = 12345679012z00f01f01f0f1f0f4f0f0f0f0f0f09f0f0f0f09b029»
-YouCanEditHtmlSourceMore= <br> HTML немесе динамикалық кодтың басқа мысалдары <a href="%s" target="_blank"> қол жетімді вики құжаттамасы </a> <br>.
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external">the wiki documentation</a><br>.
 ClonePage=Бетті/контейнерді клондау
 CloneSite=Сайтты клондау
 SiteAdded=Веб -сайт қосылды
@@ -80,7 +83,7 @@ BlogPost=Блог посты
 WebsiteAccount=Веб -сайттың есептік жазбасы
 WebsiteAccounts=Веб -сайттағы есептік жазбалар
 AddWebsiteAccount=Веб -сайт тіркелгісін жасаңыз
-BackToListForThirdParty=Үшінші тараптардың тізіміне оралу
+BackToListForThirdParty=Back to list for the third parties
 DisableSiteFirst=Алдымен веб -сайтты өшіріңіз
 MyContainerTitle=Менің веб -сайтымның атауы
 AnotherContainer=Басқа беттің/контейнердің мазмұнын осылай қосу керек (егер сізде динамикалық кодты қоссаңыз, қате болуы мүмкін, себебі ендірілген ішкі контейнер болмауы мүмкін)
@@ -137,7 +140,7 @@ PagesRegenerated=%s бет (тер)/контейнер (лер) жаңартыл
 RegenerateWebsiteContent=Веб -сайттың кэш файлдарын қалпына келтіріңіз
 AllowedInFrames=Кадрларда рұқсат етілген
 DefineListOfAltLanguagesInWebsiteProperties=Веб -сайт сипаттарына барлық қол жетімді тілдердің тізімін анықтаңыз.
-GenerateSitemaps=Веб -сайттың сайт картасының файлын жасаңыз
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=Егер растасаңыз, сайт картасының файлын өшіресіз ...
 ConfirmSitemapsCreation=Сайт картасының құрылуын растаңыз
 SitemapGenerated=<b> %s </b> сайт картасының файлы жасалды
@@ -145,3 +148,12 @@ ImportFavicon=Фавикон
 ErrorFaviconType=Фавикон PNG болуы керек
 ErrorFaviconSize=Favicon өлшемі 16x16, 32x32 немесе 64x64 болуы керек
 FaviconTooltip=Png (16x16, 32x32 немесе 64x64) болуы керек суретті жүктеңіз
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation
+PagesViewedPreviousMonth=Pages viewed (previous month)
+PagesViewedTotal=Pages viewed (total)

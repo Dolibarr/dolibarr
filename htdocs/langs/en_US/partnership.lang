@@ -20,6 +20,7 @@ ModulePartnershipName=Partnership management
 PartnershipDescription=Module Partnership management
 PartnershipDescriptionLong= Module Partnership management
 Partnership=Partnership
+Partnerships=Partnerships
 AddPartnership=Add partnership
 CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
 PartnershipCheckBacklink=Partnership: Check referring backlink
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnership: Check referring backlink
 # Menu
 #
 NewPartnership=New Partnership
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=List of partnership
 
 #
@@ -42,13 +44,14 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
 ReferingWebsiteCheck=Check of website referring
 ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website to allow external visitors to request to be part of the partnership program.
 
 #
 # Object
 #
 DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party	
-PartnershipDedicatedToThisMember=Partnership dedicated to this member	
+PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
+PartnershipDedicatedToThisMember=Partnership dedicated to this member
 DatePartnershipStart=Start date
 DatePartnershipEnd=End date
 ReasonDecline=Decline reason
@@ -59,6 +62,12 @@ BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
 ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 PartnershipType=Partnership type
 PartnershipRefApproved=Partnership %s approved
+KeywordToCheckInWebsite=If you want to check that a given keyword is present into the website of each partner, define this keyword here
+PartnershipDraft=Draft
+PartnershipAccepted=Accepted
+PartnershipRefused=Refused
+PartnershipCanceled=Canceled
+PartnershipManagedFor=Partners are
 
 #
 # Template Mail
@@ -82,11 +91,7 @@ CountLastUrlCheckError=Number of errors for last URL check
 LastCheckBacklink=Date of last URL check
 ReasonDeclineOrCancel=Reason for declining or canceling
 
-#
-# Status
-#
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=New partnership request
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s 
+

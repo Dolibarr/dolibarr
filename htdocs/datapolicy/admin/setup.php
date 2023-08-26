@@ -19,15 +19,16 @@
 /**
  * \file    htdocs/datapolicy/admin/setup.php
  * \ingroup datapolicy
- * \brief   datapolicy setup page.
+ * \brief   Datapolicy setup page to define duration of data keeping.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/datapolicy.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/datapolicy/lib/datapolicy.lib.php';
 
 // Translations
-$langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy@datapolicy'));
+$langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy'));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -50,7 +51,7 @@ if (!empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
 		'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
 	);
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$arrayofparameters['Member'] = array(
 		'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'member', 'class="pictofixedwidth"')),
 	);
@@ -69,7 +70,10 @@ $valTab = array(
 	'240' => $langs->trans('NB_YEARS', 20),
 );
 
-// Access control
+// Security
+if (!isModEnabled("datapolicy")) {
+	accessforbidden();
+}
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -137,7 +141,7 @@ if ($action == 'edit') {
 		foreach ($tab as $key => $val) {
 			print '<tr class="oddeven"><td>';
 			print $val['picto'];
-			print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+			print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
 			print '</td><td>';
 			print '<select name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'">';
 			foreach ($valTab as $key1 => $val1) {

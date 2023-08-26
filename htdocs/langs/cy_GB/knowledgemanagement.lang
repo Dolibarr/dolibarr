@@ -1,0 +1,54 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = System Rheoli Gwybodaeth
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Rheoli sylfaen Rheoli Gwybodaeth (KM) neu Ddesg Gymorth
+
+#
+# Admin page
+#
+KnowledgeManagementSetup = Sefydlu System Rheoli Gwybodaeth
+Settings = Gosodiadau
+KnowledgeManagementSetupPage = Tudalen sefydlu System Rheoli Gwybodaeth
+
+
+#
+# About page
+#
+About = Ynghylch
+KnowledgeManagementAbout = Am Reoli Gwybodaeth
+KnowledgeManagementAboutPage = Rheoli Gwybodaeth am dudalen
+
+KnowledgeManagementArea = Rheoli Gwybodaeth
+MenuKnowledgeRecord = Sylfaen wybodaeth
+ListKnowledgeRecord = Rhestr o erthyglau
+NewKnowledgeRecord = Erthygl newydd
+ValidateReply = Dilysu ateb
+KnowledgeRecords = Erthyglau
+KnowledgeRecord = Erthygl
+KnowledgeRecordExtraFields = Extrafields ar gyfer Erthygl
+GroupOfTicket=Grŵp o docynnau
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+SuggestedForTicketsInGroup=Argymhellir ar gyfer tocynnau pan fydd grŵp
+
+SetObsolete=Gosod fel darfodedig
+ConfirmCloseKM=A ydych yn cadarnhau cau'r erthygl hon fel un sydd wedi darfod ?
+ConfirmReopenKM=Ydych chi am adfer yr erthygl hon i statws "Dilyswyd" ?

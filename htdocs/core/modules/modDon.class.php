@@ -121,7 +121,7 @@ class modDon extends DolibarrModules
 		$this->rights[1][0] = 701;
 		$this->rights[1][1] = 'Lire les dons';
 		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
+		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 702;
@@ -155,7 +155,7 @@ class modDon extends DolibarrModules
 	{
 		global $conf;
 
-		$result = $this->_load_tables('/install/mysql/tables/', 'deplacement');
+		$result = $this->_load_tables('/install/mysql/', 'don');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

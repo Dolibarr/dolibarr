@@ -46,7 +46,7 @@ KnowledgeRecords = Artykuły
 KnowledgeRecord = Artykuł
 KnowledgeRecordExtraFields = Extrapola dla artykułu
 GroupOfTicket=Grupa biletów
-YouCanLinkArticleToATicketCategory=Możesz powiązać artykuł z grupą biletów (aby artykuł był sugerowany podczas kwalifikacji nowych biletów)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=Suggested for tickets when group is
 
 SetObsolete=Set as obsolete

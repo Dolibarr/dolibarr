@@ -40,36 +40,37 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
+// TODO Set $permission from the $permissiontoadd var defined on calling page
 if ($module == 'propal') {
-	$permission = $user->rights->propale->creer;
+	$permission = $user->hasRight('propal', 'creer');
 } elseif ($module == 'fichinter') {
-	$permission = $user->rights->ficheinter->creer;
+	$permission = $user->hasRight('ficheinter', 'creer');
 } elseif ($module == 'order_supplier') {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->rights->fournisseur->commande->creer;
+		$permission = $user->hasRight('fournisseur', 'commande', 'creer');
 	} else {
-		$permission = $user->rights->supplier_order->creer;
+		$permission = $user->hasRight('supplier_order', 'creer');
 	}
 } elseif ($module == 'invoice_supplier' && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->rights->fournisseur->facture->creer;
+		$permission = $user->hasRight('fournisseur', 'facture', 'creer');
 	} else {
-		$permission = $user->rights->supplier_invoice->creer;
+		$permission = $user->hasRight('supplier_invoice', 'creer');
 	}
 } elseif ($module == 'project') {
-	$permission = $user->rights->projet->creer;
+	$permission = $user->hasRight('projet', 'creer');
 } elseif ($module == 'action') {
-	$permission = $user->rights->agenda->myactions->create;
+	$permission = $user->hasRight('agenda', 'myactions', 'create');
 } elseif ($module == 'shipping') {
-	$permission = $user->rights->expedition->creer;
+	$permission = $user->hasRight('expedition', 'creer');
 } elseif ($module == 'reception') {
-	$permission = $user->rights->reception->creer;
+	$permission = $user->hasRight('reception', 'creer');
 } elseif ($module == 'project_task') {
-	$permission = $user->rights->projet->creer;
+	$permission = $user->hasRight('projet', 'creer');
 } elseif (!isset($permission) && isset($user->rights->$module->creer)) {
-	$permission = $user->rights->$module->creer;
+	$permission = $user->hasRight($module, 'creer');
 } elseif (!isset($permission) && isset($user->rights->$module->write)) {
-	$permission = $user->rights->$module->write;
+	$permission = $user->hasRight($module, 'write');
 }
 
 $formcompany = new FormCompany($db);
@@ -143,7 +144,8 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component
+			?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
@@ -151,7 +153,7 @@ if ($permission) {
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
-			if (!empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer) {
+			if (!empty($object->socid) && $object->socid > 1 && $user->hasRight('societe', 'creer')) {
 				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$selectedCompany.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
 			print $newcardbutton;
@@ -280,9 +282,6 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<div class="div-table-responsive-no-min">'."\n";
 print '<table class="tagtable nobottomiftotal liste">';
 
-//print '<tr class="liste_titre_filter">';
-//print '</tr>';
-
 print '<tr class="liste_titre">';
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact_name", "", $param, "", $sortfield, $sortorder);
@@ -316,7 +315,17 @@ foreach ($list as $entry) {
 
 	print "</tr>";
 }
-
+if (empty($list)) {
+	$colspan = 5 + ($permission ? 1 : 0);
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">';
+	if (is_object($object) && !empty($object->thirdparty)) {
+		print $form->textwithpicto($langs->trans("NoSpecificContactAddress"), $langs->trans("NoSpecificContactAddressBis"));
+	} else {
+		print $langs->trans("NoSpecificContactAddress");
+	}
+	print '</span>';
+	print '</td></tr>';
+}
 print "</table>";
 print '</div>';
 

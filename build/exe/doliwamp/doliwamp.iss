@@ -24,15 +24,14 @@ OutputBaseFilename=__FILENAMEEXEDOLIWAMP__
 ;OutputManifestFile=build\doliwampbuild.log
 ; Define full path from which all relative path are defined
 ; You must modify this to put here your dolibarr root directory
-;SourceDir=Z:\home\ldestailleur\git\dolibarrxxx
 SourceDir=..\..\..
 AppId=doliwamp
-AppPublisher=NLTechno
-AppPublisherURL=https://www.nltechno.com
+AppPublisher=DoliCloud
+AppPublisherURL=https://www.dolicloud.com
 AppSupportURL=https://www.dolibarr.org
 AppUpdatesURL=https://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql software.
-AppCopyright=Copyright (C) 2008-2020 Laurent Destailleur (NLTechno), Fabian Rodriguez (Le Goût du Libre)
+AppCopyright=Copyright (C) 2008-2022 Laurent Destailleur (DoliCloud), Fabian Rodriguez (Le Goût du Libre)
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 ;LicenseFile=COPYING
@@ -81,7 +80,7 @@ Name: "desktopicon"; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:
 Name: "{app}\logs"
 Name: "{app}\tmp"
 Name: "{app}\dolibarr_documents"
-Name: "{app}\bin\apache\apache2.4.41\logs"
+Name: "{app}\bin\apache\apache2.4.51\logs"
 
 [Files]
 ; Stop/start
@@ -99,19 +98,12 @@ Source: "build\exe\doliwamp\startdoliwamp_manual_donotuse.bat.install"; DestDir:
 Source: "build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 
-; PhpMyAdmin, Apache, Php, Mysql
+; Apache, Php, Mysql
 ; Put here path of Wampserver applications
-; Value OK: apache 2.2.6,  php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45
-; Value OK: apache 2.2.11, php 5.3.0 (if no php_exif, php_pgsql, php_zip), mysql 5.0.45
-; Value OK: apache 2.4.9,  php 5.5.12, mysql 5.0.45 instead of 5.6.17 (wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe)
-; Value OK: apache 2.4.41, php 7.3.12, mariadb10.4.10 (wampserver3.2.0_x64.exe)
-Source: "C:\wamp64\apps\phpmyadmin4.9.2\*.*"; DestDir: "{app}\apps\phpmyadmin4.9.2"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
-;Source: "C:\Program Files\Wamp\bin\apache\apache2.4.9\*.*"; DestDir: "{app}\bin\apache\apache2.4.9"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\apache\apache2.4.41\*.*"; DestDir: "{app}\bin\apache\apache2.4.41"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
-;Source: "C:\Program Files\Wamp\bin\php\php5.5.12\*.*"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\php\php7.3.12\*.*"; DestDir: "{app}\bin\php\php7.3.12"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
-;Source: "C:\Program Files\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
-Source: "C:\wamp64\bin\mariadb\mariadb10.4.10\*.*"; DestDir: "{app}\bin\mariadb\mariadb10.4.10"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
+; Value OK: apache 2.4.51, php 7.3.33, mariadb10.6.5 (wampserver3.2.6_x64.exe)
+Source: "C:\wamp64\bin\apache\apache2.4.51\*.*"; DestDir: "{app}\bin\apache\apache2.4.51"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\php\php7.3.33\*.*"; DestDir: "{app}\bin\php\php7.3.33"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\mariadb\mariadb10.6.5\*.*"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
 
 ; Mysql data files (does not overwrite if exists)
 ; We must copy them because the tool mysql_install_db.exe to generate them at first install does not return to prompt so make install hang
@@ -125,15 +117,11 @@ Source: "scripts\*.*"; DestDir: "{app}\www\dolibarr\scripts"; Flags: ignoreversi
 Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,default.properties,install.lock"
 
 ; Config files
-Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion;
-;Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.9\conf"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.41\conf"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.51\conf"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb10.4.10"; Flags: ignoreversion;
-;Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php7.3.12"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php7.3.33"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
@@ -196,7 +184,6 @@ var destFileA: String;
 var srcContents: String;
 var browser: String;
 var mysqlVersion: String;
-var phpmyadminVersion: String;
 var phpDllCopy: String;
 var batFile: String;
 
@@ -240,13 +227,9 @@ procedure InitializeWizard();
 begin
 
   //version des applis, a modifier pour chaque version de WampServer 2
-  //apacheVersion := '2.4.9';
-  //phpVersion := '5.5.12' ;
-  apacheVersion := '2.4.41';
-  phpVersion := '7.3.12' ;
-  //mysqlVersion := '5.0.45';
-  mysqlVersion := '10.4.10';
-  phpmyadminVersion := '4.1.14';
+  apacheVersion := '2.4.51';
+  phpVersion := '7.3.33' ;
+  mysqlVersion := '10.6.5';
 
   smtpServer := 'localhost';
   apachePort := '80';
@@ -380,9 +363,9 @@ begin
 
 	
 	// Migration of database
-//	datadir := pathWithSlashes+'/bin/mariadb/marradb10.4.10/data';
-//    exedirold := pathWithSlashes+'/bin/mariadb/marradb10.4.10/';
-//    exedirnew := pathWithSlashes+'/bin/mariadb/marradb10.4.10/';
+//	datadir := pathWithSlashes+'/bin/mariadb/mariadb10.6.5/data';
+//    exedirold := pathWithSlashes+'/bin/mariadb/mariadb10.6.5/';
+//    exedirnew := pathWithSlashes+'/bin/mariadb/mariadb10.6.5/';
 		
     // If we have a new database version, we should only copy old my.ini file into new directory
     // and change only all basedir= strings to use new version. Like this, data dir is still correct.
@@ -601,6 +584,17 @@ begin
 
 	      if browser = 'iexplore.exe' then
 	      begin
+		    if FileExists (pfPath+'/Microsoft/Edge/Application/msedge.exe')  then
+		    begin
+		      if MsgBox(CustomMessage('MicrosoftEdgeDetected'),mbConfirmation,MB_YESNO) = IDYES then
+		      begin
+		        browser := pfPath+'/Microsoft/Edge/Application/msedge.exe';
+		      end;
+		    end;
+		  end;
+
+	      if browser = 'iexplore.exe' then
+	      begin
             if FileExists (pfPath+'/Internet Explorer/iexplore.exe')  then
             begin
                GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, pfPath+'/Internet Explorer', 'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
@@ -636,27 +630,6 @@ begin
 
 		
 		    //----------------------------------------------
-		    // Create file alias phpmyadmin (always)
-		    //----------------------------------------------
-		
-		    destFile := pathWithSlashes+'/alias/phpmyadmin.conf';
-		    srcFile := pathWithSlashes+'/alias/phpmyadmin.conf.install';
-		
-		    if FileExists(srcFile) then
-		    begin
-		      LoadStringFromFile (srcFile, srcContents);
-		
-		      //installDir et version de phpmyadmin
-		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
-		      StringChangeEx (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion, True);
-		
-		      SaveStringToFile(destFile,srcContents, False);
-		    end;
-		    DeleteFile(srcFile);
-		
-		
-		
-		    //----------------------------------------------
 		    // Create file alias dolibarr (if not exists)
 		    //----------------------------------------------
 		
@@ -688,35 +661,6 @@ begin
 		    end;
 		    DeleteFile(srcFile);
 		
-		
-		
-		
-		    //----------------------------------------------
-		    // Create file configuration for phpmyadmin (if not exists)
-		    //----------------------------------------------
-		
-		    destFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php';
-		    srcFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php.install';
-		
-		    if FileExists(srcFile) then
-		    begin
-	  	      if not FileExists (destFile) then
-		      begin
-	            LoadStringFromFile (srcFile, srcContents);
-	            StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
-	            StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
-	            SaveStringToFile(destFile,srcContents, False);
-		      end
-		      else
-		      begin
-		        // We must replace to use format 2.4 of apache
-	            DeleteFile(destFile);
-	            LoadStringFromFile (srcFile, srcContents);
-	            StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
-	            StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
-	            SaveStringToFile(destFile,srcContents, False);
-		      end;
-		    end;
 		
 		
 		
@@ -1082,7 +1026,7 @@ Filename: "{app}\rundoliwamp.bat"; Description: {cm:LaunchNow}; Flags: shellexec
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
-Type: files; Name: "{app}\bin\mariadb\mariadb10.4.10\*.*"
+Type: files; Name: "{app}\bin\mariadb\mariadb10.6.5\*.*"
 Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"

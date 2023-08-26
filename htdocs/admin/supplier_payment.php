@@ -23,6 +23,7 @@
  *		\brief      Page to setup supplier invoices payments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -51,9 +52,9 @@ $type = 'supplier_payment';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstsupplierpayment = GETPOST('maskconstsupplierpayment', 'alpha');
+	$maskconstsupplierpayment = GETPOST('maskconstsupplierpayment', 'aZ09');
 	$masksupplierpayment = GETPOST('masksupplierpayment', 'alpha');
-	if ($maskconstsupplierpayment) {
+	if ($maskconstsupplierpayment && preg_match('/_MASK$/', $maskconstsupplierpayment)) {
 		$res = dolibarr_set_const($db, $maskconstsupplierpayment, $masksupplierpayment, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -74,7 +75,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->FACTURE_ADDON_PDF == "$value") {
+		if (getDolGlobalString("FACTURE_ADDON_PDF") == "$value") {
 			dolibarr_del_const($db, 'SUPPLIER_PAYMENT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -240,7 +241,7 @@ foreach ($dirmodels as $reldir) {
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_supplier_payment_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 
@@ -262,7 +263,7 @@ foreach ($dirmodels as $reldir) {
 							if ($conf->global->SUPPLIER_PAYMENT_ADDON == $file || $conf->global->SUPPLIER_PAYMENT_ADDON.'.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).(!empty($module->scandir) ? '&scandir='.$module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -288,7 +289,7 @@ foreach ($dirmodels as $reldir) {
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if ($conf->global->PAYMENT_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
+							if (getDolGlobalString("PAYMENT_ADDON").'.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
 									dol_htmloutput_mesg($module->error, '', 'error', 1);
 								}
@@ -350,7 +351,7 @@ foreach ($dirmodels as $reldir) {
 					print "</td>\n";
 					print "<td>\n";
 					require_once $dir.'/'.$file;
-					$module = new $classname($db, $specimenthirdparty);
+					$module = new $classname($db, new Societe($db));
 					if (method_exists($module, 'info')) {
 						print $module->info($langs);
 					} else {
@@ -382,7 +383,7 @@ foreach ($dirmodels as $reldir) {
 
 					// Default
 					print '<td class="center">';
-					if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF == "$name") {
+					if (getDolGlobalString("SUPPLIER_PAYMENT_ADDON_PDF") == "$name") {
 						//print img_picto($langs->trans("Default"),'on');
 						// Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.urlencode($name).'&scandir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -441,7 +442,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("GroupPaymentsByModOnReports");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", $conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD, 1);
+print $form->selectyesno("PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", getDolGlobalString("PAYMENTS_FOURN_REPORT_GROUP_BY_MOD"), 1);
 print '</td><td class="right">';
 print "</td></tr>\n";
 

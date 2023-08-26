@@ -2,4 +2,4 @@
 HRM_EMAIL_EXTERNAL_SERVICE=Correo electrónico para evitar el servicio externo de RRHH
 ConfirmDeleteEstablishment=¿Estás seguro de que deseas eliminar este establecimiento?
 OpenEtablishment=Establecimiento abierto
-DictionaryDepartment=RRHH - Lista de departamentos
+HrmSetup=Configuración del módulo RRHH

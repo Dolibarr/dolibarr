@@ -23,6 +23,7 @@
  *		\brief      Page to add payment of a loan
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
@@ -105,7 +106,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !GETPOST('accountid', 'int') > 0) {
+	if (isModEnabled("banque") && !GETPOST('accountid', 'int') > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -167,7 +168,7 @@ if ($action == 'add_payment') {
 
 			if (!$error) {
 				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', $payment->fk_bank, '', '');
-				if (!$result > 0) {
+				if (!($result > 0)) {
 					setEventMessages($payment->error, $payment->errors, 'errors');
 					$error++;
 				}
@@ -244,7 +245,7 @@ if ($action == 'create') {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free();
+		$db->free($resql);
 	}
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
@@ -293,6 +294,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
+		print img_picto('', 'money-bill-alt', 'class="pictofixedwidth"');
 		$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype", 'alphanohtml') : $loan->fk_typepayment, "paymenttype");
 		print "</td>\n";
 		print '</tr>';
@@ -300,10 +302,11 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 		print '<td colspan="2">';
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opend bank account list
 		print '</td></tr>';
 
-	// Number
+		// Number
 		print '<tr><td>'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</td>';

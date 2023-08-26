@@ -6,7 +6,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2009       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ class MailmanSpip
 	 */
 	public function isSpipEnabled()
 	{
-		if (defined("ADHERENT_USE_SPIP") && (ADHERENT_USE_SPIP == 1)) {
+		if (getDolGlobalInt("ADHERENT_USE_SPIP") == 1) {
 			return true;
 		}
 
@@ -91,10 +91,8 @@ class MailmanSpip
 	 */
 	public function checkSpipConfig()
 	{
-		if (defined('ADHERENT_SPIP_SERVEUR') && defined('ADHERENT_SPIP_USER') && defined('ADHERENT_SPIP_PASS') && defined('ADHERENT_SPIP_DB')) {
-			if (ADHERENT_SPIP_SERVEUR != '' && ADHERENT_SPIP_USER != '' && ADHERENT_SPIP_PASS != '' && ADHERENT_SPIP_DB != '') {
-				return true;
-			}
+		if (getDolGlobalString('ADHERENT_SPIP_SERVEUR') != '' && getDolGlobalString('ADHERENT_SPIP_USER') != '' && getDolGlobalString('ADHERENT_SPIP_PASS') != '' && getDolGlobalString('ADHERENT_SPIP_DB') != '') {
+			return true;
 		}
 
 		return false;
@@ -107,13 +105,13 @@ class MailmanSpip
 	 */
 	public function connectSpip()
 	{
-		$resource = getDoliDBInstance('mysql', ADHERENT_SPIP_SERVEUR, ADHERENT_SPIP_USER, ADHERENT_SPIP_PASS, ADHERENT_SPIP_DB, ADHERENT_SPIP_PORT);
+		$resource = getDoliDBInstance('mysql', getDolGlobalString('ADHERENT_SPIP_SERVEUR'), getDolGlobalString('ADHERENT_SPIP_USER'), getDolGlobalString('ADHERENT_SPIP_PASS'), getDolGlobalString('ADHERENT_SPIP_DB'), getDolGlobalInt('ADHERENT_SPIP_PORT'));
 
 		if ($resource->ok) {
 			return $resource;
 		}
 
-		dol_syslog('Error when connecting to SPIP '.ADHERENT_SPIP_SERVEUR.' '.ADHERENT_SPIP_USER.' '.ADHERENT_SPIP_PASS.' '.ADHERENT_SPIP_DB, LOG_ERR);
+		dol_syslog('Error when connecting to SPIP '.getDolGlobalString('ADHERENT_SPIP_SERVEUR').' '.getDolGlobalString('ADHERENT_SPIP_USER').' '.getDolGlobalString('ADHERENT_SPIP_PASS').' '.getDolGlobalString('ADHERENT_SPIP_DB'), LOG_ERR);
 
 		return false;
 	}
@@ -130,6 +128,7 @@ class MailmanSpip
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		//Patterns that are going to be replaced with their original value
 		$patterns = array(
 			'%LISTE%',
@@ -141,7 +140,7 @@ class MailmanSpip
 			$list,
 			$object->email,
 			$object->pass,
-			$conf->global->ADHERENT_MAILMAN_ADMINPW
+			getDolGlobalString('ADHERENT_MAILMAN_ADMIN_PASSWORD')
 		);
 
 		$curl_url = str_replace($patterns, $replace, $url);
@@ -288,8 +287,8 @@ class MailmanSpip
 	 *  Subscribe an email to all mailing-lists
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
-	 *  @param	array	$listes    	To force mailing-list (string separated with ,)
-	 *  @return	int		  			<0 if KO, >=0 if OK
+	 *  @param	array		$listes    	To force mailing-list (string separated with ,)
+	 *  @return	int		  				<0 if KO, >=0 if OK
 	 */
 	public function add_to_mailman($object, $listes = '')
 	{
@@ -307,7 +306,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if ($conf->adherent->enabled) {	// Synchro for members
+		if (isModEnabled('adherent')) {	// Synchro for members
 			if (!empty($conf->global->ADHERENT_MAILMAN_URL)) {
 				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
 					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
@@ -348,6 +347,8 @@ class MailmanSpip
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -375,7 +376,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if ($conf->adherent->enabled) {	// Synchro for members
+		if (isModEnabled('adherent')) {	// Synchro for members
 			if (!empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL)) {
 				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
 					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
@@ -416,5 +417,7 @@ class MailmanSpip
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 }

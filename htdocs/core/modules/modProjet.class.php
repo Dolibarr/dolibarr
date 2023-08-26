@@ -5,7 +5,8 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Charles-Fr BENKE	<charles.fr@benke.fr>
+ * Copyright (C) 2014	   Charles-Fr BENKE		<charles.fr@benke.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ class modProjet extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array('modEventOrganization'); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array('projects');
 
 		// Constants
@@ -124,25 +125,13 @@ class modProjet extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "MAIN_DELAY_PROJECT_TO_CLOSE";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "7";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-		$this->const[$r][0] = "MAIN_DELAY_TASKS_TODO";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "7";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
 		// Boxes
 		$this->boxes = array(
-			0=>array('file'=>'box_project.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_task.php', 'enabledbydefaulton'=>'Home'),
-			2=>array('file'=>'box_validated_projects.php', 'enabledbydefaulton'=>'Home'),
-			3=>array('file'=>'box_funnel_of_prospection.php', 'enabledbydefaulton'=>'Home'),
+			0=>array('file'=>'box_project.php', 'enabledbydefaulton'=>'Home'),	// open projects
+			1=>array('file'=>'box_project_opportunities.php', 'enabledbydefaulton'=>'Home'),	// open opportunities
+			2=>array('file'=>'box_task.php', 'enabledbydefaulton'=>'Home'),
+			3=>array('file'=>'box_validated_projects.php', 'enabledbydefaulton'=>'Home'),	// task without timespent
+			4=>array('file'=>'box_funnel_of_prospection.php', 'enabledbydefaulton'=>'Home'),
 		);
 
 		// Permissions
@@ -152,7 +141,7 @@ class modProjet extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 41; // id de la permission
-		$this->rights[$r][1] = "Read projects and tasks (shared projects or projects I am contact for). Can also enter time consumed on assigned tasks (timesheet)"; // libelle de la permission
+		$this->rights[$r][1] = "Read projects and tasks (shared projects or projects I am contact for)"; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
@@ -188,7 +177,7 @@ class modProjet extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 142; // id de la permission
-		$this->rights[$r][1] = "Create/modify all projects and tasks (also private projects I am not contact for). Can also enter time consumed on assigned tasks (timesheet)"; // libelle de la permission
+		$this->rights[$r][1] = "Create/modify all projects and tasks (also private projects I am not contact for)"; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'all';
@@ -202,13 +191,19 @@ class modProjet extends DolibarrModules
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'supprimer';
 
+		$r++;
+		$this->rights[$r][0] = 145; // id de la permission
+		$this->rights[$r][1] = "Can enter time consumed on assigned tasks (timesheet)"; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'time';
 
 		// Menus
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
-		//Exports
+		// Exports
 		//--------
 		$r = 1;
 
@@ -218,13 +213,13 @@ class modProjet extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('projecttask'=>'pt.rowid', 'task_time'=>'ptt.rowid');
 
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid'=>"List:societe:nom::thirdparty", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label',
+			's.rowid'=>"Numeric", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label',
 			's.phone'=>'Text', 's.email'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text',
-			'p.rowid'=>"List:projet:ref::project", 'p.ref'=>"Text", 'p.title'=>"Text",
+			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.title'=>"Text",
 			'p.usage_opportunity'=>'Boolean', 'p.usage_task'=>'Boolean', 'p.usage_bill_time'=>'Boolean',
-			'p.datec'=>"Date", 'p.dateo'=>"Date", 'p.datee'=>"Date", 'p.fk_statut'=>'Status', 'cls.code'=>"Text", 'p.opp_percent'=>'Numeric', 'p.opp_amount'=>'Numeric', 'p.description'=>"Text", 'p.entity'=>'Numeric',
+			'p.datec'=>"Date", 'p.dateo'=>"Date", 'p.datee'=>"Date", 'p.fk_statut'=>'Status', 'cls.code'=>"Text", 'p.opp_percent'=>'Numeric', 'p.opp_amount'=>'Numeric', 'p.description'=>"Text", 'p.entity'=>'Numeric', 'p.budget_amount'=>'Numeric',
 			'pt.rowid'=>'Numeric', 'pt.ref'=>'Text', 'pt.label'=>'Text', 'pt.dateo'=>"Date", 'pt.datee'=>"Date", 'pt.duration_effective'=>"Duree", 'pt.planned_workload'=>"Numeric", 'pt.progress'=>"Numeric", 'pt.description'=>"Text",
-			'ptt.rowid'=>'Numeric', 'ptt.task_date'=>'Date', 'ptt.task_duration'=>"Duree", 'ptt.fk_user'=>"List:user:CONCAT(lastname,' ',firstname)", 'ptt.note'=>"Text"
+			'ptt.rowid'=>'Numeric', 'ptt.element_date'=>'Date', 'ptt.element_duration'=>"Duree", 'ptt.fk_user'=>"FormSelect:select_dolusers", 'ptt.note'=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 's.fk_pays'=>'company',
@@ -235,12 +230,12 @@ class modProjet extends DolibarrModules
 			's.phone'=>'Phone', 's.email'=>'Email', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode',
 			'p.rowid'=>"ProjectId", 'p.ref'=>"RefProject", 'p.title'=>'ProjectLabel',
 			'p.usage_opportunity'=>'ProjectFollowOpportunity', 'p.usage_task'=>'ProjectFollowTasks', 'p.usage_bill_time'=>'BillTime',
-			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.description'=>"Description"
+			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.budget_amount'=>'Budget', 'p.description'=>"Description"
 		);
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('project'))); // If project are shared, nb will be > 1
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r] += array('p.entity'=>'Entity');
 			}
 		}
@@ -266,8 +261,8 @@ class modProjet extends DolibarrModules
 		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields
-		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.task_date'=>'TaskTimeDate', 'ptt.task_duration'=>"TimesSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
-		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time', 'ptt.task_date'=>'task_time', 'ptt.task_duration'=>"task_time", 'ptt.fk_user'=>"task_time", 'ptt.note'=>"task_time"));
+		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.element_date'=>'TaskTimeDate', 'ptt.element_duration'=>"TimesSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
+		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time', 'ptt.element_date'=>'task_time', 'ptt.element_duration'=>"task_time", 'ptt.fk_user'=>"task_time", 'ptt.note'=>"task_time"));
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('f.ref'=>"Billed"));
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('f.ref'=>"task_time"));
@@ -278,13 +273,47 @@ class modProjet extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls ON p.fk_opp_status = cls.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet_task as pt ON p.rowid = pt.fk_projet";
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."element_time as ptt ON (pt.rowid = ptt.fk_element AND ptt.elementtype = 'task')";
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON ptt.invoice_id = f.rowid';
 		}
 		$this->export_sql_end[$r] .= " WHERE p.entity IN (".getEntity('project').")";
 
+		// Import project/opportunities
+		$r++;
+		$this->import_code[$r] = 'projects';
+		$this->import_label[$r] = 'ImportDatasetProjects';
+		$this->import_icon[$r] = 'project';
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('t'=>MAIN_DB_PREFIX.'projet', 'extra'=>MAIN_DB_PREFIX.'projet_extrafields'); // List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r] = array('t.ref'=>'ProjectRef*', 't.title'=>'Label*', 't.description'=>"Description", 't.fk_soc' => 'ThirdPartyName', 't.public'=>"Public", 't.fk_statut'=>"Status");
+		$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('t.fk_opp_status'=>"OpportunityStatus", 't.opp_percent'=>"OpportunityProbability", 't.opp_amount'=>"OpportunityAmount", 't.note_public'=>"NotePublic", 't.note_private'=>"NotePrivate", 't.budget_amount'=>"Budget", 't.dateo'=>"DateStart", 't.datee'=>"DateEnd"));
+		// Add extra fields
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet' AND entity IN (0,".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_convertvalue_array[$r] = array(
+			't.ref'=>array('rule'=>'getrefifauto', 'class'=>(empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON), 'path'=>"/core/modules/project/".(empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON).'.php'),
+			't.fk_soc' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/societe/class/societe.class.php',
+				'class'   => 'Societe',
+				'method'  => 'fetch',
+				'element' => 'ThirdParty'
+			),
+		);
+		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
+		$this->import_regex_array[$r] = array('t.dateo'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datee'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
+		$this->import_examplevalues_array[$r] = array('t.fk_soc'=>'ThirdParty', 't.ref'=>"auto or PJ2010-1234", 't.title'=>"My project", 't.fk_statut'=>'0,1 or 2', 't.datec'=>'1972-10-10', 't.note_private'=>"My private note", 't.note_public'=>"My public note");
 
 		// Import list of tasks
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {

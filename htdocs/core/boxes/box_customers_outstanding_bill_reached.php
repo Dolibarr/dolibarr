@@ -65,7 +65,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 			$this->enabled = 0; // disabled by this option
 		}
 
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
 	}
 
 	/**
@@ -86,7 +86,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastOutstandingBillReached", $max));
 
-		if ($user->rights->societe->lire) {
+		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
@@ -155,9 +155,9 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 				}
 
 				if ($num == 0 || $nboutstandingbillreachedcustomers == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-					'text'=> '<span class="opacitymedium">'.$langs->trans("None").'</span>'
+					$this->info_box_contents[0][] = array(
+						'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("None").'</span>'
 					);
 				}
 

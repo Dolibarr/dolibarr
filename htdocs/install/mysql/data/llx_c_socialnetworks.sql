@@ -37,7 +37,7 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'gifycat', 'Gificat', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'giphy', 'Giphy', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'github', 'GitHub', 'https://www.github.com/{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'linkedin', 'LinkedIn', 'https://www.linkedin.com/{socialid}', 'fa-linkedin', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'mastodon', 'Mastodon', '{socialid}', '', 0);
@@ -56,8 +56,8 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'vero', 'Vero', 'https://vero.co/{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'viadeo', 'Viadeo', 'https://fr.viadeo.com/fr/{socialid}', 'fa-viadeo', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'viber', 'Viber', '{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'vimeo', 'Vimeo', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'vimeo', 'Vimeo', '{socialid}', 'fa-vimeo', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'wikipedia', 'Wikipedia', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'wikipedia', 'Wikipedia', '{socialid}', 'fa-wikipedia-w', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'xing', 'Xing', '{socialid}', 'fa-xing', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES ( 1, 'youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);

@@ -21,44 +21,24 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_units dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  *	Class of dictionary type of thirdparty (used by imports)
  */
-class CUnits // extends CommonObject
+class CUnits extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
 	public $records = array();
 
 	//var $element='ctypent';			//!< Id that identify managed objects
 	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
 
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	public $code;
-	public $label;
+	public $sortorder;
 	public $short_label;
 	public $unit_type;
 	public $scale;
-	public $active;
-
-
 
 
 	/**
@@ -81,7 +61,6 @@ class CUnits // extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -167,8 +146,6 @@ class CUnits // extends CommonObject
 	 */
 	public function fetch($id, $code = '', $short_label = '', $unit_type = '')
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
@@ -233,8 +210,6 @@ class CUnits // extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT";
@@ -289,6 +264,7 @@ class CUnits // extends CommonObject
 					$record->unit_type = $obj->unit_type;
 					$record->scale = $obj->scale;
 					$record->active = $obj->active;
+
 					$this->records[$record->id] = $record;
 				}
 			}
@@ -313,7 +289,6 @@ class CUnits // extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -386,7 +361,6 @@ class CUnits // extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_units";
@@ -420,15 +394,16 @@ class CUnits // extends CommonObject
 	 * Get unit from code
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
+	 * @param string $unit_type weight,size,surface,volume,qty,time...
 	 * @return int            <0 if KO, Id of code if OK
 	 */
-	public function getUnitFromCode($code, $mode = 'code')
+	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
 
 		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid');
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid');
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, " AND unit_type = '". $this->db->escape($unit_type) ."'");
 		}
 
 		return $code;
@@ -463,22 +438,30 @@ class CUnits // extends CommonObject
 	}
 
 	/**
-	 * get scale of unit factor
-	 * @param int $id id of unit in dictionary
-	 * @return float|int
+	 * Get scale of unit factor
+	 *
+	 * @param 	int 		$id 	Id of unit in dictionary
+	 * @return 	float|int			Scale of unit
 	 */
 	public function scaleOfUnitPow($id)
 	{
 		$base = 10;
-		// TODO : add base col into unit dictionary table
-		$unit = $this->db->getRow("SELECT scale, unit_type from ".$this->db->prefix()."c_units WHERE rowid = ".intval($id));
-		if ($unit) {
-			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
-			if ($unit->unit_type == 'time') {
-				return floatval($unit->scale);
-			}
 
-			return pow($base, floatval($unit->scale));
+		$sql = "SELECT scale, unit_type FROM ".$this->db->prefix()."c_units WHERE rowid = ".((int) $id);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// TODO : add base col into unit dictionary table
+			$unit = $this->db->fetch_object($sql);
+			if ($unit) {
+				// TODO : if base exists in unit dictionary table, remove this convertion exception and update convertion infos in database.
+				// Example time hour currently scale 3600 will become scale 2 base 60
+				if ($unit->unit_type == 'time') {
+					return floatval($unit->scale);
+				}
+
+				return pow($base, floatval($unit->scale));
+			}
 		}
 
 		return 0;

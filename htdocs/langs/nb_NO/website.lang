@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kode
+WebsiteName=Navn på nettstedet
 WebsiteSetupDesc=Opprett de nettstedene du ønsker å bruke her. Deretter går du inn i meny Nettsteder for å redigere dem.
 DeleteWebsite=Slett wedside
 ConfirmDeleteWebsite=Er du sikker på at du vil slette dette nettstedet? Alle sidene og innholdet blir også fjernet. Filene som er lastet opp (som i mediekatalogen, ECM-modulen, ...) vil ikke slettes.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=Tillegg nederst på HTML-header(felles for alle sider)
 WEBSITE_ROBOT=Robotfil (robots.txt)
 WEBSITE_HTACCESS=Nettstedets .htaccess-fil
 WEBSITE_MANIFEST_JSON=Nettstedets manifest.json-fil
-WEBSITE_README=README.md-fil
 WEBSITE_KEYWORDSDesc=Bruk et komma for å skille verdier
-EnterHereLicenseInformation=Skriv inn metadata eller lisensinformasjon for å arkivere en README.md-fil. Hvis du distribuerer nettstedet ditt som en mal, vil filen bli inkludert i mal-pakken.
+EnterHereReadmeInformation=Skriv inn en beskrivelse av nettsiden her. Hvis du distribuerer nettstedet ditt som en mal, vil filen bli inkludert i mal-pakken.
+EnterHereLicenseInformation=Skriv inn LISENSEN til koden til nettstedet her. Hvis du distribuerer nettstedet ditt som en mal, vil filen bli inkludert i mal-pakken.
 HtmlHeaderPage=HTML-header (kun for denne siden)
 PageNameAliasHelp=Navn eller alias på siden. <br> Dette aliaset brukes også til å lage en SEO-URL når nettsiden blir kjørt fra en virtuell vert til en webserver (som Apacke, Nginx, ...). Bruk knappen "<strong>%s</strong>" for å redigere dette aliaset.
 EditTheWebSiteForACommonHeader=Merk: Hvis du vil definere en personlig topptekst for alle sider, redigerer du overskriften på nettstedsnivå i stedet for på siden/containeren.
@@ -31,7 +32,7 @@ AddWebsite=Legg til nettside
 Webpage=Nettsted/container
 AddPage=Legg til side/container
 PageContainer=Side
-PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
+PreviewOfSiteNotYetAvailable=Forhåndsvisningen av nettstedet ditt <strong> %s </strong> er ikke tilgjengelig ennå. Du må først ' <strong> Importere en fullstendig nettstedsmal </strong> ' eller bare ' <strong> Legg til en side/beholder </strong> '.
 RequestedPageHasNoContentYet=Forespurt side med id %s har ikke noe innhold enda, eller cachefilen .tpl.php ble fjernet. Rediger innhold på siden for å løse dette.
 SiteDeleted=Nettstedet '%s' slettet
 PageContent=Side/Container
@@ -42,10 +43,12 @@ ViewPageInNewTab=Vis side i ny fane
 SetAsHomePage=Sett som startside
 RealURL=Virkelig URL
 ViewWebsiteInProduction=Vis webside ved hjelp av  hjemme-URL
+Virtualhost=Virtuell vert eller domenenavn
+VirtualhostDesc=Navnet på den virtuelle verten eller domenet (for eksempel: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost=<u>Bruk med Apache/NGinx/...</u><br>Opprett på webserveren din (Apache, Nginx, ...) en dedikert virtuell vert med PHP aktivert og en rotkatalog på <br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Eksempel på Apache virtuelt vertsoppsett:
 YouCanAlsoTestWithPHPS= <u> Bruk med PHP-innebygd server </u> <br> I utviklingsmiljø kan du foretrekke å teste nettstedet med PHP-innebygd webserver (PHP 5.5 nødvendig) ved å kjøre <br> <strong> php -S 0.0.0.0:8080 -t %s </strong>
-YouCanAlsoDeployToAnotherWHP=<u>Kjør nettstedet ditt med en annen leverandør av Dolibarr Hosting</u> <br> Hvis du ikke har en webserver som Apache eller NGinx tilgjengelig på internett, kan du eksportere og importere nettstedet til en annen Dolibarr-forekomst levert av en annen Dolibarr-leverandør som gir full integrasjon med nettstedsmodulen. Du kan finne en liste over noen Dolibarr-vertsleverandører på <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP= <u> Kjør nettstedet ditt med en annen Dolibarr-vertsleverandør </u> <br> Hvis du ikke har en nettserver som Apache eller NGinx tilgjengelig på internett, kan du \neksportere og importere nettstedet ditt til en annen Dolibarr-instans levert av en annen Dolibarr-vertsleverandør som gir full integrasjon med nettstedsmodulen. Du kan finne en liste over noen Dolibarr-vertsleverandører på <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org3 </a>
 CheckVirtualHostPerms=Sjekk også at den virtuelle vertsbrukeren (for eksempel www-data) har <strong>%s</strong> tillatelser på filer i<br><strong>%s</strong>
 ReadPerm=Les
 WritePerm=Skriv
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=Du kan redigere HTML kildekode ved hjelp av "Kilde"
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Du kan inkludere PHP kode i denne kilden ved hjelp av tags <strong>&lt;?php ?&gt;</strong>. Følgende globale variabler er tilgjengelige: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> Du kan også inkludere innhold fra en annen side/container med følgende syntaks:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> Du kan omdirigere til en annen side/container med følgende syntaks (NB: ikke legg ut noe innhold før en omdirigering):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> For å opprette en kobling til en annen side, bruk syntaksen:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> For å inkludere en <strong>nedlastningslink</strong> til en fil i <strong>dokumenter</strong> mappen, bruk <strong>document.php</strong> pakkeren:<br>Eksempel, for en fil i documents/ecm (need to be loggedmå logges, er syntaksen:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For en fil i documents/medias (åpen mappe for offentlig tilgang), er syntaksen:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For en fil delt via en delingskobling (åpen tilgang ved bruk av deling av filens hash-nøkkel), er syntaksen:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> For å inkludere et <strong>bilde</strong> lagret i <strong>dokumenter</strong> mappen, bruk <strong>viewimage.php</strong> pakkeren:<br>Eksempel, for et bilde i documents/medias (åpen mappe for offentlig tilgang), er syntaksen:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=For et bilde som deles med en delekobling (åpen tilgang ved hjelp av delings-hash-nøkkelen til filen), er syntaksen: <br> <strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore= <br> Flere eksempler på HTML eller dynamisk kode tilgjengelig på <a href="%s" target="_blank"> wiki-dokumentasjonen </a> <br>.
+YouCanEditHtmlSourceMore= <br> Flere eksempler på HTML eller dynamisk kode tilgjengelig på <a href="%s" target="_blank" rel="noopener noreferrer external"> wikidokumentasjonen </a> <br> .
 ClonePage=Klon side/container
 CloneSite=Klon side
 SiteAdded=Nettsted lagt til
@@ -80,7 +83,7 @@ BlogPost=Blogg post
 WebsiteAccount=Nettstedskonto
 WebsiteAccounts=Nettstedskontoer
 AddWebsiteAccount=Opprett nettsidekonto
-BackToListForThirdParty=Tilbake til listen for tredjepart
+BackToListForThirdParty=Tilbake til listen for tredjeparter
 DisableSiteFirst=Deaktiver nettsted først
 MyContainerTitle=Mitt nettsteds tittel
 AnotherContainer=Slik inkluderer du innhold på en annen side/container (du kan ha en feil her hvis du aktiverer dynamisk kode fordi den innebygde undercontaineren kanskje ikke eksisterer)
@@ -137,11 +140,23 @@ PagesRegenerated=%s side(r)/container(e) regenerert
 RegenerateWebsiteContent=Regenerer cache-filer på nettstedet
 AllowedInFrames=Tillatt i frames
 DefineListOfAltLanguagesInWebsiteProperties=Definer liste over alle tilgjengelige språk i nettstedsegenskaper.
-GenerateSitemaps=Generate website sitemap file
-ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...
-ConfirmSitemapsCreation=Confirm sitemap generation
-SitemapGenerated=Sitemap file <b>%s</b> generated
+GenerateSitemaps=Generer nettstedets sitemap.xml-fil
+ConfirmGenerateSitemaps=Hvis du bekrefter, vil du slette den eksisterende sitemap-filen...
+ConfirmSitemapsCreation=Bekreft generering av sitemap
+SitemapGenerated=Sitemap-fil <b> %s </b> generert
 ImportFavicon=Favicon
-ErrorFaviconType=Favicon must be png
-ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
-FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)
+ErrorFaviconType=Favicon må være png
+ErrorFaviconSize=Favicon må ha størrelsen 16x16, 32x32 eller 64x64
+FaviconTooltip=Last opp et bilde som må være en png (16x16, 32x32 eller 64x64)
+NextContainer=Neste side/beholder
+PreviousContainer=Forrige side/beholder
+WebsiteMustBeDisabled=Nettstedet må ha statusen "%s"
+WebpageMustBeDisabled=Nettsiden må ha statusen "%s"
+SetWebsiteOnlineBefore=Når nettstedet er frakoblet, er alle sidene offline. Endre status på nettstedet først.
+Booking=Bestilling
+Reservation=Reservasjon
+PagesViewedPreviousMonth=Sider vist (forrige måned)
+PagesViewedTotal=Viste sider (totalt)
+Visibility=Synlighet
+Everyone=Alle
+AssignedContacts=Tildelte kontakter

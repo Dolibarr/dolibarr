@@ -36,6 +36,8 @@ class RssParser
 	 */
 	public $error = '';
 
+	public $feed_version;
+
 	private $_format = '';
 	private $_urlRSS;
 	private $_language;
@@ -48,6 +50,14 @@ class RssParser
 	private $_description;
 	private $_lastfetchdate; // Last successful fetch
 	private $_rssarray = array();
+
+	private $current_namespace;
+
+	private $initem;
+	private $intextinput;
+	private $incontent;
+	private $inimage;
+	private $inchannel;
 
 	// For parsing with xmlparser
 	public $stack = array(); // parser stack
@@ -167,7 +177,7 @@ class RssParser
 	/**
 	 * getItems
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function getItems()
 	{
@@ -201,7 +211,7 @@ class RssParser
 		}
 
 		$this->_urlRSS = $urlRSS;
-		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contains special chars)
+		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contain special chars)
 		$newmask = '0644';
 
 		//dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
@@ -227,11 +237,16 @@ class RssParser
 		} else {
 			try {
 				$result = getURLContent($this->_urlRSS, 'GET', '', 1, array(), array('http', 'https'), 0);
+
 				if (!empty($result['content'])) {
 					$str = $result['content'];
+				} elseif (!empty($result['curl_error_msg'])) {
+					$this->error = 'Error retrieving URL '.$this->_urlRSS.' - '.$result['curl_error_msg'];
+					return -1;
 				}
 			} catch (Exception $e) {
-				print 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
+				$this->error = 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
+				return -2;
 			}
 		}
 
@@ -247,19 +262,26 @@ class RssParser
 					return -1;
 				}
 
-				$xmlparser = xml_parser_create('');
-				if (!is_resource($xmlparser)) {
-					$this->error = "ErrorFailedToCreateParser";
-					return -1;
-				}
+				try {
+					$xmlparser = xml_parser_create(null);
 
-				xml_set_object($xmlparser, $this);
-				xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
-				xml_set_character_data_handler($xmlparser, 'feed_cdata');
-				$status = xml_parse($xmlparser, $str);
-				xml_parser_free($xmlparser);
-				$rss = $this;
-				//var_dump($rss->_format);exit;
+					if (!is_resource($xmlparser) && !is_object($xmlparser)) {
+						$this->error = "ErrorFailedToCreateParser";
+						return -1;
+					}
+
+					xml_set_object($xmlparser, $this);
+					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+					xml_set_character_data_handler($xmlparser, 'feed_cdata');
+
+					$status = xml_parse($xmlparser, $str, false);
+
+					xml_parser_free($xmlparser);
+					$rss = $this;
+					//var_dump($status.' '.$rss->_format);exit;
+				} catch (Exception $e) {
+					$rss = null;
+				}
 			}
 		}
 
@@ -275,10 +297,7 @@ class RssParser
 				if ($fp) {
 					fwrite($fp, $str);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						$newmask = $conf->global->MAIN_UMASK;
-					}
-					@chmod($newpathofdestfile, octdec($newmask));
+					dolChmod($newpathofdestfile);
 
 					$this->_lastfetchdate = $nowgmt;
 				} else {
@@ -302,54 +321,54 @@ class RssParser
 				//var_dump($rss);
 				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
 					if (!empty($rss->channel->language)) {
-						$this->_language = (string) $rss->channel->language;
+						$this->_language = sanitizeVal((string) $rss->channel->language);
 					}
 					if (!empty($rss->channel->generator)) {
-						$this->_generator = (string) $rss->channel->generator;
+						$this->_generator = sanitizeVal((string) $rss->channel->generator);
 					}
 					if (!empty($rss->channel->copyright)) {
-						$this->_copyright = (string) $rss->channel->copyright;
+						$this->_copyright = sanitizeVal((string) $rss->channel->copyright);
 					}
 					if (!empty($rss->channel->lastbuilddate)) {
-						$this->_lastbuilddate = (string) $rss->channel->lastbuilddate;
+						$this->_lastbuilddate = sanitizeVal((string) $rss->channel->lastbuilddate);
 					}
 					if (!empty($rss->channel->image->url[0])) {
-						$this->_imageurl = (string) $rss->channel->image->url[0];
+						$this->_imageurl = sanitizeVal((string) $rss->channel->image->url[0]);
 					}
 					if (!empty($rss->channel->link)) {
-						$this->_link = (string) $rss->channel->link;
+						$this->_link = sanitizeVal((string) $rss->channel->link);
 					}
 					if (!empty($rss->channel->title)) {
-						$this->_title = (string) $rss->channel->title;
+						$this->_title = sanitizeVal((string) $rss->channel->title);
 					}
 					if (!empty($rss->channel->description)) {
-						$this->_description = (string) $rss->channel->description;
+						$this->_description = sanitizeVal((string) $rss->channel->description);
 					}
 				} else {
 					//var_dump($rss->channel);
 					if (!empty($rss->channel['language'])) {
-						$this->_language = (string) $rss->channel['language'];
+						$this->_language = sanitizeVal((string) $rss->channel['language']);
 					}
 					if (!empty($rss->channel['generator'])) {
-						$this->_generator = (string) $rss->channel['generator'];
+						$this->_generator = sanitizeVal((string) $rss->channel['generator']);
 					}
 					if (!empty($rss->channel['copyright'])) {
-						$this->_copyright = (string) $rss->channel['copyright'];
+						$this->_copyright = sanitizeVal((string) $rss->channel['copyright']);
 					}
 					if (!empty($rss->channel['lastbuilddate'])) {
-						$this->_lastbuilddate = (string) $rss->channel['lastbuilddate'];
+						$this->_lastbuilddate = sanitizeVal((string) $rss->channel['lastbuilddate']);
 					}
 					if (!empty($rss->image['url'])) {
-						$this->_imageurl = (string) $rss->image['url'];
+						$this->_imageurl = sanitizeVal((string) $rss->image['url']);
 					}
 					if (!empty($rss->channel['link'])) {
-						$this->_link = (string) $rss->channel['link'];
+						$this->_link = sanitizeVal((string) $rss->channel['link']);
 					}
 					if (!empty($rss->channel['title'])) {
-						$this->_title = (string) $rss->channel['title'];
+						$this->_title = sanitizeVal((string) $rss->channel['title']);
 					}
 					if (!empty($rss->channel['description'])) {
-						$this->_description = (string) $rss->channel['description'];
+						$this->_description = sanitizeVal((string) $rss->channel['description']);
 					}
 				}
 
@@ -363,40 +382,40 @@ class RssParser
 				//var_dump($rss);
 				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
 					if (!empty($rss->generator)) {
-						$this->_generator = (string) $rss->generator;
+						$this->_generator = sanitizeVal((string) $rss->generator);
 					}
 					if (!empty($rss->lastbuilddate)) {
-						$this->_lastbuilddate = (string) $rss->modified;
+						$this->_lastbuilddate = sanitizeVal((string) $rss->modified);
 					}
 					if (!empty($rss->link->href)) {
-						$this->_link = (string) $rss->link->href;
+						$this->_link = sanitizeVal((string) $rss->link->href);
 					}
 					if (!empty($rss->title)) {
-						$this->_title = (string) $rss->title;
+						$this->_title = sanitizeVal((string) $rss->title);
 					}
 					if (!empty($rss->description)) {
-						$this->_description = (string) $rss->description;
+						$this->_description = sanitizeVal((string) $rss->description);
 					}
 				} else {
 					//if (!empty($rss->channel['rss_language']))	$this->_language = (string) $rss->channel['rss_language'];
 					if (!empty($rss->channel['generator'])) {
-						$this->_generator = (string) $rss->channel['generator'];
+						$this->_generator = sanitizeVal((string) $rss->channel['generator']);
 					}
 					//if (!empty($rss->channel['rss_copyright']))	$this->_copyright = (string) $rss->channel['rss_copyright'];
 					if (!empty($rss->channel['modified'])) {
-						$this->_lastbuilddate = (string) $rss->channel['modified'];
+						$this->_lastbuilddate = sanitizeVal((string) $rss->channel['modified']);
 					}
 					//if (!empty($rss->image['rss_url']))			$this->_imageurl = (string) $rss->image['rss_url'];
 					if (!empty($rss->channel['link'])) {
-						$this->_link = (string) $rss->channel['link'];
+						$this->_link = sanitizeVal((string) $rss->channel['link']);
 					}
 					if (!empty($rss->channel['title'])) {
-						$this->_title = (string) $rss->channel['title'];
+						$this->_title = sanitizeVal((string) $rss->channel['title']);
 					}
 					//if (!empty($rss->channel['rss_description']))	$this->_description = (string) $rss->channel['rss_description'];
 
 					if (!empty($rss->channel)) {
-						$this->_imageurl = $this->getAtomImageUrl($rss->channel);
+						$this->_imageurl = sanitizeVal($this->getAtomImageUrl($rss->channel));
 					}
 				}
 				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
@@ -417,43 +436,43 @@ class RssParser
 					//var_dump($item);exit;
 					if ($rss->_format == 'rss') {
 						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
-							$itemLink = (string) $item->link;
-							$itemTitle = (string) $item->title;
-							$itemDescription = (string) $item->description;
-							$itemPubDate = (string) $item->pubDate;
+							$itemLink = sanitizeVal((string) $item->link);
+							$itemTitle = sanitizeVal((string) $item->title);
+							$itemDescription = sanitizeVal((string) $item->description);
+							$itemPubDate = sanitizeVal((string) $item->pubDate);
 							$itemId = '';
 							$itemAuthor = '';
 						} else {
-							$itemLink = (string) $item['link'];
-							$itemTitle = (string) $item['title'];
-							$itemDescription = (string) $item['description'];
-							$itemPubDate = (string) $item['pubdate'];
-							$itemId = (string) $item['guid'];
-							$itemAuthor = (string) $item['author'];
+							$itemLink = sanitizeVal((string) $item['link']);
+							$itemTitle = sanitizeVal((string) $item['title']);
+							$itemDescription = sanitizeVal((string) $item['description']);
+							$itemPubDate = sanitizeVal((string) $item['pubdate']);
+							$itemId = sanitizeVal((string) $item['guid']);
+							$itemAuthor = sanitizeVal((string) ($item['author'] ?? ''));
 						}
 
 						// Loop on each category
 						$itemCategory = array();
-						if (is_array($item->category)) {
+						if (!empty($item->category) && is_array($item->category)) {
 							foreach ($item->category as $cat) {
 								$itemCategory[] = (string) $cat;
 							}
 						}
 					} elseif ($rss->_format == 'atom') {
 						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
-							$itemLink = (isset($item['link']) ? (string) $item['link'] : '');
-							$itemTitle = (string) $item['title'];
-							$itemDescription = $this->getAtomItemDescription($item);
-							$itemPubDate = (string) $item['created'];
-							$itemId = (string) $item['id'];
-							$itemAuthor = (string) ($item['author'] ? $item['author'] : $item['author_name']);
+							$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
+							$itemTitle = sanitizeVal((string) $item['title']);
+							$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
+							$itemPubDate = sanitizeVal((string) $item['created']);
+							$itemId = sanitizeVal((string) $item['id']);
+							$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
 						} else {
-							$itemLink = (isset($item['link']) ? (string) $item['link'] : '');
-							$itemTitle = (string) $item['title'];
-							$itemDescription = $this->getAtomItemDescription($item);
-							$itemPubDate = (string) $item['created'];
-							$itemId = (string) $item['id'];
-							$itemAuthor = (string) ($item['author'] ? $item['author'] : $item['author_name']);
+							$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
+							$itemTitle = sanitizeVal((string) $item['title']);
+							$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
+							$itemPubDate = sanitizeVal((string) $item['created']);
+							$itemId = sanitizeVal((string) $item['id']);
+							$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
 						}
 						$itemCategory = array();
 					} else {
@@ -505,7 +524,7 @@ class RssParser
 	 *  @param	array		$attrs		Attributes of tags
 	 *  @return	void
 	 */
-	public function feed_start_element($p, $element, &$attrs)
+	public function feed_start_element($p, $element, $attrs)
 	{
 		// phpcs:enable
 		$el = $element = strtolower($element);
@@ -648,7 +667,7 @@ class RssParser
 
 
 	/**
-	 * 	To concat 2 string with no warning if an operand is not defined
+	 * 	To concat 2 strings with no warning if an operand is not defined
 	 *
 	 * 	@param	string	$str1		Str1
 	 *  @param	string	$str2		Str2
@@ -660,6 +679,7 @@ class RssParser
 			$str1 = "";
 		}
 		$str1 .= $str2;
+		return $str1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -672,9 +692,9 @@ class RssParser
 	public function append_content($text)
 	{
 		// phpcs:enable
-		if ($this->initem) {
+		if (!empty($this->initem)) {
 			$this->concat($this->current_item[$this->incontent], $text);
-		} elseif ($this->inchannel) {
+		} elseif (!empty($this->inchannel)) {
 			$this->concat($this->channel[$this->incontent], $text);
 		}
 	}
@@ -691,24 +711,24 @@ class RssParser
 		if (!$el) {
 			return;
 		}
-		if ($this->current_namespace) {
-			if ($this->initem) {
+		if (!empty($this->current_namespace)) {
+			if (!empty($this->initem)) {
 				$this->concat($this->current_item[$this->current_namespace][$el], $text);
-			} elseif ($this->inchannel) {
+			} elseif (!empty($this->inchannel)) {
 				$this->concat($this->channel[$this->current_namespace][$el], $text);
-			} elseif ($this->intextinput) {
+			} elseif (!empty($this->intextinput)) {
 				$this->concat($this->textinput[$this->current_namespace][$el], $text);
-			} elseif ($this->inimage) {
+			} elseif (!empty($this->inimage)) {
 				$this->concat($this->image[$this->current_namespace][$el], $text);
 			}
 		} else {
-			if ($this->initem) {
+			if (!empty($this->initem)) {
 				$this->concat($this->current_item[$el], $text);
-			} elseif ($this->intextinput) {
+			} elseif (!empty($this->intextinput)) {
 				$this->concat($this->textinput[$el], $text);
-			} elseif ($this->inimage) {
+			} elseif (!empty($this->inimage)) {
 				$this->concat($this->image[$el], $text);
-			} elseif ($this->inchannel) {
+			} elseif (!empty($this->inchannel)) {
 				$this->concat($this->channel[$el], $text);
 			}
 		}
@@ -781,8 +801,8 @@ class RssParser
 /**
  * Function to convert an XML object into an array
  *
- * @param	SimpleXMLElement	$xml		Xml
- * @return	void
+ * @param	SimpleXMLElement			$xml		Xml
+ * @return	array|string
  */
 function xml2php($xml)
 {

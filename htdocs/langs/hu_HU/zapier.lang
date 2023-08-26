@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ModuleZapierForDolibarrName = Zapier for Dolibarr
-ModuleZapierForDolibarrDesc = Zapier for Dolibarr modul
-ZapierForDolibarrSetup=Zapier for Dolibarr beállítása
-ZapierDescription=Interface with Zapier
-ZapierAbout=About the module Zapier
-ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.
+ModuleZapierForDolibarrDesc = Zapier Dolibarr modulhoz
+ZapierForDolibarrSetup=A Zapier beállítása Dolibarrhoz
+ZapierDescription=Interfész a Zapierrel
+ZapierAbout=A Zapier modulról
+ZapierSetupPage=A Zapier használatához nincs szükség a Dolibarr oldalon történő beállításra. A Zapier és a Dolibarr használatához azonban csomagot kell generálnia és közzé kell tennie a zapieren. Tekintse meg a dokumentációt <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">ezen a wikioldalon</a>.

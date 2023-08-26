@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Atkārtojums tika veikts visos Post darbībā
 ValidationOfPaymentFailed=Maksājuma apstiprināšana nav izdevies
 CardOwner=Kartes turētājs
 PayPalBalance=Paypal kredīts
+OnlineSubscriptionPaymentLine=Tiešsaistes abonements reģistrēts %s <br> Apmaksāts, izmantojot %s <br> Sākotnējā IP adrese: %s<br>Transakcijas ID: %s

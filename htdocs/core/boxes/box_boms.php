@@ -28,14 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last modified BOMs
  */
 class box_boms extends ModeleBoxes
 {
-	public $boxcode = "lastboms";
-	public $boximg = "object_bom";
+	public $boxcode  = "lastboms";
+	public $boximg   = "object_bom";
 	public $boxlabel = "BoxTitleLatestModifiedBoms";
-	public $depends = array("bom");
+	public $depends  = array("bom");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -60,7 +60,7 @@ class box_boms extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->bom->read);
+		$this->hidden = empty($user->rights->bom->read);
 	}
 
 	/**
@@ -78,7 +78,7 @@ class box_boms extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		$bomstatic = new Bom($this->db);
+		$bomstatic = new BOM($this->db);
 		$productstatic = new Product($this->db);
 		$userstatic = new User($this->db);
 
@@ -147,7 +147,7 @@ class box_boms extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 

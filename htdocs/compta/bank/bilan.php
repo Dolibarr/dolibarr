@@ -17,17 +17,20 @@
  */
 
 /**
- *	    \file       htdocs/compta/bank/bilan.php
- *      \ingroup    banque
- *		\brief      Page de bilan
+ *    \file       htdocs/compta/bank/bilan.php
+ *    \ingroup    compta/bank
+ *    \brief      Page of Balance sheet
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
+// Security Check Access Control
 if (empty($user->rights->banque->lire)) {
 	accessforbidden();
 }

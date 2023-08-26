@@ -54,19 +54,20 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
  *	Class to generate stick sheet with format Avery or other personalised
  */
-abstract class CommonStickerGenerator
+abstract class CommonStickerGenerator extends CommonDocGenerator
 {
-	public $code; // Code of format
-
 	/**
-	 * @var array format Array with informations
+	 * @var DoliDB Database handler.
 	 */
-	public $format;
+	public $db;
+
+	public $code; // Code of format
 
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	// protected
@@ -100,6 +101,8 @@ abstract class CommonStickerGenerator
 	protected $_COUNTY = 1;
 	protected $_First = 1;
 	public $Tformat;
+
+
 	// phpcs:enable
 	/**
 	 *	Constructor

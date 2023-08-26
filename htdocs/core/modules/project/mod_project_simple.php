@@ -60,9 +60,10 @@ class mod_project_simple extends ModeleNumRefProjects
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -84,9 +85,10 @@ class mod_project_simple extends ModeleNumRefProjects
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *   @return     boolean     false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -125,14 +127,14 @@ class mod_project_simple extends ModeleNumRefProjects
 	 */
 	public function getNextValue($objsoc, $project)
 	{
-		global $db, $conf;
+		global $db;
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (".getEntity('projectnumber', 1, $project).")";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -147,10 +149,11 @@ class mod_project_simple extends ModeleNumRefProjects
 			return -1;
 		}
 
-		$date = empty($project->date_c) ?dol_now() : $project->date_c;
+		$date = (empty($project->date_c) ? dol_now() : $project->date_c);
 
 		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m", $date);
+		//$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

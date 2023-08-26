@@ -61,11 +61,12 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	/**
 	 *	Return default description of numbering model
 	 *
-	 *	@return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $db, $conf, $langs;
+		global $db, $langs;
 
 		$langs->load("bills");
 
@@ -85,7 +86,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskholiday" value="'.getDolGlobalString('HOLIDAY_IMMACULATE_MASK').'">', $tooltip, 1, 1).'</td>';
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
@@ -127,7 +128,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$mask = $conf->global->HOLIDAY_IMMACULATE_MASK;
+		$mask = getDolGlobalString('HOLIDAY_IMMACULATE_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
