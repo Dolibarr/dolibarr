@@ -1153,7 +1153,7 @@ class Form
 	public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 
 		// If product & services are enabled or both disabled.
 		if ($forceall == 1 || (empty($forceall) && isModEnabled("product") && isModEnabled("service"))

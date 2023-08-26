@@ -374,11 +374,9 @@ class Conf
 									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
 								} elseif (in_array($partname, array('models', 'theme'))) {
 									$newvalue = '/'.$modulename.'/';
-								} elseif (in_array($partname, array('sms'))) {
-									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
 									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
-								} else {
+								} else {	// $partname can be any other value like 'sms', ...
 									$newvalue = $value;
 								}
 
