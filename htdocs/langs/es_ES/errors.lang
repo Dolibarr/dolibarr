@@ -318,8 +318,10 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: la URL de su in
 ErrorMenuExistValue=Ya existe un menú con este título o URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Los archivos SVG no están permitidos como enlaces externos sin la opción %s
 ErrorTypeMenu=Imposible agregar otro menú para el mismo módulo en la barra de navegación, aún no se maneja
-ErrorTableExist=Table <b>%s</b> already exist
-ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
+ErrorTableExist=La tabla <b> %s </b> ya existe
+ErrorDictionaryNotFound=Diccionario <b> %s </b> no encontrado
+ErrorFailedToCreateSymLinkToMedias=Error al crear los enlaces simbólicos %s para apuntar a %s
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
 WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.
@@ -360,7 +362,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validación automá
 WarningModuleNeedRefrech = El módulo <b> %s </b> ha sido deshabilitado. No olvides habilitarlo
 WarningPermissionAlreadyExist=Permisos existentes para este objeto
 WarningGoOnAccountancySetupToAddAccounts=Si esta lista está vacía, vaya al menú %s - %s - %s para cargar o crear cuentas para su plan de cuentas.
-WarningCorrectedInvoiceNotFound=Corrected invoice not found
+WarningCorrectedInvoiceNotFound=Factura corregida no encontrada
 
 SwissQrOnlyVIR = La factura SwissQR solo se puede agregar en facturas configuradas para pagarse con pagos de transferencia de crédito.
 SwissQrCreditorAddressInvalid = La dirección del acreedor no es válida (¿están configurados el código postal y la ciudad? (%s)
