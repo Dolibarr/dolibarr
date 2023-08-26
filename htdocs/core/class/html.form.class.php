@@ -1416,22 +1416,24 @@ class Form
 			}
 		}
 
-		if (preg_match('/[\(\)]/', $filter)) {
-			// If there is one parenthesis inside the criteria, we assume it is an Universal Filter Syntax.
-			$errormsg = '';
-			$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
+		if ($filter != '') {	// If a filter was provided
+			if (preg_match('/[\(\)]/', $filter)) {
+				// If there is one parenthesis inside the criteria, we assume it is an Universal Filter Syntax.
+				$errormsg = '';
+				$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
 
-			// Redo clean $filter that may contains sql conditions so sql code
-			if (function_exists('testSqlAndScriptInject')) {
-				if (testSqlAndScriptInject($filter, 3) > 0) {
-					$filter = '';
-					return 'SQLInjectionTryDetected';
+				// Redo clean $filter that may contains sql conditions so sql code
+				if (function_exists('testSqlAndScriptInject')) {
+					if (testSqlAndScriptInject($filter, 3) > 0) {
+						$filter = '';
+						return 'SQLInjectionTryDetected';
+					}
 				}
+			} else {
+				// If not, we do nothing. We already know that there is no parenthesis
+				// TODO Disallow this case in a future.
+				dol_syslog("Warning, select_thirdparty_list was called with a filter criteria not using the Universal Search Syntax.", LOG_WARNING);
 			}
-		} else {
-			// If not, we do nothing. We already no that there is no parenthesis
-			// TODO Disallow this case in a future.
-			dol_syslog("Warning, select_thirdparty_list was called with a filter criteria not using the Universal Search Syntax.", LOG_WARNING);
 		}
 
 		// We search companies
