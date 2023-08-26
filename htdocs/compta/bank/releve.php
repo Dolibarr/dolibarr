@@ -179,11 +179,10 @@ if (empty($numref)) {
 }
 $sql .= " AND b.fk_account = ".((int) $object->id);
 $sql .= " AND b.fk_account = ba.rowid";
-$sql .= " AND d.entity IN (".getEntity($object->element).")";
+$sql .= " AND ba.entity IN (".getEntity($object->element).")";
 $sql .= $db->order("b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
 
 $sqlrequestforbankline = $sql;
-
 
 
 /*
@@ -667,6 +666,8 @@ if (empty($numref)) {
 			$i++;
 		}
 		$db->free($result);
+	} else {
+		dol_print_error($db);
 	}
 
 	// Line Total
