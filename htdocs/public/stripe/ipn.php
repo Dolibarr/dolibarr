@@ -365,7 +365,7 @@ if ($event->type == 'payout.created') {
 					$pdid = $obj->rowid;
 					$invoice_id = $obj->fk_facture;
 					$payment_amountInDolibarr = $obj->amount;
-					$paymentTypeIdInDolibarr = $obj->type;
+					$paymentTypeIdInDolibarr = empty($obj->type) ? 'card' : $obj->type;
 
 					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid."). We should fix status traite to 1");
 				} else {
