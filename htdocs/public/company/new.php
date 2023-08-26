@@ -76,7 +76,12 @@ if (!isModEnabled('societe')) {
 	httponly_accessforbidden('Module Thirdparty not enabled');
 }
 
-//permissions 
+if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
+	httponly_accessforbidden("Online form for contact for public visitors has not been enabled");
+}
+
+
+//permissions
 
 $permissiontoadd 	= $user->hasRight('societe', 'creer');
 
@@ -103,7 +108,7 @@ $user->loadDefaultValues();
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -154,6 +159,8 @@ function llxFooterVierge()
 {
 	global $conf, $langs;
 
+	$ext = '';
+
 	print '</div>';
 
 	printCommonFooter('public');
@@ -187,16 +194,8 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
-	// test if login already exists
-
 	if (!GETPOST('name')) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
-		$error++;
-	}
-
-
-	if (GETPOST('client', 'int') && GETPOST('client', 'int') < 0) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Company")), null, 'errors');
 		$error++;
 	}
 
@@ -212,8 +211,6 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	if (!$error) {
-		// E-mail looks OK and login does not exist
-
 		$societe = new Societe($db);
 
 		$societe->name = GETPOST('name', 'alphanohtml');
@@ -230,7 +227,7 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
 
-		$societe->client = 2 ; # our client is a prospect
+		$societe->client = 2 ; // our client is a prospect
 
 		$societe->code_client		= -1;
 
@@ -238,7 +235,6 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->note_private = GETPOST('note_private');
 		if (!$error) {
-
 			$result = $societe->create($user);
 			if ($result > 0) {
 				require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
@@ -303,7 +299,7 @@ $extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch op
 llxHeaderVierge($langs->trans("ContactUs"));
 
 print '<br>';
-print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("NewProspect"), '', '', 0, 0, 'center');
+print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
@@ -324,9 +320,6 @@ dol_htmloutput_events();
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="newprospect">' . "\n";
 print '<input type="hidden" name="token" value="' . newToken() . '" / >';
 print '<input type="hidden" name="entity" value="' . $entity . '" />';
-
-// TODO action = 'create'
-
 print '<input type="hidden" name="action" value="add" />';
 print '<br>';
 
@@ -377,19 +370,21 @@ if ($objectsoc->particulier || $private) {
 */
 print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">'; // text appreas left
 print '<input type="hidden" name="ThirdPartyName" value="' . $langs->trans('ThirdPartyName') . '">';
-print '<span id="TypeName" class="fieldrequired"  title="' .dol_escape_htmltag($langs->trans("FieldsWithAreMandatory", '*')) . '" >' . $form->editfieldkey('ThirdPartyName', 'name', '', $objectsoc, 0) . '<span class="star"> *</span> '.'</span>';
-print '</td><td' . (empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '') . '>'; // inline input
+print '<span id="TypeName" class="fieldrequired"  title="' .dol_escape_htmltag($langs->trans("FieldsWithAreMandatory", '*')) . '" >' . $form->editfieldkey('Company', 'name', '', $objectsoc, 0) . '<span class="star"> *</span></span>';
+print '</td><td>'; // inline input
 print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="' . dol_escape_htmltag($objectsoc->name) . '" autofocus="autofocus">';
 //
 
-// name lastname
-print '<tr><td class="classfortooltip" title="' . dol_escape_htmltag($messagemandatory) . '">' . $langs->trans("name") . ' <span class="star">*</span></td><td><input type="text" name="name_alias" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('name')) . '"></td></tr>' . "\n";
+// Name and lastname
+print '<tr><td class="classfortooltip" title="' . dol_escape_htmltag($messagemandatory) . '">' . $langs->trans("Firstname") . ' <span class="star">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('firstname')) . '"></td></tr>' . "\n";
+
+print '<tr><td class="classfortooltip" title="' . dol_escape_htmltag($messagemandatory) . '">' . $langs->trans("Lastname") . ' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="' . dol_escape_htmltag(GETPOST('lastname')) . '"></td></tr>' . "\n";
 
 // Address
 print '<tr><td class="tdtop">';
 print $form->editfieldkey('Address', 'address', '', $objectsoc, 0);
 print '</td>';
-print '<td colspan="3">';
+print '<td>';
 print '<textarea name="address" id="address" class="quatrevingtpercent" rows="' . ROWS_2 . '" wrap="soft">';
 print dol_escape_htmltag($objectsoc->address, 0, 1);
 print '</textarea>';
@@ -397,7 +392,7 @@ print $form->widgetForTranslation("address", $objectsoc, $permissiontoadd, 'text
 print '</td></tr>';
 
 // Country
-print '<tr><td>' . $form->editfieldkey('Country', 'selectcountry_id', '', $objectsoc, 0) . '</td><td colspan="3" class="maxwidthonsmartphone">';
+print '<tr><td>' . $form->editfieldkey('Country', 'selectcountry_id', '', $objectsoc, 0) . '</td><td class="maxwidthonsmartphone">';
 print img_picto('', 'country', 'class="pictofixedwidth"');
 print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $objectsoc->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
 if ($user->admin) {
@@ -407,17 +402,17 @@ print '</td></tr>';
 
 // Phone / Fax
 print '<tr><td>' . $form->editfieldkey('Phone', 'phone', '', $objectsoc, 0) . '</td>';
-print '<td' . ($conf->browser->layout == 'phone' ? ' colspan="3"' : '') . '>' . img_picto('', 'object_phoning', 'class="pictofixedwidth"') . ' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="' . (GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $objectsoc->phone) . '"></td>';
-if ($conf->browser->layout == 'phone') {
-	print '</tr><tr>';
-}
-print '</tr><tr>';
+print '<td>' . img_picto('', 'object_phoning', 'class="pictofixedwidth"') . ' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="' . (GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $objectsoc->phone) . '"></td>';
+print '</tr>';
+
+print '<tr>';
 print '<td>' . $form->editfieldkey('Fax', 'fax', '', $objectsoc, 0) . '</td>';
-print '<td' . ($conf->browser->layout == 'phone' ? ' colspan="3"' : '') . '>' . img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"') . ' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="' . (GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $objectsoc->fax) . '"></td></tr>';
+print '<td>' . img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"') . ' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="' . (GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $objectsoc->fax) . '"></td>';
+print '</tr>';
 
 // Email / Web
 print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $objectsoc, 0, 'string', '', empty($conf->global->SOCIETE_EMAIL_MANDATORY) ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY) . '</td>';
-print '<td' . (($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '') . '>' . img_picto('', 'object_email', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="' . $objectsoc->email . '"></td>';
+print '<td>' . img_picto('', 'object_email', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="' . $objectsoc->email . '"></td>';
 if (isModEnabled('mailing') && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
 	if ($conf->browser->layout == 'phone') {
 		print '</tr><tr>';
@@ -426,8 +421,9 @@ if (isModEnabled('mailing') && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADD
 	print '<td class="individualline" ' . (($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '') . '>' . $form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($objectsoc->no_email) ? 0 : 1)), 1, false, 1) . '</td>';
 }
 print '</tr>';
+
 print '<tr><td>' . $form->editfieldkey('Web', 'url', '', $objectsoc, 0) . '</td>';
-print '<td colspan="3">' . img_picto('', 'globe', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="' . $objectsoc->url . '"></td></tr>';
+print '<td>' . img_picto('', 'globe', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="' . $objectsoc->url . '"></td></tr>';
 
 
 // Comments
@@ -459,7 +455,7 @@ print dol_get_fiche_end();
 
 // Save / Submit
 print '<div class="center">';
-print '<input type="submit" value="' . $langs->trans("GetMembershipButtonLabel") . '" id="submitsave" class="button">';
+print '<input type="submit" value="' . $langs->trans("Send") . '" id="submitsave" class="button">';
 if (!empty($backtopage)) {
 	print ' &nbsp; &nbsp; <input type="submit" value="' . $langs->trans("Cancel") . '" id="submitcancel" class="button button-cancel">';
 }
