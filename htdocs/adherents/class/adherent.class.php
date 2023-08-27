@@ -499,7 +499,7 @@ class Adherent extends CommonObject
 
 		// Envoi mail confirmation
 		$from = $conf->email_from;
-		if (!empty(getDolGlobalString('ADHERENT_MAIL_FROM'))) {
+		if (getDolGlobalString('ADHERENT_MAIL_FROM')) {
 			$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 		}
 

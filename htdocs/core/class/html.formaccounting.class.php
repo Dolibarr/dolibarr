@@ -396,7 +396,7 @@ class FormAccounting extends Form
 
 			$num_rows = $this->db->num_rows($resql);
 
-			if ($num_rows == 0 && (empty(getDolGlobalInt('CHARTOFACCOUNTS')) || getDolGlobalInt('CHARTOFACCOUNTS') < 0)) {
+			if ($num_rows == 0 && getDolGlobalInt('CHARTOFACCOUNTS') <= 0) {
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {

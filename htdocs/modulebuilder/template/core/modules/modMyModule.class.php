@@ -411,8 +411,8 @@ class modMyModule extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			't.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')),
-				'path'=>"/core/modules/commande/".(empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')).'.php'
+				'class'=>(!getDolGlobalString('MYMODULE_MYOBJECT_ADDON') ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')),
+				'path'=>"/core/modules/commande/".(!getDolGlobalString('MYMODULE_MYOBJECT_ADDON') ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')).'.php'
 				'classobject'=>'MyObject',
 				'pathobject'=>'/mymodule/class/myobject.class.php',
 			),

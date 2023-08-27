@@ -163,7 +163,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH'))) {
+		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
