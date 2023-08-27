@@ -86,3 +86,5 @@ ALTER TABLE llx_adherent DROP COLUMN whatsapp;
 
 ALTER TABLE llx_societe DROP COLUMN skype;
 
+ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
+
