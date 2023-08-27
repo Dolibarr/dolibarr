@@ -43,7 +43,7 @@ print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
 	print 'You must run this tool being into the root of the project.'."\n";
 	print 'Usage:   '.constant('PRODUCT').'.php pathto/index.html  [--dir-scc=pathtoscc] [--dir-phpstan=pathtophpstan]'."\n";
-	print 'Example: '.constant('PRODUCT').'.php dev/tools/apstats.php documents/apstats/index.html --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
+	print 'Example: '.constant('PRODUCT').'.php dev/tools/apstats.php documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
 	exit(0);
 }
 
@@ -63,7 +63,7 @@ $i = 0;
 while ($i < $argc) {
 	$reg = array();
 	if (preg_match('/--dir-scc=(.*)$/', $argv[$i], $reg)) {
-		$dirphpstan = $reg[1];
+		$dirscc = $reg[1];
 	}
 	if (preg_match('/--dir-phpstan=(.*)$/', $argv[$i], $reg)) {
 		$dirphpstan = $reg[1];
