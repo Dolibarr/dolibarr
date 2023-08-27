@@ -1016,11 +1016,11 @@ class Calendar extends CommonObject
 		global $langs, $conf;
 		$langs->load("bookcal@bookcal");
 
-		if (empty(getDolGlobalString('BOOKCAL_MYOBJECT_ADDON'))) {
+		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
 			$conf->global->BOOKCAL_MYOBJECT_ADDON = 'mod_calendar_standard';
 		}
 
-		if (!empty(getDolGlobalString('BOOKCAL_MYOBJECT_ADDON'))) {
+		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('BOOKCAL_MYOBJECT_ADDON').".php";
