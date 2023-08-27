@@ -237,7 +237,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->reception->dir_output."/reception") {
+		if ($conf->reception->dir_output) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -251,7 +251,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->reception->dir_output."/reception";
+			$dir = !empty($conf->reception->multidir_output[$object->entity]) ? $conf->reception->multidir_output[$object->entity] : $conf->reception->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -424,7 +424,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 						$linenumber = 0;
 						foreach ($object->lines as $line) {
 							$linenumber++;
-							$tmparray = $this->get_substitutionarray_reception_lines($line, $outputlangs);
+							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
