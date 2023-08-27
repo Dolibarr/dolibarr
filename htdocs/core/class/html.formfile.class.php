@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2022  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,11 @@ class FormFile
 	 * @var string Error code (or message)
 	 */
 	public $error;
+
+	/**
+	 * @var array used for caching object
+	 */
+	public $cache_objects = array();
 
 	public $numoffiles;
 	public $infofiles; // Used to return informations by function getDocumentsLink
