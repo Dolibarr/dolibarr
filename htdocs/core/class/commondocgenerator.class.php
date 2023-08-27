@@ -110,6 +110,21 @@ abstract class CommonDocGenerator
 	public $option_credit_note;
 
 	/**
+	 * @var int Tab Title Height
+	 */
+	public $tabTitleHeight;
+
+	/**
+	 * @var array default title fields style
+	 */
+	public $defaultTitlesFieldsStyle;
+
+	/**
+	 * @var array default content fields style
+	 */
+	public $defaultContentsFieldsStyle;
+
+	/**
 	 * @var Societe		Issuer of document
 	 */
 	public $emetteur;
