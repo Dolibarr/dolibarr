@@ -120,7 +120,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $socialnetworks = getArrayOfSocialNetworks();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartycard', 'globalcard', 'customizeprospectcustomerfield'));
+$hookmanager->initHooks(array('thirdpartycard', 'globalcard'));
 
 if ($socid > 0) {
 	$object->fetch($socid);
@@ -1500,7 +1500,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		$selected = (GETPOSTISSET('client') ?GETPOST('client', 'int') : $object->client);
-		$reshook = $hookmanager->executeHooks('prospectcustomerfield');
+		$reshook = $hookmanager->executeHooks('selectProspectCustomerType');
 		if (empty($reshook)) {
 			print $formcompany->selectProspectCustomerType($selected);
 		}
@@ -2218,7 +2218,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Prospect/Customer
 			print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			$reshook = $hookmanager->executeHooks('prospectcustomerfield');
+			$reshook = $hookmanager->executeHooks('selectProspectCustomerType', array('client_type' => $object->client));
 			if (empty($reshook)) {
 				print $formcompany->selectProspectCustomerType($object->client);
 			}
@@ -2780,7 +2780,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Type Prospect/Customer/Supplier
 		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
-		print $object->getTypeUrl(1);
+		$reshook = $hookmanager->executeHooks('getTypeUrl', array('client_type' => $object->client));
+		if (empty($reshook)) {
+			print $object->getTypeUrl(1);
+		}
 		print '</td></tr>';
 
 		// Prefix
