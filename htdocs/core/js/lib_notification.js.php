@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
  * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2020	   Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2020-2023 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Library javascript to enable Browser notifications
+ */
+
+/**
+ *	\file			htdocs/core/js/lib_notification.js.php
+ *  \brief			Javascript code to manage browser reminers
  */
 
 if (!defined('NOREQUIREUSER')) {
@@ -75,7 +80,7 @@ if ("Notification" in window) {
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
 		console.log("Ask Notification.permission");
-		Notification.requestPermission()
+		Notification.requestPermission();
 	}
 
 	/* Launch timer */
@@ -121,7 +126,7 @@ function check_events() {
 		$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
 			type: "post",   // Usually post or get
 			async: true,
-			data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: currentToken },
+			data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: currentToken, dolnotif_nb_test_for_page: dolnotif_nb_test_for_page },
 			dataType: "json",
 			success: function (result) {
 				//console.log(result);

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,6 +171,14 @@ if (empty($reshook)) {
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+
+		$fk_default_workstation = 0;
+		if (!empty($idprod) && isModEnabled('workstation')) {
+			$product = new Product($db);
+			$res = $product->fetch($idprod);
+			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
+		}
+
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
@@ -206,7 +215,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options);
+			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -566,7 +575,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (!empty($object->table_element_line)) {
 		// Products
-		$res = $object->fetchLinesbytypeproduct(0);
+		$res = $object->fetchLinesbytypeproduct(0);		// Load all lines products into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
@@ -615,7 +624,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Services
 		$filtertype = 1;
-		$res = $object->fetchLinesbytypeproduct(1);
+		$res = $object->fetchLinesbytypeproduct(1);		// Load all lines services into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');

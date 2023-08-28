@@ -118,8 +118,14 @@ class Contrat extends CommonObject
 	/**
 	 * Status of the contract
 	 * @var int
+	 * @deprecated
 	 */
-	public $statut = 0; // 0=Draft,
+	public $statut = 0;
+	/**
+	 * Status of the contract (0=Draft, 1=Validated)
+	 * @var int
+	 */
+	public $status = 0;
 
 	public $product;
 
@@ -569,8 +575,8 @@ class Contrat extends CommonObject
 			// Set new ref and define current statut
 			if (!$error) {
 				$this->ref = $num;
-				$this->statut = 1;
-				$this->brouillon = 0;
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->date_validation = $now;
 			}
 		} else {
@@ -631,8 +637,8 @@ class Contrat extends CommonObject
 
 		// Set new ref and define current status
 		if (!$error) {
-			$this->statut = 0;
-			$this->brouillon = 1;
+			$this->statut = self::STATUS_DRAFT;
+			$this->status = self::STATUS_DRAFT;
 			$this->date_validation = $now;
 		}
 
@@ -656,7 +662,7 @@ class Contrat extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{
-		$sql = "SELECT rowid, statut, ref, fk_soc,";
+		$sql = "SELECT rowid, statut as status, ref, fk_soc,";
 		$sql .= " ref_supplier, ref_customer,";
 		$sql .= " ref_ext,";
 		$sql .= " entity,";
@@ -689,6 +695,7 @@ class Contrat extends CommonObject
 				$this->error = 'Fetch found several records.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
+				return 0;
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
@@ -698,7 +705,8 @@ class Contrat extends CommonObject
 					$this->ref_supplier = $obj->ref_supplier;
 					$this->ref_ext = $obj->ref_ext;
 					$this->entity = $obj->entity;
-					$this->statut = $obj->statut;
+					$this->statut = $obj->status;
+					$this->status = $obj->status;
 
 					$this->date_contrat = $this->db->jdate($obj->datecontrat);
 					$this->date_creation = $this->db->jdate($obj->datecontrat);
@@ -738,6 +746,10 @@ class Contrat extends CommonObject
 					}
 
 					return $this->id;
+				} else {
+					dol_syslog(get_class($this)."::fetch Contract failed");
+					$this->error = "Fetch contract failed";
+					return -1;
 				}
 			} else {
 				dol_syslog(get_class($this)."::fetch Contract not found");
@@ -782,7 +794,7 @@ class Contrat extends CommonObject
 
 		// Selects contract lines related to a product
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref, p.fk_product_type as product_type,";
-		$sql .= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql .= " d.total_ht,";
 		$sql .= " d.total_tva,";
 		$sql .= " d.total_localtax1,";
@@ -829,7 +841,8 @@ class Contrat extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
-				$line->statut = $objp->statut;
+				$line->statut = $objp->status;
+				$line->status = $objp->status;
 				$line->remise_percent	= $objp->remise_percent;
 				$line->price_ht			= $objp->price_ht;
 				$line->price = $objp->price_ht; // For backward compatibility
@@ -1664,7 +1677,7 @@ class Contrat extends CommonObject
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	string		$rang 				Position
-	 *  @return int              				< 0 si erreur, > 0 si ok
+	 *  @return int              				<0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = 0, $fk_unit = null, $rang = 0)
 	{
@@ -1819,6 +1832,9 @@ class Contrat extends CommonObject
 
 				$this->db->commit();
 				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
 			}
 		} else {
 			$this->db->rollback();
@@ -2478,6 +2494,21 @@ class Contrat extends CommonObject
 		return $this->fetch_lines();
 	}
 
+	/**
+	 * 	Create an array of associated tickets
+	 *
+	 * 	@return array|int		Array o tickets or <0 if KO
+	 */
+	public function getTicketsArray()
+	{
+		global $user;
+
+		$ticket = new Ticket($this->db);
+		$nbTicket =  $ticket->fetchAll($user,  'ASC', 't.datec',  '', 0, '', array('t.fk_contract' => $this->id));
+
+		return ($nbTicket < 0 ? $nbTicket : $ticket->lines);
+	}
+
 
 	/**
 	 *  Create a document onto disk according to template module.
@@ -2854,10 +2885,9 @@ class Contrat extends CommonObject
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];

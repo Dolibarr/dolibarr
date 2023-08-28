@@ -106,6 +106,7 @@ class CashControl extends CommonObject
 	 * @var int Object Id
 	 */
 	public $id;
+	public $label;
 	public $opening;
 	public $status;
 	public $year_close;
@@ -127,6 +128,11 @@ class CashControl extends CommonObject
 	 * @var integer|string $date_modification
 	 */
 	public $date_modification;
+	/**
+	 * @var integer|string $date_modification
+	 * @deprecated
+	 */
+	public $tms;
 
 	/**
 	 * @var integer|string $date_valid
@@ -490,7 +496,7 @@ class CashControl extends CommonObject
 		//var_dump($this->fields['rowid']);exit;
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, 1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, 1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'posmodule')) {
 			$return .= '<br><span class="opacitymedium">'.substr($langs->trans("Module/Application"), 0, 12).'</span> : <span class="info-box-label">'.$this->posmodule.'</span>';

@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook Produktivschlüssel
 ONLINE_PAYMENT_WAREHOUSE=Warenlager für die Bestandsminderung bei Onlinezahlung<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice?)
 StripeLiveEnabled=Stripe live aktiviert (Nicht im Test/Sandbox Modus)
 StripeImportPayment=Stripe Zahlungen importieren
-ExampleOfTestCreditCard=Beispiel Kreditkarte für SEPA-Test: %s => gültig, %s => Fehler CVC, %s => abgelaufen, %s => Belastung fehlgeschlagen
+ExampleOfTestCreditCard=Beispiel Kreditkarte für Testzahlungen: %s => gültig, %s => Fehler CVC, %s => abgelaufen, %s => Belastung fehlgeschlagen
 ExampleOfTestBankAcountForSEPA=Beispiel Bankkonto IBAN für Lastschrifttest: %s
 StripeGateways=Stripe Gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
@@ -51,6 +51,7 @@ StripeAccount=Stripe Konto
 StripeChargeList=Liste der Bezahlvorgänge
 StripeTransactionList=Liste aller Transaktionen
 StripeCustomerId=Stripe Kunden-ID
+StripePaymentId=Stripe-Payment-ID
 StripePaymentModes=Stripe Zahlungsarten
 LocalID=Lokale ID
 StripeID=Stripe ID

@@ -137,7 +137,7 @@ if (!defined('NOREQUIRETRAN')) {
  */
 $db = null;
 if (!defined('NOREQUIREDB')) {
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->error) {
 		// If we were into a website context
@@ -233,7 +233,14 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		// This is very problematic during a fiscal control.
 		$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
 	}
-
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+		// The replacement invoice type is not allowed in Greece.
+		$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_DEPOSIT)) {
+		// The deposit invoice type is not allowed in Greece.
+		$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
+	}
 	if (($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
 		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.

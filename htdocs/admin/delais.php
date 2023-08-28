@@ -138,12 +138,6 @@ $modules = array(
 
 $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
 
-if (!isset($conf->global->MAIN_DELAY_PROJECT_TO_CLOSE)) {
-	$conf->global->MAIN_DELAY_PROJECT_TO_CLOSE = 7; // Must be same value than into conf.class.php
-}
-if (!isset($conf->global->MAIN_DELAY_TASKS_TODO)) {
-	$conf->global->MAIN_DELAY_TASKS_TODO = 7; // Must be same value than into conf.class.php
-}
 if (!isset($conf->global->MAIN_DELAY_MEMBERS)) {
 	$conf->global->MAIN_DELAY_MEMBERS = 0; // Must be same value than into conf.class.php
 }
@@ -230,7 +224,7 @@ if ($action == 'edit') {
 	foreach ($modules as $module => $delays) {
 		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']} : 0);
+				$value = getDolGlobalInt($delay['code']);
 				print '<tr class="oddeven">';
 				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
 				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td><td class="nowraponall right">';
@@ -264,7 +258,7 @@ if ($action == 'edit') {
 	foreach ($modules as $module => $delays) {
 		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']} : 0);
+				$value = getDolGlobalInt($delay['code']);
 				print '<tr class="oddeven">';
 				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
 				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td>';

@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\ConfigCollector;
+use DebugBar\DataCollector\ConfigCollector;
 
 /**
  * DolConfigCollector class

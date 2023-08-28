@@ -225,7 +225,7 @@ if ($action == 'create') {
 	print '<input type="submit" class="button" name="add" value="' . dol_escape_htmltag($langs->trans("Create")) . '">';
 	print '&nbsp; ';
 
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="javascript:history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -256,15 +256,14 @@ if (($id || $ref) && $action == 'edit') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
 
-	print '</table>';
-
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
+	print '</table>';
+
+	print '<hr>';
+
 	// SKILLDET
-
-	print dol_get_fiche_head(array(), '');
-
 	$SkilldetRecords = $object->fetchLines();
 
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) == 0) {
@@ -814,7 +813,7 @@ if ($action != "create" && $action != "edit") {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
 	if (!empty($resql)) $db->free($resql);

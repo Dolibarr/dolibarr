@@ -55,6 +55,12 @@ class Bookmark extends CommonObject
 	public $db;
 
 	/**
+	 * Last error code on a local method
+	 * @var int		Error number
+	 */
+	public $errno;
+
+	/**
 	 * @var int ID
 	 */
 	public $id;

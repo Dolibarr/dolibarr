@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ class CMailFile
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'mail' and 'smtps' for the moment)
-	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define which sending mode and parameters to use)
+	 *  @param  string  $sendcontext      	 'standard', 'emailing', 'ticket', 'password', ... (used to define which sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 *  @param	string	$upload_dir_tmp		 Temporary directory (used to convert images embedded as img src=data:image)
 	 */
@@ -187,7 +187,7 @@ class CMailFile
 
 		$this->sendcontext = $sendcontext;
 
-		// Define this->sendmode ('mail', 'smtps', 'siwftmailer', ...) according to $sendcontext ('standard', 'emailing', 'ticket')
+		// Define this->sendmode ('mail', 'smtps', 'swiftmailer', ...) according to $sendcontext ('standard', 'emailing', 'ticket', 'password')
 		$this->sendmode = '';
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
@@ -214,10 +214,10 @@ class CMailFile
 		$this->mixed_boundary = "multipart_x.".time().".x_boundary";
 
 		// On defini related_boundary
-		$this->related_boundary = 'mul_'.dol_hash(uniqid("dolibarr2"), 3); // Force md5 hash (does not contains special chars)
+		$this->related_boundary = 'mul_'.dol_hash(uniqid("dolibarr2"), 3); // Force md5 hash (does not contain special chars)
 
 		// On defini alternative_boundary
-		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3); // Force md5 hash (does not contains special chars)
+		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3); // Force md5 hash (does not contain special chars)
 
 		if (empty($subject)) {
 			dol_syslog("CMailFile::CMailfile: Try to send an email with empty subject");
@@ -512,7 +512,7 @@ class CMailFile
 
 			// Give the message a subject
 			try {
-				$result = $this->message->setSubject($this->subject);
+				$this->message->setSubject($this->subject);
 			} catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
 			}
@@ -552,6 +552,14 @@ class CMailFile
 			if (!empty($this->reply_to)) {
 				try {
 					$this->message->SetReplyTo($this->getArrayAddress($this->reply_to));
+				} catch (Exception $e) {
+					$this->errors[] = $e->getMessage();
+				}
+			}
+
+			if (!empty($this->errors_to)) {
+				try {
+					$headers->addTextHeader('Errors-To', $this->getArrayAddress($this->errors_to));
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 				}
@@ -999,6 +1007,7 @@ class CMailFile
 						$this->dump_mail();
 					}
 
+					$smtperrorcode = 0;
 					if (! $result) {
 						$smtperrorcode = $this->smtps->lastretval;	// SMTP error code
 						dol_syslog("CMailFile::sendfile: mail SMTP error code ".$smtperrorcode, LOG_WARNING);
@@ -1237,8 +1246,8 @@ class CMailFile
 			$encoded = chunk_split(base64_encode($contents), 76, $this->eol); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 			return $encoded;
 		} else {
-			$this->error = "Error: Can't read file '".$sourcefile."' into _encode_file";
-			dol_syslog("CMailFile::encode_file: ".$this->error, LOG_ERR);
+			$this->error = "Error in _encode_file() method: Can't read file '".$sourcefile."'";
+			dol_syslog("CMailFile::_encode_file: ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1350,7 +1359,7 @@ class CMailFile
 	/**
 	 * Build a css style (mode = all) into this->styleCSS and this->bodyCSS
 	 *
-	 * @return string
+	 * @return void
 	 */
 	public function buildCSS()
 	{
@@ -1702,7 +1711,7 @@ class CMailFile
 			// tls smtp start with no encryption
 			//if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $host='tls://'.$host;
 
-			dol_syslog("Try socket connection to host=".$host." port=".$port);
+			dol_syslog("Try socket connection to host=".$host." port=".$port." timeout=".$timeout);
 			//See if we can connect to the SMTP server
 			$errno = 0; $errstr = '';
 			if ($socket = @fsockopen(
@@ -1799,7 +1808,7 @@ class CMailFile
 							$this->html_images[$i]["content_type"] = $this->image_types[$ext];
 						}
 						// cid
-						$this->html_images[$i]["cid"] = dol_hash($this->html_images[$i]["fullpath"], 'md5'); // Force md5 hash (does not contains special chars)
+						$this->html_images[$i]["cid"] = dol_hash($this->html_images[$i]["fullpath"], 'md5'); // Force md5 hash (does not contain special chars)
 						// type
 						$this->html_images[$i]["type"] = 'cidfromurl';
 

@@ -93,7 +93,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
 	// Search contract
-	if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
 	}
 
@@ -249,7 +249,7 @@ if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PR
 				$i++;
 			}
 			if ($i > $nbmax) {
-				$dataseries[] = array($langs->trans("Other"), round($rest));
+				$dataseries[] = array($langs->transnoentitiesnoconv("Other"), round($rest));
 			}
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';

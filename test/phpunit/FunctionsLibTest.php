@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,11 +87,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return CoreTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db,$mysoc;
@@ -183,16 +185,16 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, 'Filter syntax error');
+		$this->assertEquals($sql, 'Filter syntax error - Bad syntax of the search string');
 
 		// A real search string
 		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, ' AND (((statut = 1 or entity IN (__AAA__)) and abc < 2 and abc <> 1.23))');
+		$this->assertEquals($sql, ' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))');
 
 		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, " AND (t.ref LIKE 'SO-%' or t.date_creation < '20160101' or t.date_creation < 0 or t.nature IS NULL)");
+		$this->assertEquals($sql, " AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))");
 
 		return true;
 	}
@@ -205,18 +207,20 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolClone()
 	{
-		$newproduct1 = new Product($this->savdb);
+		global $db;
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		$newproduct1 = new Product($db);
+
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
 		$newproductcloned1 = dol_clone($newproduct1);
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
 		$newproductcloned2 = dol_clone($newproduct1, 2);
@@ -672,6 +676,24 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		return true;
 	}
 
+
+	/**
+	 * testDolStringNoSpecial
+	 *
+	 * @return boolean
+	 */
+	public function testDolStringNoSpecial()
+	{
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 0);
+		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
+
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 1);
+		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
+
+		return true;
+	}
 
 	/**
 	 * testDolStringNohtmltag

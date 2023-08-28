@@ -95,7 +95,7 @@ $hookmanager->initHooks(array('accountancyexpensereportlist'));
 $formaccounting = new FormAccounting($db);
 $accounting = new AccountingAccount($db);
 
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -104,7 +104,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -158,7 +158,7 @@ if (empty($reshook)) {
 }
 
 
-if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
+if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	$msg = '';
 
 	if (!empty($mesCasesCochees)) {
@@ -283,7 +283,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0

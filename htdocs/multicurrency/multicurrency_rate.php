@@ -328,7 +328,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 
 	if ($result) {

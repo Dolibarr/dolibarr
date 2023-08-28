@@ -29,6 +29,26 @@
  */
 class Import
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string DB Error number
+	 */
+	public $errno;
+
 	public $array_import_module;
 	public $array_import_perms;
 	public $array_import_icon;
@@ -45,17 +65,8 @@ class Import
 	public $array_import_convertvalue;
 	public $array_import_run_sql_after;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	// To store import templates
+	public $id;
 	public $hexa; // List of fields in the export profile
 	public $datatoimport;
 	public $model_name; // Name of export profile
@@ -338,7 +349,6 @@ class Import
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."import_model";

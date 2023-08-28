@@ -47,6 +47,13 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
+	if ($object->statut ==  Expedition::STATUS_DRAFT) {
+		$head[$h][0] = DOL_URL_ROOT."/expedition/dispatch.php?id=".$object->id;
+		$head[$h][1] = $langs->trans("ShipmentDistribution");
+		$head[$h][2] = 'dispatch';
+		$h++;
+	}
+
 	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->rights->expedition->delivery->lire) {
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);

@@ -77,7 +77,7 @@ class HookManager
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int|void							    Always 1
+	 *	@return	int								0 or 1
 	 */
 	public function initHooks($arraycontext)
 	{
@@ -85,7 +85,7 @@ class HookManager
 
 		// Test if there is hooks to manage
 		if (!is_array($conf->modules_parts['hooks']) || empty($conf->modules_parts['hooks'])) {
-			return;
+			return 0;
 		}
 
 		// For backward compatibility
@@ -148,7 +148,7 @@ class HookManager
 	 *  @param		array	$parameters		Array of parameters
 	 *  @param		Object	$object			Object to use hooks on
 	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-	 *  @return		mixed					For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *  @return		int						For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
 	 *                                      $this->error or this->errors are also defined by class called by this function if error.
@@ -157,6 +157,10 @@ class HookManager
 	{
 		if (!is_array($this->hooks) || empty($this->hooks)) {
 			return 0; // No hook available, do nothing.
+		}
+		if (!is_array($parameters)) {
+			dol_syslog('executeHooks was called with a non array $parameters. Surely a bug.', LOG_WARNING);
+			$parameters = array();
 		}
 
 		$parameters['context'] = join(':', $this->contextarray);

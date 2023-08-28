@@ -61,11 +61,12 @@ class mod_contract_magre extends ModelNumRefContracts
 	/**
 	 *	Return default description of numbering model
 	 *
-	 *	@return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -123,7 +124,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

@@ -44,12 +44,14 @@ $rowid  = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $mode = GETPOST('mode', 'alopha');
 
 $sall = GETPOST("sall", "alpha");
 $filter = GETPOST("filter", 'alpha');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
@@ -96,15 +98,6 @@ $hookmanager->initHooks(array('membertypecard', 'globalcard'));
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	$search_lastname = "";
-	$search_login = "";
-	$search_email = "";
-	$type = "";
-	$sall = "";
-}
-
-
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 
@@ -112,6 +105,15 @@ $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 /*
  *	Actions
  */
+
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	$search_ref = "";
+	$search_lastname = "";
+	$search_login = "";
+	$search_email = "";
+	$type = "";
+	$sall = "";
+}
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -244,6 +246,8 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 
 llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
@@ -318,6 +322,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$membertype = new AdherentType($db);
 
 		$i = 0;
+		$savnbfield = 9;
 		/*$savnbfield = $totalarray['nbfield'];
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;*/
@@ -336,12 +341,12 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				//output kanban
 				$membertype->label = $objp->label;
-				print $membertype->getKanbanView('');
+				print $membertype->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
@@ -349,7 +354,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			} else {
 				print '<tr class="oddeven">';
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					if ($user->rights->adherent->configurer) {
+					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
@@ -373,7 +378,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				print '<td class="center">'.yn($objp->vote).'</td>';
 				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					if ($user->rights->adherent->configurer) {
+					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
@@ -536,10 +541,12 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		print nl2br($object->note)."</td></tr>";
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
+		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		print nl2br($object->mail_valid)."</td></tr>";
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->mail_valid));
+		print "</td></tr>";
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -548,6 +555,7 @@ if ($rowid > 0) {
 		print '</div>';
 
 		print dol_get_fiche_end();
+
 
 		/*
 		 * Buttons
@@ -561,8 +569,16 @@ if ($rowid > 0) {
 		}
 
 		// Add
+		if ($object->morphy == 'phy') {
+			$morphy = 'phy';
+		} elseif ($object->morphy == 'mor') {
+			$morphy = 'mor';
+		} else {
+			$morphy = '';
+		}
+
 		if ($user->hasRight('adherent', 'configurer')&& !empty($object->status)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.($morphy ? '&morphy='.urlencode($morphy) : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
@@ -581,9 +597,9 @@ if ($rowid > 0) {
 
 		$now = dol_now();
 
-		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe as company,";
+		$sql = "SELECT d.rowid, d.ref, d.entity, d.login, d.firstname, d.lastname, d.societe as company, d.fk_soc,";
 		$sql .= " d.datefin,";
-		$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut as status,";
+		$sql .= " d.email, d.photo, d.fk_adherent_type as type_id, d.morphy, d.statut as status,";
 		$sql .= " t.libelle as type, t.subscription, t.amount";
 
 		$sqlfields = $sql; // $sql fields to remove for count total
@@ -603,6 +619,9 @@ if ($rowid > 0) {
 				$sql .= natural_search(array("d.firstname", "d.lastname"), GETPOST('search', 'alpha'));
 			}
 		}
+		if (!empty($search_ref)) {
+			$sql .= natural_search("d.ref", $search_ref);
+		}
 		if (!empty($search_lastname)) {
 			$sql .= natural_search(array("d.firstname", "d.lastname"), $search_lastname);
 		}
@@ -621,7 +640,7 @@ if ($rowid > 0) {
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			/* The fast and low memory method to get and count full list converts the sql into a sql count */
 			$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 			$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -691,6 +710,9 @@ if ($rowid > 0) {
 			if (!empty($status)) {
 				$param .= "&status=".urlencode($status);
 			}
+			if (!empty($search_ref)) {
+				$param .= "&search_ref=".urlencode($search_ref);
+			}
 			if (!empty($search_lastname)) {
 				$param .= "&search_lastname=".urlencode($search_lastname);
 			}
@@ -733,6 +755,9 @@ if ($rowid > 0) {
 			}
 
 			print '<td class="liste_titre left">';
+			print '<input class="flat maxwidth100" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+
+			print '<td class="liste_titre left">';
 			print '<input class="flat maxwidth100" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 
 			print '<td class="liste_titre left">';
@@ -761,6 +786,7 @@ if ($rowid > 0) {
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			}
+			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.ref", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("MemberNature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
@@ -780,13 +806,19 @@ if ($rowid > 0) {
 
 				$datefin = $db->jdate($objp->datefin);
 
+				$adh->id = $objp->rowid;
+				$adh->ref = $objp->ref;
+				$adh->login = $objp->login;
 				$adh->lastname = $objp->lastname;
 				$adh->firstname = $objp->firstname;
 				$adh->datefin = $datefin;
 				$adh->need_subscription = $objp->subscription;
 				$adh->statut = $objp->status;
+				$adh->email = $objp->email;
+				$adh->photo = $objp->photo;
 
 				print '<tr class="oddeven">';
+
 				// Actions
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
@@ -798,6 +830,12 @@ if ($rowid > 0) {
 					}
 					print "</td>";
 				}
+
+				// Ref
+				print "<td>";
+				print $adh->getNomUrl(-1, 0, 'card', 'ref', '', -1, 0, 1);
+				print "</td>\n";
+
 				// Lastname
 				if ($objp->company != '') {
 					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user", 'class="paddingright"').$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->company, 12).'</a></td>'."\n";
@@ -871,10 +909,6 @@ if ($rowid > 0) {
 			print "</table>\n";
 			print '</div>';
 			print '</form>';
-
-			if ($num > $limit) {
-				print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
-			}
 		} else {
 			dol_print_error($db);
 		}

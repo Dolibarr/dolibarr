@@ -174,7 +174,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Count total nb of records
 			$totalofrecords = '';
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}

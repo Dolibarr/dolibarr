@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,11 +59,12 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return BankAccountTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -141,7 +143,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($this->savdb);
+		$localobject=new Account($db);
 		$localobject->initAsSpecimen();
 		$localobject->date_solde=dol_now();
 		$result=$localobject->create($user);
@@ -169,7 +171,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($this->savdb);
+		$localobject=new Account($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -212,7 +214,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$this->assertTrue($result);
 
 		// Test checkIbanForAccount for CI account
-		$localobject2=new Account($this->savdb);
+		$localobject2=new Account($db);
 		$localobject2->country = 'CI';
 		$localobject2->iban = 'CI77A12312341234123412341234';
 		$result = checkIbanForAccount($localobject2);
@@ -239,7 +241,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($this->savdb);
+		$localobject=new Account($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

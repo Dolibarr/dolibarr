@@ -4,6 +4,7 @@
  * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019-2021	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,10 +55,13 @@ $mode = GETPOST('mode', 'alpha');
 $id = GETPOST('id', 'int');
 $msg_id     = GETPOST('msg_id', 'int');
 $socid      = GETPOST('socid', 'int');
+$contractid  = GETPOST('contractid', 'int');
 $projectid  = GETPOST('projectid', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project = GETPOST('search_fk_project', 'int') ?GETPOST('search_fk_project', 'int') : GETPOST('projectid', 'int');
+$search_fk_contract = GETPOST('search_fk_contract', 'int') ?GETPOST('search_fk_contract', 'int') : GETPOST('contractid', 'int');
+
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_dateread_start = dol_mktime(0, 0, 0, GETPOST('search_dateread_startmonth', 'int'), GETPOST('search_dateread_startday', 'int'), GETPOST('search_dateread_startyear', 'int'));
@@ -84,9 +88,9 @@ $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->ticket->dir_output.'/temp/massgeneration/'.$user->id;
 if ($socid > 0) {
-	$hookmanager->initHooks(array('thirdpartyticket'));
+	$hookmanager->initHooks(array('thirdpartyticket', 'globalcard'));
 } elseif ($projectid > 0) {
-	$hookmanager->initHooks(array('projectticket'));
+	$hookmanager->initHooks(array('projectticket', 'globalcard'));
 } else {
 	$hookmanager->initHooks(array('ticketlist'));
 }
@@ -112,6 +116,8 @@ $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	} else {
+		$search[$key] = "";
 	}
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
@@ -424,6 +430,9 @@ if ($search_societe) {
 if ($search_fk_project > 0) {
 	$sql .= natural_search('fk_project', $search_fk_project, 2);
 }
+if ($search_fk_contract > 0) {
+	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
+}
 if ($search_date_start) {
 	$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
 }
@@ -460,7 +469,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -672,6 +681,9 @@ if ($search_societe) {
 if ($projectid > 0) {
 	$param .= '&projectid='.urlencode($projectid);
 }
+if ($contractid > 0) {
+	$param .= '&contractid='.urlencode($contractid);
+}
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);
 	$param .= '&search_date_startday='.urlencode($tmparray['mday']);
@@ -838,7 +850,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -915,7 +927,7 @@ foreach ($object->fields as $key => $val) {
 			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 			} elseif (strpos($val['type'], 'integer:') === 0) {
-				print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
+				print $object->showInputField($val, $key, !empty($search[$key])?$search[$key]:"", '', '', 'search_', 'maxwidth150', 1);
 			} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) {
 				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]).'">';
 			}
@@ -957,7 +969,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
@@ -983,7 +995,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if ($val && preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -1007,22 +1019,25 @@ while ($i < $imaxinloop) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 	$object->type_code = $obj->type_code;
-	$object->status = $object->fk_statut; // fk_statut is deprecated
+	$object->status = $object->fk_statut; // for backwad compatibility
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 
 		// get infos needed from object
-		$data = array();
+		// TODO Create a cache on users
+		$arraydata = array();
 		if ($obj->fk_user_assign > 0) {
 			$user_temp->fetch($obj->fk_user_assign);
-			$data['user_assignment'] = $user_temp->getNomUrl(-3);
+			$arraydata['user_assignment'] = $user_temp->getNomUrl(-3);
 		}
+		$arraydata['selected'] = in_array($object->id, $arrayofselected);
+
 		// Output Kanban
-		print $object->getKanbanView('', $data);
+		print $object->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

@@ -73,7 +73,7 @@ if (!$sortorder) {
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('agendathirdparty'));
+$hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -194,7 +194,7 @@ if (isModEnabled('agenda')) {
 	}
 }
 
-if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 	print '<br>';
 
 	$param = '&socid='.urlencode($socid);
@@ -210,7 +210,7 @@ if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) ||
 	$cachekey = 'count_events_thirdparty_'.$object->id;
 	$nbEvent = dol_getcache($cachekey);
 
-	print_barre_liste($langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
+	print_barre_liste($langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();

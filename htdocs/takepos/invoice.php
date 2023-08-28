@@ -54,7 +54,6 @@ $hookmanager->initHooks(array('takeposinvoice'));
 
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
-$id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
@@ -275,7 +274,7 @@ if (empty($reshook)) {
 
 				// If user has not used change control, add total invoice payment
 				// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay
-				if ($amountofpayment == 0 || $amountofpayment > $remaintopay) {
+				if ($amountofpayment <= 0 || $amountofpayment > $remaintopay) {
 					$payment->amounts[$invoice->id] = $remaintopay;
 				}
 
@@ -286,6 +285,8 @@ if (empty($reshook)) {
 					$payment->create($user);
 					$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 					$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
+				} elseif (getDolGlobalInt("TAKEPOS_DELAYED_TERMS")) {
+					$invoice->setPaymentTerms(getDolGlobalInt("TAKEPOS_DELAYED_TERMS"));
 				}
 			}
 
@@ -458,9 +459,10 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
+	// If we add a line and no invoice yet, we create the invoice
 	if (($action == "addline" || $action == "freezone") && $placeid == 0) {
-		$invoice->socid = getDolGlobalString("$constforcompanyid");
-		$invoice->date = dol_now();
+		$invoice->socid = getDolGlobalString($constforcompanyid);
+		$invoice->date = dol_now('tzuserrel');		// We use the local date, only the day will be saved.
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 		$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
@@ -469,6 +471,7 @@ if (empty($reshook)) {
 			$langs->load('errors');
 			dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
 		} else {
+			// Create invoice
 			$placeid = $invoice->create($user);
 			if ($placeid < 0) {
 				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
@@ -491,7 +494,7 @@ if (empty($reshook)) {
 		$price = $datapriceofproduct['pu_ht'];
 		$price_ttc = $datapriceofproduct['pu_ttc'];
 		//$price_min = $datapriceofproduct['price_min'];
-		$price_base_type = $datapriceofproduct['price_base_type'];
+		$price_base_type = empty($datapriceofproduct['price_base_type']) ? 'HT' : $datapriceofproduct['price_base_type'];
 		$tva_tx = $datapriceofproduct['tva_tx'];
 		$tva_npr = $datapriceofproduct['tva_npr'];
 
@@ -536,7 +539,7 @@ if (empty($reshook)) {
 			$invoice->fetch_thirdparty();
 			$array_options = array();
 
-			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'locatax1_tx' => $localtax1_tx, 'locatax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
+			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'localtax1_tx' => $localtax1_tx, 'localtax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
 
 			/* setup of margin calculation */
 			if (isset($conf->global->MARGIN_TYPE)) {
@@ -553,7 +556,7 @@ if (empty($reshook)) {
 					if ($pf->find_min_price_product_fournisseur($idproduct, $qty) > 0) {
 						$line['fk_fournprice'] = $pf->product_fourn_price_id;
 						$line['pa_ht'] = $pf->fourn_unitprice_with_discount;
-						if ($pf->fourn_charges > 0)
+						if (getDolGlobalString('PRODUCT_CHARGES') && $pf->fourn_charges > 0)
 							$line['pa_ht'] += $pf->fourn_charges / $pf->fourn_qty;
 					}
 				}
@@ -599,7 +602,7 @@ if (empty($reshook)) {
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-		$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+		$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_DISCOUNT_TTC') ? ($number >= 0 ? 'HT' : 'TTC') : (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC'), $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
 		$invoice->fetch($placeid);
 	}
 
@@ -899,25 +902,27 @@ if (empty($reshook)) {
 			}
 		}
 		$sectionwithinvoicelink .= '</span><br>';
-		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+		if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
+			$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">Invoice</a>';
+		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			} else {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			}
 		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 		} else {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\');">'.$langs->trans('PrintWithoutDetails').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
 			}
 			if (getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
 			}
 		}
 		if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0) {
-			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
+			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.')">'.$langs->trans('SendTicket').'</button>';
 		}
 
 		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
@@ -1075,16 +1080,19 @@ function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
 	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
+	return true;
 }
 
 function PrintBox(id, action) {
 	console.log("Open box before printing");
 	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
+	return true;
 }
 
 function Print(id, gift){
 	console.log("Call Print() to generate the receipt.");
 	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
+	return true;
 }
 
 function TakeposPrinting(id){
@@ -1098,6 +1106,7 @@ function TakeposPrinting(id){
 			data: receipt
 		});
 	});
+	return true;
 }
 
 function TakeposConnector(id){
@@ -1109,6 +1118,7 @@ function TakeposConnector(id){
 			data: 'invoice='+data
 		});
 	});
+	return true;
 }
 
 function DolibarrTakeposPrinting(id) {
@@ -1118,15 +1128,17 @@ function DolibarrTakeposPrinting(id) {
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 	});
+	return true;
 }
 
 function CreditNote() {
-	$("#poslines").load("invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {
-	});
+	$("#poslines").load("invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {	});
+	return true;
 }
 
 function SetNote() {
 	$("#poslines").load("invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline, { "addnote": $("#textinput").val() });
+	return true;
 }
 
 
@@ -1135,7 +1147,7 @@ $( document ).ready(function() {
 
 	<?php
 	$s = $langs->trans("Customer");
-	if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
+	if ($invoice->id > 0 && ($invoice->socid != getDolGlobalString($constforcompanyid))) {
 		$s = $soc->name;
 	}
 	?>
@@ -1143,7 +1155,7 @@ $( document ).ready(function() {
 	$("#customerandsales").html('');
 	$("#shoppingcart").html('');
 
-	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax125 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
@@ -1295,7 +1307,7 @@ if (!empty($conf->use_javascript_ajax)) {
 
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"])?'':$_SESSION["basiclayout"]).' conf->global->TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
-print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
+print '<table id="tablelines" class="noborder noshadow postablelines centpercent">';
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
 	if (!empty($conf->global->TAKEPOS_SHOW_HT)) {
 		print '<tr><td colspan="5">'.$sectionwithinvoicelink.'</td></tr>';
@@ -1678,14 +1690,17 @@ if ($placeid > 0) {
 
 print '</table>';
 
-if (($action == "valid" || $action == "history") && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
+if (($action == "valid" || $action == "history") && $invoice->type != Facture::TYPE_CREDIT_NOTE && empty($conf->global->TAKEPOS_NO_CREDITNOTE)) {
 	print '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
+	if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
+		print ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">Invoice</a>';
+	}
 }
 
 
 if ($action == "search") {
 	print '<center>
-	<input type="text" id="search" class="input-search-takepos" name="search" onkeyup="Search2(\'\', null);" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
+	<input type="text" id="search" class="input-nobottom" name="search" onkeyup="Search2(\'\', null);" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
 	</center>';
 }
 

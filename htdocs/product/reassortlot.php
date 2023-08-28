@@ -129,13 +129,30 @@ if (!empty($canvas)) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productreassortlotlist'));
+$hookmanager->initHooks(array('reassortlotlist'));
 
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service', 0, 'product&product');
+
+// Definition of array of fields for columns
+$arrayfields = array(
+	array('type'=>'varchar', 'label'=>'Ref', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'varchar', 'label'=>'Label', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'int', 'label'=>'Warehouse', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'varchar', 'label'=>'Lot', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'varchar', 'label'=>'DLC', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'varchar', 'label'=>'DLUO', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'int', 'label'=>'Stock', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'int', 'label'=>'StatusSell', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type'=>'int', 'label'=>'StatusBuy', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+);
+
+//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
+$arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 
 /*
@@ -394,7 +411,7 @@ if (!empty($sql_having)) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 
@@ -584,18 +601,19 @@ if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print '</td>';
 }
 print '<td class="liste_titre">';
-print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
+print '<input class="flat" type="text" name="sref" size="6" value="'.dol_escape_htmltag($sref).'">';
 print '</td>';
 print '<td class="liste_titre">';
-print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
+print '<input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'">';
 print '</td>';
 if (isModEnabled("service") && $type == 1) {
 	print '<td class="liste_titre">';
 	print '&nbsp;';
 	print '</td>';
 }
-print '<td class="liste_titre"><input class="flat" type="text" name="search_warehouse" size="6" value="'.$search_warehouse.'"></td>';
-print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.$search_batch.'"></td>';
+
+print '<td class="liste_titre"><input class="flat" type="text" name="search_warehouse" size="6" value="'.dol_escape_htmltag($search_warehouse).'"></td>';
+print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.dol_escape_htmltag($search_batch).'"></td>';
 if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	print '<td class="liste_titre center">';
 	$key = 'sellby';
@@ -733,6 +751,9 @@ while ($i < $imaxinloop) {
 	// Action column
 	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print '<td></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Ref
@@ -740,9 +761,15 @@ while ($i < $imaxinloop) {
 	print $product_static->getNomUrl(1, '', 16);
 	//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Label
 	print '<td>'.$objp->label.'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	if (isModEnabled("service") && $type == 1) {
 		print '<td class="center">';
@@ -756,6 +783,9 @@ while ($i < $imaxinloop) {
 		} else {
 			print $objp->duration;
 		}
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 		print '</td>';
 	}
 	//print '<td class="right">'.$objp->stock_theorique.'</td>';
@@ -767,6 +797,9 @@ while ($i < $imaxinloop) {
 	if ($objp->fk_entrepot > 0) {
 		print $warehousetmp->getNomUrl(1);
 	}
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 	print '</td>';
 
 	// Lot
@@ -774,14 +807,23 @@ while ($i < $imaxinloop) {
 	if ($product_lot_static->batch) {
 		print $product_lot_static->getNomUrl(1);
 	}
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 	print '</td>';
 
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<td class="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<td class="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print '<td class="right">';
@@ -800,15 +842,27 @@ while ($i < $imaxinloop) {
 		}
 	}
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '<td class="right">';
 	print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 	print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product_static->id.'&search_warehouse='.$objp->fk_entrepot.'&search_batch='.($objp->batch != 'Undefined' ? $objp->batch : 'Undefined').'">'.$langs->trans("Movements").'</a>';
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '<td class="right nowrap">'.$product_static->LibStatut($objp->statut, 5, 0).'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '<td class="right nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Fields values from hook
 	$parameters = array('obj'=>$objp);
@@ -818,11 +872,26 @@ while ($i < $imaxinloop) {
 	// Action column
 	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print '<td></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print "</tr>\n";
 	$i++;
 }
+
+// If no record found
+if ($num == 0) {
+	$colspan = 2;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
 
 $db->free($resql);
 

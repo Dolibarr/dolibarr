@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Έχει ήδη μεταφερθεί στα λογιστ�
 NotYetInGeneralLedger=Δεν έχει μεταφερθεί ακόμη στα λογιστικά ημερολόγια και στο καθολικό
 GroupIsEmptyCheckSetup=Η ομάδα είναι κενή, ελέγξτε τη ρύθμιση της εξατομικευμένης ομάδας λογιστικής
 DetailByAccount=Εμφάνιση λεπτομερειών ανά λογαριασμό
+DetailBy=Λεπτομέρεια ανά
 AccountWithNonZeroValues=Λογαριασμοί με μη μηδενικές τιμές
 ListOfAccounts=Λίστα λογαριασμών
 CountriesInEEC=Χώρες στην Ε.Ε.
@@ -51,14 +52,19 @@ AccountantFiles=Εξαγωγή εγγράφων πηγής
 ExportAccountingSourceDocHelp=Με αυτό το εργαλείο, μπορείτε να αναζητήσετε και να εξαγάγετε τα συμβάντα πηγής που χρησιμοποιούνται για τη δημιουργία της λογιστικής σας. <br> Το εξαγόμενο αρχείο ZIP θα περιέχει τις λίστες των ζητούμενων στοιχείων σε CSV, καθώς και τα συνημμένα αρχεία τους στην αρχική τους μορφή (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Για να εξαγάγετε τα ημερολόγια σας, χρησιμοποιήστε την καταχώριση μενού %s - %s.
 ExportAccountingProjectHelp=Προσδιορίστε ένα έργο εάν χρειάζεστε μια λογιστική αναφορά μόνο για ένα συγκεκριμένο έργο. Οι αναφορές εξόδων και οι πληρωμές δανείων δεν περιλαμβάνονται στις αναφορές του έργου.
+ExportAccountancy=Εξαγωγή λογιστικής 
+WarningDataDisappearsWhenDataIsExported=Προειδοποίηση, αυτή η λίστα περιέχει μόνο τις λογιστικές εγγραφές που δεν έχουν ήδη εξαχθεί (η ημερομηνία εξαγωγής είναι κενή). Εάν θέλετε να συμπεριλάβετε τις λογιστικές εγγραφές που έχουν ήδη εξαχθεί για επανεξαγωγή τους, κάντε κλικ στο παραπάνω κουμπί.
 VueByAccountAccounting=Προβολή ανά λογαριασμό λογιστικής
 VueBySubAccountAccounting=Προβολή ανά λογιστικό υπολογαριασμό
 
-MainAccountForCustomersNotDefined=Ο Κύριος λογαριασμός λογιστικής για πελάτες δεν έχει οριστεί κατά τη ρύθμιση
-MainAccountForSuppliersNotDefined=Ο Κύριος λογαριασμός λογιστικής για προμηθευτές δεν έχει οριστεί κατά τη ρύθμιση
-MainAccountForUsersNotDefined=Ο Κύριος λογαριασμός λογιστικής για χρήστες δεν έχει οριστεί κατά τη ρύθμιση
-MainAccountForVatPaymentNotDefined=Ο Κύριος λογαριασμός λογιστικής για πληρωμή ΦΠΑ δεν έχει οριστεί κατά τη ρύθμιση
-MainAccountForSubscriptionPaymentNotDefined=Ο κύριος λογαριασμός λογιστικής για την πληρωμή συνδρομής δεν έχει οριστεί κατά τη ρύθμιση
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Ο λογαριασμός λογιστικής για τον χρήστη δεν έχει οριστεί κατά τη ρύθμιση
 
 AccountancyArea=Τομέας Λογιστικής 
@@ -112,6 +118,7 @@ MenuLoanAccounts=Λογαριασμοί δανείων
 MenuProductsAccounts=Λογαριασμοί προϊόντων
 MenuClosureAccounts=Κλείσιμο Λογαριασμών
 MenuAccountancyClosure=Κλείσιμο
+MenuExportAccountancy=Εξαγωγή λογιστικής 
 MenuAccountancyValidationMovements=Επικύρωση κινήσεων
 ProductsBinding=Λογαριασμοί προϊόντων
 TransferInAccounting=Μεταφορά στη λογιστική
@@ -169,10 +176,10 @@ ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Ποια είναι η προεπιλεγ�
 
 ACCOUNTING_SELL_JOURNAL=Ημερολόγιο πωλήσεων - πωλήσεις και επιστροφές
 ACCOUNTING_PURCHASE_JOURNAL=Ημερολόγιο αγορών - αγορές και επιστροφές
-ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
+ACCOUNTING_BANK_JOURNAL=Ημερολόγιο μετρητών (εισπράξεις και εκταμιεύσεις)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Ημερολόγιο εξόδων
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Γενικό ημερολόγιο
-ACCOUNTING_HAS_NEW_JOURNAL=Έχει νέο περιοδικό
+ACCOUNTING_HAS_NEW_JOURNAL=Διαθέτει νέο Ημερολόγιο
 ACCOUNTING_INVENTORY_JOURNAL=Ημερολόγιο απογραφής
 ACCOUNTING_SOCIAL_JOURNAL=Κοινωνικό ημερολόγιο
 
@@ -295,7 +302,7 @@ DescClosure=Δείτε εδώ τον αριθμό των κινήσεων ανά
 OverviewOfMovementsNotValidated=Επισκόπηση κινήσεων που δεν έχουν επικυρωθεί και κλειδωθεί
 AllMovementsWereRecordedAsValidated=Όλες οι κινήσεις καταγράφηκαν ως επικυρωμένες και κλειδωμένες
 NotAllMovementsCouldBeRecordedAsValidated=Δεν ήταν δυνατό να καταγραφούν όλες οι κινήσεις ως επικυρωμένες και κλειδωμένες
-ValidateMovements=Επικύρωση και κλείδωμα κινήσεων...
+ValidateMovements=Επικύρωση και κλείδωμα κινήσεων
 DescValidateMovements=Απαγορεύεται οποιαδήποτε τροποποίηση ή διαγραφή γραφής, συμφωνίας και διαγραφής. Όλες οι καταχωρήσεις πρέπει να επικυρωθούν, διαφορετικά το κλείσιμο δεν θα είναι δυνατό
 
 ValidateHistory=Δεσμεύστε αυτόματα
@@ -334,7 +341,7 @@ AccountingJournalType3=Αγορές
 AccountingJournalType4=Τράπεζα
 AccountingJournalType5=Αναφορές εξόδων
 AccountingJournalType8=Απογραφή
-AccountingJournalType9=Έχει-νέο
+AccountingJournalType9=Διαθέτει νέο
 GenerationOfAccountingEntries=Δημιουργία λογιστικών εγγραφών
 ErrorAccountingJournalIsAlreadyUse=Αυτό το ημερολόγιο χρησιμοποιείται ήδη
 AccountingAccountForSalesTaxAreDefinedInto=Σημείωση: Ο λογαριασμός λογιστικής για τον φόρο πωλήσεων ορίζεται στο μενού <b>%s</b> - <b>%s</b>
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Απενεργοποίηση δέσμευσ�
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Απενεργοποίηση δέσμευσης και μεταφοράς των αγορών στη λογιστική (τα τιμολόγια προμηθευτών δεν θα λαμβάνονται υπόψη στη λογιστική)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Απενεργοποίηση δέσμευσης και μεταφοράς των αναφορών εξόδων (στη λογιστική οι αναφορές εξόδων δεν θα ληφθούν υπόψη στη λογιστική)
 ACCOUNTING_ENABLE_LETTERING=Ενεργοποίηση της λειτουργίας συμφωνίας στη λογιστική
+ACCOUNTING_ENABLE_LETTERING_DESC=Όταν αυτή η επιλογή είναι ενεργοποιημένη, μπορείτε να ορίσετε, σε κάθε λογιστική καταχώρηση, έναν κωδικό ώστε να μπορείτε να ομαδοποιήσετε διαφορετικές λογιστικές κινήσεις μαζί. Στο παρελθόν, όταν η διαχείριση διαφορετικών ημερολογίων γινόταν ανεξάρτητα, αυτή η δυνατότητα ήταν απαραίτητη για την ομαδοποίηση των γραμμών κίνησης διαφορετικών ημερολογίων. Ωστόσο, με τη λογιστική Dolibarr, ένας τέτοιος κώδικας παρακολούθησης, που ονομάζεται " <b> %s </b>  " έχει ήδη αποθηκευτεί αυτόματα, επομένως έχει ήδη γίνει αυτόματη εγγραφή, χωρίς κίνδυνο λάθους, επομένως αυτή η δυνατότητα έχει καταστεί άχρηστη για μια κοινή χρήση. Η δυνατότητα μη αυτόματης εγγραφής γραμμάτων παρέχεται για τελικούς χρήστες που πραγματικά δεν εμπιστεύονται τη μηχανή του υπολογιστή που κάνει τη μεταφορά δεδομένων στη λογιστική.
+EnablingThisFeatureIsNotNecessary=Η ενεργοποίηση αυτής της δυνατότητας δεν είναι πλέον απαραίτητη για μια αυστηρή λογιστική διαχείριση.
 ACCOUNTING_ENABLE_AUTOLETTERING=Ενεργοποιήστε την αυτόματη συμφωνία κατά τη μεταφορά στη λογιστική
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Σύνθετες επιλογές
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Ενεργοποίηση της διαχείρισης της αντιστροφής χρέωσης ΦΠΑ στις αγορές προμηθευτών
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Όταν είναι ενεργοποιημένη αυτή η επιλογή, μπορείτε να ορίσετε ότι ένας προμηθευτής ή ένα συγκεκριμένο τιμολόγιο προμηθευτή πρέπει να μεταφερθεί στη λογιστική με διαφορετικό τρόπο: Μια πρόσθετη χρέωση και ένα πιστωτικό όριο θα δημιουργηθεί στη λογιστική σε 2 δεδομένους λογαριασμούς από το λογιστικό σχέδιο που ορίζεται στη "%s " σελίδα ρύθμισης.
 
 ## Export
 NotExportLettering=Μην εξάγετε τη συμφωνία κατά τη δημιουργία του αρχείου
-NotifiedExportDate=Επισημάνετε τις εξαγόμενες γραμμές ως Εξαγόμενες <span class="warning"> (για να τροποποιήσετε μια γραμμή, θα χρειαστεί να διαγράψετε ολόκληρη τη συναλλαγή και να τη μεταφέρετε ξανά στη λογιστική) </span>
-NotifiedValidationDate=Επικύρωση και Κλείδωμα των εξαγόμενων καταχωρήσεων <span class="warning"> (το ίδιο αποτέλεσμα με τη δυνατότητα "%s", η τροποποίηση και η διαγραφή των γραμμών ΣΙΓΟΥΡΑ δεν θα είναι δυνατή) </span>
+NotifiedExportDate=Επισήμανση γραμμών που δεν έχουν εξαχθεί ακόμη ως Εξαγόμενες <span class="warning"> (για να τροποποιήσετε μια γραμμή που έχει επισημανθεί ως εξαγόμενη, θα χρειαστεί να διαγράψετε ολόκληρη τη συναλλαγή και να τη μεταφέρετε ξανά στη λογιστική) </span> 
+NotifiedValidationDate=Επικύρωση και Κλείδωμα των εξαγόμενων καταχωρήσεων που δεν έχουν ήδη κλειδωθεί <span class="warning"> (το ίδιο αποτέλεσμα με τη δυνατότητα "%s", η τροποποίηση και η διαγραφή των γραμμών ΣΙΓΟΥΡΑ δεν θα είναι δυνατή) </span>
 NotifiedExportFull=Εξαγωγή εγγράφων ;
 DateValidationAndLock=Ημερομηνία επικύρωσης και κλειδώματος
 ConfirmExportFile=Επιβεβαίωση δημιουργίας του λογιστικού αρχείου εξαγωγής ;
@@ -381,7 +394,7 @@ ChartofaccountsId=Αναγνωριστικό λογιστικού σχεδίου
 ## Tools - Init accounting account on product / service
 InitAccountancy=Έναρξη λογιστικής
 InitAccountancyDesc=Αυτή η σελίδα μπορεί να χρησιμοποιηθεί για την προετοιμασία ενός λογαριασμού λογιστικής σε προϊόντα και υπηρεσίες που δεν έχουν λογιστικό λογαριασμό για τις πωλήσεις και τις αγορές.
-DefaultBindingDesc=Αυτή η σελίδα μπορεί να χρησιμοποιηθεί για τον ορισμό ενός προεπιλεγμένου λογαριασμού που θα χρησιμοποιηθεί για να συνδέσει τις εγγραφές συναλλαγών σχετικά με την πληρωμή μισθών, δωρεές, τους φόρους και τον Φ.Π.Α. όταν δεν έχει ήδη καθοριστεί συγκεκριμένος λογαριασμός λογιστικής.
+DefaultBindingDesc=Αυτή η σελίδα μπορεί να χρησιμοποιηθεί για τον ορισμό των προεπιλεγμένων λογαριασμών (από το λογιστικό σχέδιο) που θα χρησιμοποιηθούν για τη σύνδεση επιχειρηματικών αντικειμένων με έναν λογαριασμό, όπως πληρωμή μισθών , δωρεές, φόρους και ΦΠΑ, όταν δεν είχε ήδη οριστεί συγκεκριμένος λογαριασμός.
 DefaultClosureDesc=Αυτή η σελίδα μπορεί να χρησιμοποιηθεί για να ορίσετε τις παραμέτρους που χρησιμοποιούνται για τα λογιστικά κλεισίματα.
 Options=Επιλογές
 OptionModeProductSell=Λειτουργία πωλήσεων
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Επιβεβαίωση αυτόματης μαζικ�
 ConfirmMassUnletteringManual=Επιβεβαίωση χειροκίνητης μαζικής αναίρεσης λογιστικής συμφωνίας
 ConfirmMassUnletteringQuestion=Είστε σίγουροι ότι θέλετε να αναιρέσετε τη λογιστική συμφωνία των %sεπιλεγμένων εγγραφών;
 ConfirmMassDeleteBookkeepingWriting=Επιβεβαίωση μαζικής διαγραφής
-ConfirmMassDeleteBookkeepingWritingQuestion=Αυτό θα διαγράψει τη συναλλαγή από τη λογιστική (όλες οι γραμμές που σχετίζονται με την ίδια συναλλαγή θα διαγραφούν) Είστε σίγουροι ότι θέλετε να διαγράψετε τις επιλεγμένες εγγραφές %s;
+ConfirmMassDeleteBookkeepingWritingQuestion=Αυτό θα διαγράψει τη συναλλαγή από τη λογιστική (όλες οι εγγραφές γραμμής που σχετίζονται με την ίδια συναλλαγή θα διαγραφούν). Είστε σίγουροι ότι θέλετε να διαγράψετε τις %s επιλεγμένες καταχωρήσεις;
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Ορισμένα υποχρεωτικά βήματα της ρύθμισης δεν έγιναν, παρακαλούμε ολοκληρώστε τα
@@ -446,7 +459,7 @@ NoJournalDefined=Δεν βρέθηκε ημερολόγιο
 Binded=Δεσμευμένες γραμμές 
 ToBind=Γραμμές προς δέσμευση
 UseMenuToSetBindindManualy=Γραμμές που δεν έχουν ακόμη δεσμευτεί, χρησιμοποιήστε το μενού <a href="%s">%s</a> για να κάνετε τη δέσμευση χειροκίνητα
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Λυπούμαστε, αυτή η ενότητα δεν είναι συμβατή με την πειραματική λειτουργία των τιμολογίων κατάστασης
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Σημείωση: αυτή η ενότητα ή η σελίδα δεν είναι απολύτως συμβατή με την πειραματική λειτουργία των τιμολογίων κατάστασης. Ορισμένα δεδομένα μπορεί να είναι λάθος.
 AccountancyErrorMismatchLetterCode=Αναντιστοιχία στον κώδικο συμφωνίας
 AccountancyErrorMismatchBalanceAmount=Το ισοζύγιο (%s) δεν είναι ίσο με 0
 AccountancyErrorLetteringBookkeeping=Παρουσιάστηκαν σφάλματα σχετικά με τις συναλλαγές: %s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=Ποσό πολλαπλών νομισμάτων (M
 FECFormatMulticurrencyCode=Κωδικός πολλαπλών νομισμάτων (Idevise)
 
 DateExport=Ημερομηνία εξαγωγής
-WarningReportNotReliable=Προειδοποίηση, αυτή η αναφορά δεν βασίζεται στο Καθολικό, επομένως δεν περιέχει συναλλαγή που τροποποιήθηκε χειροκίνητα στο Καθολικό. Εάν τα ημερολόγια σας είναι ενημερωμένα, η προβολή της λογιστικής είναι πιο ακριβής.
+WarningReportNotReliable=Προειδοποίηση, αυτή η αναφορά δεν βασίζεται στο Καθολικό, επομένως δεν περιέχει συναλλαγές που τροποποιήθηκαν χειροκίνητα στο Καθολικό. Εάν τα ημερολόγια σας είναι ενημερωμένα, η προβολή της λογιστικής είναι πιο ακριβής.
 ExpenseReportJournal=Ημερολόγιο Αναφοράς Εξόδων
-DocsAlreadyExportedAreExcluded=Εξαιρούνται τα έγγραφα που έχουν ήδη εξαχθεί
-ClickToHideAlreadyExportedLines=Κάντε κλικ για απόκρυψη γραμμών που έχουν ήδη εξαχθεί
+DocsAlreadyExportedAreIncluded=Περιλαμβάνονται τα έγγραφα που έχουν ήδη εξαχθεί
+ClickToShowAlreadyExportedLines=Κάντε κλικ για την εμφάνιση των ήδη εξαγομένων γραμμών
 
 NAccounts= %s  λογαριασμοί

@@ -49,6 +49,7 @@ BoxOldestActions=Oldest events to do
 BoxLastExpiredServices=Latest %s oldest contacts with active expired services
 BoxTitleLastActionsToDo=Latest %s actions to do
 BoxTitleOldestActionsToDo=Oldest %s events to do, not completed
+BoxTitleFutureActions=The next %s upcoming events
 BoxTitleLastContracts=Latest %s contracts which were modified
 BoxTitleLastModifiedDonations=Latest %s donations which were modified
 BoxTitleLastModifiedExpenses=Latest %s expense reports which were modified
@@ -112,6 +113,7 @@ NumberOfLinesInSuspenseAccount=Number of line in suspense account
 SuspenseAccountNotDefined=Suspense account isn't defined
 BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s customer shipments
+BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=No recorded customer shipment
 BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
 # Pages

@@ -328,7 +328,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -424,7 +424,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering module

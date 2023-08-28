@@ -199,7 +199,7 @@ if ($errormsg) {
 		$resultstring = '<div class="ok">';
 		$resultstring .= $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
 		$resultstring .= $langs->trans("YouCanDownloadBackupFile");
-		$resultstring .= '<div>';
+		$resultstring .= '</div>';
 
 		$_SESSION["commandbackupresult"] = $resultstring;
 	}

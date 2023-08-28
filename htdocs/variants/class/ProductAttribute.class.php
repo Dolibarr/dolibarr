@@ -607,7 +607,7 @@ class ProductAttribute extends CommonObject
 	public function addLine($ref, $value, $position = -1, $notrigger = 0)
 	{
 		global $langs, $user;
-		dol_syslog(__METHOD__ . " id={$this->id}, ref=$ref, value=$value, notrigger=$notrigger");
+		dol_syslog(__METHOD__ . " id=".$this->id.", ref=".$ref.", value=".$value.", notrigger=".$notrigger);
 		$error = 0;
 
 		// Clean parameters
@@ -976,7 +976,7 @@ class ProductAttribute extends CommonObject
 	 * 	Update a attribute to have a higher position
 	 *
 	 * @param	int		$rowid		Id of line
-	 * @return	int					<0 KO >0 OK
+	 * @return	int					<0 KO, >0 OK
 	 */
 	public function attributeMoveUp($rowid)
 	{
@@ -987,13 +987,15 @@ class ProductAttribute extends CommonObject
 
 		// Update position of attribute
 		$this->updateAttributePositionUp($rowid, $position);
+
+		return 1;
 	}
 
 	/**
 	 * 	Update a attribute to have a lower position
 	 *
 	 * @param	int		$rowid		Id of line
-	 * @return	int					<0 KO >0 OK
+	 * @return	int					<0 KO, >0 OK
 	 */
 	public function attributeMoveDown($rowid)
 	{
@@ -1007,6 +1009,8 @@ class ProductAttribute extends CommonObject
 
 		// Update position of attribute
 		$this->updateAttributePositionDown($rowid, $position, $max);
+
+		return 1;
 	}
 
 	/**
@@ -1180,7 +1184,7 @@ class ProductAttribute extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div>';

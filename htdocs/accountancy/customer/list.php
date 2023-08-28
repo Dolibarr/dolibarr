@@ -102,7 +102,7 @@ $hookmanager->initHooks(array('accountancycustomerlist'));
 $formaccounting = new FormAccounting($db);
 $accountingAccount = new AccountingAccount($db);
 
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -166,7 +166,7 @@ if (empty($reshook)) {
 }
 
 
-if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
+if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	$msg = '';
 
 	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
@@ -359,7 +359,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -446,7 +446,7 @@ if ($result) {
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	//if ($user->hasRight('mymodule', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	if ($massaction !== 'set_default_account') {
 		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);

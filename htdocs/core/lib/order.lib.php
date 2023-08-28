@@ -131,7 +131,7 @@ function commande_prepare_head(Commande $object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/commande/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda')&& (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -243,15 +243,15 @@ function getCustomerOrderPieChart($socid = 0)
 	$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity('societe').")";
+	$sql .= " AND c.entity IN (".getEntity($commandestatic->element).")";
 	if ($user->socid) {
 		$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY c.fk_statut";
@@ -270,14 +270,11 @@ function getCustomerOrderPieChart($socid = 0)
 		while ($i < $num) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-				{
 				if (!isset($vals[$row[1]])) {
 					$vals[$row[1]] = 0;
 				}
-					$vals[$row[1]] += $row[0];
-					$totalinprocess += $row[0];
-				}
+				$vals[$row[1]] += $row[0];
+				$totalinprocess += $row[0];
 				$total += $row[0];
 			}
 			$i++;

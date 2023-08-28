@@ -686,7 +686,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -847,7 +847,7 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (isModEnabled('category') && $user->rights->societe->creer) {
+if (isModEnabled('category') && $user->hasRight('societe', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
@@ -899,7 +899,7 @@ if ($search_firstlast_only) {
 }
 
 $moreforfilter = '';
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ContactCategoriesShort');
@@ -1295,7 +1295,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -1308,7 +1308,7 @@ while ($i < $imaxinloop) {
 		if ($obj->socid > 0) {
 			$contactstatic->fetch_thirdparty($obj->socid);
 		}
-		print $contactstatic->getKanbanView('');
+		print $contactstatic->getKanbanView('', array('selected' => in_array($contactstatic->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -1347,7 +1347,7 @@ while ($i < $imaxinloop) {
 		// (Last) Name
 		if (!empty($arrayfields['p.lastname']['checked'])) {
 			print '<td class="middle tdoverflowmax150">';
-			print $contactstatic->getNomUrl(1);
+			print $contactstatic->getNomUrl(-1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1492,7 +1492,11 @@ while ($i < $imaxinloop) {
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);
-				print $objsoc->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				$option_link = 'customer';
+				if ($objsoc->client == 0 && $objsoc->fournisseur > 0) {
+					$option_link = 'supplier';
+				}
+				print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			} else {
 				print '&nbsp;';
 			}

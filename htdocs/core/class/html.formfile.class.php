@@ -500,7 +500,7 @@ class FormFile
 					$modellist = $genallowed;
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
-					$modellist = ModelePDFExpedition::liste_modeles($this->db);
+					$modellist = ModelePdfExpedition::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'reception') {
 				if (is_array($genallowed)) {
@@ -585,7 +585,8 @@ class FormFile
 					$modellist = $genallowed;
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-					$modellist = ModeleExports::liste_modeles($this->db);
+					//$modellist = ModeleExports::liste_modeles($this->db);		// liste_modeles() does not exists. We are using listOfAvailableExportFormat() method instead that return a different array format.
+					$modellist = array();
 				}
 			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
 				if (is_array($genallowed)) {
@@ -1103,33 +1104,33 @@ class FormFile
 	 *  Show list of documents in $filearray (may be they are all in same directory but may not)
 	 *  This also sync database if $upload_dir is defined.
 	 *
-	 *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this.
-	 * 	@param	 Object	$object				Object on which document is linked to.
-	 * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper.
-	 * 	@param	 string	$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
-	 * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file.
-	 * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
-	 * 	@param	 int	$permonobject		Permission on object (so permission to delete or crop document)
-	 * 	@param	 int	$useinecm			Change output for use in ecm module:
-	 * 										0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
-	 * 										1: Add link to edit ECM entry
-	 * 										2: Add rename and crop link
-	 *                                      4: Add a preview column
-	 *                                      5: Add link to edit ECM entry and Add a preview column
-	 * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
-	 *  @param   int	$maxlength          Maximum length of file name shown.
-	 *  @param	 string	$title				Title before list. Use 'none' to disable title.
-	 *  @param	 string $url				Full url to use for click links ('' = autodetect)
-	 *  @param	 int	$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
-	 *  @param   int    $permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
-	 *  @param   string $upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT. Fill this to complete file data with database indexes.
-	 *  @param   string $sortfield          Sort field ('name', 'size', 'position', ...)
-	 *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
-	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
-	 *  @param	 int	$addfilterfields	Add the line with filters
-	 *  @param	 int	$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
-	 *  @param	 string	$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
-	 * 	@return	 int						<0 if KO, nb of files shown if OK
+	 *  @param	 array			$filearray          Array of files loaded by dol_dir_list('files') function before calling this.
+	 * 	@param	 Object|null	$object				Object on which document is linked to.
+	 * 	@param	 string			$modulepart			Value for modulepart used by download or viewimage wrapper.
+	 * 	@param	 string			$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
+	 * 	@param	 int			$forcedownload		Force to open dialog box "Save As" when clicking on file.
+	 * 	@param	 string			$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
+	 * 	@param	 int			$permonobject		Permission on object (so permission to delete or crop document)
+	 * 	@param	 int			$useinecm			Change output for use in ecm module:
+	 * 												0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
+	 * 												1: Add link to edit ECM entry
+	 * 												2: Add rename and crop link
+	 *                                  		    4: Add a preview column
+	 *                                  		    5: Add link to edit ECM entry and Add a preview column
+	 * 	@param	 string			$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
+	 *  @param   int			$maxlength          Maximum length of file name shown.
+	 *  @param	 string			$title				Title before list. Use 'none' to disable title.
+	 *  @param	 string 		$url				Full url to use for click links ('' = autodetect)
+	 *  @param	 int			$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
+	 *  @param   int    		$permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
+	 *  @param   string 		$upload_dir         Full path directory so we can know dir relative to MAIN_DATA_ROOT. Fill this to complete file data with database indexes.
+	 *  @param   string 		$sortfield          Sort field ('name', 'size', 'position', ...)
+	 *  @param   string 		$sortorder          Sort order ('ASC' or 'DESC')
+	 *  @param   int    		$disablemove        1=Disable move button, 0=Position move is possible.
+	 *  @param	 int			$addfilterfields	Add the line with filters
+	 *  @param	 int			$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
+	 *  @param	 string			$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
+	 * 	@return	 int								<0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1, $moreattrondiv = '')
@@ -1207,7 +1208,7 @@ class FormFile
 			if ($permtoeditline < 0) {  // Old behaviour for backward compatibility. New feature should call method with value 0 or 1
 				$permtoeditline = 0;
 				if (in_array($modulepart, array('product', 'produit', 'service'))) {
-					if ($user->rights->produit->creer && $object->type == Product::TYPE_PRODUCT) {
+					if ($user->hasRight('produit', 'creer') && $object->type == Product::TYPE_PRODUCT) {
 						$permtoeditline = 1;
 					}
 					if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) {
@@ -1593,7 +1594,7 @@ class FormFile
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $hookmanager, $form;
+		global $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
 		global $dolibarr_main_url_root;
@@ -1814,7 +1815,7 @@ class FormFile
 				}
 
 				$found = 0;
-				if (!empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
+				if (!empty($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					$found = 1;
 				} else {
 					//print 'Fetch '.$id." - ".$ref.' class='.get_class($object_instance).'<br>';
@@ -1839,24 +1840,24 @@ class FormFile
 
 					if ($result > 0) {  // Save object loaded into a cache
 						$found = 1;
-						$this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
+						$conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
 					}
 					if ($result == 0) {
 						$found = 1;
-						$this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = 'notfound';
+						$conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref] = 'notfound';
 						unset($filearray[$key]);
 					}
 				}
 
-				if ($found <= 0 || !is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
+				if ($found <= 0 || !is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					continue; // We do not show orphelins files
 				}
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
 				print '<td>';
-				if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
-					$tmpobject = $this->cache_objects[$modulepart.'_'.$id.'_'.$ref];
+				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
+					$tmpobject = $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref];
 					//if (! in_array($tmpobject->element, array('expensereport'))) {
 					print $tmpobject->getNomUrl(1, 'document');
 					//} else {
@@ -1958,6 +1959,7 @@ class FormFile
 		if (!empty($addfilterfields)) {
 			print '</form>';
 		}
+		return count($filearray);
 		// Fin de zone
 	}
 
@@ -1986,7 +1988,7 @@ class FormFile
 		} elseif ($sortfield == "date") {
 			$sortfield = "datea";
 		} else {
-			$sortfield = null;
+			$sortfield = '';
 		}
 		$res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
 		$param .= (isset($object->id) ? '&id='.$object->id : '');

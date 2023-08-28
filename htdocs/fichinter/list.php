@@ -328,7 +328,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -720,7 +720,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
 	$objectstatic->ref_client = $obj->ref_client;
-	$objectstatic->statut = $obj->status;
+	$objectstatic->statut = $obj->status;	// deprecated
 	$objectstatic->status = $obj->status;
 
 	$companystatic->name = $obj->name;
@@ -733,7 +733,7 @@ while ($i < $imaxinloop) {
 	//mode kanban
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 

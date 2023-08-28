@@ -24,4 +24,4 @@ SalariesStatistics=給与統計
 SalariesAndPayments=給与と支払
 ConfirmDeleteSalaryPayment=この給与支払を削除するか？
 FillFieldFirst=最初に従業員フィールドに入力する
-UpdateAmountWithLastSalary=最終給与で金額を設定する
+UpdateAmountWithLastSalary=最終給与額の設定

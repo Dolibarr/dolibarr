@@ -96,28 +96,34 @@ if (isModEnabled('stripe')) {
 	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
 	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
-	?>
+
+	$usestripeterminals = getDolGlobalString('STRIPE_LOCATION');
+
+	if ($usestripeterminals) {
+		?>
 <script src="https://js.stripe.com/terminal/v1/"></script>
 <script>
 var terminal = StripeTerminal.create({
   onFetchConnectionToken: fetchConnectionToken,
   onUnexpectedReaderDisconnect: unexpectedDisconnect,
 });
+
 function unexpectedDisconnect() {
   // In this function, your app should notify the user that the reader disconnected.
   // You can also include a way to attempt to reconnect to a reader.
   console.log("Disconnected from reader")
 }
+
 function fetchConnectionToken() {
-	<?php
-	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
-	if (!empty($conf->global->STRIPE_LOCATION)) {
-		$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
-	}
-	if (!empty($stripeacc)) {
-		$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
-	}
-	?>
+		<?php
+		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
+		if (!empty($conf->global->STRIPE_LOCATION)) {
+			$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
+		}
+		if (!empty($stripeacc)) {
+			$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
+		}
+		?>
   // Do not cache or hardcode the ConnectionToken. The SDK manages the ConnectionToken's lifecycle.
   return fetch('<?php echo $urlconnexiontoken; ?>', { method: "POST" })
 	.then(function(response) {
@@ -127,8 +133,11 @@ function fetchConnectionToken() {
 	  return data.secret;
 	});
 }
+
 </script>
-<?php }
+		<?php
+	}
+}
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
@@ -297,6 +306,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				$('.change2').addClass('colorwhite');
 			}
 		}
+
+		return true;
 	}
 
 	function reset()
@@ -332,6 +343,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				location.reload();
 			}
 		});
+
+		return true;
 	}
 
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {
@@ -540,9 +553,9 @@ if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && !empty($conf->
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
 	print '</span>';
 }
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').');">'.($numpad == 0 ? '8' : '20').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').');">'.($numpad == 0 ? '9' : '50').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').')">'.($numpad == 0 ? '7' : '10').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').')">'.($numpad == 0 ? '8' : '20').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').')">'.($numpad == 0 ? '9' : '50').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 0) {
 	$paycode = $arrayOfValidPaymentModes[0]->code;
@@ -561,14 +574,14 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><span class="hideonsmartphone"><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</span></button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><span class="hideonsmartphone"><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</span></button>';
 } else {
 	print '<button type="button" class="calcbutton2">'.$langs->trans("NoPaimementModesDefined").'</button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '4' : '1').');">'.($numpad == 0 ? '4' : '1').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '5' : '2').');">'.($numpad == 0 ? '5' : '2').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '6' : '5').');">'.($numpad == 0 ? '6' : '5').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '4' : '1').')">'.($numpad == 0 ? '4' : '1').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '5' : '2').')">'.($numpad == 0 ? '5' : '2').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '6' : '5').')">'.($numpad == 0 ? '6' : '5').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 1) {
 	$paycode = $arrayOfValidPaymentModes[1]->code;
@@ -587,15 +600,15 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br> '.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br> '.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '1' : '0.10').');">'.($numpad == 0 ? '1' : '0.10').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '2' : '0.20').');">'.($numpad == 0 ? '2' : '0.20').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '3' : '0.50').');">'.($numpad == 0 ? '3' : '0.50').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '1' : '0.10').')">'.($numpad == 0 ? '1' : '0.10').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '2' : '0.20').')">'.($numpad == 0 ? '2' : '0.20').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '3' : '0.50').')">'.($numpad == 0 ? '3' : '0.50').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 2) {
 	$paycode = $arrayOfValidPaymentModes[2]->code;
@@ -614,15 +627,15 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '0' : '0.01').');">'.($numpad == 0 ? '0' : '0.01').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'000\'' : '0.02').');">'.($numpad == 0 ? '000' : '0.02').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'.\'' : '0.05').');">'.($numpad == 0 ? '.' : '0.05').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '0' : '0.01').')">'.($numpad == 0 ? '0' : '0.01').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'000\'' : '0.02').')">'.($numpad == 0 ? '000' : '0.02').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'.\'' : '0.05').')">'.($numpad == 0 ? '.' : '0.05').'</button>';
 
 $i = 3;
 while ($i < count($arrayOfValidPaymentModes)) {
@@ -642,7 +655,7 @@ while ($i < count($arrayOfValidPaymentModes)) {
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
 	$i = $i + 1;
 }
 
@@ -676,8 +689,8 @@ foreach ($action_buttons as $button) {
 	print '<button type="button" class="'.$newclass.'" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
-if ($conf->global->TAKEPOS_DELAYED_PAYMENT) {
-	print '<button type="button" class="calcbutton2" onclick="Validate(\'delayed\');">'.$langs->trans("Reported").'</button>';
+if (getDolGlobalString('TAKEPOS_DELAYED_PAYMENT')) {
+	print '<button type="button" class="calcbutton2" onclick="Validate(\'delayed\')">'.$langs->trans("Reported").'</button>';
 }
 ?>
 

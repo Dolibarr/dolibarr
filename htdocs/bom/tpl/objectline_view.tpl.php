@@ -34,6 +34,8 @@
  * $type, $text, $description, $line
  */
 
+/** var ObjectLine $line */
+
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 // Protection to avoid direct call of template
@@ -78,10 +80,14 @@ $objectline = new BOMLine($object->db);
 $coldisplay = 0;
 print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
 print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.' >';
+
+// Line nb
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	print '<td class="linecolnum center">'.($i + 1).'</td>';
 	$coldisplay++;
 }
+
+// Product
 print '<td class="linecoldescription minwidth300imp">';
 print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
@@ -113,6 +119,7 @@ if (!empty($extrafields)) {
 
 print '</td>';
 
+// Qty
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
@@ -142,7 +149,7 @@ if ($filtertype != 1) {
 	echo $line->efficiency;
 	print '</td>';
 } else {
-	//Unité
+	// Unit
 	print '<td class="linecolunit nowrap right">';
 	$coldisplay++;
 
@@ -158,14 +165,16 @@ if ($filtertype != 1) {
 	// Work station
 	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
-		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+		$res = $workstation->fetch($line->fk_default_workstation);
 
-		print '<td class="linecolunit nowrap right">';
+		print '<td class="linecolworkstation nowrap right">';
 		$coldisplay++;
 		if ($res > 0) echo $workstation->getNomUrl();
 		print '</td>';
 	}
 }
+
+// Cost
 $total_cost = 0;
 $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
@@ -312,10 +321,12 @@ if ($resql) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';
 			$this->total_cost += $line->total_cost;
 		} elseif ($sub_bom_product->cost_price > 0) {
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">';
+			print '<span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">';
+			print '<span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost.= $sub_bom_product->pmp * $sub_bom_line->qty * $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
@@ -323,8 +334,11 @@ if ($resql) {
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
-				$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
-
+				if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
+					$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
+				} else {
+					$line_cost = $obj->min_price;
+				}
 				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($line_cost, 'MT').'</span></td>';
 				$total_cost+= $line_cost;
 			}

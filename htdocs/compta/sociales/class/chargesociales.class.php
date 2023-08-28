@@ -103,6 +103,10 @@ class ChargeSociales extends CommonObject
 	 */
 	public $paiementtype;
 
+	public $mode_reglement_id;
+	public $mode_reglement_code;
+	public $mode_reglement;
+
 	/**
 	 * @var int ID
 	 */
@@ -119,6 +123,7 @@ class ChargeSociales extends CommonObject
 	public $total;
 
 	public $totalpaid;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -453,8 +458,12 @@ class ChargeSociales extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paye = 1;
+
 			return 1;
 		} else {
 			return -1;
@@ -488,8 +497,12 @@ class ChargeSociales extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paye = 0;
+
 			return 1;
 		} else {
 			return -1;
@@ -722,8 +735,10 @@ class ChargeSociales extends CommonObject
 			}
 
 			$this->db->free($result);
+			return 1;
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -769,7 +784,7 @@ class ChargeSociales extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'label')) {
 			$return .= ' &nbsp; <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';

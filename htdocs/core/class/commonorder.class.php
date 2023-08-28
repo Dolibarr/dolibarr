@@ -33,7 +33,7 @@ abstract class CommonOrder extends CommonObject
 	use CommonIncoterm;
 
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -52,11 +52,11 @@ abstract class CommonOrder extends CommonObject
 		$return .= img_picto('', 'order');
 		$return .= '</div>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
-			$return .= '<br><div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		if (property_exists($this, 'total_ht')) {
 			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';

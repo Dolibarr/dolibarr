@@ -149,7 +149,7 @@ if (GETPOST('addfilter', 'alpha')) {
 	if ($result > 0) {
 		$object->fetchFilters();
 	} else {
-		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+		setEventMessages($emailcollectorfilter->error, $emailcollectorfilter->errors, 'errors');
 	}
 }
 
@@ -161,7 +161,7 @@ if ($action == 'deletefilter') {
 		if ($result > 0) {
 			$object->fetchFilters();
 		} else {
-			setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+			setEventMessages($emailcollectorfilter->error, $emailcollectorfilter->errors, 'errors');
 		}
 	}
 }
@@ -192,7 +192,7 @@ if (GETPOST('addoperation', 'alpha')) {
 			$object->fetchActions();
 		} else {
 			$error++;
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -216,7 +216,7 @@ if ($action == 'updateoperation') {
 			$object->fetchActions();
 		} else {
 			$error++;
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -228,7 +228,7 @@ if ($action == 'deleteoperation') {
 		if ($result > 0) {
 			$object->fetchActions();
 		} else {
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -242,7 +242,7 @@ if ($action == 'collecttest') {
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
 		$debuginfo = $object->debuginfo;
-		setEventMessages($object->error, null, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = '';
@@ -257,7 +257,7 @@ if ($action == 'confirm_collect') {
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
 		$debuginfo = $object->debuginfo;
-		setEventMessages($object->error, null, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = '';
@@ -395,9 +395,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringtarget = '';
 
 	// Note: $object->host has been loaded by the fetch
-	$usessl = 1;
-
-	$connectstringserver = $object->getConnectStringIMAP($usessl);
+	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
@@ -575,7 +573,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 	}
 
-	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml ? $morehtml : '?');
+	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml !== '' ? $morehtml : '?');
 	$morehtml .= '<a class="flat paddingleft marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
@@ -645,9 +643,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         console.log("We change a filter");
         if (jQuery("#filtertype option:selected").attr("data-noparam")) {
             jQuery("#rulevalue").attr("placeholder", "");
-            jQuery("#rulevalue").text(""); jQuery("#rulevalue").prop("disabled", true);
-        }
-        else { jQuery("#rulevalue").prop("disabled", false); }
+            jQuery("#rulevalue").text("");
+			jQuery("#rulevalue").prop("disabled", true);
+			jQuery("#rulevaluehelp").addClass("unvisible");
+        } else {
+			jQuery("#rulevalue").prop("disabled", false);
+			jQuery("#rulevaluehelp").removeClass("unvisible");
+		}
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
 	/*$noparam = array();
@@ -658,8 +660,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '})';
 	print '</script>'."\n";
 
-	print '</td><td>';
-	print '<input type="text" name="rulevalue" id="rulevalue">';
+	print '</td><td class="nowraponall">';
+	print '<div class="nowraponall">';
+	print '<input type="text" name="rulevalue" id="rulevalue" class="inline-block valignmiddle">';
+	print '<div class="inline-block valignmiddle unvisible" id="rulevaluehelp">';
+	print img_warning($langs->trans("FilterSearchImapHelp"), '', 'pictowarning classfortooltip');
+	print '</div>';
+	print '</div>';
 	print '</td>';
 	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button smallpaddingimp" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
@@ -747,7 +754,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$fk_element = 'position';
 	$i = 0;
 	foreach ($object->actions as $ruleaction) {
-		$ruleactionobj = new EmailcollectorAction($db);
+		$ruleactionobj = new EmailCollectorAction($db);
 		$ruleactionobj->fetch($ruleaction['id']);
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';

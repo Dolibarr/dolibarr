@@ -19,6 +19,7 @@
  */
 
 // $formatexportset must be defined
+// $downloadMode 	=0 for direct download or =1 to download after writing files or =-1 not to download files
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -35,7 +36,7 @@ $siren = getDolGlobalString('MAIN_INFO_SIREN');
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 
-if (empty($withAttachment)) {
+if (empty($downloadMode)) {
 	header('Content-Type: text/csv');
 }
 
@@ -54,10 +55,10 @@ if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountanc
 	$tmparray = dol_getdate($datetouseforfilename);
 	$fiscalmonth = empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START;
 	// Define end of month to use
-	if ($tmparray['mon'] <= $fiscalmonth) {
-		$tmparray['mon'] = $fiscalmonth;
+	if ($tmparray['mon'] < $fiscalmonth || $fiscalmonth == 1) {
+		$tmparray['mon'] = $fiscalmonth == 1 ? 12 : $fiscalmonth - 1;
 	} else {
-		$tmparray['mon'] = $fiscalmonth;
+		$tmparray['mon'] = $fiscalmonth - 1;
 		$tmparray['year']++;
 	}
 
@@ -70,6 +71,6 @@ if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountanc
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }
 
-if (empty($withAttachment)) {
+if (empty($downloadMode)) {
 	header('Content-Disposition: attachment;filename=' . $completefilename);
 }
