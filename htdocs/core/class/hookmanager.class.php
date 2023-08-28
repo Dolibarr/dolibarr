@@ -200,7 +200,7 @@ class HookManager
 			'insertExtraFooter',
 			'printLeftBlock',
 			'formAddObjectLine',
-			'formBuilddocOption',
+			'formBuilddocOptions',
 			'showSocinfoOnPrint'
 		))) {
 			$hooktype = 'output';
