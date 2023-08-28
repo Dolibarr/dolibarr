@@ -67,4 +67,16 @@ foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
 	<?php
 }
 
+if (count($linkedObjectBlock)) {
+	print '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
+	print '<td>'.$langs->trans("Total").'</td>';
+	print '<td></td>';
+	print '<td class="center"></td>';
+	print '<td class="center"></td>';
+	print '<td class="right">'.price($total).'</td>';
+	print '<td class="right"></td>';
+	print '<td class="right"></td>';
+	print '</tr>';
+}
+
 print "<!-- END PHP TEMPLATE -->\n";
