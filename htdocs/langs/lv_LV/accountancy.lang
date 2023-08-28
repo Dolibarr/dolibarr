@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Brīdinājums, šajā sarakstā ir tikai
 VueByAccountAccounting=Skatīt pēc grāmatvedības konta
 VueBySubAccountAccounting=Skatīt pēc grāmatvedības apakškonta
 
-MainAccountForCustomersNotDefined=Galvenais grāmatvedības konts klientiem, kas nav definēti iestatījumos
-MainAccountForSuppliersNotDefined=Galvenais grāmatvedības konts piegādātājiem, kas nav definēti iestatījumos
-MainAccountForUsersNotDefined=Galvenais grāmatvedības konts lietotājiem, kas nav definēti iestatījumos
-MainAccountForVatPaymentNotDefined=Galvenais grāmatvedības konts par PVN maksājumu, kas nav definēts iestatījumos
-MainAccountForSubscriptionPaymentNotDefined=Galvenais grāmatvedības konts abonēšanas maksā, kas nav definēts iestatījumā
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Uzskaites konts lietotājam, kas nav definēts iestatījumos
 
 AccountancyArea=Grāmatvedības zona

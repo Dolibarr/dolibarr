@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
-MainAccountForCustomersNotDefined=Tài khoản kế toán chính cho khách hàng không được định nghĩa trong thiết lập
-MainAccountForSuppliersNotDefined=Tài khoản kế toán chính cho các nhà cung cấp không được định nghĩa trong thiết lập
-MainAccountForUsersNotDefined=Tài khoản kế toán chính cho người dùng không được định nghĩa trong thiết lập
-MainAccountForVatPaymentNotDefined=Tài khoản kế toán chính cho thanh toán VAT không được định nghĩa trong thiết lập
-MainAccountForSubscriptionPaymentNotDefined=Tài khoản kế toán chính cho thanh toán thuê bao không được định nghĩa trong thiết lập
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Khu vực kế toán

@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Advarsel, denne liste indeholder kun de 
 VueByAccountAccounting=Vis efter regnskabskonto
 VueBySubAccountAccounting=Vis efter regnskabsmæssig underkonto
 
-MainAccountForCustomersNotDefined=Standardkonto for kunder, der ikke er defineret i opsætningen
-MainAccountForSuppliersNotDefined=Hoved kontokort for leverandører, der ikke er defineret i opsætningen
-MainAccountForUsersNotDefined=Standardkonto for brugere, der ikke er defineret i opsætningen
-MainAccountForVatPaymentNotDefined=Standardkonto for momsbetaling ikke defineret i opsætningen
-MainAccountForSubscriptionPaymentNotDefined=Hovedkontokonto for abonnementsbetaling, der ikke er defineret i opsætningen
+MainAccountForCustomersNotDefined=Hovedkonto (fra kontoplanen) for kunder, der ikke er defineret i opsætning
+MainAccountForSuppliersNotDefined=Hovedkonto (fra kontoplanen) for leverandører, der ikke er defineret i opsætning
+MainAccountForUsersNotDefined=Hovedkonto (fra kontoplanen) for brugere, der ikke er defineret i opsætning
+MainAccountForRevenueStampSaleNotDefined=Konto (fra kontoplanen) for indtægtsstemplet (salg), der ikke er defineret i opsætning
+MainAccountForRevenueStampPurchaseNotDefined=Konto (fra kontoplanen) for indtægtsstemplet (køb), der ikke er defineret i opsætning
+MainAccountForVatPaymentNotDefined=Konto (fra kontoplanen) til momsbetaling ikke defineret i opsætning
+MainAccountForSubscriptionPaymentNotDefined=Konto (fra kontoplanen) til medlemsbetaling ikke defineret i opsætning
+MainAccountForRetainedWarrantyNotDefined=Konto (fra kontoplanen) for den bibeholdte garanti, der ikke er defineret i opsætningen
 UserAccountNotDefined=Regnskabskonto for bruger er ikke defineret i opsætning
 
 AccountancyArea=Bogførings område

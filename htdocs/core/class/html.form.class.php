@@ -38,17 +38,17 @@
  */
 
 /**
- *    \file       htdocs/core/class/html.form.class.php
- *  \ingroup    core
- *    \brief      File of class with all html predefined components
+ * \file       htdocs/core/class/html.form.class.php
+ * \ingroup    core
+ * \brief      File of class with all html predefined components
  */
 
 
 /**
- *    Class to manage generation of HTML components
- *    Only common components must be here.
+ * Class to manage generation of HTML components
+ * Only common components must be here.
  *
- *  TODO Merge all function load_cache_* and loadCache* (except load_cache_vatrates) into one generic function loadCacheTable
+ * TODO Merge all function load_cache_* and loadCache* (except load_cache_vatrates) into one generic function loadCacheTable
  */
 class Form
 {
@@ -94,18 +94,18 @@ class Form
 	/**
 	 * Output key field for an editable field
 	 *
-	 * @param string $text Text of label or key to translate
-	 * @param string $htmlname Name of select field ('edit' prefix will be added)
-	 * @param string $preselected Value to show/edit (not used in this function)
-	 * @param object $object Object (on the page we show)
-	 * @param boolean $perm Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param string $typeofdata Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-	 * @param string $moreparam More param to add on a href URL.
-	 * @param int $fieldrequired 1 if we want to show field as mandatory using the "fieldrequired" CSS.
-	 * @param int $notabletag 1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
-	 * @param string $paramid Key of parameter for id ('id', 'socid')
-	 * @param string $help Tooltip help
-	 * @return    string                    HTML edit field
+	 * @param 	string 	$text 			Text of label or key to translate
+	 * @param 	string 	$htmlname 		Name of select field ('edit' prefix will be added)
+	 * @param 	string 	$preselected 	Value to show/edit (not used in this function)
+	 * @param 	object 	$object 		Object (on the page we show)
+	 * @param 	boolean $perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param 	string 	$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param 	string 	$moreparam 		More param to add on a href URL.
+	 * @param 	int 	$fieldrequired 	1 if we want to show field as mandatory using the "fieldrequired" CSS.
+	 * @param 	int 	$notabletag 	1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
+	 * @param 	string 	$paramid 		Key of parameter for id ('id', 'socid')
+	 * @param 	string 	$help 			Tooltip help
+	 * @return  string                  HTML edit field
 	 */
 	public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id', $help = '')
 	{
@@ -404,13 +404,13 @@ class Form
 	/**
 	 * Output edit in place form
 	 *
-	 * @param string $fieldname Name of the field
-	 * @param object $object Object
-	 * @param boolean $perm Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param string $typeofdata Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-	 * @param string $check Same coe than $check parameter of GETPOST()
-	 * @param string $morecss More CSS
-	 * @return    string                HTML code for the edit of alternative language
+	 * @param 	string 	$fieldname 	Name of the field
+	 * @param 	object 	$object 	Object
+	 * @param 	boolean $perm 		Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param 	string 	$typeofdata Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param 	string 	$check 		Same coe than $check parameter of GETPOST()
+	 * @param 	string 	$morecss 	More CSS
+	 * @return  string              HTML code for the edit of alternative language
 	 */
 	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string', $check = '', $morecss = '')
 	{
@@ -476,15 +476,15 @@ class Form
 	/**
 	 * Output edit in place form
 	 *
-	 * @param object $object Object
-	 * @param string $value Value to show/edit
-	 * @param string $htmlname DIV ID (field name)
-	 * @param int $condition Condition to edit
-	 * @param string $inputType Type of input ('string', 'numeric', 'datepicker' ('day' do not work, don't know why), 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:loadmethod:savemethod:buttononly')
-	 * @param string $editvalue When in edit mode, use this value as $value instead of value
-	 * @param object $extObject External object
-	 * @param mixed $custommsg String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
-	 * @return    string                HTML edit in place
+	 * @param 	object 	$object 	Object
+	 * @param 	string 	$value 		Value to show/edit
+	 * @param 	string 	$htmlname 	DIV ID (field name)
+	 * @param 	int 	$condition 	Condition to edit
+	 * @param 	string 	$inputType 	Type of input ('string', 'numeric', 'datepicker' ('day' do not work, don't know why), 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:loadmethod:savemethod:buttononly')
+	 * @param 	string 	$editvalue 	When in edit mode, use this value as $value instead of value
+	 * @param 	object 	$extObject 	External object
+	 * @param 	mixed 	$custommsg 	String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
+	 * @return  string              HTML edit in place
 	 */
 	protected function editInPlace($object, $value, $htmlname, $condition, $inputType = 'textarea', $editvalue = null, $extObject = null, $custommsg = null)
 	{
@@ -917,18 +917,18 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 * @param string 	$selected 				Id or Code or Label of preselected country
-	 * @param string 	$htmlname 				Name of html select object
-	 * @param string 	$htmloption 			More html options on select object
-	 * @param integer 	$maxlength 				Max length for labels (0=no limit)
-	 * @param string 	$morecss 				More css class
-	 * @param string 	$usecodeaskey 			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 * @param int|string $showempty 			Show empty choice
-	 * @param int 		$disablefavorites 		1=Disable favorites,
-	 * @param int 		$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
-	 * @param array 	$exclude_country_code 	Array of country code (iso2) to exclude
-	 * @param int 		$hideflags 				Hide flags
-	 * @return string                       	HTML string with select
+	 * @param string 		$selected 				Id or Code or Label of preselected country
+	 * @param string 		$htmlname 				Name of html select object
+	 * @param string 		$htmloption 			More html options on select object
+	 * @param integer 		$maxlength 				Max length for labels (0=no limit)
+	 * @param string 		$morecss 				More css class
+	 * @param string 		$usecodeaskey 			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 * @param int|string 	$showempty 				Show empty choice
+	 * @param int 			$disablefavorites 		1=Disable favorites,
+	 * @param int 			$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
+	 * @param array 		$exclude_country_code 	Array of country code (iso2) to exclude
+	 * @param int 			$hideflags 				Hide flags
+	 * @return string       	                	HTML string with select
 	 */
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
 	{
@@ -1053,15 +1053,15 @@ class Form
 	/**
 	 *  Return select list of incoterms
 	 *
-	 * @param string $selected Id or Code of preselected incoterm
-	 * @param string $location_incoterms Value of input location
-	 * @param string $page Defined the form action
-	 * @param string $htmlname Name of html select object
-	 * @param string $htmloption Options html on select object
-	 * @param int $forcecombo Force to load all values and output a standard combobox (with no beautification)
-	 * @param array $events Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param array $disableautocomplete Disable autocomplete
-	 * @return string                        HTML string with select and input
+	 * @param 	string 	$selected 				Id or Code of preselected incoterm
+	 * @param 	string 	$location_incoterms 	Value of input location
+	 * @param 	string 	$page 					Defined the form action
+	 * @param 	string 	$htmlname 				Name of html select object
+	 * @param 	string 	$htmloption 			Options html on select object
+	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	array 	$events 				Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array 	$disableautocomplete 	Disable autocomplete
+	 * @return 	string                       	HTML string with select and input
 	 */
 	public function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array(), $disableautocomplete = 0)
 	{
@@ -1140,20 +1140,20 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of types of lines (product or service)
-	 *    Example: 0=product, 1=service, 9=other (for external module)
+	 * Return list of types of lines (product or service)
+	 * Example: 0=product, 1=service, 9=other (for external module)
 	 *
-	 * @param string $selected Preselected type
-	 * @param string $htmlname Name of field in html form
-	 * @param int $showempty Add an empty field
-	 * @param int $hidetext Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
-	 * @param integer $forceall 1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
-	 * @return    void
+	 * @param 	string 		$selected 	Preselected type
+	 * @param 	string 		$htmlname 	Name of field in html form
+	 * @param 	int 		$showempty 	Add an empty field
+	 * @param 	int 		$hidetext 	Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
+	 * @param 	integer 	$forceall 	1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
+	 * @return  void
 	 */
 	public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 
 		// If product & services are enabled or both disabled.
 		if ($forceall == 1 || (empty($forceall) && isModEnabled("product") && isModEnabled("service"))
@@ -1416,22 +1416,24 @@ class Form
 			}
 		}
 
-		if (preg_match('/[\(\)]/', $filter)) {
-			// If there is one parenthesis inside the criteria, we assume it is an Universal Filter Syntax.
-			$errormsg = '';
-			$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
+		if ($filter != '') {	// If a filter was provided
+			if (preg_match('/[\(\)]/', $filter)) {
+				// If there is one parenthesis inside the criteria, we assume it is an Universal Filter Syntax.
+				$errormsg = '';
+				$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
 
-			// Redo clean $filter that may contains sql conditions so sql code
-			if (function_exists('testSqlAndScriptInject')) {
-				if (testSqlAndScriptInject($filter, 3) > 0) {
-					$filter = '';
-					return 'SQLInjectionTryDetected';
+				// Redo clean $filter that may contains sql conditions so sql code
+				if (function_exists('testSqlAndScriptInject')) {
+					if (testSqlAndScriptInject($filter, 3) > 0) {
+						$filter = '';
+						return 'SQLInjectionTryDetected';
+					}
 				}
+			} else {
+				// If not, we do nothing. We already know that there is no parenthesis
+				// TODO Disallow this case in a future.
+				dol_syslog("Warning, select_thirdparty_list was called with a filter criteria not using the Universal Search Syntax.", LOG_WARNING);
 			}
-		} else {
-			// If not, we do nothing. We already no that there is no parenthesis
-			// TODO Disallow this case in a future.
-			dol_syslog("Warning, select_thirdparty_list was called with a filter criteria not using the Universal Search Syntax.", LOG_WARNING);
 		}
 
 		// We search companies
@@ -7458,21 +7460,21 @@ class Form
 	/**
 	 *  Return list of projects in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param int $selected Preselected tickets
-	 * @param string $htmlname Name of HTML select field (must be unique in page).
-	 * @param string $filtertype To add a filter
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $status Ticket status
-	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param int $hidelabel Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array $ajaxoptions Options for ajax_autocompleter
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param string $nooutput No print, return the output into a string
-	 * @return        string
+	 * @param 	int 	$selected 				Preselected tickets
+	 * @param 	string 	$htmlname 				Name of HTML select field (must be unique in page).
+	 * @param 	string 	$filtertype				To add a filter
+	 * @param 	int 	$limit 					Limit on number of returned lines
+	 * @param 	int 	$status 				Ticket status
+	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param 	int		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param 	array 	$ajaxoptions 			Options for ajax_autocompleter
+	 * @param 	int 	$socid 					Thirdparty Id (to get also price dedicated to this customer)
+	 * @param 	string 	$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int 	$forcecombo 			Force to use combo box
+	 * @param 	string 	$morecss 				Add more css on select
+	 * @param 	array 	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param 	string 	$nooutput 				No print, return the output into a string
+	 * @return 	string
 	 */
 	public function selectProjects($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
 	{
@@ -7494,6 +7496,7 @@ class Form
 				unset($projecttmpselect);
 			}
 
+			$urloption = '';
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/projet/ajax/projects.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
 			if (empty($hidelabel)) $out .= $langs->trans("RefOrLabel") . ' : ';
@@ -8573,7 +8576,7 @@ class Form
 	}
 
 	/**
-	 *    Show a multiselect form from an array. WARNING: Use this only for short lists.
+	 * Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 * @param 	string 		$htmlname 		Name of select
 	 * @param 	array 		$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
@@ -10603,11 +10606,11 @@ class Form
 	/**
 	 * selectModelMail
 	 *
-	 * @param string $prefix Prefix
-	 * @param string $modelType Model type
-	 * @param int $default 1=Show also Default mail template
-	 * @param int $addjscombo Add js combobox
-	 * @return  string                HTML select string
+	 * @param 	string 	$prefix 		Prefix
+	 * @param	string 	$modelType 		Model type
+	 * @param 	int 	$default 		1=Show also Default mail template
+	 * @param 	int 	$addjscombo 	Add js combobox
+	 * @return  string                	HTML select string
 	 */
 	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0)
 	{
@@ -10649,13 +10652,13 @@ class Form
 	/**
 	 * Output the buttons to submit a creation/edit form
 	 *
-	 * @param string $save_label Alternative label for save button
-	 * @param string $cancel_label Alternative label for cancel button
-	 * @param array $morebuttons Add additional buttons between save and cancel
-	 * @param bool $withoutdiv Option to remove enclosing centered div
-	 * @param string $morecss More CSS
-	 * @param string $dol_openinpopup If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
-	 * @return    string                        Html code with the buttons
+	 * @param 	string 	$save_label 		Alternative label for save button
+	 * @param 	string 	$cancel_label 		Alternative label for cancel button
+	 * @param 	array 	$morebuttons 		Add additional buttons between save and cancel
+	 * @param 	bool 	$withoutdiv 		Option to remove enclosing centered div
+	 * @param 	string 	$morecss 			More CSS
+	 * @param 	string 	$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
+	 * @return  string                      Html code with the buttons
 	 */
 	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '', $dol_openinpopup = '')
 	{

@@ -43,7 +43,7 @@ print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
 	print 'You must run this tool being into the root of the project.'."\n";
 	print 'Usage:   '.constant('PRODUCT').'.php pathto/index.html  [--dir-scc=pathtoscc] [--dir-phpstan=pathtophpstan]'."\n";
-	print 'Example: '.constant('PRODUCT').'.php dev/tools/apstats.php documents/apstats/index.html --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
+	print 'Example: '.constant('PRODUCT').'.php dev/tools/apstats.php documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
 	exit(0);
 }
 
@@ -63,7 +63,7 @@ $i = 0;
 while ($i < $argc) {
 	$reg = array();
 	if (preg_match('/--dir-scc=(.*)$/', $argv[$i], $reg)) {
-		$dirphpstan = $reg[1];
+		$dirscc = $reg[1];
 	}
 	if (preg_match('/--dir-phpstan=(.*)$/', $argv[$i], $reg)) {
 		$dirphpstan = $reg[1];
@@ -157,13 +157,15 @@ foreach (array('proj', 'dep') as $source) {
 		}
 	}
 
-	foreach ($arrayoflineofcode[$source] as $key => $val) {
-		$arrayofmetrics[$source]['Files'] += $val['Files'];
-		$arrayofmetrics[$source]['Lines'] += $val['Lines'];
-		$arrayofmetrics[$source]['Blanks'] += $val['Blanks'];
-		$arrayofmetrics[$source]['Comments'] += $val['Comments'];
-		$arrayofmetrics[$source]['Code'] += $val['Code'];
-		$arrayofmetrics[$source]['Complexity'] += $val['Complexity'];
+	if (!empty($arrayoflineofcode[$source])) {
+		foreach ($arrayoflineofcode[$source] as $key => $val) {
+			$arrayofmetrics[$source]['Files'] += $val['Files'];
+			$arrayofmetrics[$source]['Lines'] += $val['Lines'];
+			$arrayofmetrics[$source]['Blanks'] += $val['Blanks'];
+			$arrayofmetrics[$source]['Comments'] += $val['Comments'];
+			$arrayofmetrics[$source]['Code'] += $val['Code'];
+			$arrayofmetrics[$source]['Complexity'] += $val['Complexity'];
+		}
 	}
 }
 
@@ -267,18 +269,20 @@ foreach (array('proj', 'dep') as $source) {
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Code']).'</td>';
 	$html .= '<td>TODO graph here...</td>';
 	$html .= '</tr>';
-	foreach ($arrayoflineofcode[$source] as $key => $val) {
-		$html .= '<tr class="loc hidden source'.$source.' language'.str_replace(' ', '', $key).'">';
-		$html .= '<td>'.$key.'</td>';
-		$html .= '<td class="right"></td>';
-		$html .= '<td class="right">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
-		$html .= '<td class="right">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
-		$html .= '<td class="right">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
-		$html .= '<td class="right">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
-		$html .= '<td class="right">'.(empty($val['Code']) ? '' : formatNumber($val['Code'])).'</td>';
-		//$html .= '<td class="right">'.(empty($val['Complexity']) ? '' : $val['Complexity']).'</td>';
-		$html .= '<td>TODO graph here...</td>';
-		$html .= '</tr>';
+	if (!empty($arrayoflineofcode[$source])) {
+		foreach ($arrayoflineofcode[$source] as $key => $val) {
+			$html .= '<tr class="loc hidden source'.$source.' language'.str_replace(' ', '', $key).'">';
+			$html .= '<td>'.$key.'</td>';
+			$html .= '<td class="right"></td>';
+			$html .= '<td class="right">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
+			$html .= '<td class="right">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
+			$html .= '<td class="right">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
+			$html .= '<td class="right">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
+			$html .= '<td class="right">'.(empty($val['Code']) ? '' : formatNumber($val['Code'])).'</td>';
+			//$html .= '<td class="right">'.(empty($val['Complexity']) ? '' : $val['Complexity']).'</td>';
+			$html .= '<td>TODO graph here...</td>';
+			$html .= '</tr>';
+		}
 	}
 }
 
@@ -299,8 +303,12 @@ $html .= '</section>';
 
 $html .= '<section class="chapter">';
 $html .= '<h2>Project value</h2><br>';
-$html .= 'COCOMO (Basic organic model) value: $'.formatNumber($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency'], 2).'<br>';
-$html .= 'COCOMO (Basic organic model) effort: '.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']).' monthes people<br>';
+$html .= 'COCOMO (Basic organic model) value: $';
+$html .= formatNumber($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency'], 2);
+$html .= '<br>';
+$html .= 'COCOMO (Basic organic model) effort: ';
+$html .= formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
+$html .= ' monthes people<br>';
 $html .= '</section>';
 
 $html .= '<section class="chapter">';

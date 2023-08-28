@@ -320,6 +320,8 @@ ErrorSVGFilesNotAllowedAsLinksWithout=SVG-filer er ikke tilladt som eksterne lin
 ErrorTypeMenu=Umuligt at tilføje en anden menu for det samme modul på navbaren, ikke håndtere endnu
 ErrorTableExist=Tabel <b> %s </b> findes allerede
 ErrorDictionaryNotFound=Ordbog <b> %s </b> ikke fundet
+ErrorFailedToCreateSymLinkToMedias=Kunne ikke oprette symbollinkene %s for at pege på %s
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.
 WarningPasswordSetWithNoAccount=Der blev angivet en adgangskode til dette medlem. Der blev dog ikke oprettet en brugerkonto. Så denne adgangskode er gemt, men kan ikke bruges til at logge ind på Dolibarr. Det kan bruges af et eksternt modul/interface, men hvis du ikke behøver at definere noget login eller adgangskode for et medlem, kan du deaktivere muligheden "Administrer et login for hvert medlem" fra medlemsmodulets opsætning. Hvis du har brug for at administrere et login, men ikke har brug for nogen adgangskode, kan du holde dette felt tomt for at undgå denne advarsel. Bemærk: E-mail kan også bruges som login, hvis medlemmet er knyttet til en bruger.
