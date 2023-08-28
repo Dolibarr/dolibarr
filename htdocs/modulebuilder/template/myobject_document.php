@@ -124,7 +124,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->mymodule->multidir_output[$object->entity ? $object->entity : $conf->entity]."/myobject/".get_exdir(0, 0, 0, 1, $object);
 }
 
-// Permissions 
+// Permissions
 // (There are several ways to check permission.)
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
