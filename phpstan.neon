@@ -14,6 +14,7 @@ parameters:
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
+		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
 		- htdocs/test/*
 		analyse:

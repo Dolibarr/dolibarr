@@ -799,7 +799,7 @@ if (empty($reshook)) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-					$prodcustprice = new Productcustomerprice($db);
+					$prodcustprice = new ProductCustomerPrice($db);
 
 					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
 
@@ -2747,9 +2747,9 @@ if ($action == 'create' && $usercancreate) {
 			}
 			print '</tr>';
 
-			print '<tr>';
 			// Amount Local Taxes
 			if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
+				print '<tr>';
 				print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
 				if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {

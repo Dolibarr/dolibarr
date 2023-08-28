@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Attention, cette liste ne contient que l
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
 
-MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
-MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration
-MainAccountForUsersNotDefined=Compte comptable général pour les utilisateurs non défini dans la configuration
-MainAccountForVatPaymentNotDefined=Compte comptable général pour les paiements de TVA non défini dans la configuration
-MainAccountForSubscriptionPaymentNotDefined=Le compte comptable général des paiements de cotisations n'est pas défini dans la configuration
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Compte comptable pour l'utilisateur non défini dans la configuration
 
 AccountancyArea=Espace comptabilité

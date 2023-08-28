@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-	$prodcustprice = new Productcustomerprice($db);
+	$prodcustprice = new ProductCustomerPrice($db);
 }
 
 // Load translation files required by the page
@@ -1906,7 +1906,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 
 // Add area to show/add/edit a price for a dedicated customer
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-	$prodcustprice = new Productcustomerprice($db);
+	$prodcustprice = new ProductCustomerPrice($db);
 
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 	$sortfield = GETPOST('sortfield', 'aZ09comma');

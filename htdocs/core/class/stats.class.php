@@ -37,6 +37,11 @@ abstract class Stats
 	 * @var string	To store the FROM part of the main table of the SQL request
 	 */
 	public $from;
+
+	/**
+	 * @var string	To store the WHERE part of the main table of the SQL request
+	 */
+	public $where;
 	/**
 	 * @var string	To store the FROM part of the line table of the SQL request
 	 */
@@ -54,6 +59,20 @@ abstract class Stats
 	 */
 	public $field_line;
 
+	/**
+	 * @var string	error message
+	 */
+	public $error;
+
+	/**
+	 * @var int year
+	 */
+	public $year;
+
+	/**
+	 * @var int month
+	 */
+	public $month;
 
 	/**
 	 *  @param	int		$year 			number

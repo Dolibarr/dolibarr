@@ -1,23 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=将当前页面添加到书签
-Bookmark=书签
-Bookmarks=书签
-ListOfBookmarks=书签列表
-EditBookmarks=列出/编辑书签
-NewBookmark=新建书签
-ShowBookmark=显示书签
-OpenANewWindow=打开新标签
-ReplaceWindow=替换当前标签
-BookmarkTargetNewWindowShort=新标签
-BookmarkTargetReplaceWindowShort=当前标签
-BookmarkTitle=书签名称
-UrlOrLink=网址
-BehaviourOnClick=选择书签URL时的行为
-CreateBookmark=创建书签
-SetHereATitleForLink=为书签设置名称
-UseAnExternalHttpLinkOrRelativeDolibarrLink=使用外部/绝对链接（https://externalurl.com）或内部/相对链接（/mypage.php）. 您也可以使用电话号码如tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=选择链接的页面在目前标签或者新标签中打开
-BookmarksManagement=书签管理
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=未设置任何书签
-NoBookmarkFound=未发现书签
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = 将当前页面添加到书签
+BehaviourOnClick = 选择书签URL时的行为
+Bookmark = 书签
+Bookmarks = 书签
+BookmarkTargetNewWindowShort = 新标签
+BookmarkTargetReplaceWindowShort = 当前标签
+BookmarkTitle = 书签名称
+BookmarksManagement = 书签管理
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = 选择是否应在当前标签页或新标签页中打开链接页面
+CreateBookmark = 创建书签
+EditBookmarks = 列出/编辑书签
+ListOfBookmarks = 书签列表
+NewBookmark = 新建书签
+NoBookmarkFound = 未发现书签
+NoBookmarks = 未设置任何书签
+OpenANewWindow = 打开新标签页
+ReplaceWindow = 替换当前标签
+SetHereATitleForLink = 为书签设置名称
+ShowBookmark = 显示书签
+UrlOrLink = 网址
+UseAnExternalHttpLinkOrRelativeDolibarrLink = 使用外部/绝对链接（https://externalurl.com）或内部/相对链接（/mypage.php）. 您也可以使用电话号码如tel:0123456.

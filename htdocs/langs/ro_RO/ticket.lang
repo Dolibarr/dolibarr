@@ -329,8 +329,8 @@ OldUser=Utilizator anterior
 NewUser=Utilizator nou
 NumberOfTicketsByMonth=Număr de tichete pe lună
 NbOfTickets=Număr de tichete
-ExternalContributors=External contributors
-AddContributor=Add external contributor
+ExternalContributors=Contributori externi
+AddContributor=Adăugare contributor extern
 
 # notifications
 TicketCloseEmailSubjectCustomer=Tichet închis

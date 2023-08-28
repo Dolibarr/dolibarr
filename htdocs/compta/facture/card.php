@@ -2168,7 +2168,7 @@ if (empty($reshook)) {
 				$pu_ttc = $datapriceofproduct['pu_ttc'];
 				$price_min = $datapriceofproduct['price_min'];
 				$price_min_ttc = (isset($datapriceofproduct['price_min_ttc'])) ? $datapriceofproduct['price_min_ttc'] : null;
-				$price_base_type = $datapriceofproduct['price_base_type'];
+				$price_base_type = empty($datapriceofproduct['price_base_type']) ? 'HT' : $datapriceofproduct['price_base_type'];
 
 				//$tva_tx = $datapriceofproduct['tva_tx'];
 				//$tva_npr = $datapriceofproduct['tva_npr'];
@@ -4719,7 +4719,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print price($object->retained_warranty).'%';

@@ -1237,3 +1237,5 @@ SearchSyntaxTooltipForStringOrNum=For å søke i tekstfelt kan du bruke tegnene 
 InProgress=Pågår
 DateOfPrinting=Dato for utskrift
 ClickFullScreenEscapeToLeave=Klikk her for å bytte til fullskjermmodus. Trykk ESCAPE for å gå ut av fullskjermmodus.
+UserNotYetValid=Ikke gyldig ennå
+UserExpired=Utløpt

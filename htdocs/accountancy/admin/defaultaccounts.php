@@ -78,9 +78,16 @@ if ($mysoc->isInEEC()) {
 $list_account[] = 'ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT';
 
 $list_account[] = '---Others---';
-$list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
+$list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
+
+/*if ($mysoc->useRevenueStamp()) {
+	$list_account[] = 'ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT';
+	$list_account[] = 'ACCOUNTING_REVENUESTAMP_BUY_ACCOUNT';
+}*/
+
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
+
 if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
@@ -110,6 +117,7 @@ if (isModEnabled('societe')) {
 /*
  * Actions
  */
+
 if ($action == 'update') {
 	$error = 0;
 	// Process $list_account_main
@@ -257,6 +265,8 @@ foreach ($list_account as $key) {
 			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_VAT/', $key)) {
 			print img_picto('', 'vat', 'class="pictofixedwidth"');
+			/*} elseif (preg_match('/^ACCOUNTING_REVENUESTAMP/', $key)) {
+			print img_picto('', 'vat', 'class="pictofixedwidth"');*/
 		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_CUSTOMER/', $key)) {
 			print img_picto('', 'bill', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^LOAN_ACCOUNTING_ACCOUNT/', $key)) {

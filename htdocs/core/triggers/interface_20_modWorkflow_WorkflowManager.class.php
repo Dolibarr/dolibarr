@@ -246,7 +246,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['supplier_proposal'] as $element) {
-						if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_BILLED) {
+						if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_CLOSE) {
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
@@ -268,7 +268,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['reception'] as $element) {
-						if ($element->statut == Reception::STATUS_VALIDATED) {
+						if ($element->statut == Reception::STATUS_VALIDATED || $element->statut == Reception::STATUS_CLOSED) {
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
@@ -343,8 +343,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 					foreach ($order->linkedObjects as $type => $shipping_array) {
 						if ($type == 'shipping' && is_array($shipping_array) && count($shipping_array) > 0) {
+							/** @var Expedition[] $shipping_array */
 							foreach ($shipping_array as $shipping) {
-								if ($shipping->statut <= 0) {
+								if ($shipping->status <= 0) {
 									continue;
 								}
 								if (is_array($shipping->lines) && count($shipping->lines) > 0) {

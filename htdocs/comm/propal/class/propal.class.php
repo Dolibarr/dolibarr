@@ -1448,7 +1448,7 @@ class Propal extends CommonObject
 										}
 									}
 								} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-									$prodcustprice = new Productcustomerprice($this->db);
+									$prodcustprice = new ProductCustomerPrice($this->db);
 									$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
 									$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 									if ($result) {

@@ -554,6 +554,7 @@ if (empty($reshook)) {
 				}
 
 				$id = $objecttmp->id; // For builddoc action
+				$lastref = $objecttmp->ref; // generated ref
 				$object  =$objecttmp;
 
 				// Fac builddoc

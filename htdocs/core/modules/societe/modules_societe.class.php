@@ -202,7 +202,7 @@ abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $soc, $type)
 	{
-		global $conf, $db;
+		global $db;
 
 		$langs->load("admin");
 

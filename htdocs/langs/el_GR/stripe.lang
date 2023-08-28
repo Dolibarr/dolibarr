@@ -51,6 +51,7 @@ StripeAccount=Λογαριασμός Stripe
 StripeChargeList=Λίστα χρεώσεων Stripe
 StripeTransactionList=Κατάλογος των συναλλαγών Stripe
 StripeCustomerId=Αναγνωριστικό πελάτη Sripe
+StripePaymentId=Αναγνωριστικό πληρωμής Stripe
 StripePaymentModes=Λειτουργίες πληρωμής Stripe
 LocalID=Τοπικό αναγνωριστικό
 StripeID=Αναγνωριστικό Stripe

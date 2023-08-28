@@ -321,5 +321,5 @@ BatchNotFound=No s'ha trobat lot / sèrie per a aquest producte
 StockMovementWillBeRecorded=Es registrarà el moviment d'estoc
 StockMovementNotYetRecorded=El moviment d'estoc no es veurà afectat per aquest pas
 WarningThisWIllAlsoDeleteStock=Advertència, això també destruirà totes les quantitats en estoc al magatzem
-DeleteBatch=Delete lot/serial
-ConfirmDeleteBatch=Are you sure you want to delete lot/serial ?
+DeleteBatch=Esborra el lot/sèrie
+ConfirmDeleteBatch=Esteu segur que voleu suprimir el lot/sèrie?

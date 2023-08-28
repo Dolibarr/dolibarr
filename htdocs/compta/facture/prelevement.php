@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
@@ -830,8 +828,12 @@ if ($object->id > 0) {
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td>&nbsp;</td>';
+	}
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
-	print '<td class="center">'.$langs->trans("User").'</td>';
+	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 	if ($type == 'bank-transfer') {
@@ -840,7 +842,10 @@ if ($object->id > 0) {
 		print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	}
 	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td>&nbsp;</td>';
+	}
 	print '</tr>';
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
@@ -878,15 +883,24 @@ if ($object->id > 0) {
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
 			$tmpuser->statut = $obj->user_status;
+			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
 
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="right">';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
+				print img_delete();
+				print '</a></td>';
+			}
+
 			// Date
-			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
 
 			// User
-			print '<td align="center">';
-			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
+			print '<td class="tdoverflowmax125">';
+			print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
 			// Amount
@@ -896,7 +910,7 @@ if ($object->id > 0) {
 			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
 
 			// Link to make payment now
-			print '<td class="center">';
+			print '<td class="minwidth75">';
 			if ($obj->fk_prelevement_bons > 0) {
 				$withdrawreceipt = new BonPrelevement($db);
 				$withdrawreceipt->id = $obj->fk_prelevement_bons;
@@ -934,11 +948,13 @@ if ($object->id > 0) {
 			//
 			print '<td class="center">-</td>';
 
-			// Actions
-			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
-			print img_delete();
-			print '</a></td>';
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="right">';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
+				print img_delete();
+				print '</a></td>';
+			}
 
 			print "</tr>\n";
 			$i++;
@@ -990,11 +1006,16 @@ if ($object->id > 0) {
 
 			print '<tr class="oddeven">';
 
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td>&nbsp;</td>';
+			}
+
 			// Date
-			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
 
 			// User
-			print '<td align="center">';
+			print '<td class="tdoverflowmax125">';
 			print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
@@ -1002,10 +1023,10 @@ if ($object->id > 0) {
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
 			// Date process
-			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
 
 			// Link to payment request done
-			print '<td class="center">';
+			print '<td class="center minwidth75">';
 			if ($obj->fk_prelevement_bons > 0) {
 				$withdrawreceipt = new BonPrelevement($db);
 				$withdrawreceipt->id = $obj->fk_prelevement_bons;
@@ -1042,8 +1063,10 @@ if ($object->id > 0) {
 			//
 			print '<td>&nbsp;</td>';
 
-			// Actions
-			print '<td>&nbsp;</td>';
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td>&nbsp;</td>';
+			}
 
 			print "</tr>\n";
 			$i++;
