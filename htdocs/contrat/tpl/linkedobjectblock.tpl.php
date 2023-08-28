@@ -36,7 +36,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("contracts");
 
 $total = 0; $ilink = 0;
-usort($linkedObjectBlock, function ($a, $b) { return $b->id - $a->id; });
+
 foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
 
 	$trclass = 'oddeven';

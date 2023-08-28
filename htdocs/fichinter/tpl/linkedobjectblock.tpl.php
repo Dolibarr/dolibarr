@@ -35,7 +35,7 @@ $langs->load("interventions");
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
 
 $ilink = 0;
-usort($linkedObjectBlock, function ($a, $b) { return $b->id - $a->id; });
+
 foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
 
 	$trclass = 'oddeven';

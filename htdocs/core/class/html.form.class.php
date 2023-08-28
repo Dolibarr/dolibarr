@@ -8773,6 +8773,7 @@ class Form
 				}
 
 				global $linkedObjectBlock;
+				usort($objects, function ($a, $b) { return $b->id - $a->id; });
 				$linkedObjectBlock = $objects;
 
 				// Output template part (modules that overwrite templates must declare this into descriptor)

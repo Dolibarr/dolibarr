@@ -34,7 +34,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $var = true;
 $total = 0;
-usort($linkedObjectBlock, function ($a, $b) { return $b->id - $a->id; });
+
 foreach ($linkedObjectBlock as $key => $objectlink) {	?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
 	<td><?php echo $langs->trans("ExpenseReport"); ?></td>
