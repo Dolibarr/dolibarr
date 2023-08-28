@@ -66,6 +66,11 @@ ALTER TABLE llx_societe_rib ADD COLUMN extraparams varchar(255);
 
 ALTER TABLE llx_c_type_container ADD COLUMN position integer DEFAULT 0;
 
+ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
+
+
+-- DROP COLUMN
+-- maybe there is an option to copy into new fields or delete only if empty
 ALTER TABLE llx_user DROP COLUMN skype;
 ALTER TABLE llx_user DROP COLUMN twitter;
 ALTER TABLE llx_user DROP COLUMN facebook;
@@ -85,6 +90,3 @@ ALTER TABLE llx_adherent DROP COLUMN youtube;
 ALTER TABLE llx_adherent DROP COLUMN whatsapp;
 
 ALTER TABLE llx_societe DROP COLUMN skype;
-
-ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
-
