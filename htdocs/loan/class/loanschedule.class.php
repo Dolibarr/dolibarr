@@ -91,6 +91,10 @@ class LoanSchedule extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var LoanSchedule[]
+	 * @see LoanSchedule::fetchAll()
+	 */
 	public $lines = array();
 
 	/**

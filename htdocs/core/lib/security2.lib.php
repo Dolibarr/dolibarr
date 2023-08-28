@@ -411,20 +411,25 @@ function encodedecode_dbpassconf($level = 0)
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
 				if (preg_match('/crypted:/i', $buffer)) {
 					// method dol_encode/dol_decode
+					$mode = 'crypted:';
 					$val = preg_replace('/crypted:/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
 				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
 					// method dolEncrypt/dolDecrypt
+					$mode = 'dolcrypt:';
 					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dolDecrypt($buffer);
 					$passwd = $val;
 				} else {
 					$passwd = $val;
+					$mode = 'crypted:';
 					$val = dol_encode($val);
 					$passwd_crypted = $val;
+					// TODO replace with dolEncrypt()
+					// ...
 				}
 				$lineofpass = 1;
 			}
@@ -436,7 +441,7 @@ function encodedecode_dbpassconf($level = 0)
 					$config .= '$dolibarr_main_db_pass=\''.$passwd.'\';'."\n";
 				}
 				if ($level == 1) {
-					$config .= '$dolibarr_main_db_pass=\'crypted:'.$passwd_crypted.'\';'."\n";
+					$config .= '$dolibarr_main_db_pass=\''.$mode.$passwd_crypted.'\';'."\n";
 				}
 
 				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
@@ -569,10 +574,12 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 {
 	global $conf;
 
+	$out = '';
+
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<!-- Js code to suggest a security key -->';
-		print '<script nonce="'.getNonce().'" type="text/javascript">';
-		print 'jQuery(document).ready(function () {
+		$out .= "\n".'<!-- Js code to suggest a security key -->';
+		$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
+		$out .= 'jQuery(document).ready(function () {
             jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currentotken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
@@ -589,6 +596,8 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 				});
             });
 		});'."\n";
-		print '</script>';
+		$out .= '</script>';
 	}
+
+	return $out;
 }

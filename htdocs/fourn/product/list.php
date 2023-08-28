@@ -74,7 +74,7 @@ $catid = GETPOST('catid', 'intcomma');
 $hookmanager->initHooks(array('supplierpricelist'));
 $extrafields = new ExtraFields($db);
 
-if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) {
+if (!$user->hasRight("produit", "lire") && !$user->hasRight("service", "lire")) {
 	accessforbidden();
 }
 

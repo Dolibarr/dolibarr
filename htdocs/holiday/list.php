@@ -843,8 +843,8 @@ if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) 
 		$holidaystatic->id = $obj->rowid;
 		$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 		$holidaystatic->statut = $obj->status;
-		$holidaystatic->date_debut = $obj->date_debut;
-		$holidaystatic->date_fin = $obj->date_fin;
+		$holidaystatic->date_debut = $db->jdate($obj->date_debut);
+		$holidaystatic->date_fin = $db->jdate($obj->date_fin);
 
 		// User
 		$userstatic->id = $obj->fk_user;
@@ -877,7 +877,7 @@ if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) 
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="'.$savnbfield.'">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 

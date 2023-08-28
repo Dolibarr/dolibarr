@@ -537,9 +537,9 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		} else {
 			$permsToadd = array();
 			$perms = array(
-				'read' => 'Read objects of '.ucfirst($module),
-				'write' => 'Create/Update objects of '.ucfirst($module),
-				'delete' => 'Delete objects of '.ucfirst($module)
+				'read' => 'Read '.$objectname.' object of '.ucfirst($module),
+				'write' => 'Create/Update '.$objectname.' object of '.ucfirst($module),
+				'delete' => 'Delete '.$objectname.' object of '.ucfirst($module)
 			);
 			$i = 0;
 			foreach ($perms as $index => $value) {
@@ -648,7 +648,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// write the begin of table with specifics options
 	$table = "== DATA SPECIFICATIONS\n";
-	$table .= "== Table of fields and their properties for object *$objectname* : \n";
+	$table .= "=== Table of fields with properties for object *$objectname* : \n";
 	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
 	$table .= "|===\n";
 	$table .= "|code";
@@ -681,10 +681,10 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= implode("|", $values) . "\n";
 	}
 	// end table
-	$table .= "|===";
-	$table .= "__ end table for object $objectname";
+	$table .= "|===\n";
+	$table .= "__ end table for object $objectname\n";
 	//write in file
-	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
+	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
@@ -925,16 +925,6 @@ function removeObjectFromApiFile($file, $objectname, $modulename)
 	return 1;
 }
 
-/**
- * Compare menus by their object
- * @param  mixed  $a  first value
- * @param  mixed  $b  seconde value
- * @return int        1 if OK, -1 if KO
- */
-function compareMenus($a, $b)
-{
-	return strcmp($a['fk_menu'], $b['fk_menu']);
-}
 
 /**
  * @param    string         $file       path of filename
@@ -959,7 +949,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		array_push($menus, $menuWantTo);
 	} elseif ($action == 2 && !empty($key) && !empty($menuWantTo)) {
 		// update right from permissions array
-
+		$urlCounter=0;
 		// check if the values already exists
 		foreach ($menus as $index => $menu) {
 			if ($index !== $key) {
@@ -968,12 +958,12 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 						$counter++;
 					}
 					if (strcasecmp(str_replace(' ', '', $menu['url']), str_replace(' ', '', $menuWantTo['url'])) === 0) {
-						$counter++;
+						$urlCounter++;
 					}
 				}
 			}
 		}
-		if (!$counter) {
+		if (!$counter && $urlCounter < 2) {
 			$menus[$key] = $menuWantTo;
 		} else {
 			$errors++;
@@ -994,9 +984,6 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		$endMenu = '/* END MODULEBUILDER LEFTMENU MYOBJECT */';
 		$allMenus = getFromFile($file, $beginMenu, $endMenu);
 		dolReplaceInFile($file, array($allMenus => ''));
-
-		// orders menu with other menus that have the same object
-		usort($menus, 'compareMenus');
 
 		//prepare each menu and stock them in string
 		$str_menu = "";
@@ -1032,4 +1019,198 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
 		return 1;
 	}return -1;
+}
+
+/**
+ * Updates a dictionary in a module descriptor file.
+ *
+ * @param string $module The name of the module.
+ * @param string $file The path to the module descriptor file.
+ * @param array $dicts The dictionary data to be updated.
+ * @return int Returns the number of replacements made in the file.
+ */
+function updateDictionaryInFile($module, $file, $dicts)
+{
+
+	$isEmpty = false;
+	$dicData = "\t\t\$this->dictionaries=array(\n";
+	$module = strtolower($module);
+	foreach ($dicts as $key => $value) {
+		if (empty($value)) {
+			$isEmpty = true;
+			$dicData = "\t\t\$this->dictionaries=array();";
+			break;
+		}
+
+		$dicData .= "\t\t\t'$key'=>";
+
+		if ($key === 'tabcond') {
+			$conditions = array_map(function ($val) use ($module) {
+				return ($val === true || $val === false) ? "isModEnabled('$module')" : $val;
+			}, $value);
+			$dicData .= "array(" . implode(",", $conditions) . ")";
+		} elseif ($key === 'tabhelp') {
+			$helpItems = array();
+			foreach ($value as $key => $helpValue) {
+				$helpItems[] = "array('code'=>\$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
+			}
+			$dicData .= "array(" . implode(",", $helpItems) . ")";
+		} else {
+			if (is_array($value)) {
+				$dicData .= "array(" . implode(",", array_map(function ($val) {
+					return "'$val'";
+				}, $value)) . ")";
+			} else {
+				$dicData .= "'$value'";
+			}
+		}
+		$dicData .= ",\n";
+	}
+	$dicData .= (!$isEmpty ? "\t\t);" : '');
+
+	$stringDic = getFromFile($file, '/* BEGIN MODULEBUILDER DICTIONARIES */', '/* END MODULEBUILDER DICTIONARIES */');
+	$writeInfile = dolReplaceInFile($file, array($stringDic => $dicData."\n"));
+
+	return $writeInfile;
+}
+
+/**
+ * Creates a new dictionary table.
+ *
+ * for creating a new dictionary table in Dolibarr. It generates the necessary SQL code to define the table structure,
+ * including columns such as 'rowid', 'code', 'label', 'position', 'use_default', 'active', etc. The table name is constructed based on the provided $namedic parameter.
+ *
+ * @param string $modulename The lowercase name of the module for which the dictionary table is being created.
+ * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
+ * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
+ * @param array|null $dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
+ * @return void
+ */
+function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
+{
+	global $db, $langs;
+
+	if (empty($namedic)) {
+		setEventMessages($langs->trans("ErrorEmptyNameDic"), null, 'errors');
+		return;
+	}
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$modulename = strtolower($modulename);
+
+	if (empty($dictionnaires)) {
+		$dictionnaires = array('tabname' => array(), 'tablib' => array(), 'tabsql' => array(), 'tabsqlsort' => array(), 'tabfield' => array(), 'tabfieldvalue' => array(), 'tabfieldinsert' => array(), 'tabrowid' => array(), 'tabcond' => array(), 'tabhelp' => array());
+	}
+
+	$columns = array(
+		'rowid' => array('type' => 'integer(11)'),
+		'code' => array('type' => 'varchar(255) NOT NULL'),
+		'label' => array('type' => 'varchar(255) NOT NULL'),
+		'position' => array('type' => 'integer(11) NULL'),
+		'use_default' => array('type' => 'varchar(255) DEFAULT 1'),
+		'active' => array('type' => 'integer')
+	);
+
+
+	$primaryKey = 'rowid';
+	foreach ($columns as $key => $value) {
+		if ($key === 'rowid') {
+			$primaryKey = 'rowid';
+			break;
+		}
+		if (!array_key_exists('rowid', $columns)) {
+			$primaryKey = array_key_first($columns);
+			break;
+		}
+	}
+	// check if tablename exist in Database and create it if not
+	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.strtolower($namedic) . "'";
+	$checkTable = $db->query($query);
+	if ($checkTable && $db->num_rows($checkTable) > 0) {
+		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
+		return;
+	} else {
+		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "InnoDB");
+		if ($_results < 0) {
+			dol_print_error($db);
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorTableNotFound", $namedic), null, 'errors');
+		}
+	}
+
+	// rewrite dictionnary if
+	$dictionnaires['tabname'][] = strtolower($namedic);
+	$dictionnaires['tablib'][] = ucfirst(substr($namedic, 2));
+	$dictionnaires['tabsql'][] = 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.strtolower($namedic).' as f';
+	$dictionnaires['tabsqlsort'][] = (array_key_exists('label', $columns) ? 'label ASC' : '');
+	$dictionnaires['tabfield'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$dictionnaires['tabfieldvalue'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$dictionnaires['tabfieldinsert'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
+	$dictionnaires['tabrowid'][] = $primaryKey;
+	$dictionnaires['tabcond'][] = isModEnabled('$modulename');
+	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
+
+	// Build the dictionary string
+		$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
+	if ($writeInfile > 0) {
+		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
+	}
+}
+
+/**
+ * Generate Urls and add them to documentaion module
+ *
+ * @param string $file_api   filename or path of api
+ * @param string $file_doc   filename or path of documentation
+ * @return int               -1 if KO, 1 if OK, 0 if nothing change
+ */
+function writeApiUrlsInDoc($file_api, $file_doc)
+{
+	$error = 0;
+	if (!dol_is_file($file_api) || !dol_is_file($file_doc)) {
+		$error++;
+	}
+	$string = getFromFile($file_api, '/*begin methods CRUD*/', '/*end methods CRUD*/');
+	$extractUrls = explode("\n", $string);
+
+	// extract urls from file
+	$urlValues = [];
+	foreach ($extractUrls as $key => $line) {
+		$lineWithoutTabsSpaces = preg_replace('/^[\t\s]+/', '', $line);
+		if (strpos($lineWithoutTabsSpaces, '* @url') === 0) {
+			$urlValue = trim(substr($lineWithoutTabsSpaces, strlen('* @url')));
+			$urlValues[] = $urlValue;
+		}
+	}
+
+	// get urls by object
+	$str = $_SERVER['HTTP_HOST'].'/api/index.php/';
+	$groupedUrls = [];
+	foreach ($urlValues as $url) {
+		if (preg_match('/(?:GET|POST|PUT|DELETE) (\w+)s/', $url, $matches)) {
+			$objectName = $matches[1];
+			$url = $str.trim(strstr($url, ' '));
+			$groupedUrls[$objectName][] = $url;
+		}
+	}
+	if (empty($groupedUrls)) {
+		$error++;
+	}
+
+	// buil format asciidoc for urls in table
+	if (!$error) {
+		$asciiDocTable = "[options=\"header\"]\n|===\n|Objet | URLs\n";
+		foreach ($groupedUrls as $objectName => $urls) {
+			$urlsList = implode(" +\n*", $urls);
+			$asciiDocTable .= "|$objectName | \n*$urlsList +\n";
+		}
+		$asciiDocTable .= "|===\n";
+		$file_write = dolReplaceInFile($file_doc, array('__API_DOC__' => '__API_DOC__'."\n".$asciiDocTable));
+		if ($file_write < 0) {
+			return -1;
+		}
+		return 1;
+	}
+	return -1;
 }

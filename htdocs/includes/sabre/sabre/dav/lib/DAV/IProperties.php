@@ -23,8 +23,6 @@ interface IProperties extends INode
      *
      * To update specific properties, call the 'handle' method on this object.
      * Read the PropPatch documentation for more information.
-     *
-     * @param PropPatch $propPatch
      */
     public function propPatch(PropPatch $propPatch);
 

@@ -204,6 +204,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0c');
 
+		$test='/user/perms.php?id=1&action=addrights&entity=1&rights=123&confirm=yes&token=123456789&updatedmodulename=lmscoursetracking';
+		$result=testSqlAndScriptInject($test, 1);
+		print "test=".$test." result=".$result."\n";
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject with a valid url');
+
 		// Should detect attack
 		$expectedresult=1;
 
@@ -335,6 +340,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="<a onpointerdown=alert(document.domain)>XSS</a>";
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject lll');
+
+		$test='<a onscrollend=alert(1) style="display:block;overflow:auto;border:1px+dashed;width:500px;height:100px;"><br><br><br><br><br><span+id=x>test</span></a>';	// Add the char %F6 into the variable
+		$result=testSqlAndScriptInject($test, 0);
+		//print "test=".$test." result=".$result."\n";
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject mmm');
+
 
 		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$result=testSqlAndScriptInject($test, 0);	// result must be 0
@@ -562,8 +573,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');	// With some PHP and libxml version, we got this when parsong invalid HTML
-		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');		// On other we got a HTML that has been cleaned
+		$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');					// With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
+		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');	// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
 
 		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);

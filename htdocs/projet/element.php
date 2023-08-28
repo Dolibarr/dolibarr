@@ -6,10 +6,9 @@
  * Copyright (C) 2015-2021  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021-2023  Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2023      	Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- *
+ * Copyright (C) 2023      	Frédéric France      wfrederic.france@netlogic.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -38,71 +37,72 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (isModEnabled('stock')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+if (isModEnabled('agenda')) {
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (isModEnabled("propal")) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (isModEnabled('banque')) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+}
+if (isModEnabled('categorie')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
+if (isModEnabled('commande')) {
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+}
+if (isModEnabled('contrat')) {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+}
+if (isModEnabled('deplacement')) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+}
+if (isModEnabled('don')) {
+	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+}
+if (isModEnabled('expedition')) {
+	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+}
+if (isModEnabled('expensereport')) {
+	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
 if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (isModEnabled('commande')) {
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-}
-if (isModEnabled('supplier_proposal')) {
-	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-}
-if (isModEnabled("supplier_invoice")) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-}
-if (isModEnabled("supplier_order")) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-}
-if (isModEnabled('contrat')) {
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-}
 if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
-if (isModEnabled("expedition")) {
-	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-}
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
-if (isModEnabled('expensereport')) {
-	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-}
-if (isModEnabled('agenda')) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-}
-if (isModEnabled('don')) {
-	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-}
-if (!empty($conf->loan->enabled)) {
+if (isModEnabled('loan')) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
-}
-if (isModEnabled('stock')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-}
-if (isModEnabled('tax')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-}
-if (isModEnabled("banque")) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-}
-if (!empty($conf->salaries->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
-}
-if (isModEnabled('categorie')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 if (isModEnabled('mrp')) {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 }
+if (isModEnabled('propal')) {
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+}
+if (isModEnabled('salaries')) {
+	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+}
+if (isModEnabled('stock')) {
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+}
+if (isModEnabled('supplier_invoice')) {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+}
+if (isModEnabled('supplier_order')) {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+}
+if (isModEnabled('supplier_proposal')) {
+	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+}
+if (isModEnabled('tax')) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+}
+
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -127,10 +127,10 @@ if (isModEnabled('expensereport')) {
 if (isModEnabled('don')) {
 	$langs->load("donations");
 }
-if (!empty($conf->loan->enabled)) {
+if (isModEnabled('loan')) {
 	$langs->load("loan");
 }
-if (!empty($conf->salaries->enabled)) {
+if (isModEnabled('salaries')) {
 	$langs->load("salaries");
 }
 if (isModEnabled('mrp')) {
@@ -378,7 +378,8 @@ $listofreferent = array(
 		'buttonnew'=>'AddWarehouse',
 		'project_field'=>'fk_project',
 		'testnew'=>$user->hasRight('stock', 'creer'),
-		'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'lire') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT)),
+		'test'=>isModEnabled('stock') && $user->hasRight('stock', 'lire') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT)
+	),
 	'propal'=>array(
 		'name'=>"Proposals",
 		'title'=>"ListProposalsAssociatedProject",
@@ -389,7 +390,8 @@ $listofreferent = array(
 		'lang'=>'propal',
 		'buttonnew'=>'AddProp',
 		'testnew'=>$user->hasRight('propal', 'creer'),
-		'test'=>!empty($conf->propal->enabled) && $user->hasRight('propal', 'lire')),
+		'test'=>isModEnabled('propal') && $user->hasRight('propal', 'lire')
+	),
 	'order'=>array(
 		'name'=>"CustomersOrders",
 		'title'=>"ListOrdersAssociatedProject",
@@ -400,7 +402,8 @@ $listofreferent = array(
 		'lang'=>'orders',
 		'buttonnew'=>'CreateOrder',
 		'testnew'=>$user->hasRight('commande', 'creer'),
-		'test'=>!empty($conf->commande->enabled) && $user->hasRight('commande', 'lire')),
+		'test'=>isModEnabled('commande') && $user->hasRight('commande', 'lire')
+	),
 	'invoice'=>array(
 		'name'=>"CustomersInvoices",
 		'title'=>"ListInvoicesAssociatedProject",
@@ -412,7 +415,8 @@ $listofreferent = array(
 		'lang'=>'bills',
 		'buttonnew'=>'CreateBill',
 		'testnew'=>$user->hasRight('facture', 'creer'),
-		'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
+		'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')
+	),
 	'invoice_predefined'=>array(
 		'name'=>"PredefinedInvoices",
 		'title'=>"ListPredefinedInvoicesAssociatedProject",
@@ -423,7 +427,8 @@ $listofreferent = array(
 		'lang'=>'bills',
 		'buttonnew'=>'CreateBill',
 		'testnew'=>$user->hasRight('facture', 'creer'),
-		'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
+		'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')
+	),
 	'proposal_supplier'=>array(
 		'name'=>"SupplierProposals",
 		'title'=>"ListSupplierProposalsAssociatedProject",
@@ -434,7 +439,8 @@ $listofreferent = array(
 		'lang'=>'supplier_proposal',
 		'buttonnew'=>'AddSupplierProposal',
 		'testnew'=>$user->hasRight('supplier_proposal', 'creer'),
-		'test'=>!empty($conf->supplier_proposal->enabled) && $user->hasRight('supplier_proposal', 'lire')),
+		'test'=>isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')
+	),
 	'order_supplier'=>array(
 		'name'=>"SuppliersOrders",
 		'title'=>"ListSupplierOrdersAssociatedProject",
@@ -445,7 +451,8 @@ $listofreferent = array(
 		'lang'=>'suppliers',
 		'buttonnew'=>'AddSupplierOrder',
 		'testnew'=>$user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'),
-		'test'=>!empty($conf->supplier_order->enabled) && $user->hasRight('fournisseur', 'commande', 'lire') || $user->hasRight('supplier_order', 'lire')),
+		'test'=>isModEnabled('supplier_order') && $user->hasRight('fournisseur', 'commande', 'lire') || $user->hasRight('supplier_order', 'lire')
+	),
 	'invoice_supplier'=>array(
 		'name'=>"BillsSuppliers",
 		'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -457,7 +464,8 @@ $listofreferent = array(
 		'lang'=>'suppliers',
 		'buttonnew'=>'AddSupplierInvoice',
 		'testnew'=>$user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'),
-		'test'=>!empty($conf->supplier_invoice->enabled) && $user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire')),
+		'test'=>isModEnabled('supplier_invoice') && $user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire')
+	),
 	'contract'=>array(
 		'name'=>"Contracts",
 		'title'=>"ListContractAssociatedProject",
@@ -468,7 +476,8 @@ $listofreferent = array(
 		'lang'=>'contracts',
 		'buttonnew'=>'AddContract',
 		'testnew'=>$user->hasRight('contrat', 'creer'),
-		'test'=>!empty($conf->contrat->enabled) && $user->hasRight('contrat', 'lire')),
+		'test'=>isModEnabled('contrat') && $user->hasRight('contrat', 'lire')
+	),
 	'intervention'=>array(
 		'name'=>"Interventions",
 		'title'=>"ListFichinterAssociatedProject",
@@ -481,7 +490,8 @@ $listofreferent = array(
 		'lang'=>'interventions',
 		'buttonnew'=>'AddIntervention',
 		'testnew'=>$user->hasRight('ficheinter', 'creer'),
-		'test'=>!empty($conf->ficheinter->enabled) && $user->hasRight('ficheinter', 'lire')),
+		'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')
+	),
 	'shipping'=>array(
 		'name'=>"Shippings",
 		'title'=>"ListShippingAssociatedProject",
@@ -492,7 +502,8 @@ $listofreferent = array(
 		'lang'=>'sendings',
 		'buttonnew'=>'CreateShipment',
 		'testnew'=>0,
-		'test'=>isModEnabled('expedition') && $user->hasRight('expedition', 'lire')),
+		'test'=>isModEnabled('expedition') && $user->hasRight('expedition', 'lire')
+	),
 	'mrp'=>array(
 		'name'=>"MO",
 		'title'=>"ListMOAssociatedProject",
@@ -505,7 +516,8 @@ $listofreferent = array(
 		'testnew'=>$user->hasRight('mrp', 'write'),
 		'project_field'=>'fk_project',
 		'nototal'=>1,
-		'test'=>!empty($conf->mrp->enabled) && $user->hasRight('mrp', 'read')),
+		'test'=>isModEnabled('mrp') && $user->hasRight('mrp', 'read')
+	),
 	'trip'=>array(
 		'name'=>"TripsAndExpenses",
 		'title'=>"ListExpenseReportsAssociatedProject",
@@ -518,7 +530,8 @@ $listofreferent = array(
 		'lang'=>'trips',
 		'buttonnew'=>'AddTrip',
 		'testnew'=>$user->hasRight('deplacement', 'creer'),
-		'test'=>!empty($conf->deplacement->enabled) && $user->hasRight('deplacement', 'lire')),
+		'test'=>isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
+	),
 	'expensereport'=>array(
 		'name'=>"ExpenseReports",
 		'title'=>"ListExpenseReportsAssociatedProject",
@@ -531,7 +544,8 @@ $listofreferent = array(
 		'lang'=>'trips',
 		'buttonnew'=>'AddTrip',
 		'testnew'=>$user->hasRight('expensereport', 'creer'),
-		'test'=>!empty($conf->expensereport->enabled) && $user->hasRight('expensereport', 'lire')),
+		'test'=>isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')
+	),
 	'donation'=>array(
 		'name'=>"Donation",
 		'title'=>"ListDonationsAssociatedProject",
@@ -544,7 +558,8 @@ $listofreferent = array(
 		'lang'=>'donations',
 		'buttonnew'=>'AddDonation',
 		'testnew'=>$user->hasRight('don', 'creer'),
-		'test'=>!empty($conf->don->enabled) && $user->hasRight('don', 'lire')),
+		'test'=>isModEnabled('don') && $user->hasRight('don', 'lire')
+	),
 	'loan'=>array(
 		'name'=>"Loan",
 		'title'=>"ListLoanAssociatedProject",
@@ -557,7 +572,8 @@ $listofreferent = array(
 		'lang'=>'loan',
 		'buttonnew'=>'AddLoan',
 		'testnew'=>$user->hasRight('loan', 'write'),
-		'test'=>!empty($conf->loan->enabled) && $user->hasRight('loan', 'read')),
+		'test'=>isModEnabled('loan') && $user->hasRight('loan', 'read')
+	),
 	'chargesociales'=>array(
 		'name'=>"SocialContribution",
 		'title'=>"ListSocialContributionAssociatedProject",
@@ -570,7 +586,8 @@ $listofreferent = array(
 		'lang'=>'compta',
 		'buttonnew'=>'AddSocialContribution',
 		'testnew'=>$user->hasRight('tax', 'charges', 'lire'),
-		'test'=>!empty($conf->tax->enabled) && $user->hasRight('tax', 'charges', 'lire')),
+		'test'=>isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')
+	),
 	'project_task'=>array(
 		'name'=>"TaskTimeSpent",
 		'title'=>"ListTaskTimeUserProject",
@@ -582,7 +599,8 @@ $listofreferent = array(
 		'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 		'buttonnew'=>'AddTimeSpent',
 		'testnew'=>$user->hasRight('project', 'creer'),
-		'test'=>!empty($conf->project->enabled) && $user->hasRight('projet', 'lire') && empty($conf->global->PROJECT_HIDE_TASKS)),
+		'test'=>isModEnabled('project') && $user->hasRight('projet', 'lire') && empty($conf->global->PROJECT_HIDE_TASKS)
+	),
 	'stock_mouvement'=>array(
 		'name'=>"MouvementStockAssociated",
 		'title'=>"ListMouvementStockProject",
@@ -591,7 +609,8 @@ $listofreferent = array(
 		'datefieldname'=>'datem',
 		'margin'=>'minus',
 		'disableamount'=>0,
-		'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)),
+		'test'=>isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)
+	),
 	'salaries'=>array(
 		'name'=>"Salaries",
 		'title'=>"ListSalariesAssociatedProject",
@@ -604,7 +623,8 @@ $listofreferent = array(
 		'lang'=>'salaries',
 		'buttonnew'=>'AddSalary',
 		'testnew'=>$user->hasRight('salaries', 'write'),
-		'test'=>!empty($conf->salaries->enabled) && $user->hasRight('salaries', 'read')),
+		'test'=>isModEnabled('salaries') && $user->hasRight('salaries', 'read')
+	),
 	'variouspayment'=>array(
 		'name'=>"VariousPayments",
 		'title'=>"ListVariousPaymentsAssociatedProject",
@@ -617,7 +637,8 @@ $listofreferent = array(
 		'lang'=>'banks',
 		'buttonnew'=>'AddVariousPayment',
 		'testnew'=>$user->hasRight('banque', 'modifier'),
-		'test'=>isModEnabled("banque") && $user->hasRight('banque', 'lire') && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
+		'test'=>isModEnabled("banque") && $user->hasRight('banque', 'lire') && empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)
+	),
 		/* No need for this, available on dedicated tab "Agenda/Events"
 		 'agenda'=>array(
 		 'name'=>"Agenda",
@@ -734,12 +755,12 @@ foreach ($listofreferent as $key => $value) {
 	}
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
-	$margin = empty($value['margin']) ? 0 : $value['margin'];
+	$margin = empty($value['margin']) ? '' : $value['margin'];
 	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
-		if ($margin == 'add') {
+		if ($margin === 'add') {
 			$tooltiponprofitplus .= ' &gt; '.$name." (+)<br>\n";
 		}
-		if ($margin == 'minus') {
+		if ($margin === 'minus') {
 			$tooltiponprofitminus .= ' &gt; '.$name." (-)<br>\n";
 		}
 	}
@@ -833,13 +854,8 @@ foreach ($listofreferent as $key => $value) {
 				} elseif ($tablename == 'stock_mouvement') {
 					$total_ht_by_line = $element->price * abs($element->qty);
 				} elseif ($tablename == 'projet_task') {
-					if ($idofelementuser) {
-						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
-						$total_ht_by_line = price2num($tmp['amount'], 'MT');
-					} else {
-						$tmp = $element->getSumOfAmount('', $dates, $datee);
-						$total_ht_by_line = price2num($tmp['amount'], 'MT');
-					}
+					$tmp = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee);
+					$total_ht_by_line = price2num($tmp['amount'], 'MT');
 				} elseif ($key == 'loan') {
 					if ((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)) {
 						// Get total loan
@@ -1324,7 +1340,7 @@ foreach ($listofreferent as $key => $value) {
 						print " - ".dol_print_date($element->datef, 'dayhour');
 					}
 				} elseif (in_array($tablename, array('projet_task'))) {
-					$tmpprojtime = $element->getSumOfAmount($elementuser, $dates, $datee); // $element is a task. $elementuser may be empty
+					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee); // $element is a task. $elementuser may be empty
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
 					print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
 					print '</a>';
@@ -1377,7 +1393,7 @@ foreach ($listofreferent as $key => $value) {
 					} elseif ($tablename == 'stock_mouvement') {
 						$total_ht_by_line = $element->price * abs($element->qty);
 					} elseif (in_array($tablename, array('projet_task'))) {
-						if (!empty($conf->salaries->enabled)) {
+						if (isModEnabled('salaries')) {
 							// TODO Permission to read daily rate to show value
 							$total_ht_by_line = price2num($tmpprojtime['amount'], 'MT');
 							if ($tmpprojtime['nblinesnull'] > 0) {
@@ -1431,7 +1447,7 @@ foreach ($listofreferent as $key => $value) {
 					} elseif ($tablename == 'stock_mouvement') {
 						$total_ttc_by_line = $element->price * abs($element->qty);
 					} elseif ($tablename == 'projet_task') {
-						if (!empty($conf->salaries->enabled)) {
+						if (isModEnabled('salaries')) {
 							// TODO Permission to read daily rate
 							$defaultvat = get_default_tva($mysoc, $mysoc);
 							$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
@@ -1553,7 +1569,7 @@ foreach ($listofreferent as $key => $value) {
 				if (empty($value['disableamount'])) {
 					if ($key == 'loan') {
 						print $langs->trans("Total").' '.$langs->trans("LoanCapital").' : '.price($total_ttc);
-					} elseif ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) {
+					} elseif ($tablename != 'projet_task' || isModEnabled('salaries')) {
 						print ''.$langs->trans("TotalHT").' : '.price($total_ht);
 					}
 				}
@@ -1564,7 +1580,7 @@ foreach ($listofreferent as $key => $value) {
 				if (empty($value['disableamount'])) {
 					if ($key == 'loan') {
 						print $langs->trans("Total").' '.$langs->trans("RemainderToPay").' : '.price($total_ttc);
-					} elseif ($tablename != 'projet_task' || !empty($conf->salaries->enabled)) {
+					} elseif ($tablename != 'projet_task' || isModEnabled('salaries')) {
 						print $langs->trans("TotalTTC").' : '.price($total_ttc);
 					}
 				}

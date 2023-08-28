@@ -41,7 +41,7 @@ class File extends Node implements DAV\PartialUpdate\IPatchSupport
      *
      * The second argument is the type of update we're doing.
      * This is either:
-     * * 1. append
+     * * 1. append (default)
      * * 2. update based on a start byte
      * * 3. update based on an end byte
      *;
@@ -74,6 +74,9 @@ class File extends Node implements DAV\PartialUpdate\IPatchSupport
             case 3:
                 $f = fopen($this->path, 'c');
                 fseek($f, $offset, SEEK_END);
+                break;
+            default:
+                $f = fopen($this->path, 'a');
                 break;
         }
         if (is_string($data)) {

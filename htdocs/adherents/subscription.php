@@ -152,7 +152,7 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 	}
 }
 
-if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->hasRight('user', 'user', 'creer'))) {
+if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self', 'creer') || $user->hasRight('user', 'user', 'creer'))) {
 	$error = 0;
 	if (!$user->hasRight('user', 'user', 'creer')) {    // If can edit only itself user, we can link to itself only
 		if (GETPOST("userid", 'int') != $user->id && GETPOST("userid", 'int') != $object->user_id) {
@@ -580,7 +580,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Tags / Categories
-if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	print '<tr><td>'.$langs->trans("Categories").'</td>';
 	print '<td colspan="2">';
 	print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
@@ -604,7 +604,8 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 }
 
 // Public
-print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
+print '<tr><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 // Other attributes
 $cols = 2;

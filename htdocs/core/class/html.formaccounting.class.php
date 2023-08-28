@@ -45,6 +45,12 @@ class FormAccounting extends Form
 	public $error = '';
 
 	/**
+	 * @var int Nb of accounts found
+	 */
+	public $nbaccounts;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param		DoliDB		$db      Database handler
@@ -390,7 +396,7 @@ class FormAccounting extends Form
 
 			$num_rows = $this->db->num_rows($resql);
 
-			if ($num_rows == 0 && (empty(getDolGlobalInt('CHARTOFACCOUNTS')) || getDolGlobalInt('CHARTOFACCOUNTS') < 0)) {
+			if ($num_rows == 0 && getDolGlobalInt('CHARTOFACCOUNTS') <= 0) {
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {
@@ -434,7 +440,10 @@ class FormAccounting extends Form
 			}
 		}
 
+
 		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+
+		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
 
 		return $out;
 	}
