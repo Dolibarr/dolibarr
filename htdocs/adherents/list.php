@@ -41,6 +41,10 @@ $langs->loadLangs(array("members", "companies", "categories"));
 
 
 // Get parameters
+$catid 		= GETPOST("catid", 'int');
+$socid 		= GETPOST('socid', 'int');
+
+// action+display parameters
 $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -74,9 +78,6 @@ $search_email 		= GETPOST("search_email", 'alpha');
 $search_categ 		= GETPOST("search_categ", 'int');
 $search_morphy 		= GETPOST("search_morphy", 'alpha');
 $search_import_key  = trim(GETPOST("search_import_key", 'alpha'));
-
-$catid 		= GETPOST("catid", 'int');
-$socid 		= GETPOST('socid', 'int');
 
 $search_filter 		= GETPOST("search_filter", 'alpha');
 $search_status 		= GETPOST("search_status", 'intcomma');  // statut
@@ -115,6 +116,7 @@ if (!$sortfield) {
 	$sortfield = ($filter == 'outofdate' ? "d.datefin" : "d.lastname");
 }
 
+// Initialize objects
 $object = new Adherent($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
