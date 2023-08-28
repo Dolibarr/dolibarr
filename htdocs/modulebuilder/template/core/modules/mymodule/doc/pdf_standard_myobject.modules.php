@@ -197,7 +197,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$realpatharray = array();
 		$this->atleastonephoto = false;
 		/*
-		if (!empty(getDolGlobalString('MAIN_GENERATE_MYOBJECT_WITH_PICTURE')))
+		if (getDolGlobalString('MAIN_GENERATE_MYOBJECT_WITH_PICTURE'))
 		{
 			$objphoto = new Product($this->db);
 
@@ -289,7 +289,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 				$heightforinfotot = 50; // Height reserved to output the info and total part and payment part
 				$heightforfreetext = (getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5); // Height reserved to output the free text on last page
-				$heightforfooter = $this->marge_basse + (empty(getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
+				$heightforfooter = $this->marge_basse + ((getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')=='') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -298,7 +298,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				// Set path to the background PDF File
-				if (!empty(getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'))) {
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
@@ -320,7 +320,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
 				// If user has no certificate, we try to take the company one
 				if (!$cert) {
-					$cert = empty(getDolGlobalString('CERTIFICATE_CRT')) ? '' : getDolGlobalString('CERTIFICATE_CRT');
+					$cert = getDolGlobalString('CERTIFICATE_CRT');
 				}
 				// If a certificate is found
 				if ($cert) {
@@ -757,7 +757,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 				// Display payment area
 				/*
-				if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && empty(getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS')))
+				if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && (getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS')==''))
 				{
 					$posy = $this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
 				}
@@ -783,7 +783,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty(getDolGlobalString('MAIN_UMASK'))) {
+				if (getDolGlobalString('MAIN_UMASK')) {
 					@chmod($file, octdec(getDolGlobalString('MAIN_UMASK')));
 				}
 
@@ -848,14 +848,14 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 		if (empty($hidetop)) {
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
-			if (!empty(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) && is_object($outputlangsbis)) {
+			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 				$titre .= ' - '.$outputlangsbis->transnoentities("AmountInCurrency", $outputlangsbis->transnoentitiesnoconv("Currency".$currency));
 			}
 
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
-			if (!empty(getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR'))) {
+			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
 				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
@@ -912,7 +912,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (empty(getDolGlobalString('PDF_DISABLE_MYCOMPANY_LOGO'))) {
+		if (getDolGlobalString('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
 				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
@@ -942,7 +942,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("PdfTitle");
-		if (!empty(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) && is_object($outputlangsbis)) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - ';
 			$title .= $outputlangsbis->transnoentities("PdfTitle");
 		}
@@ -996,7 +996,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$pdf->SetTextColor(0, 0, 60);
 
 		$title = $outputlangs->transnoentities("Date");
-		if (!empty(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) && is_object($outputlangsbis)) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - '.$outputlangsbis->transnoentities("Date");
 		}
 		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs), '', 'R');
