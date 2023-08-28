@@ -674,6 +674,16 @@ abstract class CommonObject
 	public $nb = array();
 
 	/**
+	 * @var array array of status string
+	 */
+	public $statuts = array();
+
+	/**
+	 * @var array array of short status string
+	 */
+	public $statuts_short = array();
+
+	/**
 	 * @var string output
 	 */
 	public $output;
