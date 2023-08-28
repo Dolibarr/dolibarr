@@ -926,47 +926,38 @@ class Target extends CommonObject
 	{
 		global $langs, $conf;
 
-		if (empty($conf->global->WEBHOOK_TARGET_ADDON)) {
-			$conf->global->WEBHOOK_TARGET_ADDON = 'mod_target_standard';
+		$mybool = false;
+
+		$classname = getDolGlobalString('WEBHOOK_TARGET_ADDON', 'mod_target_standard');
+		$file = $classname.".php";
+
+		// Include file with class
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$dir = dol_buildpath($reldir."core/modules/webhook/");
+
+			// Load file with numbering class (if found)
+			$mybool |= @include_once $dir.$file;
 		}
 
-		if (!empty($conf->global->WEBHOOK_TARGET_ADDON)) {
-			$mybool = false;
+		if ($mybool === false) {
+			dol_print_error('', "Failed to include file ".$file);
+			return '';
+		}
 
-			$file = $conf->global->WEBHOOK_TARGET_ADDON.".php";
-			$classname = $conf->global->WEBHOOK_TARGET_ADDON;
+		if (class_exists($classname)) {
+			$obj = new $classname();
+			$numref = $obj->getNextValue($this);
 
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/webhook/");
-
-				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
-			}
-
-			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
+			if ($numref != '' && $numref != '-1') {
+				return $numref;
 			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
 		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
+			print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
 			return "";
 		}
 	}
