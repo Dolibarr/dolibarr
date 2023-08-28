@@ -251,7 +251,7 @@ class MyObject extends CommonObject
 
 		$this->db = $db;
 
-		if (empty(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID')) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -1035,11 +1035,11 @@ class MyObject extends CommonObject
 		global $langs, $conf;
 		$langs->load("mymodule@mymodule");
 
-		if (empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON'))) {
+		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON')=='') {
 			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';
 		}
 
-		if (!empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON'))) {
+		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('MYMODULE_MYOBJECT_ADDON').".php";
@@ -1105,7 +1105,7 @@ class MyObject extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty(getDolGlobalString('MYOBJECT_ADDON_PDF'))) {
+			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
 				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
 			}
 		}
