@@ -184,13 +184,8 @@ class CompanyBankAccount extends Account
 	public $starting_date;
 	public $total_amount_of_all_payments;
 
-	public $rum;
-	public $date_rum;
 
-	public $stripe_card_ref;	// ID of BAN into an external payment system
-	public $stripe_account;		// Account ID in the external payment system
 	public $ext_payment_site;	// Name of the external payment system ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
- 	public $status;
 	public $comment;
 	public $ipaddress;
 
@@ -201,6 +196,13 @@ class CompanyBankAccount extends Account
 	 * @var string
 	 */
 	public $stripe_account;
+
+	/**
+	 * ID of BAN into an external payment system
+	 *
+	 * @var string
+	 */
+	public $stripe_card_ref;
 
 	/**
 	 * Date modification record (tms)
@@ -419,7 +421,7 @@ class CompanyBankAccount extends Account
 		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site";
-    $sql .= " ,last_main_doc";
+		$sql .= " ,last_main_doc";
 		$sql .= " ,model_pdf";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
@@ -465,9 +467,8 @@ class CompanyBankAccount extends Account
 				$this->stripe_card_ref = $obj->stripe_card_ref;		// External system payment mode ID
 				$this->stripe_account  = $obj->stripe_account;		// External system customer ID
 				$this->ext_payment_site= $obj->ext_payment_site;	// External system name ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
- 				$this->last_main_doc   = $obj->last_main_doc;
+				$this->last_main_doc   = $obj->last_main_doc;
 				$this->model_pdf   	   = $obj->model_pdf;
-
 			}
 			$this->db->free($resql);
 
