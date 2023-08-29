@@ -1797,6 +1797,7 @@ class Product extends CommonObject
 				$this->fourn_multicurrency_id          = $obj->fk_multicurrency;
 				$this->fourn_multicurrency_code        = $obj->multicurrency_code;
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $this->packaging = $obj->packaging;
+
 				$result = $obj->fk_product;
 				return $result;
 			} else { // If not found
@@ -1807,7 +1808,10 @@ class Product extends CommonObject
 				$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
 				$sql .= " pfp.packaging";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-				$sql .= " WHERE pfp.fk_product = ".$product_id;
+				$sql .= " WHERE 1 = 1";
+                if ($product_id > 0) {
+					$sql .= " AND pfp.fk_product = ".((int) $product_id);
+                }
 				if ($fourn_ref != 'none') { $sql .= " AND pfp.ref_fourn = '".$this->db->escape($fourn_ref)."'";
 				}
 				if ($fk_soc > 0) { $sql .= " AND pfp.fk_soc = ".$fk_soc;
@@ -2045,7 +2049,8 @@ class Product extends CommonObject
 				$this->db->commit();
 			} else {
 				$this->db->rollback();
-				dol_print_error($this->db);
+				$this->error = $this->db->lasterror();
+				return -1;
 			}
 		}
 
@@ -5028,14 +5033,16 @@ class Product extends CommonObject
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled))
 		{
+			// Case module reception is not used
 			$filterStatus = '4';
 			if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
 			$result = $this->load_stats_reception(0, $filterStatus, 1);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled))
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && !empty($conf->reception->enabled))
 		{
+			// Case module reception is used
 			$filterStatus = '4';
 			if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
 			$result = $this->load_stats_reception(0, $filterStatus, 1); // Use same tables than when module reception is not used.

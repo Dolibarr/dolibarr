@@ -4944,20 +4944,18 @@ function price2num($amount, $rounding = '', $option = 0)
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
 			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-		}
-		elseif ($rounding == 'MT') {
+		} elseif ($rounding == 'MT') {
 			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
-		}
-		elseif ($rounding == 'MS') {
-			$nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
-		}
-		elseif ($rounding == 'CU') {
+		} elseif ($rounding == 'MS') {
+			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
+		} elseif ($rounding == 'CU') {
 			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_UNIT, 8);	// TODO Use param of currency
-		}
-		elseif ($rounding == 'CT') {
+		} elseif ($rounding == 'CT') {
 			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);		// TODO Use param of currency
+		} elseif (is_numeric($rounding)) {
+			$nbofdectoround = $rounding;
 		}
-		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
+
 		//print " RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) $amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';

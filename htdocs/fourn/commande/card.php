@@ -787,8 +787,7 @@ if (empty($reshook))
 		} else {
 			$db->rollback();
 
-			dol_print_error($db, $object->error);
-			exit;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -800,6 +799,8 @@ if (empty($reshook))
 		$result = $object->deleteline($lineid);
 		if ($result > 0)
 		{
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';

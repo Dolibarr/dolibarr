@@ -2648,7 +2648,7 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	// If bank module is not used
-	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->status == ExpenseReport::STATUS_APPROVED)
+	if (($user->rights->expensereport->to_paid && empty($conf->banque->enabled)) && $object->status == ExpenseReport::STATUS_APPROVED)
 	{
 		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
 		if ($object->paid == 0)

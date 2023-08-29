@@ -204,6 +204,7 @@ if (!empty($conf->projet->enabled))
 		}
 	} else {
 		if (!empty($object->fk_project)) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
 			$morehtmlref .= $proj->getNomUrl(1);

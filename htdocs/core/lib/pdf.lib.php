@@ -1271,7 +1271,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$textwasmodified = ($note == $prodser->note);
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasmodified || $translatealsoifmodified))  $note = $prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
-	} elseif ($object->element == 'facture' || $object->element == 'facturefourn') {
+	} elseif (($object->element == 'facture' || $object->element == 'facturefourn') && preg_match('/^\(DEPOSIT\).+/', $desc)) { // We must not replace '(DEPOSIT)' when it is alone, it will be translated and detailed later
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
@@ -1927,7 +1927,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			if ($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)
 			{
 				$prev_progress = 0;
-				if (method_exists($object, 'get_prev_progress'))
+				if (method_exists($object->lines[$i], 'get_prev_progress'))
 				{
 			 		$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}

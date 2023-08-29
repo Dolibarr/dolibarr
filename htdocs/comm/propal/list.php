@@ -272,9 +272,9 @@ if ($action == 'validate') {
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
+			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_DRAFT) {
-					if ($tmpproposal->valid($user)) {
+					if ($tmpproposal->valid($user) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
 					} else {
 						setEventMessage($langs->trans('CantBeValidated'), 'errors');
@@ -285,7 +285,7 @@ if ($action == 'validate') {
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}
@@ -305,14 +305,14 @@ if ($action == "sign") {
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
+			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
 					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;
 
-					if ($tmpproposal->update($user)) {
+					if ($tmpproposal->update($user) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 					} else {
-						dol_print_error($db);
+						setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
@@ -320,7 +320,7 @@ if ($action == "sign") {
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}

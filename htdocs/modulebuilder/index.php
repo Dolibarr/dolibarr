@@ -3008,7 +3008,7 @@ if ($module == 'initmodule')
 						print '</td>';
 
 						print '<td>';
-						print $perm[1];
+						print $langs->trans($perm[1]);
 						print '</td>';
 
 						print '<td>';

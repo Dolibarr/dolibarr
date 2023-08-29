@@ -132,7 +132,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 if ($sref) $sql .= natural_search('cf.ref', $sref);
 if ($snom) $sql .= natural_search('s.nom', $snom);
-if ($suser) $sql .= natural_search('u.login', $suser);
+if ($suser) $sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $suser);
 if ($sttc) $sql .= natural_search('cf.total_ttc', $sttc, 1);
 $sql .= dolSqlDateFilter('cf.date_creation', $search_dateday, $search_datemonth, $search_dateyear);
 if ($sall) $sql .= natural_search(array('cf.ref', 'cf.note'), $sall);
