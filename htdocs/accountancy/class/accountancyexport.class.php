@@ -882,7 +882,7 @@ class AccountancyExport
 				print $date_document . $separator;
 
 				// FEC:CompteNum
-				print $line->numero_compte . $separator;
+				print length_accountg($line->numero_compte) . $separator;
 
 				// FEC:CompteLib
 				print dol_string_unaccent($line->label_compte) . $separator;
