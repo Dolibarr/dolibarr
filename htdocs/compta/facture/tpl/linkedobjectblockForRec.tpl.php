@@ -37,7 +37,6 @@ $langs->load("bills");
 
 $total = 0;
 $ilink = 0;
-
 foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
 
 	$trclass = 'oddeven';
