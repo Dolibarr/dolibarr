@@ -605,3 +605,7 @@ SituationTotalProgress=Avancement total %d %%
 SearchUnpaidInvoicesWithDueDate=Rechercher les factures impayées avec date d'échéance = %s
 NoPaymentAvailable=Aucun paiement disponible pour %s
 PaymentRegisteredAndInvoiceSetToPaid=Paiement enregistré et facture %s passée à payée
+MentionCategoryOfOperations=Catégorie d'opérations
+MentionCategoryOfOperations0=Livraison de marchandises
+MentionCategoryOfOperations1=Prestation de services
+MentionCategoryOfOperations2=Mixte - Livraison de biens & prestation de services
