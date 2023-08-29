@@ -89,8 +89,7 @@ if ($object->element == 'mo') {
 
 	$total = 0;
 	$ilink = 0;
-
-foreach ($linkedObjectBlock as $key => $objectlink) {
+	foreach ($linkedObjectBlock as $key => $objectlink) {
 		$ilink++;
 
 		$trclass = 'oddeven';
