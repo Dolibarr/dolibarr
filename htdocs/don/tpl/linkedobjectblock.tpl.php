@@ -51,7 +51,8 @@ print '</td>';
 print '<td class="right">'.$objectlink->getLibStatut(3).'</td>';
 print '</tr>';
 
-if (count($linkedObjectBlock)) {	?>
+if (count($linkedObjectBlock)) {
+	?>
 	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>

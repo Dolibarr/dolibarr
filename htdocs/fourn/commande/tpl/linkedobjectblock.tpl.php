@@ -59,7 +59,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	</tr>
 	<?php
 }
-if (count($linkedObjectBlock)) {	?>
+if (count($linkedObjectBlock)) {
+	?>
 	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>
