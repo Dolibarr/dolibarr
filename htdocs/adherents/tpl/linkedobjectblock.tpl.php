@@ -32,7 +32,6 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("members");
 
 $total = 0;
-
 foreach ($linkedObjectBlock as $key => $objectlink) {	echo '<tr class="oddeven">';
 	echo '<td>'.$langs->trans("Subscription").'</td>';
 	echo '<td class="nowraponall">'.$objectlink->getNomUrl(1).'</td>';

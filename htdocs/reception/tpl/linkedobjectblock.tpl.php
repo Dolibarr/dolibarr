@@ -1,4 +1,4 @@
-<?php
+*<?php
 /* Copyright (C) 2012 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2014 Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
@@ -41,7 +41,8 @@ $langs->load("receptions");
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
 
 $total = 0; $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
+foreach ($linkedObjectBlock as $key => $objectlink) {
+	$ilink++;
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {

@@ -35,7 +35,8 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("mymodule");
 
 $total = 0; $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink) {	$ilink++;
+foreach ($linkedObjectBlock as $key => $objectlink) {
+	$ilink++;
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
