@@ -1157,3 +1157,60 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}
 }
+
+/**
+ * Generate Urls and add them to documentaion module
+ *
+ * @param string $file_api   filename or path of api
+ * @param string $file_doc   filename or path of documentation
+ * @return int               -1 if KO, 1 if OK, 0 if nothing change
+ */
+function writeApiUrlsInDoc($file_api, $file_doc)
+{
+	$error = 0;
+	if (!dol_is_file($file_api) || !dol_is_file($file_doc)) {
+		$error++;
+	}
+	$string = getFromFile($file_api, '/*begin methods CRUD*/', '/*end methods CRUD*/');
+	$extractUrls = explode("\n", $string);
+
+	// extract urls from file
+	$urlValues = [];
+	foreach ($extractUrls as $key => $line) {
+		$lineWithoutTabsSpaces = preg_replace('/^[\t\s]+/', '', $line);
+		if (strpos($lineWithoutTabsSpaces, '* @url') === 0) {
+			$urlValue = trim(substr($lineWithoutTabsSpaces, strlen('* @url')));
+			$urlValues[] = $urlValue;
+		}
+	}
+
+	// get urls by object
+	$str = $_SERVER['HTTP_HOST'].'/api/index.php/';
+	$groupedUrls = [];
+	foreach ($urlValues as $url) {
+		if (preg_match('/(?:GET|POST|PUT|DELETE) (\w+)s/', $url, $matches)) {
+			$objectName = $matches[1];
+			$url = $str.trim(strstr($url, ' '));
+			$groupedUrls[$objectName][] = $url;
+		}
+	}
+	if (empty($groupedUrls)) {
+		$error++;
+	}
+
+	// buil format asciidoc for urls in table
+	if (!$error) {
+		$asciiDocTable = "[options=\"header\"]\n|===\n|Objet | URLs\n";
+		foreach ($groupedUrls as $objectName => $urls) {
+			$urlsList = implode(" +\n*", $urls);
+			$asciiDocTable .= "|$objectName | \n*$urlsList +\n";
+		}
+		$asciiDocTable .= "|===\n";
+		$file_write = dolReplaceInFile($file_doc, array('__API_DOC__' => '__API_DOC__'."\n".$asciiDocTable));
+		if ($file_write < 0) {
+			return -1;
+		}
+		return 1;
+	}
+	return -1;
+}

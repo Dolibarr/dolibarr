@@ -375,7 +375,7 @@ class Thirdparties extends DolibarrApi
 		$object->client = $object->client | $soc_origin->client;
 		$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 		$listofproperties = array(
-			'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+			'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'url', 'barcode',
 			'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 			'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 			'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',

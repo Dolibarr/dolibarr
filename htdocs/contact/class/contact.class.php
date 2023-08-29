@@ -244,41 +244,6 @@ class Contact extends CommonObject
 	public $socialnetworks;
 
 	/**
-	 * Skype username
-	 * @var string
-	 * @deprecated
-	 */
-	public $skype;
-
-	/**
-	 * Twitter username
-	 * @var string
-	 * @deprecated
-	 */
-	public $twitter;
-
-	 /**
-	  * Facebook username
-	  * @var string
-	  * @deprecated
-	  */
-	public $facebook;
-
-	 /**
-	  * Linkedin username
-	  * @var string
-	  * @deprecated
-	  */
-	public $linkedin;
-
-	/**
-	 * Jabber username
-	 * @var string
-	 * @deprecated
-	 */
-	public $jabberid;
-
-	/**
 	 * @var string filename for photo
 	 */
 	public $photo;
@@ -1699,6 +1664,8 @@ class Contact extends CommonObject
 		$this->email = 'specimen@specimen.com';
 		$this->socialnetworks = array(
 			'skype' => 'tom.hanson',
+			'twitter' => 'tomhanson',
+			'linkedin' => 'tomhanson',
 		);
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';

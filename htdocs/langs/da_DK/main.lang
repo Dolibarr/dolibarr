@@ -1237,3 +1237,5 @@ SearchSyntaxTooltipForStringOrNum=For at søge i tekstfelter kan du bruge tegnen
 InProgress=I gang
 DateOfPrinting=Udskrivningsdato
 ClickFullScreenEscapeToLeave=Klik her for at skifte i fuldskærmstilstand. Tryk på ESCAPE for at forlade fuldskærmstilstand.
+UserNotYetValid=Ikke gyldig endnu
+UserExpired=Udløbet

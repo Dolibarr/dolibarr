@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=تحذير ، تحتوي هذه القا
 VueByAccountAccounting=عرض حسب الحساب المحاسبي
 VueBySubAccountAccounting=عرض حسب الحساب المحاسبة الفرعي
 
-MainAccountForCustomersNotDefined=حساب المحاسبة الرئيسي للعملاء الغير محددين في الإعدادات
-MainAccountForSuppliersNotDefined=حساب المحاسبة الرئيسي للموردين الغير محددين في الإعدادات
-MainAccountForUsersNotDefined=حساب المحاسبة الرئيسي للمستخدمين الغير محددين في الإعدادات
-MainAccountForVatPaymentNotDefined=حساب المحاسبة الرئيسي لدفعات (VAT) الغير محددين في الإعدادات
-MainAccountForSubscriptionPaymentNotDefined=حساب المحاسبة الرئيسي للمشتركين الغير محددين في الإعدادات
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=لم يتم تعريف حساب في الحسابات في الاعدادات
 
 AccountancyArea=منطقة المحاسبة
