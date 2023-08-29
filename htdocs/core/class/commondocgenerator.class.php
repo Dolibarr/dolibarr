@@ -109,6 +109,11 @@ abstract class CommonDocGenerator
 	public $option_escompte;
 	public $option_credit_note;
 
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
 	/**
 	 * @var int Tab Title Height
 	 */
