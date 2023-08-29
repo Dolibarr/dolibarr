@@ -72,6 +72,10 @@ class BOM extends CommonObject
 	 */
 	public $picto = 'bom';
 
+	/**
+	 * @var Product	Object product of the BOM
+	 */
+	public $product;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -909,7 +913,7 @@ class BOM extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1354,7 +1358,7 @@ class BOM extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 		$this->ref = 'BOM-123';
-		$this->date = $this->date_creation;
+		$this->date_creation = dol_now() - 20000;
 	}
 
 
