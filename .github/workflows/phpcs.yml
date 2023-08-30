@@ -28,3 +28,4 @@ jobs:
           phpcs_path: php phpcs.phar
           standard: 'dev/setup/codesniffer/ruleset.xml'
           fail_on_warnings: false
+          scope: "blame"
