@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,11 +55,12 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return NumberingModulesTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -655,7 +657,35 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('A198201-0001', $result);	// counter must start to 1
 
 
-
 		return $result;
+	}
+
+
+	/**
+	 * testShipmentSafor
+	 *
+	 * @return int
+	 */
+	public function testShipmentSafor()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
+		require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/mod_expedition_safor.php';
+
+		$localobject=new Expedition($db);
+		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
+		$localobject->date_creation = dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1915 to be sure to not have existing invoice for this year (usefull only if numbering is {0000@1}
+		$numbering=new mod_expedition_safor();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('SH8001-0003', $result);	// counter must start to 1
 	}
 }

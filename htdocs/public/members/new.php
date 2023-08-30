@@ -85,7 +85,7 @@ if (!isModEnabled('adherent')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
 
-if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
@@ -129,7 +129,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 	}
 
-	print '<div class="center">';
+	print '<header class="center">';
 
 	// Output html code for logo
 	if ($urllogo) {
@@ -149,7 +149,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	print '</div>';
+	print '</header>';
 
 	print '<div class="divmainbodylarge">';
 }
@@ -161,7 +161,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  */
 function llxFooterVierge()
 {
-	global $conf;
+	global $conf, $langs;
 
 	print '</div>';
 
@@ -169,7 +169,7 @@ function llxFooterVierge()
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext ? '&'.$ext : '').'"></script>'."\n";
+		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.(!empty($ext) ? '&'.$ext : '').'"></script>'."\n";
 	}
 
 	print "</body>\n";
@@ -693,7 +693,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 
 	// Public
 	$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
-	$publiclabel = $langs->trans("Public", $conf->global->MAIN_INFO_SOCIETE_NOM, $linkofpubliclist);
+	$publiclabel = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
 	print '<tr><td>'.$publiclabel.'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 
 	// Other attributes

@@ -105,7 +105,7 @@ class Mo extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200', 'alwayseditable'=>1),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax150'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
-		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'$conf->stock->enabled', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
+		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'isModEnabled("stock")', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
@@ -149,8 +149,16 @@ class Mo extends CommonObject
 	 */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_validation
+	 */
+	public $date_valid;
 
+	/**
+	 * @var integer|string date_validation
+	 */
 	public $tms;
+
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -176,7 +184,6 @@ class Mo extends CommonObject
 	 */
 	public $date_end_planned;
 
-
 	/**
 	 * @var int ID bom
 	 */
@@ -191,6 +198,13 @@ class Mo extends CommonObject
 	 * @var int ID project
 	 */
 	public $fk_project;
+
+	/**
+	 * @var double	New quantity. When we update the quantity to produce, we set this to save old value before calling the ->update that call the updateProduction that need this
+	 * 				to recalculate all the quantities in lines to consume and produce.
+	 */
+	public $oldQty;
+
 
 	// If this object has a subtable with lines
 
@@ -238,6 +252,7 @@ class Mo extends CommonObject
 	 * @var array tpl
 	 */
 	public $tpl = array();
+
 
 	/**
 	 * Constructor
@@ -626,8 +641,6 @@ class Mo extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		global $langs;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -686,7 +699,7 @@ class Mo extends CommonObject
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new Bom($this->db);
+				$bom = new BOM($this->db);
 				$bom->fetch($this->fk_bom);
 				if ($bom->bomtype == 1) {
 					$role = 'toproduce';
@@ -736,6 +749,7 @@ class Mo extends CommonObject
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
+								if (!empty($line->fk_default_workstation)) $moline->fk_default_workstation = $line->fk_default_workstation;
 
 								$resultline = $moline->create($user, false); // Never use triggers here
 								if ($resultline <= 0) {
@@ -762,7 +776,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * Update quantities in lines to consume and to produce.
+	 * Update quantities in lines to consume and/or lines to produce.
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
@@ -790,7 +804,7 @@ class Mo extends CommonObject
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
-							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
+							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and efficiency
 							$res = $moLine->update($user);
 							if (!$res) $error++;
 						}
@@ -833,7 +847,7 @@ class Mo extends CommonObject
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
 		global $langs;
-		$langs->load('stocks');
+		$langs->loadLangs(array('stocks', 'mrp'));
 
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -1383,8 +1397,9 @@ class Mo extends CommonObject
 
 	/**
 	 * 	Create an array of lines
-	 * 	@param string $rolefilter string lines role filter
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 *
+	 * 	@param string 		$rolefilter 	string lines role filter
+	 * 	@return array|int					array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray($rolefilter = '')
 	{
@@ -1699,10 +1714,13 @@ class Mo extends CommonObject
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_bom')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->fk_bom.'</span>';
+		if (!empty($arraydata['bom'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['bom']->getNomUrl(1).'</span>';
+		}
+		if (!empty($arraydata['product'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['product']->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'qty')) {
 			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';

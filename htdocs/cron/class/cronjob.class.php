@@ -370,8 +370,8 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->unitfrequency) ? 'NULL' : "'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql .= " ".(!isset($this->frequency) ? '0' : ((int) $this->frequency)).",";
 		$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
-		$sql .= " ".((int) $user->id).",";
-		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
+		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
 		$sql .= " ".(!isset($this->nbrun) ? '0' : ((int) $this->nbrun)).",";
 		$sql .= " ".(empty($this->maxrun) ? '0' : ((int) $this->maxrun)).",";
@@ -900,6 +900,11 @@ class Cronjob extends CommonObject
 		// Clear fields
 		$object->status = self::STATUS_DISABLED;
 		$object->label = $langs->trans("CopyOf").' '.$langs->trans($object->label);
+		$object->datelastrun = null;
+		$object->lastresult = '';
+		$object->datelastresult = null;
+		$object->lastoutput = '';
+		$object->nbrun = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -908,6 +913,7 @@ class Cronjob extends CommonObject
 		// Other options
 		if ($result < 0) {
 			$this->error = $object->error;
+			$this->errors = $object->errors;
 			$error++;
 		}
 
@@ -996,7 +1002,7 @@ class Cronjob extends CommonObject
 		}
 		$datas['space'] = '<br>';
 
-		if (!empty($this->datestart)) {
+		if (!empty($this->datestart) && $this->datestart >= dol_now()) {
 			$datas['crondtstart'] = '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
 		}
 		if (!empty($this->dateend)) {
@@ -1025,8 +1031,6 @@ class Cronjob extends CommonObject
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1067,7 +1071,7 @@ class Cronjob extends CommonObject
 				$label = $langs->trans("ShowCronJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1079,7 +1083,7 @@ class Cronjob extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1173,7 +1177,7 @@ class Cronjob extends CommonObject
 			return -1;
 		} else {
 			if (empty($user->id)) {
-				$this->error = " User user login:".$userlogin." do not exists";
+				$this->error = "User login: ".$userlogin." does not exist";
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				$conf->setEntityValues($this->db, $savcurrententity);
 				return -1;
@@ -1266,7 +1270,7 @@ class Cronjob extends CommonObject
 			}
 
 			if (!$error) {
-				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); !!! Log for job may be into a different log file...", LOG_DEBUG);
 
 				// Create Object for the called module
 				$nameofclass = $this->objectname;

@@ -165,8 +165,8 @@ if ($filtertype != 1) {
 $coldisplay += $colspan;
 print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
 $coldisplay += $colspan;
-print '<input type="submit" class="button buttongen margintoponly marginbottomonly button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
-print '<input type="submit" class="button buttongen margintoponly marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
+print '<input type="submit" class="reposition button buttongen margintoponly marginbottomonly button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="reposition button buttongen margintoponly marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</td>';
 print '</tr>';
 

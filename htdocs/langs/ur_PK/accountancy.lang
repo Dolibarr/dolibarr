@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=پہلے ہی اکاؤنٹنگ جرنلز اور لیجر
 NotYetInGeneralLedger=ابھی تک اکاؤٹنگ جرنلز اور لیجر میں منتقل نہیں کیا گیا ہے۔
 GroupIsEmptyCheckSetup=گروپ خالی ہے، ذاتی اکاؤنٹنگ گروپ کا سیٹ اپ چیک کریں۔
 DetailByAccount=اکاؤنٹ کے حساب سے تفصیل دکھائیں۔
+DetailBy=Detail by
 AccountWithNonZeroValues=غیر صفر اقدار والے اکاؤنٹس
 ListOfAccounts=اکاؤنٹس کی فہرست
 CountriesInEEC=ای ای سی میں ممالک
@@ -51,14 +52,19 @@ AccountantFiles=ماخذ کی دستاویزات برآمد کریں۔
 ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=اپنے جریدے برآمد کرنے کے لیے، مینو اندراج %s - %s استعمال کریں۔
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=حساب کتاب کے حساب سے دیکھیں
 VueBySubAccountAccounting=اکاؤنٹنگ ذیلی اکاؤنٹ کے ذریعہ دیکھیں
 
-MainAccountForCustomersNotDefined=صارفین کے لیے مین اکاؤنٹنگ اکاؤنٹ سیٹ اپ میں بیان نہیں کیا گیا ہے۔
-MainAccountForSuppliersNotDefined=وینڈرز کے لیے مین اکاؤنٹنگ اکاؤنٹ سیٹ اپ میں بیان نہیں کیا گیا ہے۔
-MainAccountForUsersNotDefined=صارفین کے لیے مرکزی اکاؤنٹنگ اکاؤنٹ سیٹ اپ میں بیان نہیں کیا گیا ہے۔
-MainAccountForVatPaymentNotDefined=VAT ادائیگی کے لیے مرکزی اکاؤنٹنگ اکاؤنٹ سیٹ اپ میں بیان نہیں کیا گیا ہے۔
-MainAccountForSubscriptionPaymentNotDefined=رکنیت کی ادائیگی کے لیے مرکزی اکاؤنٹنگ اکاؤنٹ سیٹ اپ میں بیان نہیں کیا گیا ہے۔
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=اکاؤنٹنگ ایریا
@@ -112,6 +118,7 @@ MenuLoanAccounts=قرض کے اکاؤنٹس
 MenuProductsAccounts=پروڈکٹ اکاؤنٹس
 MenuClosureAccounts=بند کرنے والے اکاؤنٹس
 MenuAccountancyClosure=بندش
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=نقل و حرکت کی توثیق کریں۔
 ProductsBinding=مصنوعات کے اکاؤنٹس
 TransferInAccounting=اکاؤنٹنگ میں منتقلی
@@ -167,9 +174,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=ذیلی اکاؤنٹ کے لیے کومبو لسٹ ک
 ACCOUNTING_DATE_START_BINDING=اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر شروع کرنے کے لیے تاریخ کی وضاحت کریں۔ اس تاریخ کے نیچے، لین دین کو اکاؤنٹنگ میں منتقل نہیں کیا جائے گا۔
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
-ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=اخراجات کی رپورٹ جرنل
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=نیا جریدہ ہے۔
@@ -238,6 +245,7 @@ ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month an
 ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=فنانس جرنل
 ExpenseReportsJournal=اخراجات کی رپورٹ کا جریدہ
+InventoryJournal=Inventory journal
 DescFinanceJournal=فنانس جرنل بشمول بینک اکاؤنٹ کے ذریعے ادائیگیوں کی تمام اقسام
 DescJournalOnlyBindedVisible=یہ ریکارڈ کا ایک منظر ہے جو اکاؤنٹنگ اکاؤنٹ کے پابند ہیں اور اسے جرنلز اور لیجر میں ریکارڈ کیا جا سکتا ہے۔
 VATAccountNotDefined=VAT کے لیے اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
@@ -294,7 +302,7 @@ DescClosure=Consult here the number of movements by month not yet validated & lo
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock movements...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=تحریر، حروف اور حذف میں کسی قسم کی ترمیم یا حذف ممنوع ہو گا۔ مشق کے لیے تمام اندراجات کی توثیق ہونی چاہیے ورنہ بند کرنا ممکن نہیں ہوگا۔
 
 ValidateHistory=خودکار طور پر باندھیں۔
@@ -343,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=سیلز پر اکاؤنٹنسی میں با
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=خریداری پر اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر کو غیر فعال کریں (وینڈر انوائس کو اکاؤنٹنگ میں مدنظر نہیں رکھا جائے گا)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=اخراجات کی رپورٹوں پر اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر کو غیر فعال کریں (اکاؤنٹنگ میں اخراجات کی رپورٹوں کو مدنظر نہیں رکھا جائے گا)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=اکاؤنٹنگ برآمد فائل کی نسل کی تصدیق؟
@@ -380,7 +394,7 @@ ChartofaccountsId=اکاؤنٹس کی شناخت کا چارٹ
 ## Tools - Init accounting account on product / service
 InitAccountancy=اکاؤنٹنسی شروع کریں۔
 InitAccountancyDesc=اس صفحہ کو ان مصنوعات اور خدمات پر اکاؤنٹنگ اکاؤنٹ شروع کرنے کے لیے استعمال کیا جا سکتا ہے جن میں سیلز اور خریداریوں کے لیے اکاؤنٹنگ اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
-DefaultBindingDesc=اس صفحہ کو پہلے سے طے شدہ اکاؤنٹ سیٹ کرنے کے لیے استعمال کیا جا سکتا ہے تاکہ ادائیگی کی تنخواہوں، عطیہ، ٹیکسوں اور وٹ کے بارے میں لین دین کے ریکارڈ کو جوڑنے کے لیے استعمال کیا جا سکے جب کوئی مخصوص اکاؤنٹنگ اکاؤنٹ پہلے سے سیٹ نہ ہو۔
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=یہ صفحہ اکاؤنٹنگ بند کرنے کے لیے استعمال ہونے والے پیرامیٹرز کو سیٹ کرنے کے لیے استعمال کیا جا سکتا ہے۔
 Options=اختیارات
 OptionModeProductSell=موڈ سیلز
@@ -432,7 +446,7 @@ ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=سیٹ اپ کے کچھ لازمی اقدامات نہیں کیے گئے، براہ کرم انہیں مکمل کریں۔
@@ -445,7 +459,7 @@ NoJournalDefined=کسی جریدے کی وضاحت نہیں کی گئی۔
 Binded=لکیریں جڑی ہوئی ہیں۔
 ToBind=باندھنے کے لیے لکیریں۔
 UseMenuToSetBindindManualy=لائنیں ابھی تک پابند نہیں ہیں، دستی طور پر بائنڈنگ بنانے کے لیے مینو <a href="%s"> %s </a> استعمال کریں۔
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=معذرت کے ساتھ یہ ماڈیول حالات کی رسیدوں کی تجرباتی خصوصیت سے مطابقت نہیں رکھتا
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
@@ -475,9 +489,9 @@ FECFormatMulticurrencyAmount=ملٹی کرنسی کی رقم (Montantdevise)
 FECFormatMulticurrencyCode=ملٹی کرنسی کوڈ (آئیڈیوائز)
 
 DateExport=تاریخ برآمد
-WarningReportNotReliable=انتباہ، یہ رپورٹ لیجر پر مبنی نہیں ہے، لہذا اس میں لیجر میں دستی طور پر ترمیم شدہ لین دین شامل نہیں ہے۔ اگر آپ کی جرنلائزیشن اپ ٹو ڈیٹ ہے، تو بک کیپنگ کا نظریہ زیادہ درست ہے۔
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=اخراجات کی رپورٹ جرنل
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s اکاؤنٹس

@@ -547,7 +547,7 @@ print '<tr><td class="center">';
 if ($action == "dosign" && empty($cancel)) {
 	print '<div class="tablepublicpayment">';
 	print '<input type="button" class="buttonDelete small" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
-	print '<input type="text" class="" id="name"  placeholder="'.$langs->trans("Lastname").'">';
+	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly" id="name"  placeholder="'.$langs->trans("Lastname").'">';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
 	// Do not use class="reposition" here: It breaks the submit and there is a message on top to say it's ok, so going back top is better.

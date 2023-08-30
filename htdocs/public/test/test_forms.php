@@ -42,7 +42,7 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print "Test 1a: We must have here current date and hour for user (must match hour on browser). Note: Check your are logged so user TZ and DST are known.";
 $offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 $offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
-print " (dol_tz=".$offsettz." dol_dst=".$dol_dst.")<br>\n";
+print " (dol_tz=".$offsettz." dol_dst=".$offsetdst.")<br>\n";
 print $form->selectDate(dol_now(), 'test1a', 1, 1, 0);
 
 print '<br><br>'."\n";

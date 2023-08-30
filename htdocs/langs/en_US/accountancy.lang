@@ -53,15 +53,16 @@ ExportAccountingSourceDocHelp=With this tool, you can search and export the sour
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 ExportAccountancy=Export accountancy
-WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been exported. If you want to display the accounting entries already exported to re-export them, click on the button above.
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
-MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
-MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
-MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
-MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Accounting area
@@ -299,7 +300,7 @@ DescClosure=Consult here the number of movements by month not yet validated & lo
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock movements...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=Bind Automatically
@@ -486,7 +487,7 @@ FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
 FECFormatMulticurrencyCode=Multicurrency code (Idevise)
 
 DateExport=Date export
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines

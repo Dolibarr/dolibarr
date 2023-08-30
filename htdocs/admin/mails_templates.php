@@ -116,14 +116,14 @@ if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue = array();
-$tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,joinfiles,defaultfortype,content";
+$tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
 if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 	$tabfieldvalue[25] .= ',content_lines';
 }
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert = array();
-$tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,joinfiles,defaultfortype,content";
+$tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
 if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 	$tabfieldinsert[25] .= ',content_lines';
 }
@@ -168,6 +168,7 @@ $tabhelp[25] = array(
 	'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"),
 	'position'=>$langs->trans("PositionIntoComboList"),
 	'topic'=>'<span class="small">'.$helpsubstit.'</span>',
+	'email_from'=>$langs->trans('ForceEmailFrom'),
 	'joinfiles'=>$langs->trans('AttachMainDocByDefault'),
 	'defaultfortype'=>$langs->trans("DefaultForTypeDesc"),
 	'content'=>'<span class="small">'.$helpsubstit.'</span>',
@@ -182,10 +183,10 @@ $elementList = array();
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToUser'));
-if (isModEnabled('adherent') && !empty($user->rights->adherent->lire)) {
+if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
 	$elementList['member'] = img_picto('', 'object_member', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToMember'));
 }
-if (isModEnabled('recruitment') && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
+if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
 }
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
@@ -194,13 +195,13 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 if (isModEnabled('project')) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
-if (isModEnabled("propal") && !empty($user->rights->propal->lire)) {
+if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$elementList['propal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendProposal'));
 }
-if (isModEnabled('commande') && !empty($user->rights->commande->lire)) {
+if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 	$elementList['order_send'] = img_picto('', 'order', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendOrder'));
 }
-if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$elementList['facture_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
 }
 if (isModEnabled("expedition")) {
@@ -221,7 +222,7 @@ if (isModEnabled("supplier_order") && ($user->hasRight('fournisseur', 'commande'
 if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 	$elementList['invoice_supplier_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
 }
-if (isModEnabled('contrat') && !empty($user->rights->contrat->lire)) {
+if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 	$elementList['contract'] = img_picto('', 'contract', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendContract'));
 }
 if (isModEnabled('ticket') && !empty($user->rights->ticket->read)) {
@@ -236,7 +237,7 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('eventorganization') && !empty($user->rights->eventorganization->read)) {
 	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
-if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
+if (isModEnabled('partnership') && !empty($user->rights->partnership->read)) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
 
@@ -463,10 +464,10 @@ if (empty($reshook)) {
 					$_POST['joinfiles'] = GETPOST('joinfiles-'.$rowid);
 				}
 				if ($field == 'content') {
-					$_POST['content'] = GETPOST('content-'.$rowid);
+					$_POST['content'] = GETPOST('content-'.$rowid, 'restricthtml');
 				}
 				if ($field == 'content_lines') {
-					$_POST['content_lines'] = GETPOST('content_lines-'.$rowid);
+					$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
 				}
 
 				if ($i) {
@@ -494,7 +495,7 @@ if (empty($reshook)) {
 				$i++;
 			}
 
-			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+			$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
 			if (!$user->admin) {	// A non admin user can only edit its own template
 				$sql .= " AND fk_user  = ".((int) $user->id);
 			}
@@ -575,7 +576,7 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 $morejs = array();
 $morecss = array();
 
-$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, joinfiles, defaultfortype, content_lines, content, enabled, active";
+$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from,joinfiles, defaultfortype, content_lines, content, enabled, active";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin) {
@@ -805,14 +806,17 @@ if ($action == 'create') {
 	print '<tr class="impair nodrag nodrop nohover"><td colspan="9" class="nobottom">';
 
 	// Show fields for topic, join files and body
-	$fieldsforcontent = array('topic', 'joinfiles', 'content');
+	$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content');
 	if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
-		$fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines');
+		$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content', 'content_lines');
 	}
 	foreach ($fieldsforcontent as $tmpfieldlist) {
 		// Topic of email
 		if ($tmpfieldlist == 'topic') {
 			print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
+		}
+		if ($tmpfieldlist == 'email_from') {
+			print $form->textwithpicto($langs->trans("MailFrom"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist);
 		}
 		if ($tmpfieldlist == 'joinfiles') {
 			print '<strong>'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
@@ -826,6 +830,8 @@ if ($action == 'create') {
 
 		// Input field
 		if ($tmpfieldlist == 'topic') {
+			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'">';
+		} elseif ($tmpfieldlist == 'email_from') {
 			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'">';
 		} elseif ($tmpfieldlist == 'joinfiles') {
 			print $form->selectyesno($tmpfieldlist, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, false, 0, 1);
@@ -1088,7 +1094,7 @@ if ($num) {
 				print '<tr class="oddeven nohover'.(in_array($tmpfieldlist, array('topic', 'joinfiles')) ? ' nobottom' : '').'" id="tr-'.$tmpfieldlist.'-'.$rowid.'">';
 				print '<td colspan="10">';
 
-				$fieldsforcontent = array('topic', 'joinfiles', 'content');
+				$fieldsforcontent = array('topic', 'email_from','joinfiles', 'content');
 				if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 					$fieldsforcontent[] = 'content_lines';
 				}
@@ -1103,6 +1109,11 @@ if ($num) {
 						// Show line for topic, joinfiles and content
 						if ($tmpfieldlist == 'topic') {
 							print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
+							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
+							print '<br>'."\n";
+						}
+						if ($tmpfieldlist == 'email_from') {
+							print '<strong>'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
 							print '<br>'."\n";
 						}
@@ -1144,7 +1155,7 @@ if ($num) {
 				// If template is for a module, check module is enabled.
 				if ($obj->module) {
 					$tempmodulekey = $obj->module;
-					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+					if (empty($conf->$tempmodulekey) || !isModEnabled($tempmodulekey)) {
 						$i++;
 						continue;
 					}
@@ -1222,16 +1233,18 @@ if ($num) {
 						}
 						if ($value == 'type_template') {
 							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							$css = "center";
+							$css = "center tdoverflowmax150";
 						}
 						if ($value == 'lang' && $valuetoshow) {
 							$valuetoshow = $valuetoshow.' - '.$langs->trans("Language_".$valuetoshow);
+							$class .= ' tdoverflowmax100';
 						}
 						if ($value == 'fk_user') {
 							if ($valuetoshow > 0) {
 								$fuser = new User($db);
 								$fuser->fetch($valuetoshow);
 								$valuetoshow = $fuser->getNomUrl(1);
+								$class .= ' tdoverflowmax100';
 							}
 						}
 						if ($value == 'private') {
@@ -1248,7 +1261,8 @@ if ($num) {
 						if (in_array($value, array('joinfiles', 'defaultfortype'))) {
 							$css = "center";
 							if ($valuetoshow) {
-								$valuetoshow = yn(1);
+								//$valuetoshow = yn(1);
+								$valuetoshow = '<input type="checkbox" checked="checked" disabled>';
 							} else {
 								$valuetoshow = '';
 							}
@@ -1303,7 +1317,7 @@ if ($num) {
 
 // If no record found
 if ($nbqualified == 0) {
-	$colspan = 10;
+	$colspan = 12;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 

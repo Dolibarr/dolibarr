@@ -464,7 +464,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if ($conf->global->ACCOUNTING_REEXPORT == 1) {
+			if (empty($conf->global->ACCOUNTING_REEXPORT)) {
 				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
 			} else {
 				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'warnings');
@@ -562,7 +562,7 @@ if (count($filter) > 0) {
 	}
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('accountancy').')';
-if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
+if (empty($conf->global->ACCOUNTING_REEXPORT)) {	// Reexport not enabled (default mode)
 	$sql .= " AND t.date_export IS NULL";
 }
 if (count($sqlwhere) > 0) {
@@ -574,7 +574,7 @@ if (count($sqlwhere) > 0) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It currently consumes too much memory on large export.
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). fetchAll() currently consumes too much memory on large export.
 	// Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
@@ -670,7 +670,7 @@ $title_page = $langs->trans("Operations").' - '.$langs->trans("ExportAccountancy
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -815,21 +815,20 @@ if ($reshook < 0) {
 }
 
 $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
-
 if (empty($reshook)) {
 	// Button re-export
-	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("ClickToShowAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
+	if (empty($conf->global->ACCOUNTING_REEXPORT)) {
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("ClickToShowAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToShowAlreadyExportedLines").'</span>';
 		$newcardbutton .= '</a>';
 	} else {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("DocsAlreadyExportedAreIncluded"), 'switch_on', 'class="warning size15x valignmiddle"');
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("DocsAlreadyExportedAreIncluded"), 'switch_on', 'class="warning size15x valignmiddle"');
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("DocsAlreadyExportedAreIncluded").'</span>';
 		$newcardbutton .= '</a>';
 	}
 
 	if ($user->hasRight('accounting', 'mouvements', 'export')) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), $user->hasRight('accounting', 'mouvements', 'export'));
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), $user->hasRight('accounting', 'mouvements', 'export'));
 	}
 }
 
@@ -837,9 +836,8 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, 
 
 // Not display message when all the list of docs are included
 if (empty($conf->global->ACCOUNTING_REEXPORT)) {
-	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0);
+	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0, 'hideonsmartphone info');
 }
-print '<br>';
 
 //$topicmail = "Information";
 //$modelmail = "accountingbookkeeping";
@@ -961,7 +959,7 @@ if (!empty($arrayfields['t.credit']['checked'])) {
 if (!empty($arrayfields['t.lettering_code']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.dol_escape_htmltag($search_lettering_code).'"/>';
-	print '<br><span class="nowrap"><input type="checkbox" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
+	print '<br><span class="nowrap"><input type="checkbox" id="search_not_reconciled" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'><label for="search_not_reconciled">'.$langs->trans("NotReconciled").'</label></span>';
 	print '</td>';
 }
 

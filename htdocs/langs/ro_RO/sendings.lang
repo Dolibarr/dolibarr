@@ -48,7 +48,7 @@ DateDeliveryPlanned=Data planificată a livrării
 RefDeliveryReceipt=Ref. document de livrare
 StatusReceipt=Stare document de livrare
 DateReceived=Data de livrare reală
-ClassifyReception=Clasifică ca recepţionat
+ClassifyReception=Clasifică Recepționat
 SendShippingByEMail=Trimitere livrare pe email
 SendShippingRef=Transmitere livrare %s
 ActionsOnShipping=Evenimente pe livrare
@@ -74,3 +74,8 @@ SumOfProductWeights=Greutatea totală a produselor
 # warehouse details
 DetailWarehouseNumber= Detalii depozit
 DetailWarehouseFormat= Greutate: %s (Cantitate: %d)
+
+ShipmentDistribution=Expediere distribuție
+
+ErrorTooManyCombinationBatchcode=Nicio expediere pentru linia %s , deoarece au fost găsite prea multe combinații de depozit, produs, lot (%s).
+ErrorNoCombinationBatchcode=Nicio expediere pentru linia %s, deoarece nu a fost găsită nicio combinație de depozit, produs, lot. 

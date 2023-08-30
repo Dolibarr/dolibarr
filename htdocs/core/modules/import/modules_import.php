@@ -43,7 +43,7 @@ class ModeleImports
 	public $error = '';
 
 	/**
-	 * @var int id of driver
+	 * @var string Code of driver
 	 */
 	public $id;
 
@@ -129,7 +129,7 @@ class ModeleImports
 	/**
 	 * getDriverId
 	 *
-	 * @return string		Id
+	 * @return int		Id
 	 */
 	public function getDriverId()
 	{

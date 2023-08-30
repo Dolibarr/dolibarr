@@ -361,7 +361,7 @@ print '</tr>';
 foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) {
+	if (getDolGlobalInt('ACCOUNTING_MANAGE_ZERO') && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) {
 		continue;
 	}
 
@@ -394,10 +394,10 @@ foreach ($list_binding as $key) {
 	// Value
 	print '<td class="right">';
 	if ($key == 'ACCOUNTING_DATE_START_BINDING') {
-		print $form->selectDate((!empty($conf->global->$key) ? $db->idate($conf->global->$key) : -1), $key, 0, 0, 1);
+		print $form->selectDate((getDolGlobalInt($key) ? (int) getDolGlobalInt($key) : -1), $key, 0, 0, 1);
 	} elseif ($key == 'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER') {
 		$array = array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
-		print $form->selectarray($key, $array, (isset($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER : 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
+		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}

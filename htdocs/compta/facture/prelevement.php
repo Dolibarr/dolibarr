@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
@@ -81,7 +79,7 @@ if ($type == 'bank-transfer') {
 	}
 } else {
 	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
-	if (!$user->rights->facture->lire) {
+	if (!$user->hasRight('facture', 'lire')) {
 		accessforbidden();
 	}
 }
@@ -500,7 +498,7 @@ if ($object->id > 0) {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateInvoice');
 	print '</td>';
-	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -523,7 +521,7 @@ if ($object->id > 0) {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editconditions' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editconditions' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -544,7 +542,7 @@ if ($object->id > 0) {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
-	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+	if ($object->type != $object::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -573,7 +571,7 @@ if ($object->id > 0) {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($action != 'editmode' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+	if ($action != 'editmode' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -594,7 +592,7 @@ if ($object->id > 0) {
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('BankAccount');
 	print '<td>';
-	if (($action != 'editbankaccount') && $user->hasRight('commande', 'creer') && !empty($object->brouillon)) {
+	if (($action != 'editbankaccount') && $user->hasRight('commande', 'creer') && $object->status == $object::STATUS_DRAFT) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -679,7 +677,7 @@ if ($object->id > 0) {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('RevenueStamp');
 		print '</td>';
-		if ($action != 'editrevenuestamp' && !empty($object->brouillon) && $user->hasRight('facture', 'creer')) {
+		if ($action != 'editrevenuestamp' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -747,10 +745,10 @@ if ($object->id > 0) {
 	print "\n".'<div class="tabsAction">'."\n";
 
 	$buttonlabel = $langs->trans("MakeWithdrawRequest");
-	$user_perms = $user->rights->prelevement->bons->creer;
+	$user_perms = $user->hasRight('prelevement', 'bons', 'creer');
 	if ($type == 'bank-transfer') {
 		$buttonlabel = $langs->trans("MakeBankTransferOrder");
-		$user_perms = $user->rights->paymentbybanktransfer->create;
+		$user_perms = $user->hasRight('paymentbybanktransfer', 'create');
 	}
 
 	// Add a transfer request
@@ -830,8 +828,12 @@ if ($object->id > 0) {
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td>&nbsp;</td>';
+	}
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
-	print '<td class="center">'.$langs->trans("User").'</td>';
+	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 	if ($type == 'bank-transfer') {
@@ -840,7 +842,10 @@ if ($object->id > 0) {
 		print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	}
 	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td>&nbsp;</td>';
+	}
 	print '</tr>';
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
@@ -878,15 +883,24 @@ if ($object->id > 0) {
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
 			$tmpuser->statut = $obj->user_status;
+			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
 
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="right">';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
+				print img_delete();
+				print '</a></td>';
+			}
+
 			// Date
-			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
 
 			// User
-			print '<td align="center">';
-			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
+			print '<td class="tdoverflowmax125">';
+			print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
 			// Amount
@@ -896,7 +910,7 @@ if ($object->id > 0) {
 			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
 
 			// Link to make payment now
-			print '<td class="center">';
+			print '<td class="minwidth75">';
 			if ($obj->fk_prelevement_bons > 0) {
 				$withdrawreceipt = new BonPrelevement($db);
 				$withdrawreceipt->id = $obj->fk_prelevement_bons;
@@ -934,11 +948,13 @@ if ($object->id > 0) {
 			//
 			print '<td class="center">-</td>';
 
-			// Actions
-			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
-			print img_delete();
-			print '</a></td>';
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="right">';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
+				print img_delete();
+				print '</a></td>';
+			}
 
 			print "</tr>\n";
 			$i++;
@@ -954,7 +970,7 @@ if ($object->id > 0) {
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
@@ -985,25 +1001,32 @@ if ($object->id > 0) {
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
 			$tmpuser->statut = $obj->user_status;
+			$tmpuser->status = $obj->user_status;
+			$tmpuser->photo = $obj->user_photo;
 
 			print '<tr class="oddeven">';
 
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td>&nbsp;</td>';
+			}
+
 			// Date
-			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
 
 			// User
-			print '<td align="center">';
-			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
+			print '<td class="tdoverflowmax125">';
+			print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
 			// Amount
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
 			// Date process
-			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
 
 			// Link to payment request done
-			print '<td class="center">';
+			print '<td class="center minwidth75">';
 			if ($obj->fk_prelevement_bons > 0) {
 				$withdrawreceipt = new BonPrelevement($db);
 				$withdrawreceipt->id = $obj->fk_prelevement_bons;
@@ -1040,8 +1063,10 @@ if ($object->id > 0) {
 			//
 			print '<td>&nbsp;</td>';
 
-			// Actions
-			print '<td>&nbsp;</td>';
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td>&nbsp;</td>';
+			}
 
 			print "</tr>\n";
 			$i++;

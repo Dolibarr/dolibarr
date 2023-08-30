@@ -50,6 +50,12 @@ class Account extends CommonObject
 	public $table_element = 'bank_account';
 
 	/**
+	 * @var int  Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'account';
@@ -932,8 +938,8 @@ class Account extends CommonObject
 	/**
 	 *  Update BBAN (RIB) account fields
 	 *
-	 *  @param	User	$user       Object user making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *  @param	User|null	$user       Object user making update
+	 *  @return	int						<0 if KO, >0 if OK
 	 */
 	public function update_bban(User $user = null)
 	{
@@ -992,8 +998,6 @@ class Account extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		if (empty($id) && empty($ref)) {
 			$this->error = "ErrorBadParameters";
 			return -1;
@@ -1004,7 +1008,7 @@ class Account extends CommonObject
 		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
-		$sql .= " ba.datec as date_creation, ba.tms as date_update, ba.ics, ba.ics_transfer,";
+		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
 		$sql .= ' c.code as country_code, c.label as country,';
 		$sql .= ' d.code_departement as state_code, d.nom as state,';
 		$sql .= ' aj.code as accountancy_journal';
@@ -1071,7 +1075,8 @@ class Account extends CommonObject
 				$this->comment        = $obj->comment;
 
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
-				$this->date_update    = $this->db->jdate($obj->date_update);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->date_update    = $this->date_modification;	// For compatibility
 
 				$this->ics           = $obj->ics;
 				$this->ics_transfer  = $obj->ics_transfer;
@@ -1110,8 +1115,8 @@ class Account extends CommonObject
 	/**
 	 *  Delete bank account from database
 	 *
-	 *	@param	User	$user	User deleting
-	 *  @return int             <0 if KO, >0 if OK
+	 *  @param	User|null	$user	User deleting
+	 *  @return int      	       	<0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -1336,8 +1341,9 @@ class Account extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
+	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         <0 if KO, >0 if OK
 	 */
 	public function load_state_board($filteraccountid = 0)
 	{
@@ -1365,6 +1371,7 @@ class Account extends CommonObject
 				$this->nb["banklines"] = $obj->nb;
 			}
 			$this->db->free($resql);
+			return 1;
 		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
@@ -1538,25 +1545,19 @@ class Account extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-		$this->error_number = 0;
+		$error = 0;
 
-		// Call function to check BAN
-
+		// Call functions to check BAN
 		if (!checkIbanForAccount($this)) {
-			$this->error_number = 12;
+			$error++;
 			$this->error_message = 'IBANNotValid';
 		}
 		if (!checkSwiftForAccount($this)) {
-			$this->error_number = 12;
+			$error++;
 			$this->error_message = 'SwiftNotValid';
 		}
-		/*if (! checkBanForAccount($this))
-		{
-			$this->error_number = 12;
-			$this->error_message = 'BANControlError';
-		}*/
 
-		if ($this->error_number == 0) {
+		if (! $error) {
 			return 1;
 		} else {
 			return 0;
@@ -1850,7 +1851,7 @@ class Account extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'type_lib')) {
@@ -2157,8 +2158,8 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *      Delete bank transaction record
 	 *
-	 *		@param	User	$user	User object that delete
-	 *      @return	int 			<0 if KO, >0 if OK
+	 *		@param	User|null	$user	User object that delete
+	 *      @return	int 				<0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -2230,10 +2231,10 @@ class AccountLine extends CommonObjectLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Delete bank line records
+	 * 	Delete bank line records
 	 *
-	 *		@param	User	$user	User object that delete
-	 *      @return	int 			<0 if KO, >0 if OK
+	 *	@param	User|null	$user	User object that delete
+	 *  @return	int 				<0 if KO, >0 if OK
 	 */
 	public function delete_urls(User $user = null)
 	{
@@ -2330,7 +2331,7 @@ class AccountLine extends CommonObjectLine
 		dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!empty($cat)) {
+			if (!empty($cat) && $cat > 0) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
@@ -2343,6 +2344,7 @@ class AccountLine extends CommonObjectLine
 				$this->db->query($sql);
 
 				// No error check. Can fail if category already affected
+				// TODO Do no try the insert if link already exists
 			}
 
 			$this->rappro = 1;
@@ -2568,8 +2570,9 @@ class AccountLine extends CommonObjectLine
 			$result .= $langs->trans("BankLineConciliated").': ';
 			$result .= yn($this->rappro);
 		}
-		if ($option == 'showall' || $option == 'showconciliatedandaccounted') {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
+		if (isModEnabled('accounting') && ($option == 'showall' || $option == 'showconciliatedandaccounted')) {
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+			$sql .= " WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -2610,7 +2613,8 @@ class AccountLine extends CommonObjectLine
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		//global $langs;
+
 		//$langs->load('companies');
 		/*
 		if ($mode == 0)
@@ -2643,6 +2647,8 @@ class AccountLine extends CommonObjectLine
 			if ($status==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
 			if ($status==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
 		}*/
+
+		return '';
 	}
 
 

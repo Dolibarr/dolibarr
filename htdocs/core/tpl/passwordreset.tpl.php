@@ -38,7 +38,6 @@ if ($size > 10000) {
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 header('Cache-Control: Public, must-revalidate');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 if (GETPOST('dol_hide_topmenu')) {
 	$conf->dol_hide_topmenu = 1;
@@ -98,10 +97,10 @@ if ($setnewpassword && $username && $passworduidhash) {
 	if ($result < 0) {
 		$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 	} else {
-		global $dolibarr_main_instance_unique_id;
+		global $conf;
 
-		//print $edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id.' '.$passworduidhash;
-		if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
+		//print $edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id.' '.$passworduidhash;
+		if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id, $passworduidhash)) {
 			// Clear session
 			unset($_SESSION['dol_login']);
 

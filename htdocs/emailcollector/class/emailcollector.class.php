@@ -131,6 +131,8 @@ class EmailCollector extends CommonObject
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com', 'csslist'=>'tdoverflowmax125'),
 		'port'          => array('type'=>'varchar(10)', 'label'=>'EMailHostPort', 'visible'=>1, 'enabled'=>1, 'position'=>91, 'notnull'=>1, 'searchall'=>0, 'comment'=>"IMAP server port", 'help'=>'Example: 993', 'csslist'=>'tdoverflowmax50', 'default'=>'993'),
 		'hostcharset'   => array('type'=>'varchar(16)', 'label'=>'HostCharset', 'visible'=>-1, 'enabled'=>1, 'position'=>92, 'notnull'=>0, 'searchall'=>0, 'comment'=>"IMAP server charset", 'help'=>'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default'=>'UTF-8'),
+		'imap_encryption'  => array('type'=>'varchar(16)', 'label'=>'ImapEncryption', 'visible'=>-1, 'enabled'=>1, 'position'=>93, 'searchall'=>0, 'comment'=>"IMAP encryption", 'help'=>'ImapEncryptionHelp', 'arrayofkeyval'=> array('ssl'=>'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default'=>'ssl'),
+		'norsh'  => array('type'=>'integer', 'label'=>'NoRSH', 'visible'=>-1, 'enabled'=>"!getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>94, 'searchall'=>0, 'help'=>'NoRSHHelp', 'arrayofkeyval'=> array(0 =>'No', 1 => 'Yes'), 'default'=> 0),
 		'acces_type'     => array('type'=>'integer', 'label'=>'accessType', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login type", 'arrayofkeyval'=>array('0'=>'loginPassword', '1'=>'oauthToken'), 'default'=>'0', 'help'=>''),
 		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
@@ -213,6 +215,8 @@ class EmailCollector extends CommonObject
 	public $password;
 	public $acces_type;
 	public $oauth_service;
+	public $imap_encryption;
+	public $norsh;
 	public $source_directory;
 	public $target_directory;
 	public $maxemailpercollect;
@@ -762,8 +766,12 @@ class EmailCollector extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+
+			return 1;
 		} else {
 			dol_print_error($this->db);
+
+			return -1;
 		}
 	}
 
@@ -771,11 +779,9 @@ class EmailCollector extends CommonObject
 	/**
 	 * Return the connectstring to use with IMAP connection function
 	 *
-	 * @param	int		$ssl		Add /ssl tag
-	 * @param	int		$norsh		Add /norsh to connectstring
 	 * @return string
 	 */
-	public function getConnectStringIMAP($ssl = 1, $norsh = 0)
+	public function getConnectStringIMAP()
 	{
 		global $conf;
 
@@ -783,15 +789,16 @@ class EmailCollector extends CommonObject
 		$flags = '/service=imap'; // IMAP
 		if (!empty($conf->global->IMAP_FORCE_TLS)) {
 			$flags .= '/tls';
-		} elseif (empty($conf->global->IMAP_FORCE_NOSSL)) {
-			if ($ssl) {
-				$flags .= '/ssl';
-			}
+		} elseif (empty($this->imap_encryption) || ($this->imap_encryption == 'ssl' && !empty($conf->global->IMAP_FORCE_NOSSL))) {
+			$flags .= '';
+		} else {
+			$flags .= '/' . $this->imap_encryption;
 		}
+
 		$flags .= '/novalidate-cert';
 		//$flags.='/readonly';
 		//$flags.='/debug';
-		if ($norsh || !empty($conf->global->IMAP_FORCE_NORSH)) {
+		if (!empty($this->norsh) || !empty($conf->global->IMAP_FORCE_NORSH)) {
 			$flags .= '/norsh';
 		}
 		//Used in shared mailbox from Office365
@@ -996,8 +1003,10 @@ class EmailCollector extends CommonObject
 					} else {
 						// Nothing can be done for this param
 						$errorforthisaction++;
-						$this->error = 'The extract rule to use has on an unknown source (must be HEADER, SUBJECT or BODY)';
+						$this->error = 'The extract rule to use to overwrite properties has on an unknown source (must be HEADER, SUBJECT or BODY)';
 						$this->errors[] = $this->error;
+
+						$operationslog .= '<br>'.$this->error;
 					}
 				} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $regforregex)) {
 					$valuecurrent = '';
@@ -1122,6 +1131,8 @@ class EmailCollector extends CommonObject
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
+				$supportedoauth2array = array();
+
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 				$keyforsupportedoauth2array = $this->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
@@ -1185,7 +1196,7 @@ class EmailCollector extends CommonObject
 				$client = $cm->make([
 					'host'           => $this->host,
 					'port'           => $this->port,
-					'encryption'     => 'ssl',
+					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
 					'validate_cert'  => true,
 					'protocol'       => 'imap',
 					'username'       => $this->login,
@@ -1198,7 +1209,7 @@ class EmailCollector extends CommonObject
 				$client = $cm->make([
 					'host'           => $this->host,
 					'port'           => $this->port,
-					'encryption'     => 'ssl',
+					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
 					'validate_cert'  => true,
 					'protocol'       => 'imap',
 					'username'       => $this->login,
@@ -1430,6 +1441,7 @@ class EmailCollector extends CommonObject
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
+						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
 						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
@@ -1620,8 +1632,8 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
-				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References']??'')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References']??'')." Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
@@ -1749,7 +1761,15 @@ class EmailCollector extends CommonObject
 				//$htmlmsg,$plainmsg,$charset,$attachments
 				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
 				// Removed emojis
-				$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
+
+				if (utf8_valid($messagetext)) {
+					//$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
+					$messagetext = $this->removeEmoji($messagetext);
+				} else {
+					$operationslog .= '<br>Discarded - Email body is not valid utf8';
+					dol_syslog(" Discarded - Email body is not valid utf8");
+					continue; // Exclude email
+				}
 
 				if ($searchfilterexcludebody) {
 					if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
@@ -2023,7 +2043,7 @@ class EmailCollector extends CommonObject
 								}
 
 								if (get_class($objectemail) != 'Societe') {
-									$thirdpartyid = $objectemail->fk_soc;
+									$thirdpartyid = $objectemail->fk_soc ?? $objectemail->socid;
 								} else {
 									$thirdpartyid = $objectemail->id;
 								}
@@ -2248,7 +2268,7 @@ class EmailCollector extends CommonObject
 
 													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 												} else {
-													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> We discard this, not used to search existing thirdparty';
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> We discard this, not a field used to search an existing thirdparty';
 												}
 											} else {
 												// Regex not found
@@ -2263,8 +2283,10 @@ class EmailCollector extends CommonObject
 										} else {
 											// Nothing can be done for this param
 											$errorforactions++;
-											$this->error = 'The extract rule to use to load thirdparty has an unknown source (must be HEADER, SUBJECT or BODY)';
+											$this->error = 'The extract rule to use to load thirdparty for email '.$msgid.' has an unknown source (must be HEADER, SUBJECT or BODY)';
 											$this->errors[] = $this->error;
+
+											$operationslog .= '<br>'.$this->error;
 										}
 									} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg)) {
 										//if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
@@ -2273,19 +2295,19 @@ class EmailCollector extends CommonObject
 										if ($propertytooverwrite == 'id') {
 											$idtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'email') {
 											$emailtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'name') {
 											$nametouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 										} elseif ($propertytooverwrite == 'name_alias') {
 											$namealiastouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' We set property namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 										}
 									} else {
 										$errorforactions++;
@@ -3099,6 +3121,7 @@ class EmailCollector extends CommonObject
 							if (!is_object($hookmanager)) {
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
+								$hookmanager->initHooks(['emailcolector']);
 							}
 
 							$parameters = array(
@@ -3273,8 +3296,8 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    UID email
-	 * @param 	string $destdir	    Target dir for attachments
-	 * @return 	array				Array with number and object
+	 * @param 	string $destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
+	 * @return 	void
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
 	{
@@ -3326,7 +3349,7 @@ class EmailCollector extends CommonObject
 	 * @param 	string		$mid			Part no
 	 * @param 	Object		$p              Object p
 	 * @param   string      $partno         Partno
-	 * @param 	string 		$destdir	    Target dir for attachments
+	 * @param 	string 		$destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return	void
 	 */
 	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
@@ -3353,7 +3376,7 @@ class EmailCollector extends CommonObject
 				$params[strtolower($x->attribute)] = $x->value;
 			}
 		}
-		if ($p->dparameters) {
+		if (!empty($p->dparameters)) {
 			foreach ($p->dparameters as $x) {
 				$params[strtolower($x->attribute)] = $x->value;
 			}
@@ -3362,44 +3385,46 @@ class EmailCollector extends CommonObject
 		// ATTACHMENT
 		// Any part with a filename is an attachment,
 		// so an attached text file (type 0) is not mistaken as the message.
-		if ($params['filename'] || $params['name']) {
+		if (!empty($params['filename']) || !empty($params['name'])) {
 			// filename may be given as 'Filename' or 'Name' or both
-			$filename = ($params['filename']) ? $params['filename'] : $params['name'];
+			$filename = $params['filename'] ?? $params['name'];
 			// filename may be encoded, so see imap_mime_header_decode()
 			$attachments[$filename] = $data; // this is a problem if two files have same name
 
-			// Get file name (with extension)
-			$file_name_complete =  $params['filename'];
+			if (strlen($destdir)) {
+				if (substr($destdir, -1) != '/') $destdir .= '/';
 
+				// Get file name (with extension)
+				$file_name_complete = $params['filename'];
+				$destination = $destdir.$file_name_complete;
 
-			$destination = $destdir.'/'.$file_name_complete;
+				// Extract file extension
+				$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
 
-			// Extract file extension
-			$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
+				// Extract file name without extension
+				$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
 
-			// Extract file name without extension
-			$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
+				// Save an original file name variable to track while renaming if file already exists
+				$file_name_original = $file_name;
 
-			// Save an original file name variable to track while renaming if file already exists
-			$file_name_original = $file_name;
+				// Increment file name by 1
+				$num = 1;
 
-			// Increment file name by 1
-			$num = 1;
+				/**
+				 * Check if the same file name already exists in the upload folder,
+				 * append increment number to the original filename
+				 */
+				while (file_exists($destdir.$file_name.".".$extension)) {
+					$file_name = $file_name_original . ' (' . $num . ')';
+					$file_name_complete = $file_name . "." . $extension;
+					$destination = $destdir.$file_name_complete;
+					$num++;
+				}
 
-			/**
-			 * Check if the same file name already exists in the upload folder,
-			 * append increment number to the original filename
-			 */
-			while (file_exists($destdir."/".$file_name.".".$extension)) {
-				$file_name = $file_name_original . ' (' . $num . ')';
-				$file_name_complete = $file_name . "." . $extension;
-				$destination = $destdir.'/'.$file_name_complete;
-				$num++;
+				$destination = dol_sanitizePathName($destination);
+
+				file_put_contents($destination, $data);
 			}
-
-			$destination = dol_sanitizePathName($destination);
-
-			file_put_contents($destination, $data);
 		}
 
 		// TEXT
@@ -3428,9 +3453,9 @@ class EmailCollector extends CommonObject
 		}
 
 		// SUBPART RECURSION
-		if ($p->parts) {
+		if (!empty($p->parts)) {
 			foreach ($p->parts as $partno0 => $p2) {
-				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1)); // 1.2, 1.2.1, etc.
+				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1), $destdir); // 1.2, 1.2.1, etc.
 			}
 		}
 	}
@@ -3493,5 +3518,25 @@ class EmailCollector extends CommonObject
 		}
 
 		return $subject;
+	}
+
+	/**
+	 * Remove EMoji from email content
+	 *
+	 * @param string	$text		String to sanitize
+	 * @return string				Sanitized string
+	 */
+	protected function removeEmoji($text)
+	{
+		// Supprimer les caractères emoji en utilisant une expression régulière
+		$text = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $text);
+		$text = preg_replace('/[\x{1F300}-\x{1F5FF}]/u', '', $text);
+		$text = preg_replace('/[\x{1F680}-\x{1F6FF}]/u', '', $text);
+		$text = preg_replace('/[\x{2600}-\x{26FF}]/u', '', $text);
+		$text = preg_replace('/[\x{2700}-\x{27BF}]/u', '', $text);
+		$text = preg_replace('/[\x{1F900}-\x{1F9FF}]/u', '', $text);
+		$text = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $text);
+
+		return $text;
 	}
 }

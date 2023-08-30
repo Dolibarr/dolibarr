@@ -49,6 +49,11 @@ class pdf_azur extends ModelePDFPropales
 	public $db;
 
 	/**
+	 * @var int The environment ID when using a multicompany module
+	 */
+	public $entity;
+
+	/**
 	 * @var string model name
 	 */
 	public $name;
@@ -69,57 +74,10 @@ class pdf_azur extends ModelePDFPropales
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
 
 
 	/**
@@ -903,6 +861,7 @@ class pdf_azur extends ModelePDFPropales
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -924,9 +883,11 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
+		$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
+
 		// If France, show VAT mention if not applicable
 		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 
@@ -943,23 +904,23 @@ class pdf_azur extends ModelePDFPropales
 		// Show shipping date
 		if (!empty($object->delivery_date)) {
 			$outputlangs->load("sendings");
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("DateDeliveryPlanned").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size -$diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$dlp = dol_print_date($object->delivery_date, $displaydate, false, $outputlangs, true);
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
 			$posy = $pdf->GetY() + 1;
 		} elseif ($object->availability_code || $object->availability) {    // Show availability conditions
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("AvailabilityPeriod").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$lib_availability = $outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset($object->availability);
 			$lib_availability = str_replace('\n', "\n", $lib_availability);
@@ -979,12 +940,12 @@ class pdf_azur extends ModelePDFPropales
 			$shipping_method_code = dol_getIdFromCode($this->db, $shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 			$shipping_method_label = dol_getIdFromCode($this->db, $shipping_method_id, 'c_shipment_mode', 'rowid', 'libelle');
 
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("SendingMethod").':';
 			$pdf->MultiCell(43, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement = ($outputlangs->transnoentities("SendingMethod".strtoupper($shipping_method_code)) != "SendingMethod".strtoupper($shipping_method_code)) ? $outputlangs->trans("SendingMethod".strtoupper($shipping_method_code)) : $shipping_method_label;
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
@@ -995,12 +956,12 @@ class pdf_azur extends ModelePDFPropales
 
 		// Show payments conditions
 		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM) && $object->cond_reglement_code) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
 			$pdf->MultiCell(43, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
@@ -1017,11 +978,11 @@ class pdf_azur extends ModelePDFPropales
 			if ($object->mode_reglement_code
 			&& $object->mode_reglement_code != 'CHQ'
 			&& $object->mode_reglement_code != 'VIR') {
-				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$titre = $outputlangs->transnoentities("PaymentMode").':';
 				$pdf->MultiCell(80, 5, $titre, 0, 'L');
-				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 				$pdf->SetXY($posxval, $posy);
 				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 				$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
@@ -1033,8 +994,6 @@ class pdf_azur extends ModelePDFPropales
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ') {
 				// Si mode reglement non force ou si force a CHQ
 				if (getDolGlobalInt('FACTURE_CHQ_NUMBER')) {
-					$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
-
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0) {
 						$account = new Account($this->db);
 						$account->fetch(getDolGlobalInt('FACTURE_CHQ_NUMBER'));
@@ -1470,7 +1429,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->postotalht - 1, $tab_top + 1);
-			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("TotalHT"), '', 'C');
+			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("TotalHTShort"), '', 'C');
 		}
 	}
 
@@ -1502,8 +1461,10 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
+		$w = 100;
+
 		$posy = $this->marge_haute;
-		$posx = $this->page_largeur - $this->marge_droite - 100;
+		$posx = $this->page_largeur - $this->marge_droite - $w;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 
@@ -1591,7 +1552,8 @@ class pdf_azur extends ModelePDFPropales
 			$displaydate = "day";
 		}
 
-		$posy += 4;
+		//$posy += 4;
+		$posy = $pdf->getY();
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($object->date, $displaydate, false, $outputlangs, true), '', 'R');
@@ -1634,12 +1596,18 @@ class pdf_azur extends ModelePDFPropales
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
-			// Add internal contact of proposal if defined
+			// Add internal contact of object if defined
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
@@ -1664,7 +1632,7 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetTextColor(0, 0, 60);
 			}
 
-			// Show sender name
+			// Show company name
 			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
 				$pdf->SetXY($posx + 2, $posy + 3);
 				$pdf->SetFont('', 'B', $default_font_size);

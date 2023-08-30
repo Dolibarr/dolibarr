@@ -211,7 +211,7 @@ class RssParser
 		}
 
 		$this->_urlRSS = $urlRSS;
-		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contains special chars)
+		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contain special chars)
 		$newmask = '0644';
 
 		//dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
@@ -667,7 +667,7 @@ class RssParser
 
 
 	/**
-	 * 	To concat 2 string with no warning if an operand is not defined
+	 * 	To concat 2 strings with no warning if an operand is not defined
 	 *
 	 * 	@param	string	$str1		Str1
 	 *  @param	string	$str2		Str2
@@ -679,6 +679,7 @@ class RssParser
 			$str1 = "";
 		}
 		$str1 .= $str2;
+		return $str1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

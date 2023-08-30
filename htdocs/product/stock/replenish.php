@@ -533,7 +533,7 @@ if ($includeproductswithoutdesiredqty == 'on') {
 }
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {
@@ -579,7 +579,7 @@ print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'<
 
 //$link = '<a title=' .$langs->trans("MenuNewWarehouse"). ' href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("MenuNewWarehouse").'</a>';
 
-if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+if (empty($fk_entrepot) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."\n";
 }
 print '<br><br>';
@@ -615,7 +615,8 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	print '</div>';
 }
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
+$filter = '(fournisseur:=:1)';
+print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', $filter, 1);
 print '</div>';
 
 $parameters = array();
@@ -953,6 +954,21 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '</tr>';
 	}
 	$i++;
+}
+
+if ($num == 0) {
+	$colspan = 9;
+	if (isModEnabled("service") && $type == 1) {
+		$colspan++;
+	}
+	if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+		$colspan++;
+	}
+	print '<tr><td colspan="'.$colspan.'">';
+	print '<span class="opacitymedium">';
+	print $langs->trans("None");
+	print '</span>';
+	print '</td></tr>';
 }
 
 $parameters = array('sql'=>$sql);

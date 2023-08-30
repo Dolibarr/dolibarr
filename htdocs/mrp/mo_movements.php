@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       mo_movements.php
- *		\ingroup    mrp
- *		\brief      Page to show tock movements of a MO
+ *    \file       mo_movements.php
+ *    \ingroup    mrp
+ *    \brief      Page to show stock movements of a MO
  */
 
 // Load Dolibarr environment
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+
 dol_include_once('/mrp/class/mo.class.php');
 dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
@@ -39,20 +40,21 @@ dol_include_once('/mrp/lib/mrp_mo.lib.php');
 $langs->loadLangs(array("mrp", "stocks", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$id          = GETPOST('id', 'int');
+$ref         = GETPOST('ref', 'alpha');
+$action      = GETPOST('action', 'aZ09');
+$confirm     = GETPOST('confirm', 'alpha');
+$cancel      = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mostockmovement'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha');
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$massaction = GETPOST('massaction', 'aZ09');
-$lineid   = GETPOST('lineid', 'int');
+$backtopage  = GETPOST('backtopage', 'alpha');
+$optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$massaction  = GETPOST('massaction', 'aZ09');
+$lineid      = GETPOST('lineid', 'int');
 
-$msid = GETPOST('msid', 'int');
-$year = GETPOST("year", 'int');
+$msid  = GETPOST('msid', 'int');
+$year  = GETPOST("year", 'int');
 $month = GETPOST("month", 'int');
+
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_movement = GETPOST("search_movement", 'alpha');
 $search_product_ref = trim(GETPOST("search_product_ref", 'alpha'));
@@ -65,7 +67,7 @@ $search_qty = trim(GETPOST("search_qty", 'alpha'));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page  = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (empty($page) || $page == -1) {
@@ -144,6 +146,7 @@ if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 $objectlist->fields = dol_sort_array($objectlist->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Permissions
 $permissionnote = $user->rights->mrp->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -253,7 +256,7 @@ $form = new Form($db);
 $formproject = new FormProjets($db);
 $formproduct = new FormProduct($db);
 $productstatic = new Product($db);
-$productlot = new ProductLot($db);
+$productlot = new Productlot($db);
 $warehousestatic = new Entrepot($db);
 $userstatic = new User($db);
 
@@ -492,7 +495,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -928,20 +931,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $userstatic->getNomUrl(-1);
 			print "</td>\n";
 		}
+		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
-			// Inventory code
-			print '<td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objp->inventorycode).'">';
 			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
 			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';
 		}
+		// Label of movement
 		if (!empty($arrayfields['m.label']['checked'])) {
-			// Label of movement
 			print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 		}
+		// Type of movement
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
-			// Type of movement
 			switch ($objp->type_mouvement) {
 				case "0":
 					print '<td class="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
@@ -972,17 +975,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($arrayfields['m.value']['checked'])) {
 			// Qty
 			print '<td class="right">';
-			if ($objp->qt > 0) {
-				print '+';
+			if ($objp->qty >0) {
+				print '<span class="stockmovemententry">+'.$objp->qty.'</span>';
+			} else {
+				print '<span class="stockmovementexit">'.$objp->qty.'<span>';
 			}
-			print $objp->qty;
 			print '</td>';
 		}
 		if (!empty($arrayfields['m.price']['checked'])) {
 			// Price
 			print '<td class="right">';
 			if ($objp->price != 0) {
-				print price($objp->price);
+				print '<span class="opacitymedium">'.price($objp->price).'</span>';
 			}
 			print '</td>';
 		}
@@ -990,10 +994,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
+			if (in_array($objp->rowid, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$objp->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {

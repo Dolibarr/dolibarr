@@ -48,10 +48,10 @@ class MembersTypes extends DolibarrApi
 	 *
 	 * Return an array with member type informations
 	 *
-	 * @param     int     $id ID of member type
-	 * @return    array|mixed data without useless information
+	 * @param   int     $id 			ID of member type
+	 * @return  Object              	Object with cleaned properties
 	 *
-	 * @throws    RestException
+	 * @throws  RestException
 	 */
 	public function get($id)
 	{
@@ -97,7 +97,7 @@ class MembersTypes extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type AS t LEFT JOIN ".MAIN_DB_PREFIX."adherent_type_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('member_type').')';
 
 		// Add sql filters

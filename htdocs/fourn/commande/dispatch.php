@@ -86,21 +86,21 @@ if ($id > 0 || !empty($ref)) {
 }
 
 if (empty($conf->reception->enabled)) {
-	$permissiontoreceive = $user->rights->fournisseur->commande->receptionner;
-	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->receptionner)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande_advance->check)));
+	$permissiontoreceive = $user->hasRight("fournisseur", "commande", "receptionner");
+	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "commande", "receptionner")) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "commande_advance", "check")));
 } else {
-	$permissiontoreceive = $user->rights->reception->creer;
-	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
+	$permissiontoreceive = $user->hasRight("reception", "creer");
+	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("reception", "creer")) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("reception", "reception_advance", "validate")));
 }
 
 // $id is id of a purchase order.
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
+$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
 
 if (!isModEnabled('stock')) {
 	accessforbidden();
 }
 
-$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
@@ -663,7 +663,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($num) {
 				while ($i < $num) {
 					$objd = $db->fetch_object($resql);
-					$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
+					$products_dispatched[$objd->rowid] = price2num($objd->qty, 'MS');
 					$i++;
 				}
 			}
@@ -780,6 +780,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$conf->cache['product'] = array();
 
+			// Loop on each source order line (may be more or less than current number of lines in llx_commande_fournisseurdet)
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
@@ -873,7 +874,7 @@ if ($id > 0 || !empty($ref)) {
 							print '<td class="right">';
 							print '</td>'; // Qty to dispatch
 							print '<td>';
-							//print img_picto($langs->trans('AddDispatchBatchLine'), 'split.png', 'onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
+							//print img_picto($langs->trans('AddDispatchBatchLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
 							print '</td>'; // Dispatch column
 							print '<td></td>'; // Warehouse column
 
@@ -936,7 +937,7 @@ if ($id > 0 || !empty($ref)) {
 							print '<td class="right">';
 							print '</td>'; // Qty to dispatch
 							print '<td>';
-							//print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
+							//print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
 							print '</td>'; // Dispatch column
 							print '<td></td>'; // Warehouse column
 
@@ -978,7 +979,8 @@ if ($id > 0 || !empty($ref)) {
 
 						// Qty to dispatch
 						print '<td class="right">';
-						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
+						print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
 						print '</td>';
 
 						print '<td>';
@@ -1115,14 +1117,30 @@ if ($id > 0 || !empty($ref)) {
 					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
                 });
 
-	            jQuery("#autoreset").click(function() {';
-	$i = 0;
-	while ($i < $nbproduct) {
-		print '           jQuery("#qty_0_'.$i.'").val("");';
-		$i++;
-	}
-	print '
+	            $("#autoreset").click(function() {
+					$(".qtydispatchinput").each(function(){
+						id = $(this).attr("id");
+						idtab = id.split("_");
+						if(idtab[1] == 0){
+							console.log(idtab);
+							$(this).val("");
+							$("#qty_dispatched_0_"+idtab[2]).val("0");
+						} else {
+							obj = $(this).parent().parent();
+							nameobj = obj.attr("name");
+							nametab = nameobj.split("_");
+							obj.remove();
+							$("tr[name^=\'"+nametab[0]+"_\'][name$=\'_"+nametab[2]+"\']:last .splitbutton").show();
+						}
+					});
                 });
+
+				$(".resetline").click(function(){
+					id = $(this).attr("id");
+					id = id.split("reset_");
+					console.log("Reset trigger for id = qty_"+id[1]);
+					$("#qty_"+id[1]).val("");
+				});
 			});
 		</script>';
 

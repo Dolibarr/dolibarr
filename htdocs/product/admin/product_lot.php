@@ -170,7 +170,7 @@ $head = product_lot_admin_prepare_head();
 print dol_get_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 	// The feature to define the numbering module of lot or serial is no enabled bcause it is not used anywhere in Dolibarr code: You can set it
 	// but the numbering module is not used.
 	// TODO Use it on lot creation page, when you create a lot and when the lot number is kept empty to define the lot according
@@ -214,7 +214,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering model
@@ -306,7 +306,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering model

@@ -121,7 +121,7 @@ class Receptions extends DolibarrApi
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."reception as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."reception AS t LEFT JOIN ".MAIN_DB_PREFIX."reception_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -642,7 +642,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(404, 'Reception not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('reception', $this->commande->id)) {
+		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -651,7 +651,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+			throw new RestException(500, 'Error when closing Reception: '.$this->reception->error);
 		}
 
 		// Reload reception

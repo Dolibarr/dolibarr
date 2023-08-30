@@ -382,16 +382,28 @@ class Entrepot extends CommonObject
 			// End call triggers
 		}
 
-		$elements = array('stock_mouvement', 'product_stock', 'product_warehouse_properties');
-		foreach ($elements as $table) {
-			if (!$error) {
-				$sql = "DELETE FROM ".$this->db->prefix().$table;
-				$sql .= " WHERE fk_entrepot = ".((int) $this->id);
+		if (!$error) {
+			$sql = "DELETE FROM ".$this->db->prefix()."product_batch";
+			$sql .= " WHERE fk_product_stock IN (SELECT rowid FROM ".$this->db->prefix()."product_stock as ps WHERE ps.fk_entrepot = ".((int) $this->id).")";
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
 
-				$result = $this->db->query($sql);
-				if (!$result) {
-					$error++;
-					$this->errors[] = $this->db->lasterror();
+		if (!$error) {
+			$elements = array('stock_mouvement', 'product_stock');
+			foreach ($elements as $table) {
+				if (!$error) {
+					$sql = "DELETE FROM ".$this->db->prefix().$table;
+					$sql .= " WHERE fk_entrepot = ".((int) $this->id);
+
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
 				}
 			}
 		}
@@ -708,6 +720,10 @@ class Entrepot extends CommonObject
 		$langs->load('stocks');
 
 		$datas = [];
+
+		$option = $params['option'] ?? '';
+		$nofetch = !empty($params['nofetch']);
+
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("Warehouse")];
 		}
@@ -718,6 +734,12 @@ class Entrepot extends CommonObject
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
 		if (!empty($this->lieu)) {
 			$datas['locationsummary'] = '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (!$nofetch && isModEnabled('categorie')) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories_warehouse'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_WAREHOUSE, 1, 1);
 		}
 
 		return $datas;
@@ -752,13 +774,14 @@ class Entrepot extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-			$label = '';
+			$label = 'ToComplete';
 		} else {
 			$label = implode($this->getTooltipContentArray($params));
 		}
@@ -973,8 +996,10 @@ class Entrepot extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</div>';
 		$return .= '<div class="info-box-content" >';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'lieu') && (!empty($this->lieu))) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->lieu.'</span>';
 		}

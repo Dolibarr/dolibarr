@@ -116,6 +116,7 @@ class Job extends CommonObject
 	);
 	public $rowid;
 	public $ref;
+	public $label;
 	public $description;
 	public $date_creation;
 	public $tms;
@@ -727,7 +728,7 @@ class Job extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Job").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("JobProfile").'</u>';
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
@@ -789,7 +790,7 @@ class Job extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->label.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -844,6 +845,9 @@ class Job extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		return '';		// There is no status on job profile for the moment
+
+		/*
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
@@ -862,6 +866,7 @@ class Job extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		*/
 	}
 
 	/**
@@ -1074,7 +1079,7 @@ class Job extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		/*if (property_exists($this, 'deplacement')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span>';

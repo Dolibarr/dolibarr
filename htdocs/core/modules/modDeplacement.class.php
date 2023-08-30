@@ -80,7 +80,7 @@ class modDeplacement extends DolibarrModules
 		$this->rights[1][0] = 171;
 		$this->rights[1][1] = 'Lire ses notes de frais et deplacements et celles de sa hierarchy';
 		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
+		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 172;

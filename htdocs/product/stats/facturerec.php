@@ -154,7 +154,7 @@ if ($id > 0 || !empty($ref)) {
 
 		if ($showmessage && $nboflines > 1) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
-		} elseif ($user->rights->facture->lire) {
+		} elseif ($user->hasRight('facture', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= "f.titre, f.datec, f.rowid as facid, f.suspended as suspended,";
 			$sql .= " d.rowid, d.total_ht as total_ht, d.qty"; // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
@@ -191,7 +191,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Count total nb of records
 			$totalofrecords = '';
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}

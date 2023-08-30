@@ -137,7 +137,7 @@ if (!defined('NOREQUIRETRAN')) {
  */
 $db = null;
 if (!defined('NOREQUIREDB')) {
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->error) {
 		// If we were into a website context

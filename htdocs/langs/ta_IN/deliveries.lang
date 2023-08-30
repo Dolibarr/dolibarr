@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=டெலிவரி
 DeliveryRef=ரெஃப் டெலிவரி
-DeliveryCard=ரசீது அட்டை
+DeliveryCard=Stock receipt
 DeliveryOrder=விநியோக ரசீது
 DeliveryDate=டெலிவரி தேதி
 CreateDeliveryOrder=விநியோக ரசீதை உருவாக்கவும்

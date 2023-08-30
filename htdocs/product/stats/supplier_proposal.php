@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 
-		if ($user->rights->propal->lire) {
+		if ($user->hasRight('propal', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
 			//$sql .= " p.ref_supplier,";
 			$sql .= "p.date_valid, p.fk_statut as statut, d.rowid, d.qty";
@@ -174,7 +174,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Count total nb of records
 			$totalofrecords = '';
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}

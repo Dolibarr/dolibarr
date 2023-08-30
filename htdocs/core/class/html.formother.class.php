@@ -331,7 +331,6 @@ class FormOther
 						$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
 					} else {
 						$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
-						//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
 					}
 					$out .= $obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '');
 					$out .= '</option>';
@@ -412,12 +411,6 @@ class FormOther
 		$tab_categs = $static_categs->get_full_arbo($type);
 
 		$moreforfilter = '';
-		// Enhance with select2
-		if ($conf->use_javascript_ajax) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$comboenhancement = ajax_combobox('select_categ_'.$htmlname);
-			$moreforfilter .= $comboenhancement;
-		}
 
 		// Print a select with each of them
 		$moreforfilter .= '<select class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
@@ -450,6 +443,13 @@ class FormOther
 		}
 		$moreforfilter .= '</select>';
 
+		// Enhance with select2
+		if ($conf->use_javascript_ajax) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$comboenhancement = ajax_combobox('select_categ_'.$htmlname);
+			$moreforfilter .= $comboenhancement;
+		}
+
 		return $moreforfilter;
 	}
 
@@ -471,6 +471,7 @@ class FormOther
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
+		global $action;
 
 		$langs->load('users');
 
@@ -694,7 +695,7 @@ class FormOther
 
 		$numlines = count($lines);
 		for ($i = 0; $i < $numlines; $i++) {
-			if ($lines[$i]->fk_parent == $parent) {
+			if ($lines[$i]->fk_task_parent == $parent) {
 				//var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
 				// Break on a new project
@@ -734,9 +735,9 @@ class FormOther
 				if (isset($lines[$i]->id)) {		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
 					// Check if we must disable entry
 					$disabled = 0;
-					if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid))) {
+					if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_task_parent == $disablechildoftaskid))) {
 						$disabled++;
-						if ($lines[$i]->fk_parent == $disablechildoftaskid) {
+						if ($lines[$i]->fk_task_parent == $disablechildoftaskid) {
 							$newdisablechildoftaskid = $lines[$i]->id; // If task is child of a disabled parent, we will propagate id to disable next child too
 						}
 					}
@@ -788,7 +789,7 @@ class FormOther
 	 *
 	 *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
 	 *  @param	string		$textifnotdefined	Text to show if color not defined
-	 *  @return	string							HTML code for color thumb
+	 *  @return	string							Show color string
 	 *  @see selectColor()
 	 */
 	public static function showColor($color, $textifnotdefined = '')
@@ -802,9 +803,9 @@ class FormOther
 		$color = colorArrayToHex(colorStringToArray($color, array()), '');
 
 		if ($color) {
-			print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
+			return '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		} else {
-			print $textifnotdefined;
+			return $textifnotdefined;
 		}
 	}
 
@@ -830,17 +831,18 @@ class FormOther
 	/**
 	 *  Output a HTML code to select a color. Field will return an hexa color like '334455'.
 	 *
-	 *  @param	string		$set_color		Pre-selected color
-	 *  @param	string		$prefix			Name of HTML field
-	 *  @param	string		$form_name		Deprecated. Not used.
-	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
-	 *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
-	 *  @param	string		$morecss		Add css style into input field
+	 *  @param	string		$set_color				Pre-selected color
+	 *  @param	string		$prefix					Name of HTML field
+	 *  @param	string		$form_name				Deprecated. Not used.
+	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
+	 *  @param 	array		$arrayofcolors			Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 *  @param	string		$morecss				Add css style into input field
 	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
+	 *  @param	string		$default				Default color
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '', $default = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -852,8 +854,9 @@ class FormOther
 		$out = '';
 
 		if (!is_array($arrayofcolors) || count($arrayofcolors) < 1) {
+			// Case of selection of any color
 			$langs->load("other");
-			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
+			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax) && !getDolGlobalInt('MAIN_USE_HTML5_COLOR_SELECTOR')) {
 				$out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
@@ -918,9 +921,31 @@ class FormOther
 					);
 				 });
 	             </script>';
+				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
+			} else {
+				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat input-nobottom colorselector valignmiddle '.($morecss ? ' '.$morecss : '').'" type="color" value="#'.dol_escape_htmltag($set_color !== '' ? $set_color : $default).'" />';
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
+	             jQuery(document).ready(function(){
+					var originalhex = null;
+					jQuery("#colorpicker'.$prefix.'").on(\'change\', function() {
+						var hex = jQuery("#colorpicker'.$prefix.'").val();
+						console.log("new color selected in input color "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
+				if ($setpropertyonselect) {
+					$out .= 'if (originalhex == null) {';
+					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
+					$out .= '   console.log("original color is saved into originalhex = "+originalhex);';
+					$out .= '}';
+					$out .= 'if (hex != null) {';
+					$out .= '	document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', hex);';
+					$out .= '}';
+				}
+				$out .= '
+					});
+				});
+				</script>';
 			}
-			$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
-		} else { // In most cases, this is not used. We used instead function with no specific list of colors
+		} else {
+			// In most cases, this is not used. We used instead function with no specific list of colors
 			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
 				$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
 				$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
@@ -1097,7 +1122,7 @@ class FormOther
 	 *  @param	string		$option			Option
 	 *  @param	string		$morecss		More CSS
 	 *  @param  bool		$addjscombo		Add js combo
-	 *  @return	string
+	 *  @return	void
 	 *  @deprecated
 	 */
 	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)

@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       booking_contact.php
- *  \ingroup    bookcal
- *  \brief      Tab for contacts linked to Booking
+ *   \file       htdocs/bookcal/booking_contact.php
+ *   \ingroup    bookcal
+ *   \brief      Tab for contacts linked to Booking
  */
 
 // Load Dolibarr environment
@@ -144,7 +144,7 @@ if ($object->id) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';

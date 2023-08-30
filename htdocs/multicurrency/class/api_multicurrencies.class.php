@@ -109,7 +109,7 @@ class MultiCurrencies extends DolibarrApi
 	 * Return an array with Currency informations
 	 *
 	 * @param 	int 		$id 	ID of Currency
-	 * @return 	array|mixed 		Data without useless information
+	 * @return  Object              Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -219,7 +219,7 @@ class MultiCurrencies extends DolibarrApi
 
 		// Add default rate if defined
 		if (isset($request_data['rate']) && $request_data['rate'] > 0) {
-			if ($multicurrency->addRate(DolibarrApiAccess::$user, $request_data['rate']) < 0) {
+			if ($multicurrency->addRate($request_data['rate']) < 0) {
 				throw new RestException(500, "Error adding currency rate", array_merge(array($multicurrency->error), $multicurrency->errors));
 			}
 
@@ -301,7 +301,7 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param	int		$id				Currency ID
 	 * @param	array	$request_data	Request data
-	 * @return	array					The currency with the new rate
+	 * @return	Object|false		  	Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -343,9 +343,12 @@ class MultiCurrencies extends DolibarrApi
 
 		// Clear all fields out of interrest
 		foreach ($object as $key => $value) {
-			if ($key == "rate") $object->$key = $this->_cleanObjectDatasRate($object->$key);
-			if ($key == "id" || $key == "code" || $key == "rate" || $key == "name")
+			if ($key == "rate") {
+				$object->$key = $this->_cleanObjectDatasRate($object->$key);
+			}
+			if ($key == "id" || $key == "code" || $key == "rate" || $key == "name") {
 				continue;
+			}
 			unset($object->$key);
 		}
 

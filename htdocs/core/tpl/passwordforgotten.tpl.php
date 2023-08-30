@@ -27,7 +27,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 // DDOS protection
-$size = (int) $_SERVER['CONTENT_LENGTH'];
+$size = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
 if ($size > 10000) {
 	$langs->loadLangs(array("errors", "install"));
 	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);
@@ -36,7 +36,6 @@ if ($size > 10000) {
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 header('Cache-Control: Public, must-revalidate');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 if (GETPOST('dol_hide_topmenu')) {
 	$conf->dol_hide_topmenu = 1;

@@ -54,7 +54,7 @@ if (empty($user->id)) {
 	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
-
+$conf->global->MAIN_UMASK='666';
 
 
 /**
@@ -69,7 +69,6 @@ class AllTests
 	 */
 	public static function suite()
 	{
-
 		$suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
 		//require_once dirname(__FILE__).'/CoreTest.php';

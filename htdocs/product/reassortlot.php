@@ -129,7 +129,7 @@ if (!empty($canvas)) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productreassortlotlist'));
+$hookmanager->initHooks(array('reassortlotlist'));
 
 // Security check
 if ($user->socid) {
@@ -411,7 +411,7 @@ if (!empty($sql_having)) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 

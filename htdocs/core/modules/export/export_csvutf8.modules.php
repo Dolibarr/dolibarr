@@ -76,7 +76,7 @@ class ExportCsvUtf8 extends ExportCsv
 		global $conf;
 		$conf->global->EXPORT_CSV_FORCE_CHARSET = 'UTF-8';
 
-		parent::write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types);
+		return parent::write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -94,6 +94,6 @@ class ExportCsvUtf8 extends ExportCsv
 		global $conf;
 
 		$conf->global->EXPORT_CSV_FORCE_CHARSET = 'UTF-8';
-		parent::write_record($array_selected_sorted, $objp, $outputlangs, $array_types);
+		return parent::write_record($array_selected_sorted, $objp, $outputlangs, $array_types);
 	}
 }

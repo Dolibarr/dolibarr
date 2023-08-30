@@ -204,7 +204,7 @@ function printDropdownBookmarksList()
 		';
 
 		$html .= '
-				<!-- Menu Body -->
+				<!-- Menu Body bookmarks -->
 				<div class="bookmark-body dropdown-body">'.$bookmarkList.'
 				<span id="top-bookmark-search-nothing-found" class="'.($bookmarkNb ? 'hidden-search-result ' : '').'opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
 				</div>

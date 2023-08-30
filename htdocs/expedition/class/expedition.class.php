@@ -114,8 +114,6 @@ class Expedition extends CommonObject
 	 */
 	public $ref_customer;
 
-	public $brouillon;
-
 	/**
 	 * @var int warehouse id
 	 */
@@ -326,14 +324,12 @@ class Expedition extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
 		}
 
 		$this->user = $user;
-
 
 		$this->db->begin();
 
@@ -516,7 +512,10 @@ class Expedition extends CommonObject
 		$tab = $line_ext->detail_batch;
 		// create stockLocation Qty array
 		foreach ($tab as $detbatch) {
-			if ($detbatch->entrepot_id) {
+			if (!empty($detbatch->entrepot_id)) {
+				if (empty($stockLocationQty[$detbatch->entrepot_id])) {
+					$stockLocationQty[$detbatch->entrepot_id] = 0;
+				}
 				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->qty;
 			}
 		}
@@ -644,10 +643,6 @@ class Expedition extends CommonObject
 				$this->label_incoterms      = $obj->label_incoterms;
 
 				$this->db->free($result);
-
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
 
 				// Tracking url
 				$this->getUrlTrackingStatus($obj->tracking_number);
@@ -961,11 +956,11 @@ class Expedition extends CommonObject
 		global $conf, $langs;
 
 		$num = count($this->lines);
-		if ($dbatch['qty'] > 0) {
+		if ($dbatch['qty'] > 0 || ($dbatch['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
 			$line = new ExpeditionLigne($this->db);
 			$tab = array();
 			foreach ($dbatch['detail'] as $key => $value) {
-				if ($value['q'] > 0) {
+				if ($value['q'] > 0 || ($value['q'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
 					// $value['q']=qty to move
 					// $value['id_batch']=id into llx_product_batch of record to move
 					//var_dump($value);
@@ -977,9 +972,12 @@ class Expedition extends CommonObject
 						return -1;
 					}
 					$linebatch->qty = $value['q'];
+					if ($linebatch->qty == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
+						$linebatch->batch = null;
+					}
 					$tab[] = $linebatch;
 
-					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
+					if (getDolGlobalString("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", '0')) {
 						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 						$prod_batch = new Productbatch($this->db);
 						$prod_batch->fetch($value['id_batch']);
@@ -1958,9 +1956,8 @@ class Expedition extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ExpeditionLigne($this->db);
-			$line->desc = $langs->trans("Description")." ".$xnbp;
-			$line->libelle = $langs->trans("Description")." ".$xnbp; // deprecated
-			$line->label = $langs->trans("Description")." ".$xnbp;
+			$line->product_desc = $langs->trans("Description")." ".$xnbp;
+			$line->product_label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 			$line->qty_asked = 5;
 			$line->qty_shipped = 4;
@@ -2745,8 +2742,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function insert($user, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		// Check parameters

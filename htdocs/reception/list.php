@@ -230,9 +230,9 @@ if (empty($reshook)) {
 		sort($receptions);
 		foreach ($receptions as $id_reception) {
 			$rcp = new Reception($db);
-			 // We only invoice reception that are validated
-			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != $rcp::STATUS_VALIDATED) {
-				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusSupplierOrderValidatedShort"));
+			 // We not allow invoice reception that are in draft status
+			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut == $rcp::STATUS_DRAFT) {
+				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusReceptionValidatedShort"));
 				$error++;
 				continue;
 			}
@@ -554,6 +554,7 @@ if (empty($reshook)) {
 				}
 
 				$id = $objecttmp->id; // For builddoc action
+				$lastref = $objecttmp->ref; // generated ref
 				$object  =$objecttmp;
 
 				// Fac builddoc
@@ -708,7 +709,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 $sql .= $hookmanager->resPrint;
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -860,7 +861,7 @@ $arrayofmassactions = array(
 	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
+if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->rights->supplier_invoice->creer) {
 	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisReceptions");
 }
 if ($massaction == 'createbills') {
