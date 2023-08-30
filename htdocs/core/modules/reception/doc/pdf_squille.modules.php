@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2018	   Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2023      Frédéric France          <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,26 @@ class pdf_squille extends ModelePdfReception
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
+
+	/**
+	 * @var int posx weight vol
+	 */
+	public $posxweightvol;
+
+	/**
+	 * @var int posx qty ordered
+	 */
+	public $posxqtyordered;
+
+	/**
+	 * @var int posx qty to ship
+	 */
+	public $posxqtytoship;
+
+	/**
+	 * @var int posx totalht
+	 */
+	public $posxtotalht;
 
 
 	/**
@@ -617,7 +638,7 @@ class pdf_squille extends ModelePdfReception
 	 *	Show total to pay
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param  Reception	$object         Object reception
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
@@ -829,7 +850,7 @@ class pdf_squille extends ModelePdfReception
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Reception	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void

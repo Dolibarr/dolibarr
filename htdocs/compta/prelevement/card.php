@@ -521,11 +521,11 @@ if ($id > 0 || $ref) {
 			print '<td class="right">';
 
 			if ($obj->statut == 3) {
-				print '<b>'.$langs->trans("StatusRefused").'</b>';
+				print '<span class="error">'.$langs->trans("StatusRefused").'</span>';
 			} else {
 				if ($object->statut == BonPrelevement::STATUS_CREDITED) {
-					if ($obj->statut == 2) {
-						if ($user->rights->prelevement->bons->credit) {
+					if ($obj->statut == LignePrelevement::STATUS_CREDITED) {
+						if ($user->hasRight('prelevement', 'bons', 'credit')) {
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
 							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newToken().'">'.$langs->trans("StandingOrderReject").'</a>';
 						} else {

@@ -77,8 +77,8 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 $manifest->short_name = $manifest->name;
 
 
-$manifest->theme_color = !empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR) ? $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR : '#F05F40';
-$manifest->background_color = !empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR) ? $conf->global->MAIN_MANIFEST_APPLI_BG_COLOR : "#ffffff";
+$manifest->theme_color = empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR) ? getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40') : $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR;
+$manifest->background_color = empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR) ? "#ffffff" : $conf->global->MAIN_MANIFEST_APPLI_BG_COLOR;
 $manifest->display = "standalone";
 $manifest->splash_pages = null;
 $manifest->icons = array();

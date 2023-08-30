@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Wyświetl według konta księgowego
 VueBySubAccountAccounting=Wyświetl według subkonta księgowego
 
-MainAccountForCustomersNotDefined=Główne konto księgowe dla klientów nie zdefiniowane w ustawieniach
-MainAccountForSuppliersNotDefined=Główne konto rozliczeniowe dla dostawców niezdefiniowane w konfiguracji
-MainAccountForUsersNotDefined=Główne konto księgowe dla użytkowników nie zdefiniowane w ustawieniach
-MainAccountForVatPaymentNotDefined=Główne konto księgowe dla płatności VAT nie zdefiniowane w ustawieniach
-MainAccountForSubscriptionPaymentNotDefined=Główne konto księgowe dla płatności za subskrypcję nie zostało zdefiniowane w konfiguracji
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Kontro księgowe dla użytkownika nie zdefiniowane w ustawieniach
 
 AccountancyArea=Strefa księgowości

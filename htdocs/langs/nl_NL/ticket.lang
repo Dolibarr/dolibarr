@@ -126,9 +126,9 @@ TicketParams=Parameters
 TicketsShowModuleLogo=Toon het logo van de module in de openbare interface
 TicketsShowModuleLogoHelp=Schakel deze optie in om het logo op de pagina's van de openbare interface te verbergen
 TicketsShowCompanyLogo=Toon het logo van het bedrijf in de openbare interface
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
-TicketsShowCompanyFooter=Display the footer of the company in the public interface
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Schakel deze optie in om het logo van het hoofdbedrijf weer te geven op de pagina's van de openbare interface
+TicketsShowCompanyFooter=Geef de voettekst van het bedrijf weer in de openbare interface
+TicketsShowCompanyFooterHelp=Schakel deze optie in om de voettekst van het hoofdbedrijf weer te geven op de pagina's van de openbare interface
 TicketsEmailAlsoSendToMainAddress=Stuur ook een melding naar het hoofd e-mailadres
 TicketsEmailAlsoSendToMainAddressHelp=Schakel deze optie in om ook een e-mail te sturen naar het adres gedefinieerd in set-up "%s" (zie tabblad "%s")
 TicketsLimitViewAssignedOnly=Beperk de weergave tot tickets die zijn toegewezen aan de huidige gebruiker (niet effectief voor externe gebruikers, altijd beperkt tot de derde partij waarvan ze afhankelijk zijn)
@@ -329,8 +329,8 @@ OldUser=Oude gebruiker
 NewUser=Nieuwe gebruiker
 NumberOfTicketsByMonth=Aantal tickets per maand
 NbOfTickets=Aantal tickets
-ExternalContributors=External contributors
-AddContributor=Add external contributor
+ExternalContributors=Externe bijdragers
+AddContributor=Externe bijdrager toevoegen
 
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket gesloten

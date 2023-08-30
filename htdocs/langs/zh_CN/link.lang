@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - languages
 LinkANewFile=链接一份新文件/文档
 LinkedFiles=链接文件和文档
-NoLinkFound=空空如也
+NoLinkFound=无注册链接
 LinkComplete=文件链接成功
 ErrorFileNotLinked=文件无法链接
 LinkRemoved=链接 %s 已移除

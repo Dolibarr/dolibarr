@@ -23,7 +23,7 @@ Module4100Desc = 管理数据隐私的模块（符合GDPR）
 #
 datapolicySetup = 数据隐私政策模块设置
 Deletion = 删除数据
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
+datapolicySetupPage = 根据您所在国家/地区的法律（例如 GDPR <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">第 5 条 </a>），个人数据的保存期限不得超过超出收集目的所需的数量（需要归档的除外）。 <br> 在没有事件发生的一段时间内（您将在下面指定的持续时间），删除将自动完成。
 NB_MONTHS = %s月
 ONE_YEAR = 1年
 NB_YEARS = %s年
