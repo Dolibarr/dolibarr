@@ -26,5 +26,5 @@ jobs:
         with:
           files: "**.php" # you may customize glob as needed
           phpcs_path: php phpcs.phar
-          standard: dev/setup/codesniffer/ruleset.xml
+          standard: 'dev/setup/codesniffer/ruleset.xml'
           fail_on_warnings: false
