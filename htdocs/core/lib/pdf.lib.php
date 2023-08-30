@@ -1464,7 +1464,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			} else {
 				$textwasnotmodified = ($desc == $prodser->description);
 			}
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($textwasnotmodified || $translatealsoifmodified)) {
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) {
 				$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
 			}
 
