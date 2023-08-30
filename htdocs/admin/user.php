@@ -118,13 +118,13 @@ if ($action == 'set_default') {
 	}
 } elseif ($action == 'sethideexternaluser') {
 	//Set hide external user into combox or select
-$status = GETPOST('status', 'alpha');
-
-if (dolibarr_set_const($db, "USER_HIDE_EXTERNAL_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0) {
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
-} else {
-	dol_print_error($db);
+	$status = GETPOST('status', 'alpha');
+	if (dolibarr_set_const($db, "USER_HIDE_EXTERNAL_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0) {
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 
