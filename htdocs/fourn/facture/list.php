@@ -651,9 +651,6 @@ if (!empty($searchCategoryProductList)) {
 		}
 	}
 }
-if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND f.fk_statut = ".((int) $search_status);
-}
 if ($filter && $filter != -1) {
 	$aFilter = explode(',', $filter);
 	foreach ($aFilter as $fil) {
