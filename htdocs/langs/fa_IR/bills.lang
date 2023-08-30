@@ -164,6 +164,7 @@ BillFrom=از
 BillTo=به
 ShippingTo=Shipping to
 ActionsOnBill=کنش‌های مربوط به صورت‌حساب
+ActionsOnBillRec=Actions on recurring invoice
 RecurringInvoiceTemplate=صورت‌حساب تکرارشدنی/قالبی
 NoQualifiedRecurringInvoiceTemplateFound=هیچ صورت‌حساب قالبی تکرارشدنی واجد شرایط ساخته‌شدن نیست.
 FoundXQualifiedRecurringInvoiceTemplate=(%s) صورت‌حساب قالبی‌تکرارشدنی مناسب ساخته‌شدن پیدا شد.
@@ -196,6 +197,7 @@ ConfirmClassifyPaidPartiallyReasonDiscount=پرداخت نشده باقی‌ما
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=پرداخت‌نشده باقی‌ماندن<b>( %s %s)</b> تخفیفی است که اعطا شده، زیرا پرداخت قبل از موعد انجام شده است. من قبول می‌کنم مبلغ م.ب.ا.ا. را به‌واسطۀ این تخفیف ضرر کنم.
 ConfirmClassifyPaidPartiallyReasonDiscountVat=پرداخت‌نشده باقی‌ماندن <b>(%s %s) </b> تخفیفی است که اعطا شده، زیرا پرداخت قبل از موعد انجام شده است. من م.ب.ا.ا. را بدون یادداشت اعتباری بازیابی می‌کنم.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=مشتری بدحساب
+ConfirmClassifyPaidPartiallyReasonBadSupplier=Bad vendor
 ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fee)
 ConfirmClassifyPaidPartiallyReasonWithholdingTax=Withholding tax
 ConfirmClassifyPaidPartiallyReasonProductReturned=برخی‌از محصولات برگشت‌خورده
@@ -208,6 +210,7 @@ ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=این گزینه در ه�
 ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=The unpaid amount will never be paid as it is a withholding tax
 ConfirmClassifyPaidPartiallyReasonOtherDesc=این گزینه را در صورتی که سایر گزینه‌ها مناسب نباشد انتخاب کنید، برای مثال برای شرایط زیر: <br>- پرداخت کامل نشده به‌این علت که برخی محصولات پس‌داده شده‌اند <br>- مبلغ ادعا شده بسیار مهم است چون تخفیف فراموش شده است <br> در همۀ احوال، مبلغ ادعاشده باید در سامانۀ حساب‌داری با یک یادداشت اعتباری تصحیح شود
+ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=A <b>bad supplier</b> is a supplier we refuse to pay.
 ConfirmClassifyAbandonReasonOther=سایر
 ConfirmClassifyAbandonReasonOtherDesc=این گزینه در شرایطی غیر از این استفاده می‌شود. برای مثال به دلیل این‌که می‌خواهید یک صورت‌حساب جایگزین بسازید.
 ConfirmCustomerPayment=آیا واردشدن این پرداخت برای <b>%s</b> %s را تائید می‌کنید؟
@@ -330,8 +333,8 @@ DiscountFromExcessPaid=پرداخت‌های اضافی صورت‌حساب %s
 AbsoluteDiscountUse=این نوع از اعتبار می‌تواند قبل از تائید در صورت‌حساب به‌حساب آید
 CreditNoteDepositUse=برای استفاده از این نوع اعتبارها صورت‌حساب باید تائید شده باشد
 NewGlobalDiscount=ایجاد تخفیف‌مطلق‌جدید
-NewSupplierGlobalDiscount=New supplier absolute discount
-NewClientGlobalDiscount=New client absolute discount
+NewSupplierGlobalDiscount=New absolute supplier discount
+NewClientGlobalDiscount=New absolute client discount
 NewRelativeDiscount=ایجاد تخفیف‌نسبی‌جدید
 DiscountType=نوع تخفیف
 NoteReason=توضیح/علت
@@ -401,7 +404,7 @@ DateLastGenerationShort=تاریخ آخرین تولید
 MaxPeriodNumber=حداکثر تعداد تولید صورت‌حساب
 NbOfGenerationDone=تعداد صورت‌حساب‌هائی که تا کنون تولید شده
 NbOfGenerationOfRecordDone=Number of record generation already done
-NbOfGenerationDoneShort=تعداد تولیدهای انجام شده
+NbOfGenerationDoneShort=Number of generations done
 MaxGenerationReached=حداکثر تعداد قابل تولید به‌سررسیده
 InvoiceAutoValidate=تائید خودکار صورت‌حساب‌ها
 GeneratedFromRecurringInvoice=تولیدشده از صورت‌حساب تکرارشدنی قالبی %s

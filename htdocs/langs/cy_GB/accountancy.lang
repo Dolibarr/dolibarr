@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Gweld yn ôl cyfrif cyfrifeg
 VueBySubAccountAccounting=Gweld trwy isgyfrif cyfrifo
 
-MainAccountForCustomersNotDefined=Prif gyfrif cyfrifo ar gyfer cwsmeriaid heb ei ddiffinio yn y gosodiad
-MainAccountForSuppliersNotDefined=Prif gyfrif cyfrifo ar gyfer gwerthwyr heb ei ddiffinio yn y gosodiad
-MainAccountForUsersNotDefined=Prif gyfrif cyfrifo ar gyfer defnyddwyr heb ei ddiffinio yn y gosodiad
-MainAccountForVatPaymentNotDefined=Prif gyfrif cyfrifo ar gyfer taliad TAW heb ei ddiffinio yn y gosodiad
-MainAccountForSubscriptionPaymentNotDefined=Prif gyfrif cyfrifo ar gyfer taliad tanysgrifiad heb ei ddiffinio yn y gosodiad
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Maes cyfrifo

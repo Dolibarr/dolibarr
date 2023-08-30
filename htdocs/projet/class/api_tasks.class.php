@@ -570,7 +570,7 @@ class Tasks extends DolibarrApi
 	 * { "date": "2016-12-31 23:15:00", "duration": 1800, "user_id": 1, "note": "My time test" }
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
@@ -619,7 +619,7 @@ class Tasks extends DolibarrApi
 	 * Delete time spent for a task of a project.
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 *
 	 * @url DELETE    {id}/timespent/{timespent_id}
 	 *
@@ -653,7 +653,7 @@ class Tasks extends DolibarrApi
 	 * Loads the selected task & timespent records.
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 *
 	 * @return void
 	 */

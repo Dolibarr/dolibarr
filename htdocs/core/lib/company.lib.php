@@ -716,7 +716,7 @@ function getFormeJuridiqueLabel($code)
 		return '';
 	}
 
-	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
 	$sql .= " WHERE code = '".$db->escape($code)."'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
@@ -727,7 +727,7 @@ function getFormeJuridiqueLabel($code)
 		if ($num) {
 			$obj = $db->fetch_object($resql);
 
-			$label = ($obj->libelle != '-' ? $obj->libelle : '');
+			$label = ($obj->label != '-' ? $obj->label : '');
 
 			return $langs->trans($label);
 		} else {
@@ -2056,8 +2056,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '<td class="tdoverflowmax300"';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
-				//$actionstatic->libelle=$libelle;
+				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				$libelle = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
@@ -2443,7 +2442,8 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 
 	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
-	print '<footer class="center paddingleft paddingright opacitymedium centpercent">'."\n";
+	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
+	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';

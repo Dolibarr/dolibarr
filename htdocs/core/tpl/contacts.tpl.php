@@ -40,36 +40,37 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
+// TODO Set $permission from the $permissiontoadd var defined on calling page
 if ($module == 'propal') {
-	$permission = $user->rights->propal->creer;
+	$permission = $user->hasRight('propal', 'creer');
 } elseif ($module == 'fichinter') {
-	$permission = $user->rights->ficheinter->creer;
+	$permission = $user->hasRight('ficheinter', 'creer');
 } elseif ($module == 'order_supplier') {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->rights->fournisseur->commande->creer;
+		$permission = $user->hasRight('fournisseur', 'commande', 'creer');
 	} else {
-		$permission = $user->rights->supplier_order->creer;
+		$permission = $user->hasRight('supplier_order', 'creer');
 	}
 } elseif ($module == 'invoice_supplier' && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->rights->fournisseur->facture->creer;
+		$permission = $user->hasRight('fournisseur', 'facture', 'creer');
 	} else {
-		$permission = $user->rights->supplier_invoice->creer;
+		$permission = $user->hasRight('supplier_invoice', 'creer');
 	}
 } elseif ($module == 'project') {
-	$permission = $user->rights->projet->creer;
+	$permission = $user->hasRight('projet', 'creer');
 } elseif ($module == 'action') {
 	$permission = $user->hasRight('agenda', 'myactions', 'create');
 } elseif ($module == 'shipping') {
-	$permission = $user->rights->expedition->creer;
+	$permission = $user->hasRight('expedition', 'creer');
 } elseif ($module == 'reception') {
-	$permission = $user->rights->reception->creer;
+	$permission = $user->hasRight('reception', 'creer');
 } elseif ($module == 'project_task') {
-	$permission = $user->rights->projet->creer;
+	$permission = $user->hasRight('projet', 'creer');
 } elseif (!isset($permission) && isset($user->rights->$module->creer)) {
-	$permission = $user->rights->$module->creer;
+	$permission = $user->hasRight($module, 'creer');
 } elseif (!isset($permission) && isset($user->rights->$module->write)) {
-	$permission = $user->rights->$module->write;
+	$permission = $user->hasRight($module, 'write');
 }
 
 $formcompany = new FormCompany($db);

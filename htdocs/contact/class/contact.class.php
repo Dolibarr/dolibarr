@@ -107,7 +107,7 @@ class Contact extends CommonObject
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
 		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>77, 'searchall'=>1),
-		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
+		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
 		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'searchall'=>1),
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
@@ -242,41 +242,6 @@ class Contact extends CommonObject
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
-
-	/**
-	 * Skype username
-	 * @var string
-	 * @deprecated
-	 */
-	public $skype;
-
-	/**
-	 * Twitter username
-	 * @var string
-	 * @deprecated
-	 */
-	public $twitter;
-
-	 /**
-	  * Facebook username
-	  * @var string
-	  * @deprecated
-	  */
-	public $facebook;
-
-	 /**
-	  * Linkedin username
-	  * @var string
-	  * @deprecated
-	  */
-	public $linkedin;
-
-	/**
-	 * Jabber username
-	 * @var string
-	 * @deprecated
-	 */
-	public $jabberid;
 
 	/**
 	 * @var string filename for photo
@@ -1699,6 +1664,8 @@ class Contact extends CommonObject
 		$this->email = 'specimen@specimen.com';
 		$this->socialnetworks = array(
 			'skype' => 'tom.hanson',
+			'twitter' => 'tomhanson',
+			'linkedin' => 'tomhanson',
 		);
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';
@@ -2194,8 +2161,6 @@ class Contact extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs;
-
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';

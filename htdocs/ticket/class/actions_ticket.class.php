@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
+
+// TODO Only the last method emailElementlist is a hook method. Other must be moved into standard ticket.class.php
 
 
 /**
  *  Class Actions of the module ticket
  */
-class ActionsTicket
+class ActionsTicket extends CommonHookActions
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -82,6 +86,7 @@ class ActionsTicket
 	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;
+
 
 	/**
 	 *    Constructor
@@ -141,7 +146,7 @@ class ActionsTicket
 	public function getInfo($id)
 	{
 		$this->getInstanceDao();
-		$this->dao->fetch($id, '', $track_id);
+		$this->dao->fetch($id);
 
 		$this->label = $this->dao->label;
 		$this->description = $this->dao->description;

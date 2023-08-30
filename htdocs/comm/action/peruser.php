@@ -973,7 +973,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$var = !$var;
 		echo "<tr>";
 		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').'">';
-		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '');
+		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '', 'paddingleft');
 		print '</td>';
 		$tmpday = $sav;
 

@@ -540,13 +540,15 @@ class BonPrelevement extends CommonObject
 					} else {
 						if ($this->type == 'bank-transfer') {
 							$modeforaddpayment = 'payment_supplier';
-							$labelforaddpayment = '(BankTransferPayment)';
+							$labelforaddpayment = '(SupplierInvoicePayment)';
+							$addbankurl = 'credit-transfer';
 						} else {
 							$modeforaddpayment = 'payment';
-							$labelforaddpayment = '(WithdrawalPayment)';
+							$labelforaddpayment = '(CustomerInvoicePayment)';
+							$addbankurl = 'direct-debit';	// = 'directdebit'
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '');
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;
@@ -840,7 +842,7 @@ class BonPrelevement extends CommonObject
 	 *  @param  string  $executiondate		Date to execute the transfer
 	 *  @param	int	    $notrigger			Disable triggers
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
-	 *  @param	int		$did				ID of an existing payment request. If $did is defined, no entry
+	 *  @param	int		$did				ID of an existing payment request. If $did is defined, we use the existing payment request.
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 *	@return	int							<0 if KO, No of invoice included into file if OK
 	 */
@@ -966,7 +968,7 @@ class BonPrelevement extends CommonObject
 								if ($format == 'FRST' && $bac->frstrecur != 'FRST') {
 									continue;
 								}
-								if ($format == 'RCUR' && ($bac->frstrecur != 'RCUR' && $bac->frstrecur != 'RECUR')) {
+								if ($format == 'RCUR' && $bac->frstrecur != 'RCUR') {
 									continue;
 								}
 							}

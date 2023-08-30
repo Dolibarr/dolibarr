@@ -49,10 +49,25 @@ class Cpaiement
 	public $code;
 
 	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var string[] array of errors messages
+	 */
+	public $errors;
+
+	/**
+	 * @var string
 	 * @deprecated
 	 * @see $label
 	 */
 	public $libelle;
+
+	/**
+	 * @var string
+	 */
 	public $label;
 
 	public $type;

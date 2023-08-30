@@ -418,7 +418,7 @@ if (empty($reshook) && $action != 'remove_file') {
  * View
  */
 
-$productlot = new ProductLot($db);
+$productlot = new Productlot($db);
 $productstatic = new Product($db);
 $warehousestatic = new Entrepot($db);
 $movement = new MouvementStock($db);
