@@ -1,4 +1,4 @@
-<?php
+FormProjects<?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne             <eric.seigne@ryxeo.com>

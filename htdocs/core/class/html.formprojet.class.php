@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/core/class/html.formprojet.class.php
+ *      \file       htdocs/core/class/html.formproject.class.php
  *      \ingroup    core
  *      \brief      Class file for html component project
  */
@@ -27,7 +27,7 @@
 /**
  *      Class to manage building of HTML components
  */
-class FormProjets
+class FormProjects
 {
 	/**
 	 * @var DoliDB Database handler.

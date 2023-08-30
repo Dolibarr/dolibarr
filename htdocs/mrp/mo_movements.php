@@ -1,4 +1,4 @@
-<?php
+FormProjects<?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Ferran Marcet <fmarcet@2byte.es>
  *

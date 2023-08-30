@@ -1,4 +1,4 @@
-<?php
+FormProjects<?php
 /* Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>

@@ -1,4 +1,4 @@
-<?php
+FormProjects<?php
 /* Copyright (C) 2013-2015 Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2019-2022 Frédéric France         <frederic.france@netlogic.fr>

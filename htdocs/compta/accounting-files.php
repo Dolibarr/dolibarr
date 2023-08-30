@@ -1,4 +1,4 @@
-<?php
+FormProjects<?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017       Pierre-Henry Favre   <support@atm-consulting.fr>
