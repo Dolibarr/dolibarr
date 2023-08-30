@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = Are you sure you want to "%s" ?
 ConfirmBtnCommonTitle = Confirm your action
 CloseDialog = Zamknij
 Autofill = Autofill
+OrPasteAnURL=or Paste an URL
 
 # externalsite
 ExternalSiteSetup=Skonfiguruj link do zewnętrznej strony internetowej
@@ -308,18 +309,18 @@ ExternalSiteModuleNotComplete=Moduł zewnętrznej strony internetowej nie zosta�
 ExampleMyMenuEntry=Moje wejścia do menu
 
 # ftp
-FTPClientSetup=FTP or SFTP Client module setup
+FTPClientSetup=Konfiguracja modułu klienta FTP lub SFTP
 NewFTPClient=New FTP/SFTP connection setup
 FTPArea=FTP/SFTP Area
-FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
-SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
-FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to server with defined login/password
+FTPAreaDesc=Ten ekran pokazuje widok serwera FTP i SFTP.
+SetupOfFTPClientModuleNotComplete=Wydaje się, że konfiguracja modułu klienta FTP lub SFTP jest niekompletna
+FTPFeatureNotSupportedByYourPHP=Twój PHP nie obsługuje funkcji FTP ani SFTP
+FailedToConnectToFTPServer=Nie udało się połączyć z serwerem (serwer %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Nie udało się zalogować do serwera ze zdefiniowanym loginem / hasłem
 FTPFailedToRemoveFile=Nie udało się usunąć pliku <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty.
+FTPFailedToRemoveDir=Nie udało się usunąć katalogu <b> %s </b>: sprawdź uprawnienia i czy katalog jest pusty.
 FTPPassiveMode=Tryb pasywny
-ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
+ChooseAFTPEntryIntoMenu=Wybierz witrynę FTP / SFTP z menu ...
 FailedToGetFile=Nie można pobrać plików %s
 ErrorFTPNodisconnect=Error to disconnect FTP/SFTP server
 FileWasUpload=File <b>%s</b> was uploaded

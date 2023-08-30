@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 /**
  * 	Class to manage dictionary Countries (used by imports)
  */
-class Ccountry extends Commondict
+class Ccountry extends CommonDict
 {
 	public $element = 'ccountry'; //!< Id that identify managed objects
 	public $table_element = 'c_country'; //!< Name of table without prefix where object is stored

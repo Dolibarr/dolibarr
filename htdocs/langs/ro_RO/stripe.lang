@@ -51,6 +51,7 @@ StripeAccount=Contul Stripe
 StripeChargeList=Listă de comisioane Stripe
 StripeTransactionList=Listă de tranzacții Stripe
 StripeCustomerId=ID client Stripe
+StripePaymentId=Id plată Stripe
 StripePaymentModes=Moduri de plată Stripe
 LocalID=ID local
 StripeID=ID Stripe

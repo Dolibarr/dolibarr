@@ -49,9 +49,10 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $db, $langs;
 
@@ -111,7 +112,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
