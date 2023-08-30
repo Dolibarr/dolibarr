@@ -42,52 +42,52 @@
 
 -- CONTENT -------------------------------------------------------------------
 -- 
--- Algeria     -> only for Departmements
--- Andorra     -> only for Departmements
--- Angola      -> only for Departmements
+-- Algeria     -> only for Departements
+-- Andorra     -> only for Departements
+-- Angola      -> only for Departements
 -- Argentina
--- Australia   -> only for Departmements
--- Austria     -> only for Departmements
--- Barbados    -> only for Departmements
+-- Australia   -> only for Departements
+-- Austria     -> only for Departements
+-- Barbados    -> only for Departements
 -- Belgium
 -- Bolivia
--- Brazil      -> only for Departmements
+-- Brazil      -> only for Departements
 -- Burundi
--- Canada      -> only for Departmements
+-- Canada      -> only for Departements
 -- Chile
 -- China
--- Colombie    -> only for Departmements
+-- Colombie    -> only for Departements
 -- Croatia
 -- Denmark
 -- France
--- Germany     -> only for Departmements
+-- Germany     -> only for Departements
 -- Greece
--- Honduras    -> only for Departmements
+-- Honduras    -> only for Departements
 -- Hungary
--- India       -> only for Departmements
--- Indonesia   -> only for Departmements
+-- India       -> only for Departements
+-- Indonesia   -> only for Departements
 -- Italy
--- Japan       -> only for Departmements
+-- Japan       -> only for Departements
 -- Luxembourg
 -- Mauritius
--- Mexique     -> only for Departmements
+-- Mexique     -> only for Departements
 -- Morocco
--- Netherlands -> only for Departmements
--- Panama      -> only for Departmements
+-- Netherlands -> only for Departements
+-- Panama      -> only for Departements
 -- Peru
 -- Portugal
--- Romania     -> only for Departmements
+-- Romania     -> only for Departements
 -- San Salvador
 -- Slovakia
 -- Slovenia
 -- Spain
--- Switzerland/Suisse    -> only for Departmements/Cantons
--- Taiwan      -> only for Departmements
+-- Switzerland/Suisse    -> only for Departements/Cantons
+-- Taiwan      -> only for Departements
 -- Tunesia
 -- Turkey
--- United Arab Emirates  -> only for Departmements
+-- United Arab Emirates  -> only for Departements
 -- United Kingdom
--- USA         -> only for Departmements
+-- USA         -> only for Departements
 -- Venezuela
 
 
