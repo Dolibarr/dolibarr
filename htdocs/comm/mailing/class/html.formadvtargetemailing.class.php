@@ -171,6 +171,9 @@ class FormAdvTargetEmailing extends Form
 		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql_usr .= " AND u2.statut<>0 ";
 		}
+		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX)) {
+			$sql_usr .= " AND u2.employee<>0 ";
+		}
 		$sql_usr .= " ORDER BY name ASC";
 		// print $sql_usr;exit;
 

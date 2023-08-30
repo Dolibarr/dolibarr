@@ -116,6 +116,15 @@ if ($action == 'set_default') {
 	} else {
 		dol_print_error($db);
 	}
+} elseif ($action == 'sethideexternaluser') {
+	//Set hide external user into combox or select
+$status = GETPOST('status', 'alpha');
+
+if (dolibarr_set_const($db, "USER_HIDE_EXTERNAL_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0) {
+	header("Location: ".$_SERVER["PHP_SELF"]);
+	exit;
+} else {
+	dol_print_error($db);
 }
 
 
@@ -180,6 +189,22 @@ if ($conf->use_javascript_ajax) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_INACTIVE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_INACTIVE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	}
+}
+print '</td></tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UserHideExternal").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+
+print '<td align="center" width="100">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('USER_HIDE_EXTERNAL_IN_COMBOBOX');
+} else {
+	if (empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_EXTERNAL_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_EXTERNAL_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';

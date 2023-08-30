@@ -1416,6 +1416,7 @@ DisableForgetPasswordLinkOnLogonPage=Do not show the "Password Forgotten" link o
 UsersSetup=Users module setup
 UserMailRequired=Email required to create a new user
 UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
+UserHideExternal=Hide external users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on external users on some pages)
 UsersDocModules=Document templates for documents generated from user record
 GroupsDocModules=Document templates for documents generated from a group record
 ##### HRM setup #####
