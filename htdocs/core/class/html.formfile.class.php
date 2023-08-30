@@ -724,6 +724,7 @@ class FormFile
 				}
 				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
 				// script for select the separator
+				/* TODO This must appear on export feature only
 				$out .= '<label class="forhide" for="delimiter">Delimiter:</label>';
 				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value="," id="comma" checked><label class="forhide" for="comma">,</label>';
 				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value=";" id="semicolon"><label class="forhide" for="semicolon">;</label>';
@@ -740,7 +741,7 @@ class FormFile
 										$("input.testinput").prop("disabled", false);
 										$(".forhide").show();
 									}
-								
+
 									if ($("#semicolon").is(":checked")) {
 										separator = ";";
 									} else {
@@ -754,6 +755,7 @@ class FormFile
 								}
 							});
 						</script>';
+				*/
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}
@@ -1015,7 +1017,7 @@ class FormFile
 		$out .= '<script>
 		jQuery(document).ready(function() {
 			var selectedValue = $(".selectformat").val();
-			
+
 			if (selectedValue === "excel2007" || selectedValue === "tsv") {
 			  $(".forhide").prop("disabled", true).hide();
 			} else {
