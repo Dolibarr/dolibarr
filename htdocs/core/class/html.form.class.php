@@ -8236,9 +8236,8 @@ class Form
 				$addjscombo = 0;
 			}
 		}
-
 		$idname = str_replace(array('[', ']'), array('', ''), $htmlname);
-		$out .= '<select id="' . preg_replace('/^\./', '', $idname) . '" ' . ($disabled ? 'disabled="disabled" ' : '') . 'class="flat ' . (preg_replace('/^\./', '', $htmlname)) . ($morecss ? ' ' . $morecss : '') . '"';
+		$out .= '<select id="' . preg_replace('/^\./', '', $idname) . '" ' . ($disabled ? 'disabled="disabled" ' : '') . 'class="flat ' . (preg_replace('/^\./', '', $htmlname)) . ($morecss ? ' ' . $morecss : '') . ' selectformat"';
 		$out .= ' name="' . preg_replace('/^\./', '', $htmlname) . '" ' . ($moreparam ? $moreparam : '');
 		$out .= '>'."\n";
 
@@ -8252,7 +8251,6 @@ class Form
 			}
 			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
 		}
-
 		if (is_array($array)) {
 			// Translate
 			if ($translate) {
@@ -8264,14 +8262,12 @@ class Form
 					}
 				}
 			}
-
 			// Sort
 			if ($sort == 'ASC') {
 				asort($array);
 			} elseif ($sort == 'DESC') {
 				arsort($array);
 			}
-
 			foreach ($array as $key => $tmpvalue) {
 				if (is_array($tmpvalue)) {
 					$value = $tmpvalue['label'];
@@ -8289,7 +8285,6 @@ class Form
 						$style = ' class="warning"';
 					}
 				}
-
 				if ($key_in_label) {
 					if (empty($nohtmlescape)) {
 						$selectOptionValue = dol_escape_htmltag($key . ' - ' . ($maxlen ? dol_trunc($value, $maxlen) : $value));
@@ -8306,7 +8301,6 @@ class Form
 						$selectOptionValue = '&nbsp;';
 					}
 				}
-
 				$out .= '<option value="' . $key . '"';
 				$out .= $style . $disabled;
 				if (is_array($id)) {
@@ -8330,24 +8324,24 @@ class Form
 					}
 				}
 				$out .= '>';
-				//var_dump($selectOptionValue);
 				$out .= $selectOptionValue;
 				$out .= "</option>\n";
 			}
 		}
-
 		$out .= "</select>";
-
-		// Add code for jquery to use multiselect
+			// Add code for jquery to use multiselect
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
+
+
+
+
 		return $out;
 	}
-
 
 	/**
 	 *    Return a HTML select string, built from an array of key+value, but content returned into select come from an Ajax call of an URL.

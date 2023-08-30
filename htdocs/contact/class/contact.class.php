@@ -107,7 +107,7 @@ class Contact extends CommonObject
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
 		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>77, 'searchall'=>1),
-		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
+		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
 		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'searchall'=>1),
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
