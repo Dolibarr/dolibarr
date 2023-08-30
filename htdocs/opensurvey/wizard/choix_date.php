@@ -170,6 +170,7 @@ if (GETPOST('confirmation')) {
 	// Add survey into database
 	if (!$erreur) {
 		$_SESSION["toutchoix"] = substr("$choixdate", 1);
+		unset($_SESSION["nbrecaseshoraires"]);
 
 		ajouter_sondage();
 	}
@@ -206,7 +207,7 @@ llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss
 //nombre de cases par défaut
 if (!isset($_SESSION["nbrecaseshoraires"])) {
 	$_SESSION["nbrecaseshoraires"] = 5;
-} elseif (GETPOST('ajoutcases') && $_SESSION["nbrecaseshoraires"] == 5) {
+} elseif ((GETPOST('ajoutcases') || GETPOST("ajoutcases_y")) && $_SESSION["nbrecaseshoraires"] == 5) {
 	$_SESSION["nbrecaseshoraires"] = 10;
 }
 
