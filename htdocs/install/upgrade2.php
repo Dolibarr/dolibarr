@@ -4133,6 +4133,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/facture/pdf_crabe.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
 		'/core/modules/export/export_excel.modules.php',
+		'/core/modules/export/export_csv.modules.php',
+		'/core/modules/export/exportcsv.modules.php',
 		'/core/modules/export/export_excel2007new.modules.php',
 		'/core/boxes/box_members.php',
 

@@ -62,8 +62,12 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		$i = 0;
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
+				$reg = array();
 				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg)) {
 					$moduleid = $reg[1];
+					if ($moduleid == 'csv') {
+						continue;	// This may happen if on old file export_csv.modules.php was not correctly deleted
+					}
 
 					// Loading Class
 					$file = $dir."export_".$moduleid.".modules.php";
