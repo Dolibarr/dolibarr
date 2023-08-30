@@ -62,7 +62,7 @@ dol_syslog("Call ajax projet/ajax/projects.php");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-top_httphead('application/json');
+top_httphead();
 
 if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
 	return;
