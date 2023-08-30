@@ -1903,7 +1903,9 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 
 		// check if documentation has been generated
 		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
-		deletePropsFromDoc($file_doc, $objectname);
+		if (file_exists($file_doc)) {
+			deletePropsAndPermsFromDoc($file_doc, $objectname);
+		}
 
 		clearstatcache(true);
 		if (function_exists('opcache_invalidate')) {
