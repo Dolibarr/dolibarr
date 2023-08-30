@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 class MailingTargets // This can't be abstract as it is used for some method
 {
 	/**
-	 * @var string	Condition to be enabled
+	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
-	public $enabled;
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -46,17 +46,31 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 */
 	public $errors;
 
+	/**
+	 * @var string	Condition to be enabled
+	 */
+	public $enabled;
 
+	/**
+	 * @var string Name of the module
+	 */
+	public $name;
+
+	/**
+	 * @var string Description of the module
+	 */
+	public $desc;
+
+	/**
+	 * @var string Tooltip to show after description of the module
+	 */
 	public $tooltip = '';
 
 	/**
-	 * @var string The SQL string used to find the recipients
+	 * @var string To store the SQL string used to find the recipients
 	 */
 	public $sql;
 
-	public $desc;
-
-	public $name;
 
 	public $evenunsubscribe = 0;		// Set this to 1 if you want to flag you also want to include email in target that has opt-out.
 
