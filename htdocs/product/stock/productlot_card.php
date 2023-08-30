@@ -47,7 +47,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'my
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object = new ProductLot($db);
+$object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('productlotcard', 'globalcard')); // Note that conf->hooks_modules contains array
 

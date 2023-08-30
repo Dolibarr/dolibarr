@@ -2179,7 +2179,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 
 				// Define the constant in database if requested (not the default mode)
-				if (!empty($addtodatabase)) {
+				if (!empty($addtodatabase) && !empty($name)) {
 					$result = $this->insert_dirs($name, $dir);
 					if ($result) {
 						$err++;
@@ -2430,7 +2430,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$versiontrans .= 'warning';
 		}
 
-		print '
+		$return = '
     	<div class="box-flex-item info-box-module'
 			.(empty($conf->global->$const_name) ? ' --disabled' : '')
 			.($this->isCoreOrExternalModule() == 'external' ? ' --external' : '')
@@ -2444,12 +2444,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
 		if (!empty($this->picto)) {
 			if (preg_match('/^\//i', $this->picto)) {
-				print img_picto($alttext, $this->picto, 'class="inline-block valignmiddle"', 1);
+				$return .= img_picto($alttext, $this->picto, 'class="inline-block valignmiddle"', 1);
 			} else {
-				print img_object($alttext, $this->picto, 'class="inline-block valignmiddle"');
+				$return .= img_object($alttext, $this->picto, 'class="inline-block valignmiddle"');
 			}
 		} else {
-			print img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
+			$return .= img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
 		}
 
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
@@ -2458,34 +2458,36 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$versionTitle.= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
 			}
 
-			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
-			print $this->getVersion(1);
-			print '</span>';
+			$return .=  '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
+			$return .=  $this->getVersion(1);
+			$return .=  '</span>';
 		}
 
-		print '</div>
+		$return .=  '</div>
 	    <div class="info-box-content info-box-text-module'.(empty($conf->global->$const_name) ? '' : ' info-box-module-enabled'.($versiontrans ? ' info-box-content-warning' : '')).'">
 	    <span class="info-box-title">'.$this->getName().'</span>
 	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
-		print '<div class="valignmiddle inline-block info-box-more">';
+		$return .=  '<div class="valignmiddle inline-block info-box-more">';
 		//if ($versiontrans) print img_warning($langs->trans("Version").' '.$this->getVersion(1)).' ';
-		print '<a class="valignmiddle inline-block" href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($this->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
-		print '</div><br>';
+		$return .=  '<a class="valignmiddle inline-block" href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($this->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+		$return .=  '</div><br>';
 
-		print '<div class="valignmiddle inline-block info-box-actions">';
-		print '<div class="valignmiddle inline-block info-box-setup">';
-		print $codetoconfig;
-		print '</div>';
-		print '<div class="valignmiddle inline-block marginleftonly marginrightonly">';
-		print $codeenabledisable;
-		print '</div>';
-		print '</div>';
+		$return .=  '<div class="valignmiddle inline-block info-box-actions">';
+		$return .=  '<div class="valignmiddle inline-block info-box-setup">';
+		$return .=  $codetoconfig;
+		$return .=  '</div>';
+		$return .=  '<div class="valignmiddle inline-block marginleftonly marginrightonly">';
+		$return .=  $codeenabledisable;
+		$return .=  '</div>';
+		$return .=  '</div>';
 
-		print '
+		$return .=  '
 	    </div><!-- /.info-box-content -->
 	    </div><!-- /.info-box -->
 	    </div>';
+
+		return $return;
 	}
 
 	/**

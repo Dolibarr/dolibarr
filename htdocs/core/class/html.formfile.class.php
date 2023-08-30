@@ -500,7 +500,7 @@ class FormFile
 					$modellist = $genallowed;
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
-					$modellist = ModelePDFExpedition::liste_modeles($this->db);
+					$modellist = ModelePdfExpedition::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'reception') {
 				if (is_array($genallowed)) {
@@ -585,7 +585,8 @@ class FormFile
 					$modellist = $genallowed;
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-					$modellist = ModeleExports::liste_modeles($this->db);
+					//$modellist = ModeleExports::liste_modeles($this->db);		// liste_modeles() does not exists. We are using listOfAvailableExportFormat() method instead that return a different array format.
+					$modellist = array();
 				}
 			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
 				if (is_array($genallowed)) {
@@ -1639,7 +1640,7 @@ class FormFile
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $hookmanager, $form;
+		global $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
 		global $dolibarr_main_url_root;
@@ -1860,7 +1861,7 @@ class FormFile
 				}
 
 				$found = 0;
-				if (!empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
+				if (!empty($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					$found = 1;
 				} else {
 					//print 'Fetch '.$id." - ".$ref.' class='.get_class($object_instance).'<br>';
@@ -1885,24 +1886,24 @@ class FormFile
 
 					if ($result > 0) {  // Save object loaded into a cache
 						$found = 1;
-						$this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
+						$conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
 					}
 					if ($result == 0) {
 						$found = 1;
-						$this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = 'notfound';
+						$conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref] = 'notfound';
 						unset($filearray[$key]);
 					}
 				}
 
-				if ($found <= 0 || !is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
+				if ($found <= 0 || !is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					continue; // We do not show orphelins files
 				}
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
 				print '<td>';
-				if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
-					$tmpobject = $this->cache_objects[$modulepart.'_'.$id.'_'.$ref];
+				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
+					$tmpobject = $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref];
 					//if (! in_array($tmpobject->element, array('expensereport'))) {
 					print $tmpobject->getNomUrl(1, 'document');
 					//} else {

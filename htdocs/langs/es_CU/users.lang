@@ -65,7 +65,6 @@ ConfirmCreateThirdParty=¿Está seguro de que desea crear un tercero para este m
 LoginToCreate=Iniciar sesión para crear
 YourRole=tus roles
 YourQuotaOfUsersIsReached=¡Se ha alcanzado su cuota de usuarios activos!
-DontDowngradeSuperAdmin=Solo un superadministrador puede degradar a un superadministrador
 HierarchicView=vista jerárquica
 UseTypeFieldToChange=Use el campo Tipo para cambiar
 OpenIDURL=URL de identificación abierta

@@ -55,11 +55,12 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $db, $conf, $langs;
+		global $db, $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("ticket", "admin"));

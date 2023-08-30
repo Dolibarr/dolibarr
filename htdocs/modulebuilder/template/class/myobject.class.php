@@ -49,7 +49,7 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int  	Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
@@ -430,7 +430,7 @@ class MyObject extends CommonObject
 
 
 	/**
-	 * Load list of objects in memory from the database.
+	 * Load list of objects in memory from the database. Using a fetchAll is a bad practice, instead try to forge you optimized and limited SQL request.
 	 *
 	 * @param  string      $sortorder    Sort Order
 	 * @param  string      $sortfield    Sort field
@@ -442,8 +442,6 @@ class MyObject extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -451,6 +449,9 @@ class MyObject extends CommonObject
 		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON tf.fk_object = t.rowid";
+		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
@@ -465,7 +466,7 @@ class MyObject extends CommonObject
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
+					$sqlwhere[] = $value;	// For this case, $value never come from a user input but is a hard coded value in code
 				} elseif (strpos($value, '%') === false) {
 					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
 				} else {
@@ -1075,11 +1076,11 @@ class MyObject extends CommonObject
 		global $langs, $conf;
 		$langs->load("mymodule@mymodule");
 
-		if (empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON'))) {
+		if (!getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) {
 			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';
 		}
 
-		if (!empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON'))) {
+		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('MYMODULE_MYOBJECT_ADDON').".php";

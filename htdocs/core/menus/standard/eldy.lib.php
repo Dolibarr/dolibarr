@@ -396,7 +396,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Tickets and knowledge base
+	// Tickets and Knowledge base
 	$tmpentry = array(
 		'enabled'=>(isModEnabled('ticket') || isModEnabled('knowledgemanagement')),
 		'perms'=>($user->hasRight('ticket',  'read') || $user->hasRight('knowledgemanagement',  'knowledgerecord', 'read')),
@@ -411,7 +411,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr[] = array(
 		'name' => 'Ticket',
 		'link' => $link,
-		'title' =>  "Tickets",
+		'title' =>  isModEnabled('ticket') ? "Tickets" : "MenuKnowledgeRecordShort",
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
@@ -986,7 +986,14 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					} else {
 						print '<span class="vmenu">';
 					}
-					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
+					if (!empty($menu_array[$i]['prefix'])) {
+						if (preg_match('/^fa-[a-zA-Z0-9-_]+$/', $menu_array[$i]['prefix'])) {
+							print '<span class="fa '.$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
+						} else {
+							print $menu_array[$i]['prefix'];
+						}
+					}
+					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -997,7 +1004,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
 					print '<div class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled">';
-					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
+					if (!empty($menu_array[$i]['prefix'])) {
+						print $menu_array[$i]['prefix'];
+					}
+					print $menu_array[$i]['titre'];
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';

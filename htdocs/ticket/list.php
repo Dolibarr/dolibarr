@@ -681,6 +681,9 @@ if ($search_societe) {
 if ($projectid > 0) {
 	$param .= '&projectid='.urlencode($projectid);
 }
+if ($contractid > 0) {
+	$param .= '&contractid='.urlencode($contractid);
+}
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);
 	$param .= '&search_date_startday='.urlencode($tmparray['mday']);

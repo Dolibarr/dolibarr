@@ -34,6 +34,10 @@
  */
 class Cchargesociales
 {
+	public $db;
+
+	public $id;
+
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -70,6 +74,10 @@ class Cchargesociales
 	public $module;
 	public $accountancy_code;
 
+	/**
+	 * @var array array of errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor

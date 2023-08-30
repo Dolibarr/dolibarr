@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = Esteu segur que voleu «%s»?
 ConfirmBtnCommonTitle = Confirmeu la vostra acció
 CloseDialog = Tancar
 Autofill = Emplenament automàtic
+OrPasteAnURL=o Enganxeu un URL
 
 # externalsite
 ExternalSiteSetup=Configuració de l'enllaç a la pàgina web externa

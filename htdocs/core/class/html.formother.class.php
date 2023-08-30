@@ -331,7 +331,6 @@ class FormOther
 						$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
 					} else {
 						$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
-						//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
 					}
 					$out .= $obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '');
 					$out .= '</option>';
@@ -472,6 +471,7 @@ class FormOther
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
+		global $action;
 
 		$langs->load('users');
 
