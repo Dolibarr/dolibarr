@@ -179,6 +179,7 @@ if (GETPOST('confirmation')) {
 	// Add survey into database
 	if (!$erreur && $erreurNb == 0) {
 		$_SESSION["toutchoix"] = substr("$choixdate", 1);
+		unset($_SESSION["nbrecaseshoraires"]);
 
 		ajouter_sondage();
 	}
@@ -215,9 +216,21 @@ llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss
 //nombre de cases par défaut
 if (!isset($_SESSION["nbrecaseshoraires"])) {
 	$_SESSION["nbrecaseshoraires"] = 5;
-} elseif (GETPOST('ajoutcases') && $_SESSION["nbrecaseshoraires"] == 5) {
+} elseif ((GETPOST('ajoutcases') || GETPOST("ajoutcases_y")) && $_SESSION["nbrecaseshoraires"] == 5) {
 	$_SESSION["nbrecaseshoraires"] = 10;
+	//On sauvegarde les heures deja entrées
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) {
+		$nbofchoice = count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) {
+			//affichage des 5 cases horaires
+			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
+				$horairesi = GETPOST("horaires".$i);
+				$_SESSION["horaires$i"][$j] = $horairesi[$j];
+			}
+		}
+	}
 }
+
 
 //valeurs de la date du jour actuel
 $jourAJ = date("j");
@@ -407,7 +420,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 			$k = $i + 1;
 			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
 				for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-					$horairesi = GETPOST("horaires".$i);
+					$horairesi = GETPOST("horaires".$i, 'array');
 					$_SESSION["horaires$i"][$j] = $horairesi[$j];
 				}
 			}
@@ -452,7 +465,7 @@ if (issetAndNoEmpty('reporterhoraires')) {
 	}
 }
 
-//report des horaires dans toutes les cases
+//effacer les horaires dans toutes les cases
 if (issetAndNoEmpty('resethoraires')) {
 	$nbofchoice = count($_SESSION["totalchoixjour"]);
 	for ($i = 0; $i < $nbofchoice; $i++) {
