@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Ha a számviteli számlát a költségjelentés-soro
 DescVentilDoneExpenseReport=Itt megtekintheti a költségjelentések sorainak listáját és a díjak elszámolási számláját
 
 Closure=Éves zárás
-DescClosure=Itt tekintheti meg a még nem érvényesített és zárolt mozgások számát havi bontásban
+AccountancyClosureStep1Desc=Itt tekintheti meg a még nem érvényesített és zárolt mozgások számát havi bontásban
 OverviewOfMovementsNotValidated=Nem érvényesített és zárolt mozgások áttekintése
 AllMovementsWereRecordedAsValidated=Minden mozgást érvényesítettként és zárolva rögzítettünk
 NotAllMovementsCouldBeRecordedAsValidated=Nem minden mozgást lehetett érvényesítettként és zároltként rögzíteni

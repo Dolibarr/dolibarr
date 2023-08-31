@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=ຖ້າເຈົ້າຕັ້ງບັນຊີ�
 DescVentilDoneExpenseReport=ປຶກສາຫາລືຢູ່ທີ່ນີ້ບັນຊີລາຍຊື່ຂອງລາຍງານຄ່າໃຊ້ຈ່າຍແລະບັນຊີຄ່າທໍານຽມຂອງເຂົາເຈົ້າ
 
 Closure=ການປິດປະຈໍາປີ
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked

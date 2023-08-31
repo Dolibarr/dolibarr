@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Якщо ви налаштуєте рахунок б
 DescVentilDoneExpenseReport=Ознайомтеся з переліком рядків звітів про витрати та їх обліковим рахунком
 
 Closure=Щорічне закриття
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Огляд переміщень не підтверджених і заблокованих
 AllMovementsWereRecordedAsValidated=Усі рухи були зафіксовані як підтверджені та заблоковані
 NotAllMovementsCouldBeRecordedAsValidated=Не всі переміщення можна записати як підтверджені та заблоковані

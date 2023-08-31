@@ -186,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Paie
 ACCOUNTING_RESULT_PROFIT=Compte de résultat (Profit)
 ACCOUNTING_RESULT_LOSS=Compte de résultat (perte)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal de fermeture
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Groupes comptables utilisés pour le compte de bilan (séparé par une virgule)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Groupes comptables utilisés pour le compte de résultat (séparé par une virgule)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable par défaut pour les virements internes
 TransitionalAccount=Compte transitoire de virement bancaire
@@ -298,7 +300,7 @@ DescVentilExpenseReportMore=Si vous avez défini des comptes comptables au nivea
 DescVentilDoneExpenseReport=Consultez ici la liste des lignes des notes de frais et leur compte comptable
 
 Closure=Clôture annuelle
-DescClosure=Consultez ici le nombre de mouvements par mois non encore validés & verrouillés
+AccountancyClosureStep1Desc=Consultez ici le nombre de mouvements par mois non encore validés & verrouillés
 OverviewOfMovementsNotValidated=Aperçu des mouvements non validés et verrouillés
 AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés comme validés et ont été verrouillés
 NotAllMovementsCouldBeRecordedAsValidated=Certains mouvements n'ont pas pu être enregistrés comme validés et n'ont pas été verrouillés
@@ -441,12 +443,25 @@ AccountancyNoUnletteringModified=Aucune annulation de lettrage modifiée
 AccountancyOneUnletteringModifiedSuccessfully=Une annulation de lettrage modifiée avec succès
 AccountancyUnletteringModifiedSuccessfully=%s annulations de lettrage modifiées avec succès
 
+## Closure
+AccountancyClosureStep1=Étape 1 : Valider et vérrouiller les mouvements
+AccountancyClosureStep2=Étape 2 : Clôturer la période fiscal
+AccountancyClosureStep3=Étape 3 : Extourner les écritures (Optionnel)
+AccountancyClosureClose=Clôturer la période fiscal
+AccountancyClosureAccountingReversal=Extourner les écritures
+AccountancyClosureStep3NewFiscalPeriod=Prochaine période fiscal
+AccountancyClosureGenerateClosureBookkeepingRecords=Ajouter les écritures de clôture
+AccountancyClosureCloseSuccessfully=La période fiscal actuelle a été clôturée avec succès
+AccountancyClosureInsertAccountingReversalSuccessfully=Les écritures ont été extournées avec succès
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Confirmation de l'annulation du lettrage automatique
 ConfirmMassUnletteringManual=Confirmation de l'annulation du lettrage manuel
 ConfirmMassUnletteringQuestion=Voulez-vous vraiment annuler le lettrage des %s enregistrements sélectionnés ?
 ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
 ConfirmMassDeleteBookkeepingWritingQuestion=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à cette transaction seront supprimées). Êtes-vous sûr de vouloir supprimer les %s enregistrements sélectionnés ?
+AccountancyClosureConfirmClose=Êtes-vous sûr de vouloir clôturer la période fiscal actuelle ?
+AccountancyClosureConfirmAccountingReversal=Êtes-vous sûr de vouloir extourner les écritures ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Certaines étapes obligatoires de la configuration n'ont pas été réalisées, merci de compléter cette dernière
@@ -465,6 +480,8 @@ AccountancyErrorMismatchBalanceAmount=Le solde (%s) n'est pas égal à 0
 AccountancyErrorLetteringBookkeeping=Des erreurs sont survenues concernant les transactions : %s
 ErrorAccountNumberAlreadyExists=Le code comptable %s existe déjà
 ErrorArchiveAddFile=Impossible de mettre le fichier "%s" dans l'archive
+ErrorNoFiscalPeriodActiveFound=Aucune période fiscal active trouvée
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=La date d'opération n'est pas sur une période fiscal active
 
 ## Import
 ImportAccountingEntries=Écritures comptables

@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=إذا قمت بإعداد حساب على نوع ب
 DescVentilDoneExpenseReport=راجع هنا قائمة بنود تقارير المصروفات وحساب رسومها
 
 Closure=الإغلاق السنوي
-DescClosure=استشر هنا عدد الحركات حسب الشهر التي لم يتم التحقق من صحتها وإغلاقها
+AccountancyClosureStep1Desc=استشر هنا عدد الحركات حسب الشهر التي لم يتم التحقق من صحتها وإغلاقها
 OverviewOfMovementsNotValidated=نظرة عامة على الحركات التي لم يتم التحقق من صحتها وإغلاقها
 AllMovementsWereRecordedAsValidated=تم تسجيل جميع الحركات على أنها محققة ومغلقة
 NotAllMovementsCouldBeRecordedAsValidated=لا يمكن تسجيل جميع الحركات على أنها تم التحقق من صحتها وقفلها

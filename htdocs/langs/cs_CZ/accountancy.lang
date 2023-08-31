@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Pokud nastavíte účetní účet na řádcích výk
 DescVentilDoneExpenseReport=Poraďte se zde seznam v souladu se zprávami výdajů a jejich poplatků účtování účtu
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked

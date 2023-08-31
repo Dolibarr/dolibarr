@@ -186,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Social journal
 ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Transitional bank transfer account
@@ -298,7 +300,7 @@ DescVentilExpenseReportMore=If you setup accounting account on type of expense r
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
@@ -441,12 +443,25 @@ AccountancyNoUnletteringModified=No unreconcile modified
 AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
+## Closure
+AccountancyClosureStep1=Step 1 : Validate and lock movements
+AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep3=Step 3 : Extract entries (Optional)
+AccountancyClosureClose=Close fiscal period
+AccountancyClosureAccountingReversal=Extract entries
+AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
+AccountancyClosureGenerateClosureBookkeepingRecords=Add closing bookkeeping records
+AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping records has been inserted successfully
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
+AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ?
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to accounting reversal ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
@@ -465,6 +480,8 @@ AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
+ErrorNoFiscalPeriodActiveFound=No fiscal period active found
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not on active fiscal period
 
 ## Import
 ImportAccountingEntries=Accounting entries
