@@ -235,7 +235,7 @@ class FormAccounting extends Form
 	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
 		// phpcs:enable
-		global $db, $langs, $user, $mysoc;
+		global $db, $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
@@ -293,7 +293,7 @@ class FormAccounting extends Form
 				$out .= '</select>';
 				//if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			} else {
-				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
+				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("AccountingCategories"));
 			}
 		} else {
 			dol_print_error($this->db);
