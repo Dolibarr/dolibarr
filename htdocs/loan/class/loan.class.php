@@ -1060,7 +1060,7 @@ class Loan extends CommonObject implements \JsonSerializable
 			0,
 			'',
 			0,
-			0,
+			0
 		) . img_help(
 			1,
 			$langs->trans('CalcInArrear') . ': '
