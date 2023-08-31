@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Atenție, această listă conține doar 
 VueByAccountAccounting=Vizualizare după contul contabil
 VueBySubAccountAccounting=Vizualizați după subcont contabil
 
-MainAccountForCustomersNotDefined=Contul contabil principal pentru clienții care nu sunt definiți în configurare
-MainAccountForSuppliersNotDefined=Contul contabil principal pentru furnizorii care nu sunt definiți în configurare
-MainAccountForUsersNotDefined=Contul contabil principal pentru utilizatorii care nu sunt definiți în configurare
-MainAccountForVatPaymentNotDefined=Contul contabil principal pentru plăţile de TVA care nu sunt definite în configurare
-MainAccountForSubscriptionPaymentNotDefined=Contul contabil principal pentru plăţile de abonamente care nu sunt definite în configurare
+MainAccountForCustomersNotDefined=Contul contabil principal (din Planul de Conturi) pentru clienți nu a fost definit în configurare
+MainAccountForSuppliersNotDefined=Contul contabil principal (din Planul de Conturi) pentru furnizori nu a fost definit în configurare
+MainAccountForUsersNotDefined=Contul contabil principal (din Planul de Conturi) pentru utilizatori nu a fost definit în configurare
+MainAccountForRevenueStampSaleNotDefined=Contul contabil (din Planul de Conturi) pentru taxa de venit (vânzări) nu a fost definit în configurare
+MainAccountForRevenueStampPurchaseNotDefined=Contul contabil (din Planul de Conturi) pentru taxa de venit (achiziții) nu a fost definit în configurare
+MainAccountForVatPaymentNotDefined=Contul contabil (din Planul de Conturi) pentru plata TVA nu a fost definit în configurare
+MainAccountForSubscriptionPaymentNotDefined=Contul contabil (din Planul de Conturi) pentru plată adeziune membri nu a fost definit în configurare
+MainAccountForRetainedWarrantyNotDefined=Contul contabil (din Planul de conturi) pentru garanția reținută nu a fost definit la configurare
 UserAccountNotDefined=Contul contabil pentru utilizator nu a fost definit în configurare
 
 AccountancyArea=Zona contabilă

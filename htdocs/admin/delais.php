@@ -224,7 +224,7 @@ if ($action == 'edit') {
 	foreach ($modules as $module => $delays) {
 		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']} : 0);
+				$value = getDolGlobalInt($delay['code']);
 				print '<tr class="oddeven">';
 				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
 				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td><td class="nowraponall right">';
@@ -258,7 +258,7 @@ if ($action == 'edit') {
 	foreach ($modules as $module => $delays) {
 		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']} : 0);
+				$value = getDolGlobalInt($delay['code']);
 				print '<tr class="oddeven">';
 				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
 				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td>';

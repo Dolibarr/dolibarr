@@ -642,7 +642,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(404, 'Reception not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('reception', $this->commande->id)) {
+		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -651,7 +651,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+			throw new RestException(500, 'Error when closing Reception: '.$this->reception->error);
 		}
 
 		// Reload reception
@@ -709,7 +709,7 @@ class Receptions extends DolibarrApi
 	private function _validate($data)
 	{
 		$reception = array();
-		foreach (Shipments::$FIELDS as $field) {
+		foreach (Receptions::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}

@@ -2376,6 +2376,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print '<br>We fixed '.$totalnb.' record(s). Some records may still be corrupted. New check may be required.';
 		return $totalnb;
 	}
+	return -1;
 }
 
 

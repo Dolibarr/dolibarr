@@ -149,7 +149,7 @@ class DoliDBPgsql extends DoliDB
 	 *  @param	bool	$unescapeslashquot	Unescape slash quote with quote quote
 	 *  @return string   					SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'auto', $unescapeslashquot = false)
+	public function convertSQLFromMysql($line, $type = 'auto', $unescapeslashquot = false)
 	{
 		global $conf;
 

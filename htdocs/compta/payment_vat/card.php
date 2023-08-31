@@ -124,7 +124,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 
 llxHeader();
 
-$tva = new TVA($db);
+$tva = new Tva($db);
 $form = new Form($db);
 
 $h = 0;

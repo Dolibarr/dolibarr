@@ -674,11 +674,11 @@ class Products extends DolibarrApi
 
 		if ($result > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-			$prodcustprice = new Productcustomerprice($this->db);
+			$prodcustprice = new ProductCustomerPrice($this->db);
 			$filter = array();
-			$filter['t.fk_product'] .= $id;
+			$filter['t.fk_product'] = $id;
 			if ($thirdparty_id) {
-				$filter['t.fk_soc'] .= $thirdparty_id;
+				$filter['t.fk_soc'] = $thirdparty_id;
 			}
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
@@ -1047,21 +1047,21 @@ class Products extends DolibarrApi
 			$sql .= $this->db->plimit($limit, $offset);
 		}
 
-		$result = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 
-		if (!$result) {
-			throw new RestException(503, 'Error when retrieve product attribute list : '.$this->db->lasterror());
+		if (!$resql) {
+			throw new RestException(503, 'Error when retrieving product attribute list : '.$this->db->lasterror());
 		}
 
 		$return = array();
-		while ($result = $this->db->fetch_object($query)) {
+		while ($obj = $this->db->fetch_object($resql)) {
 			$tmp = new ProductAttribute($this->db);
-			$tmp->id = $result->rowid;
-			$tmp->ref = $result->ref;
-			$tmp->ref_ext = $result->ref_ext;
-			$tmp->label = $result->label;
-			$tmp->position = $result->position;
-			$tmp->entity = $result->entity;
+			$tmp->id = $obj->rowid;
+			$tmp->ref = $obj->ref;
+			$tmp->ref_ext = $obj->ref_ext;
+			$tmp->label = $obj->label;
+			$tmp->position = $obj->position;
+			$tmp->entity = $obj->entity;
 
 			$return[] = $this->_cleanObjectDatas($tmp);
 		}

@@ -80,7 +80,16 @@ class User extends CommonObject
 	public $picto = 'user';
 
 	public $id = 0;
+
+	/**
+	 * @var int
+	 * @deprecated
+	 * @see $status
+	 */
 	public $statut;
+
+	public $status;
+
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
@@ -167,6 +176,11 @@ class User extends CommonObject
 	 * @var string Clear password in memory
 	 */
 	public $pass;
+
+	/**
+	 * @var string Crypted password in memory
+	 */
+	public $pass_crypted;
 
 	/**
 	 * @var string Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
@@ -342,6 +356,10 @@ class User extends CommonObject
 	 */
 	public $fk_warehouse;
 
+	/**
+	 * @var int egroupware id
+	 */
+	public $egroupware_id;
 
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
@@ -688,7 +706,6 @@ class User extends CommonObject
 	 */
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
-		global $conf;
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'compta' => 'comptabilite',
@@ -831,7 +848,6 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity, $notrigger for user id=".$this->id);
 
 		if (empty($this->id)) {
-			$error++;
 			$this->error = 'Try to call addrights on an object user with an empty id';
 			return -1;
 		}
@@ -1580,12 +1596,14 @@ class User extends CommonObject
 			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && !empty($conf->global->STOCK_USERSTOCK_AUTOCREATE)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$langs->load("stocks");
+
 				$entrepot = new Entrepot($this->db);
 				$entrepot->label = $langs->trans("PersonalStock", $this->getFullName($langs));
 				$entrepot->libelle = $entrepot->label; // For backward compatibility
 				$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock", $this->getFullName($langs));
 				$entrepot->statut = 1;
 				$entrepot->country_id = $mysoc->country_id;
+
 				$warehouseid = $entrepot->create($user);
 
 				$this->fk_warehouse = $warehouseid;
@@ -1645,7 +1663,7 @@ class User extends CommonObject
 		$this->civility_code = $contact->civility_code;
 		$this->lastname = $contact->lastname;
 		$this->firstname = $contact->firstname;
-		$this->gender = $contact->gender;
+		//$this->gender = $contact->gender;		// contact ha sno gender
 		$this->email = $contact->email;
 		$this->socialnetworks = $contact->socialnetworks;
 		$this->office_phone = $contact->phone_pro;
@@ -2605,7 +2623,6 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->newgroupid = $group; // deprecated. Remove this.
 				$this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
 
 				// Call trigger
@@ -2661,7 +2678,6 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->oldgroupid = $group; // deprecated. Remove this.
 				$this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
 
 				// Call trigger
@@ -2938,7 +2954,7 @@ class User extends CommonObject
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$result .= '<span class="nopadding usertext'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
+				$result .= '<span class="nopadding usertext'.((!isset($this->status) || $this->status) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
 			}
 			if ($mode == 'login') {
 				$result .= dol_string_nohtmltag(dol_trunc($this->login, $maxlen));
@@ -3059,7 +3075,20 @@ class User extends CommonObject
 			$statusType = 'status4';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		$label = $this->labelStatus[$status];
+		$labelshort = $this->labelStatusShort[$status];
+
+		$now = dol_now();
+		if (!empty($this->datestartvalidity) && $now < $this->datestartvalidity) {
+			$statusType = 'status3';
+			$label .= ' ('.$langs->trans("UserNotYetValid").')';
+		}
+		if (!empty($this->dateendvalidity) && $now > ($this->dateendvalidity + 24 * 3600 - 1)) {
+			$statusType = 'status2';
+			$label .= ' ('.$langs->trans("UserExpired").')';
+		}
+
+		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
 
@@ -3184,11 +3213,11 @@ class User extends CommonObject
 
 		// Champs
 		foreach ($ldapkey as $constname => $varname) {
-			if (!empty($this->$varname) && !empty($conf->global->$constname)) {
-				$info[$conf->global->$constname] = $this->$varname;
+			if (!empty($this->$varname) && getDolGlobalString($constname)) {
+				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (!empty($conf->global->LDAP_KEY_USERS) && $conf->global->LDAP_KEY_USERS == $conf->global->$constname) {
+				if (!empty($conf->global->LDAP_KEY_USERS) && $conf->global->LDAP_KEY_USERS == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
@@ -3196,8 +3225,8 @@ class User extends CommonObject
 			}
 		}
 		foreach ($socialnetworks as $key => $value) {
-			if (!empty($this->socialnetworks[$value['label']]) && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
-				$info[$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
+			if (!empty($this->socialnetworks[$value['label']]) && getDolGlobalString('LDAP_FIELD_'.strtoupper($value['label']))) {
+				$info[getDolGlobalString('LDAP_FIELD_'.strtoupper($value['label']))] = $this->socialnetworks[$value['label']];
 			}
 		}
 		if ($this->address && !empty($conf->global->LDAP_FIELD_ADDRESS)) {
@@ -3257,7 +3286,7 @@ class User extends CommonObject
 			}
 		}
 
-		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware') {
+		if (getDolGlobalString('LDAP_SERVER_TYPE') == 'egroupware') {
 			$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
 
 			$info['uidnumber'] = $this->id;
@@ -3279,8 +3308,8 @@ class User extends CommonObject
 			if ($this->email) {
 				$info["rfc822Mailbox"] = $this->email;
 			}
-			if ($this->phone_mobile) {
-				$info["phpgwCellTelephoneNumber"] = $this->phone_mobile;
+			if ($this->user_mobile) {
+				$info["phpgwCellTelephoneNumber"] = $this->user_mobile;
 			}
 		}
 
@@ -3845,7 +3874,7 @@ class User extends CommonObject
 	 *  Return property of user from its id
 	 *
 	 *  @param	int		$rowid      id of contact
-	 *  @param  string	$mode       'email' or 'mobile'
+	 *  @param  string	$mode       'email', 'mobile', or 'name'
 	 *  @return string  			Email of user with format: "Full name <email>"
 	 */
 	public function user_get_property($rowid, $mode)
@@ -3872,6 +3901,8 @@ class User extends CommonObject
 					$user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
 				} elseif ($mode == 'mobile') {
 					$user_property = $obj->user_mobile;
+				} elseif ($mode == 'name') {
+					$user_property = dolGetFirstLastname($obj->firstname, $obj->lastname);
 				}
 			}
 			return $user_property;

@@ -375,7 +375,7 @@ $cats = $object->get_filles();
 if ($cats < 0) {
 	dol_print_error($db, $object->error, $object->errors);
 } elseif (count($cats) < 1) {
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven nobottom">';
 	print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("NoSubCat").'</span></td>';
 	print '</tr>';
 } else {
@@ -490,8 +490,8 @@ $typeid = $type;
 
 // List of products or services (type is type of category)
 if ($type == Categorie::TYPE_PRODUCT) {
-	if ($user->hasRight("product", "read")) {
-		$permission = ($user->rights->produit->creer || $user->hasRight('service', 'creer'));
+	if ($user->hasRight("product", "read") || $user->hasRight("service", "read")) {
+		$permission = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
 
 		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($prods < 0) {

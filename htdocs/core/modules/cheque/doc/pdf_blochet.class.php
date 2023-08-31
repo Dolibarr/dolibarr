@@ -35,10 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php'
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
 	/**
-	 * Issuer
-	 * @var Societe
+	 * @var int tab_top
 	 */
-	public $emetteur;
+	public $tab_top;
+
+	/**
+	 * @var int tab_height
+	 */
+	public $tab_height;
 
 	/**
 	 *	Constructor
@@ -47,7 +51,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("main", "bills"));

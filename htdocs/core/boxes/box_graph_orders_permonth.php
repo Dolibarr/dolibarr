@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show orders per month graph
  */
 class box_graph_orders_permonth extends ModeleBoxes
 {
-	public $boxcode = "orderspermonth";
-	public $boximg = "object_order";
+	public $boxcode  = "orderspermonth";
+	public $boximg   = "object_order";
 	public $boxlabel = "BoxCustomersOrdersPerMonth";
-	public $depends = array("commande");
+	public $depends  = array("commande");
 
 	/**
 	 * @var DoliDB Database handler.

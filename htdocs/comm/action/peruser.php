@@ -973,7 +973,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$var = !$var;
 		echo "<tr>";
 		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').'">';
-		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '');
+		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '', 'paddingleft');
 		print '</td>';
 		$tmpday = $sav;
 
@@ -1396,10 +1396,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$ids1 = '';
 		$ids2 = '';
 		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) {
-			$ids1 = join(',', array_keys($cases1[$h]));
+			$ids1 = join(', ', array_keys($cases1[$h]));
 		}
 		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) {
-			$ids2 = join(',', array_keys($cases2[$h]));
+			$ids2 = join(', ', array_keys($cases2[$h]));
 		}
 
 		if ($h == $begin_h) {

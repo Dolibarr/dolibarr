@@ -56,6 +56,9 @@ $bankid = GETPOST('bankid', 'int');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('usercardBank', 'globalcard'));
+
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
@@ -876,8 +879,14 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 	}
 
+
+
 	print '</table>';
 	print '</div>';
+
+	// Add hook in fields
+	$parameters = array('colspan' => ' colspan="2"');
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 }
 
 // Edit

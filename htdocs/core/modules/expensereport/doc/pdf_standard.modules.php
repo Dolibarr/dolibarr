@@ -75,12 +75,6 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxpiece;
 	public $posxcomment;
 	public $posxtva;
@@ -1109,6 +1103,7 @@ class pdf_standard extends ModeleExpenseReport
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

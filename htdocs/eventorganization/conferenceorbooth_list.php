@@ -75,7 +75,7 @@ $project = new Project($db);
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array($contextpage)); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array($contextpage)); // Note that conf->hooks_modules contains array of activated contexes
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -223,6 +223,42 @@ if (empty($reshook)) {
 	$uploaddir = $conf->eventorganization->dir_output;
 	include DOL_DOCUMENT_ROOT.'/eventorganization/core/actions_massactions_mail.inc.php';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($permissiontoadd && (($action == 'setstatus' && $confirm == "yes") || $massaction == 'setstatus')) {
+		$db->begin();
+		$error = 0;$nbok = 0;
+		$objecttmp = new $objectclass($db);
+		foreach ($toselect as $key => $idselect) {
+			$result = $objecttmp->fetch($idselect);
+			if ($result > 0) {
+				$objecttmp->status = GETPOST("statusmassaction", 'int');
+				$result = $objecttmp->update($user);
+				if ($result <= 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else {
+					$nbok++;
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error ++;
+				break;
+			}
+		}
+		if (empty($error)) {
+			if ($nbok > 1) {
+				setEventMessages($langs->trans("RecordsUpdated", $nbok), null, 'mesgs');
+			} elseif ($nbok > 0) {
+				setEventMessages($langs->trans("RecordUpdated", $nbok), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans("NoRecordUpdated"), null, 'mesgs');
+			}
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
 }
 
 
@@ -233,8 +269,8 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
-$title = $langs->trans('ListOfConferencesOrBooths');
-//$help_url = "EN:Module_ConferenceOrBooth|FR:Module_ConferenceOrBooth_FR|ES:Módulo_ConferenceOrBooth";
+$title = $langs->trans("EventOrganizationConfOrBoothes");
+$help_url = "EN:Module_Event_Organization";
 $help_url = '';
 $morejs = array();
 $morecss = array();
@@ -537,7 +573,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
+	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOST('search_current_entity', 'int') ? 0 : 1)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
 }
@@ -622,7 +658,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?id='.((int) $id));
@@ -680,6 +716,9 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
+if (!empty($permissiontoadd)) {
+	$arrayofmassactions['presetstatus'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyStatus");
+}
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
@@ -700,9 +739,10 @@ print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
-$title = $langs->trans("EventOrganizationConfOrBoothes");
-
 $newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.(!empty($project->id)?'&withproject=1&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.(!empty($project->id)?'&withproject=1&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id)?'&withproject=1&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -716,6 +756,20 @@ $trackid = 'conferenceorbooth_'.$object->id;
 $withmaindocfilemail = 0;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if ($massaction == 'presetstatus') {
+	$formquestion = array();
+	$statuslist[$objecttmp::STATUS_DRAFT] = $objecttmp->LibStatutEvent($objecttmp::STATUS_DRAFT);
+	$statuslist[$objecttmp::STATUS_SUGGESTED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_SUGGESTED);
+	$statuslist[$objecttmp::STATUS_CONFIRMED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_CONFIRMED);
+	$statuslist[$objecttmp::STATUS_NOT_QUALIFIED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_NOT_QUALIFIED);
+	$statuslist[$objecttmp::STATUS_DONE] = $objecttmp->LibStatutEvent($objecttmp::STATUS_DONE);
+	$statuslist[$objecttmp::STATUS_CANCELED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_CANCELED);
+	$formquestion[] = array('type' => 'other',
+			'name' => 'affectedcommercial',
+			'label' => $form->editfieldkey('ModifyStatus', 'status_id', '', $object, 0),
+			'value' => $form->selectarray('statusmassaction', $statuslist, GETPOST('statusmassaction')));
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmModifyStatus"), $langs->trans("ConfirmModifyStatusQuestion", count($toselect)), "setstatus", $formquestion, 1, 0, 200, 500, 1);
+}
 
 if ($search_all) {
 	$setupstring = '';
@@ -777,7 +831,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -838,7 +892,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
@@ -894,19 +948,21 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		$thirdparty = $object->fetch_thirdparty();
+		print $object->getKanbanView('', array('selected' => $selected, 'thirdparty' => $thirdparty));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
 	} else {
-		// Show here line of result
+		// Show line of result
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
@@ -938,7 +994,7 @@ while ($i < $imaxinloop) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			}
 
-			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
+			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'right';
 			}
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';

@@ -80,7 +80,7 @@ if (!$sortorder) {
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));
 
-$object = new DolResource($db);
+$object = new Dolresource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.

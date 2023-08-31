@@ -1951,7 +1951,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$commandeligne = new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
-				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $tmpsoc);
+				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $mysoc);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -2056,7 +2056,7 @@ function migrate_modeles($db, $langs, $conf)
 
 	if (isModEnabled("expedition")) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
-		$modellist = ModelePDFExpedition::liste_modeles($db);
+		$modellist = ModelePdfExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
 			// Aucun model par defaut.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('rouget','shipping')";
@@ -4133,6 +4133,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/facture/pdf_crabe.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
 		'/core/modules/export/export_excel.modules.php',
+		'/core/modules/export/export_csv.modules.php',
+		'/core/modules/export/exportcsv.modules.php',
 		'/core/modules/export/export_excel2007new.modules.php',
 		'/core/boxes/box_members.php',
 

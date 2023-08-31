@@ -327,6 +327,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
 	} elseif ($type === 'clear') {
 		return '{CLEAR}' . $password;  // Just for test, plain text password is not secured !
 	}
+	return "";
 }
 
 /**
@@ -614,6 +615,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'ecm') {
 				if (!$user->rights->ecm->upload) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'modulebuilder') {
+				if (!$user->hasRight('modulebuilder', 'run')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -1060,7 +1066,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		//print $sql;
 
 		// For events, check on users assigned to event
 		if ($feature === 'agenda' && $objectid > 0) {
@@ -1172,7 +1177,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		$langs->setDefaultLang();
 	}
 
-	$langs->load("errors");
+	$langs->loadLangs(array("main", "errors"));
 
 	if ($printheader) {
 		if (function_exists("llxHeader")) {
@@ -1180,6 +1185,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		} elseif (function_exists("llxHeaderVierge")) {
 			llxHeaderVierge('');
 		}
+		print '<div style="padding: 20px">';
 	}
 	print '<div class="error">';
 	if (empty($message)) {
@@ -1212,6 +1218,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		}
 	}
 	if ($printfooter && function_exists("llxFooter")) {
+		print '</div>';
 		llxFooter();
 	}
 
