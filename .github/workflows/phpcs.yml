@@ -29,3 +29,4 @@ jobs:
           standard: 'dev/setup/codesniffer/ruleset.xml'
           fail_on_warnings: false
           scope: "blame"
+          encoding: "utf-8"
