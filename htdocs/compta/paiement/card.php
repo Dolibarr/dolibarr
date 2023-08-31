@@ -523,9 +523,8 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 }
 
 $params = array();
-
 if (! empty($title_button)) {
-    $params['attr'] = array('title' => $title_button);
+	$params['attr'] = array('title' => $title_button);
 }
 
 if ($user->socid == 0 && $action == '') {
