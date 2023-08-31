@@ -659,9 +659,29 @@ abstract class CommonObject
 	 */
 	public $alreadypaid;
 
+	/**
+	 * @var array		Array with label of status
+	 */
 	public $labelStatus;
 
+	/**
+	 * @var array array of status string
+	 * @deprecated 	Use instead labelStatus
+	 */
+	public $statuts = array();
+
+	/**
+	 * @var array		Array with short label of status
+	 */
 	protected $labelStatusShort;
+
+	/**
+	 * @var array array of short status string
+	 * @deprecated 	Use instead labelStatusShort
+	 */
+	public $statuts_short = array();
+
+
 
 	/**
 	 * @var int 		show photo on popup
@@ -673,15 +693,6 @@ abstract class CommonObject
 	 */
 	public $nb = array();
 
-	/**
-	 * @var array array of status string
-	 */
-	public $statuts = array();
-
-	/**
-	 * @var array array of short status string
-	 */
-	public $statuts_short = array();
 
 	/**
 	 * @var string output
