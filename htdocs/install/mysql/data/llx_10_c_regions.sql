@@ -42,52 +42,52 @@
 
 -- CONTENT -------------------------------------------------------------------
 -- 
--- Algeria     -> only for Departements
--- Andorra     -> only for Departements
--- Angola      -> only for Departements
+-- Algeria     -> only for Departments/Counties
+-- Andorra     -> only for Departments/Counties
+-- Angola      -> only for Departments/Counties
 -- Argentina
--- Australia   -> only for Departements
--- Austria     -> only for Departements
--- Barbados    -> only for Departements
+-- Australia   -> only for Departments/Counties
+-- Austria     -> only for Departments/Counties
+-- Barbados    -> only for Departments/Counties
 -- Belgium
 -- Bolivia
--- Brazil      -> only for Departements
+-- Brazil      -> only for Departments/Counties
 -- Burundi
--- Canada      -> only for Departements
+-- Canada      -> only for Departments/Counties
 -- Chile
 -- China
--- Colombie    -> only for Departements
+-- Colombie    -> only for Departments/Counties
 -- Croatia
 -- Denmark
 -- France
--- Germany     -> only for Departements
+-- Germany     -> only for Departments/Counties
 -- Greece
--- Honduras    -> only for Departements
+-- Honduras    -> only for Departments/Counties
 -- Hungary
--- India       -> only for Departements
--- Indonesia   -> only for Departements
+-- India       -> only for Departments/Counties
+-- Indonesia   -> only for Departments/Counties
 -- Italy
--- Japan       -> only for Departements
+-- Japan       -> only for Departments/Counties
 -- Luxembourg
 -- Mauritius
--- Mexique     -> only for Departements
+-- Mexique     -> only for Departments/Counties
 -- Morocco
--- Netherlands -> only for Departements
--- Panama      -> only for Departements
+-- Netherlands -> only for Departments/Counties
+-- Panama      -> only for Departments/Counties
 -- Peru
 -- Portugal
--- Romania     -> only for Departements
+-- Romania     -> only for Departments/Counties
 -- San Salvador
 -- Slovakia
 -- Slovenia
 -- Spain
--- Switzerland/Suisse    -> only for Departements/Cantons
--- Taiwan      -> only for Departements
+-- Switzerland/Suisse    -> only for Departments/Cantons
+-- Taiwan      -> only for Departments/Counties
 -- Tunesia
 -- Turkey
--- United Arab Emirates  -> only for Departements
+-- United Arab Emirates  -> only for Departments/Counties
 -- United Kingdom
--- USA         -> only for Departements
+-- USA         -> only for Departments/Counties
 -- Venezuela
 
 
