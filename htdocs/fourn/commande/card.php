@@ -84,6 +84,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'pu
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
+$stockDelete = GETPOST('stockDelete', 'int');
+
 $socid     = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $cancel    = GETPOST('cancel', 'alpha');
@@ -1105,10 +1107,11 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete existing dispatched lines
-		$dispatchedLines = $object->getDispachedLines();
 		$errOnDelete = 0;
-		if(!empty($dispatchedLines)){
-			foreach($dispatchedLines as $dispatchedLine){
+		if($stockDelete){
+			$dispatchedLines = $object->getDispachedLines();
+			if (!empty($dispatchedLines)) {
+				foreach ($dispatchedLines as $dispatchedLine) {
 				$db->begin();
 				$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 				$result = $supplierorderdispatch->fetch($dispatchedLine['id']);
@@ -1150,10 +1153,11 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if(empty($errOnDelete)){
+		}
+		if (empty($errOnDelete)) {
 			$result = $object->delete($user);
 			if ($result > 0) {
-				header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
+				header("Location: " . DOL_URL_ROOT . '/fourn/commande/list.php?restore_lastsearch_values=1');
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1955,12 +1959,34 @@ if ($action == 'create') {
 
 	// Confirmation de la suppression de la commande
 	if ($action == 'delete') {
-		$textmodal = $langs->trans('ConfirmDeleteOrder');
-		if(!empty($object->getDispachedLines())){
-			$textmodal .= "<br/>";
-			$textmodal .= $langs->trans('ExistingDipatchLinesWillBeRemoved');
+		$arrayAjouts = array();
+		$heightModal = 0;
+		$widthModal = 500;
+		if (!empty($object->getDispachedLines())) {
+			$arrayAjouts = array(
+				array(
+					'type' => 'other',
+					'value' => img_warning() . " " . $langs->trans('ExistingDipatchLines')
+				),
+				array('type' => 'separator'),
+				array(
+					'type' => 'select',
+					'id' => 'stockDeleteSelect',
+					'name' => 'stockDelete',
+					'label' => $langs->trans('ConfirmDeleteDispatchedLines'),
+					'values' => array(1 => $langs->trans('Yes'), 0 => $langs->trans('No')),
+					'select_show_empty' => false
+				),
+				array(
+					'type' => 'other',
+					'value' => img_warning() . " " . $langs->trans('WarningDispatchedLinesWillNotBeAccessibles')
+				),
+				array('type' => 'separator'),
+			);
+			$heightModal = 300;
+			$widthModal = "70%";
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $textmodal, 'confirm_delete', '', 0, 2);	
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
 	}
 
 	// Clone confirmation
