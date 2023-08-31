@@ -4122,6 +4122,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/menus/standard/auguria_frontoffice.php',
 		'/core/menus/standard/eldy_backoffice.php',
 		'/core/menus/standard/eldy_frontoffice.php',
+		'/core/modules/export/exports_csv.modules.php',
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',
