@@ -485,7 +485,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>';
 	}
 
-	if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABOLITY)) {
+	if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
 		print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
 		print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		print '</tr>';
@@ -503,7 +503,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		print '</tr>';
 		print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'numeric').'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'string').'</td>';
+		print '</tr>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $user->rights->stock->creer).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $user->rights->stock->creer, 'string').'</td>';
 		print '</tr>';
 	}
 
