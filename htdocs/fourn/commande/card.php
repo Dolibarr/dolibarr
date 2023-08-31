@@ -1112,47 +1112,47 @@ if (empty($reshook)) {
 			$dispatchedLines = $object->getDispachedLines();
 			if (!empty($dispatchedLines)) {
 				foreach ($dispatchedLines as $dispatchedLine) {
-				$db->begin();
-				$supplierorderdispatch = new CommandeFournisseurDispatch($db);
-				$result = $supplierorderdispatch->fetch($dispatchedLine['id']);
-				if ($result > 0) {
-					$qty = $supplierorderdispatch->qty;
-					$entrepot = $supplierorderdispatch->fk_entrepot;
-					$product = $supplierorderdispatch->fk_product;
-					$price = price2num(GETPOST('price', 'alpha'), 'MU');
-					$comment = $langs->trans('SupplierOrderDeletion', $object->ref);
-					$eatby = $supplierorderdispatch->eatby;
-					$sellby = $supplierorderdispatch->sellby;
-					$batch = $supplierorderdispatch->batch;
-			
-					$result = $supplierorderdispatch->delete($user);
-				}
-				if ($result < 0) {
-					$errorsOnDelete = $object->errors;
-					$errOnDelete++;
-				} else {
-					// If module stock is enabled and the stock increase is done on purchase order dispatching
-					if ($entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) && empty($supplierorderdispatch->fk_reception)) {
-						$mouv = new MouvementStock($db);
-						if ($product > 0) {
-							$mouv->origin = &$object;
-							$mouv->setOrigin($object->element, $object->id);
-							$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
-							if ($result < 0) {
-								$errorsOnDelete = $mouv->errors;
-								$errOnDelete++;
+					$db->begin();
+					$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+					$result = $supplierorderdispatch->fetch($dispatchedLine['id']);
+						if ($result > 0) {
+						$qty = $supplierorderdispatch->qty;
+						$entrepot = $supplierorderdispatch->fk_entrepot;
+						$product = $supplierorderdispatch->fk_product;
+						$price = price2num(GETPOST('price', 'alpha'), 'MU');
+						$comment = $langs->trans('SupplierOrderDeletion', $object->ref);
+						$eatby = $supplierorderdispatch->eatby;
+						$sellby = $supplierorderdispatch->sellby;
+						$batch = $supplierorderdispatch->batch;
+				
+						$result = $supplierorderdispatch->delete($user);
+					}
+					if ($result < 0) {
+						$errorsOnDelete = $object->errors;
+						$errOnDelete++;
+					} else {
+						// If module stock is enabled and the stock increase is done on purchase order dispatching
+						if ($entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) && empty($supplierorderdispatch->fk_reception)) {
+							$mouv = new MouvementStock($db);
+							if ($product > 0) {
+								$mouv->origin = &$object;
+								$mouv->setOrigin($object->element, $object->id);
+								$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+								if ($result < 0) {
+									$errorsOnDelete = $mouv->errors;
+									$errOnDelete++;
+								}
 							}
 						}
 					}
-				}
-				if ($errOnDelete > 0) {
-					$db->rollback();
-					setEventMessages('', $errorsOnDelete, 'errors');
-				} else {
-					$db->commit();
+					if ($errOnDelete > 0) {
+						$db->rollback();
+						setEventMessages('', $errorsOnDelete, 'errors');
+					} else {
+						$db->commit();
+					}
 				}
 			}
-		}
 		}
 		if (empty($errOnDelete)) {
 			$result = $object->delete($user);
