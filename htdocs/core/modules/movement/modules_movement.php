@@ -30,7 +30,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFMovement extends CommonDocGenerator
 {
-	public $option_codestockservice;
+	/**
+	 * @var DoliDb Database handler
+	 */
+	public $db;
+
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
+	 * @var string document type
+	 */
+	public $type;
+
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr';
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
