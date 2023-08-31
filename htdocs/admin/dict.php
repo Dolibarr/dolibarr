@@ -2639,7 +2639,6 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$maxlength = '';
 			if (in_array($fieldlist[$field], array('libelle', 'label'))) {
 				switch ($tabname) {
-					case 'c_accounting_category':
 					case 'c_ecotaxe':
 					case 'c_email_senderprofile':
 					case 'c_forme_juridique':
