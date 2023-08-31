@@ -312,8 +312,8 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".((int) $user->id);
 			$sql .= ", ".(!empty($this->fk_project) ? ((int) $this->fk_project) : "null");
 			$sql .= ", ".(!empty($facsrc->fk_account) ? ((int) $facsrc->fk_account) : "null");
-			$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
-			$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
+			$sql .= ", ".($facsrc->cond_reglement_id > 0 ? ((int) $facsrc->cond_reglement_id) : "null");
+			$sql .= ", ".($facsrc->mode_reglement_id > 0 ? ((int) $facsrc->mode_reglement_id) : "null");
 			$sql .= ", ".((int) $this->usenewprice);
 			$sql .= ", ".((int) $this->frequency);
 			$sql .= ", '".$this->db->escape($this->unit_frequency)."'";
