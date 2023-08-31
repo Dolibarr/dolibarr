@@ -70,6 +70,8 @@ class Conf
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
 
+	public $email_from;
+
 	//! Used to store current menu handler
 	public $standard_menu;
 	// List of activated modules
@@ -138,6 +140,7 @@ class Conf
 	public $agenda;
 	public $commande;
 	public $propal;
+	public $order;
 	/**
 	 * @deprecated Use invoice
 	 */

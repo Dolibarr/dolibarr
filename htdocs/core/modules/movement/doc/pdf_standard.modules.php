@@ -38,30 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_standard extends ModelePDFMovement
 {
 	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
-
-	/**
-	 * @var string model description (short text)
-	 */
-	public $description;
-
-	/**
 	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
 	 */
 	public $update_main_doc_field;
-
-	/**
-	 * @var string document type
-	 */
-	public $type;
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr';
 
 	public $wref;
 	public $posxidref;
@@ -104,7 +83,6 @@ class pdf_standard extends ModelePDFMovement
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
-		$this->option_codestockservice = 0; // Display stock-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
