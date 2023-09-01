@@ -550,11 +550,11 @@ abstract class CommonDocGenerator
 			$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 			$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
 
-			$array_key.'_total_ht'=>price2num($object->total_ht),
-			$array_key.'_total_vat'=>(!empty($object->total_vat) ?price2num($object->total_vat) : price2num($object->total_tva)),
+			$array_key.'_total_ht'=>price($object->total_ht, 0, $outputlangs),
+			$array_key.'_total_vat'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
 			$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 			$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
-			$array_key.'_total_ttc'=>price2num($object->total_ttc),
+			$array_key.'_total_ttc'=>price($object->total_ttc, 0, $outputlangs),
 
 			$array_key.'_multicurrency_code' => $object->multicurrency_code,
 			$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
@@ -706,7 +706,7 @@ abstract class CommonDocGenerator
 			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
 			'line_localtax1_rate'=>vatrate($line->localtax1_tx),
 			'line_localtax2_rate'=>vatrate($line->localtax1_tx),
-			'line_up'=>price2num($line->subprice),
+			'line_up'=>price($line->subprice, 0, $outputlangs),
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
 			'line_total_up'=>price2num($line->subprice * $line->qty),
 			'line_total_up_locale'=>price($line->subprice * $line->qty, 0, $outputlangs),
