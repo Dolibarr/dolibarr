@@ -216,7 +216,7 @@ if (isset($current_fiscal_period)) {
 			'name' => 'inventory_journal_id',
 			'type' => 'other',
 			'label' => $langs->trans('InventoryJournal'),
-			'value' => $formaccounting->select_journal($conf->global->ACCOUNTING_CLOSURE_DEFAULT_JOURNAL, "inventory_journal_id", 9, 1, 0, 0)
+			'value' => $formaccounting->select_journal($conf->global->ACCOUNTING_CLOSURE_DEFAULT_JOURNAL, "inventory_journal_id", 8, 1, 0, 0)
 		);
 		$fiscal_period_arr = array();
 		foreach ($active_fiscal_periods as $info) {
