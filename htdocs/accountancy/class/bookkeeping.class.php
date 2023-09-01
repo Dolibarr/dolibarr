@@ -2263,7 +2263,7 @@ class BookKeeping extends CommonObject
 			$sql_list = array();
 			if (is_array(self::$active_fiscal_period_cached)) {
 				foreach (self::$active_fiscal_period_cached as $fiscal_period) {
-					$sql_list[] = "('" . $this->db->jdate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->jdate($fiscal_period['date_end']) . "')";
+					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
 				}
 			}
 			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . implode(' OR ', $sql_list) . ')' : '';
