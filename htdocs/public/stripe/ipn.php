@@ -111,7 +111,7 @@ $event = null;
 if (getDolGlobalString('STRIPE_DEBUG')) {
 	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripeipn_payload.log', 'w+');
 	if ($fh) {
-		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' IPN Called. HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
+		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' IPN Called. service='.$service.' HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
 		fwrite($fh, $payload);
 		fclose($fh);
 		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripeipn_payload.log');
@@ -126,7 +126,7 @@ try {
 	// Invalid payload
 	httponly_accessforbidden('Invalid payload', 400);
 } catch (\Stripe\Exception\SignatureVerificationException $e) {
-	httponly_accessforbidden('Invalid signature', 400);
+	httponly_accessforbidden('Invalid signature. May be a hook for an event created by another Stripe env ? Check setup of your keys whsec_...', 400);
 } catch (Exception $e) {
 	httponly_accessforbidden('Error '.$e->getMessage(), 400);
 }

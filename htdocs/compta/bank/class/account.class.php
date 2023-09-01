@@ -2337,7 +2337,7 @@ class AccountLine extends CommonObjectLine
 		dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!empty($cat)) {
+			if (!empty($cat) && $cat > 0) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
@@ -2350,6 +2350,7 @@ class AccountLine extends CommonObjectLine
 				$this->db->query($sql);
 
 				// No error check. Can fail if category already affected
+				// TODO Do no try the insert if link already exists
 			}
 
 			$this->rappro = 1;
