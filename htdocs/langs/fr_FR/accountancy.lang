@@ -444,14 +444,14 @@ AccountancyOneUnletteringModifiedSuccessfully=Une annulation de lettrage modifi�
 AccountancyUnletteringModifiedSuccessfully=%s annulations de lettrage modifiées avec succès
 
 ## Closure
-AccountancyClosureStep1=Étape 1 : Valider et vérrouiller les mouvements
-AccountancyClosureStep2=Étape 2 : Clôturer la période fiscal
+AccountancyClosureStep1=Étape 1 : Valider et verrouiller les mouvements
+AccountancyClosureStep2=Étape 2 : Clôturer la période fiscale
 AccountancyClosureStep3=Étape 3 : Extourner les écritures (Optionnel)
-AccountancyClosureClose=Clôturer la période fiscal
+AccountancyClosureClose=Clôturer la période fiscale
 AccountancyClosureAccountingReversal=Extourner les écritures
-AccountancyClosureStep3NewFiscalPeriod=Prochaine période fiscal
-AccountancyClosureGenerateClosureBookkeepingRecords=Ajouter les écritures de clôture
-AccountancyClosureCloseSuccessfully=La période fiscal actuelle a été clôturée avec succès
+AccountancyClosureStep3NewFiscalPeriod=Prochaine période fiscale
+AccountancyClosureGenerateClosureBookkeepingRecords=Générer l'écriture d'à-nouveaux sur le nouvel exercice
+AccountancyClosureCloseSuccessfully=La période fiscale actuelle a été clôturée avec succès
 AccountancyClosureInsertAccountingReversalSuccessfully=Les écritures ont été extournées avec succès
 
 ## Confirm box
@@ -460,7 +460,7 @@ ConfirmMassUnletteringManual=Confirmation de l'annulation du lettrage manuel
 ConfirmMassUnletteringQuestion=Voulez-vous vraiment annuler le lettrage des %s enregistrements sélectionnés ?
 ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
 ConfirmMassDeleteBookkeepingWritingQuestion=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à cette transaction seront supprimées). Êtes-vous sûr de vouloir supprimer les %s enregistrements sélectionnés ?
-AccountancyClosureConfirmClose=Êtes-vous sûr de vouloir clôturer la période fiscal actuelle ?
+AccountancyClosureConfirmClose=Êtes-vous sûr de vouloir clôturer la période fiscale actuelle ?
 AccountancyClosureConfirmAccountingReversal=Êtes-vous sûr de vouloir extourner les écritures ?
 
 ## Error
