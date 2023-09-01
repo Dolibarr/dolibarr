@@ -93,6 +93,7 @@ class Reception extends CommonObject
 	public $depth_units;
 	// A denormalized value
 	public $trueSize;
+	public $size_units;
 
 	public $date_delivery; // Date delivery planed
 
@@ -120,6 +121,11 @@ class Reception extends CommonObject
 
 	public $meths;
 	public $listmeths; // List of carriers
+
+	/**
+	 * @var CommandeFournisseur
+	 */
+	public $commandeFournisseur;
 
 	/**
 	 * @var CommandeFournisseurDispatch[]
