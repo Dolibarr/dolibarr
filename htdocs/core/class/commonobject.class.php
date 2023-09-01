@@ -4315,6 +4315,9 @@ abstract class CommonObject
 		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
 			return -1;
 		}
+		if (!preg_match('/^[_a-zA-Z0-9]+$/', $field_select)) {
+			dol_syslog('Invalid value $field_select for parameter '.$field_select.' in call to getAllItemsLinkedByObjectID(). Must be a single field name.', LOG_ERR);
+		}
 
 		global $db;
 
@@ -4329,6 +4332,35 @@ abstract class CommonObject
 		}
 
 		return $TRes;
+	}
+
+	/**
+	 * Count items linked to an object id in association table
+	 *
+	 * @param	int		$fk_object_where		id of object we need to get linked items
+	 * @param	string	$field_where			name of field of object we need to get linked items
+	 * @param	string	$table_element			name of association table
+	 * @return 	array|int						Array of record, -1 if empty
+	 */
+	public static function getCountOfItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
+	{
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
+
+		global $db;
+
+		$sql = "SELECT COUNT(*) as nb FROM ".$db->prefix().$table_element." WHERE ".$field_where." = ".((int) $fk_object_where);
+		$resql = $db->query($sql);
+		$n = 0;
+		if ($resql) {
+			$res = $db->fetch_object($resql);
+			if ($res) {
+				$n = $res->nb;
+			}
+		}
+
+		return $n;
 	}
 
 	/**
