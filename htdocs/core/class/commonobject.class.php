@@ -4255,9 +4255,8 @@ abstract class CommonObject
 		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
 			return -1;
 		}
-
 		if (!preg_match('/^[_a-zA-Z0-9]+$/', $field_select)) {
-			error_log("ERROR: Invalid value '$field_select' for parameter \$field_select in call to getAllItemsLinkedByObjectID(). Must be a single field name.");
+			dol_syslog('Invalid value $field_select for parameter '.$field_select.' in call to getAllItemsLinkedByObjectID(). Must be a single field name.', LOG_ERR);
 		}
 
 		global $db;
