@@ -812,6 +812,12 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		writePermsInAsciiDoc($moduledescriptorfile, $destfile);
 
+		// add api urls if file exist
+		if (file_exists($dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php')) {
+			$apiFile = $dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php';
+			writeApiUrlsInDoc($apiFile, $destfile);
+		}
+
 		// Delete old documentation files
 		$FILENAMEDOC = $modulelowercase.'.html';
 		$FILENAMEDOCPDF = $modulelowercase.'.pdf';
@@ -1897,7 +1903,9 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 
 		// check if documentation has been generated
 		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
-		deletePropsFromDoc($file_doc, $objectname);
+		if (file_exists($file_doc)) {
+			deletePropsAndPermsFromDoc($file_doc, $objectname);
+		}
 
 		clearstatcache(true);
 		if (function_exists('opcache_invalidate')) {

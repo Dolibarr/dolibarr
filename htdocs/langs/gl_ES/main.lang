@@ -1237,3 +1237,5 @@ SearchSyntaxTooltipForStringOrNum=Para procurar dentro dos campos de texto, pode
 InProgress=En progreso
 DateOfPrinting=Data de impresión
 ClickFullScreenEscapeToLeave=Fai clic aquí para cambiar ao modo de pantalla completa. Preme ESCAPE para saír do modo pantalla completa.
+UserNotYetValid=Aínda non válido
+UserExpired=Expirado

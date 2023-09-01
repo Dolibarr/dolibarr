@@ -1951,7 +1951,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$commandeligne = new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
-				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $tmpsoc);
+				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $mysoc);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -4122,6 +4122,12 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/menus/standard/auguria_frontoffice.php',
 		'/core/menus/standard/eldy_backoffice.php',
 		'/core/menus/standard/eldy_frontoffice.php',
+		'/core/modules/export/export_excel.modules.php',
+		'/core/modules/export/export_csv.modules.php',
+		'/core/modules/export/exportcsv.modules.php',
+		'/core/modules/export/export_excel2007new.modules.php',
+		'/core/modules/facture/pdf_crabe.modules.php',
+		'/core/modules/facture/pdf_oursin.modules.php',
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',
@@ -4130,10 +4136,6 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/peche.modules.php',
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
-		'/core/modules/facture/pdf_crabe.modules.php',
-		'/core/modules/facture/pdf_oursin.modules.php',
-		'/core/modules/export/export_excel.modules.php',
-		'/core/modules/export/export_excel2007new.modules.php',
 		'/core/boxes/box_members.php',
 
 		'/api/class/api_generic.class.php',

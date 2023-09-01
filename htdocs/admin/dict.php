@@ -1643,6 +1643,8 @@ if ($id > 0) {
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
 
+		$colspan = 0;
+
 		// Title line with search input fields
 		print '<!-- line title to search record -->'."\n";
 		print '<tr class="liste_titre_filter">';
@@ -1658,7 +1660,6 @@ if ($id > 0) {
 			$colspan++;
 		}
 
-		$colspan = 0;
 		foreach ($fieldlist as $field => $value) {
 			if ($value == 'entity') {
 				continue;
@@ -1725,6 +1726,9 @@ if ($id > 0) {
 			}
 
 			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabcomplete[$tabname[$id]]['help'][$value])) {
+				if (!is_array($tabcomplete[$tabname[$id]]['help'])) {	// protection when $tabcomplete[$tabname[$id]]['help'] is a an empty string, we must force it into an array
+					$tabcomplete[$tabname[$id]]['help'] = array();
+				}
 				$tabcomplete[$tabname[$id]]['help'][$value] = $langs->trans('LabelUsedByDefault');
 			}
 
@@ -2635,7 +2639,6 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$maxlength = '';
 			if (in_array($fieldlist[$field], array('libelle', 'label'))) {
 				switch ($tabname) {
-					case 'c_accounting_category':
 					case 'c_ecotaxe':
 					case 'c_email_senderprofile':
 					case 'c_forme_juridique':

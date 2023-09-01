@@ -616,6 +616,52 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 }
 
 /**
+ * Converts a formatted properties string into an associative array.
+ *
+ * @param string $string The formatted properties string.
+ * @return array The resulting associative array.
+ */
+function parsePropertyString($string)
+{
+
+	$string = str_replace("'", '', $string);
+
+	// Uses a regular expression to capture keys and values
+	preg_match_all('/\s*([^\s=>]+)\s*=>\s*([^,]+),?/', $string, $matches, PREG_SET_ORDER);
+	$propertyArray = [];
+
+	foreach ($matches as $match) {
+		$key = trim($match[1]);
+		$value = trim($match[2]);
+
+		if (strpos($value, 'array(') === 0) {
+			$nestedArray = substr($value, 6);
+			$nestedArray = parsePropertyString($nestedArray);
+			$value = $nestedArray;
+		} elseif (strpos($value, '"Id")') !== false) {
+			$value = str_replace(')', '', $value);
+		} else {
+			if (is_numeric($value)) {
+				if (strpos($value, '.') !== false) {
+					$value = (float) $value;
+				} else {
+					$value = (int) $value;
+				}
+			} else {
+				if ($value === 'true') {
+					$value = true;
+				} elseif ($value === 'false') {
+					$value = false;
+				}
+			}
+		}
+		$propertyArray[$key] = $value;
+	}
+
+	return $propertyArray;
+}
+
+/**
  * Write all properties of the object in AsciiDoc format
  * @param  string   $file           path of the class
  * @param  string   $objectname     name of the objectClass
@@ -626,7 +672,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 {
 
 	// stock all properties in array
-	$attributesUnique = array ('label', 'type', 'arrayofkeyval', 'notnull', 'default', 'index', 'foreignkey', 'position', 'enabled', 'visible', 'noteditable', 'alwayseditable', 'searchall', 'isameasure', 'css','cssview','csslist', 'help', 'showoncombobox', 'validate','comment','picto' );
+	$attributesUnique = array ('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
 
 	$start = "public \$fields=array(";
 	$end = ");";
@@ -657,32 +703,53 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= "|".$attUnique;
 	}
 	$table .="\n";
+	$valuesModif = array();
 	foreach ($keys as $string) {
 		$string = trim($string, "'");
 		$string = rtrim($string, ",");
-		$array = eval("return [$string];");
 
-		// check if is array after cleaning string
+		$array = parsePropertyString($string);
+
+		// Iterate through the array to merge all key to one array
+		$code = '';
+		foreach ($array as $key => $value) {
+			if (is_array($value)) {
+				$code = $key;
+				continue;
+			} else {
+				$array[$code][$key] = $value;
+				unset($array[$key]);
+			}
+		}
+		// check if is array after parsing the string
 		if (!is_array($array)) {
 			return -1;
 		}
-
 		$field = array_keys($array);
+		if ($field[0] === '') {
+			$field[0] = 'label';
+		}
 		$values = array_values($array)[0];
 
 		// check each field has all properties and add it if missed
 		foreach ($attributesUnique as $attUnique) {
+			if ($attUnique == 'type' && $field[0] === 'label') {
+				$values[$attUnique] = 'varchar(255)';
+			}
 			if (!array_key_exists($attUnique, $values)) {
-				$values[$attUnique] = '';
+				$valuesModif[$attUnique] = '';
+			} else {
+				$valuesModif[$attUnique] = $values[$attUnique];
 			}
 		}
-
 		$table .= "|*" . $field[0] . "*|";
-		$table .= implode("|", $values) . "\n";
+		$table .= implode("|", $valuesModif) . "\n";
 	}
+
 	// end table
 	$table .= "|===\n";
 	$table .= "__ end table for object $objectname\n";
+
 	//write in file
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
@@ -691,13 +758,14 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	return 1;
 }
 
+
 /**
- * Delete property from documentation if we delete object
+ * Delete property and permissions from documentation if we delete object
  * @param  string  $file         file or path
  * @param  string  $objectname   name of object wants to deleted
  * @return void
  */
-function deletePropsFromDoc($file, $objectname)
+function deletePropsAndPermsFromDoc($file, $objectname)
 {
 
 	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
@@ -706,7 +774,15 @@ function deletePropsFromDoc($file, $objectname)
 	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
 	$new_contents = preg_replace($search, '', $str);
 	file_put_contents($file, $new_contents);
+
+	//perms If Exist
+	$perms = "|*".strtolower($objectname)."*|";
+	$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
+	$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
+	file_put_contents($file, $new_contents);
 }
+
+
 
 /**
  * Search a string and return all lines needed from file
@@ -1156,4 +1232,61 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	if ($writeInfile > 0) {
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}
+}
+
+/**
+ * Generate Urls and add them to documentaion module
+ *
+ * @param string $file_api   filename or path of api
+ * @param string $file_doc   filename or path of documentation
+ * @return int               -1 if KO, 1 if OK, 0 if nothing change
+ */
+function writeApiUrlsInDoc($file_api, $file_doc)
+{
+	$error = 0;
+	if (!dol_is_file($file_api) || !dol_is_file($file_doc)) {
+		$error++;
+	}
+	$string = getFromFile($file_api, '/*begin methods CRUD*/', '/*end methods CRUD*/');
+	$extractUrls = explode("\n", $string);
+
+	// extract urls from file
+	$urlValues = [];
+	foreach ($extractUrls as $key => $line) {
+		$lineWithoutTabsSpaces = preg_replace('/^[\t\s]+/', '', $line);
+		if (strpos($lineWithoutTabsSpaces, '* @url') === 0) {
+			$urlValue = trim(substr($lineWithoutTabsSpaces, strlen('* @url')));
+			$urlValues[] = $urlValue;
+		}
+	}
+
+	// get urls by object
+	$str = $_SERVER['HTTP_HOST'].'/api/index.php/';
+	$groupedUrls = [];
+	foreach ($urlValues as $url) {
+		if (preg_match('/(?:GET|POST|PUT|DELETE) (\w+)s/', $url, $matches)) {
+			$objectName = $matches[1];
+			$url = $str.trim(strstr($url, ' '));
+			$groupedUrls[$objectName][] = $url;
+		}
+	}
+	if (empty($groupedUrls)) {
+		$error++;
+	}
+
+	// buil format asciidoc for urls in table
+	if (!$error) {
+		$asciiDocTable = "[options=\"header\"]\n|===\n|Objet | URLs\n";
+		foreach ($groupedUrls as $objectName => $urls) {
+			$urlsList = implode(" +\n*", $urls);
+			$asciiDocTable .= "|$objectName | \n*$urlsList +\n";
+		}
+		$asciiDocTable .= "|===\n";
+		$file_write = dolReplaceInFile($file_doc, array('__API_DOC__' => '__API_DOC__'."\n".$asciiDocTable));
+		if ($file_write < 0) {
+			return -1;
+		}
+		return 1;
+	}
+	return -1;
 }

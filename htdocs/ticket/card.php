@@ -449,8 +449,6 @@ if (empty($reshook)) {
 		if (!$error) {
 			// Log action in ticket logs table
 			$object->fetch_user($usertoassign);
-			//$log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
-
 
 			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
 			header("Location: card.php?track_id=".$object->track_id);
@@ -499,9 +497,6 @@ if (empty($reshook)) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
 			$object->close($user);
-
-			// Log action in ticket logs table
-			//$log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
 
 			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
@@ -589,9 +584,6 @@ if (empty($reshook)) {
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
 				if ($res) {
-					// Log action in ticket logs table
-					//$log_action = $langs->trans('TicketLogReopen');
-
 					$url = 'card.php?track_id='.$object->track_id;
 					header("Location: ".$url);
 					exit();
@@ -620,15 +612,13 @@ if (empty($reshook)) {
 	} elseif ($action == "set_message" && $user->rights->ticket->manage) {
 		if (!GETPOST('cancel')) {
 			$object->fetch('', '', GETPOST('track_id', 'alpha'));
-			$oldvalue_message = $object->message;
+			//$oldvalue_message = $object->message;
 			$fieldtomodify = GETPOST('message_initial', 'restricthtml');
 
 			$object->message = $fieldtomodify;
 			$ret = $object->update($user);
 			if ($ret > 0) {
-				//$log_action = $langs->trans('TicketInitialMessageModified')." \n";
-				// include the Diff class
-				include_once DOL_DOCUMENT_ROOT.'/core/class/utils_diff.class.php';
+				//include_once DOL_DOCUMENT_ROOT.'/core/class/utils_diff.class.php';
 				// output the result of comparing two files as plain text
 				//$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
@@ -644,12 +634,9 @@ if (empty($reshook)) {
 		// Reopen ticket
 		if ($object->fetch(GETPOST('id', 'int'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOST('new_status', 'int');
-			$old_status = $object->status;
+			//$old_status = $object->status;
 			$res = $object->setStatut($new_status);
 			if ($res) {
-				// Log action in ticket logs table
-				$log_action = $langs->trans('TicketLogStatusChanged', $langs->transnoentities($object->statuts_short[$old_status]), $langs->transnoentities($object->statuts_short[$new_status]));
-
 				$url = 'card.php?track_id='.$object->track_id;
 				header("Location: ".$url);
 				exit();
@@ -694,8 +681,6 @@ if (empty($reshook)) {
 
 		$ret = $object->update($user);
 		if ($ret > 0) {
-			//$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
-
 			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
 		} else {
 			$error++;
@@ -1019,7 +1004,7 @@ if ($action == 'create' || $action == 'presend') {
 				if ($permissiontoedit) {
 					$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
 					if ($action == 'edit_contrat') {
-						$formcontract = new Formcontract($db);
+						$formcontract = new FormContract($db);
 						$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
 					} else {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';

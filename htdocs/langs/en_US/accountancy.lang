@@ -60,8 +60,6 @@ VueBySubAccountAccounting=View by accounting subaccount
 MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
 MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
-MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
-MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
 MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
 MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
 MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
@@ -450,7 +448,7 @@ ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction fro
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
-ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=The export format setuped is not supported into this page

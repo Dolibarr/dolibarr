@@ -369,6 +369,17 @@ class PartnershipType extends CommonObject
 	}
 
 	/**
+	 *  Return the label of the status
+	 *
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return '';
+	}
+
+	/**
 	 *	Load the info information in the object
 	 *
 	 *	@param  int		$id       Id of object

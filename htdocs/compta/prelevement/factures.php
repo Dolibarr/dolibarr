@@ -383,7 +383,7 @@ if ($resql) {
 	print "</table>";
 	print '</div>';
 
-	$db->free($result);
+	$db->free($resql);
 } else {
 	dol_print_error($db);
 }

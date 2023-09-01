@@ -61,3 +61,34 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 UPDATE llx_bank_url SET type = 'direct-debit' WHERE type = 'withdraw' AND url like '%compta/prelevement/card%';
 
 ALTER TABLE llx_facture_fourn ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_societe_rib ADD COLUMN extraparams varchar(255);
+
+ALTER TABLE llx_c_type_container ADD COLUMN position integer DEFAULT 0;
+
+ALTER TABLE llx_user DROP COLUMN skype;
+ALTER TABLE llx_user DROP COLUMN twitter;
+ALTER TABLE llx_user DROP COLUMN facebook;
+ALTER TABLE llx_user DROP COLUMN instagram;
+ALTER TABLE llx_user DROP COLUMN snapchat;
+ALTER TABLE llx_user DROP COLUMN googleplus;
+ALTER TABLE llx_user DROP COLUMN youtube;
+ALTER TABLE llx_user DROP COLUMN whatsapp;
+
+ALTER TABLE llx_adherent DROP COLUMN skype;
+ALTER TABLE llx_adherent DROP COLUMN twitter;
+ALTER TABLE llx_adherent DROP COLUMN facebook;
+ALTER TABLE llx_adherent DROP COLUMN instagram;
+ALTER TABLE llx_adherent DROP COLUMN snapchat;
+ALTER TABLE llx_adherent DROP COLUMN googleplus;
+ALTER TABLE llx_adherent DROP COLUMN youtube;
+ALTER TABLE llx_adherent DROP COLUMN whatsapp;
+
+ALTER TABLE llx_societe DROP COLUMN skype;
+
+ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
+
+ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_availability integer DEFAULT NULL;
+
+ALTER TABLE llx_product_lot ADD COLUMN qc_frequency integer DEFAULT NULL;
+ALTER TABLE llx_product_lot ADD COLUMN lifetime integer DEFAULT NULL;

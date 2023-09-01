@@ -85,7 +85,7 @@ if (!isModEnabled('adherent')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
 
-if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
