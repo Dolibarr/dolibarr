@@ -361,7 +361,7 @@ GROUP BY fk_facture_fourn
 ";
 $resql = $db->query($sql);
 
-$num = $db->num_rows($result);
+$num = $db->num_rows($resql);
 $i = 0;
 while ($i < $num) {
 	$obj = $db->fetch_object($resql);
