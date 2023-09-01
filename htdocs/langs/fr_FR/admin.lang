@@ -1427,6 +1427,10 @@ SuppliersPayment=Règlements fournisseurs
 SupplierPaymentSetup=Configuration des règlements fournisseurs
 InvoiceCheckPosteriorDate=Vérifier les dates de facturation à la validation
 InvoiceCheckPosteriorDateHelp=La validation des factures sera refusée si la date de facturation est antérieure à la date de la dernière facture du même type.
+InvoiceOptionCategoryOfOperations=Afficher la mention "catégorie d'opérations" sur la facture.
+InvoiceOptionCategoryOfOperationsHelp=Selon les cas, la mention apparaîtra sous la forme : <br> - Catégorie d'opérations : Livraison de biens <br> - Catégorie d'opérations : Prestation de services <br> - Catégorie d'opérations : Mixte - Livraison de biens & prestation de services
+InvoiceOptionCategoryOfOperationsYes1=Oui, sous le bloc d'adresse
+InvoiceOptionCategoryOfOperationsYes2=Oui, dans le coin inférieur gauche
 ##### Proposals #####
 PropalSetup=Configuration du module Propositions Commerciales
 ProposalsNumberingModules=Modèles de numérotation des propositions commerciales
