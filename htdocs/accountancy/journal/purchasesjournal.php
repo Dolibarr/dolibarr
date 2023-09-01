@@ -368,6 +368,7 @@ while ($i < $num) {
 	if ($obj->nb > 0) {
 		$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
 	}
+	$i++;
 }
 //var_dump($errorforinvoice);exit;
 
