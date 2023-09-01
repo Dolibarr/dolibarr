@@ -2611,15 +2611,10 @@ class BookKeeping extends CommonObject
 					$error++;
 				} else {
 					$now = dol_now();
-					$income_statement_debit = 0;
-					$income_statement_credit = 0;
+                    $income_statement_amount = 0;
 					while ($obj = $this->db->fetch_object($resql)) {
 						if (in_array($obj->pcg_type, $accounting_groups_used_for_income_statement)) {
-							if ($obj->opening_balance < 0) {
-								$income_statement_debit += $obj->opening_balance;
-							} else {
-								$income_statement_credit += $obj->opening_balance;
-							}
+                            $income_statement_amount += $obj->opening_balance;
 						} else {
 							// Insert bookkeeping record for balance sheet account
 							$mt = $obj->opening_balance;
@@ -2661,48 +2656,10 @@ class BookKeeping extends CommonObject
 					}
 
 					// Insert bookkeeping record for income statement
-					if (!$error && $income_statement_debit < 0) {
-						$mt = $income_statement_debit;
+					if (!$error && $income_statement_amount != 0) {
+						$mt = $income_statement_amount;
 						$accountingaccount = new AccountingAccount($this->db);
-						$accountingaccount->fetch(null, getDolGlobalString('ACCOUNTING_RESULT_LOSS'), true);
-
-						$bookkeeping = new BookKeeping($this->db);
-						$bookkeeping->doc_date = $new_fiscal_period->date_start;
-						$bookkeeping->date_lim_reglement = '';
-						$bookkeeping->doc_ref = $new_fiscal_period->label;
-						$bookkeeping->date_creation = $now;
-						$bookkeeping->doc_type = 'closure';
-						$bookkeeping->fk_doc = $new_fiscal_period->id;
-						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
-						$bookkeeping->thirdparty_code = '';
-
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->subledger_label = '';
-
-						$bookkeeping->numero_compte = $accountingaccount->account_number;
-						$bookkeeping->label_compte = $accountingaccount->label;
-
-						$bookkeeping->label_operation = $new_fiscal_period->label;
-						$bookkeeping->montant = $mt;
-						$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
-						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
-						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
-						$bookkeeping->code_journal = $journal->code;
-						$bookkeeping->journal_label = $langs->transnoentities($journal->label);
-						$bookkeeping->fk_user_author = $user->id;
-						$bookkeeping->entity = $conf->entity;
-
-						$result = $bookkeeping->create($user);
-						if ($result < 0) {
-							$this->error = $bookkeeping->error;
-							$this->errors = $bookkeeping->errors;
-							$error++;
-						}
-					}
-					if (!$error && $income_statement_credit > 0) {
-						$mt = $income_statement_credit;
-						$accountingaccount = new AccountingAccount($this->db);
-						$accountingaccount->fetch(null, getDolGlobalString('ACCOUNTING_RESULT_PROFIT'), true);
+						$accountingaccount->fetch(null, getDolGlobalString($income_statement_amount < 0 ? 'ACCOUNTING_RESULT_LOSS' : 'ACCOUNTING_RESULT_PROFIT'), true);
 
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;
