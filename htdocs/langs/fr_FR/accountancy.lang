@@ -480,8 +480,8 @@ AccountancyErrorMismatchBalanceAmount=Le solde (%s) n'est pas égal à 0
 AccountancyErrorLetteringBookkeeping=Des erreurs sont survenues concernant les transactions : %s
 ErrorAccountNumberAlreadyExists=Le code comptable %s existe déjà
 ErrorArchiveAddFile=Impossible de mettre le fichier "%s" dans l'archive
-ErrorNoFiscalPeriodActiveFound=Aucune période fiscal active trouvée
-ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=La date d'opération n'est pas sur une période fiscal active
+ErrorNoFiscalPeriodActiveFound=Aucune période fiscale active trouvée
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=La date d'opération n'est pas sur une période fiscale active
 
 ## Import
 ImportAccountingEntries=Écritures comptables
