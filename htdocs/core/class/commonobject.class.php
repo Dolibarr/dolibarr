@@ -4290,12 +4290,14 @@ abstract class CommonObject
 
 		global $db;
 
-		$sql = "SELECT COUNT(*) n FROM ".$db->prefix().$table_element." WHERE ".$field_where." = ".((int) $fk_object_where);
+		$sql = "SELECT COUNT(*) as nb FROM ".$db->prefix().$table_element." WHERE ".$field_where." = ".((int) $fk_object_where);
 		$resql = $db->query($sql);
 		$n = 0;
 		if ($resql) {
 			$res = $db->fetch_object($resql);
-			if ($res) $n = $res->n;
+			if ($res) {
+				$n = $res->nb;
+			}
 		}
 
 		return $n;
