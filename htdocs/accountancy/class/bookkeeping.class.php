@@ -2825,8 +2825,9 @@ class BookKeeping extends CommonObject
 
 				$bookkeeping->montant = -$bookkeeping->montant;
 				$bookkeeping->sens = ($bookkeeping->montant >= 0) ? 'C' : 'D';
-				$bookkeeping->debit = -$bookkeeping->debit;
-				$bookkeeping->credit = -$bookkeeping->credit;
+                $old_debit = $bookkeeping->debit;
+				$bookkeeping->debit = $bookkeeping->credit;
+				$bookkeeping->credit = $old_debit;
 
 				$bookkeeping->fk_user_author = $user->id;
 				$bookkeeping->entity = $conf->entity;
