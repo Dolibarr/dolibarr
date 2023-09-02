@@ -32,6 +32,8 @@
  *	\brief      File of contacts class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -39,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	use CommonSocialNetworks;
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -98,11 +103,11 @@ class Contact extends CommonObject
 		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>52),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
 		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>77, 'searchall'=>1),
-		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
+		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
 		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'searchall'=>1),
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
@@ -114,8 +119,8 @@ class Contact extends CommonObject
 		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'ProspectStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
 		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
+		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
+		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
 		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>3, 'position'=>205),
 		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>3, 'position'=>210),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
@@ -131,11 +136,31 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var string gender
+	 */
+	public $gender;
+
+	/**
+	 * @var int egroupware_id
+	 */
+	public $egroupware_id;
+
+	/**
+	 * @var int birthday_alert
+	 */
+	public $birthday_alert;
+
+	/**
 	 * @var string The civilite code, not an integer
 	 * @deprecated
 	 * @see $civility_code
 	 */
 	public $civilite;
+
+	/**
+	 * @var string fullname
+	 */
+	public $fullname;
 
 	/**
 	 * @var string Address
@@ -176,6 +201,11 @@ class Contact extends CommonObject
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
+	 * @var string thirdparty name
+	 */
+	public $socname;
+
+	/**
 	 * @var int 0=inactive, 1=active
 	 */
 	public $statut;
@@ -187,6 +217,14 @@ class Contact extends CommonObject
 	 * @var string
 	 */
 	public $email;
+
+	/**
+	 * Email
+	 * @var string
+	 * @deprecated
+	 * @see $email
+	 */
+	public $mail;
 
 	/**
 	 * URL
@@ -204,41 +242,6 @@ class Contact extends CommonObject
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
-
-	/**
-	 * Skype username
-	 * @var string
-	 * @deprecated
-	 */
-	public $skype;
-
-	/**
-	 * Twitter username
-	 * @var string
-	 * @deprecated
-	 */
-	public $twitter;
-
-	 /**
-	  * Facebook username
-	  * @var string
-	  * @deprecated
-	  */
-	public $facebook;
-
-	 /**
-	  * Linkedin username
-	  * @var string
-	  * @deprecated
-	  */
-	public $linkedin;
-
-	/**
-	 * Jabber username
-	 * @var string
-	 * @deprecated
-	 */
-	public $jabberid;
 
 	/**
 	 * @var string filename for photo
@@ -432,12 +435,13 @@ class Contact extends CommonObject
 	/**
 	 *  Add a contact into database
 	 *
-	 *  @param      User	$user       Object user that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @param      User	$user           Object user that create
+	 *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
+	 *  @return     int      			    <0 if KO, >0 if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 		$now = dol_now();
@@ -513,7 +517,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CONTACT_CREATE', $user);
 				if ($result < 0) {
@@ -684,22 +688,6 @@ class Contact extends CommonObject
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
-				// if ($tmpobj->skype != $this->skype) {
-				// 	$tmpobj->skype = $this->skype;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->twitter != $this->twitter) {
-				// 	$tmpobj->twitter = $this->twitter;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->facebook != $this->facebook) {
-				// 	$tmpobj->facebook = $this->facebook;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->linkedin != $this->linkedin) {
-				//     $tmpobj->linkedin = $this->linkedin;
-				//     $usermustbemodified++;
-				// }
 				if ($usermustbemodified) {
 					$result = $tmpobj->update($user, 0, 1, 1, 1);
 					if ($result < 0) {
@@ -831,9 +819,6 @@ class Contact extends CommonObject
 		}
 		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
-		}
-		if ($this->skype && !empty($conf->global->LDAP_CONTACT_FIELD_SKYPE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
@@ -1046,12 +1031,12 @@ class Contact extends CommonObject
 
 				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
-				$this->country			= $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				$this->country = $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
-				$this->fk_soc			= $obj->fk_soc;		// Both fk_soc and socid are used
-				$this->socid			= $obj->fk_soc;		// Both fk_soc and socid are used
-				$this->socname			= $obj->socname;
-				$this->poste			= $obj->poste;
+				$this->fk_soc = $obj->fk_soc;		// Both fk_soc and socid are used
+				$this->socid = $obj->fk_soc;		// Both fk_soc and socid are used
+				$this->socname = $obj->socname;
+				$this->poste = $obj->poste;
 				$this->statut = $obj->statut;
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
@@ -1067,22 +1052,22 @@ class Contact extends CommonObject
 				$this->phone_perso = trim($obj->phone_perso);
 				$this->phone_mobile = trim($obj->phone_mobile);
 
-				$this->email			= $obj->email;
+				$this->email = $obj->email;
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
-				$this->photo			= $obj->photo;
-				$this->priv				= $obj->priv;
-				$this->mail				= $obj->email;
+				$this->photo = $obj->photo;
+				$this->priv = $obj->priv;
+				$this->mail = $obj->email;
 
 				$this->birthday = $this->db->jdate($obj->birthday);
-				$this->note				= $obj->note_private; // deprecated
-				$this->note_private		= $obj->note_private;
+				$this->note = $obj->note_private; // deprecated
+				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
-				$this->default_lang		= $obj->default_lang;
+				$this->default_lang = $obj->default_lang;
 				$this->user_id = $obj->user_id;
-				$this->user_login		= $obj->user_login;
+				$this->user_login = $obj->user_login;
 				$this->canvas = $obj->canvas;
 
-				$this->import_key		= $obj->import_key;
+				$this->import_key = $obj->import_key;
 
 				// Define gender according to civility
 				$this->setGenderFromCivility();
@@ -1406,6 +1391,52 @@ class Contact extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowContact")];
+		}
+		if (!empty($this->photo) && class_exists('Form')) {
+			$photo = '<div class="photointooltip floatright">';
+			$photo .= Form::showphoto('contact', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$photo .= '</div>';
+			$datas['photo'] = $photo;
+		}
+
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contact").'</u> ' . $this->getLibStatut(4);
+		$datas['name'] = '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
+		// if ($this->civility_id) $datas['civility'] = '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate civilty_id code
+		if (!empty($this->poste)) {
+			$datas['job'] = '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;
+		}
+		$datas['email'] = '<br><b>'.$langs->trans("EMail").':</b> '.$this->email;
+		$phonelist = array();
+		$country_code = empty($this->country_code) ? '': $this->country_code;
+		if ($this->phone_pro) {
+			$phonelist[] = dol_print_phone($this->phone_pro, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
+		}
+		if ($this->phone_mobile) {
+			$phonelist[] = dol_print_phone($this->phone_mobile, $country_code, $this->id, 0, '', '&nbsp;', 'mobile');
+		}
+		if ($this->phone_perso) {
+			$phonelist[] = dol_print_phone($this->phone_perso, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
+		}
+		$datas['phonelist'] = '<br><b>'.$langs->trans("Phone").':</b> '.implode('&nbsp;', $phonelist);
+		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
+
+		return $datas;
+	}
+
+	/**
 	 *  Return name of contact with link (and eventually picto)
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
@@ -1422,35 +1453,25 @@ class Contact extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		$result = ''; $label = '';
-		if (!empty($this->photo) && class_exists('Form')) {
-			$label .= '<div class="photointooltip floatright">';
-			$label .= Form::showphoto('contact', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
-			$label .= '</div>';
-			//$label .= '<div style="clear: both;"></div>';
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
 		}
 
-		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contact").'</u>';
-		$label .= ' '.$this->getLibStatut(4);
-		$label .= '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
-		//if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
-		if (!empty($this->poste)) {
-			$label .= '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label .= '<br><b>'.$langs->trans("EMail").':</b> '.$this->email;
-		$phonelist = array();
-		$country_code = empty($this->country_code) ? '': $this->country_code;
-		if ($this->phone_pro) {
-			$phonelist[] = dol_print_phone($this->phone_pro, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
-		}
-		if ($this->phone_mobile) {
-			$phonelist[] = dol_print_phone($this->phone_mobile, $country_code, $this->id, 0, '', '&nbsp;', 'mobile');
-		}
-		if ($this->phone_perso) {
-			$phonelist[] = dol_print_phone($this->phone_perso, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
-		}
-		$label .= '<br><b>'.$langs->trans("Phone").':</b> '.implode('&nbsp;', $phonelist);
-		$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
 
 		$url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
 
@@ -1460,48 +1481,58 @@ class Contact extends CommonObject
 			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($add_save_lastsearch_values) {
+			if ($url && $add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
 
 		$url .= $moreparam;
 
-		$linkclose = "";
+		$linkclose = '';
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowContact");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		$linkstart = '<a href="'.$url.'"';
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
 		$linkstart .= $linkclose.'>';
-		$linkend = '</a>';
-
-		if ($option == 'xxx') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
 			$linkend = '</a>';
 		}
 
 		$result .= $linkstart;
+
 		if ($withpicto) {
 			if ($withpicto < 0) {
 				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+				if ($withpicto != 2 && $withpicto != -2) {
+					$result .= ' ';
+				}
 			} else {
-				$result .= img_object(($notooltip ? '' : $label), ( $this->picto ?  $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="pictofixedwidth"' : '') : 'class="'.(($withpicto != 2) ? 'pictofixedwidth ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 			}
 		}
 		if ($withpicto != 2 && $withpicto != -2) {
 			$result .= '<span class="valigmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
 		}
+
 		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array('contactdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1531,10 +1562,10 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *	Return label of contact status
+	 *  Return the label of the status
 	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * 	@return 	string					Label of contact status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode)
 	{
@@ -1543,11 +1574,11 @@ class Contact extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param      int			$status     Id statut
-	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return     string					Libelle
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode)
 	{
@@ -1633,6 +1664,8 @@ class Contact extends CommonObject
 		$this->email = 'specimen@specimen.com';
 		$this->socialnetworks = array(
 			'skype' => 'tom.hanson',
+			'twitter' => 'tomhanson',
+			'linkedin' => 'tomhanson',
 		);
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';
@@ -1772,7 +1805,7 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 * Get Contact roles for a thirdparty
+	 * Get thirdparty contact roles of a given contact
 	 *
 	 * @param  string 	$element 	Element type
 	 * @return array|int			Array of contact roles or -1
@@ -1789,6 +1822,8 @@ class Contact extends CommonObject
 		$sql = "SELECT sc.fk_socpeople as id, sc.fk_c_type_contact";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql .= ", ".MAIN_DB_PREFIX."societe_contacts sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople sp";
+		$sql .= " ON sc.fk_socpeople = sp.rowid AND sp.statut = 1";
 		$sql .= " WHERE sc.fk_soc =".((int) $this->socid);
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
@@ -1818,7 +1853,7 @@ class Contact extends CommonObject
 	 * Updates all roles (default contact for companies) according to values inside the ->roles array.
 	 * This is called by update of contact.
 	 *
-	 * @return float|int
+	 * @return int
 	 * @see fetchRoles()
 	 */
 	public function updateRoles()
@@ -1828,7 +1863,7 @@ class Contact extends CommonObject
 		$error = 0;
 
 		if (!isset($this->roles)) {
-			return;	// Avoid to loose roles when property not set
+			return 0;	// Avoid to loose roles when property not set
 		}
 
 		$this->db->begin();
@@ -1958,9 +1993,9 @@ class Contact extends CommonObject
 	/**
 	 *  Return status of prospect
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param	int		$mode       0=label long, 1=label short, 2=Picto + Label short, 3=Picto, 4=Picto + Label long
 	 *  @param	string	$label		Label to use for status for added status
-	 *  @return string        		Libelle
+	 *  @return string        		Label
 	 */
 	public function getLibProspCommStatut($mode = 0, $label = '')
 	{
@@ -1978,7 +2013,7 @@ class Contact extends CommonObject
 	 *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
 	 *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
 	 *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
-	 *  @return string       	 			Libelle du statut
+	 *  @return string       	 			Label of status
 	 */
 	public function libProspCommStatut($statut, $mode = 0, $label = '', $picto = '')
 	{
@@ -2121,11 +2156,13 @@ class Contact extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs;
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -2138,9 +2175,10 @@ class Contact extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<div class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
-			$return .= '<div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		/*if (property_exists($this, 'phone_pro') && !empty($this->phone_pro)) {
 			$return .= '<br>'.img_picto($langs->trans("Phone"), 'phone');
@@ -2151,7 +2189,7 @@ class Contact extends CommonObject
 			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
 		}*/
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

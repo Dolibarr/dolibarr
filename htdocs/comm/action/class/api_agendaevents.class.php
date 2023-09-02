@@ -57,8 +57,8 @@ class AgendaEvents extends DolibarrApi
 	 *
 	 * Return an array with Agenda Events informations
 	 *
-	 * @param       int         $id         ID of Agenda Events
-	 * @return 	    array|mixed             Data without useless information
+	 * @param   int         $id         ID of Agenda Events
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -81,7 +81,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
-			throw new RestException(401, "Insufficient rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+			throw new RestException(401, 'Insufficient rights to read event of this owner id. Your id is '.DolibarrApiAccess::$user->id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
@@ -134,7 +134,7 @@ class AgendaEvents extends DolibarrApi
 				$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 			}
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm AS t LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields AS ef ON (ef.fk_object = t.id)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if (isModEnabled("societe")) {
 			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -159,11 +159,10 @@ class AgendaEvents extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -290,7 +289,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'delete')) {
 			throw new RestException(401, "Insufficient rights to delete your Agenda Event");
 		}
 

@@ -91,7 +91,7 @@ if (empty($action)) {
 if ($action == "productinfo") {
 	$prod = new Product($db);
 	$prod->fetch($idproduct);
-	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="AddProductConfirm(place, '.$idproduct.');">'.$langs->trans('Add').'</button>';
+	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="AddProductConfirm(place, '.$idproduct.')">'.$langs->trans('Add').'</button>';
 	print "<br><b>".$prod->label."</b><br>";
 	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$idproduct.'">';
 	print "<br>".$prod->description;
@@ -115,7 +115,7 @@ if ($action == "productinfo") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$printer = new dolReceiptPrinter($db);
-		$printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]});
+		$printer->initPrinter(getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]));
 		$printer->printer->feed();
 		$printer->printer->feed();
 		$printer->printer->text($langs->trans('IM'));
@@ -130,8 +130,8 @@ if ($action == "productinfo") {
 		$printer->printer->feed();
 		$printer->close();
 	} else {
-		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'Cash\');">'.$langs->trans('Cash').'</button>';
-		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'CreditCard\');">'.$langs->trans('CreditCard').'</button>';
+		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'Cash\')">'.$langs->trans('Cash').'</button>';
+		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'CreditCard\')">'.$langs->trans('CreditCard').'</button>';
 		print '<br>';
 	}
 } elseif ($action == "editline") {
@@ -148,9 +148,9 @@ if ($action == "productinfo") {
 			print "<br>".$prod->description;
 			print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 			print '<br>';
-			print '<button type="button" class="publicphonebutton2 phonered width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty - 1).');">-</button>';
-			print '<button type="button" class="publicphonebutton2 phonegreen width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty + 1).');">+</button>';
-			print '<button type="button" class="publicphonebutton2 phoneblue width24" onclick="SetNote(place, '.$selectedline.');">'.$langs->trans('Note').'</button>';
+			print '<button type="button" class="publicphonebutton2 phonered width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty - 1).')">-</button>';
+			print '<button type="button" class="publicphonebutton2 phonegreen width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty + 1).')">+</button>';
+			print '<button type="button" class="publicphonebutton2 phoneblue width24" onclick="SetNote(place, '.$selectedline.')">'.$langs->trans('Note').'</button>';
 		}
 	}
 } else {
@@ -249,6 +249,8 @@ function AddProductConfirm(placeid, productid){
 		});';
 	}
 	?>
+
+	return true;
 }
 
 function SetQty(place, selectedline, qty){
@@ -278,6 +280,8 @@ function SetQty(place, selectedline, qty){
 	}
 	?>
 	LoadCats();
+
+	return true;
 }
 
 function SetNote(place, selectedline){

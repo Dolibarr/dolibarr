@@ -37,11 +37,12 @@ class mod_reception_moonstone extends ModelNumRefReception
 	/**
 	 *  Return default description of numbering model
 	 *
-	 *  @return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -77,13 +78,13 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -96,13 +97,13 @@ class mod_reception_moonstone extends ModelNumRefReception
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$reception	Reception object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@param	Societe			$objsoc     Third party object
+	 *	@param	Object|null		$reception	Reception object
+	 *	@return string      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -113,7 +114,11 @@ class mod_reception_moonstone extends ModelNumRefReception
 			return 0;
 		}
 
-		$date = $reception->date_reception;
+		if (!empty($reception)) {
+			$date = $reception->date_reception;
+		} else {
+			$date = dol_now();
+		}
 
 		$numFinal = get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);
 

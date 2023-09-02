@@ -54,9 +54,9 @@ if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
  */
 
 if ($action == 'updateMask') {
-	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'alpha');
+	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'aZ09');
 	$maskchequereceipts = GETPOST('maskchequereceipts', 'alpha');
-	if ($maskconstchequereceipts) {
+	if ($maskconstchequereceipts && preg_match('/_MASK$/', $maskconstchequereceipts)) {
 		$res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -164,7 +164,7 @@ foreach ($dirmodels as $reldir) {
 							print (empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 

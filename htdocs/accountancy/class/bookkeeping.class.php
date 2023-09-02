@@ -282,7 +282,7 @@ class BookKeeping extends CommonObject
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);
 			} else {
 				//$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
-				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.$this->numero_compte;
+				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.($this->numero_compte != -1 ? $this->numero_compte : $langs->trans("Unknown"));
 				if ($this->subledger_account && $this->subledger_account != $this->numero_compte) {
 					$mesg .= ', '.$langs->trans("SubledgerAccount").': '.$this->subledger_account;
 				}
@@ -716,11 +716,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int $id Id object
-	 * @param string $ref Ref
-	 * @param string $mode 	Mode
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int 	$id 	Id object
+	 * @param 	string 	$ref 	Ref (Not used. Does not exists on this table, same as rowid)
+	 * @param 	string 	$mode 	Mode
+	 * @return 	int 			Int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -761,7 +760,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (null !== $ref) {
-			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			$sql .= " AND t.rowid = ".((int) $ref);
 		} else {
 			$sql .= ' AND t.rowid = '.((int) $id);
 		}
@@ -1154,9 +1153,10 @@ class BookKeeping extends CommonObject
 	 * @param 	int 	$offset 		offset limit
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
+	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
 	 * @return 	int 					<0 if KO, >0 if OK
 	 */
-	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
 	{
 		global $conf;
 
@@ -1166,6 +1166,11 @@ class BookKeeping extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= " t.numero_compte,";
+		$sql .= " t.label_compte,";
+		if (!empty($option)) {
+			$sql .= " t.subledger_account,";
+			$sql .= " t.subledger_label,";
+		}
 		$sql .= " SUM(t.debit) as debit,";
 		$sql .= " SUM(t.credit) as credit";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
@@ -1191,6 +1196,8 @@ class BookKeeping extends CommonObject
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
+				} elseif ($key == 't.reconciled_option') {
+					$sqlwhere[] = 't.lettering_code IS NULL';
 				} else {
 					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
@@ -1201,7 +1208,17 @@ class BookKeeping extends CommonObject
 			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
 		}
 
-		$sql .= ' GROUP BY t.numero_compte';
+		if (!empty($option)) {
+			$sql .= ' AND t.subledger_account IS NOT NULL';
+			$sql .= ' AND t.subledger_account != ""';
+			$sql .= ' GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label';
+			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
+		} else {
+			$sql .= ' GROUP BY t.numero_compte, t.label_compte';
+			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
+		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -1219,6 +1236,9 @@ class BookKeeping extends CommonObject
 				$line = new BookKeepingLine();
 
 				$line->numero_compte = $obj->numero_compte;
+				$line->label_compte = $obj->label_compte;
+				$line->subledger_account = $obj->subledger_account;
+				$line->subledger_label = $obj->subledger_label;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 
@@ -1459,15 +1479,16 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by importkey
 	 *
 	 * @param  string		$importkey		Import key
+	 * @param string $mode Mode
 	 * @return int Result
 	 */
-	public function deleteByImportkey($importkey)
+	public function deleteByImportkey($importkey, $mode = '')
 	{
 		$this->db->begin();
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE import_key = '".$this->db->escape($importkey)."'";
 
 		$resql = $this->db->query($sql);
@@ -1541,9 +1562,10 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
+	 * @param string $mode Mode
 	 * @return 	int 				Result
 	 */
-	public function deleteMvtNum($piecenum)
+	public function deleteMvtNum($piecenum, $mode = '')
 	{
 		global $conf;
 
@@ -1551,7 +1573,7 @@ class BookKeeping extends CommonObject
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".(int) $piecenum;
 		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
@@ -2010,7 +2032,7 @@ class BookKeeping extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
-		$pcgver = $conf->global->CHARTOFACCOUNTS;
+		$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 		$sql = "SELECT DISTINCT ab.numero_compte as account_number, aa.label as label, aa.rowid as rowid, aa.fk_pcg_version";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab";
@@ -2067,12 +2089,12 @@ class BookKeeping extends CommonObject
 	 * FIXME: This function takes the parent of parent to get the root account !
 	 *
 	 * @param 	string 	$account	Accounting account
-	 * @return 	array 				Array with root account information (max 2 upper level)
+	 * @return 	array|int 			Array with root account information (max 2 upper level), <0 if KO
 	 */
 	public function getRootAccount($account = null)
 	{
 		global $conf;
-		$pcgver = $conf->global->CHARTOFACCOUNTS;
+		$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 		$sql  = "SELECT root.rowid, root.account_number, root.label as label,";
 		$sql .= " parent.rowid as parent_rowid, parent.account_number as parent_account_number, parent.label as parent_label";
@@ -2114,7 +2136,7 @@ class BookKeeping extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		$pcgver = $conf->global->CHARTOFACCOUNTS;
+		$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 		$sql  = "SELECT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version, cat.label as category";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa ";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";

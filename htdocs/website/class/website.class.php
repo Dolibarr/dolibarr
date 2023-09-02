@@ -47,7 +47,8 @@ class Website extends CommonObject
 	public $table_element = 'website';
 
 	/**
-	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  	Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -91,17 +92,21 @@ class Website extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
+	 * @var integer date_creation
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string date_modification
+	 * @var integer	date_modification
 	 */
 	public $date_modification;
+	/**
+	 * @var integer date_modification
+	 */
+	public $tms;
 
 	/**
-	 * @var integer
+	 * @var integer Default home page
 	 */
 	public $fk_default_home;
 
@@ -111,24 +116,27 @@ class Website extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var string
+	 * @var int User Modification Id
+	 */
+	public $fk_user_modif;
+
+	/**
+	 * @var string Virtual host
 	 */
 	public $virtualhost;
 
 	/**
-	 * @var int
+	 * @var int Use a manifest file
 	 */
 	public $use_manifest;
 
 	/**
-	 * @var int
+	 * @var int	Postion
 	 */
 	public $position;
 
 	/**
-	 * List of containers
-	 *
-	 * @var array
+	 * @var array List of containers
 	 */
 	public $lines;
 
@@ -436,7 +444,7 @@ class Website extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		$this->records = array();
+		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -460,7 +468,7 @@ class Website extends CommonObject
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->records[$line->id] = $line;
+				$this->lines[$line->id] = $line;
 			}
 			$this->db->free($resql);
 
@@ -852,9 +860,9 @@ class Website extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -864,11 +872,11 @@ class Website extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un status donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -1132,9 +1140,7 @@ class Website extends CommonObject
 		fputs($fp, $line);
 
 		fclose($fp);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filesql, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($filesql);
 
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
@@ -1562,9 +1568,9 @@ class Website extends CommonObject
 			if ($countrycode == 'us') {
 				$label = preg_replace('/\s*\(.*\)/', '', $label);
 			}
-			$out .= '<a href="'.$url.substr($languagecodeselected, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+			$out .= '<li><a href="'.$url.substr($languagecodeselected, 0, 2).'"><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
 			$out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
-			$out .= '</li></a>';
+			$out .= '</a></li>';
 		}
 		$i = 0;
 		if (is_array($languagecodes)) {
@@ -1583,11 +1589,11 @@ class Website extends CommonObject
 				if ($countrycode == 'us') {
 					$label = preg_replace('/\s*\(.*\)/', '', $label);
 				}
-				$out .= '<a href="'.$url.substr($languagecode, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+				$out .= '<li><a href="'.$url.substr($languagecode, 0, 2).'"><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
 				if (empty($i) && empty($languagecodeselected)) {
 					$out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
 				}
-				$out .= '</li></a>';
+				$out .= '</a></li>';
 				$i++;
 			}
 		}

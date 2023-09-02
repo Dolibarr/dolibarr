@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\Xml\Request;
 
 use Sabre\Xml\Reader;
@@ -16,8 +18,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ExpandPropertyReport implements XmlDeserializable {
-
+class ExpandPropertyReport implements XmlDeserializable
+{
     /**
      * An array with requested properties.
      *
@@ -50,18 +52,16 @@ class ExpandPropertyReport implements XmlDeserializable {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree();
 
         $obj = new self();
         $obj->properties = self::traverse($elems);
 
         return $obj;
-
     }
 
     /**
@@ -69,15 +69,15 @@ class ExpandPropertyReport implements XmlDeserializable {
      * {DAV:}property elements.
      *
      * @param array $elems
-     * @return void
+     *
+     * @return array
      */
-    private static function traverse($elems) {
-
+    private static function traverse($elems)
+    {
         $result = [];
 
         foreach ($elems as $elem) {
-
-            if ($elem['name'] !== '{DAV:}property') {
+            if ('{DAV:}property' !== $elem['name']) {
                 continue;
             }
 
@@ -85,7 +85,7 @@ class ExpandPropertyReport implements XmlDeserializable {
                 $elem['attributes']['namespace'] :
                 'DAV:';
 
-            $propName = '{' . $namespace . '}' . $elem['attributes']['name'];
+            $propName = '{'.$namespace.'}'.$elem['attributes']['name'];
 
             $value = null;
             if (is_array($elem['value'])) {
@@ -93,11 +93,8 @@ class ExpandPropertyReport implements XmlDeserializable {
             }
 
             $result[$propName] = $value;
-
         }
 
         return $result;
-
     }
-
 }

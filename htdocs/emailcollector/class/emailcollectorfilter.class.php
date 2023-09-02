@@ -206,16 +206,14 @@ class EmailCollectorFilter extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
-		// ...
+		// $object->title = $langs->trans("CopyOf")." ".$object->title;
+
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
-					//var_dump($key);
-					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -252,25 +250,9 @@ class EmailCollectorFilter extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
+
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	/*public function fetchLines()
-	{
-		$this->lines=array();
-
-		// Load lines with object EmailcollectorFilterLine
-
-		return count($this->lines)?1:0;
-	}*/
 
 	/**
 	 * Update object into database
@@ -317,7 +299,6 @@ class EmailCollectorFilter extends CommonObject
 		}
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>'.$langs->trans("EmailcollectorFilter").'</u>';
 		$label .= '<br>';
@@ -446,6 +427,7 @@ class EmailCollectorFilter extends CommonObject
 				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
 			}
 		}
+		return "";
 	}
 
 	/**
@@ -468,7 +450,7 @@ class EmailCollectorFilter extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 

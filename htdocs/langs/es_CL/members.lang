@@ -84,7 +84,6 @@ MenuMembersStats=Estadística
 NewMemberbyWeb=Nuevo miembro agregado. Esperando aprobacion
 NewMemberForm=Nueva forma de miembro
 TurnoverOrBudget=Volumen de ventas (empresa) o Cotización (asociación o colectivo)
-MEMBER_NEWFORM_PAYONLINE=Salte en la página integrada de pago en línea
 MembersStatisticsByProperties=Estadísticas de miembros por naturaleza
 NoEmailSentToMember=No se envió ningún correo electrónico al miembro
 EmailSentToMember=Correo electrónico enviado al miembro al %s

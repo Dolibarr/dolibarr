@@ -103,7 +103,6 @@ class Availabilities extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3, 'validate'=>'1',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0, 'cssview'=>'wordbreak', 'validate'=>'1',),
@@ -116,15 +115,14 @@ class Availabilities extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'), 'validate'=>'1',),
-		'start' => array('type'=>'date', 'label'=>'Start Date', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'isameasure'=>'1',),
-		'end' => array('type'=>'date', 'label'=>'End Date', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'isameasure'=>'1',),
-		'type' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>'1', 'position'=>49, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Customer', '1'=>'Supplier', '2'=>'Else'),),
-		'duration' => array('type'=>'integer', 'label'=>'Duration', 'enabled'=>'1', 'position'=>47, 'notnull'=>1, 'visible'=>1, 'default'=>'30', 'isameasure'=>'1',),
+		'start' => array('type'=>'date', 'label'=>'Start Date', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'searchall'=>1,),
+		'end' => array('type'=>'date', 'label'=>'End Date', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'searchall'=>1,),
+		'duration' => array('type'=>'integer', 'label'=>'Duration', 'enabled'=>'1', 'position'=>47, 'notnull'=>1, 'visible'=>1, 'default'=>'30',),
 		'startHour' => array('type'=>'integer', 'label'=>'Start Hour', 'enabled'=>'1', 'position'=>46, 'notnull'=>1, 'visible'=>-1,),
 		'endHour' => array('type'=>'integer', 'label'=>'End Hour', 'enabled'=>'1', 'position'=>46.5, 'notnull'=>1, 'visible'=>-1,),
+		'fk_bookcal_calendar' => array('type'=>'integer:Calendar:bookcal/class/calendar.class.php:1', 'label'=>'CalendarId', 'enabled'=>'1', 'position'=>48, 'notnull'=>1, 'visible'=>1,),
 	);
 	public $rowid;
-	public $ref;
 	public $label;
 	public $description;
 	public $note_public;
@@ -139,10 +137,10 @@ class Availabilities extends CommonObject
 	public $status;
 	public $start;
 	public $end;
-	public $type;
 	public $duration;
 	public $startHour;
 	public $endHour;
+	public $fk_bookcal_calendar;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -201,7 +199,7 @@ class Availabilities extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->bookcal->availabilities->read) {
+		/*if ($user->hasRight('bookcal', 'availabilities', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -516,7 +514,7 @@ class Availabilities extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->availabilities->write))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('bookcal', 'availabilities', 'write'))
 		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->availabilities->availabilities_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
@@ -774,7 +772,7 @@ class Availabilities extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -842,7 +840,7 @@ class Availabilities extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("bookcal@bookcal");
+			//$langs->load("agenda");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
@@ -944,7 +942,7 @@ class Availabilities extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("bookcal@bookcal");
+		$langs->load("agenda");
 
 		if (empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON)) {
 			$conf->global->BOOKCAL_AVAILABILITIES_ADDON = 'mod_availabilities_standard';
@@ -1009,7 +1007,7 @@ class Availabilities extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("bookcal@bookcal");
+		$langs->load("agenda");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_availabilities';

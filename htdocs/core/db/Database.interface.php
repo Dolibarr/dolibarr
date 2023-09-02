@@ -98,7 +98,7 @@ interface Database
 	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  string        SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl');
+	public function convertSQLFromMysql($line, $type = 'ddl');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -129,6 +129,17 @@ interface Database
 	public function DDLListTables($database, $table = '');
 	// phpcs:enable
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  List tables into a database with table type
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '');
+	// phpcs:enable
+
 	/**
 	 * Return last request executed with query()
 	 *
@@ -143,7 +154,7 @@ interface Database
 	 * @param   string $sortorder Sort order
 	 * @return  string            String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null);
+	public function order($sortfield = '', $sortorder = '');
 
 	/**
 	 * Decrypt sensitive data in database

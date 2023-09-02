@@ -254,7 +254,7 @@ class DiscountAbsolute
 
 		// Check parameters
 		if (empty($this->description)) {
-			$this->error = 'BadValueForPropertyDescription';
+			$this->error = 'BadValueForPropertyDescriptionOfDiscount';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -366,13 +366,14 @@ class DiscountAbsolute
 		$sql .= " AND fk_invoice_supplier IS NULL)"; // Not used as credit note and not used as deposit
 
 		dol_syslog(get_class($this)."::delete Delete discount", LOG_DEBUG);
+		require_once DOL_DOCUMENT_ROOT. '/core/class/commoninvoice.class.php';
 		$result = $this->db->query($sql);
 		if ($result) {
 			// If source of discount was a credit note or deposit, we change source statut.
 			if ($this->fk_facture_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture";
 				$sql .= " set paye=0, fk_statut=1";
-				$sql .= " WHERE (type = 2 or type = 3) AND rowid = ".((int) $this->fk_facture_source);
+				$sql .= " WHERE (type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_facture_source);
 
 				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -387,7 +388,7 @@ class DiscountAbsolute
 			} elseif ($this->fk_invoice_supplier_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture_fourn";
 				$sql .= " set paye=0, fk_statut=1";
-				$sql .= " WHERE (type = 2 or type = 3) AND rowid = ".((int) $this->fk_invoice_supplier_source);
+				$sql .= " WHERE (type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_invoice_supplier_source);
 
 				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -419,7 +420,7 @@ class DiscountAbsolute
 	 *	When discount is from a credit note used to reduce payment of an invoice, we link using rowidinvoice
 	 *
 	 *	@param		int		$rowidline		Invoice line id (To use discount into invoice lines)
-	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduc payment of invoice)
+	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduce payment of invoice)
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	public function link_to_invoice($rowidline, $rowidinvoice)
@@ -573,12 +574,12 @@ class DiscountAbsolute
 			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
 			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture as f";
 			$sql .= " WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = ".((int) $invoice->id);
-			$sql .= " AND f.type = 3";
+			$sql .= " AND f.type = ". (int) $invoice::TYPE_DEPOSIT;
 		} elseif ($invoice->element == 'invoice_supplier') {
 			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
 			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture_fourn as f";
 			$sql .= " WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = ".((int) $invoice->id);
-			$sql .= " AND f.type = 3";
+			$sql .= " AND f.type = ". (int) $invoice::TYPE_DEPOSIT;
 		} else {
 			$this->error = get_class($this)."::getSumDepositsUsed was called with a bad object as a first parameter";
 			dol_print_error($this->error);

@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=ویب ہُک لائیو کلید
 ONLINE_PAYMENT_WAREHOUSE=جب آن لائن ادائیگی کی جاتی ہے تو اسٹاک کو کم کرنے کے لیے استعمال کیا جائے گا
 StripeLiveEnabled=اسٹرائپ لائیو فعال (بصورت دیگر ٹیسٹ/سینڈ باکس موڈ)
 StripeImportPayment=پٹی کی ادائیگی درآمد کریں۔
-ExampleOfTestCreditCard=ٹیسٹ کے لیے کریڈٹ کارڈ کی مثال: %s => درست، %s => غلطی CVC، %s => میعاد ختم، %s => چارج ناکام
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=پٹی والے دروازے
 OAUTH_STRIPE_TEST_ID=اسٹرائپ کنیکٹ کلائنٹ آئی ڈی (ca_...)
 OAUTH_STRIPE_LIVE_ID=اسٹرائپ کنیکٹ کلائنٹ آئی ڈی (ca_...)
@@ -61,6 +62,7 @@ DeleteACard=کارڈ حذف کریں۔
 ConfirmDeleteCard=کیا آپ واقعی اس کریڈٹ یا ڈیبٹ کارڈ کو حذف کرنا چاہتے ہیں؟
 CreateCustomerOnStripe=پٹی پر گاہک بنائیں
 CreateCardOnStripe=پٹی پر کارڈ بنائیں
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=پٹی میں دکھائیں۔
 StripeUserAccountForActions=کچھ اسٹرائپ ایونٹس کی ای میل اطلاع کے لیے استعمال کرنے والا صارف اکاؤنٹ (سٹرائپ ادائیگی)
 StripePayoutList=پٹی کی ادائیگیوں کی فہرست
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=IPN (لائیو موڈ) کو کال کرنے کے ل�
 PaymentWillBeRecordedForNextPeriod=ادائیگی اگلی مدت کے لیے ریکارڈ کی جائے گی۔
 ClickHereToTryAgain= <a href="%s"> دوبارہ کوشش کرنے کے لیے یہاں کلک کریں... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=مضبوط کسٹمر تصدیقی اصولوں کی وجہ سے، کارڈ کی تخلیق اسٹرائپ بیک آفس سے ہونی چاہیے۔ آپ اسٹرائپ کسٹمر ریکارڈ پر سوئچ کرنے کے لیے یہاں کلک کر سکتے ہیں: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

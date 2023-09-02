@@ -487,47 +487,45 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<table class="border centpercent">';
 		print '<tbody>';
 
-		// groupe
+		// Groups of users
 		print '<tr>';
 		print '<td class="titlefield fieldrequired">';
 		print $form->textwithpicto($langs->trans("groups"), $langs->trans("fusionGroupsUsers"));
-
 		print '</td>';
-
 		print '<td>';
-		//@todo  ajouter entity  !
-		$sql =' SELECT rowid, nom from '.MAIN_DB_PREFIX.'usergroup ';
+		print img_picto($langs->trans("groups"), 'group', 'class="pictofixedwidth"');
 
+		$sql =' SELECT rowid, nom from '.MAIN_DB_PREFIX.'usergroup WHERE entity IN ('.getEntity('usergroup').')';
 		$resql = $db->query($sql);
 		$Tgroup = array();
 		while ($obj = $db->fetch_object($resql)) {
 			$Tgroup[$obj->rowid] = $obj->nom;
 		}
+
 		print $form->multiselectarray('groups', $Tgroup, GETPOST('groups', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 
 		print '</td>';
 
-		// users
+		// Users
 		print '<tr>';
 		print '<td class="titlefield fieldrequired">';
 		print $form->textwithpicto($langs->trans("users"), $langs->trans("fusionGroupsUsers"));
 		print '<td>';
+		print img_picto($langs->trans("users"), 'user', 'class="pictofixedwidth"');
 
-		$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from '.MAIN_DB_PREFIX.'user as  u';
-		$sql .= ' WHERE  1=1 ';
+		$sql = ' SELECT u.rowid, u.lastname, u.firstname from '.MAIN_DB_PREFIX.'user as  u';
+		$sql .= ' WHERE 1=1';
 		$sql .= !empty($morefilter) ? $morefilter : '';
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$userlist[$obj->rowid] = $obj->firstname . ' '. $obj->lastname;
+				$userlist[$obj->rowid] = dolGetFirstLastname($obj->firstname, $obj->lastname);
 			}
 		}
 
 		print img_picto('', 'users') . $form->multiselectarray('users', $userlist, GETPOST('users', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print '</td>';
-
-
 
 		// Type
 		print '<tr>';
@@ -624,7 +622,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -747,11 +745,29 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 					}
 				}
 
+				$typeleaves = $object->getTypes(1, -1);
+				$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+
+				if ($object->halfday == 2) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == -1) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Afternoon";
+				} elseif ($object->halfday == 1) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == 2) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Afternoon";
+				}
+
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;
 
 				$message .= "<ul>";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Type")." : ".(empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow)."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv($starthalfdaykey)." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')." ".$langs->transnoentitiesnoconv($endhalfdaykey)."</li>\n";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
 				$message .= "</ul>\n";
 

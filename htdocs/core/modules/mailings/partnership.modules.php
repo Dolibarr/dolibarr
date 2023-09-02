@@ -32,17 +32,12 @@ class mailing_partnership extends MailingTargets
 
 	public $require_admin = 0;
 
-	public $require_module = array(); // This module allows to select by categories must be also enabled if category module is not activated
+	public $require_module = array('partnership'); // This module allows to select by categories must be also enabled if category module is not activated
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'partnership';
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
 
 	public $enabled = 'isModEnabled("partnership")';
 
@@ -86,6 +81,9 @@ class mailing_partnership extends MailingTargets
 		if (GETPOST('filter', 'int') > 0) {
 			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
 		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		$sql .= " UNION ";
 
@@ -98,6 +96,9 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND pt.rowid = p.fk_type";
 		if (GETPOST('filter', 'int') > 0) {
 			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
 		}
 
 		$sql .= " ORDER BY email";
@@ -180,6 +181,9 @@ class mailing_partnership extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.rowid = p.fk_soc AND s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		$sql .= " UNION ";
 
@@ -187,6 +191,9 @@ class mailing_partnership extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."adherent as s";
 		$sql .= " WHERE s.rowid = p.fk_member AND s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('member').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		//print $sql;
 

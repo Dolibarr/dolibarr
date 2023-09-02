@@ -45,6 +45,26 @@ class BankCateg // extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var DoliDB
+	 */
+	protected $db;
+
+	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var array errors
+	 */
+	public $errors;
+
+	/**
+	 * @var array context
+	 */
+	public $context;
+
 
 	/**
 	 * Constructor
@@ -150,9 +170,9 @@ class BankCateg // extends CommonObject
 	/**
 	 * Update database
 	 *
-	 * @param  User $user User that modify
-	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int                    <0 if KO, >0 if OK
+	 * @param  User|null	$user 		User that modify
+	 * @param  int 			$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int          	        <0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -278,7 +298,7 @@ class BankCateg // extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
+		// $object->statut = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

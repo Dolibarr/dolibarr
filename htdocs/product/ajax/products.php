@@ -20,7 +20,7 @@
 
 /**
  * \file 	htdocs/product/ajax/products.php
- * \brief 	File to return Ajax response on product list request.
+ * \brief 	File to return Ajax response on product list request, with default VAT rate.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -34,9 +34,6 @@ if (!defined('NOREQUIREHTML')) {
 }
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
-}
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
 }
 if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
@@ -103,26 +100,36 @@ if ($action == 'fetch' && !empty($id)) {
 
 		$price_level = 1;
 		if ($socid > 0) {
-			$thirdpartytemp = new Societe($db);
-			$thirdpartytemp->fetch($socid);
-
-			//Load translation description and label
-			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
-				$newlang = $thirdpartytemp->default_lang;
-
-				if (!empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-					$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
-					$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
-				} else {
-					$outdesc_trans = $object->description;
-					$outlabel_trans = $object->label;
-				}
+			$needchangeaccordingtothirdparty = 0;
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+				$needchangeaccordingtothirdparty = 1;
 			}
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+				$needchangeaccordingtothirdparty = 1;
+			}
+			if ($needchangeaccordingtothirdparty) {
+				$thirdpartytemp = new Societe($db);
+				$thirdpartytemp->fetch($socid);
 
-			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-				$price_level = $thirdpartytemp->price_level;
+				//Load translation description and label according to thirdparty language
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+					$newlang = $thirdpartytemp->default_lang;
+
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+						$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
+						$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
+					} else {
+						$outdesc_trans = $object->description;
+						$outlabel_trans = $object->label;
+					}
+				}
+
+				//Set price level according to thirdparty
+				if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+					$price_level = $thirdpartytemp->price_level;
+				}
 			}
 		}
 
@@ -185,10 +192,10 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Price by customer
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-			$prodcustprice = new Productcustomerprice($db);
+			$prodcustprice = new ProductCustomerPrice($db);
 
 			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
 
@@ -215,6 +222,32 @@ if ($action == 'fetch' && !empty($id)) {
 			$outdefault_vat_code = $object->default_vat_code;
 		}
 
+		// VAT to use and default VAT for product are set to same value by default
+		$product_outtva_tx_formated =  $outtva_tx_formated;
+		$product_outtva_tx =  $outtva_tx;
+		$product_outdefault_vat_code = $outdefault_vat_code;
+
+		// If we ask the price according to buyer, we change it.
+		if (GETPOST('addalsovatforthirdpartyid', 'int')) {
+			$thirdparty_buyer = new Societe($db);
+			$thirdparty_buyer->fetch($socid);
+
+			$tmpvatwithcode = get_default_tva($mysoc, $thirdparty_buyer, $id, 0);
+
+			if (!is_numeric($tmpvatwithcode) || $tmpvatwithcode != -1) {
+				$reg =array();
+				if (preg_match('/(.+)\s\((.+)\)/', $tmpvatwithcode, $reg)) {
+					$outtva_tx = price2num($reg[1]);
+					$outtva_tx_formated = price($outtva_tx);
+					$outdefault_vat_code = $reg[2];
+				} else {
+					$outtva_tx = price2num($tmpvatwithcode);
+					$outtva_tx_formated = price($outtva_tx);
+					$outdefault_vat_code = '';
+				}
+			}
+		}
+
 		$outjson = array(
 			'ref' => $outref,
 			'label' => $outlabel,
@@ -225,13 +258,19 @@ if ($action == 'fetch' && !empty($id)) {
 			'price_ht' => $outprice_ht,
 			'price_ttc' => $outprice_ttc,
 			'pricebasetype' => $outpricebasetype,
+			'product_tva_tx_formated' => $product_outtva_tx_formated,
+			'product_tva_tx' => $product_outtva_tx,
+			'product_default_vat_code' => $product_outdefault_vat_code,
+
 			'tva_tx_formated' => $outtva_tx_formated,
 			'tva_tx' => $outtva_tx,
 			'default_vat_code' => $outdefault_vat_code,
+
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
-			'array_options'=>$object->array_options);
+			'array_options'=>$object->array_options
+		);
 	}
 
 	echo json_encode($outjson);

@@ -2,7 +2,8 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,9 +230,9 @@ if (empty($reshook)) {
 		sort($receptions);
 		foreach ($receptions as $id_reception) {
 			$rcp = new Reception($db);
-			 // We only invoice reception that are validated
-			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != $rcp::STATUS_VALIDATED) {
-				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusSupplierOrderValidatedShort"));
+			 // We not allow invoice reception that are in draft status
+			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut == $rcp::STATUS_DRAFT) {
+				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusReceptionValidatedShort"));
 				$error++;
 				continue;
 			}
@@ -252,15 +253,101 @@ if (empty($reshook)) {
 					}
 				}
 			} else {
+				$cond_reglement_id = 0;
+				$mode_reglement_id = 0;
+				$fk_account = 0;
+				$remise_percent = 0;
+				$remise_absolue = 0;
+				$transport_mode_id = 0;
+				if (!empty($rcp->cond_reglement_id)) {
+					$cond_reglement_id = $rcp->cond_reglement_id;
+				}
+				if (!empty($rcp->mode_reglement_id)) {
+					$mode_reglement_id = $rcp->mode_reglement_id;
+				}
+				if (!empty($rcp->fk_account)) {
+					$fk_account = $rcp->fk_account;
+				}
+				if (!empty($rcp->remise_percent)) {
+					$remise_percent = $rcp->remise_percent;
+				}
+				if (!empty($rcp->remise_absolue)) {
+					$remise_absolue = $rcp->remise_absolue;
+				}
+				if (!empty($rcp->transport_mode_id)) {
+					$transport_mode_id = $rcp->transport_mode_id;
+				}
+
+				if (empty($cond_reglement_id)
+					|| empty($mode_reglement_id)
+					|| empty($fk_account)
+					|| empty($remise_percent)
+					|| empty($remise_absolue)
+					|| empty($transport_mode_id)
+				) {
+					if (!isset($rcp->supplier_order)) {
+						$rcp->fetch_origin();
+					}
+
+					// try to get from source of reception (supplier order)
+					if (!empty($rcp->commandeFournisseur)) {
+						$supplierOrder = $rcp->commandeFournisseur;
+						if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
+							$cond_reglement_id = $supplierOrder->cond_reglement_id;
+						}
+						if (empty($mode_reglement_id) && !empty($supplierOrder->mode_reglement_id)) {
+							$mode_reglement_id = $supplierOrder->mode_reglement_id;
+						}
+						if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
+							$fk_account = $supplierOrder->fk_account;
+						}
+						if (empty($remise_percent) && !empty($supplierOrder->remise_percent)) {
+							$remise_percent = $supplierOrder->remise_percent;
+						}
+						if (empty($remise_absolue) && !empty($supplierOrder->remise_absolue)) {
+							$remise_absolue = $supplierOrder->remise_absolue;
+						}
+						if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
+							$transport_mode_id = $supplierOrder->transport_mode_id;
+						}
+					}
+
+					// try get from third-party of reception
+					if (!empty($rcp->thirdparty)) {
+						$soc = $rcp->thirdparty;
+						if (empty($cond_reglement_id) && !empty($soc->cond_reglement_supplier_id)) {
+							$cond_reglement_id = $soc->cond_reglement_supplier_id;
+						}
+						if (empty($mode_reglement_id) && !empty($soc->mode_reglement_supplier_id)) {
+							$mode_reglement_id = $soc->mode_reglement_supplier_id;
+						}
+						if (empty($fk_account) && !empty($soc->fk_account)) {
+							$fk_account = $soc->fk_account;
+						}
+						if (empty($remise_percent) && !empty($soc->remise_supplier_percent)) {
+							$remise_percent = $soc->remise_supplier_percent;
+						}
+						if (empty($remise_absolue) && !empty($soc->remise_absolue)) {
+							$remise_absolue = $soc->remise_absolue;
+						}
+						if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
+							$transport_mode_id = $soc->transport_mode_id;
+						}
+					}
+				}
+
 				// If we want one invoice per reception or if there is no first invoice yet for this thirdparty.
 				$objecttmp->socid = $rcp->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
-				$objecttmp->cond_reglement_id	= $rcp->cond_reglement_id || $rcp->thirdparty->cond_reglement_supplier_id;
-				$objecttmp->mode_reglement_id	= $rcp->mode_reglement_id || $rcp->thirdparty->mode_reglement_supplier_id;
+				$objecttmp->cond_reglement_id = $cond_reglement_id;
+				$objecttmp->mode_reglement_id = $mode_reglement_id;
+				$objecttmp->fk_account = $fk_account;
+				$objecttmp->remise_percent = $remise_percent;
+				$objecttmp->remise_absolue = $remise_absolue;
+				$objecttmp->transport_mode_id = $transport_mode_id;
 
-				$objecttmp->fk_account = !empty($rcp->thirdparty->fk_account) ? $rcp->thirdparty->fk_account : 0;
-				$objecttmp->remise_percent 	= !empty($rcp->thirdparty->remise_percent) ? $rcp->thirdparty->remise_percent : 0;
-				$objecttmp->remise_absolue 	= !empty($rcp->thirdparty->remise_absolue) ? $rcp->thirdparty->remise_absolue : 0;
+				// if the VAT reverse-charge is activated by default in supplier card to resume the information
+				$objecttmp->vat_reverse_charge = $soc->vat_reverse_charge;
 
 				$objecttmp->fk_project			= $rcp->fk_project;
 				//$objecttmp->multicurrency_code = $rcp->multicurrency_code;
@@ -279,6 +366,11 @@ if (empty($reshook)) {
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin    = 'reception';
 				$objecttmp->origin_id = $id_reception;
+
+				// Auto calculation of date due if not filled by user
+				if (empty($objecttmp->date_echeance)) {
+					$objecttmp->date_echeance = $objecttmp->calculate_date_lim_reglement();
+				}
 
 				$objecttmp->array_options = $rcp->array_options; // Copy extrafields
 
@@ -462,6 +554,7 @@ if (empty($reshook)) {
 				}
 
 				$id = $objecttmp->id; // For builddoc action
+				$lastref = $objecttmp->ref; // generated ref
 				$object  =$objecttmp;
 
 				// Fac builddoc
@@ -616,7 +709,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 $sql .= $hookmanager->resPrint;
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -659,7 +752,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($sall) {
 	$param .= "&sall=".urlencode($sall);
@@ -768,7 +861,7 @@ $arrayofmassactions = array(
 	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
+if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->rights->supplier_invoice->creer) {
 	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisReceptions");
 }
 if ($massaction == 'createbills') {
@@ -959,8 +1052,8 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone right">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status onrightofpage');
+	print '<td class="liste_titre right parentonrightofpage">';
+	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Status billed

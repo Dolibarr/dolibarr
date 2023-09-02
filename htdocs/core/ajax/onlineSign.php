@@ -59,13 +59,14 @@ $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
 $mode = GETPOST('mode', 'aZ09');	// 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
+$online_sign_name = GETPOST("onlinesignname") ? GETPOST("onlinesignname") : '';
 
 $error = 0;
 $response = "";
 
 $type = $mode;
 
-// Check securitykey
+// Security check
 $securekeyseed = '';
 if ($type == 'proposal') {
 	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
@@ -90,7 +91,8 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnable
 top_httphead();
 
 if ($action == "importSignature") {
-	if (!empty($signature) && $signature[0] == "image/png;base64") {
+	$issignatureok = (!empty($signature) && $signature[0] == "image/png;base64");
+	if ($issignatureok) {
 		$signature = $signature[1];
 		$data = base64_decode($signature);
 
@@ -102,6 +104,10 @@ if ($action == "importSignature") {
 
 			$upload_dir = !empty($conf->propal->multidir_output[$object->entity])?$conf->propal->multidir_output[$object->entity]:$conf->propal->dir_output;
 			$upload_dir .= '/'.dol_sanitizeFileName($object->ref).'/';
+
+			$default_font_size = pdf_getPDFFontSize($langs);	// Must be after pdf_getInstance
+			$default_font = pdf_getPDFFont($langs);	// Must be after pdf_getInstance
+			$langs->loadLangs(array("main", "companies"));
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
 			$filename = "signatures/".$date."_signature.png";
@@ -143,7 +149,6 @@ if ($action == "importSignature") {
 							$pdf->SetCompression(false);
 						}
 
-
 						//$pdf->Open();
 						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
 
@@ -155,7 +160,7 @@ if ($action == "importSignature") {
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tppl);
 							} catch (Exception $e) {
-								dol_syslog("Error when manipulating some PDF by onlineSign: ".$e->getMessage(), LOG_ERR);
+								dol_syslog("Error when manipulating the PDF ".$sourcefile." by onlineSign: ".$e->getMessage(), LOG_ERR);
 								$response = $e->getMessage();
 								$error++;
 							}
@@ -167,7 +172,14 @@ if ($action == "importSignature") {
 						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
 						$wforimg = $s['w'] - 20 - $xforimgstart;
 
+						$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
+						$pdf->SetFont($default_font, '', $default_font_size - 1);
+						$pdf->MultiCell($wforimg, 4, $langs->trans("DateSigning").': '.dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
+						$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
+						$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname").': '.$online_sign_name, 0, 'L');
+
 						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
+
 						//$pdf->Close();
 						$pdf->Output($newpdffilename, "F");
 
@@ -187,7 +199,6 @@ if ($action == "importSignature") {
 				$db->begin();
 
 				$online_sign_ip = getUserRemoteIP();
-				$online_sign_name = '';		// TODO Ask name on form to sign
 
 				$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
 				$sql .= " SET fk_statut = ".((int) $object::STATUS_SIGNED).", note_private = '".$db->escape($object->note_private)."',";
@@ -207,9 +218,6 @@ if ($action == "importSignature") {
 				}
 
 				if (!$error) {
-					$db->commit();
-					$response = "success";
-					setEventMessages("PropalSigned", null, 'warnings');
 					if (method_exists($object, 'call_trigger')) {
 						//customer is not a user !?! so could we use same user as validation ?
 						$user = new User($db);
@@ -218,16 +226,24 @@ if ($action == "importSignature") {
 						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
 						if ($result < 0) {
 							$error++;
+							$response = "error in trigger ".$object->error;
+						} else {
+							$response = "success";
 						}
-						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED_WEB', $user);
-						if ($result < 0) {
-							$error++;
-						}
+					} else {
+						$response = "success";
 					}
 				} else {
-					$db->rollback();
 					$error++;
 					$response = "error sql";
+				}
+
+				if (!$error) {
+					$db->commit();
+					$response = "success";
+					setEventMessages("PropalSigned", null, 'warnings');
+				} else {
+					$db->rollback();
 				}
 			}
 		} elseif ($mode == 'contract') {

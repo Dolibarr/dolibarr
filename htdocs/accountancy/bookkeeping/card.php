@@ -412,7 +412,11 @@ if ($action == 'create') {
 	if (!empty($object->piece_num)) {
 		$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?restore_lastsearch_values=1">'.$langs->trans('BackToList').'</a>';
 
-		print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
+		if ($mode == '_tmp') {
+			print load_fiche_titre($langs->trans("CreateMvts"), $backlink);
+		} else {
+			print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
+		}
 
 		$head = array();
 		$h = 0;
@@ -493,7 +497,7 @@ if ($action == 'create') {
 
 		// Ref document
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref') {
@@ -608,7 +612,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print '<br>';
 

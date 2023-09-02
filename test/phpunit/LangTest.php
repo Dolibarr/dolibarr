@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +88,12 @@ class LangTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SecurityTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -210,13 +212,14 @@ class LangTest extends PHPUnit\Framework\TestCase
 
 			unset($tmplangs);
 
+			print "Check also some syntax rules into the language file\n";
 			$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
 			foreach ($filesarray2 as $key => $file) {
 				if (! preg_match('/\.lang$/', $file)) {
 					continue;
 				}
 
-				print 'Check lang file '.$file."\n";
+				//print 'Check lang file '.$file."\n";
 				$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
 
 				$result=preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.

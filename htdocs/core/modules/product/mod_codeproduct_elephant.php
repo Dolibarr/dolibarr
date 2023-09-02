@@ -119,7 +119,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(!empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT) ? $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 
 		$texte .= '</tr>';
 

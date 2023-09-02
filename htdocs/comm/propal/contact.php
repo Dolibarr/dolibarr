@@ -63,9 +63,9 @@ if (!$error) {
 }
 
 // Security check
+$socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	$object->id = $user->socid;
 }
 restrictedArea($user, 'propal', $object->id);
 
@@ -76,7 +76,7 @@ $usercancreate = $user->hasRight("propal", "creer");
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->propal->creer) {
+if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
 	if ($object->id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -94,12 +94,12 @@ if ($action == 'addcontact' && $user->rights->propal->creer) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->propal->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('propal', 'creer')) {
 	// Toggle the status of a contact
 	if ($object->id > 0) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	}
-} elseif ($action == 'deletecontact' && $user->rights->propal->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('propal', 'creer')) {
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);
 
@@ -149,7 +149,7 @@ if ($object->id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);

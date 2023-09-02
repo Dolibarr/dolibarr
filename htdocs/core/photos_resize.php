@@ -51,7 +51,7 @@ if (empty($modulepart)) {
 $accessallowed = 0;
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	$result = restrictedArea($user, 'produit|service', $id, 'product&product');
-	if ($modulepart == 'produit|service' && (!$user->rights->produit->lire && !$user->rights->service->lire)) {
+	if ($modulepart == 'produit|service' && (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire'))) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -119,6 +119,7 @@ if (!$accessallowed) {
 }
 
 // Define dir according to modulepart
+$dir = '';
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	$object = new Product($db);
@@ -237,7 +238,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	}
 } elseif ($modulepart == 'mrp') {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
-	$object = new MO($db);
+	$object = new Mo($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
 		if ($result <= 0) {
@@ -344,7 +345,8 @@ if ($cancel) {
 
 if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey")) {
 	if (empty($dir)) {
-		print 'Bug: Value for $dir could not be defined.';
+		dol_print_error('', 'Bug: Value for $dir could not be defined.');
+		exit;
 	}
 
 	$fullpath = $dir."/".$original_file;
@@ -453,7 +455,6 @@ if ($action == 'confirm_crop') {
 			if ($result < 0) {
 				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 			}
-			$result = $ecmfile->create($user);
 		}
 
 		if ($backtourl) {
@@ -601,7 +602,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 /* Check that mandatory fields are filled */
-print '<script type="text/javascript">
+print '<script nonce="'.getNonce().'" type="text/javascript">
 jQuery(document).ready(function() {
 	$("#submitcrop").click(function(e) {
         console.log("We click on submitcrop");

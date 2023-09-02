@@ -44,7 +44,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
-if ($mode == 'customer' && !$user->rights->facture->lire) {
+if ($mode == 'customer' && !$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 if ($mode == 'supplier' && empty($user->rights->fournisseur->facture->lire)) {
@@ -265,15 +265,6 @@ complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
-// We use select_thirdparty_list instead of select_company so we can use $filter and share same code for customer and supplier.
-$filter = '';
-if ($mode == 'customer') {
-	$filter = 's.client in (1,2,3)';
-}
-if ($mode == 'supplier') {
-	$filter = 's.fournisseur = 1';
-}
-
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
@@ -286,6 +277,13 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+$filter = '';
+if ($mode == 'customer') {
+	$filter = '(s.client:IN:1,2,3)';
+}
+if ($mode == 'supplier') {
+	$filter = '(s.fournisseur:=:1)';
+}
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
@@ -421,7 +419,7 @@ print '</td></tr></table>';
 
 
 print '</div></div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 
 print dol_get_fiche_end();

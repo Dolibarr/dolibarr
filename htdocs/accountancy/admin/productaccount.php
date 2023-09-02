@@ -52,11 +52,13 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 // search & action GETPOST
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
+
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
 $codeventil_sell = GETPOST('codeventil_sell', 'array');
 $chk_prod = GETPOST('chk_prod', 'array');
 $default_account = GETPOST('default_account', 'int');
-$confirm = GETPOST('confirm', 'alpha');
 $account_number_buy = GETPOST('account_number_buy');
 $account_number_sell = GETPOST('account_number_sell');
 $changeaccount = GETPOST('changeaccount', 'array');
@@ -78,7 +80,6 @@ $search_onpurchase = GETPOST('search_onpurchase', 'alpha');
 
 $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changetype = GETPOST('changetype', 'alpha');
-$optioncss = GETPOST('optioncss', 'alpha');
 
 if (empty($accounting_product_mode)) {
 	$accounting_product_mode = 'ACCOUNTANCY_SELL';
@@ -194,7 +195,7 @@ if ($action == 'update') {
 				}
 				if ($result <= 0) {
 					// setEventMessages(null, $accounting->errors, 'errors');
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				} else {
 					$sql = '';
@@ -203,7 +204,7 @@ if ($action == 'update') {
 						$sql_exists .= " WHERE fk_product = " . ((int) $productid) . " AND entity = " . ((int) $conf->entity);
 						$resql_exists = $db->query($sql_exists);
 						if (!$resql_exists) {
-							$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$resql_exists.'</pre></span></div>';
+							$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$resql_exists.'</pre></span></div>';
 							$ko++;
 						} else {
 							$nb_exists = $db->num_rows($resql_exists);
@@ -394,7 +395,7 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -416,7 +417,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($searchCategoryProductOperator == 1) {
 		$param .= "&search_category_product_operator=".urlencode($searchCategoryProductOperator);
@@ -467,24 +468,24 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Options').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";
-	print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL"'.($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSell').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode1" name="accounting_product_mode" value="ACCOUNTANCY_SELL"'.($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '').'> <label for="accounting_product_mode1">'.$langs->trans('OptionModeProductSell').'</label></td>';
 	print '<td>'.$langs->trans('OptionModeProductSellDesc');
 	print "</td></tr>\n";
 	if ($mysoc->isInEEC()) {
-		print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_INTRA"'.($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSellIntra').'</td>';
+		print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode2" name="accounting_product_mode" value="ACCOUNTANCY_SELL_INTRA"'.($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' ? ' checked' : '').'> <label for="accounting_product_mode2">'.$langs->trans('OptionModeProductSellIntra').'</label></td>';
 		print '<td>'.$langs->trans('OptionModeProductSellIntraDesc');
 		print "</td></tr>\n";
 	}
-	print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_EXPORT"'.($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSellExport').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode3" name="accounting_product_mode" value="ACCOUNTANCY_SELL_EXPORT"'.($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT' ? ' checked' : '').'> <label for="accounting_product_mode3">'.$langs->trans('OptionModeProductSellExport').'</label></td>';
 	print '<td>'.$langs->trans('OptionModeProductSellExportDesc');
 	print "</td></tr>\n";
-	print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY"'.($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuy').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode4" name="accounting_product_mode" value="ACCOUNTANCY_BUY"'.($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '').'> <label for="accounting_product_mode4">'.$langs->trans('OptionModeProductBuy').'</label></td>';
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	if ($mysoc->isInEEC()) {
-		print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY_INTRA"'.($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuyIntra').'</td>';
+		print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode5" name="accounting_product_mode" value="ACCOUNTANCY_BUY_INTRA"'.($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' ? ' checked' : '').'> <label for="accounting_product_mode5">'.$langs->trans('OptionModeProductBuyIntra').'</label></td>';
 		print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	}
-	print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY_EXPORT"'.($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuyExport').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode6" name="accounting_product_mode" value="ACCOUNTANCY_BUY_EXPORT"'.($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT' ? ' checked' : '').'> <label for="accounting_product_mode6">'.$langs->trans('OptionModeProductBuyExport').'</label></td>';
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	print "</table>\n";
 
@@ -528,11 +529,11 @@ if ($resql) {
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
 		$categoriesProductArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
-		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span>';
+		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <label for="search_category_product_operator"><span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span></label>';
 		$moreforfilter .= '</div>';
 	}
 
-	//Show/hide child products. Hidden by default
+	// Show/hide child products. Hidden by default
 	if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"' : '').'>';
@@ -558,9 +559,16 @@ if ($resql) {
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
 	print '<tr class="liste_titre_filter">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="center liste_titre">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
-	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" size="5" name="search_vat" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
 
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) {
 		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
@@ -579,13 +587,21 @@ if ($resql) {
 	print ' '.$langs->trans("or").' '.$form->selectarray('search_current_account_valid', $listofvals, $search_current_account_valid, 1);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="center liste_titre">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="center liste_titre">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
+		print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
+	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) {
@@ -600,8 +616,11 @@ if ($resql) {
 	}
 	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "ppe.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
-	$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
-	print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
+		print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
+	}
 	print '</tr>';
 
 	$product_static = new Product($db);
@@ -681,7 +700,21 @@ if ($resql) {
 			}
 		}
 
+		$selected = 0;
+		if (!empty($chk_prod)) {
+			if (in_array($product_static->id, $chk_prod)) {
+				$selected = 1;
+			}
+		}
+
 		print '<tr class="oddeven">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center">';
+			print '<input type="checkbox" class="checkforselect productforselectcodeventil_'.$product_static->id.'" name="chk_prod[]" '.($selected ? "checked" : "").' value="'.$obj->rowid.'"/>';
+			print '</td>';
+		}
 
 		print '<td>';
 		print $product_static->getNomUrl(1);
@@ -830,16 +863,13 @@ if ($resql) {
 			print '</td>';
 		}
 
-		if (!empty($chk_prod)) {
-			$ischecked = 0;
-			if (in_array($product_static->id, $chk_prod)) {
-				$ischecked=true;
-			}
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center">';
+			print '<input type="checkbox" class="checkforselect productforselectcodeventil_'.$product_static->id.'" name="chk_prod[]" '.($selected ? "checked" : "").' value="'.$obj->rowid.'"/>';
+			print '</td>';
 		}
 
-		// Checkbox select
-		print '<td class="center">';
-		print '<input type="checkbox" class="checkforselect productforselectcodeventil_'.$product_static->id.'" name="chk_prod[]" '.($ischecked ? "checked" : "").' value="'.$obj->rowid.'"/></td>';
 		print "</tr>";
 		$i++;
 	}

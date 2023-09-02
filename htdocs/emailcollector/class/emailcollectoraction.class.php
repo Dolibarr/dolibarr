@@ -24,8 +24,6 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for EmailCollectorAction
@@ -113,37 +111,6 @@ class EmailCollectorAction extends CommonObject
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
-
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	//public $table_element_line = 'emailcollectoractiondet';
-
-	// /**
-	//  * @var string    Field with ID of parent key if this field has a parent
-	//  */
-	//public $fk_element = 'fk_emailcollectoraction';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	//public $class_element_line = 'EmailcollectorActionline';
-
-	// /**
-	//	* @var array	List of child tables. To test if we can delete object.
-	//  */
-	//protected $childtables=array();
-
-	// /**
-	//  * @var EmailcollectorActionLine[]     Array of subtable lines
-	//  */
-	//public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -225,16 +192,14 @@ class EmailCollectorAction extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
-		// ...
+		// $object->title = $langs->trans("CopyOf")." ".$object->title;
+
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
-					//var_dump($key);
-					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -271,25 +236,9 @@ class EmailCollectorAction extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		// if ($result > 0 && !empty($this->table_element_line)) {
-		// 	$this->fetchLinesCommon();
-		// }
+
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	/*public function fetchLines()
-	{
-		$this->lines=array();
-
-		// Load lines with object EmailcollectorActionLine
-
-		return count($this->lines)?1:0;
-	}*/
 
 	/**
 	 * Update object into database
@@ -336,7 +285,6 @@ class EmailCollectorAction extends CommonObject
 		}
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>'.$langs->trans("EmailcollectorAction").'</u>';
 		$label .= '<br>';
@@ -465,6 +413,7 @@ class EmailCollectorAction extends CommonObject
 				return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
 			}
 		}
+		return "";
 	}
 
 	/**
@@ -487,7 +436,7 @@ class EmailCollectorAction extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 

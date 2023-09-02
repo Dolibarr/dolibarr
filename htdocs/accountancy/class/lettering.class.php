@@ -329,6 +329,7 @@ class Lettering extends BookKeeping
 		// Update request
 
 		$now = dol_now();
+		$affected_rows = 0;
 
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
@@ -341,6 +342,8 @@ class Lettering extends BookKeeping
 			if (!$resql) {
 				$error++;
 				$this->errors[] = "Error ".$this->db->lasterror();
+			} else {
+				$affected_rows = $this->db->affected_rows($resql);
 			}
 		}
 
@@ -352,7 +355,7 @@ class Lettering extends BookKeeping
 			}
 			return -1 * $error;
 		} else {
-			return 1;
+			return $affected_rows;
 		}
 	}
 
@@ -387,7 +390,7 @@ class Lettering extends BookKeeping
 			}
 			return -1 * $error;
 		} else {
-			return 1;
+			return $this->db->affected_rows($resql);
 		}
 	}
 
@@ -482,7 +485,7 @@ class Lettering extends BookKeeping
 				else $result = $this->updateLettering($bookkeeping_lines);
 				if ($result < 0) {
 					$group_error++;
-				} else {
+				} elseif ($result > 0) {
 					$nb_lettering++;
 				}
 			}
@@ -689,6 +692,9 @@ class Lettering extends BookKeeping
 
 		// Clean parameters
 		$document_ids = is_array($document_ids) ? $document_ids : array();
+		//remove empty entries
+		$document_ids = array_filter($document_ids);
+
 		$doc_type = trim($doc_type);
 
 		if (empty($document_ids)) {
@@ -739,10 +745,13 @@ class Lettering extends BookKeeping
 		// Clean parameters
 		$document_ids = is_array($document_ids) ? $document_ids : array();
 		$doc_type = trim($doc_type);
+		//remove empty entries
+		$document_ids = array_filter($document_ids);
 
 		if (empty($document_ids)) {
 			return array();
 		}
+
 		if (!is_array(self::$doc_type_infos[$doc_type])) {
 			$langs->load('errors');
 			$this->errors[] = $langs->trans('ErrorBadParameters');

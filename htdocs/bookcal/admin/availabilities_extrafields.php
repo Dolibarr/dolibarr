@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/availabilities_extrafields.php
- *		\ingroup    bookcal
- *		\brief      Page to setup extra fields of availabilities
+ *   \file       htdocs/bookcal/admin/availabilities_extrafields.php
+ *   \ingroup    bookcal
+ *   \brief      Page to setup extra fields of availabilities
  */
 
 // Load Dolibarr environment
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once '../lib/bookcal.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bookcal@bookcal', 'admin'));
+$langs->loadLangs(array('agenda', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -80,19 +80,12 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 $head = bookcalAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'availabilities_extrafields', $langs->trans($page_name), -1, 'bookcal@bookcal');
+print dol_get_fiche_head($head, 'availabilities_extrafields', $langs->trans($page_name), -1, 'fa-calendar-check');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
 
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 
 /*

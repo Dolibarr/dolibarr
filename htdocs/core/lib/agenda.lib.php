@@ -70,17 +70,17 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	}
 	print '<input type="hidden" name="search_showbirthday" value="'.((int) $showbirthday).'">';
 
-	if ($canedit) {
-		print '<div class="divsearchfield">';
-		// Type
-		$multiselect = 0;
-		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
-		}
-		print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
-		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
-		print '</div>';
+	print '<div class="divsearchfield">';
+	// Type
+	$multiselect = 0;
+	if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+		$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+	}
+	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
+	print '</div>';
 
+	if ($canedit) {
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
@@ -135,7 +135,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	$object = null;
 	$reshook = $hookmanager->executeHooks('searchAgendaFrom', $parameters, $object, $action); // Note that $action and $object may have been
 
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 }
 
 
@@ -434,7 +434,7 @@ function actions_prepare_head($object)
 	// Tab to link resources
 	if (isModEnabled('resource')) {
 		include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-		$resource = new DolResource($db);
+		$resource = new Dolresource($db);
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
 		$listofresourcelinked = $resource->getElementResources($object->element, $object->id);

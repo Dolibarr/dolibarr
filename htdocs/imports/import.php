@@ -142,7 +142,13 @@ $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
 $separator			= (GETPOST('separator', 'alphanohtml') ? GETPOST('separator', 'alphanohtml', 3) : '');
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
+$charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
+
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('imports'));
+
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -639,7 +645,7 @@ if ($step == 3 && $datatoimport) {
 		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 		$maxphp = @ini_get('upload_max_filesize'); // In unknown
 		if (preg_match('/k$/i', $maxphp)) {
-			$maxphp = (int) substr($maxphp, 0, -1) * 1;
+			$maxphp = (int) substr($maxphp, 0, -1);
 		}
 		if (preg_match('/m$/i', $maxphp)) {
 			$maxphp = (int) substr($maxphp, 0, -1) * 1024;
@@ -652,7 +658,7 @@ if ($step == 3 && $datatoimport) {
 		}
 		$maxphp2 = @ini_get('post_max_size'); // In unknown
 		if (preg_match('/k$/i', $maxphp2)) {
-			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1;
+			$maxphp2 = (int) substr($maxphp2, 0, -1);
 		}
 		if (preg_match('/m$/i', $maxphp2)) {
 			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024;
@@ -802,6 +808,7 @@ if ($step == 4 && $datatoimport) {
 	if ($model == 'csv') {
 		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
+		$obj->charset = '';
 	}
 	if ($model == 'xlsx') {
 		if (!preg_match('/\.xlsx$/i', $filetoimport)) {
@@ -1082,9 +1089,9 @@ if ($step == 4 && $datatoimport) {
 		$valforsourcefieldnb[$lefti] = $key;
 		$lefti++;
 
-		if ($lefti > count($fieldstarget)) {
+		/*if ($lefti > count($fieldstarget)) {
 			break; // Other fields are in the not imported area
-		}
+		}*/
 	}
 	//var_dump($valforsourcefieldnb);
 
@@ -1138,14 +1145,14 @@ if ($step == 4 && $datatoimport) {
 
 	print '<table class="nobordernopadding centpercent tableimport">';
 	foreach ($fieldssource as $code => $line) {	// $fieldssource is an array code=column num,  line=content on first line for column in source file.
-		if ($i == $minpos) {
+		/*if ($i == $minpos) {
 			break;
-		}
+		}*/
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
 		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
-		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
+		$entitylang = !empty($entitytolang[$entity]) ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
 		print '<td class="nowraponall hideonsmartphone" style="font-weight: normal">=> </td>';
 		print '<td class="nowraponall" style="font-weight: normal">';
@@ -1506,7 +1513,7 @@ if ($step == 4 && $datatoimport) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			$tmpuser = new user($db);
+			$tmpuser = new User($db);
 
 			$i = 0;
 			while ($i < $num) {
@@ -1876,17 +1883,41 @@ if ($step == 5 && $datatoimport) {
 					break;
 				}
 
-				// Run import
-				$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+				$parameters = array(
+					'step'                         => $step,
+					'datatoimport'                 => $datatoimport,
+					'obj'                          => &$obj,
+					'arrayrecord'                  => $arrayrecord,
+					'array_match_file_to_database' => $array_match_file_to_database,
+					'objimport'                    => $objimport,
+					'fieldssource'                 => $fieldssource,
+					'importid'                     => $importid,
+					'updatekeys'                   => $updatekeys,
+					'arrayoferrors'                => &$arrayoferrors,
+					'arrayofwarnings'              => &$arrayofwarnings,
+					'nbok'                         => &$nbok,
+				);
 
-				if (count($obj->errors)) {
-					$arrayoferrors[$sourcelinenb] = $obj->errors;
+				$reshook = $hookmanager->executeHooks('ImportInsert', $parameters);
+				if ($reshook < 0) {
+					$arrayoferrors[$sourcelinenb][] = [
+						'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+					];
 				}
-				if (count($obj->warnings)) {
-					$arrayofwarnings[$sourcelinenb] = $obj->warnings;
-				}
-				if (!count($obj->errors) && !count($obj->warnings)) {
-					$nbok++;
+
+				if (empty($reshook)) {
+					// Run import
+					$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+
+					if (count($obj->errors)) {
+						$arrayoferrors[$sourcelinenb] = $obj->errors;
+					}
+					if (count($obj->warnings)) {
+						$arrayofwarnings[$sourcelinenb] = $obj->warnings;
+					}
+					if (!count($obj->errors) && !count($obj->warnings)) {
+						$nbok++;
+					}
 				}
 			}
 			// Close file
@@ -2261,17 +2292,42 @@ if ($step == 6 && $datatoimport) {
 				break;
 			}
 
-			// Run import
-			$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+			$parameters = array(
+				'step'                         => $step,
+				'datatoimport'                 => $datatoimport,
+				'obj'                          => &$obj,
+				'arrayrecord'                  => $arrayrecord,
+				'array_match_file_to_database' => $array_match_file_to_database,
+				'objimport'                    => $objimport,
+				'fieldssource'                 => $fieldssource,
+				'importid'                     => $importid,
+				'updatekeys'                   => $updatekeys,
+				'arrayoferrors'                => &$arrayoferrors,
+				'arrayofwarnings'              => &$arrayofwarnings,
+				'nbok'                         => &$nbok,
+			);
 
-			if (count($obj->errors)) {
-				$arrayoferrors[$sourcelinenb] = $obj->errors;
+			$reshook = $hookmanager->executeHooks('ImportInsert', $parameters);
+			if ($reshook < 0) {
+				$arrayoferrors[$sourcelinenb][] = [
+					'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+				];
 			}
-			if (count($obj->warnings)) {
-				$arrayofwarnings[$sourcelinenb] = $obj->warnings;
-			}
-			if (!count($obj->errors) && !count($obj->warnings)) {
-				$nbok++;
+
+			if (empty($reshook)) {
+				// Run import
+				$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+
+				if (count($obj->errors)) {
+					$arrayoferrors[$sourcelinenb] = $obj->errors;
+				}
+				if (count($obj->warnings)) {
+					$arrayofwarnings[$sourcelinenb] = $obj->warnings;
+				}
+
+				if (!count($obj->errors) && !count($obj->warnings)) {
+					$nbok++;
+				}
 			}
 		}
 		// Close file
@@ -2407,8 +2463,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 			} else {
 				print ' - ';
 			}
-			//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ExampleOnFirstLine").': </span>';
-			print '<i class="opacitymedium">'.$example.'</i>';
+			print '<i class="opacitymedium">'.dol_escape_htmltag($example).'</i>';
 		}
 		print '</td>';
 		print '</tr>';

@@ -18,6 +18,7 @@
 
 use Luracast\Restler\RestException;
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
@@ -25,6 +26,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  */
 class Login
 {
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * Constructor of the class
@@ -121,6 +126,9 @@ class Login
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$login = checkLoginPassEntity($login, $password, $entity, $authmode, 'api');		// Check credentials.
+		if ($login === '--bad-login-validity--') {
+			$login = '';
+		}
 		if (empty($login)) {
 			throw new RestException(403, 'Access denied');
 		}
@@ -149,7 +157,7 @@ class Login
 
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql .= " SET api_key = '".$this->db->escape($token)."'";
+			$sql .= " SET api_key = '".$this->db->escape(dolEncrypt($token, '', '', 'dolibarr'))."'";
 			$sql .= " WHERE login = '".$this->db->escape($login)."'";
 
 			dol_syslog(get_class($this)."::login", LOG_DEBUG); // No log
@@ -159,6 +167,9 @@ class Login
 			}
 		} else {
 			$token = $tmpuser->api_key;
+			if (!utf8_check($token)) {
+				throw new RestException(500, 'Error, the API token of this user has a non valid value. Try to update it with a valid value.');
+			}
 		}
 
 		//return token

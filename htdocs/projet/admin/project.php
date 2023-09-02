@@ -55,10 +55,10 @@ $type = 'project';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstproject = GETPOST('maskconstproject', 'alpha');
+	$maskconstproject = GETPOST('maskconstproject', 'aZ09');
 	$maskproject = GETPOST('maskproject', 'alpha');
 
-	if ($maskconstproject) {
+	if ($maskconstproject && preg_match('/_MASK$/', $maskconstproject)) {
 		$res = dolibarr_set_const($db, $maskconstproject, $maskproject, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -74,10 +74,10 @@ if ($action == 'updateMask') {
 }
 
 if ($action == 'updateMaskTask') {
-	$maskconstmasktask = GETPOST('maskconsttask', 'alpha');
+	$maskconstmasktask = GETPOST('maskconsttask', 'aZ09');
 	$masktaskt = GETPOST('masktask', 'alpha');
 
-	if ($maskconstmasktask) {
+	if ($maskconstmasktask && preg_match('/_MASK$/', $maskconstmasktask)) {
 		$res = dolibarr_set_const($db, $maskconstmasktask, $masktaskt, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -328,7 +328,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -424,7 +424,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering module

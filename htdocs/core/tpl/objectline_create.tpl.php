@@ -40,6 +40,7 @@ if (empty($object) || !is_object($object)) {
 	print "Error: this template page cannot be called directly as an URL";
 	exit;
 }
+
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
@@ -48,6 +49,7 @@ if (!isset($dateSelector)) {
 	global $dateSelector; // Take global var only if not already defined into function calling (for example formAddObjectLine)
 }
 global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
+global $mysoc;
 
 if (!isset($dateSelector)) {
 	$dateSelector = 1; // For backward compatibility
@@ -122,12 +124,12 @@ if ($nolinesbefore) {
 		<?php if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) { ?>
 			<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 		<?php } ?>
-		<?php if (!empty($inputalsopricewithtax)) { ?>
+		<?php if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 			<td class="linecoluttc right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 		<?php } ?>
 		<td class="linecolqty right"><?php echo $langs->trans('Qty'); ?></td>
 		<?php
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
 			print $langs->trans('Unit');
@@ -410,7 +412,7 @@ if ($nolinesbefore) {
 		</td>
 		<?php
 	}
-	if (!empty($inputalsopricewithtax)) {
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluttc right">
@@ -421,10 +423,11 @@ if ($nolinesbefore) {
 	$coldisplay++;
 	?>
 	<td class="nobottom linecolqty right">
-	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1); ?>">
+	<?php $default_qty = (empty($conf->global->MAIN_OBJECTLINE_CREATE_EMPTY_QTY_BY_DEFAULT) ? 1 : ''); ?>
+	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : $default_qty); ?>">
 	</td>
 	<?php
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
@@ -736,11 +739,11 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has differet prices"); }
 				<?php } ?>
 				// Get the price for the product and display it
-				console.log("Load unit price without tax and set it into #price_ht for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
+				console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
 				$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
-					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>' },
+					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 },
 					function(data) {
-						console.log("objectline_create.tpl Load unit price end, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
+						console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
 						$('#date_start').removeAttr('type');
 						$('#date_end').removeAttr('type');
@@ -761,7 +764,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 							jQuery('#date_end').removeClass('inputmandatory');
 						}
 
-						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC') {
+						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC' && <?php print getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') ? 'false' : 'true'; ?>) {
 							console.log("objectline_create.tpl set content of price_ttc");
 							jQuery("#price_ttc").val(data.price_ttc);
 						} else {
@@ -776,6 +779,35 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						var stringforvatrateselection = tva_tx;
 						if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 							stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+							<?php
+							// Special case for India
+							if (getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
+								?>
+								console.log("MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA is on so we check if we need to autoswith the vat code");
+								console.log("mysoc->country_code=<?php echo $mysoc->country_code; ?> thirdparty->country_code=<?php echo $object->thirdparty->country_code; ?>");
+								new_default_vat_code = default_vat_code;
+								<?php
+								if ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code == $object->thirdparty->state_code) {
+									// We are in India and states are same, we revert the vat code "I-x" into "CS-x"
+									?>
+									console.log("Countries are both IN and states are same, so we revert I into CS in default_vat_code="+default_vat_code);
+									new_default_vat_code = default_vat_code.replace(/^I\-/, 'C+S-');
+									<?php
+								} elseif ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code != $object->thirdparty->state_code) {
+									// We are in India and states differs, we revert the vat code "CS-x" into "I-x"
+									?>
+									console.log("Countries are both IN and states differs, so we revert CS into I in default_vat_code="+default_vat_code);
+									new_default_vat_code = default_vat_code.replace(/^C\+S\-/, 'I-');
+									<?php
+								}
+								?>
+								if (new_default_vat_code != default_vat_code && jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val()) {
+									console.log("We found en entry into VAT with new default_vat_code, we will use it");
+									stringforvatrateselection = jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val();
+								}
+								<?php
+							}
+							?>
 						}
 						// Set vat rate if field is an input box
 						$('#tva_tx').val(tva_tx);
@@ -895,7 +927,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						}
 						options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 					});
-					options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice").'...'; ?></option>';
+					options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dol_escape_js($langs->trans("InputPrice").'...'); ?></option>';
 
 					console.log("finally selected defaultkey="+defaultkey+" defaultprice for buying price="+defaultprice);
 
@@ -1071,7 +1103,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			$('#tva_tx option').removeAttr('selected');
 			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
 			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
-
 			<?php
 			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
@@ -1113,7 +1144,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		<?php } ?>
 	});
 
-	/* Function to set fields from choice */
+	/* Function to set fields visibility after selecting a free product */
 	function setforfree() {
 		console.log("objectline_create.tpl::setforfree. We show most fields");
 		jQuery("#idprodfournprice").val('0');	// Set cursor on not selected product
@@ -1148,7 +1179,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ttc").val('').hide();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
-		jQuery("#tva_tx, #title_vat").hide();
+		/* jQuery("#tva_tx, #title_vat").hide(); */
 		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();

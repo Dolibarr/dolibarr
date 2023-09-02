@@ -54,11 +54,12 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -68,7 +69,7 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstBom" value="HRM_EVALUATION_ADVANCED_MASK">';
+		$texte .= '<input type="hidden" name="maskconstEvaluation" value="HRM_EVALUATION_ADVANCED_MASK">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Evaluation"), $langs->transnoentities("Evaluation"));

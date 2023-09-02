@@ -92,7 +92,27 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !emp
 		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
 			$link = 'http://'.$link;
 		}
-		dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
+
+		// Parse $newUrl
+		$newUrlArray = parse_url($link);
+
+		// Allow external links to svg ?
+		if (!getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS')) {
+			if (!empty($newUrlArray['path']) && preg_match('/\.svg$/i', $newUrlArray['path'])) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorSVGFilesNotAllowedAsLinksWithout', 'MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS'), null, 'errors');
+			}
+		}
+		// Check URL is external (must refuse local link by default)
+		if (!getDolGlobalString('MAIN_ALLOW_LOCAL_LINKS_AS_EXTERNAL_LINKS')) {
+			// Test $newUrlAray['host'] to check link is external using isIPAllowed() and if not refuse the local link
+			// TODO
+		}
+
+		if (!$error) {
+			dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
+		}
 	}
 }
 
@@ -188,7 +208,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		//error fetching
 	}
 } elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha') && !empty($permissiontoadd)) {
-	// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+	// For documents pages, upload_dir contains already the path to the file from module dir
 	if (!empty($upload_dir)) {
 		$filenamefrom = dol_sanitizeFileName(GETPOST('renamefilefrom', 'alpha'), '_', 0); // Do not remove accents
 		$filenameto = dol_sanitizeFileName(GETPOST('renamefileto', 'alpha'), '_', 0); // Do not remove accents
@@ -200,7 +220,22 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$error++;
 			setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
 		}
-		if (!$error && $filenamefrom != $filenameto) {
+
+		// Check that filename is not the one of a reserved allowed CLI command
+		if (empty($error)) {
+			global $dolibarr_main_restrict_os_commands;
+			if (!empty($dolibarr_main_restrict_os_commands)) {
+				$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+				$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+				if (in_array(basename($filenameto), $arrayofallowedcommand)) {
+					$error++;
+					$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+					setEventMessages($langs->trans("ErrorFilenameReserved", basename($filenameto)), null, 'errors');
+				}
+			}
+		}
+
+		if (empty($error) && $filenamefrom != $filenameto) {
 			// Security:
 			// Disallow file with some extensions. We rename them.
 			// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
@@ -236,17 +271,18 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 							// When we rename a file from the file manager in ecm, we must not regenerate thumbs (not a problem, we do pass here)
 							// When we rename a file from the website module, we must not regenerate thumbs (module = medias in such a case)
 							// but when we rename from a tab "Documents", we must regenerate thumbs
-							if (GETPOST('modulepart') == 'medias') {
+							if (GETPOST('modulepart', 'aZ09') == 'medias') {
 								$generatethumbs = 0;
 							}
 
 							if ($generatethumbs) {
-								if ($object->id) {
+								if ($object->id > 0) {
+									// Create thumbs for the new file
 									$object->addThumbs($destpath);
-								}
 
-								// TODO Add revert function of addThumbs to remove thumbs with old name
-								//$object->delThumbs($srcpath);
+									// Delete thumb files with old name
+									$object->delThumbs($srcpath);
+								}
 							}
 
 							setEventMessages($langs->trans("FileRenamed"), null);

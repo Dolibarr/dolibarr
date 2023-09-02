@@ -117,7 +117,7 @@ if ($action == 'update') {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transkey = '".$db->escape($transkey)."', transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".((int) GETPOST('rowid', 'int'));
 		$result = $db->query($sql);
-		if ($result > 0) {
+		if ($result) {
 			$db->commit();
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action = "";
@@ -226,7 +226,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if (isset($optioncss) && $optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -463,7 +463,11 @@ if ($mode == 'searchkey') {
 	} else {
 		// Now search into translation array
 		foreach ($newlang->tab_translate as $key => $val) {
-			if ($transkey && !preg_match('/'.preg_quote($transkey, '/').'/i', $key)) {
+			$newtranskey = preg_replace('/\$$/', '', preg_replace('/^\^/', '', $transkey));
+			$newtranskeystart = preg_match('/^\^/', $transkey);
+			$newtranskeyend = preg_match('/\$$/', $transkey);
+			$regexstring = ($newtranskeystart ? '^' : '').preg_quote($newtranskey, '/').($newtranskeyend ? '$' : '');
+			if ($transkey && !preg_match('/'.$regexstring.'/i', $key)) {
 				continue;
 			}
 			if ($transvalue && !preg_match('/'.preg_quote($transvalue, '/').'/i', $val)) {

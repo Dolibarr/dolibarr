@@ -30,7 +30,7 @@ function bookcalAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("bookcal@bookcal");
+	$langs->load("agenda");
 
 	$h = 0;
 	$head = array();
@@ -46,11 +46,6 @@ function bookcalAdminPrepareHead()
 	$head[$h][2] = 'myobject_extrafields';
 	$h++;
 	*/
-
-	$head[$h][0] = dol_buildpath("/bookcal/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

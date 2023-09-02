@@ -35,10 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php'
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
 	/**
-	 * Issuer
-	 * @var Societe
+	 * @var int tab_top
 	 */
-	public $emetteur;
+	public $tab_top;
+
+	/**
+	 * @var int tab_height
+	 */
+	public $tab_height;
 
 	/**
 	 *	Constructor
@@ -47,7 +51,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("main", "bills"));
@@ -203,9 +207,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$this->errors = $hookmanager->errors;
 		}
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 
@@ -401,7 +403,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *  @param	Object		$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
-	 *  @return	void
+	 *  @return	mixed
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{

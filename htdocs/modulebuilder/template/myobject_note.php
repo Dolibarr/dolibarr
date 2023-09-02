@@ -89,7 +89,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectnote', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array($object->element.'note', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -144,9 +144,11 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
-$help_url = '';
 $title = $langs->trans('MyObject').' - '.$langs->trans("Notes");
+//$title = $object->ref." - ".$langs->trans("Notes");
+$help_url = '';
+//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
+
 llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
@@ -168,8 +170,7 @@ if ($id > 0 || !empty($ref)) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (!empty($conf->project->enabled))
-	 {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd)
