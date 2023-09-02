@@ -329,6 +329,34 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					}
 				}
 
+				// and determine category of operation
+				$categoryOfOperation = 0;
+				$nbProduct = 0;
+				$nbService = 0;
+				foreach ($object->lines as $line) {
+					// determine category of operation
+					if ($categoryOfOperation < 2) {
+						$lineProductType = $line->product_type;
+						if ($lineProductType == Product::TYPE_PRODUCT) {
+							$nbProduct++;
+						} elseif ($lineProductType == Product::TYPE_SERVICE) {
+							$nbService++;
+						}
+						if ($nbProduct > 0 && $nbService > 0) {
+							// mixed products and services
+							$categoryOfOperation = 2;
+						}
+					}
+				}
+
+				// determine category of operation
+				if ($categoryOfOperation <= 0) {
+					// only services
+					if ($nbProduct == 0 && $nbService > 0) {
+						$categoryOfOperation = 1;
+					}
+				}
+
 				// Make substitution
 				$substitutionarray = array(
 					'__FROM_NAME__' => $this->emetteur->name,
@@ -402,6 +430,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				// TODO Search all tags {object_...:xxxx} into template then loop on this found tags to analyze them and the the corresponding
 				// property of object and use the xxxx to know how to format it.
 				// Before that, we hard code this substitution as if we have found them into the template.
+				
 				$tmparray['object_PREVIOUS_MONTH'] = dol_print_date(dol_time_plus_duree($object->date, -1, 'm'), '%m');
 				$tmparray['object_MONTH'] = dol_print_date($object->date, '%m');
 				$tmparray['object_NEXT_MONTH'] = dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%m');
@@ -411,6 +440,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$tmparray['object_PREVIOUS_YEAR'] = dol_print_date(dol_time_plus_duree($object->date, -1, 'y'), '%Y');
 				$tmparray['object_YEAR'] = dol_print_date($object->date, '%Y');
 				$tmparray['object_NEXT_YEAR'] = dol_print_date(dol_time_plus_duree($object->date, 1, 'y'), '%Y');
+        $tmparray['object_productorservice_operation'] = $outputlangs->transnoentities("MentionCategoryOfOperations" . $categoryOfOperation);
+
 
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
