@@ -1755,9 +1755,9 @@ if ($action == 'create') {
 
 		$text = $langs->trans("ConfirmValidateSending", $numref);
 		if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
-			$text .= '<br>'.$langs->trans("StockMovementWillBeRecorded").'.';
+			$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementWillBeRecorded").'.';
 		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
-			$text .= '<br>'.$langs->trans("StockMovementNotYetRecorded").'.';
+			$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementNotYetRecorded").'.';
 		}
 
 		if (isModEnabled('notification')) {

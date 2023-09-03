@@ -1372,6 +1372,11 @@ if ($action == 'create') {
 			}
 
 			$text = $langs->trans("ConfirmValidateReception", $numref);
+			if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')) {
+				$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementWillBeRecorded").'.';
+			} elseif (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
+				$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementNotYetRecorded").'.';
+			}
 
 			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -1380,7 +1385,7 @@ if ($action == 'create') {
 				$text .= $notify->confirmMessage('RECEPTION_VALIDATE', $object->socid, $object);
 			}
 
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateReception'), $text, 'confirm_valid', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateReception'), $text, 'confirm_valid', '', 0, 1, 250);
 		}
 
 		// Confirm cancelation
