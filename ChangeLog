@@ -19,7 +19,8 @@ WARNING:
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
 * The method get_substitutionarray_shipment_lines() has been removed. Use the generic get_substitutionarray_lines() instead.
-
+* Recheck setup of your module workflow to see if you need to enable the new setting to have shipment set to billed automatically 
+  when an invoice from a shipment is validated (and if your process is to make invoice on shipment and not on order).
 
 
 ***** ChangeLog for 18.0.1 compared to 18.0.0 *****

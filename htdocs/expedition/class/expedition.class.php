@@ -2108,13 +2108,13 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as closed.
+	 *	Classify the shipping as closed (this record also the stock movement)
 	 *
 	 *	@return     int     <0 if KO, >0 if OK
 	 */
 	public function setClosed()
 	{
-		global $conf, $langs, $user;
+		global $conf, $user;
 
 		$error = 0;
 
@@ -2280,7 +2280,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
+	 *	Classify the shipping as invoiced (used for exemple by trigger when WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
@@ -2291,17 +2291,17 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1'; // TODO Update only billed
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET billed = 1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->statut = self::STATUS_CLOSED;
 			$this->billed = 1;
 
 			// Call trigger
 			$result = $this->call_trigger('SHIPPING_BILLED', $user);
 			if ($result < 0) {
+				$this->billed = 0;
 				$error++;
 			}
 		} else {
@@ -2313,8 +2313,6 @@ class Expedition extends CommonObject
 			$this->db->commit();
 			return 1;
 		} else {
-			$this->statut = self::STATUS_VALIDATED;
-			$this->billed = 0;
 			$this->db->rollback();
 			return -1;
 		}
