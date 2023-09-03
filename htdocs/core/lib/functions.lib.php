@@ -10211,14 +10211,24 @@ function showSimpleOrderTable($outputlangs, $object)
 	global $conf;
 
 	$discountIsAvailable = false;
+	$orderPositionHasNoPrice = false;
 	
 	foreach($object->lines as $order_position) { 
+
+		if(!property_exists($order_position, "price")){
+			$orderPositionHasNoPrice = true;
+			break;
+		}
 
 		if(!empty($order_position->remise_percent)){
 			$discountIsAvailable = true;
 			break;
 		}
 	}; 
+
+	if($orderPositionHasNoPrice){
+		return "";
+	}
 
 	$discountHeader = $discountIsAvailable ? `<th style="width:120px">{$outputlangs->trans("Discount")}</th>` : "";
 	
