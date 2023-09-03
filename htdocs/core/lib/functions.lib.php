@@ -3150,6 +3150,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 	if ($target) {
 		$linkstart .= ' target="'.$target.'"';
 	}
+	$linkstart .= ' title="'.$langs->trans("URL").': '.$url.'"';
 	$linkstart .= '>';
 
 	$link = '';
@@ -3163,7 +3164,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 	if ($morecss == 'float') {	// deprecated
 		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</div>';
 	} else {
-		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</span>'.$linkend;
+		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto('', 'globe').' ' : '').$link.'</span>'.$linkend;
 	}
 }
 
