@@ -262,8 +262,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			// Then set reception to "Billed" if WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE is set
-			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE)) {
+			// Then set reception to "Billed" if WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE is set
+			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE)) {
 				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
