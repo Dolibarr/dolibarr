@@ -237,7 +237,21 @@ th,td {
 	padding: 20px;
 	font-size: 1.2em;
 	margin-top: 10px;
-	maring-bottom: 10px;
+	margin-bottom: 10px;
+	width: 200px;
+}
+.box.inline-box {
+    display: inline-block;
+	text-align: center;
+	margin-left: 10px;
+}
+.back1 {
+	background-color: #888800;
+	color: #FFF;
+}
+.back1 {
+	background-color: #880088;
+	color: #FFF;
 }
 </style>';
 
@@ -312,14 +326,14 @@ $html .= '</section>';
 
 $html .= '<section class="chapter">';
 $html .= '<h2>Project value</h2><br>';
-$html .= '<div class="box inline-box">';
+$html .= '<div class="box inline-box back1">';
 $html .= 'COCOMO (Basic organic model) value:<br>';
-$html .= '$'.formatNumber($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency'], 2);
+$html .= '<b>$'.formatNumber($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency'], 2).'</b>';
 $html .= '</div>';
-$html .= '<div class="box inline-box">';
+$html .= '<div class="box inline-box back2">';
 $html .= 'COCOMO (Basic organic model) effort<br>';
-$html .= formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
-$html .= ' monthes people<br>';
+$html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
+$html .= ' monthes people</b><br>';
 $html .= '</section>';
 
 $html .= '<section class="chapter">';
