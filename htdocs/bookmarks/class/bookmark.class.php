@@ -50,11 +50,6 @@ class Bookmark extends CommonObject
 	public $picto = 'bookmark';
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
 	 * Last error code on a local method
 	 * @var int		Error number
 	 */
