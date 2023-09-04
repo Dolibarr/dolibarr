@@ -188,7 +188,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Bank accounts
-	if (empty(getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT'))) {
+	if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
 		$nbBankAccount = 0;
 		$foundonexternalonlinesystem = 0;
 		$langs->load("bills");

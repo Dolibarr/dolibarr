@@ -1546,7 +1546,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("Default", '', '', '', '', '', '', '', 'center ');
-		if (empty(getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) && !empty(getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN"))) {
+		if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 			print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
 		}
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
@@ -1726,7 +1726,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			if (empty(getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) && !empty(getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN"))) {
+			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 				// Show online signature link
 				print '<td class="right nowraponall">';
 				$useonlinesignature = 1;

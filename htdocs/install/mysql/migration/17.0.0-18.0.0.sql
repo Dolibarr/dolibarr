@@ -428,7 +428,7 @@ CREATE TABLE llx_c_invoice_subtype (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   entity integer DEFAULT 1,
   fk_country integer NOT NULL,
-  code varchar(3) NOT NULL,
+  code varchar(4) NOT NULL,
   label varchar(100),
   active tinyint DEFAULT 1 NOT NULL
 ) ENGINE=innodb;
@@ -454,13 +454,6 @@ ALTER TABLE llx_element_time ADD COLUMN ref_ext varchar(32);
 
 ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);
 
-ALTER TABLE llx_societe_rib ADD COLUMN model_pdf varchar(255) AFTER currency_code;
-ALTER TABLE llx_societe_rib ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
-ALTER TABLE llx_societe_rib ADD COLUMN date_signature datetime AFTER stripe_account;
-ALTER TABLE llx_societe_rib ADD COLUMN online_sign_ip varchar(48) AFTER date_signature;
-ALTER TABLE llx_societe_rib ADD COLUMN online_sign_name		varchar(64) AFTER online_sign_ip;
-
-INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PROPOSAL_ALLOW_ONLINESIGN', 1, '1', 'string', 0);
 
 -- Email Collector
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN imap_encryption varchar(16) DEFAULT 'ssl' AFTER hostcharset;
