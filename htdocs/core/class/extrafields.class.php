@@ -2141,10 +2141,9 @@ class ExtraFields
 					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
 					// technically non-empty value may be treated as empty functionally).
 					// value can be alpha, int, array, etc...
-					if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
-						|| (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
-						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
-						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
+					$v = $_POST["options_".$key] ?? null;
+					$type = $this->attributes[$object->table_element]['type'][$key];
+					if (self::isEmptyValue($v,$type)) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 
 						// Field is not defined. We mark this as an error. We may fix it later if there is a default value and $todefaultifmissing is set.
@@ -2350,5 +2349,15 @@ class ExtraFields
 		}
 
 		return 0;
+	}
+
+	public static function isEmptyValue($v, string $type) {
+		if ($v === null || $v === '') $isEmpty = true;
+		elseif (is_array($v) || $type == 'select') $isEmpty = empty($v);
+		elseif ($type == 'link') $isEmpty = ($v == '-1');
+		elseif ($type == 'sellist') $isEmpty = ($v == '0');
+		else $isEmpty = empty($v) && $v != '0';
+
+		return $isEmpty;
 	}
 }
