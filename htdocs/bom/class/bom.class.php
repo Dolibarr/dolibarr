@@ -708,9 +708,10 @@ class BOM extends CommonObject
 	 * @param	string	$import_key				Import Key
 	 * @param	int		$fk_unit				Unit of line
 	 * @param	array	$array_options			extrafields array
+	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0, $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -788,6 +789,9 @@ class BOM extends CommonObject
 				foreach ($array_options as $key => $value) {
 					$line->array_options[$key] = $array_options[$key];
 				}
+			}
+			if ($line->fk_default_workstation != $fk_default_workstation) {
+				$line->fk_default_workstation = $fk_default_workstation;
 			}
 
 			$result = $line->update($user);
