@@ -155,7 +155,10 @@ abstract class CommonDocGenerator
 	public $posxdesc;		// For description
 	public $posxqty;
 	public $posxpuht;
-
+	public $posxtva;
+	public $atleastonephoto;
+	public $atleastoneratenotnull;
+	public $atleastonediscount;
 
 	/**
 	 *	Constructor

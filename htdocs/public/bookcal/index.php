@@ -19,7 +19,7 @@
  */
 
 /**
- *     	\file       htdocs/public/onlinesign/newonlinesign.php
+ *     	\file       htdocs/public/bookcal/index.php
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  *					Example of URL: https://localhost/public/bookcal/booking.php?ref=PR...
@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "bookcal"));
 
