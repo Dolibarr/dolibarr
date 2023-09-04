@@ -1370,7 +1370,8 @@ if ($id > 0) {
 			}
 			if ($value == 'country') {
 				if (in_array('region_id', $fieldlist)) {
-					print '<td>&nbsp;</td>'; continue;
+					//print '<td>&nbsp;</td>';
+					continue;
 				}		// For region page, we do not show the country input
 				$valuetoshow = $langs->trans("Country");
 			}
