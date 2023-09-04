@@ -93,6 +93,7 @@ if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == 2 
 	$search_country_id = $mysoc->country_id;
 }
 $search_code = GETPOST('search_code', 'alpha');
+$search_active = GETPOST('search_active', 'alpha');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin', 'dictionaryadmin'));
@@ -702,6 +703,7 @@ if ($reshook < 0) {
 if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
 	$search_country_id = '';
 	$search_code = '';
+	$search_active = '';
 }
 
 if (empty($reshook)) {
@@ -1225,12 +1227,16 @@ if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'rowid='.urlencode($rowid).'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
-/*
- * Show a dictionary
- */
+// Show a dictionary
 if ($id > 0) {
 	// Complete search values request with sort criteria
 	$sql = $tabsql[$id];
+
+	$tableprefix = '';
+	$tableprefixarray = array(28 => 'h.', 7 => 'a.', 32 => 'a.', 3 => 'r.', 8 => 't.', 10 => 't.', 1 => 'f.', 2 => 'd.', 14 => 'd.');
+	if (!empty($tableprefixarray[$id])) {
+		$tableprefix = $tableprefixarray[$id];
+	}
 
 	if (!preg_match('/ WHERE /', $sql)) {
 		$sql .= " WHERE 1 = 1";
@@ -1238,24 +1244,13 @@ if ($id > 0) {
 	if ($search_country_id > 0) {
 		$sql .= " AND c.rowid = ".((int) $search_country_id);
 	}
-	if ($search_code != '' && $id == 9) {
-		$sql .= natural_search("code_iso", $search_code);
-	} elseif ($search_code != '' && $id == 28) {
-		$sql .= natural_search("h.code", $search_code);
-	} elseif ($search_code != '' && ($id == 7 || $id == 32)) {
-		$sql .= natural_search("a.code", $search_code);
-	} elseif ($search_code != '' && $id == 3) {
-		$sql .= natural_search("r.code_region", $search_code);
-	} elseif ($search_code != '' && ($id == 8 || $id == 10)) {
-		$sql .= natural_search("t.code", $search_code);
-	} elseif ($search_code != '' && $id == 1) {
-		$sql .= natural_search("f.code", $search_code);
-	} elseif ($search_code != '' && $id == 2) {
-		$sql .= natural_search("d.code_departement", $search_code);
-	} elseif ($search_code != '' && $id == 14) {
-		$sql .= natural_search("e.code", $search_code);
-	} elseif ($search_code != '' && $id != 9) {
-		$sql .= natural_search("code", $search_code);
+	if ($search_code != '') {
+		$sql .= natural_search($tableprefix."code_iso", $search_code);
+	}
+	if ($search_active == 'yes') {
+		$sql .= " AND ".$tableprefix."active = 1";
+	} elseif ($search_active == 'no') {
+		$sql .= " AND ".$tableprefix."active = 0";
 	}
 
 	if ($sortfield) {
@@ -1370,7 +1365,8 @@ if ($id > 0) {
 			}
 			if ($value == 'country') {
 				if (in_array('region_id', $fieldlist)) {
-					print '<td>&nbsp;</td>'; continue;
+					//print '<td>&nbsp;</td>';
+					continue;
 				}		// For region page, we do not show the country input
 				$valuetoshow = $langs->trans("Country");
 			}
@@ -1512,10 +1508,12 @@ if ($id > 0) {
 
 			if ($id == 2) {	// Special case for state page
 				if ($value == 'region_id') {
-					$valuetoshow = '&nbsp;'; $showfield = 1;
+					$valuetoshow = '&nbsp;';
+					$showfield = 1;
 				}
 				if ($value == 'region') {
-					$valuetoshow = $langs->trans("Country").'/'.$langs->trans("Region"); $showfield = 1;
+					$valuetoshow = $langs->trans("Country").'/'.$langs->trans("Region");
+					$showfield = 1;
 				}
 			}
 
@@ -1695,7 +1693,10 @@ if ($id > 0) {
 			$colspan++;
 		}
 
-		print '<td class="liste_titre"></td>';
+		// Active
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_active', $search_active, 0, false, 1);
+		print '</td>';
 		$colspan++;
 
 		// Action button
