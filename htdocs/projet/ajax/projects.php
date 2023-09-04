@@ -62,7 +62,6 @@ dol_syslog("Call ajax projet/ajax/projects.php");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-top_httphead('application/json');
 
 if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
 	return;
@@ -70,21 +69,35 @@ if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
 
 // Mode to get list of projects
 if (empty($mode) || $mode != 'gettasks') {
+
+	top_httphead('application/json');
+
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
 
 	$formproject = new FormProjets($db);
 	$arrayresult = $formproject->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
+
+	$db->close();
+
+	print json_encode($arrayresult);
+
+	return;
 }
 
 // Mode to get list of tasks
+// THIS MODE RETURNS HTML NOT JSON - THE CALL SHOULD BE UPDATE IN THE FUTURE
 if ($mode == 'gettasks') {
+
+	top_httphead();
+
 	$formproject = new FormProjets($db);
 	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
+
+	$db->close();
+
 	return;
 }
 
 
-$db->close();
 
-print json_encode($arrayresult);
