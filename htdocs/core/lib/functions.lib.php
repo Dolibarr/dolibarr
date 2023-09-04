@@ -5532,7 +5532,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
  */
 function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0, $pagenavastextinput = 0, $morehtmlrightbeforearrow = '')
 {
-	global $conf, $langs;
+	global $conf;
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
