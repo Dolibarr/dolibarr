@@ -6187,7 +6187,7 @@ abstract class CommonObject
 				// Similar code than into insertExtraFields
 				if ($attributeRequired) {
 					$v = $this->array_options[$key];
-					if (ExtraFields::isEmptyValue($v,$attributeType)) {
+					if (ExtraFields::isEmptyValue($v, $attributeType)) {
 						$langs->load("errors");
 						dol_syslog("Mandatory field '".$key."' is empty during create and set to required into definition of extrafields");
 						$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
