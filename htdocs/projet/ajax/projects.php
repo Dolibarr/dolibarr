@@ -63,7 +63,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 // Mode to get list of projects
 if (empty($mode) || $mode != 'gettasks') {
-
 	top_httphead('application/json');
 
 	// When used from jQuery, the search term is added as GET param "term".
@@ -82,7 +81,6 @@ if (empty($mode) || $mode != 'gettasks') {
 // Mode to get list of tasks
 // THIS MODE RETURNS HTML NOT JSON - THE CALL SHOULD BE UPDATE IN THE FUTURE
 if ($mode == 'gettasks') {
-
 	top_httphead();
 
 	$formproject = new FormProjets($db);
@@ -92,6 +90,3 @@ if ($mode == 'gettasks') {
 
 	return;
 }
-
-
-
