@@ -1401,7 +1401,7 @@ class Ticket extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->libStatut($this->fk_statut, $mode, 0, $this->progress);
+		return $this->LibStatut($this->fk_statut, $mode, 0, $this->progress);
 	}
 
 

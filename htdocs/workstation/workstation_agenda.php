@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
+global $conf, $db, $hookmanager, $langs, $user;
+
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
 
@@ -87,7 +89,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('workstation', 'workstation', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check
 $isdraft = 0;

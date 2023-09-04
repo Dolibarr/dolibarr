@@ -363,7 +363,7 @@ div.cadre td.ok {
 }
 /*Case de tableau NON dans affichage de sondage*/
 div.cadre td.non {
-	background-color: #FF7777;
+	background-color: #FFBBBB;
 	min-width: 60px;
 }
 /*Case de tableau VIDE dans affichage de sondage*/
