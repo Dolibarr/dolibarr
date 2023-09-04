@@ -298,10 +298,7 @@ function getCustomerOrderPieChart($socid = 0)
 			if ($status == Commande::STATUS_SHIPMENTONPROCESS) {
 				$colorseries[$status] = $badgeStatus4;
 			}
-			if ($status == Commande::STATUS_CLOSED && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {
-				$colorseries[$status] = $badgeStatus6;
-			}
-			if ($status == Commande::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
+			if ($status == Commande::STATUS_CLOSED) {
 				$colorseries[$status] = $badgeStatus6;
 			}
 			if ($status == Commande::STATUS_CANCELED) {
