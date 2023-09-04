@@ -1401,7 +1401,7 @@ class FormFile
 							print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
 							print '<input class="inline-block" type="checkbox" id="idshareenabled'.$key.'" name="shareenabled"'.($file['share'] ? ' checked="checked"' : '').' /> ';
 						} else {
-							if ($file['share']) {
+							if (array_key_exists('share', $file) && $file['share']) {
 								// Define $urlwithroot
 								$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 								$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file

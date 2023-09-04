@@ -427,10 +427,13 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
+    $queryEnabled = false;
+    if(isset($conf->query)) $queryEnabled = (bool) $conf->query->enabled;
+
 	// Tools
 	$tmpentry = array(
-		'enabled'=>$user->rights->export->lire || $conf->query->enabled,
-		'perms'=>$user->rights->export->lire || $user->rights->query->all->read,
+		'enabled'=>$user->hasRight('export', 'lire') || $queryEnabled,
+		'perms'=>$user->hasRight('export', 'lire') || $user->hasRight('query', 'all', 'read'),
 		'module'=>''
 	);
 	$menu_arr[] = array(

@@ -957,46 +957,6 @@ class Loan extends CommonObject implements \JsonSerializable
 	}
 
 	/**
-	 * @param array $fieldDefArray
-	 * @param string $key
-	 * @param mixed $value Current value (preselected / pre-entered)
-	 * @param string $moreparam Additional html attributes
-	 * @param string $keysuffix
-	 * @param string $keyprefix
-	 * @param string $morecss Additional classes (for the class attribute of the main HTML input element)
-	 * @return string|void
-	 */
-	public function showInputField($fieldDefArray, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0) {
-		global $conf, $langs, $form;
-		/*
-				date_creation
-				label
-				fk_bank
-				capital
-				insurance_amount
-				nbPeriods
-				rate
-				capital_position
-				date_position
-				accountancy_account_capital
-				accountancy_account_insurance
-				accountancy_account_interest
-				fk_project
-				fk_user_author
-				fk_user_modif
-				fk_periodicity
-				calc_mode
-				future_value
-		 */
-		if ($key === '') {
-
-		}
-		elseif (array_key_exists($key, $this->fields)) {
-			return parent::showInputField($fieldDefArray, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0);
-		}
-	}
-
-	/**
 	 * Secure calls to json_encode($myLoan) by encoding only business-relevant values
 	 *
 	 * @return array
@@ -1100,7 +1060,7 @@ class Loan extends CommonObject implements \JsonSerializable
 			0,
 			'',
 			0,
-			0,
+			0
 		) . img_help(
 			1,
 			$langs->trans('CalcInArrear') . ': '

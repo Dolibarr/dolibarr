@@ -1046,11 +1046,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Load object modCodeTiers
-		$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+		$module = !empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard';
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 			$module = substr($module, 0, dol_strlen($module) - 4);
 		}
+
 		$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
+        foreach($conf->modules_parts['models'] as $mo) {
+            $dirsociete[] = $mo.'core/modules/societe/';    // Add more models
+        }
+
 		foreach ($dirsociete as $dirroot) {
 			$res = dol_include_once($dirroot.$module.'.php');
 			if ($res) {
@@ -1058,19 +1063,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 		$modCodeClient = new $module;
-		// Load object modCodeFournisseur
-		$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
-		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
-			$module = substr($module, 0, dol_strlen($module) - 4);
-		}
-		$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
-		foreach ($dirsociete as $dirroot) {
-			$res = dol_include_once($dirroot.$module.'.php');
-			if ($res) {
-				break;
-			}
-		}
-		$modCodeFournisseur = new $module;
+		$modCodeFournisseur = new $module;  // Load object modCodeFournisseur
 
 		// Define if customer/prospect or supplier status is set or not
 		if (GETPOST("type", 'aZ') != 'f') {
