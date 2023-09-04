@@ -186,6 +186,7 @@ if ($result) {
 	$tablocaltax1 = array();
 	$tablocaltax2 = array();
 	$tabcompany = array();
+	$vatdata_cache = array();
 
 	$num = $db->num_rows($result);
 
@@ -211,7 +212,13 @@ if ($result) {
 
 		//$compta_revenuestamp = getDolGlobalString('ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT', 'NotDefined');
 
-		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
+		$tax_id = $obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : '');
+		if (array_key_exists($tax_id, $vatdata_cache)) {
+			$vatdata = $vatdata_cache[$tax_id];
+		} else {
+			$vatdata = getTaxesFromId($tax_id, $mysoc, $mysoc, 0);
+				$vatdata_cache[$tax_id] = $vatdata;
+		}
 		$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
@@ -338,8 +345,16 @@ if ($result) {
 	dol_print_error($db);
 }
 
+// Check for too many invoices first.
+if (count($tabfac) > 10000) {
+	$error++;
+	setEventMessages("TooManyInvoicesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
+}
+
 $errorforinvoice = array();
 
+/*
+// Old way, 1 query for each invoice
 // Loop on all invoices to detect lines without binded code (fk_code_ventilation <= 0)
 foreach ($tabfac as $key => $val) {		// Loop on each invoice
 	$sql = "SELECT COUNT(fd.rowid) as nb";
@@ -356,8 +371,34 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		dol_print_error($db);
 	}
 }
-//var_dump($errorforinvoice);exit;
+*/
+// New way, single query, load all unbound lines
 
+$sql = "
+SELECT
+    fk_facture,
+    COUNT(fd.rowid) as nb
+FROM
+	".MAIN_DB_PREFIX."facturedet as fd
+WHERE
+    fd.product_type <= 2
+    AND fd.fk_code_ventilation <= 0
+    AND fd.total_ttc <> 0
+	AND fk_facture IN (".$db->sanitize(join(",", array_keys($tabfac))).")
+GROUP BY fk_facture
+";
+$resql = $db->query($sql);
+
+$num = $db->num_rows($resql);
+$i = 0;
+while ($i < $num) {
+	$obj = $db->fetch_object($resql);
+	if ($obj->nb > 0) {
+		$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+	}
+	$i++;
+}
+//var_dump($errorforinvoice);exit;
 
 // Bookkeeping Write
 if ($action == 'writebookkeeping') {
