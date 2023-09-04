@@ -53,7 +53,6 @@ $discard_closed = GETPOST('discardclosed', 'int');
 // Security check
 restrictedArea($user, 'projet', 0, 'projet&project');
 
-
 /*
  * View
  */
@@ -61,11 +60,6 @@ restrictedArea($user, 'projet', 0, 'projet&project');
 dol_syslog("Call ajax projet/ajax/projects.php");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-
-
-if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
-	return;
-}
 
 // Mode to get list of projects
 if (empty($mode) || $mode != 'gettasks') {
@@ -76,7 +70,7 @@ if (empty($mode) || $mode != 'gettasks') {
 	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
 
 	$formproject = new FormProjets($db);
-	$arrayresult = $formproject->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
+	$arrayresult = $formproject->select_projects_list($socid, '', '', 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
 
 	$db->close();
 
