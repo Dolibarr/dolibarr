@@ -25,17 +25,15 @@
  * \brief   This file is to manage CRUD function of type of payments
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  * Class Cpaiement
  */
-class Cpaiement
+class Cpaiement extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -46,29 +44,12 @@ class Cpaiement
 	 */
 	public $table_element = 'c_paiement';
 
-	public $code;
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var string[] array of errors messages
-	 */
-	public $errors;
-
 	/**
 	 * @var string
 	 * @deprecated
 	 * @see $label
 	 */
 	public $libelle;
-
-	/**
-	 * @var string
-	 */
-	public $label;
 
 	public $type;
 	public $active;

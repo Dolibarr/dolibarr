@@ -233,6 +233,8 @@ class PartnershipUtils
 		$this->output = '';
 		$this->error = '';
 		$partnershipsprocessed = array();
+		$emailnotfound = '';
+		$websitenotfound = '';
 
 		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
 		if ($gracedelay < 1) {
@@ -251,21 +253,16 @@ class PartnershipUtils
 
 		$sql = "SELECT p.rowid, p.status, p.".$fk_partner;
 		$sql .= ", p.last_check_backlink";
-
 		$sql .= ', partner.url, partner.email';
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p";
-
 		if ($managedfor == 'member') {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as partner on (partner.rowid = p.fk_member)";
 		} else {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as partner on (partner.rowid = p.fk_soc)";
 		}
-
-		$sql .= " WHERE 1 = 1";
-		$sql .= " AND p.".$fk_partner." > 0";
-		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted not yet canceled
-		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 7 * 24 * 3600)."')"; // Every week, check that website contains a link to dolibarr.
+		$sql .= " WHERE p.".$fk_partner." > 0";
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted and not yet canceled
+		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referal link.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
 
@@ -274,7 +271,6 @@ class PartnershipUtils
 			$numofexpiredmembers = $this->db->num_rows($resql);
 			$somethingdoneonpartnership = 0;
 			$ifetchpartner = 0;
-			$websitenotfound = '';
 			while ($ifetchpartner < $numofexpiredmembers) {
 				$ifetchpartner++;
 
@@ -376,18 +372,16 @@ class PartnershipUtils
 
 		if (!$error) {
 			$this->db->commit();
-			$this->output = $numofexpiredmembers.' partnership checked'."\n";
-			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
-			if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
-			if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
+			$this->output = "";
 		} else {
 			$this->db->rollback();
 			$this->output = "Rollback after error\n";
-			$this->output .= $numofexpiredmembers.' partnership checked'."\n";
-			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
-			if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
-			if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
 		}
+		$this->output .= $numofexpiredmembers.' partnership checked'."\n";
+		if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
+		if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
+		if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
+		$this->output .= "\nSQL used to find partnerships to scan: ".$sql;
 
 		return ($error ? 1 : 0);
 	}
