@@ -2314,7 +2314,7 @@ if ($id > 0) {
 
 					// Action button
 					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-						print '<td class="center maxwidthsearch">';
+						print '<td class="center maxwidthsearch nowraponall">';
 						// Modify link
 						if ($canbemodified) {
 							print '<a class="reposition marginleftonly paddingleft marginrightonly paddingright editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a>';
