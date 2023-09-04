@@ -325,6 +325,12 @@ if ($result) {
 	dol_print_error($db);
 }
 
+// Check for too many invoices first.
+if (count($tabfac) > 10000) { // Global config in htdocs/admin/const.php???
+	$error++;
+	setEventMessages("TooManyInvoicesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
+}
+
 $errorforinvoice = array();
 
 /*
@@ -357,6 +363,7 @@ WHERE
     fd.product_type <= 2
     AND fd.fk_code_ventilation <= 0
     AND fd.total_ttc <> 0
+	AND fk_facture_fourn IN (".$db->sanitize(join(",", array_keys($tabfac))).")
 GROUP BY fk_facture_fourn
 ";
 $resql = $db->query($sql);
