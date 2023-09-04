@@ -5660,35 +5660,35 @@ abstract class CommonObject
 			// Set the public "share" key
 			$setsharekey = false;
 			if ($this->element == 'propal' || $this->element == 'proposal') {
-				if (!empty(getDolGlobalInt("PROPOSAL_ALLOW_ONLINESIGN"))) {
+				if (getDolGlobalInt("PROPOSAL_ALLOW_ONLINESIGN")) {
 					$setsharekey = true;	// feature to make online signature is not set or set to on (default)
 				}
-				if (!empty(getDolGlobalInt("PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD"))) {
+				if (getDolGlobalInt("PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD")) {
 					$setsharekey = true;
 				}
 			}
-			if ($this->element == 'commande' && !empty(getDolGlobalInt("ORDER_ALLOW_EXTERNAL_DOWNLOAD"))) {
+			if ($this->element == 'commande' && getDolGlobalInt("ORDER_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'facture' && !empty(getDolGlobalInt("INVOICE_ALLOW_EXTERNAL_DOWNLOAD"))) {
+			if ($this->element == 'facture' && getDolGlobalInt("INVOICE_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'bank_account' && !empty(getDolGlobalInt("BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD"))) {
+			if ($this->element == 'bank_account' && getDolGlobalInt("BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'product' && !empty(getDolGlobalInt("PRODUCT_ALLOW_EXTERNAL_DOWNLOAD"))) {
+			if ($this->element == 'product' && getDolGlobalInt("PRODUCT_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'contrat' && !empty(getDolGlobalInt("CONTRACT_ALLOW_EXTERNAL_DOWNLOAD"))) {
+			if ($this->element == 'contrat' && getDolGlobalInt("CONTRACT_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'fichinter' && !empty(getDolGlobalInt("FICHINTER_ALLOW_EXTERNAL_DOWNLOAD"))) {
+			if ($this->element == 'fichinter' && getDolGlobalInt("FICHINTER_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'supplier_proposal' && !empty(getDolGlobalInt("SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD"))) {
+			if ($this->element == 'supplier_proposal' && getDolGlobalInt("SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'societe_rib' && !empty(getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN"))) {
+			if ($this->element == 'societe_rib' && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 				$setsharekey = true;
 			}
 
