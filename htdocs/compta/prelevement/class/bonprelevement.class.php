@@ -898,10 +898,10 @@ class BonPrelevement extends CommonObject
 			$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
 			if ($type != 'bank-transfer') {
 				$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_facture_demande as pfd ON f.rowid = pfd.fk_facture";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pfd ON f.rowid = pfd.fk_facture";
 			} else {
 				$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_facture_demande as pfd ON f.rowid = pfd.fk_facture_fourn";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pfd ON f.rowid = pfd.fk_facture_fourn";
 			}
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
@@ -911,6 +911,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND pfd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pfd.ext_payment_id IS NULL";
+			$sql .= " AND sr.type = 'bank' ";
 			if ($did > 0) {
 				$sql .= " AND pfd.rowid = ".((int) $did);
 			}
