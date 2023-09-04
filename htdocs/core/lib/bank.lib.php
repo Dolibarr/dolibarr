@@ -276,9 +276,13 @@ function various_payment_prepare_head($object)
  *      @param  Account     $account    A bank account
  *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkSwiftForAccount($account)
+function checkSwiftForAccount(Account $account = null, $swift = null)
 {
-	$swift = $account->bic;
+	if ($account == null && $swift == null) {
+		return false;
+	} elseif ($swift == null) {
+		$swift = $account->bic;
+	}
 	if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
 		return true;
 	} else {
@@ -292,11 +296,14 @@ function checkSwiftForAccount($account)
  *      @param  Account     $account    A bank account
  *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkIbanForAccount(Account $account)
+function checkIbanForAccount(Account $account = null, $ibantocheck = null)
 {
+	if ($account == null && $ibantocheck == null) {
+		return false;
+	} elseif ($ibantocheck == null) {
+		$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
+	}
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-
-	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
 
 	$iban = new PHP_IBAN\IBAN($ibantocheck);
 	$check = $iban->Verify();
