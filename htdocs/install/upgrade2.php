@@ -4100,6 +4100,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 
 	// List of files to delete
 	$filetodeletearray = array(
+		'/core/ajax/ajaxcompanies.php',
 		'/core/triggers/interface_demo.class.php',
 		'/core/menus/barre_left/default.php',
 		'/core/menus/barre_top/default.php',
