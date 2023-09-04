@@ -4137,6 +4137,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
 		'/core/boxes/box_members.php',
+		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
 
 		'/api/class/api_generic.class.php',
 		'/asterisk/cidlookup.php',
