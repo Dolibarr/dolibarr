@@ -911,7 +911,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND pd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pd.ext_payment_id IS NULL";
-			$sql .= " AND sr.type = 'bank' ";
+			$sql .= " AND sr.type = 'ban' ";
 			if ($did > 0) {
 				$sql .= " AND pd.rowid = ".((int) $did);
 			}
