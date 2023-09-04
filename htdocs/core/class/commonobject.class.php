@@ -1123,7 +1123,7 @@ abstract class CommonObject
 	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
 	 *  @param  string		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 *  @param  int			$notrigger			Disable all triggers
-	 *  @return int         	        		<0 if KO, 0 if already added, >0 if OK
+	 *  @return int         	        		<0 if KO, 0 if already added or code not valid, >0 if OK
 	 */
 	public function add_contact($fk_socpeople, $type_contact, $source = 'external', $notrigger = 0)
 	{
@@ -1168,9 +1168,8 @@ abstract class CommonObject
 		}
 
 		if ($id_type_contact == 0) {
-			$this->error = 'CODE_NOT_VALID_FOR_THIS_ELEMENT';
 			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
-			return -3;
+			return 0;
 		}
 
 		$datecreate = dol_now();
@@ -2742,7 +2741,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -3710,7 +3709,8 @@ abstract class CommonObject
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs($diff) > 0.1) {
+						if (abs($diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+							// If error is more than 10 times the accurancy of rounding. This should not happen.
 							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your line may be corrupted. Try to edit each line manually.';
 							dol_syslog($errmsg, LOG_WARNING);
 							dol_print_error('', $errmsg);
@@ -5715,9 +5715,15 @@ abstract class CommonObject
 	 */
 	public function addThumbs($file)
 	{
-		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php'; // This define also $maxwidthsmall, $quality, ...
+		$tmparraysize = getDefaultImageSizes();
+		$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+		$maxheightsmall = $tmparraysize['maxheightsmall'];
+		$maxwidthmini = $tmparraysize['maxwidthmini'];
+		$maxheightmini = $tmparraysize['maxheightmini'];
+		//$quality = $tmparraysize['quality'];
+		$quality = 50;	// For thumbs, we force quality to 50
 
 		$file_osencoded = dol_osencode($file);
 		if (file_exists($file_osencoded)) {
@@ -6649,6 +6655,11 @@ abstract class CommonObject
 					break;
 				case 'boolean':
 					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
+					}
+					break;
+				case 'link':
+					if ($this->array_options["options_".$key] === '') {
 						$this->array_options["options_".$key] = null;
 					}
 					break;
@@ -8110,7 +8121,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '1');
+						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -8118,12 +8129,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '1');
+						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '1');
+						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
@@ -8451,8 +8462,9 @@ abstract class CommonObject
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
 			return $user->rights->fournisseur->facture;
-		} elseif ($element == 'evaluation') {
-			return $user->rights->hrm->evaluation;
+		} elseif (!empty($user->rights->{$this->module}->{$element})) {
+			// for modules built with ModuleBuilder
+			return $user->rights->{$this->module}->{$element};
 		}
 
 		return $user->rights->{$element};
@@ -9891,6 +9903,21 @@ abstract class CommonObject
 				$this->{$key} = $value;
 			}
 		}
+
+		// Force values to default values when known
+		if (property_exists($this, 'fields')) {
+			foreach ($this->fields as $key => $value) {
+				// If fields are already set, do nothing
+				if (array_key_exists($key, $fields)) {
+					continue;
+				}
+
+				if (!empty($value['default'])) {
+					$this->$key = $value['default'];
+				}
+			}
+		}
+
 		return 1;
 	}
 

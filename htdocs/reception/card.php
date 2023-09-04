@@ -93,6 +93,8 @@ if (GETPOST('modelselected')) {
 }
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -178,7 +180,29 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	/*
+	$backurlforlist = DOL_URL_ROOT.'/reception/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			 if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				 $backtopage = $backurlforlist;
+			 } else {
+				 $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			 }
+		}
+	}
+	*/
+
 	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+
 		$action = '';
 	}
 
@@ -315,16 +339,17 @@ if (empty($reshook)) {
 			}
 		}
 
+		// Loop lines to calculate $totalqty
 		for ($i = 1; $i <= $num; $i++) {
-			$idl = "idl".$i;
+			$idl = "idl".$i;	// id line source
 
-			$sub_qty = array();
-			$subtotalqty = 0;
+			//$sub_qty = array();
+			//$subtotalqty = 0;
 
-			$j = 0;
-			$batch = "batchl".$i."_0";
-			$stockLocation = "ent1".$i."_0";
-			$qty = "qtyl".$i;
+			//$j = 0;
+			//$batch = "batchl".$i."_0";
+			//$stockLocation = "ent1".$i."_0";
+			$qty = "qtyl".$i;	// qty
 
 			//reception line for product with no batch management and no multiple stock location
 			if (GETPOST($qty, 'alpha') > 0) {
@@ -338,6 +363,7 @@ if (empty($reshook)) {
 
 		if ($totalqty > 0) {  // There is at least one thing to ship
 			for ($i = 1; $i <= $num; $i++) {
+				$idl = "idl".$i;	// id line source
 				$lineToTest = '';
 				$lineId = GETPOST($idl, 'int');
 				foreach ($objectsrc->lines as $linesrc) {
@@ -351,26 +377,28 @@ if (empty($reshook)) {
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
-				// EATBY <-> DLUO see productbatch.class.php
-				// SELLBY <-> DLC
+				// EATBY <-> DLUO and SELLBY <-> DLC, see productbatch.class.php
 				$eatby = "dluo".$i;
 				$sellby = "dlc".$i;
 				$batch = "batch".$i;
 				$cost_price = "cost_price".$i;
 
-				//if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS')) || (GETPOST($qty, 'int') < 0 && getDolGlobalString('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
-				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS)) {
-					$ent = "entl".$i;
+				//var_dump(GETPOST("productl".$i, 'int').' '.GETPOST('entl'.$i, 'int').' '.GETPOST($idl, 'int').' '.GETPOST($qty, 'int').' '.GETPOST($batch, 'alpha'));
 
+				//if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS')) || (GETPOST($qty, 'int') < 0 && getDolGlobalString('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
+				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS'))) {
+					$ent = "entl".$i;
 					$idl = "idl".$i;
 
 					$entrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
 
+					/*
 					if (!empty($lineToTest)) {
 						$fk_product = $lineToTest->fk_product;
 					} else {
 						$fk_product = $linesrc->fk_product;
-					}
+					}*/
+					$fk_product = GETPOST("productl".$i, 'int');
 
 					if ($entrepot_id < 0) {
 						$entrepot_id = '';
@@ -378,6 +406,7 @@ if (empty($reshook)) {
 					if (!($fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						$entrepot_id = 0;
 					}
+
 					$eatby = GETPOST($eatby, 'alpha');
 					$sellby = GETPOST($sellby, 'alpha');
 					$eatbydate = str_replace('/', '-', $eatby);
@@ -394,7 +423,6 @@ if (empty($reshook)) {
 					}
 				}
 			}
-
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -760,6 +788,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="origin_id" value="'.$objectsrc->id.'">';
+			print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			if (GETPOST('entrepot_id', 'int')) {
 				print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id', 'int').'">';
 			}
@@ -888,7 +918,7 @@ if ($action == 'create') {
 				if ($objectsrc->fetch_optionals() > 0) {
 					$recept->array_options = array_merge($recept->array_options, $objectsrc->array_options);
 				}
-				print $object->showOptionals($extrafields, 'create', $parameters);
+				print $recept->showOptionals($extrafields, 'create', $parameters);
 			}
 
 			// Incoterms
@@ -915,7 +945,7 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
-			// Reception lines
+			// Number of lines show on the reception card
 			$numAsked = 0;
 
 			/**
@@ -928,7 +958,7 @@ if ($action == 'create') {
 			foreach ($_POST as $key => $value) {
 				// If create form is coming from the button "Create Reception" of previous page
 
-				// without batch module enabled
+				// without batch module enabled or product with no lot/serial
 				$reg = array();
 				if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 					$numAsked++;
@@ -943,10 +973,10 @@ if ($action == 'create') {
 					$ent = "entrepot_" . $paramSuffix;
 					$pu = "pu_" . $paramSuffix; // This is unit price including discount
 					$fk_commandefourndet = "fk_commandefourndet_" . $paramSuffix;
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'));
+					$dispatchLines[$numAsked] = array('paramSuffix'=>$paramSuffix, 'prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'));
 				}
 
-				// with batch module enabled
+				// with batch module enabled and product with lot/serial
 				if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 					$numAsked++;
 					$paramSuffix = $reg[1] . '_' . $reg[2];
@@ -964,11 +994,11 @@ if ($action == 'create') {
 					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$paramSuffix.'month', 'int'), GETPOST('dluo_'.$paramSuffix.'day', 'int'), GETPOST('dluo_'.$paramSuffix.'year', 'int'));
 					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$paramSuffix.'month', 'int'), GETPOST('dlc_'.$paramSuffix.'day', 'int'), GETPOST('dlc_'.$paramSuffix.'year', 'int'));
 					$fk_commandefourndet = 'fk_commandefourndet_'.$paramSuffix;
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+					$dispatchLines[$numAsked] = array('paramSuffix'=>$paramSuffix, 'prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 
 				// If create form is coming from same page, it means that post was sent but an error occured
-				if (preg_match('/^productid([0-9]+)$/i', $key, $reg)) {
+				if (preg_match('/^productl([0-9]+)$/i', $key, $reg)) {
 					$numAsked++;
 					$paramSuffix = $reg[1];
 					$suffix2numAsked[$paramSuffix] = $numAsked;
@@ -1090,9 +1120,13 @@ if ($action == 'create') {
 					$product->fetch($line->fk_product);
 					$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
 					//var_dump($product->stock_warehouse[1]);
+					//var_dump($dispatchLines[$indiceAsked]);
 
 					print '<td>';
 					print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
+
+					print '<input type="hidden" name="productl'.$indiceAsked.'" value="'.$line->fk_product.'">';
+
 					if (! array_key_exists($line->id, $arrayofpurchaselinealreadyoutput)) {	// Add test to avoid to show qty twice
 						print '<input type="hidden" name="productid'.$indiceAsked.'" value="'.$line->fk_product.'">';
 
@@ -1689,7 +1723,7 @@ if ($action == 'create') {
 				print $langs->trans("QtyReceived").' - ';
 			}
 			if (isModEnabled('stock')) {
-				print $langs->trans("WarehouseSource").' - ';
+				print $langs->trans("WarehouseTarget").' - ';
 			}
 			if (isModEnabled('productbatch')) {
 				print $langs->trans("Batch");
@@ -1709,7 +1743,7 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 			}
 			if (isModEnabled('stock')) {
-				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
+				print '<td class="left">'.$langs->trans("WarehouseTarget").'</td>';
 			}
 
 			if (isModEnabled('productbatch')) {
@@ -1951,12 +1985,24 @@ if ($action == 'create') {
 				if (isModEnabled('productbatch')) {
 					if (isset($lines[$i]->batch)) {
 						print '<!-- Detail of lot -->';
-						print '<td class="linecolbatch">';
-						$detail = '';
-						if ($lines[$i]->product->status_batch) {
-							$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
-							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-								$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
+						print '<td class="linecolbatch nowrap">';
+						$detail = $langs->trans("NA");
+						if ($lines[$i]->product->status_batch > 0 && $lines[$i]->fk_product > 0) {
+							require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+							$productlot = new Productlot($db);
+							$reslot = $productlot->fetch(0, $lines[$i]->fk_product, $lines[$i]->batch);
+							if ($reslot > 0) {
+								$detail = $productlot->getNomUrl(1);
+							} else {
+								// lot is not created and info is only in reception lines
+								$batchinfo = $langs->trans("Batch").': '.$lines[$i]->batch;
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
+								}
+								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
+								}
+								$detail = $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $batchinfo);
 							}
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 								$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");

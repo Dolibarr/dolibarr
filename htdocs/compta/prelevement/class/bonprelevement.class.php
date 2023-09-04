@@ -453,11 +453,13 @@ class BonPrelevement extends CommonObject
 					} else {
 						if ($this->type == 'bank-transfer') {
 							$modeforaddpayment = 'payment_supplier';
+							$labelforaddpayment = '(BankTransferPayment)';
 						} else {
 							$modeforaddpayment = 'payment';
+							$labelforaddpayment = '(WithdrawalPayment)';
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $bankaccount, '', '');
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $bankaccount, '', '');
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;
@@ -1582,7 +1584,7 @@ class BonPrelevement extends CommonObject
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
-						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac_ref_supplier, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
+						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac.($obj->fac_ref_supplier ? ' '.$obj->fac_ref_supplier : ''), $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
 						$this->total = $this->total + $obj->somme;
 						$i++;
 					}

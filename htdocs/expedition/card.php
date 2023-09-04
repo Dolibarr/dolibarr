@@ -346,7 +346,7 @@ if (empty($reshook)) {
 		}
 
 		//var_dump($batch_line[2]);
-		if ($totalqty > 0 && !$error) {		// There is at least one thing to ship and no error
+		if (($totalqty > 0 || !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) && !$error) {		// There is at least one thing to ship and no error
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 				if (!isset($batch_line[$i])) {
@@ -355,7 +355,7 @@ if (empty($reshook)) {
 						//shipment from multiple stock locations
 						$nbstockline = count($stockLine[$i]);
 						for ($j = 0; $j < $nbstockline; $j++) {
-							if ($stockLine[$i][$j]['qty'] > 0) {
+							if ($stockLine[$i][$j]['qty'] > 0 || ($stockLine[$i][$j]['qty'] == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))) {
 								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
 								if ($ret < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
@@ -364,7 +364,7 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+						if (GETPOST($qty, 'int') > 0 || !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
 							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
@@ -375,7 +375,7 @@ if (empty($reshook)) {
 								$entrepot_id = 0;
 							}
 
-							$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i]);
+							$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), price2num(GETPOST($qty, 'alpha'), 'MS'), $array_options[$i]);
 							if ($ret < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
 								$error++;

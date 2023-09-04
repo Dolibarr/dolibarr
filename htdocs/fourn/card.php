@@ -411,6 +411,7 @@ if ($object->id > 0) {
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
+	print '<br>';
 
 	// Lien recap
 	$boxstat .= '<div class="box box-halfright">';
@@ -530,16 +531,6 @@ if ($object->id > 0) {
 
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-	// Lien recap
-	/*
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
-	print '</tr>';
-	print '</table>';
-	print '<br>';
-	*/
 
 	/*
 	 * List of products
@@ -642,7 +633,7 @@ if ($object->id > 0) {
 				print '<td colspan="3">';
 				print '<table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastSupplierProposals", ($num < $MAXLIST ? "" : $MAXLIST)).'</td>';
 				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllPriceRequests").'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
-				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
+				// print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table>';
 				print '</td></tr>';
 			}

@@ -72,15 +72,15 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 		$enabled = 1;
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra])) {
-			$enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1);
+			$enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
-			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1);
+			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
 		}
 
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
-			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1);
+			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '2');
 		}
 		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
@@ -152,6 +152,9 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 			if ($object->element == 'fichinter') {
 				$keyforperm = 'ficheinter';
+			}
+			if ($object->element == 'product') {
+				$keyforperm = 'produit';
 			}
 			if (isset($user->rights->$keyforperm)) {
 				$permok = !empty($user->rights->$keyforperm->creer) || !empty($user->rights->$keyforperm->create) || !empty($user->rights->$keyforperm->write);

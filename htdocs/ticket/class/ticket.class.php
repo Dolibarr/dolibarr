@@ -448,6 +448,8 @@ class Ticket extends CommonObject
 		$result = $this->verify();
 
 		if ($result >= 0) {
+			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+
 			// Insert request
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."ticket(";
 			$sql .= "ref,";
@@ -496,7 +498,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'")."";
-			$sql .= ", ".((int) $conf->entity);
+			$sql .= ", ".((int) $this->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
 			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
@@ -580,7 +582,7 @@ class Ticket extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error);
+			dol_print_error('', get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 
@@ -1242,13 +1244,14 @@ class Ticket extends CommonObject
 	/**
 	 *      Load into a cache array, the list of ticket categories (setup done into dictionary)
 	 *
-	 *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
+	 *      @param	int		$publicgroup	0=No public group, 1=Public group only, -1=All
+	 *      @return int             		Number of lines loaded, 0 if already loaded, <0 if KO
 	 */
-	public function loadCacheCategoriesTickets()
+	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
 		global $conf, $langs;
 
-		if (!empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
+		if ($publicgroup == -1 && !empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
 			// Cache already loaded
 			return 0;
 		}
@@ -1256,8 +1259,13 @@ class Ticket extends CommonObject
 		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE active > 0 AND entity = ".((int) $conf->entity);
+		if ($publicgroup > -1) {
+			$sql .= " AND public = ".((int) $publicgroup);
+		}
 		$sql .= " ORDER BY pos";
+
 		dol_syslog(get_class($this)."::load_cache_categories_tickets", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -2265,8 +2273,8 @@ class Ticket extends CommonObject
 	 * Used for files linked into messages.
 	 * Files may be renamed during copy to avoid overwriting existing files.
 	 *
-	 * @param	string	$forcetrackid	Force trackid
-	 * @return	array					Array with final path/name/mime of files.
+	 * @param	string		$forcetrackid	Force trackid used for $keytoavoidconflict into get_attached_files()
+	 * @return	array|int					Array with final path/name/mime of files.
 	 */
 	public function copyFilesForTicket($forcetrackid = null)
 	{
@@ -2286,7 +2294,7 @@ class Ticket extends CommonObject
 		$formmail->trackid = (is_null($forcetrackid) ? 'tic'.$this->id : '');
 		$attachedfiles = $formmail->get_attached_files();
 
-		$filepath = $attachedfiles['paths'];
+		$filepath = $attachedfiles['paths'];	// path is for example user->dir_temp.'/'.$user->id.'/'...
 		$filename = $attachedfiles['names'];
 		$mimetype = $attachedfiles['mimes'];
 
@@ -2309,16 +2317,23 @@ class Ticket extends CommonObject
 			}
 
 			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1);
-
-			if (image_format_supported($destfile) == 1) {
-				// Create small thumbs for image (Ratio is near 16/9)
-				// Used on logon for example
-				$imgThumbSmall = vignette($destfile, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-				// Create mini thumbs for image (Ratio is near 16/9)
-				// Used on menu or for setup page for example
-				$imgThumbMini = vignette($destfile, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+			if (!$res) {
+				// Move has failed
+				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);
+				return -1;
+			} else {
+				// If file is an image, we create thumbs
+				if (image_format_supported($destfile) == 1) {
+					// Create small thumbs for image (Ratio is near 16/9)
+					// Used on logon for example
+					$imgThumbSmall = vignette($destfile, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+					// Create mini thumbs for image (Ratio is near 16/9)
+					// Used on menu or for setup page for example
+					$imgThumbMini = vignette($destfile, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+				}
 			}
 
+			// Clear variables into session
 			$formmail->remove_attached_files($i);
 
 			// Fill array with new names
@@ -2379,11 +2394,11 @@ class Ticket extends CommonObject
 	 * Add new message on a ticket (private/public area).
 	 * Can also send it be email if GETPOST('send_email', 'int') is set. For such email, header and footer is added.
 	 *
-	 * @param   User    $user       User for action
-	 * @param   string  $action     Action string
-	 * @param   int     $private    1=Message is private. TODO Implement this. What does this means ?
-	 * @param   int     $public_area    				1=Is the public area
-	 * @return  int
+	 * @param   User    $user       	User for action
+	 * @param   string  $action     	Action string
+	 * @param   int     $private    	1=Message is private. TODO Implement this. What does this means ?
+	 * @param   int     $public_area    1=Is the public area
+	 * @return  int						<0 if KO, >= 0 if OK
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
@@ -2420,6 +2435,10 @@ class Ticket extends CommonObject
 
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();
+			if (is_numeric($resarray) && $resarray == -1) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				return -1;
+			}
 
 			$listofpaths = $resarray['listofpaths'];
 			$listofnames = $resarray['listofnames'];

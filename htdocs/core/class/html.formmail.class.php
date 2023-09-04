@@ -543,6 +543,10 @@ class FormMail extends Form
 				$helpforsubstitution .= $langs->trans('AvailableVariables').' :<br>'."\n";
 			}
 			foreach ($this->substit as $key => $val) {
+				// Do not show deprecated variables into the tooltip help of substitution variables
+				if (in_array($key, array('__NEWREF__', '__REFCLIENT__', '__REFSUPPLIER__', '__SUPPLIER_ORDER_DATE_DELIVERY__', '__SUPPLIER_ORDER_DELAY_DELIVERY__'))) {
+					continue;
+				}
 				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
 			}
 			if (!empty($this->withsubstit)) {	// Unset or set ->withsubstit=0 to disable this.
@@ -805,7 +809,7 @@ class FormMail extends Form
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
 
 							if ($conf->entity > 1) {
-								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
+								$relativepathtofile = str_replace('/'.$conf->entity.'/', '/', $relativepathtofile);
 							}
 							// Try to extract data from full path
 							$formfile_params = array();

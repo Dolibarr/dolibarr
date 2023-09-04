@@ -161,7 +161,7 @@ function versiondolibarrarray()
  *  @param		int		$nocommentremoval			Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
  *  @param		int		$colspan					2=Add a colspan=2 on td
- *  @param		int		$onlysqltoimportwebsite		Only sql resquests used to import a website template is allowed
+ *  @param		int		$onlysqltoimportwebsite		Only sql resquests used to import a website template are allowed
  * 	@return		int									<=0 if KO, >0 if OK
  */
 function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0)
@@ -1330,14 +1330,14 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && empty(getDolGlobalString($const_name))) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && !getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && empty(getDolGlobalString($const_name))) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && !getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						//If module is not activated disqualified
-						if (empty(getDolGlobalString($const_name))) {
+						// If module is not activated disqualified
+						if (!getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
 

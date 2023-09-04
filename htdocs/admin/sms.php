@@ -221,7 +221,7 @@ if ($action == 'edit') {
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	$text = empty(getDolGlobalString('MAIN_SMS_SENDMODE')) ? '' : $listofmethods[getDolGlobalString('MAIN_SMS_SENDMODE')];
+	$text = getDolGlobalString('MAIN_SMS_SENDMODE') ? $listofmethods[getDolGlobalString('MAIN_SMS_SENDMODE')] : '';
 	if (empty($text)) {
 		$text = $langs->trans("Undefined").' '.img_warning();
 	}

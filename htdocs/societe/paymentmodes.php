@@ -47,20 +47,18 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 $langs->loadLangs(array("companies", "commercial", "banks", "bills", 'paypal', 'stripe', 'withdrawals'));
 
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', '', '');
-
-
 // Get parameters
 $id = GETPOST("id", "int");
 $source = GETPOST("source", "alpha"); // source can be a source or a paymentmode
 $ribid = GETPOST("ribid", "int");
 $action = GETPOST("action", 'alpha', 3);
 $cancel = GETPOST('cancel', 'alpha');
+
+// Security check
+$socid = GETPOST("socid", "int");
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 // Initialize objects
 $object = new Societe($db);
@@ -84,6 +82,12 @@ $permissiontoadd = $user->hasRight('societe', 'creer'); // Used by the include o
 
 $permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
 
+
+// Check permission on company
+$result = restrictedArea($user, 'societe', '', '');
+
+
+// Init Stripe objects
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
 	$servicestatus = 0;
@@ -448,7 +452,7 @@ if (empty($reshook)) {
 			setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 		}
 	}
-	if ($action == 'confirm_delete' && GETPOST('confirm', 'alpha') == 'yes') {
+	if ($action == 'confirm_deletebank' && GETPOST('confirm', 'alpha') == 'yes') {
 		$companybankaccount = new CompanyBankAccount($db);
 		if ($companybankaccount->fetch($ribid ? $ribid : $id)) {
 			// TODO This is currently done at bottom of page instead of asking confirm
@@ -729,7 +733,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		} elseif ($action == 'delete' && $source) {
+		} elseif ($action == 'deletebank' && $source) {
 			try {
 				if (preg_match('/pm_/', $source)) {
 					$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
@@ -831,8 +835,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	// Confirm delete ban
-	if ($action == 'delete') {
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid ? $ribid : $id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $companybankaccount->getRibLabel()), "confirm_delete", '', 0, 1);
+	if ($action == 'deletebank') {
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid ? $ribid : $id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $companybankaccount->getRibLabel()), "confirm_deletebank", '', 0, 1);
 	}
 	// Confirm delete card
 	if ($action == 'deletecard') {
@@ -1607,7 +1611,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print img_picto($langs->trans("Modify"), 'edit');
 				print '</a>';
 
-				print '<a class="marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=delete&token='.newToken().'">';
+				print '<a class="marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=deletebank&token='.newToken().'">';
 				print img_picto($langs->trans("Delete"), 'delete');
 				print '</a>';
 			}
@@ -1711,7 +1715,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			// Action column
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
-				print '<a class="marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=delete&token='.newToken().'">';
+				print '<a class="marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletebank&token='.newToken().'">';
 				print img_picto($langs->trans("Delete"), 'delete');
 				print '</a>';
 			}

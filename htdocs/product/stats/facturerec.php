@@ -156,7 +156,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		} elseif ($user->rights->facture->lire) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
-			$sql .= "f.titre, f.datec, f.rowid as facid,";
+			$sql .= "f.titre, f.datec, f.rowid as facid, f.suspended as suspended,";
 			$sql .= " d.rowid, d.total_ht as total_ht, d.qty"; // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
 			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
@@ -251,7 +251,7 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datec", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.suspended", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if ($num > 0) {
@@ -280,7 +280,7 @@ if ($id > 0 || !empty($ref)) {
 						print dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>";
 						print '<td class="center">'.$objp->qty."</td>\n";
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
-						print '<td align="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5, $paiement, $objp->type).'</td>';
+						print '<td align="right">'.$invoicestatic->LibStatut(1, $objp->suspended, 5, $paiement, $objp->type).'</td>';
 						print "</tr>\n";
 						$i++;
 					}

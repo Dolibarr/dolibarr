@@ -367,7 +367,7 @@ if ($action == 'update') {
 					$computedvalue,
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-					GETPOST('enabled', 'alpha'),
+					GETPOST('enabled', 'nohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOST('printable', 'alpha'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)

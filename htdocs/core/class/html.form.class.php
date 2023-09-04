@@ -21,6 +21,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,7 +246,7 @@ class Form
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
 				}
-				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata)) {
+				if (preg_match('/^(string|safehtmlstring|email|url)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.(empty($tmp[1]) ? '' : ' size="'.$tmp[1].'"').' autofocus>';
 				} elseif (preg_match('/^(integer)/', $typeofdata)) {
@@ -319,6 +320,8 @@ class Form
 			} else {
 				if (preg_match('/^(email)/', $typeofdata)) {
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
+				} elseif (preg_match('/^url/', $typeofdata)) {
+					$ret .= dol_print_url($value, '_blank', 32, 1);
 				} elseif (preg_match('/^(amount|numeric)/', $typeofdata)) {
 					$ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
 				} elseif (preg_match('/^(checkbox)/', $typeofdata)) {
@@ -2503,6 +2506,7 @@ class Form
 			$error++;
 			dol_print_error($db);
 		}
+		$out .= '</select>';
 		if (empty($nooutput)) {
 			print $out;
 		} else {

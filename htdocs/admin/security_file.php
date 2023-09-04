@@ -62,8 +62,8 @@ if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 if ($action == 'updateform') {
 	$antivircommand = GETPOST('MAIN_ANTIVIRUS_COMMAND', 'restricthtml'); // Use GETPOST restricthtml because we must accept ". Example c:\Progra~1\ClamWin\bin\clamscan.exe
 	$antivirparam = GETPOST('MAIN_ANTIVIRUS_PARAM', 'restricthtml'); // Use GETPOST restricthtml because we must accept ". Example --database="C:\Program Files (x86)\ClamWin\lib"
-	$antivircommand = dol_string_nospecial($antivircommand, '', array("|", ";", "<", ">", "&")); // Sanitize command
-	$antivirparam = dol_string_nospecial($antivirparam, '', array("|", ";", "<", ">", "&")); // Sanitize params
+	$antivircommand = dol_string_nospecial($antivircommand, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
+	$antivirparam = dol_string_nospecial($antivirparam, '', array("|", ";", "<", ">", "&", "+")); // Sanitize params
 
 	$res3 = dolibarr_set_const($db, 'MAIN_UPLOAD_DOC', GETPOST('MAIN_UPLOAD_DOC', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, "MAIN_UMASK", GETPOST('MAIN_UMASK', 'alpha'), 'chaine', 0, '', $conf->entity);

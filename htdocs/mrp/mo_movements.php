@@ -928,20 +928,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $userstatic->getNomUrl(-1);
 			print "</td>\n";
 		}
+		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
-			// Inventory code
-			print '<td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objp->inventorycode).'">';
 			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
 			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';
 		}
+		// Label of movement
 		if (!empty($arrayfields['m.label']['checked'])) {
-			// Label of movement
 			print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 		}
+		// Type of movement
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
-			// Type of movement
 			switch ($objp->type_mouvement) {
 				case "0":
 					print '<td class="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
@@ -972,17 +972,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($arrayfields['m.value']['checked'])) {
 			// Qty
 			print '<td class="right">';
-			if ($objp->qt > 0) {
-				print '+';
+			if ($objp->qty >0) {
+				print '<span class="stockmovemententry">+'.$objp->qty.'</span>';
+			} else {
+				print '<span class="stockmovementexit">'.$objp->qty.'<span>';
 			}
-			print $objp->qty;
 			print '</td>';
 		}
 		if (!empty($arrayfields['m.price']['checked'])) {
 			// Price
 			print '<td class="right">';
 			if ($objp->price != 0) {
-				print price($objp->price);
+				print '<span class="opacitymedium">'.price($objp->price).'</span>';
 			}
 			print '</td>';
 		}

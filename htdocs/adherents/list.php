@@ -181,7 +181,8 @@ $result = restrictedArea($user, 'adherent');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -317,10 +318,17 @@ $formother = new FormOther($db);
 $membertypestatic = new AdherentType($db);
 $memberstatic = new Adherent($db);
 
-$title = $langs->trans("Members");
-
 $now = dol_now();
 
+// Page Header
+$title = $langs->trans("Members")." - ".$langs->trans("List");
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+$morejs = array();
+$morecss = array();
+
+
+// Build and execute select
+// --------------------------------------------------------------------
 if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 	$sql = "SELECT DISTINCT";
 } else {
@@ -343,8 +351,8 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -408,10 +416,10 @@ if ($search_filter == 'waitingsubscription') {
 	$sql .= " AND (datefin IS NULL AND t.subscription = '1')";
 }
 if ($search_filter == 'uptodate') {
-	$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = '0')";
+	$sql .= " AND (datefin >= '".$db->idate($now)."' OR (datefin IS NULL AND t.subscription = '0'))";
 }
 if ($search_filter == 'outofdate') {
-	$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = '1')";
+	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
 	// Peut valoir un nombre ou liste de nombre separes par virgules
@@ -471,16 +479,14 @@ if ($search_country) {
 if ($search_import_key) {
 	$sql .= natural_search("d.import_key", $search_import_key);
 }
-
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-// Count total nb of records with no order and no limits
+// Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
@@ -494,12 +500,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 	$db->free($resql);
 }
+//print $sql;
 
 // Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
@@ -516,8 +523,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 
-$arrayofselected = is_array($toselect) ? $toselect : array();
-
+// Direct jump if only one record found
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
@@ -525,8 +531,12 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('', $title, $help_url);
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
@@ -1273,7 +1283,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 $db->free($resql);

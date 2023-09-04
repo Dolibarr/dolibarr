@@ -421,7 +421,8 @@ if ($nolinesbefore) {
 	$coldisplay++;
 	?>
 	<td class="nobottom linecolqty right">
-	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1); ?>">
+	<?php $default_qty = (empty($conf->global->MAIN_OBJECTLINE_CREATE_EMPTY_QTY_BY_DEFAULT) ? 1 : ''); ?>
+	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : $default_qty); ?>">
 	</td>
 	<?php
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -761,7 +762,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 							jQuery('#date_end').removeClass('inputmandatory');
 						}
 
-						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC') {
+						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC' && <?php print getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') ? 'false' : 'true'; ?>) {
 							console.log("objectline_create.tpl set content of price_ttc");
 							jQuery("#price_ttc").val(data.price_ttc);
 						} else {
@@ -774,7 +775,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 
 						// Now set the VAT
 						var stringforvatrateselection = tva_tx;
-						if (typeof default_vat_code != 'undefined' && default_vat_code != null) {
+						if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 							stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 						}
 						// Set vat rate if field is an input box
@@ -895,7 +896,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						}
 						options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 					});
-					options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice").'...'; ?></option>';
+					options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dol_escape_js($langs->trans("InputPrice").'...'); ?></option>';
 
 					console.log("finally selected defaultkey="+defaultkey+" defaultprice for buying price="+defaultprice);
 
@@ -996,7 +997,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
 			var stringforvatrateselection = tva_tx;
-			if (typeof default_vat_code != 'undefined' && default_vat_code != null) {
+			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
 
@@ -1058,7 +1059,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
 			var stringforvatrateselection = tva_tx;
-			if (typeof default_vat_code != 'undefined' && default_vat_code != null) {
+			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
 
@@ -1071,7 +1072,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			$('#tva_tx option').removeAttr('selected');
 			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
 			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
-
 			<?php
 			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {

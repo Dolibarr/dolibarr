@@ -51,7 +51,7 @@ class modAgenda extends DolibarrModules
 		$this->numero = 2400;
 
 		$this->family = "projects";
-		$this->module_position = '15';
+		$this->module_position = '16';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";

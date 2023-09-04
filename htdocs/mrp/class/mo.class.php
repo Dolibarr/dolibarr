@@ -101,7 +101,7 @@ class Mo extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
-		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:(t.status:=:1)', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>'$conf->bom->enabled', 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300', 'csslist'=>'nowraponall', 'picto'=>'bom'),
+		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:(t.status:=:1)', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>'$conf->bom->enabled', 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'bom'),
 		'mrptype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>34, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth150', 'csslist'=>'minwidth150 center'),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>'$conf->product->enabled', 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'default'=>1, 'isameasure'=>1),
@@ -255,25 +255,22 @@ class Mo extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		global $conf;
-
 		$error = 0;
 		$idcreated = 0;
 
-		$this->db->begin();
-
-		// Check that product is not a kit/virtual product
-		if (empty($conf->global->ALLOW_USE_KITS_INTO_BOM_AND_MO) && $this->fk_product > 0) {
+		// If kits feature is enabled and we don't allow kits into BOM and MO, we check that the product is not a kit/virtual product
+		if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && !getDolGlobalString('ALLOW_USE_KITS_INTO_BOM_AND_MO') && $this->fk_product > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($this->fk_product);
 			if ($tmpproduct->hasFatherOrChild(1) > 0) {
 				$this->error = 'ErrorAVirtualProductCantBeUsedIntoABomOrMo';
 				$this->errors[] = $this->error;
-				$this->db->rollback();
 				return -1;
 			}
 		}
+
+		$this->db->begin();
 
 		if ($this->fk_bom > 0) {
 			// If there is a nown BOM, we force the type of MO to the type of BOM
@@ -292,7 +289,7 @@ class Mo extends CommonObject
 		}
 
 		if (!$error) {
-			$result = $this->updateProduction($user, $notrigger);	// Insert lines from BOM
+			$result = $this->createProduction($user, $notrigger);	// Insert lines from BOM
 			if ($result <= 0) {
 				$error++;
 			}
@@ -612,6 +609,7 @@ class Mo extends CommonObject
 			$error++;
 		}
 
+		// Update the lines (the qty) to consume or to produce
 		$result = $this->updateProduction($user, $notrigger);
 		if ($result <= 0) {
 			$error++;
@@ -626,6 +624,7 @@ class Mo extends CommonObject
 		}
 	}
 
+
 	/**
 	 * Erase and update the line to consume and to produce.
 	 *
@@ -633,23 +632,19 @@ class Mo extends CommonObject
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 * @return int             <0 if KO, >0 if OK
 	 */
-	public function updateProduction(User $user, $notrigger = true)
+	public function createProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
 		$role = "";
 
 		if ($this->status != self::STATUS_DRAFT) {
-			//$this->error = 'BadStatusForUpdateProduction';
-			//return -1;
-			return 1;
+			return -1;
 		}
 
 		$this->db->begin();
 
 		// Insert lines in mrp_production table from BOM data
 		if (!$error) {
-			// TODO Check that production has not started. If yes, we stop here.
-
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.((int) $this->id);
 			$this->db->query($sql);
 
@@ -723,6 +718,53 @@ class Mo extends CommonObject
 									break;
 								}
 							}
+						}
+					}
+				}
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Update quantities in lines to consume and to produce.
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function updateProduction(User $user, $notrigger = true)
+	{
+		$error = 0;
+
+		if ($this->status != self::STATUS_DRAFT) return 1;
+
+		$this->db->begin();
+
+		$oldQty = $this->oldQty;
+		$newQty = $this->qty;
+		if ($newQty != $oldQty && !empty($this->oldQty)) {
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "mrp_production WHERE fk_mo = " . (int) $this->id;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$moLine = new MoLine($this->db);
+					$res = $moLine->fetch($obj->rowid);
+					if (!$res) $error++;
+
+					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
+						if (empty($moLine->qty_frozen)) {
+							$qty = $newQty * $moLine->qty / $oldQty;
+							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
+							$res = $moLine->update($user);
+							if (!$res) $error++;
 						}
 					}
 				}

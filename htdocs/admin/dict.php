@@ -1201,7 +1201,7 @@ if ($search_country_id > 0) {
 	$param .= '&search_country_id='.urlencode($search_country_id);
 }
 if ($search_code != '') {
-	$param .= '&search_code='.urlencode($search_country_id);
+	$param .= '&search_code='.urlencode($search_code);
 }
 if ($entity != '') {
 	$param .= '&entity='.(int) $entity;
@@ -1251,6 +1251,8 @@ if ($id > 0) {
 		$sql .= natural_search("f.code", $search_code);
 	} elseif ($search_code != '' && $id == 2) {
 		$sql .= natural_search("d.code_departement", $search_code);
+	} elseif ($search_code != '' && $id == 14) {
+		$sql .= natural_search("e.code", $search_code);
 	} elseif ($search_code != '' && $id != 9) {
 		$sql .= natural_search("code", $search_code);
 	}

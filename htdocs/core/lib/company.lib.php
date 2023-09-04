@@ -875,7 +875,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// Opp amount
 						print '<td class="right">';
 						if ($obj->opp_status_code) {
-							print price($obj->opp_amount, 1, '', 1, -1, -1, '');
+							print '<span class="amount">'.price($obj->opp_amount, 1, '', 1, -1, -1, '').'</span>';
 						}
 						print '</td>';
 						// Opp status

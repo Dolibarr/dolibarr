@@ -33,6 +33,9 @@
 
 
 -- Missing in v16 or lower
+
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accounting_system (pcg_version);
@@ -56,6 +59,9 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 UPDATE llx_c_actioncomm SET type = 'system' WHERE code = 'AC_OTH';
 
 ALTER TABLE llx_opensurvey_user_studs MODIFY reponses VARCHAR(200) NOT NULL;
+
+ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey, entity);
 
 -- v17
 

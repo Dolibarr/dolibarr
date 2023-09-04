@@ -1069,6 +1069,7 @@ if ($id > 0 || !empty($ref)) {
 				$dispatchBt = empty($conf->reception->enabled) ? $langs->trans("Receive") : $langs->trans("CreateReception");
 
 				print '<br>';
+				print '<input type="hidden" name="backtopageforcancel" value="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 				print '<input type="submit" class="button" name="dispatch" value="'.dol_escape_htmltag($dispatchBt).'"';
 				$disabled = 0;
 				if (!$permissiontoreceive) {

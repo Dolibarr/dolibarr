@@ -182,8 +182,6 @@ class Workstation extends CommonObject
 
 		$this->db = $db;
 
-		$this->fields['ref']['default'] = $this->getNextNumRef();
-
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}

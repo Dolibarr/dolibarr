@@ -213,7 +213,7 @@ $formresource = new FormResource($db);
 $now = dol_now();
 
 $help_url = 'EN:Module_Workstation';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Workstations"));
+$title = $langs->trans("Workstations");
 $morejs = array();
 $morecss = array();
 

@@ -27,12 +27,12 @@ Prerequisites to build autoexe DoliWamp package from Linux (solution seems broke
 
 Prerequisites to build autoexe DoliWamp package from Windows:
 
-> Install Perl for Windwos (https://strawberryperl.com/)
+> Install Perl for Windows (https://strawberryperl.com/)
 > Install isetup-5.5.8.exe (https://www.jrsoftware.org)
 > Install WampServer-3.2.*-64.exe (Apache 2.4.51, PHP 7.3.33, MariaDB 10.6.5 for example. Version must match the values found into doliwamp.iss)
 > Install GIT for Windows (https://git-scm.com/ => You must choose option "Add Git bash profile", "Git commit as-is")
-> Install Dolibarr verions:   
-  git clone https://github.com/dolibarr/dolibarr
+> Install Dolibarr current version:   
+  git clone https://github.com/dolibarr/dolibarr  or  git clone --branch X.Y https://github.com/dolibarr/dolibarr  
 
 > Add the path of PHP (C:\wamp64\bin\php\php7.3.33) and InnoSetup (C:\Program Files (x86)\Inno Setup 5) into the %PATH% of Windows.
 

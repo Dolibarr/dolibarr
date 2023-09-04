@@ -127,6 +127,8 @@ if ($resql) {
 	print '<th class="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
+	$num = $db->num_rows($resql);
+
 	while ($objp = $db->fetch_object($resql)) {
 		$checkdepositstatic->id = $objp->rowid;
 		$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
@@ -152,6 +154,10 @@ if ($resql) {
 
 		print '</tr>';
 	}
+	if (empty($num)) {
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	}
+
 	print "</table>";
 	print '</div>';
 

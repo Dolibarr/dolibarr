@@ -691,13 +691,13 @@ function setUserPassword($authentication, $shortuser)
 			$res = $userstat->fetch('', $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
-				if ($res) {
+				if (is_numeric($res) && $res < 0) {
+					$error++;
+					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
+				} else {
 					$objectresp = array(
 						'result'=>array('result_code' => 'OK', 'result_label' => ''),
 					);
-				} else {
-					$error++;
-					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
 				}
 			} else {
 				$error++;

@@ -465,9 +465,10 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
+	// If we add a line and no invoice yet, we create the invoice
 	if (($action == "addline" || $action == "freezone") && $placeid == 0) {
-		$invoice->socid = getDolGlobalString("$constforcompanyid");
-		$invoice->date = dol_now();
+		$invoice->socid = getDolGlobalString($constforcompanyid);
+		$invoice->date = dol_now('tzuserrel');		// We use the local date, only the day will be saved.
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 		$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
@@ -476,6 +477,7 @@ if (empty($reshook)) {
 			$langs->load('errors');
 			dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
 		} else {
+			// Create invoice
 			$placeid = $invoice->create($user);
 			if ($placeid < 0) {
 				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
@@ -498,7 +500,7 @@ if (empty($reshook)) {
 		$price = $datapriceofproduct['pu_ht'];
 		$price_ttc = $datapriceofproduct['pu_ttc'];
 		//$price_min = $datapriceofproduct['price_min'];
-		$price_base_type = $datapriceofproduct['price_base_type'];
+		$price_base_type = empty($datapriceofproduct['price_base_type']) ? 'HT' : $datapriceofproduct['price_base_type'];
 		$tva_tx = $datapriceofproduct['tva_tx'];
 		$tva_npr = $datapriceofproduct['tva_npr'];
 
@@ -543,7 +545,7 @@ if (empty($reshook)) {
 			$invoice->fetch_thirdparty();
 			$array_options = array();
 
-			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'locatax1_tx' => $localtax1_tx, 'locatax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
+			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'localtax1_tx' => $localtax1_tx, 'localtax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
 
 			/* setup of margin calculation */
 			if (isset($conf->global->MARGIN_TYPE)) {

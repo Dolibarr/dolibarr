@@ -566,7 +566,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (!empty($object->table_element_line)) {
 		// Products
-		$res = $object->fetchLinesbytypeproduct(0);
+		$res = $object->fetchLinesbytypeproduct(0);		// Load all lines products into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
@@ -615,7 +615,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Services
 		$filtertype = 1;
-		$res = $object->fetchLinesbytypeproduct(1);
+		$res = $object->fetchLinesbytypeproduct(1);		// Load all lines services into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');

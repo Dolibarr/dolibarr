@@ -231,7 +231,7 @@ if ($action == 'install') {
 					if (!$error) {
 						@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
 						$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
-						if (!dol_is_dir($modulenamedir)) {
+						if (!dol_is_dir($submodulenamedir)) {
 							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
 						}
 						dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
@@ -443,7 +443,7 @@ foreach ($modulesdir as $dir) {
 								 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							print "admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					} catch (Exception $e) {
 						 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
@@ -495,8 +495,14 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
-	if (!count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
-		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
+	if (count($conf->modules) <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
+	}
+	if (!empty($conf->global->MAIN_SETUP_MODULES_INFO)) {	// Show a custom message
+		$deschelp .= '<div class="info">'.$langs->trans($conf->global->MAIN_SETUP_MODULES_INFO)."<br></div>\n";
+	}
+	if ($deschelp) {
+		$deschelp .= '<br>';
 	}
 }
 if ($mode == 'marketplace') {
@@ -1107,7 +1113,7 @@ if ($mode == 'deploy') {
 
 	$fullurl = '<a href="'.$urldolibarrmodules.'" target="_blank" rel="noopener noreferrer">'.$urldolibarrmodules.'</a>';
 	$message = '';
-	if (!empty($allowonlineinstall)) {
+	if ($allowonlineinstall) {
 		if (!in_array('/custom', explode(',', $dolibarr_main_url_root_alt))) {
 			$message = info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
 			$allowfromweb = -1;
@@ -1126,7 +1132,7 @@ if ($mode == 'deploy') {
 	} else {
 		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
 			// Show clean message
-			if (!is_numeric('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			if (!is_numeric(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US'))) {
 				$message = info_admin($langs->trans(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')));
 			} else {
 				$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));

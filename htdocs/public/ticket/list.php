@@ -195,7 +195,6 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
 if ($action == "view_ticketlist") {
-	print '<div class="div-table-responsive">';
 	print '<div class="ticketpublicarealist">';
 
 	print '<br>';
@@ -236,6 +235,8 @@ if ($action == "view_ticketlist") {
 			$param .= '&entity='.((int) $entity);
 		}
 
+		$param .= '&token='.newToken();
+
 		// Definition of fields for list
 		$arrayfields = array(
 			't.datec' => array('label' => $langs->trans("Date"), 'checked' => 1),
@@ -263,7 +264,9 @@ if ($action == "view_ticketlist") {
 		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
-					$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' =>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) && $extrafields->attributes[$object->table_element]['perms'][$key]);
+					$enabled = abs(dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1, 1, 0));
+					$enabled = (($enabled == 0 || $enabled == 3) ? 0 : $enabled);
+					$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $enabled && $extrafields->attributes[$object->table_element]['perms'][$key]);
 				}
 			}
 		}
@@ -415,6 +418,7 @@ if ($action == "view_ticketlist") {
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -723,7 +727,6 @@ if ($action == "view_ticketlist") {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
 
-	print '</div>';
 	print '</div>';
 } else {
 	print '<div class="ticketpublicarea">';

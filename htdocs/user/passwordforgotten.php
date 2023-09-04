@@ -142,16 +142,16 @@ if (empty($reshook)) {
 			$messagewarning .= '</div>';
 
 			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
-				usleep(20000);	// add delay to simulate setPassword and send_password actions delay
+				usleep(20000);	// add delay to simulate setPassword and send_password actions delay (0.02s)
 				$message .= $messagewarning;
 				$username = '';
 			} else {
 				if (empty($edituser->email)) {
-					usleep(20000);	// add delay to simulate setPassword and send_password actions delay
+					usleep(20000);	// add delay to simulate setPassword and send_password actions delay (0.02s)
 					$message .= $messagewarning;
 				} else {
 					$newpassword = $edituser->setPassword($user, '', 1);
-					if ($newpassword < 0) {
+					if (is_numeric($newpassword) && $newpassword < 0) {
 						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {

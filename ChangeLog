@@ -3,6 +3,151 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 17.0.3 compared to 17.0.2 *****
+FIX: #20304 propaldates update
+FIX: #24508 Label not reported when creating a supplier invoice template (#25340)
+FIX: #24569 filters on stockadate page
+FIX: #24631 Filter on categories of warehouses faulty
+FIX: #24695
+FIX: #24756 Total sum on annual report bank
+FIX: #24918
+FIX: #24985 Societe - Function thirdparty merging not working with module whose tables are not deployed by default
+FIX: #24991
+FIX: #24997 Update slovakia vat rate
+FIX: #25223
+FIX: ability to disable forcing focus on select2 to avoid side effects
+FIX: Add hidden conf to add extrafields in canelle template : INVOICE_ADD_EXTRAFIELD_IN_NOTE
+FIX: Add/Update required modules for thirdparties (by categ) & partnership
+FIX: ajax on off setup type
+FIX: avoid php8 warning
+FIX: Bad management of localtax on TakePOS due to typo error in var name
+FIX: can define empty qty by default when create object line
+FIX: can not remove the last selected value with checkbox
+FIX: case special char for password in email admin page
+FIX: Change $key into $tmpkey
+FIX: CommonObject::getRights()
+FIX: commonobject: getRights() did not find rights correctly for objects built using modulebuilder
+FIX: CVE reported by BELABED Skander (Akerva)
+FIX: CVE XSS on company name reported by Belabed Skander from Akerva
+FIX: decimal values were not possible on shipment quantities (introduced by #24882)
+FIX: default value for condition of payment on proposal
+FIX: default values were not set for specimen objects
+FIX: Delete of bank of a thirdparty must need the edit thirdparty perm
+FIX: display project tasks list columns (#24557)
+FIX: dol_print_error parameters on ticket fetch method (#25318)
+FIX: dol_trunc may not have the desired behaviour for truncating a cryptographic initialiszation vector, for instance when MAIN_DISABLE_TRUNC is used
+FIX: Donation - Missing Language key
+FIX: error expedition qty 0
+FIX: extrafield quick edit not working on products
+FIX: fatal error on Stripe setup page and security when terminal not used
+FIX: Fatal Error PHP 8 : division by 0 (#25384)
+FIX|Fix  Change strpos for expedition and receipt in files.lib.php $haystack and $needle inversion
+FIX: Fix main and left menu info for the root menu of the list of accountancy journal
+FIX: Homogenise handling of null extrafield value in create/update
+FIX: Langs was not loaded for extrafields error
+FIX: Missing localtaxes on receipt in TakePOS
+FIX: no change on thirdparties.modules.php required modules
+FIX: OAUth2 module for Google with scopes for people and calendar
+FIX: php8.1 warning on lists with total due to unset array key (#25460)
+FIX: quickedit code missing on product card
+FIX: Selection of customer on second or more parallel sell in TakePOS
+FIX: Showing bank account on list for direct debit
+FIX: SQL migration file
+FIX: String was compared to an integer
+FIX: to avoid wrong path of file (#25320)
+FIX: Total sum on annual report bank
+FIX: translation extrafield mass action #24080
+FIX: Try to fix the date of invoice on TakePOS on eastern timezone
+FIX: TVA calc option must be the same on update line as on create line
+FIX: Update mouvementstock.class.php (#25396)
+FIX: update product on translation update
+FIX: use dol_substr instead of dol_trunc for truncating openssl initialization vector
+FIX: We should always be able to filter on action type no matter if we can't read actions of others (#24462)
+FIX: wrong var name
+
+***** ChangeLog for 17.0.2 compared to 17.0.1 *****
+FIX: Change strpos for expedition and receipt in files.lib $haystack and $needle inversion
+FIX: Add hidden conf to add extrafields in canelle template : INVOICE_ADD_EXTRAFIELD_IN_NOTE
+FIX: #24414
+FIX: #24798 Deleting member subscription is not possible
+FIX: add a test for updating date on task update in tab time consummed pro…
+FIX: add charchesociales in security.lib.php
+FIX: Add Missing rights check on holiday calendar
+FIX: Add the possibility to events owner to check their events from the list when the perm "Read the actions (events or tasks) of others" is not active
+FIX: Authorize '0' subprice in supplier proposal line
+FIX: avoid error when computed property of extrafields is used
+FIX: avoid warnings php8
+FIX: Back to cancel on reception creation
+FIX: Bad deletion of email when there is several emails processed
+FIX: bank account not visible on credit transfer
+FIX: Better support for option MAIN_NO_INPUT_PRICE_WITH_TAX
+FIX: broken feature : send private message by email
+FIX: categorie compatibility with actioncomm
+FIX: Click on "NEW" in simple POS was broken
+FIX: Compress in xz for better debian old version compatibility
+FIX: Correct Evaluation for extrafields
+FIX: Count only attendee draft of validated.
+FIX: Creation of thumbs when images.lib.php was already included
+FIX: delete of warehouse
+FIX: deletion of a line of time spent (backport e3aa438d2a582313dfd5178b8cc5975e0c912c25)
+FIX: Deployment of external module failed with copy dir error.
+FIX: edit field value of url
+FIX: error management on emoji and utf8 validity by emailcollector
+FIX: expense report autofill ttc input if force ttc conf is enabled
+FIX: filter missing id on consumption contact card
+FIX: Filter on member status
+FIX: Filter status orders in list no invoiced if validated + in progress + delivered
+FIX: Fiscal year list ref display
+FIX: for empty shipping
+FIX: INVOICE_SHOW_SHIPPING_ADDRESS
+FIX: jump to direct record on member search was broken
+FIX: label of columns must be short into invoice PDF table
+FIX: making search in takepos broken when TAKEPOS_PRODUCT_IN_STOCK is set
+FIX: Margin calculation for credit notes on margin reports
+FIX: message MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US
+FIX: missing checking if file is uploaded
+FIX: missing constant and avoid submit button conflict
+FIX: missing entity field in unique index (since v16)
+FIX: Missing error message display on insertExtrafields()
+FIX: missing mrp module dependency
+FIX: More complete fix for #24411
+FIX: No error message because  $price_ht_devise is equal to '0' if not filled because of price2num
+FIX: No usage of the function updateProduction in the update function
+FIX: On company change, we must reuse the company parameters
+FIX: Operator to search category Knowledge
+FIX: Pb in install when password start with some special char like !
+FIX: pb in sending email when mail contains data src image.
+FIX: PDF Font for turkish language
+FIX: product notes rights
+FIX: Propagate correct origin/origin_id when creating order from proposal
+FIX: Propagate extrafields from supplier order to reception
+FIX: reassortlot search categorie + add inithooks
+FIX: Reception process loose some lines on first error.
+FIX: redesign of the function : updateProduction
+FIX: ref_client on Project Overview for propale
+FIX: reference id in getnomurl function.
+FIX: regression Undefined $datepaid
+FIX: remove NOTOKENRENOWAL (backport commit v17 7c316229db8060781ee50f4465b1133b5aeef156)
+FIX: Remove warning on lettering - Impossible to write in ledger v16 v17 v18
+FIX: Report of date of task suggested only if there is tasks
+FIX: Rounding on total margin on invoice list
+FIX: Search List Select Extrafields with condition
+FIX: Search when criteria start with !
+FIX: Sending email from attendee list
+FIX: Shipping address same third party
+FIX: special chars in generated file name from build doc mass action
+FIX: supplier invoice status on bank transfer line
+FIX: supplier link on bank transfer line
+FIX: Task events not displayed
+FIX: token errors on public interface
+FIX: Transfer between accounts with different currencies was broken
+FIX: Update hour of intervention line
+FIX: Upload of files on public ticket interface
+FIX: Use max parameters of widget graph product distribution
+FIX: Warehouse total line
+FIX: When salary module is not enabled, bad permission check on user list
+FIX: wrong colspan for tasks list
+
 ***** ChangeLog for 17.0.1 compared to 17.0.0 *****
 
 FIX: 17.0 PHP Warning invalid argument supplied for foreach
@@ -261,6 +406,7 @@ Following changes may create regressions for some external modules, but were nec
 * You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
 * Making a global search is sending the parameter using always the name search_all (instead of sometimes sall and search_all)
 * The property $url_last_version must be public if defined into module descriptor files;
+* Filters in class field definitions must be a Dolibarr filter syntax string.
 
 ***** ChangeLog for 16.0.5 compared to 16.0.4 *****
 

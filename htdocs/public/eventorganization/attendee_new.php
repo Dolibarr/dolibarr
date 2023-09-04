@@ -38,6 +38,7 @@ if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
+
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retrieve from object ref and not from url.
@@ -108,6 +109,7 @@ if ($type == 'global') {
 	} else {
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
 		$sql .= " WHERE fk_project = ".((int) $project->id);
+		$sql .= " AND status IN (0, 1)";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -553,8 +555,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 				// Add link between invoice and the attendee registration
 				/*if (!$error) {
-					$facture->add_object_linked($confattendee->element, $confattendee->id);
-				}*/
+				 $facture->add_object_linked($confattendee->element, $confattendee->id);
+				 }*/
 			}
 
 			if (!$error) {
@@ -627,7 +629,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			// Get email content from template
 			$arraydefaultmessage = null;
 
-			$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+			$labeltouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
 			}
@@ -725,6 +727,9 @@ if ($project->date_start_event || $project->date_end_event) {
 }
 if ($project->location) {
 	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
+}
+if ($project->note_public) {
+	print '<br><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
 }
 
 print '</div>';

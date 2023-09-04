@@ -152,7 +152,7 @@ fi
 
 if [ "x${demopasshash}" != "xpassword_hash" ]
 then
-	echo '<?php echo MD5("$demopass"); ?>' > /tmp/tmp.php 
+	echo '<?php echo MD5("'$demopass'"); ?>' > /tmp/tmp.php 
 	newpass=`php -f /tmp/tmp.php`
 	rm /tmp/tmp.php
 else

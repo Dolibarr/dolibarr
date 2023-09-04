@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -380,13 +380,8 @@ if ($action == 'writebookkeeping') {
 					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
-						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
 
-						if ($nb_lettering < 0) {
-							$error++;
-							$errorforline++;
-							setEventMessages($lettering_static->error, $lettering_static->errors, 'errors');
-						}
+						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
 					}
 				}
 			}

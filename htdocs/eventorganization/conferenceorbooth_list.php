@@ -74,6 +74,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical objects
+$project = new Project($db);
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
@@ -158,7 +159,6 @@ if (!$permissiontoread) accessforbidden();
  */
 
 if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && !empty($user->rights->eventorganization->write)) {
-	$project = new Project($db);
 	//If "set" fields keys is in projects fields
 	$project_attr=preg_replace('/^set/', '', $action);
 	if (array_key_exists($project_attr, $project->fields)) {
@@ -166,6 +166,7 @@ if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && !empty($
 		if ($result < 0) {
 			setEventMessages(null, $project->errors, 'errors');
 		} else {
+			$projectid = $project->id;
 			$project->{$project_attr}=GETPOST($project_attr);
 			$result=$project->update($user);
 			if ($result < 0) {
@@ -242,7 +243,6 @@ $morejs = array();
 $morecss = array();
 
 if ($projectid > 0 || $projectref) {
-	$project = new Project($db);
 	$result = $project->fetch($projectid, $projectref);
 	if ($result < 0) {
 		setEventMessages(null, $project->errors, 'errors');
@@ -644,6 +644,12 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($project->id > 0) {
+	$param .= '&projectid='.((int) $project->id);
+}
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
 		foreach ($search[$key] as $skey) {
@@ -658,9 +664,6 @@ foreach ($search as $key => $val) {
 	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';

@@ -92,6 +92,7 @@ NoTypeDefinedGoToSetup=No member types defined. Go to menu "Members types"
 NewMemberType=New member type
 WelcomeEMail=Welcome email
 SubscriptionRequired=Contribution required
+SubscriptionRequiredDesc=If subscription is required, a subscription with a start or end date must be recorded to have the member up to date (whatever is subscription amount, even if subscription is free).
 DeleteType=Delete
 VoteAllowed=Vote allowed
 Physical=Individual

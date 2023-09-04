@@ -482,18 +482,16 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-
-		if (empty($user->rights->facture)) {
-			$user->rights->facture = new stdClass();
-		}
-
 		//$dummyuser=new User($db);
 		//$result=restrictedArea($dummyuser,'societe');
 
 		// We save user properties
-		$savpermlire = $user->rights->facture->lire;
-		$savpermcreer = $user->rights->facture->creer;
+		$savpermlire = $user->hasRight('facture', 'lire');
+		$savpermcreer = $user->hasRight('facture', 'creer');
 
+		if (empty($user->rights->facture)) {
+			$user->rights->facture = new stdClass();
+		}
 
 		// Check access to SPECIMEN
 		$user->rights->facture->lire = 0;

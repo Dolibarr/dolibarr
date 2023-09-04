@@ -2045,7 +2045,7 @@ class User extends CommonObject
 				if ($this->pass != $this->pass_indatabase && !dol_verifyHash($this->pass, $this->pass_indatabase_crypted)) {
 					// If a new value for password is set and different than the one crypted into database
 					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass, 0, 1);
-					if ($result < 0) {
+					if (is_numeric($result) && $result < 0) {
 						return -5;
 					}
 				}
@@ -2333,7 +2333,7 @@ class User extends CommonObject
 
 						if ($result >= 0) {
 							$result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1); // Cryptage non gere dans module adherent
-							if ($result < 0) {
+							if (is_numeric($result) && $result < 0) {
 								$this->error = $adh->error;
 								dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 								$error++;

@@ -318,7 +318,7 @@ function getIbanHumanReadable(Account $account)
 {
 	if ($account->getCountryCode() == 'FR') {
 		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', $account->iban);
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban)?'':$account->iban);
 		$iban = new PHP_IBAN\IBAN($ibantoprint);
 		return $iban->HumanFormat();
 	}

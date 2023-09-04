@@ -23,12 +23,34 @@
  */
 
 // Define size of logo small and mini
+// TODO Remove this and call getDefaultImageSizes() instead
 $maxwidthsmall = 480;
 $maxheightsmall = 270; // Near 16/9eme
 $maxwidthmini = 128;
 $maxheightmini = 72; // 16/9eme
 $quality = 80;
 
+/**
+ *      Return default values for image sizes
+ *
+ *      @return array		Array of default values
+ */
+function getDefaultImageSizes()
+{
+	$maxwidthsmall = 480;
+	$maxheightsmall = 270; // Near 16/9eme
+	$maxwidthmini = 128;
+	$maxheightmini = 72; // 16/9eme
+	$quality = 80;
+
+	return array(
+		'maxwidthsmall' => $maxwidthsmall,
+		'maxheightsmall' => $maxheightsmall,
+		'maxwidthmini' => $maxwidthmini,
+		'maxheightmini' => $maxheightmini,
+		'quality' => $quality
+	);
+}
 
 /**
  *      Return if a filename is file name of a supported image format

@@ -424,10 +424,10 @@ if ($object->format == "D") {
 		} else {
 			$next = intval($toutsujet[$i + 1]);
 		}
-		if ($next && dol_print_date($cur, "%a %e") == dol_print_date($next, "%a %e") && dol_print_date($cur, "%B") == dol_print_date($next, "%B")) {
+		if ($next && dol_print_date($cur, "%a %d") == dol_print_date($next, "%a %d") && dol_print_date($cur, "%B") == dol_print_date($next, "%B")) {
 			$colspan++;
 		} else {
-			print '<td colspan="'.$colspan.'" class="jour">'.dol_print_date($cur, "%a %e").'</td>'."\n";
+			print '<td colspan="'.$colspan.'" class="jour">'.dol_print_date($cur, "%a %d").'</td>'."\n";
 			$colspan = 1;
 		}
 	}
