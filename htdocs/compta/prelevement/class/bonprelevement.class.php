@@ -730,25 +730,25 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		$sql = "SELECT sum(pfd.amount) as nb";
+		$sql = "SELECT sum(pd.amount) as nb";
 		if ($mode != 'bank-transfer') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 		} else {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 		}
-		$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+		$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
 		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 		}
 		if ($mode != 'bank-transfer') {
-			$sql .= " AND f.rowid = pfd.fk_facture";
+			$sql .= " AND f.rowid = pd.fk_facture";
 		} else {
-			$sql .= " AND f.rowid = pfd.fk_facture_fourn";
+			$sql .= " AND f.rowid = pd.fk_facture_fourn";
 		}
 		$sql .= " AND f.paye = 0";
-		$sql .= " AND pfd.traite = 0";
-		$sql .= " AND pfd.ext_payment_id IS NULL";
+		$sql .= " AND pd.traite = 0";
+		$sql .= " AND pd.ext_payment_id IS NULL";
 		$sql .= " AND f.total_ttc > 0";
 
 		$resql = $this->db->query($sql);
@@ -796,18 +796,18 @@ class BonPrelevement extends CommonObject
 		} else {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		}
-		$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+		$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pd";
 		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 		}
 		if ($type == 'bank-transfer') {
-			$sql .= " AND f.rowid = pfd.fk_facture_fourn";
+			$sql .= " AND f.rowid = pd.fk_facture_fourn";
 		} else {
-			$sql .= " AND f.rowid = pfd.fk_facture";
+			$sql .= " AND f.rowid = pd.fk_facture";
 		}
-		$sql .= " AND pfd.traite = 0";
-		$sql .= " AND pfd.ext_payment_id IS NULL";
+		$sql .= " AND pd.traite = 0";
+		$sql .= " AND pd.ext_payment_id IS NULL";
 		$sql .= " AND f.total_ttc > 0";
 
 		dol_syslog(get_class($this)."::NbFactureAPrelever");
@@ -891,29 +891,29 @@ class BonPrelevement extends CommonObject
 		$factures_errors = array();
 
 		if (!$error) {
-			$sql = "SELECT f.rowid, pfd.rowid as pfdrowid, f.fk_soc";
+			$sql = "SELECT f.rowid, pd.rowid as pfdrowid, f.fk_soc";
 			$sql .= ", pfd.code_banque, pfd.code_guichet, pfd.number, pfd.cle_rib";
 			$sql .= ", pfd.amount";
 			$sql .= ", s.nom as name";
 			$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
 			if ($type != 'bank-transfer') {
 				$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pfd ON f.rowid = pfd.fk_facture";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture";
 			} else {
 				$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pfd ON f.rowid = pfd.fk_facture_fourn";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture_fourn";
 			}
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
 			$sql .= " AND f.fk_statut = 1"; // Invoice validated
 			$sql .= " AND f.paye = 0";
-			$sql .= " AND pfd.traite = 0";
+			$sql .= " AND pd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
-			$sql .= " AND pfd.ext_payment_id IS NULL";
+			$sql .= " AND pd.ext_payment_id IS NULL";
 			$sql .= " AND sr.type = 'bank' ";
 			if ($did > 0) {
-				$sql .= " AND pfd.rowid = ".((int) $did);
+				$sql .= " AND pd.rowid = ".((int) $did);
 			}
 			dol_syslog(__METHOD__." Read invoices,", LOG_DEBUG);
 
