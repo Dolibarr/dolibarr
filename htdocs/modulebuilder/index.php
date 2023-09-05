@@ -1290,10 +1290,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			}
 			$rights = $moduleobj->rights;
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
-
-			$generatePerms = reWriteAllPermissions($moduledescriptorfile, $rights, null, null, $objectname, $module, -2);
-			if ($generatePerms < 0) {
-				setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
+			$checkComment = checkExistComment($moduledescriptorfile, 1);
+			if ($checkComment < 0) {
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+			} else {
+				$generatePerms = reWriteAllPermissions($moduledescriptorfile, $rights, null, null, $objectname, $module, -2);
+				if ($generatePerms < 0) {
+					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
+				}
 			}
 		}
 
@@ -1459,7 +1463,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			}
 		}
 		if (!$counter) {
-			dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
+			$checkComment = checkExistComment($moduledescriptorfile, 0);
+			if ($checkComment < 0) {
+				$error++;
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+			} else {
+				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
+			}
 		}
 			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
 			$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
@@ -1585,13 +1595,18 @@ if ($dirins && $action == 'initdic' && $module && $dicname) {
 			exit;
 		}
 		$dictionaries = $moduleobj->dictionaries;
-		createNewDictionnary($module, $moduledescriptorfile, $newdicname, $dictionaries);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
+		$checkComment = checkExistComment($moduledescriptorfile, 2);
+		if ($checkComment < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			createNewDictionnary($module, $moduledescriptorfile, $newdicname, $dictionaries);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			clearstatcache(true);
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
+			exit;
 		}
-		clearstatcache(true);
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
-		exit;
 	}
 }
 
@@ -1895,35 +1910,45 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 
 		// delete menus linked to the object
 		$menus = $moduleobj->menu;
-		reWriteAllMenus($moduledescriptorfile, $menus, $objectname, null, -1);
+		$rewriteMenu = checkExistComment($moduledescriptorfile, 0);
+
+		if ($rewriteMenu < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			reWriteAllMenus($moduledescriptorfile, $menus, $objectname, null, -1);
+		}
 
 		// regenerate permissions and delete them
 		$permissions = $moduleobj->rights;
-		reWriteAllPermissions($moduledescriptorfile, $permissions, null, null, $objectname, '', -1);
-
-		// check if documentation has been generated
-		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
-		if (file_exists($file_doc)) {
-			deletePropsAndPermsFromDoc($file_doc, $objectname);
-		}
-
-		clearstatcache(true);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
-		}
-		$resultko = 0;
-		foreach ($filetodelete as $tmpfiletodelete) {
-			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
-			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 0, 0, 1);
-			if (!$resulttmp) {
-				$resultko++;
-			}
-		}
-
-		if ($resultko == 0) {
-			setEventMessages($langs->trans("FilesDeleted"), null);
+		$rewritePerms = checkExistComment($moduledescriptorfile, 1);
+		if ($rewritePerms < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			setEventMessages($langs->trans("ErrorSomeFilesCouldNotBeDeleted"), null, 'warnings');
+			reWriteAllPermissions($moduledescriptorfile, $permissions, null, null, $objectname, '', -1);
+		}
+		if ($rewritePerms && $rewriteMenu) {
+			// check if documentation has been generated
+			$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
+			deletePropsAndPermsFromDoc($file_doc, $objectname);
+
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			$resultko = 0;
+			foreach ($filetodelete as $tmpfiletodelete) {
+				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
+				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 0, 0, 1);
+				if (!$resulttmp) {
+					$resultko++;
+				}
+			}
+
+			if ($resultko == 0) {
+				setEventMessages($langs->trans("FilesDeleted"), null);
+			} else {
+				setEventMessages($langs->trans("ErrorSomeFilesCouldNotBeDeleted"), null, 'warnings');
+			}
 		}
 	}
 
@@ -1978,6 +2003,11 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 
 	$dicts = $moduleobj->dictionaries;
+	$checkComment = checkExistComment($moduledescriptorfile, 2);
+	if ($checkComment < 0) {
+		$error++;
+		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
+	}
 
 	if (!empty(GETPOST('dictionnarykey'))) {
 		$newdicname = $dicts['tabname'][GETPOST('dictionnarykey')-1];
@@ -2021,13 +2051,16 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		$result = updateDictionaryInFile($module, $moduledescriptorfile, $dicts);
 		if ($result > 0) {
 			setEventMessages($langs->trans("DictionaryDeleted", ucfirst(substr($newdicname, 2))), null);
+		} elseif (!$result) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			clearstatcache(true);
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
+			exit;
 		}
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
-		}
-		clearstatcache(true);
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
-		exit;
 	}
 }
 if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey')) {
@@ -2056,16 +2089,21 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey')) {
 	$dicts = $moduleobj->dictionaries;
 	if (!empty(GETPOST('tablib')) && GETPOST('tablib') !== $dicts['tablib'][$keydict]) {
 		$dicts['tablib'][$keydict] = ucfirst(strtolower(GETPOST('tablib')));
-		$updateDict = updateDictionaryInFile($module, $moduledescriptorfile, $dicts);
-		if ($updateDict > 0) {
-			setEventMessages($langs->trans("DictionaryNameUpdated", ucfirst(GETPOST('tablib'))), null);
+		$checkComment = checkExistComment($moduledescriptorfile, 2);
+		if ($checkComment < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			$updateDict = updateDictionaryInFile($module, $moduledescriptorfile, $dicts);
+			if ($updateDict > 0) {
+				setEventMessages($langs->trans("DictionaryNameUpdated", ucfirst(GETPOST('tablib'))), null);
+			}
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			clearstatcache(true);
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
+			exit;
 		}
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
-		}
-		clearstatcache(true);
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
-		exit;
 	}
 	//var_dump(GETPOST('tablib'));exit;
 }
@@ -2215,11 +2253,6 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 			5=>$crud
 		];
 
-		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-		//rewriting all permissions after add a right
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
-		setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
-
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
 			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
@@ -2229,14 +2262,22 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
 		}
 	}
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		//rewriting all permissions after add a right
+		$rewrite = checkExistComment($moduledescriptorfile, 1);
+	if ($rewrite < 0) {
+		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+	} else {
+		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
+		setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 
-	clearstatcache(true);
-	if (function_exists('opcache_invalidate')) {
-		opcache_reset();	// remove the include cache hell !
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		exit;
 	}
-
-	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-	exit;
 }
 
 
@@ -2330,17 +2371,19 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		// rewriting all permissions after update permission needed
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, '', '', 2);
-
-		setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
-
-		clearstatcache(true);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
+		$rewrite = checkExistComment($moduledescriptorfile, 1);
+		if ($rewrite < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, '', '', 2);
+			setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			exit;
 		}
-
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-		exit;
 	}
 }
 // Delete permission
@@ -2363,11 +2406,6 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 	$key = (int) GETPOST('permskey', 'int')-1;
 
 	if (!$error) {
-		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-
-		// rewriting all permissions
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, null, '', '', 0);
-
 		// check if module is enabled
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
@@ -2375,12 +2413,18 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
-			setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
 			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
-
 			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
 			exit;
+		}
+
+		// rewriting all permissions
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		$rewrite = checkExistComment($moduledescriptorfile, 1);
+		if ($rewrite < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
+			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, null, '', '', 0);
 			setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
 
 			clearstatcache(true);
@@ -2538,24 +2582,29 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
 	$key = (int) GETPOST('menukey', 'int');
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 
-	if ($menus[$key]['fk_menu'] === 'fk_mainmenu='.strtolower($module)) {
-		if (in_array(strtolower($menus[$key]['leftmenu']), $result)) {
-			reWriteAllMenus($moduledescriptorfile, $menus, $menus[$key]['leftmenu'], $key, -1);
+	$checkcomment = checkExistComment($moduledescriptorfile, 0);
+	if ($checkcomment < 0) {
+		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+	} else {
+		if ($menus[$key]['fk_menu'] === 'fk_mainmenu='.strtolower($module)) {
+			if (in_array(strtolower($menus[$key]['leftmenu']), $result)) {
+				reWriteAllMenus($moduledescriptorfile, $menus, $menus[$key]['leftmenu'], $key, -1);
+			} else {
+				reWriteAllMenus($moduledescriptorfile, $menus, null, $key, 0);
+			}
 		} else {
 			reWriteAllMenus($moduledescriptorfile, $menus, null, $key, 0);
 		}
-	} else {
-		reWriteAllMenus($moduledescriptorfile, $menus, null, $key, 0);
-	}
 
-	clearstatcache(true);
-	if (function_exists('opcache_invalidate')) {
-		opcache_reset();	// remove the include cache hell !
-	}
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
 
-	setEventMessages($langs->trans('MenuDeletedSuccessfuly'), null);
-	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-	exit;
+		setEventMessages($langs->trans('MenuDeletedSuccessfuly'), null);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		exit;
+	}
 }
 
 // Add menu in module without initial object
@@ -2684,15 +2733,19 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			$menuToAdd['perms'] = '1';
 		}
 
-		$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuToAdd, null, 1);
-
-		clearstatcache(true);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();
+		$checkcomment = checkExistComment($moduledescriptorfile, 0);
+		if ($checkcomment < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			reWriteAllMenus($moduledescriptorfile, $menus, $menuToAdd, null, 1);
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+			setEventMessages($langs->trans('MenuAddedSuccesfuly'), null);
+			exit;
 		}
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-		setEventMessages($langs->trans('MenuAddedSuccesfuly'), null);
-		exit;
 	}
 }
 
@@ -2771,20 +2824,25 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 			}
 			if (!$error) {
 				//update menu
-				$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
+				$checkComment = checkExistComment($moduledescriptorfile, 0);
+				if ($checkComment < 0) {
+					setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+				} else {
+					$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
 
-				clearstatcache(true);
-				if (function_exists('opcache_invalidate')) {
-					opcache_reset();
-				}
-				if ($result < 0) {
-					setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
-					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
+					clearstatcache(true);
+					if (function_exists('opcache_invalidate')) {
+						opcache_reset();
+					}
+					if ($result < 0) {
+						setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
+						header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
+						exit;
+					}
+					setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
+					header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 					exit;
 				}
-				setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
-				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-				exit;
 			}
 	} else {
 		$_POST['type'] = '';
