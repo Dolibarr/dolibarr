@@ -134,6 +134,7 @@ class FormMail extends Form
 	public $withtocc;
 	public $withtoccc;
 	public $withtopic;
+	public $witherrorsto;
 
 	/**
 	 * @var int 0=No attaches files, 1=Show attached files, 2=Can add new attached files
@@ -150,12 +151,20 @@ class FormMail extends Form
 	public $withreplytoreadonly;
 	public $withtoreadonly;
 	public $withtoccreadonly;
+	public $witherrorstoreadonly;
 	public $withtocccreadonly;
 	public $withtopicreadonly;
+	public $withbodyreadonly;
 	public $withfilereadonly;
 	public $withdeliveryreceipt;
 	public $withcancel;
+	public $withdeliveryreceiptreadonly;
 	public $withfckeditor;
+
+	/**
+	 * @var string ckeditortoolbar
+	 */
+	public $ckeditortoolbar;
 
 	public $substit = array();
 	public $substit_lines = array();

@@ -62,6 +62,7 @@ class FormSms
 	public $withreplytoreadonly;
 	public $withtoreadonly;
 	public $withtopicreadonly;
+	public $withbodyreadonly;
 	public $withcancel;
 
 	public $substit = array();

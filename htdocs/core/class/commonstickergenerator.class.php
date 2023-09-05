@@ -71,8 +71,10 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	// protected
-	// Nom du format de l'etiquette
+	// Name of stick
 	protected $_Avery_Name = '';
+	// Code of stick
+	protected $_Avery_Code = '';
 	// Marge de gauche de l'etiquette
 	protected $_Margin_Left = 0;
 	// marge en haut de la page avant la premiere etiquette

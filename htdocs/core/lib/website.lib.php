@@ -163,12 +163,13 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
 	}*/
 	$content = dolStripPhpCode($content, $replacewith);
-	//var_dump($content);
 
 	// Protect the link styles.css.php to any replacement that we make after.
 	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+	$content = str_replace('src="javascript.js.php', 'src="!~!~!~javascript.js.php', $content);
 	$content = str_replace('href="http', 'href="!~!~!~http', $content);
 	$content = str_replace('href="//', 'href="!~!~!~//', $content);
+	$content = str_replace('src="//', 'src="!~!~!~//', $content);
 	$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
@@ -301,11 +302,14 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	} elseif (defined('USEDOLIBARRSERVER')) {	// REPLACEMENT OF LINKS When page called from Dolibarr server
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
+		$content = str_replace(' async src="/javascript.js', ' async src="javascript.js', $content);
 
 		// Protect the link styles.css.php to any replacement that we make after.
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+		$content = str_replace('src="javascript.css.php', 'src="!~!~!~javascript.css.php', $content);
 		$content = str_replace('href="http', 'href="!~!~!~http', $content);
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
+		$content = str_replace('src="//', 'src="!~!~!~//', $content);
 		$content = str_replace(array('src="viewimage.php', 'src="/viewimage.php'), 'src="!~!~!~/viewimage.php', $content);
 		$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 		$content = str_replace(array('href="document.php', 'href="/document.php'), 'href="!~!~!~/document.php', $content);
@@ -354,8 +358,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		if (empty($includehtmlcontentopened)) {
 			$content = str_replace('!~!~!~', '', $content);
 		}
-	} else // REPLACEMENT OF LINKS When page called from virtual host web server
-	{
+	} else { // REPLACEMENT OF LINKS When page called from virtual host web server
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
 			$content = preg_replace('/^(<link[^>]*rel="canonical" href=")\//m', '\1'.$website->virtualhost.'/', $content, -1, $nbrep);
