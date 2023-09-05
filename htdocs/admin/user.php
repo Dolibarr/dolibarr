@@ -125,6 +125,16 @@ if ($action == 'set_default') {
 	} else {
 		dol_print_error($db);
 	}
+} elseif ($action == 'sethidenonemployeeuser') {
+	//Set hide non employee user into combox or select
+	$status = GETPOST('status', 'alpha');
+
+	if (dolibarr_set_const($db, "USER_HIDE_NONEMPLOYEE_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 
@@ -192,6 +202,26 @@ if ($conf->use_javascript_ajax) {
 	}
 }
 print '</td></tr>';
+
+// user hide non employee
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UserHideNonEmployee").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+
+print '<td align="center" width="100">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX');
+} else {
+	if (empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_NONEMPLOYEE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_NONEMPLOYEE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	}
+}
+print '</td></tr>';
+
+// user hide external
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserHideExternal").'</td>';

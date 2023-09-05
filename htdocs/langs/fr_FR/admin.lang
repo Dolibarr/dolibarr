@@ -1419,7 +1419,8 @@ DisableForgetPasswordLinkOnLogonPage=Cacher le lien "Mot de passe oublié" sur l
 UsersSetup=Configuration du module utilisateurs
 UserMailRequired=Email requis pour créer un nouvel utilisateur
 UserHideInactive=Masquer les utilisateurs inactifs sur toutes les listes déroulantes d'utilisateurs (non recommandé: cela peut signifier que vous ne pourrez pas filtrer ou rechercher les anciens utilisateurs sur certaines pages)
-UserHideExternal=Masquer les utilisateurs externes (non salariés) sur toutes les listes déroulantes d'utilisateurs (non recommandé: cela peut signifier que vous ne pourrez pas filtrer ou rechercher les utilisateurs externes sur certaines pages)
+UserHideExternal=Masquer les utilisateurs externes (non liés à un tiers) sur toutes les listes déroulantes d'utilisateurs (non recommandé: cela peut signifier que vous ne pourrez pas filtrer ou rechercher les utilisateurs externes sur certaines pages)
+UserHideNonEmployee=Masquer les utilisateurs externes (non salariés) sur toutes les listes déroulantes d'utilisateurs (non recommandé: cela peut signifier que vous ne pourrez pas filtrer ou rechercher les utilisateurs non salariés sur certaines pages)
 UsersDocModules=Modèles de documents pour les documents générés à partir de la fiche utilisateur
 GroupsDocModules=Modèles de documents pour les documents générés à partir de la fiche d'un groupe
 ##### HRM setup #####
