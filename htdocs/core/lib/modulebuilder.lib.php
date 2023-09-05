@@ -448,7 +448,34 @@ function dolGetListOfObjectClasses($destdir)
 
 	return -1;
 }
+/**
+ * function for check if comment begin an end exist in modMyModule class
+ * @param  string  $file    filename or path
+ * @param  int     $number   0 = For Menus,1 = For permissions, 2 = For Dictionaries
+ * @return int     1 if OK , -1 if KO
+ */
+function checkExistComment($file, $number)
+{
 
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file_get_contents($file);
+	if ($number === 0) {
+		if (strpos($content, '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */') !== false && strpos($content, '/* END MODULEBUILDER LEFTMENU MYOBJECT */') !== false) {
+			return 1;
+		}
+	} elseif ($number === 1) {
+		if (strpos($content, '/* BEGIN MODULEBUILDER PERMISSIONS */') !== false && strpos($content, '/* END MODULEBUILDER PERMISSIONS */') !== false) {
+			return 1;
+		}
+	} elseif ($number == 2) {
+		if (strpos($content, '/* BEGIN MODULEBUILDER DICTIONARIES */') !== false && strpos($content, '/* END MODULEBUILDER DICTIONARIES */') !== false) {
+			return 1;
+		}
+	}
+	return -1;
+}
 /**
  * Delete all permissions
  *
