@@ -372,6 +372,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'facturerec') {
 		$features = 'facture';
 	}
+	if ($features == 'supplier_invoicerec') {
+		$features = 'fournisseur';
+		$feature2 = 'facture';
+	}
 	if ($features == 'mo') {
 		$features = 'mrp';
 	}
