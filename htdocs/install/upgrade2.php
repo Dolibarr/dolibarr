@@ -4100,6 +4100,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 
 	// List of files to delete
 	$filetodeletearray = array(
+		'/core/ajax/ajaxcompanies.php',
 		'/core/triggers/interface_demo.class.php',
 		'/core/menus/barre_left/default.php',
 		'/core/menus/barre_top/default.php',
@@ -4107,8 +4108,6 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/modCommercial.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
-		'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
-		'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
@@ -4137,6 +4136,10 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
 		'/core/boxes/box_members.php',
+
+		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
+		'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
+		'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
 
 		'/api/class/api_generic.class.php',
 		'/asterisk/cidlookup.php',

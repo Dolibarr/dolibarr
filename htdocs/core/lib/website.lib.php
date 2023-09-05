@@ -76,6 +76,9 @@ function dolStripPhpCode($str, $replacewith = '')
 function dolKeepOnlyPhpCode($str)
 {
 	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?php', '__LTINTPHP__', $str);
+	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this is Off in php.ini
+	$str = str_replace('__LTINTPHP__', '<?php', $str);
 
 	$newstr = '';
 
