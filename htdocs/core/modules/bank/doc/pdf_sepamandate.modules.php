@@ -106,11 +106,10 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$this->xPosSignArea=120;
 
-		$this->heightforfreetext = (!empty(getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT')) ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5);
+		$this->heightforfreetext = (getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') > 0 ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5);
 
 		$this->heightforfooter = $this->marge_basse + 8;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
