@@ -150,6 +150,8 @@ abstract class CommonDocGenerator
 	 */
 	public $result;
 
+	public $posxlabel;
+	public $posxup;
 	public $posxref;
 	public $posxpicture;	// For picture
 	public $posxdesc;		// For description

@@ -371,7 +371,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	/*print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
 	print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	print ", perm: user->right->".$features.($feature2 ? "->".$feature2 : "")."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
+	print ", perm: user->hasRight(".$features.($feature2 ? ",".$feature2 : "").", lire) = ".($feature2 ? $user->hasRight($features, $feature2, 'lire') : $user->hasRight($features, 'lire'))."<br>";
 	*/
 
 	$parentfortableentity = '';

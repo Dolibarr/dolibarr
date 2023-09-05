@@ -40,15 +40,12 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
-
-
-
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'receptions'));
 
 if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
@@ -80,7 +77,7 @@ $objectorder = new Commande($db);
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
-	if ($result < 0) {
+	if ($result <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$result = $object->fetch_thirdparty();
@@ -104,6 +101,7 @@ if (!isModEnabled('stock')) {
 
 $usercancreate = $user->hasRight('expedition', 'creer');
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+
 
 /*
  * Actions
@@ -319,7 +317,7 @@ $morejs = array('/expedition/js/lib_dispatch.js.php');
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs);
 
-if ($id > 0 || !empty($ref)) {
+if ($object->id > 0 || !empty($object->ref)) {
 	$lines = $object->lines;
 
 	$num_prod = count($lines);
