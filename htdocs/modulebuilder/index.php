@@ -1290,7 +1290,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			}
 			$rights = $moduleobj->rights;
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
-			$checkComment = checkExistComment($moduledescriptorfile, 1);
+			$checkComment=checkExistComment($moduledescriptorfile, 1);
 			if ($checkComment < 0) {
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 			} else {
