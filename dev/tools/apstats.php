@@ -246,11 +246,11 @@ th,td {
 	margin-left: 10px;
 }
 .back1 {
-	background-color: #888800;
+	background-color: #884466;
 	color: #FFF;
 }
-.back1 {
-	background-color: #880088;
+.back2 {
+	background-color: #664488;
 	color: #FFF;
 }
 </style>';
