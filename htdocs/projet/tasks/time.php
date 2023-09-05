@@ -1043,7 +1043,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-			print nl2br($projectstatic->description);
+			print dol_htmlentitiesbr($projectstatic->description);
 			print '</td></tr>';
 
 			// Categories
@@ -2087,7 +2087,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOST('lineid', 'int') == $task_time->rowid) {
-          print '<input type="hidden" name="lineid" value="' . GETPOST('lineid', 'int') . '">';
+					print '<input type="hidden" name="lineid" value="' . GETPOST('lineid', 'int') . '">';
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 					print ' ';
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
