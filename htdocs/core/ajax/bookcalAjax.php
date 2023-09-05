@@ -80,11 +80,11 @@ if ($action == 'verifyavailability') {
 	}
 	if (!$error) {
 		$datetocheckbooking_end = dol_time_plus_duree($datetocheckbooking, 1, 'd');
-		$sql = "SELECT b.start, b.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_booking as b";
+		$sql = "SELECT b.datep, b.id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as b";
 		$sql .= " WHERE fk_bookcal_availability = ".((int) $idavailability);
-		$sql .= " AND b.start >= '".$db->idate($datetocheckbooking)."'";
-		$sql .= " AND b.start < '".$db->idate($datetocheckbooking_end)."'";
+		$sql .= " AND b.datep >= '".$db->idate($datetocheckbooking)."'";
+		$sql .= " AND b.datep < '".$db->idate($datetocheckbooking_end)."'";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -94,7 +94,7 @@ if ($action == 'verifyavailability') {
 			$response["content"] = array();
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$dateobject = $obj->start;
+				$dateobject = $obj->datep;
 				$dateobject = explode(" ", $dateobject)[1];
 				$dateobject = explode(":", $dateobject);
 
