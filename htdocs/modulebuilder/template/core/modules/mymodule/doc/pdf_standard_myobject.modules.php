@@ -197,8 +197,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$realpatharray = array();
 		$this->atleastonephoto = false;
 		/*
-		if (getDolGlobalInt('MAIN_GENERATE_MYOBJECT_WITH_PICTURE')))
-		{
+		if (getDolGlobalInt('MAIN_GENERATE_MYOBJECT_WITH_PICTURE'))) {
 			$objphoto = new Product($this->db);
 
 			for ($i = 0; $i < $nblines; $i++)
@@ -284,7 +283,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 50; // Height reserved to output the info and total part and payment part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + (getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 
 				if (class_exists('TCPDF')) {
@@ -316,7 +315,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
 				// If user has no certificate, we try to take the company one
 				if (!$cert) {
-					$cert = getDolGlobalString('CERTIFICATE_CRT') ? '' : getDolGlobalString('CERTIFICATE_CRT');
+					$cert = getDolGlobalString('CERTIFICATE_CRT');
 				}
 				// If a certificate is found
 				if ($cert) {
@@ -1080,7 +1079,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			}
 
 			// Recipient name
-			if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+			if ($object->contact->socid != $object->thirdparty->id && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1239,7 +1238,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			'border-left' => true, // add left line separator
 		);
 
-		if (getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
+		if (!getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$this->cols['vat']['status'] = true;
 		}
 
@@ -1290,7 +1289,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			),
 			'border-left' => true, // add left line separator
 		);
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->cols['unit']['status'] = true;
 		}
 
