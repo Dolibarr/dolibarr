@@ -1290,3 +1290,31 @@ function writeApiUrlsInDoc($file_api, $file_doc)
 	}
 	return -1;
 }
+
+
+/**
+ * count directories or files in modulebuilder folder
+ * @param  string $path  path of directory
+ * @param  int    $type  type of file 1= file,2=directory
+ * @return int|bool
+ */
+function countItemsInDirectory($path, $type = 1)
+{
+	if (!is_dir($path)) {
+		return false;
+	}
+
+	$allFilesAndDirs = scandir($path);
+	$count = 0;
+
+	foreach ($allFilesAndDirs as $item) {
+		if ($item != '.' && $item != '..') {
+			if ($type == 1 && is_file($path . DIRECTORY_SEPARATOR . $item) && strpos($item, '.back') === false) {
+				$count++;
+			} elseif ($type == 2 && is_dir($path . DIRECTORY_SEPARATOR . $item)) {
+				$count++;
+			}
+		}
+	}
+	return $count;
+}
