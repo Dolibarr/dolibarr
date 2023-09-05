@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Visualització per compte comptable
 VueBySubAccountAccounting=Visualització per subcompte comptable
 
-MainAccountForCustomersNotDefined=Compte comptable per a clients no definida en la configuració
-MainAccountForSuppliersNotDefined=Compte comptable principal per a proveïdors no definit a la configuració
-MainAccountForUsersNotDefined=Compte comptable per a usuaris no de definit en la configuració
-MainAccountForVatPaymentNotDefined=Compte comptable per a IVA no definida en la configuració
-MainAccountForSubscriptionPaymentNotDefined=Compte comptable per a IVA no definida en la configuració del mòdul
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Compte comptable per a l'usuari no definit a la configuració
 
 AccountancyArea=Àrea de comptabilitat

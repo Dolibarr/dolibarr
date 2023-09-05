@@ -208,6 +208,7 @@ class FormMargin
 	public function displayMarginInfos($object, $force_price = false)
 	{
 		global $langs, $conf, $user, $hookmanager;
+		global $action;
 
 		if (!empty($user->socid)) {
 			return;

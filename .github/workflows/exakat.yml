@@ -2,6 +2,7 @@
 name: "Exakat analysis"
 
 on:
+  # execute once a month, the 1st
   schedule:
   - cron: "0 20 1 * *"
   workflow_dispatch:
@@ -21,7 +22,7 @@ jobs:
     - name: Exakat
       uses: docker://exakat/exakat-ga
       with:
-        ignore_rules: 'Classes/UseInstanceof,Performances/PrePostIncrement,Functions/UndefinedFunctions,Functions/WrongNumberOfArguments,Functions/WrongTypeWithCall,Variables/UndefinedVariable,Classes/DontUnsetProperties,Classes/NonPpp,Classes/StaticMethodsCalledFromObject,Classes/UseClassOperator,Functions/UsesDefaultArguments,Php/NoClassInGlobal,Php/ShouldUseCoalesce,Php/WrongTypeForNativeFunction,Structures/AddZero,Structures/DropElseAfterReturn,Structures/IfWithSameConditions,Structures/MergeIfThen,Structures/ElseIfElseif,Structures/ExitUsage,Structures/RepeatedPrint,Structures/RepeatedRegex,Structures/SameConditions,Structures/SwitchWithoutDefault,Structures/ShouldMakeTernary,Structures/UselessParenthesis,Structures/UseConstant' 
+        ignore_rules: 'Classes/UseInstanceof,Performances/PrePostIncrement,Functions/UndefinedFunctions,Functions/WrongNumberOfArguments,Functions/WrongTypeWithCall,Variables/UndefinedVariable,Classes/DontUnsetProperties,Classes/NonPpp,Classes/StaticMethodsCalledFromObject,Classes/UseClassOperator,Functions/UsesDefaultArguments,Php/NoClassInGlobal,Php/ShouldUseCoalesce,Php/WrongTypeForNativeFunction,Structures/AddZero,Structures/DropElseAfterReturn,Structures/IfWithSameConditions,Structures/MergeIfThen,Structures/NestedTernary,Structures/ElseIfElseif,Structures/ExitUsage,Structures/RepeatedPrint,Structures/RepeatedRegex,Structures/SameConditions,Structures/SwitchWithoutDefault,Structures/ShouldMakeTernary,Structures/UselessParenthesis,Structures/UseConstant' 
         ignore_dirs: '/htdocs/includes/,/htdocs/install/doctemplates/,/build/,/dev/,/doc/,/scripts/,/test/'
         file_extensions: php   
         project_reports: Perfile     

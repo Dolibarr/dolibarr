@@ -214,7 +214,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$Tickettatic = new Ticket($db);
-		$nbTicket = count($Tickettatic->getAllItemsLinkedByObjectID($project->id, '*', 'fk_project', 'ticket'));
+		$nbTicket = $Tickettatic->getCountOfItemsLinkedByObjectID($project->id, 'fk_project', 'ticket');
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?projectid='.((int) $project->id);
 		$head[$h][1] = $langs->trans("Ticket");
 		if ($nbTicket > 0) {

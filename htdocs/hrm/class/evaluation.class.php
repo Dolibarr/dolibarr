@@ -154,7 +154,7 @@ class Evaluation extends CommonObject
 	/**
 	 * @var string    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'Evaluationline';
+	public $class_element_line = 'EvaluationLine';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
@@ -166,10 +166,10 @@ class Evaluation extends CommonObject
 	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	protected $childtablesoncascade = array('@Evaluationline:hrm/class/evaluationdet.class.php:fk_evaluation');
+	protected $childtablesoncascade = array('@EvaluationLine:hrm/class/evaluationdet.class.php:fk_evaluation');
 
 	/**
-	 * @var Evaluationline[]     Array of subtable lines
+	 * @var EvaluationLine[]     Array of subtable lines
 	 */
 	public $lines = array();
 
@@ -237,7 +237,7 @@ class Evaluation extends CommonObject
 			if (is_array($TRequiredRanks) && !empty($TRequiredRanks)) {
 				$this->lines = array();
 				foreach ($TRequiredRanks as $required) {
-					$line = new Evaluationline($this->db);
+					$line = new EvaluationLine($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
 					$line->required_rank = $required->rankorder;
@@ -919,7 +919,7 @@ class Evaluation extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new Evaluationline($this->db);
+		$objectline = new EvaluationLine($this->db);
 		$result = $objectline->fetchAll('ASC', '', 0, 0, array('customsql'=>'fk_evaluation = '.$this->id));
 
 		if (is_numeric($result)) {
@@ -1077,19 +1077,16 @@ class Evaluation extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_user') && !(empty($this->fk_user))) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Employee").'</span> : ';
-			$return .= '<span class="info-box-label ">'.$this->fk_user.'</span>';
+		if (!empty($arraydata['user'])) {
+			$return .= '<br><span class="info-box-label ">'.$arraydata['user'].'</span>';
 		}
-		if (property_exists($this, 'fk_job') && !(empty($this->fk_job))) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Job").'</span> : ';
-			$return .= '<span class="info-box-label ">'.$this->fk_job.'</span>';
+		if (!empty($arraydata['job'])) {
+			$return .= '<br><span class="info-box-label ">'.$arraydata['job'].'</span>';
 		}
-
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
-		$return .= '</span>';
+		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;

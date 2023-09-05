@@ -1620,6 +1620,19 @@ class FactureRec extends CommonInvoice
 	}
 
 	/**
+	 * Return next reference of invoice not already used (or last reference)
+	 *
+	 * @param	 Societe	$soc		Thirdparty object
+	 * @param    string		$mode		'next' for next value or 'last' for last value
+	 * @return   string					free ref or last ref
+	 */
+	public function getNextNumRef($soc, $mode = 'next')
+	{
+		// Not used for recurring invoices
+		return '';
+	}
+
+	/**
 	 *	Load miscellaneous information for tab "Info"
 	 *
 	 *	@param  int		$id		Id of object to load
@@ -1667,7 +1680,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public function initAsSpecimen($option = '')
 	{
-		global $user, $langs, $conf;
+		global $langs;
 
 		$now = dol_now();
 		$arraynow = dol_getdate($now);

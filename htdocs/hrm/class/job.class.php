@@ -728,7 +728,7 @@ class Job extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Job").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("JobProfile").'</u>';
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
