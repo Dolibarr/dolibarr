@@ -3203,6 +3203,19 @@ if ($module == 'initmodule') {
 	// Tabs for module
 	if (!$error) {
 		$dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+		$destdir = $dirread.'/'.strtolower($module);
+		$objects = dolGetListOfObjectClasses($destdir);
+		$diroflang = dol_buildpath($modulelowercase, 0)."/langs";
+		$countLangs = countItemsInDirectory($diroflang, 2);
+		$countDictionaries = count($moduleobj->dictionaries['tabname']);
+		$countRights = count($moduleobj->rights);
+		$countMenus = count($moduleobj->menu);
+		$countTriggers = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/triggers");
+		$countWidgets = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/boxes");
+		$countCss = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/css");
+		$countJs = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/js");
+		$countCLI = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/scripts");
+		$hasDoc = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/doc");
 
 		$head2 = array();
 		$h = 0;
@@ -3213,22 +3226,22 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Objects");
+		$head2[$h][1] = (count($objects) <= 0 ? $langs->trans("Objects") : $langs->trans("Objects")." (".count($objects).")");
 		$head2[$h][2] = 'objects';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=languages&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Languages");
+		$head2[$h][1] = ($countLangs <= 0 ? $langs->trans("Languages") : $langs->trans("Languages")." (".$countLangs.") ");
 		$head2[$h][2] = 'languages';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Dictionaries");
+		$head2[$h][1] = ($countDictionaries <= 0 ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries')." (".$countDictionaries.")");
 		$head2[$h][2] = 'dictionaries';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Permissions");
+		$head2[$h][1] = ($countRights <= 0 ? $langs->trans("Permissions") : $langs->trans("Permissions")." (".$countRights.")");
 		$head2[$h][2] = 'permissions';
 		$h++;
 
@@ -3238,7 +3251,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Menus");
+		$head2[$h][1] = ($countMenus <= 0 ? $langs->trans("Menus") : $langs->trans("Menus")." (".$countMenus.")");
 		$head2[$h][2] = 'menus';
 		$h++;
 
@@ -3248,12 +3261,12 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Triggers");
+		$head2[$h][1] = ($countTriggers <= 0 ? $langs->trans("Triggers") : $langs->trans("Triggers")." (".$countTriggers.")");
 		$head2[$h][2] = 'triggers';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Widgets");
+		$head2[$h][1] = ($countWidgets <= 0 ? $langs->trans("Widgets") : $langs->trans("Widgets")." (".$countWidgets.")");
 		$head2[$h][2] = 'widgets';
 		$h++;
 
@@ -3263,17 +3276,17 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=css&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("CSS");
+		$head2[$h][1] = ($countCss <= 0 ? $langs->trans("CSS") : $langs->trans("CSS")." (".$countCss.")");
 		$head2[$h][2] = 'css';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=js&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("JS");
+		$head2[$h][1] = ($countJs <= 0 ? $langs->trans("JS") : $langs->trans("JS")." (".$countJs.")");
 		$head2[$h][2] = 'js';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cli&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("CLI");
+		$head2[$h][1] = ($countCLI <= 0 ? $langs->trans("CLI") : $langs->trans("CLI")." (".$countCLI.")");
 		$head2[$h][2] = 'cli';
 		$h++;
 
@@ -3283,7 +3296,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Documentation");
+		$head2[$h][1] = ($hasDoc <= 0 ? $langs->trans("Documentation") : $langs->trans("Documentation")." (".$hasDoc.")");
 		$head2[$h][2] = 'specifications';
 		$h++;
 
