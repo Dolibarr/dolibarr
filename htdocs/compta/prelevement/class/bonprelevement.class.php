@@ -87,6 +87,10 @@ class BonPrelevement extends CommonObject
 	 */
 	public $file;
 
+	/*
+	 * @var string filename
+	 */
+	public $filename;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
