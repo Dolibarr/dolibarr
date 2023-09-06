@@ -549,11 +549,16 @@ if ($resourceid > 0) {
 }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
+	if ($filtert > 0) {
+		$sql .= " AND ar.fk_element = ".$filtert;
+	}
+	if ($usergroup > 0) {
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
+	}
 }
-if ($usergroup > 0) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
-}
+
 $sql .= ' WHERE a.fk_action = ca.id';
 $sql .= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
@@ -597,10 +602,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 if ($socid > 0) {
 	$sql .= ' AND a.fk_soc = '.((int) $socid);
 }
-// We must filter on assignement table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
-}
+
 if ($mode == 'show_day') {
 	$sql .= " AND (";
 	$sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
@@ -644,17 +646,6 @@ if ($status == 'done' || $status == '100') {
 }
 if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
-}
-// We must filter on assignement table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " AND (";
-	if ($filtert > 0) {
-		$sql .= "ar.fk_element = ".$filtert;
-	}
-	if ($usergroup > 0) {
-		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
-	}
-	$sql .= ")";
 }
 // Sort on date
 $sql .= ' ORDER BY fk_user_action, datep'; //fk_user_action
