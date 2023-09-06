@@ -725,7 +725,7 @@ class Expedition extends CommonObject
 		$soc->fetch($this->socid);
 
 		// Class of company linked to order
-		$result = $soc->set_as_client();
+		$result = $soc->setAsCustomer();
 
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life

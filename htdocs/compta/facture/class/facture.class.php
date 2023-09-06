@@ -3372,7 +3372,7 @@ class Facture extends CommonInvoice
 
 			if (!$error) {
 				// Define third party as a customer
-				$result = $this->thirdparty->set_as_client();
+				$result = $this->thirdparty->setAsCustomer();
 
 				// If active we decrement the main product and its components at invoice validation
 				if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_BILL) && $idwarehouse > 0) {
