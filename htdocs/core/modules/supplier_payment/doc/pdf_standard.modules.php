@@ -227,7 +227,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-				$nblines = count($object->lines);
+				$nblines = count((array)$object->lines);
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
