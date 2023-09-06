@@ -1105,8 +1105,8 @@ class EmailCollector extends CommonObject
 		$searchfilterisanswer = 0;
 		$searchfilterisnotanswer = 0;
 		$searchfilterreplyto = 0;
-		$searchfilterexcludebody = '';
-		$searchfilterexcludesubject = '';
+		$searchfilterexcludebodyarray = array();
+		$searchfilterexcludesubjectarray = array();
 		$operationslog = '';
 
 		$now = dol_now();
@@ -1298,7 +1298,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'subject') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//array_push($criteria, array("NOT SUBJECT" => $rule['rulevalue']));
-						$searchfilterexcludesubject = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
 					}
@@ -1306,7 +1306,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'body') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//array_push($criteria, array("NOT BODY" => $rule['rulevalue']));
-						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						array_push($criteria, array("BODY" => $rule['rulevalue']));
 					}
@@ -1429,7 +1429,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'subject') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-						$searchfilterexcludesubject = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
@@ -1437,7 +1437,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'body') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
 						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
@@ -1769,12 +1769,14 @@ class EmailCollector extends CommonObject
 					continue; // Exclude email
 				}
 
-				if ($searchfilterexcludebody) {
-					if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
-						$nbemailprocessed++;
-						$operationslog .= '<br>Discarded - Email body contains string '.$searchfilterexcludebody;
-						dol_syslog(" Discarded - Email body contains string ".$searchfilterexcludebody);
-						continue; // Exclude email
+				if (!empty($searchfilterexcludebodyarray)) {
+					foreach ($searchfilterexcludebodyarray as $searchfilterexcludebody) {
+						if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
+							$nbemailprocessed++;
+							$operationslog .= '<br>Discarded - Email body contains string '.$searchfilterexcludebody;
+							dol_syslog(" Discarded - Email body contains string ".$searchfilterexcludebody);
+							continue 2; // Exclude email
+						}
 					}
 				}
 
@@ -1861,12 +1863,14 @@ class EmailCollector extends CommonObject
 					//var_dump($msgid);exit;
 				}
 
-				if ($searchfilterexcludesubject) {
-					if (preg_match('/'.preg_quote($searchfilterexcludesubject, '/').'/ms', $subject)) {
-						$nbemailprocessed++;
-						$operationslog .= '<br>Discarded - Email subject contains string '.$searchfilterexcludesubject;
-						dol_syslog(" Discarded - Email subject contains string ".$searchfilterexcludesubject);
-						continue; // Exclude email
+				if (!empty($searchfilterexcludesubjectarray)) {
+					foreach ($searchfilterexcludesubjectarray as $searchfilterexcludesubject) {
+						if (preg_match('/'.preg_quote($searchfilterexcludesubject, '/').'/ms', $subject)) {
+							$nbemailprocessed++;
+							$operationslog .= '<br>Discarded - Email subject contains string '.$searchfilterexcludesubject;
+							dol_syslog(" Discarded - Email subject contains string ".$searchfilterexcludesubject);
+							continue 2; // Exclude email
+						}
 					}
 				}
 
