@@ -2274,12 +2274,16 @@ class EmailCollector extends CommonObject
 												}
 											} else {
 												// Regex not found
-												$idtouseforthirdparty = null;
-												$nametouseforthirdparty = null;
-												$emailtouseforthirdparty = null;
-												$namealiastouseforthirdparty = null;
+												if (in_array($propertytooverwrite, array('id', 'email', 'name', 'name_alias'))) {
+													$idtouseforthirdparty = null;
+													$nametouseforthirdparty = null;
+													$emailtouseforthirdparty = null;
+													$namealiastouseforthirdparty = null;
 
-												$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found. Property searched is critical so we cancel the search.';
+												} else {
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
+												}
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
