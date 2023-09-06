@@ -970,8 +970,9 @@ class Propal extends CommonObject
 
 				$this->update_price(1, 'auto');
 
-				$this->fk_propal = $this->id;
-				$this->rowid = $rowid;
+				// $this is Propal
+				// $this->fk_propal = $this->id;
+				// $this->rowid = $rowid;
 
 				$this->db->commit();
 				return $result;
