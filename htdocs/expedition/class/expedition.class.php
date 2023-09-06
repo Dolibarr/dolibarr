@@ -679,7 +679,7 @@ class Expedition extends CommonObject
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::Fetch no expedition found', LOG_ERR);
-				$this->error = 'Delivery with id '.$id.' not found';
+				$this->error = 'Shipment with id '.$id.' not found';
 				return 0;
 			}
 		} else {
