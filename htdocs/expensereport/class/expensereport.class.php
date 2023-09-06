@@ -2257,15 +2257,6 @@ class ExpenseReport extends CommonObject
 				$error++;
 			}
 
-			if (!$error && !$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
 			if (!$error) {
 				$this->db->commit();
 				return 1;
@@ -3125,12 +3116,11 @@ class ExpenseReportLine extends CommonObjectLine
 	 * Update line
 	 *
 	 * @param   User    $user      User
+	 * @param   int     $notrigger      1=No trigger
 	 * @return  int                <0 if KO, >0 if OK
 	 */
-	public function update(User $user)
+	public function update(User $user, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		// Clean parameters
@@ -3179,6 +3169,17 @@ class ExpenseReportLine extends CommonObjectLine
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+
+			if (!$error && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+
 			$tmpparent = new ExpenseReport($this->db);
 			$result = $tmpparent->fetch($this->fk_expensereport);
 			if ($result > 0) {
