@@ -5659,7 +5659,7 @@ abstract class CommonObject
 				$ecmfile->fullpath_orig = '';
 				$ecmfile->gen_or_uploaded = 'generated';
 				$ecmfile->description = ''; // indexed content
-				$ecmfile->keywords = ''; // keyword content
+				//$ecmfile->keywords = ''; // keyword content
 				$result = $ecmfile->update($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
