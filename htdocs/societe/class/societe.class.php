@@ -2592,11 +2592,11 @@ class Societe extends CommonObject
 		$error = 0;
 		$this->context = array('commercial_modified'=>$commid);
 
-		$result = $this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE', $user);
+		// Modify by Jonathan MARTIN : 07/09/2023
+		/*$result = $this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE', $user);
 		if ($result < 0) {
 			$error++;
-		}
-
+		}*/
 		if ($this->id > 0 && $commid > 0) {
 			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
 			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
@@ -2604,6 +2604,13 @@ class Societe extends CommonObject
 			if (!$this->db->query($sql)) {
 				dol_syslog(get_class($this)."::del_commercial Erreur");
 			}
+		}
+
+		// Modify by Jonathan MARTIN : 07/09/2023
+		// Déplacement après la suppresion du/des commercial(s) concernées pour avoir le/les commerciaux restant après la suppression
+		$result = $this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE', $user);
+		if ($result < 0) {
+			$error++;
 		}
 	}
 
