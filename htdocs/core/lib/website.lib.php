@@ -76,6 +76,9 @@ function dolStripPhpCode($str, $replacewith = '')
 function dolKeepOnlyPhpCode($str)
 {
 	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?php', '__LTINTPHP__', $str);
+	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this is Off in php.ini
+	$str = str_replace('__LTINTPHP__', '<?php', $str);
 
 	$newstr = '';
 
@@ -168,6 +171,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
 	$content = str_replace('src="javascript.js.php', 'src="!~!~!~javascript.js.php', $content);
 	$content = str_replace('href="http', 'href="!~!~!~http', $content);
+	$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 	$content = str_replace('href="//', 'href="!~!~!~//', $content);
 	$content = str_replace('src="//', 'src="!~!~!~//', $content);
 	$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
@@ -308,6 +312,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
 		$content = str_replace('src="javascript.css.php', 'src="!~!~!~javascript.css.php', $content);
 		$content = str_replace('href="http', 'href="!~!~!~http', $content);
+		$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
 		$content = str_replace('src="//', 'src="!~!~!~//', $content);
 		$content = str_replace(array('src="viewimage.php', 'src="/viewimage.php'), 'src="!~!~!~/viewimage.php', $content);
