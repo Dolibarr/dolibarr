@@ -527,18 +527,18 @@ $eventarray = array();
 
 
 // DEFAULT CALENDAR + AUTOEVENT CALENDAR + CONFERENCEBOOTH CALENDAR
-$sql = 'SELECT';
+$sql = "SELECT";
 if ($usergroup > 0) {
 	$sql .= " DISTINCT";
 }
-$sql .= ' a.id, a.label,';
-$sql .= ' a.datep,';
-$sql .= ' a.datep2,';
-$sql .= ' a.percent,';
-$sql .= ' a.fk_user_author,a.fk_user_action,';
-$sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
-$sql .= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
-$sql .= ' ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto';
+$sql .= " a.id, a.label,";
+$sql .= " a.datep,";
+$sql .= " a.datep2,";
+$sql .= " a.percent,";
+$sql .= " a.fk_user_author,a.fk_user_action,";
+$sql .= " a.transparency, a.priority, a.fulldayevent, a.location,";
+$sql .= " a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,";
+$sql .= " ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto";
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -559,8 +559,8 @@ if ($filtert > 0 || $usergroup > 0) {
 	}
 }
 
-$sql .= ' WHERE a.fk_action = ca.id';
-$sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+$sql .= " WHERE a.fk_action = ca.id";
+$sql .= " AND a.entity IN (".getEntity('agenda').")";
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -600,7 +600,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
-	$sql .= ' AND a.fk_soc = '.((int) $socid);
+	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
 
 if ($mode == 'show_day') {
@@ -613,7 +613,7 @@ if ($mode == 'show_day') {
 	$sql .= " OR ";
 	$sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
 	$sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
-	$sql .= ')';
+	$sql .= ")";
 } else {
 	// To limit array
 	$sql .= " AND (";
@@ -648,7 +648,7 @@ if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
 }
 // Sort on date
-$sql .= ' ORDER BY fk_user_action, datep'; //fk_user_action
+$sql .= $db->order("fk_user_action, datep'");
 //print $sql;
 
 dol_syslog("comm/action/peruser.php", LOG_DEBUG);
