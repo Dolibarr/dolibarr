@@ -1455,10 +1455,12 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 						//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
 						print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 					} else {
-						if (getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
-							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
-						} else {
+						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_PRICES')) {
 							print '<div class="" id="proprice'.$count.'"></div>';
+						}
+						if (getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
+							print '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
+						} else {
 							print '<img class="imgwrapper" title="" id="proimg'.$count.'">';
 						}
 					}
