@@ -2075,7 +2075,6 @@ if ($action != 'dopayment') {
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
-				// if (!empty($getpostlang)) print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 				print '</div>';
