@@ -895,6 +895,8 @@ class BonPrelevement extends CommonObject
 		$factures_errors = array();
 
 		if (!$error) {
+			dol_syslog(__METHOD__." Read invoices for did=".((int) $did), LOG_DEBUG);
+
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid, f.fk_soc";
 			$sql .= ", pfd.code_banque, pfd.code_guichet, pfd.number, pfd.cle_rib";
 			$sql .= ", pfd.amount";
@@ -919,7 +921,6 @@ class BonPrelevement extends CommonObject
 			if ($did > 0) {
 				$sql .= " AND pd.rowid = ".((int) $did);
 			}
-			dol_syslog(__METHOD__." Read invoices,", LOG_DEBUG);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -941,7 +942,9 @@ class BonPrelevement extends CommonObject
 				dol_syslog(__METHOD__." Read invoices, ".$i." invoices to withdraw", LOG_DEBUG);
 			} else {
 				$error++;
-				dol_syslog(__METHOD__." Read invoices error ".$this->db->error(), LOG_ERR);
+				$this->error = $this->db->lasterror();
+				dol_syslog(__METHOD__." Read invoices error ".$this->db->lasterror(), LOG_ERR);
+				return -1;
 			}
 		}
 
