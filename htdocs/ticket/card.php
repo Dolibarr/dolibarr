@@ -4,7 +4,7 @@
  * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,29 +22,31 @@
  */
 
 /**
- *    \file     htdocs/ticket/card.php
- *    \ingroup 	ticket
+ *   \file       htdocs/ticket/card.php
+ *   \ingroup    ticket
+ *   \brief      Page to create/edit/view Tickets
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 if (isModEnabled('project')) {
-	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 if (isModEnabled('contrat')) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
 
 // Load translation files required by the page
@@ -52,20 +54,22 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
 $id        = GETPOST('id', 'int');
-$socid     = GETPOST('socid', 'int');
-$track_id  = GETPOST('track_id', 'alpha', 3);
 $ref       = GETPOST('ref', 'alpha');
+$track_id  = GETPOST('track_id', 'alpha', 3);
+$socid     = GETPOST('socid', 'int');
+$contactid = GETPOST('contactid', 'int');
 $projectid = GETPOST('projectid', 'int');
-$cancel    = GETPOST('cancel', 'alpha');
+$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
+
 $action    = GETPOST('action', 'aZ09');
+$cancel    = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$contactid = GETPOST('contactid', 'int');
-
-$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma') ? GETPOST('sortfield', 'aZ09comma') : "a.datep";
 $sortorder = GETPOST('sortorder', 'aZ09comma') ? GETPOST('sortorder', 'aZ09comma') : "desc";
+$search_rowid = GETPOST('search_rowid');
+$search_agenda_label = GETPOST('search_agenda_label');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -75,8 +79,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
-$search_rowid = GETPOST('search_rowid');
-$search_agenda_label = GETPOST('search_agenda_label');
+
 
 // Initialize technical object to manage hooks of ticket. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ticketcard', 'globalcard'));
@@ -102,13 +105,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
 
-//Select mail models is same action as add_message
+// Select mail models is same action as add_message
 if (GETPOST('modelselected', 'alpha')) {
 	$action = 'presend';
 }
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id || $track_id || $ref) {
 	$res = $object->fetch($id, $ref, $track_id);
 	if ($res >= 0) {
@@ -129,8 +132,10 @@ if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id);
 
 $triggermodname = 'TICKET_MODIFY';
-$permissiontoread = $user->hasRight('ticket', 'read');
-$permissiontoadd = $user->hasRight('ticket', 'write');
+
+// Permissions
+$permissiontoread   = $user->hasRight('ticket', 'read');
+$permissiontoadd    = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
 
 $upload_dir = $conf->ticket->dir_output;
@@ -212,7 +217,8 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$getRef = GETPOST("ref", 'alphanohtml');
-			if ($object->fetch('', $getRef) > 0) {
+			$test = new Ticket($db);
+			if ($test->fetch('', $getRef) > 0) {
 				$object->ref = $object->getDefaultRef();
 				$object->track_id = null;
 				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref));
@@ -240,6 +246,7 @@ if (empty($reshook)) {
 			}
 
 			$object->fk_project = $projectid;
+			$object->fk_contract = GETPOST('fk_contract', 'int');
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -382,7 +389,7 @@ if (empty($reshook)) {
 	}
 
 	// Mark as Read
-	if ($action == "mark_ticket_read" && $permissiontoadd) {
+	if ($action == "set_read" && $permissiontoadd) {
 		$object->fetch('', '', GETPOST("track_id", 'alpha'));
 
 		if ($object->markAsRead($user) > 0) {
@@ -416,7 +423,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {    // Update list of contacts
-			// Si déjà un user assigné on le supprime des contacts
+			// If a user has already been assigned, we delete him from the contacts.
 			if ($useroriginassign > 0) {
 				$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 				foreach ($internal_contacts as $key => $contact) {
@@ -442,8 +449,6 @@ if (empty($reshook)) {
 		if (!$error) {
 			// Log action in ticket logs table
 			$object->fetch_user($usertoassign);
-			//$log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
-
 
 			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
 			header("Location: card.php?track_id=".$object->track_id);
@@ -493,9 +498,6 @@ if (empty($reshook)) {
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
 			$object->close($user);
 
-			// Log action in ticket logs table
-			//$log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
-
 			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
 			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
@@ -530,6 +532,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Set progress status
 	if ($action == 'set_progression' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setProgression(GETPOST('progress', 'alpha'));
@@ -540,6 +543,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Set categories
 	if ($action == 'set_categories' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCategories(GETPOST('categories', 'array'));
@@ -550,6 +554,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Set Subject
 	if ($action == 'setsubject' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'))) {
 			if ($action == 'setsubject') {
@@ -579,9 +584,6 @@ if (empty($reshook)) {
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
 				if ($res) {
-					// Log action in ticket logs table
-					//$log_action = $langs->trans('TicketLogReopen');
-
 					$url = 'card.php?track_id='.$object->track_id;
 					header("Location: ".$url);
 					exit();
@@ -610,15 +612,13 @@ if (empty($reshook)) {
 	} elseif ($action == "set_message" && $user->rights->ticket->manage) {
 		if (!GETPOST('cancel')) {
 			$object->fetch('', '', GETPOST('track_id', 'alpha'));
-			$oldvalue_message = $object->message;
+			//$oldvalue_message = $object->message;
 			$fieldtomodify = GETPOST('message_initial', 'restricthtml');
 
 			$object->message = $fieldtomodify;
 			$ret = $object->update($user);
 			if ($ret > 0) {
-				//$log_action = $langs->trans('TicketInitialMessageModified')." \n";
-				// include the Diff class
-				include_once DOL_DOCUMENT_ROOT.'/core/class/utils_diff.class.php';
+				//include_once DOL_DOCUMENT_ROOT.'/core/class/utils_diff.class.php';
 				// output the result of comparing two files as plain text
 				//$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
@@ -634,12 +634,9 @@ if (empty($reshook)) {
 		// Reopen ticket
 		if ($object->fetch(GETPOST('id', 'int'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOST('new_status', 'int');
-			$old_status = $object->status;
+			//$old_status = $object->status;
 			$res = $object->setStatut($new_status);
 			if ($res) {
-				// Log action in ticket logs table
-				$log_action = $langs->trans('TicketLogStatusChanged', $langs->transnoentities($object->statuts_short[$old_status]), $langs->transnoentities($object->statuts_short[$new_status]));
-
 				$url = 'card.php?track_id='.$object->track_id;
 				header("Location: ".$url);
 				exit();
@@ -650,7 +647,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Action to update one extrafield
+	// Action to update an extrafield
 	if ($action == "update_extras" && $permissiontoadd) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 
@@ -684,8 +681,6 @@ if (empty($reshook)) {
 
 		$ret = $object->update($user);
 		if ($ret > 0) {
-			//$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
-
 			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
 		} else {
 			$error++;
@@ -805,7 +800,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print '</form>'; */
 } elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'categories' || $action == 'reopen'
-	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
+	|| $action== 'edit_contrat' || $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {
 		// or for unauthorized internals users
 		if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
@@ -910,7 +905,7 @@ if ($action == 'create' || $action == 'presend') {
 
 				print '</td></tr>';
 
-				// Statut
+				// Status
 				print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstat->getLibStatut(4).'</td></tr>';
 
 				print "</table>";
@@ -995,6 +990,33 @@ if ($action == 'create' || $action == 'presend') {
 					$morehtmlref .= $object->project->getNomUrl(1);
 					if ($object->project->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($object->project->title).'</span>';
+					}
+				}
+			}
+		}
+
+		// Contract
+		if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
+			// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
+			if (isModEnabled('contrat')) {
+				$langs->load('contracts');
+				$morehtmlref .= '<br>';
+				if ($permissiontoedit) {
+					$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
+					if ($action == 'edit_contrat') {
+						$formcontract = new FormContract($db);
+						$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
+					} else {
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
+						$morehtmlref .=  img_edit($langs->trans('SetContract'));
+						$morehtmlref .=  '</a>';
+					}
+				} else {
+					if (!empty($object->fk_contract)) {
+						$contratstatic = new Contrat($db);
+						$contratstatic->fetch($object->fk_contract);
+						//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+						$morehtmlref .= $contratstatic->getNomUrl(0, '', 1);
 					}
 				}
 			}
@@ -1152,7 +1174,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</table>';
 
 
-		// Fin colonne gauche et début colonne droite
+		// End of left column and beginning of right column
 		print '</div><div class="fichehalfright">';
 
 
@@ -1222,7 +1244,7 @@ if ($action == 'create' || $action == 'presend') {
 		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
 			print '<input type="submit" class="button small" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
-			//    Button to edit Properties
+			// Button to edit Properties
 			if (isset($object->status) && $object->status < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {
 				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
@@ -1438,12 +1460,12 @@ if ($action == 'create' || $action == 'presend') {
 					print dolGetButtonAction('', $langs->trans('TicketAddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&token='.newToken().'&socid='. $object->fk_soc.'&origin=ticket_ticket&originid='. $object->id, '');
 				}
 
-				// Close ticket if statut is read
+				// Close ticket if status is read
 				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
 					print dolGetButtonAction('', $langs->trans('CloseTicket'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
-				// Abadon ticket if statut is read
+				// Abandon ticket if status is read
 				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
 					print dolGetButtonAction('', $langs->trans('AbandonTicket'), 'default', $_SERVER["PHP_SELF"].'?action=abandon&token='.newToken().'&track_id='.$object->track_id, '');
 				}
@@ -1522,7 +1544,7 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->param = array('fk_user_create' => $user->id);
 			$formticket->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
 
-			// Tableau des parametres complementaires du post
+			// Table of additional post parameters
 			$formticket->param['models'] = $modelmail;
 			$formticket->param['models_id'] = GETPOST('modelmailselected', 'int');
 			//$formticket->param['socid']=$object->fk_soc;

@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = Weet je zeker dat je "1%s"?
 ConfirmBtnCommonTitle = Bevestig
 CloseDialog = Sluiten
 Autofill = Automatisch aanvullen
+OrPasteAnURL=of Plak een URL
 
 # externalsite
 ExternalSiteSetup=Instellingen voor de link naar een externe website

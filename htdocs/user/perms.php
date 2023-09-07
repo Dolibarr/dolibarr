@@ -634,17 +634,17 @@ if ($result) {
 			print '</td>';
 		} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
 			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
-				if ($caneditperms) {
-					print '<td class="center">';
-					print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
-					print '</td>';
-				} else {
-					print '<td>&nbsp;</td>';
-				}
 				print '<td class="center nowrap">';
 				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
 				//print img_picto($langs->trans("Active"), 'tick');
 				print '</td>';
+				if ($caneditperms) {
+					print '<td class="">';
+					print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
+					print '</td>';
+				} else {
+					print '<td>c&nbsp;</td>';
+				}
 			} else {
 				// Do not own permission
 				if ($caneditperms) {
@@ -669,13 +669,11 @@ if ($result) {
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a></td>';
 			} else {
-				print '<td>&nbsp;</td>';
+				print '<td>aa';
+				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+				print '</td>';
 			}
 			print '<td class="center">';
-			if (!$caneditperms) {
-				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
-			}
-			//print '&nbsp;';
 			print '</td>';
 		}
 
@@ -690,6 +688,14 @@ if ($result) {
 		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
+			}
+		}
+		// Special warning cas for the permission "Allow to modify other users password
+		if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
+			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
+				in_array($obj->id, $permsuser) ||
+				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+					print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
 			}
 		}
 		print '</td>';

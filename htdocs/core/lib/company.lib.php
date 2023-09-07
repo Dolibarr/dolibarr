@@ -716,7 +716,7 @@ function getFormeJuridiqueLabel($code)
 		return '';
 	}
 
-	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
 	$sql .= " WHERE code = '".$db->escape($code)."'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
@@ -727,7 +727,7 @@ function getFormeJuridiqueLabel($code)
 		if ($num) {
 			$obj = $db->fetch_object($resql);
 
-			$label = ($obj->libelle != '-' ? $obj->libelle : '');
+			$label = ($obj->label != '-' ? $obj->label : '');
 
 			return $langs->trans($label);
 		} else {
@@ -869,7 +869,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 						// Ref
 						print '<td class="nowraponall">';
-						print $projecttmp->getNomUrl(1);
+						print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
 						print '</td>';
 
 						// Label
@@ -1672,8 +1672,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+			&& $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
+		} elseif (is_object($filterobj)) {
+			return 'Bad value for $filterobj';
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
@@ -1724,12 +1728,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
-				// Generic case
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+				&& $filterobj->table_element && $filterobj->element) {
+				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
+			} elseif (is_object($filterobj)) {
+				return 'Bad value for $filterobj';
 			}
 		}
 
@@ -2048,8 +2056,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '<td class="tdoverflowmax300"';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
-				//$actionstatic->libelle=$libelle;
+				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				$libelle = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
@@ -2435,7 +2442,8 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 
 	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
-	print '<footer class="center paddingleft paddingright opacitymedium centpercent">'."\n";
+	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
+	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';

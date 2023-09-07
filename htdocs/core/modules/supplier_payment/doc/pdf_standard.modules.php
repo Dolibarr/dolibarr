@@ -70,12 +70,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxdate;
 	public $posxreffacturefourn;
 	public $posxreffacture;
@@ -546,6 +540,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		// Date
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
 		$pdf->MultiCell(150, 4, date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y"), 0, 'L', 1);
+		return $posy;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

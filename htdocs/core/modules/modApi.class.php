@@ -20,7 +20,8 @@
 
 /**
  * 	\defgroup   api     Module Api
- *  \brief      Descriptor file for Api modulee
+ *  \brief      Module for API (REST) management
+ *
  *  \file       htdocs/core/modules/modApi.class.php
  *  \ingroup    api
  *  \brief      Description and activation file for the module Api

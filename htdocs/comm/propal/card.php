@@ -542,7 +542,7 @@ if (empty($reshook)) {
 							$num = count($lines);
 							for ($i = 0; $i < $num; $i++) {
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->label);
 
 								// Positive line
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
@@ -702,6 +702,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'closeas';
 		} elseif (GETPOST('statut', 'int') == $object::STATUS_SIGNED || GETPOST('statut', 'int') == $object::STATUS_NOTSIGNED) {
+			$locationTarget = '';
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == $object::STATUS_VALIDATED || ( ! empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) && $object->statut == $object::STATUS_DRAFT)) {
 				$db->begin();
@@ -710,10 +711,12 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				} else {
+					// Needed if object linked modified by trigger (because linked objects can't be fetched two times : linkedObjectsFullLoaded)
+					$locationTarget = DOL_URL_ROOT . '/comm/propal/card.php?id=' . $object->id;
 				}
 
 				$deposit = null;
-				$locationTarget = '';
 
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
@@ -1089,7 +1092,7 @@ if (empty($reshook)) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-					$prodcustprice = new Productcustomerprice($db);
+					$prodcustprice = new ProductCustomerPrice($db);
 
 					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
 
@@ -2796,35 +2799,35 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-	print '<td class="nowrap amountcard right">' . price($object->total_ht, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+	print '<td class="nowrap amountcard right">' . price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
-	print '<td class="nowrap amountcard right">' . price($object->total_tva, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+	print '<td class="nowrap amountcard right">' . price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</tr>';
 
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) {
 		print '<tr>';
 		print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
-		print '<tr>';
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
+			print '<tr>';
 			print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 		}
@@ -2832,9 +2835,9 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td>' . $langs->trans('AmountTTC') . '</td>';
-	print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+	print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</tr>';
 

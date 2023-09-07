@@ -49,7 +49,7 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int  	Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
@@ -85,7 +85,7 @@ class MyObject extends CommonObject
 	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt('MY_SETUP_PARAM') or 'isModEnabled("multicurrency")' ...)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -430,7 +430,7 @@ class MyObject extends CommonObject
 
 
 	/**
-	 * Load list of objects in memory from the database.
+	 * Load list of objects in memory from the database. Using a fetchAll is a bad practice, instead try to forge you optimized and limited SQL request.
 	 *
 	 * @param  string      $sortorder    Sort Order
 	 * @param  string      $sortfield    Sort field
@@ -442,8 +442,6 @@ class MyObject extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -451,6 +449,9 @@ class MyObject extends CommonObject
 		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON tf.fk_object = t.rowid";
+		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
@@ -465,7 +466,7 @@ class MyObject extends CommonObject
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
+					$sqlwhere[] = $value;	// For this case, $value never come from a user input but is a hard coded value in code
 				} elseif (strpos($value, '%') === false) {
 					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
 				} else {
@@ -574,7 +575,7 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->myobject->write))
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
 		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->myobject->myobject_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
@@ -692,8 +693,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->write))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->mymodule_advance->validate))))
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','mymodule_advance','validate'))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -716,8 +717,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->write))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->mymodule_advance->validate))))
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','mymodule_advance','validate'))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -740,12 +741,13 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->write))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','mymodule_advance','validate'))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
 		 }*/
+
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYOBJECT_REOPEN');
 	}
@@ -864,7 +866,7 @@ class MyObject extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (!getDolGlobalInt(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1075,11 +1077,11 @@ class MyObject extends CommonObject
 		global $langs, $conf;
 		$langs->load("mymodule@mymodule");
 
-		if (empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON'))) {
+		if (!getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) {
 			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';
 		}
 
-		if (!empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON'))) {
+		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('MYMODULE_MYOBJECT_ADDON').".php";

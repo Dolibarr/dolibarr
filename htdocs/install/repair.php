@@ -231,11 +231,19 @@ if ($ok && GETPOST('standard', 'alpha')) {
 
 if ($ok && GETPOST('standard', 'alpha')) {
 	$extrafields = new ExtraFields($db);
+
+	// List of tables that has an extrafield table
 	$listofmodulesextra = array('societe'=>'societe', 'adherent'=>'adherent', 'product'=>'product',
-				'socpeople'=>'socpeople', 'propal'=>'propal', 'commande'=>'commande', 'facture'=>'facture',
-				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur', 'facture_fourn'=>'facture_fourn',
+				'socpeople'=>'socpeople', 'propal'=>'propal', 'commande'=>'commande',
+				'facture'=>'facture', 'facturedet'=>'facturedet', 'facture_rec'=>'facture_rec', 'facturedet_rec'=>'facturedet_rec',
+				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur',
+				'facture_fourn'=>'facture_fourn', 'facture_fourn_rec'=>'facture_fourn_rec', 'facture_fourn_det'=>'facture_fourn_det', 'facture_fourn_det_rec'=>'facture_fourn_det_rec',
+				'fichinter'=>'fichinter', 'fichinterdet'=>'fichinterdet',
+				'inventory'=>'inventory',
 				'actioncomm'=>'actioncomm', 'bom_bom'=>'bom_bom', 'mrp_mo'=>'mrp_mo',
-				'adherent_type'=>'adherent_type', 'user'=>'user', 'projet'=>'projet', 'projet_task'=>'projet_task');
+				'adherent_type'=>'adherent_type', 'user'=>'user', 'partnershiap'=>'partnershiap', 'projet'=>'projet', 'projet_task'=>'projet_task', 'ticket'=>'ticket');
+	//$listofmodulesextra = array('fichinter'=>'fichinter');
+
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach ($listofmodulesextra as $tablename => $elementtype) {
 		// Get list of fields
@@ -248,7 +256,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		$arrayoffieldsfound = array();
 		$resql = $db->DDLDescTable($tableextra);
 		if ($resql) {
-			print '<tr><td>Check availability of extra field for '.$tableextra."<br>\n";
+			print '<tr><td>Check availability of extra field for '.$tableextra;
 			$i = 0;
 			while ($obj = $db->fetch_object($resql)) {
 				$fieldname = $fieldtype = '';
@@ -268,6 +276,11 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				}
 				$arrayoffieldsfound[$fieldname] = array('type'=>$fieldtype);
 			}
+			print ' - Found '.count($arrayoffieldsfound).' fields into table';
+			if (count($arrayoffieldsfound) > 0) {
+				print ' <span class="opacitymedium">('.join(', ', array_keys($arrayoffieldsfound)).')</span>';
+			}
+			print '<br>'."\n";
 
 			// If it does not match, we create fields
 			foreach ($arrayoffieldsdesc as $code => $label) {
@@ -325,7 +338,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 
 			print "</td><td>&nbsp;</td></tr>\n";
 		} else {
-			dol_print_error($db);
+			print '<tr><td>Table '.$tableextra.' is not found</td><td></td></tr>'."\n";
 		}
 	}
 }

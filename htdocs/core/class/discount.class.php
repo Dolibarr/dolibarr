@@ -254,7 +254,7 @@ class DiscountAbsolute
 
 		// Check parameters
 		if (empty($this->description)) {
-			$this->error = 'BadValueForPropertyDescription';
+			$this->error = 'BadValueForPropertyDescriptionOfDiscount';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}

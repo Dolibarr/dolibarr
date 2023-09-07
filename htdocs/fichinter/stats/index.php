@@ -59,7 +59,7 @@ $langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));
  */
 
 $form = new Form($db);
-$objectstatic = new FichInter($db);
+$objectstatic = new Fichinter($db);
 
 $title = $langs->trans("InterventionStatistics");
 $dir = $conf->ficheinter->dir_temp;

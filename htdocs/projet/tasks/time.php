@@ -67,8 +67,6 @@ $tab        = GETPOST('tab', 'aZ09');
 $search_day = GETPOST('search_day', 'int');
 $search_month = GETPOST('search_month', 'int');
 $search_year = GETPOST('search_year', 'int');
-$search_datehour = '';
-$search_datewithhour = '';
 $search_date_startday = GETPOST('search_date_startday', 'int');
 $search_date_startmonth = GETPOST('search_date_startmonth', 'int');
 $search_date_startyear = GETPOST('search_date_startyear', 'int');
@@ -173,14 +171,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_day = '';
 	$search_month = '';
 	$search_year = '';
-	$search_date = '';
-	$search_datehour = '';
-	$search_datewithhour = '';
 	$search_note = '';
 	$search_duration = '';
 	$search_value = '';
-	$search_date_creation = '';
-	$search_date_update = '';
 	$search_date_startday = '';
 	$search_date_startmonth = '';
 	$search_date_startyear = '';
@@ -257,7 +250,9 @@ if ($action == 'addtimespent' && $user->rights->projet->time) {
 				}
 				$object->timespent_fk_user = GETPOST("userid", 'int');
 				$object->timespent_fk_product = GETPOST("fk_product", 'int');
+
 				$result = $object->addTimeSpent($user);
+
 				if ($result >= 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				} else {
@@ -948,7 +943,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Project card
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+			if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+				$tmpurl = $_SESSION['pageforbacktolist']['project'];
+				$tmpurl = preg_replace('/__SOCID__/', $projectstatic->socid, $tmpurl);
+				$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+			} else {
+				$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+			}
 
 			$morehtmlref = '<div class="refidno">';
 			// Title
@@ -1073,6 +1074,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			print '<br>';
 		}
+
+		$param = '';
 
 		// Link to create time
 		$linktocreatetimeBtnStatus = 0;
@@ -1844,8 +1847,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			print '<td class="center">';
 			$form->buttonsSaveCancel();
-			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-add reposition" value="'.$langs->trans("Add").'">';
-			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="save" class="button buttongen smallpaddingimp marginleftonly margintoponlyshort marginbottomonlyshort button-add reposition" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" name="cancel" class="button buttongen smallpaddingimp marginleftonly margintoponlyshort marginbottomonlyshort button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -2092,12 +2095,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="center nowraponall maxwidth75">';
+				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOST('lineid', 'int') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="'.GETPOST('lineid', 'int').'">';
-					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
+					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 					print ' ';
-					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
 					if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
 						if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {

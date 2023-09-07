@@ -430,7 +430,7 @@ if ($search_societe) {
 if ($search_fk_project > 0) {
 	$sql .= natural_search('fk_project', $search_fk_project, 2);
 }
-if ($search_fk_contracct > 0) {
+if ($search_fk_contract > 0) {
 	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
 }
 if ($search_date_start) {
@@ -681,6 +681,9 @@ if ($search_societe) {
 if ($projectid > 0) {
 	$param .= '&projectid='.urlencode($projectid);
 }
+if ($contractid > 0) {
+	$param .= '&contractid='.urlencode($contractid);
+}
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);
 	$param .= '&search_date_startday='.urlencode($tmparray['mday']);
@@ -847,7 +850,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -966,7 +969,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label

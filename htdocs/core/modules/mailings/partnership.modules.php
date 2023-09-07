@@ -39,11 +39,6 @@ class mailing_partnership extends MailingTargets
 	 */
 	public $picto = 'partnership';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 'isModEnabled("partnership")';
 
 

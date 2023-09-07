@@ -173,13 +173,13 @@ $arrayfields = array(
 	'f.datef'=>array('label'=>"DateInvoice", 'checked'=>1),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>0),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>0),
-	's.town'=>array('label'=>"Town", 'checked'=>-1),
-	's.zip'=>array('label'=>"Zip", 'checked'=>1),
-	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>41),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>0, 'position'=>42),
+	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>43),
+	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>44),
+	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>45),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>46),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>49),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentTerm", 'checked'=>1, 'position'=>50),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>52),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>105),
@@ -189,13 +189,13 @@ $arrayfields = array(
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>115),
 	'dynamount_payed'=>array('label'=>"Paid", 'checked'=>0, 'position'=>116),
 	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>117),
-	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
-	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
-	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
-	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
-	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
-	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
-	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)), // Not enabled by default because slow
+	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'position'=>205, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'position'=>206, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'position'=>207, 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'position'=>208, 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'position'=>209, 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'position'=>210, 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'position'=>211, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)), // Not enabled by default because slow
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>500),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>501),
 	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
@@ -650,9 +650,6 @@ if (!empty($searchCategoryProductList)) {
 			$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
 		}
 	}
-}
-if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND f.fk_statut = ".((int) $search_status);
 }
 if ($filter && $filter != -1) {
 	$aFilter = explode(',', $filter);

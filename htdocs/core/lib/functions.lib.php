@@ -274,6 +274,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 
 	// fix different element names (France to English)
 	switch ($element) {
+		case 'projet':
+			$element = 'project';
+			break;
 		case 'contrat':
 			$element = 'contract';
 			break; // "/contrat/class/contrat.class.php"
@@ -955,8 +958,6 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
  */
 function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
-	global $conf;
-
 	// TODO : use class "Validate" to perform tests (and add missing tests) if needed for factorize
 	// Check is done after replacement
 	switch ($check) {
@@ -1044,8 +1045,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 		case 'nohtml':		// No html
 			$out = dol_string_nohtmltag($out, 0);
 			break;
-		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlnolink':
+		case 'restricthtml':		// Recommended for most html textarea
+		case 'restricthtmlallowclass':
 		case 'restricthtmlallowunvalid':
 			$out = dol_htmlwithnojs($out, 1, $check);
 			break;
@@ -1169,7 +1171,8 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				if ($key == 'main') {
 					continue;
 				}
-				if (file_exists($dirroot.'/'.$path)) {
+				// if (@file_exists($dirroot.'/'.$path)) {
+				if (@file_exists($dirroot.'/'.$path)) {	// avoid [php:warn]
 					$res = $dirroot.'/'.$path;
 					return $res;
 				}
@@ -1216,7 +1219,8 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i', $path, $regs); // Take part before '?'
 			if (!empty($regs[1])) {
 				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
-				if (file_exists($dirroot.'/'.$regs[1])) {
+				//if (file_exists($dirroot.'/'.$regs[1])) {
+				if (@file_exists($dirroot.'/'.$regs[1])) {	// avoid [php:warn]
 					if ($type == 1) {
 						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
 					}
@@ -1327,7 +1331,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
 	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
-	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
+	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '`');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
@@ -1352,7 +1356,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
-	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';');
+	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';', '`');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
@@ -1594,13 +1598,17 @@ function dol_escape_json($stringtoescape)
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
- *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
+ *  @see		dol_string_nohtmltag(), dol_string_onlythesehtmltags(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
 	if ($noescapetags == 'common') {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	}
+	if ($cleanalsojavascript) {
+		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
 	}
 
 	// escape quotes and backslashes, newlines, etc.
@@ -2429,7 +2437,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$tmptxt = $object->getLibStatut(5);
 		$morehtmlstatus .= $tmptxt; // No status on task
-	} elseif (method_exists($object, 'getLibStatut')) { // Generic case
+	} elseif (method_exists($object, 'getLibStatut')) { // Generic case for status
 		$tmptxt = $object->getLibStatut(6);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5);
@@ -2540,7 +2548,7 @@ function dol_bc($var, $moreclass = '')
  *
  *      @param  Object		$object			A company or contact object
  * 	    @param	int			$withcountry	1=Add country into address string
- *      @param	string		$sep			Separator to use to build string
+ *      @param	string		$sep			Separator to use to separate info when building string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @param	int			$mode			0=Standard output, 1=Remove address
  *  	@param	string		$extralangcode	User extralanguage $langcode as values for address, town
@@ -2557,7 +2565,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
-		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : $object->address));
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : preg_replace('/[\n\r]/', $sep, $object->address)));
 	}
 	// Zip/Town/State
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
@@ -2587,7 +2595,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if (!empty($object->state)) {
-			$ret .= "\n".$object->state;
+			$ret .= $sep.$object->state;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('JP'))) {
 		// JP: In romaji, title firstname name\n address lines \n [state,] town zip \n country
@@ -2609,6 +2617,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
 	}
+
 	if (!is_object($outputlangs)) {
 		$outputlangs = $langs;
 	}
@@ -3127,7 +3136,7 @@ function dol_print_size($size, $shortvalue = 0, $shortunit = 0)
  * @param	string		$morecss	More CSS
  * @return	string					HTML Link
  */
-function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $morecss = 'float')
+function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $morecss = '')
 {
 	global $langs;
 
@@ -3135,26 +3144,30 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 		return '';
 	}
 
-	$link = '<a href="';
+	$linkstart = '<a href="';
 	if (!preg_match('/^http/i', $url)) {
-		$link .= 'http://';
+		$linkstart .= 'http://';
 	}
-	$link .= $url;
-	$link .= '"';
+	$linkstart .= $url;
+	$linkstart .= '"';
 	if ($target) {
-		$link .= ' target="'.$target.'"';
+		$linkstart .= ' target="'.$target.'"';
 	}
-	$link .= '>';
+	$linkstart .= ' title="'.$langs->trans("URL").': '.$url.'"';
+	$linkstart .= '>';
+
+	$link = '';
 	if (!preg_match('/^http/i', $url)) {
 		$link .= 'http://';
 	}
 	$link .= dol_trunc($url, $max);
-	$link .= '</a>';
 
-	if ($morecss == 'float') {
+	$linkend = '</a>';
+
+	if ($morecss == 'float') {	// deprecated
 		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</div>';
 	} else {
-		return '<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</span>';
+		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto('', 'globe').' ' : '').$link.'</span>'.$linkend;
 	}
 }
 
@@ -3271,11 +3284,11 @@ function getArrayOfSocialNetworks()
 /**
  * Show social network link
  *
- * @param	string		$value				Skype to show (only skype, without 'Name of recipient' before)
+ * @param	string		$value				Social network ID to show (only skype, without 'Name of recipient' before)
  * @param	int 		$cid 				Id of contact if known
  * @param	int 		$socid 				Id of third party if known
  * @param	string 		$type				'skype','facebook',...
- * @param	array		$dictsocialnetworks socialnetworks availables
+ * @param	array		$dictsocialnetworks List of socialnetworks availables
  * @return	string							HTML Link
  */
 function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetworks = array())
@@ -3605,10 +3618,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 
 			// Define urlmask
-			$urlmask = 'ErrorClickToDialModuleNotConfigured';
-			if (!empty($conf->global->CLICKTODIAL_URL)) {
-				$urlmask = $conf->global->CLICKTODIAL_URL;
-			}
+			$urlmask = getDolGlobalString('CLICKTODIAL_URL', 'ErrorClickToDialModuleNotConfigured');
 			if (!empty($user->clicktodial_url)) {
 				$urlmask = $user->clicktodial_url;
 			}
@@ -3703,7 +3713,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
  */
 function dol_print_ip($ip, $mode = 0)
 {
-	global $conf, $langs;
+	global $langs;
 
 	$ret = '';
 
@@ -5525,7 +5535,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
  */
 function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0, $pagenavastextinput = 0, $morehtmlrightbeforearrow = '')
 {
-	global $conf, $langs;
+	global $conf;
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
@@ -6231,6 +6241,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdparty_seller->country_code)."'";
 	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+	$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 	if (!empty($vatratecode)) {
 		$sql .= " AND t.code ='".$db->escape($vatratecode)."'"; // If we have the code, we use it in priority
 	} else {
@@ -6287,9 +6298,9 @@ function get_localtax_by_third($local)
 
 	$sql  = " SELECT t.localtax".$local." as localtax";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_pays";
-	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux = (";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.entity IN (".getEntity('c_tva').") AND t.taux = (";
 	$sql .= "SELECT MAX(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = tt.fk_pays";
-	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1)";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.entity IN (".getEntity('c_tva').") AND tt.active = 1)";
 	$sql .= " AND t.localtax".$local."_type <> '0'";
 	$sql .= " ORDER BY t.rowid DESC";
 
@@ -6344,6 +6355,7 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";*/
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		if ($vatratecode) {
 			$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 		}
@@ -6500,6 +6512,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdpartytouse->country_code)."'";
+			$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -6579,6 +6592,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);
 
@@ -7109,7 +7123,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	int		$allowlink				Allow link tags.
  *	@return string	    					String cleaned
  *
- * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
+ * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
 function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0)
 {
@@ -7171,7 +7185,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 /**
  *	Clean a string from some undesirable HTML tags.
  *  Note: Complementary to dol_string_onlythesehtmltags().
- *  This method is used for example when option MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES is set to 1.
+ *  This method is used for example by dol_htmlwithnojs() when option MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES is set to 1.
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	array	$allowed_attributes		Array of tags not allowed
@@ -7223,7 +7237,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			}
 		}
 
-		$return = $dom->saveHTML();
+		$return = $dom->saveHTML();	// This may add a LF at end of lines, so we will trim later
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
 
 		$return = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $return);
@@ -7237,7 +7251,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 
 /**
  *	Clean a string from some undesirable HTML tags.
- *  Note. Not as secured as dol_string_onlythesehtmltags().
+ *  Note: You should use instead dol_string_onlythesehtmltags() that is more secured if you can.
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	array	$disallowed_tags		Array of tags not allowed
@@ -7330,7 +7344,7 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
  * @param	int     $nl2brmode			0=Adding br before \n, 1=Replacing \n by br
  * @param   bool	$forxml             false=Use <br>, true=Use <br />
  * @return	string						String encoded
- * @see dol_nboflines(), dolGetFirstLineOfText()
+ * @see dol_htmlentitiesbr(), dol_nboflines(), dolGetFirstLineOfText()
  */
 function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 {
@@ -7350,8 +7364,8 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  * Sanitize a HTML to remove js and dangerous content
  *
  * @param	string	$stringtoencode				String to encode
- * @param	int     $nouseofiframesandbox		Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
- * @param	string	$check						'restricthtmlnolink' or 'restricthtml' or 'restricthtmlallowunvalid'
+ * @param	int     $nouseofiframesandbox		0=Default, 1=Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing (not yet working)
+ * @param	string	$check						'restricthtmlnolink' or 'restricthtml' or 'restricthtmlallowclass' or 'restricthtmlallowunvalid'
  * @return	string								HTML sanitized
  */
 function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
@@ -7370,10 +7384,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		do {
 			$oldstringtoclean = $out;
 
-			libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
-
 			if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
 				try {
+					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+
 					$dom = new DOMDocument;
 					// Add a trick to solve pb with text without parent tag
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
@@ -7388,7 +7402,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
-					$out = 'InvalidHTMLString';
+					$out = 'InvalidHTMLStringCantBeCleaned';
 				}
 			}
 
@@ -7410,11 +7424,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 			// Keep only some html tags and remove also some 'javascript:' strings
-			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+			$out = dol_string_onlythesehtmltags($out, 0, ($check == 'restricthtmlallowclass' ? 0 : 1), 1);
 
-			// We should also exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
+			// Keep only some html attributes and exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
 			if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
-				// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
 				$out = dol_string_onlythesehtmlattributes($out);
 			}
 
@@ -7453,7 +7466,9 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *              - MultiCell -> param must not be encoded into HTML.
  *              Because writeHTMLCell convert also \n into <br>, if function
  *              is used to build PDF, nl2brmode must be 1.
- *  When we output string on pages, we use dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes, and use dol_escape_htmltag() for simple labels.
+ *  Note: When we output string on pages, we should use
+ *        - dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)) for notes,
+ *        - dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
  *
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
@@ -7549,6 +7564,7 @@ function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
  * @param   string  $encoding       Encoding page code
  * @param   bool    $double_encode  When double_encode is turned off, PHP will not encode existing html entities
  * @return  string  $ret            Encoded string
+ * @see dol_htmlentitiesbr()
  */
 function dol_htmlentities($string, $flags = ENT_QUOTES|ENT_SUBSTITUTE, $encoding = 'UTF-8', $double_encode = false)
 {
@@ -7912,6 +7928,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (isModEnabled("expedition") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
+				$substitutionarray['__SHIPPINGMETHOD__'] = 'Shipping method';
 			}
 			if (isModEnabled("reception") && (!is_object($object) || $object->element == 'reception')) {
 				$substitutionarray['__RECEPTIONTRACKNUM__'] = 'Shippin tracking number of shipment';
@@ -8057,6 +8074,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (is_object($object) && $object->element == 'shipping') {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = $object->tracking_number;
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = $object->tracking_url;
+				$substitutionarray['__SHIPPINGMETHOD__'] = $object->shipping_method;
 			}
 			if (is_object($object) && $object->element == 'reception') {
 				$substitutionarray['__RECEPTIONTRACKNUM__'] = $object->tracking_number;
@@ -8970,6 +8988,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
  *
  *      @param	string	$str        String to check
  * 		@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
+ * 		@see utf8_valid()
  */
 function utf8_check($str)
 {
@@ -9007,6 +9026,7 @@ function utf8_check($str)
  *
  *      @param	string	$str        String to check
  * 		@return	boolean				True if string is valid UTF8 string, false if corrupted
+ * 		@see utf8_check()
  */
 function utf8_valid($str)
 {
@@ -9712,7 +9732,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule);
-		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
+		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters, $object);
 		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
 		} else {				// Hook
@@ -10779,7 +10799,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$dictvalues[$obj->{$rowidfield}] = $obj;	// $obj is stdClass
+				$dictvalues[$obj->$rowidfield] = $obj;	// $obj is stdClass
 			}
 		} else {
 			dol_print_error($db);
@@ -11050,7 +11070,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
  * @param string    	$actionType 'default', 'delete', 'danger', 'email', ...
- * @param string|array 	$url        Url for link or array of subbutton description
+ * @param string|array 	$url        Url for link or array of subbutton description ('label'=>, 'url'=>, 'lang'=>, 'perm'=> )
  * @param string    	$id         Attribute id of button
  * @param int|boolean	$userRight  User action right
  * // phpcs:disable
@@ -11079,31 +11099,43 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button
 	if (is_array($url)) {
-		$out = '<div class="dropdown inline-block dropdown-holder">';
-		$out .= '<a style="margin-right: auto;" class="dropdown-toggle butAction" data-toggle="dropdown">'.$label.'</a>';
-		$out .= '<div class="dropdown-content">';
-		foreach ($url as $subbutton) {
-			if ($subbutton['enabled'] && $subbutton['perm']) {
+		if (count($url) > 1) {
+			$out = '<div class="dropdown inline-block dropdown-holder">';
+			$out .= '<a style="margin-right: auto;" class="dropdown-toggle butAction" data-toggle="dropdown">'.$label.'</a>';
+			$out .= '<div class="dropdown-content">';
+			foreach ($url as $subbutton) {
 				if (!empty($subbutton['lang'])) {
 					$langs->load($subbutton['lang']);
 				}
-				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage'])), '', 1, array('isDropDown' => true));
+				$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], array('isDropDown' => true));
+			}
+			$out .= "</div>";
+			$out .= "</div>";
+		} else {
+			foreach ($url as $subbutton) {	// Should loop on 1 record only
+				if (!empty($subbutton['lang'])) {
+					$langs->load($subbutton['lang']);
+				}
+				$tmpurl = DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm']);
 			}
 		}
-		$out .= "</div>";
-		$out .= "</div>";
 
 		return $out;
 	}
 
-	// If $url is a simple link
+	// Here, $url is a simple link
+
 	if (!empty($params['isDropdown']))
 		$class = "dropdown-item";
 	else {
 		$class = 'butAction';
 		if ($actionType == 'danger' || $actionType == 'delete') {
 			$class = 'butActionDelete';
-			if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
+			if (!empty($url) && strpos($url, 'token=') === false) {
+				$url .= '&token='.newToken();
+			}
 		}
 	}
 	$attr = array(

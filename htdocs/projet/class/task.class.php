@@ -1311,10 +1311,11 @@ class Task extends CommonObjectLine
 		$timespent->note = $this->timespent_note;
 		$timespent->datec = $this->db->idate($now);
 
-		if ($timespent->create($user) > 0) {
-			$tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."element_time");
-			$ret = $tasktime_id;
-			$this->timespent_id = $ret;
+		$result = $timespent->create($user);
+
+		if ($result > 0) {
+			$ret = $result;
+			$this->timespent_id = $result;
 
 			if (!$notrigger) {
 				// Call trigger
@@ -2197,6 +2198,7 @@ class Task extends CommonObjectLine
 			//else return $this->progress.' %';
 			return '&nbsp;';
 		}
+		return "";
 	}
 
 	/**

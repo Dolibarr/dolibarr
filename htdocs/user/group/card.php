@@ -60,7 +60,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $userid = GETPOST('user', 'int');
 
-$object = new Usergroup($db);
+$object = new UserGroup($db);
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

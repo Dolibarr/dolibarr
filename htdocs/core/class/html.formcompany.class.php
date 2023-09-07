@@ -55,7 +55,7 @@ class FormCompany extends Form
 
 		$effs = array();
 
-		$sql = "SELECT id, code, libelle";
+		$sql = "SELECT id, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_typent";
 		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = " . (empty($mysoc->country_id) ? '0' : $mysoc->country_id) . ")";
 		if ($filter) {
@@ -78,7 +78,7 @@ class FormCompany extends Form
 				if ($langs->trans($objp->code) != $objp->code) {
 					$effs[$key] = $langs->trans($objp->code);
 				} else {
-					$effs[$key] = $objp->libelle;
+					$effs[$key] = $objp->label;
 				}
 				if ($effs[$key] == '-') {
 					$effs[$key] = '';
@@ -104,7 +104,7 @@ class FormCompany extends Form
 		// phpcs:enable
 		$effs = array();
 
-		$sql = "SELECT id, code, libelle";
+		$sql = "SELECT id, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_effectif";
 		$sql .= " WHERE active = 1";
 		if ($filter) {
@@ -125,7 +125,7 @@ class FormCompany extends Form
 					$key = $objp->code;
 				}
 
-				$effs[$key] = $objp->libelle != '-' ? $objp->libelle : '';
+				$effs[$key] = $objp->label != '-' ? $objp->label : '';
 				$i++;
 			}
 			$this->db->free($resql);
@@ -753,14 +753,14 @@ class FormCompany extends Form
 							if ($disabled) {
 								print ' disabled';
 							}
-							print ' selected>' . dol_trunc($obj->name, 24) . '</option>';
+							print ' selected>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . '</option>';
 							$firstCompany = $obj->rowid;
 						} else {
 							print '<option value="' . $obj->rowid . '"';
 							if ($disabled) {
 								print ' disabled';
 							}
-							print '>' . dol_trunc($obj->name, 24) . '</option>';
+							print '>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . '</option>';
 						}
 						$i++;
 					}

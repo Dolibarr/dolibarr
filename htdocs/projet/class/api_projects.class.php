@@ -43,6 +43,12 @@ class Projects extends DolibarrApi
 	public $project;
 
 	/**
+	 * @var Task $task {@type Task}
+	 */
+	public $task;
+
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -100,8 +106,6 @@ class Projects extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->projet->lire) {
 			throw new RestException(401);
 		}

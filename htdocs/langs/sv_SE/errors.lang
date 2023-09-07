@@ -191,6 +191,7 @@ ErrorGlobalVariableUpdater4=SOAP-klienten misslyckades med felet '%s'
 ErrorGlobalVariableUpdater5=Ingen global variabel vald
 ErrorFieldMustBeANumeric=Fält <b> %s </b> måste vara ett numeriskt värde
 ErrorMandatoryParametersNotProvided=Obligatoriska parametrar som inte tillhandahålls
+ErrorOppStatusRequiredIfUsage=You set you want to use this project to follow an opportunity, so you must also fill the initial Status of opportunity.
 ErrorOppStatusRequiredIfAmount=Du anger en beräknad summa för den här ledningen. Så du måste också ange statusen.
 ErrorFailedToLoadModuleDescriptorForXXX=Misslyckades att ladda moduldoktorarklass för %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Dålig definition av menyfältet i modulbeskrivaren (dåligt värde för nyckelfk_menu)
@@ -262,7 +263,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Fel, parameter <b> %s </b> måste 
 ErrorLoginDateValidity=Fel, den här inloggningen ligger utanför giltighetsdatumintervallet
 ErrorValueLength=Fältets längd '<b> %s </b>' måste vara högre än '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' är ett reserverat nyckelord
-ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command.
+ErrorFilenameReserved=Filnamnet <b> %s </b> kan inte användas eftersom det är ett reserverat och skyddat kommando.
 ErrorNotAvailableWithThisDistribution=Ej tillgängligt med denna distribution
 ErrorPublicInterfaceNotEnabled=Det offentliga gränssnittet var inte aktiverat
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Språket på den nya sidan måste definieras om det är inställt som en översättning av en annan sida
@@ -304,13 +305,21 @@ ErrorValueForTooLow=Värdet för <b> %s </b> är för lågt
 ErrorValueCantBeNull=Värdet för <b> %s </b> kan inte vara null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Datumet för banktransaktionen får inte vara tidigare än datumet för filöverföringen
 ErrorTooMuchFileInForm=För många filer i formuläret, det maximala antalet är %s fil(er)
-ErrorSessionInvalidatedAfterPasswordChange=Sessionen ogiltigförklarades efter byte av lösenord, status eller giltighetsdatum. Vänligen logga in igen.
+ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, email, status or dates of validity. Please relogin.
 ErrorExistingPermission = Tillstånd <b> %s </b> för objekt <b> %s </b> finns redan
 ErrorFieldExist=Värdet för <b> %s </b> finns redan
 ErrorEqualModule=Modul ogiltig i <b> %s </b>
 ErrorFieldValue=Värdet för <b> %s </b> är felaktigt
-ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
-
+ErrorCoherenceMenu= <b> %s </b> krävs när <b> %s </b> är Vänster
+ErrorUploadFileDragDrop=There was an error while the file(s) upload
+ErrorUploadFileDragDropPermissionDenied=There was an error while the file(s) upload : Permission denied
+ErrorFixThisHere=<a href="%s">Fix this here</a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
+ErrorMenuExistValue=A Menu already exist with this Title or URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
+ErrorTableExist=Table <b>%s</b> already exist
+ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) är högre än PHP-parameter post_max_size (%s). Detta är inte en konsekvent installation.
 WarningPasswordSetWithNoAccount=Ett lösenord har ställts för den här medlemmen. Men inget användarkonto skapades. Så det här lösenordet är lagrat men kan inte användas för att logga in till Dolibarr. Den kan användas av en extern modul / gränssnitt men om du inte behöver definiera någon inloggning eller ett lösenord för en medlem kan du inaktivera alternativet "Hantera en inloggning för varje medlem" från inställningen av medlemsmodulen. Om du behöver hantera en inloggning men inte behöver något lösenord, kan du hålla fältet tomt för att undvika denna varning. Obs! Email kan också användas som inloggning om medlemmen är länkad till en användare.
@@ -349,6 +358,16 @@ WarningThemeForcedTo=Varning, temat har tvingats till <b> %s </b> av en dold kon
 WarningPagesWillBeDeleted=Varning, detta kommer också att radera alla befintliga sidor/behållare på webbplatsen. Du bör exportera din webbplats innan, så du har en säkerhetskopia för att återimportera den senare.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatisk validering är inaktiverad när alternativet att minska lager är inställt på "Fakturavalidering".
 WarningModuleNeedRefrech = Modul <b> %s </b> har inaktiverats. Glöm inte att aktivera det
+WarningPermissionAlreadyExist=Existing permissions for this object
+WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.
+WarningCorrectedInvoiceNotFound=Corrected invoice not found
+
+SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
+SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
+SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
+SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
+SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
 
 # Validate
 RequireValidValue = Värdet är inte giltigt
@@ -370,3 +389,4 @@ BadSetupOfField = Fel inställning av fältet
 BadSetupOfFieldClassNotFoundForValidation = Felaktig inställning av fält: Klass hittades inte för validering
 BadSetupOfFieldFileNotFound = Felaktig inställning av fält: Filen hittades inte för inkludering
 BadSetupOfFieldFetchNotCallable = Felaktig inställning av fält: Hämtning kan inte anropas på klass
+ErrorTooManyAttempts= Too many attempts, please try again later

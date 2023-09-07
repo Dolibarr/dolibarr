@@ -77,7 +77,7 @@ class HookManager
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int|void							    Always 1
+	 *	@return	int								0 or 1
 	 */
 	public function initHooks($arraycontext)
 	{
@@ -85,7 +85,7 @@ class HookManager
 
 		// Test if there is hooks to manage
 		if (!is_array($conf->modules_parts['hooks']) || empty($conf->modules_parts['hooks'])) {
-			return;
+			return 0;
 		}
 
 		// For backward compatibility
@@ -200,7 +200,7 @@ class HookManager
 			'insertExtraFooter',
 			'printLeftBlock',
 			'formAddObjectLine',
-			'formBuilddocOption',
+			'formBuilddocOptions',
 			'showSocinfoOnPrint'
 		))) {
 			$hooktype = 'output';
@@ -241,8 +241,8 @@ class HookManager
 					$actionclassinstance->error = 0;
 					$actionclassinstance->errors = array();
 
-					if (getDolGlobalInt('MAIN_DEBUG_SHOW_EACH_QUALIFIED_HOOK_CALL') >= 2) {
-						// This his too much verbose, enabled in develop only
+					if (getDolGlobalInt('MAIN_DEBUG_HOOK')) {
+						// This his too much verbose, enabled if const enabled only
 						dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
 					}
 
@@ -283,7 +283,10 @@ class HookManager
 							continue;
 						}
 
-						//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
+						if (getDolGlobalInt('MAIN_DEBUG_HOOK')) {
+							dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
+						}
+
 						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 						$resaction += $resactiontmp;
 

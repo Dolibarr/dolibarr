@@ -51,6 +51,7 @@ StripeAccount=Stripe アカウント
 StripeChargeList=Stripe 料金のリスト
 StripeTransactionList=Stripeトランザクションのリスト
 StripeCustomerId=Stripe の顧客ID
+StripePaymentId=Stripe 支払い ID
 StripePaymentModes=Stripe 支払モード
 LocalID=ローカルID
 StripeID=Stripe ID
