@@ -898,8 +898,8 @@ class BonPrelevement extends CommonObject
 			dol_syslog(__METHOD__." Read invoices for did=".((int) $did), LOG_DEBUG);
 
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid, f.fk_soc";
-			$sql .= ", pfd.code_banque, pfd.code_guichet, pfd.number, pfd.cle_rib";
-			$sql .= ", pfd.amount";
+			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
+			$sql .= ", pd.amount";
 			$sql .= ", s.nom as name";
 			$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
 			if ($type != 'bank-transfer') {
@@ -968,7 +968,7 @@ class BonPrelevement extends CommonObject
 					if ($resfetch >= 0) {		// Field 0 of $fac is rowid of invoice
 					*/
 
-						// Check if $fac[8] s.nom is null
+					// Check if $fac[8] s.nom is null
 					if ($fac[8] != null) {
 						//$bac = new CompanyBankAccount($this->db);
 						//$bac->fetch(0, $soc->id);
