@@ -6934,7 +6934,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
  *	Creation of a directory (this can create recursive subdir)
  *
  *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
+ *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning, on first dir, saying PHP has no permission when open_basedir is used)
  *  @param	string		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
  *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
  */
@@ -6967,6 +6967,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 		} else {
 			$ccdir .= $cdir[$i];
 		}
+		$regs = array();
 		if (preg_match("/^.:$/", $ccdir, $regs)) {
 			continue; // Si chemin Windows incomplet, on poursuit par rep suivant
 		}
