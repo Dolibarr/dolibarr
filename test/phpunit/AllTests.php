@@ -225,6 +225,8 @@ class AllTests
 		// Rest
 		require_once dirname(__FILE__).'/RestAPIUserTest.php';
 		$suite->addTestSuite('RestAPIUserTest');
+		require_once dirname(__FILE__).'/RestAPIContactTest.php';
+		$suite->addTestSuite('RestAPIContactTest');
 		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
 		$suite->addTestSuite('RestAPIDocumentTest');
 
