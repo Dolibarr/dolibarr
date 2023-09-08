@@ -2174,6 +2174,7 @@ class Societe extends CommonObject
 	 */
 	public function set_as_client()
 	{
+		global $conf;
 		// phpcs:enable
 		if ($this->id) {
 			$newclient = 1;
