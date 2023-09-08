@@ -51,6 +51,7 @@ StripeAccount=Stripe account
 StripeChargeList=List of Stripe charges
 StripeTransactionList=List of Stripe transactions
 StripeCustomerId=Stripe customer id
+StripePaymentId=Stripe payment id
 StripePaymentModes=Stripe payment modes
 LocalID=Local ID
 StripeID=Stripe ID
@@ -75,4 +76,4 @@ STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
 TERMINAL_LOCATION=Location (address) for Stripe Terminals
 RequestDirectDebitWithStripe=Request Direct Debit with Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
- 
+StripeConnect_Mode=Stripe Connect mode

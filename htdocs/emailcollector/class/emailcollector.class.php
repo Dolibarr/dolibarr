@@ -131,8 +131,8 @@ class EmailCollector extends CommonObject
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com', 'csslist'=>'tdoverflowmax125'),
 		'port'          => array('type'=>'varchar(10)', 'label'=>'EMailHostPort', 'visible'=>1, 'enabled'=>1, 'position'=>91, 'notnull'=>1, 'searchall'=>0, 'comment'=>"IMAP server port", 'help'=>'Example: 993', 'csslist'=>'tdoverflowmax50', 'default'=>'993'),
 		'hostcharset'   => array('type'=>'varchar(16)', 'label'=>'HostCharset', 'visible'=>-1, 'enabled'=>1, 'position'=>92, 'notnull'=>0, 'searchall'=>0, 'comment'=>"IMAP server charset", 'help'=>'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default'=>'UTF-8'),
-		'imap_encryption'  => array('type'=>'varchar(16)', 'label'=>'ImapEncryption', 'visible'=>1, 'enabled'=>1, 'position'=>93, 'searchall'=>0, 'comment'=>"IMAP encryption", 'help'=>'ImapEncryptionHelp', 'arrayofkeyval'=> array('ssl'=>'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default'=>'ssl'),
-		'norsh'  => array('type'=>'integer', 'label'=>'NoRSH', 'visible'=>1, 'enabled'=>"!getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>94, 'searchall'=>0, 'help'=>'NoRSHHelp', 'arrayofkeyval'=> array(0 =>'No', 1 => 'Yes'), 'default'=> 0),
+		'imap_encryption'  => array('type'=>'varchar(16)', 'label'=>'ImapEncryption', 'visible'=>-1, 'enabled'=>1, 'position'=>93, 'searchall'=>0, 'comment'=>"IMAP encryption", 'help'=>'ImapEncryptionHelp', 'arrayofkeyval'=> array('ssl'=>'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default'=>'ssl'),
+		'norsh'  => array('type'=>'integer', 'label'=>'NoRSH', 'visible'=>-1, 'enabled'=>"!getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>94, 'searchall'=>0, 'help'=>'NoRSHHelp', 'arrayofkeyval'=> array(0 =>'No', 1 => 'Yes'), 'default'=> 0),
 		'acces_type'     => array('type'=>'integer', 'label'=>'accessType', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login type", 'arrayofkeyval'=>array('0'=>'loginPassword', '1'=>'oauthToken'), 'default'=>'0', 'help'=>''),
 		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
@@ -1131,6 +1131,8 @@ class EmailCollector extends CommonObject
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
+				$supportedoauth2array = array();
+
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 				$keyforsupportedoauth2array = $this->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
@@ -1630,8 +1632,8 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
-				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References']??'')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References']??'')." Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
@@ -2041,7 +2043,7 @@ class EmailCollector extends CommonObject
 								}
 
 								if (get_class($objectemail) != 'Societe') {
-									$thirdpartyid = $objectemail->fk_soc;
+									$thirdpartyid = $objectemail->fk_soc ?? $objectemail->socid;
 								} else {
 									$thirdpartyid = $objectemail->id;
 								}
@@ -3119,6 +3121,7 @@ class EmailCollector extends CommonObject
 							if (!is_object($hookmanager)) {
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
+								$hookmanager->initHooks(['emailcolector']);
 							}
 
 							$parameters = array(
@@ -3222,6 +3225,7 @@ class EmailCollector extends CommonObject
 		} else {
 			$langs->load("admin");
 			$output = $langs->trans('NoNewEmailToProcess');
+			$output .= ' (defaultlang='.$langs->defaultlang.')';
 		}
 
 		// Disconnect
@@ -3293,7 +3297,7 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    UID email
-	 * @param 	string $destdir	    Target dir for attachments
+	 * @param 	string $destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return 	void
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
@@ -3346,7 +3350,7 @@ class EmailCollector extends CommonObject
 	 * @param 	string		$mid			Part no
 	 * @param 	Object		$p              Object p
 	 * @param   string      $partno         Partno
-	 * @param 	string 		$destdir	    Target dir for attachments
+	 * @param 	string 		$destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return	void
 	 */
 	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
@@ -3373,7 +3377,7 @@ class EmailCollector extends CommonObject
 				$params[strtolower($x->attribute)] = $x->value;
 			}
 		}
-		if ($p->dparameters) {
+		if (!empty($p->dparameters)) {
 			foreach ($p->dparameters as $x) {
 				$params[strtolower($x->attribute)] = $x->value;
 			}
@@ -3382,44 +3386,46 @@ class EmailCollector extends CommonObject
 		// ATTACHMENT
 		// Any part with a filename is an attachment,
 		// so an attached text file (type 0) is not mistaken as the message.
-		if ($params['filename'] || $params['name']) {
+		if (!empty($params['filename']) || !empty($params['name'])) {
 			// filename may be given as 'Filename' or 'Name' or both
-			$filename = ($params['filename']) ? $params['filename'] : $params['name'];
+			$filename = $params['filename'] ?? $params['name'];
 			// filename may be encoded, so see imap_mime_header_decode()
 			$attachments[$filename] = $data; // this is a problem if two files have same name
 
-			// Get file name (with extension)
-			$file_name_complete =  $params['filename'];
+			if (strlen($destdir)) {
+				if (substr($destdir, -1) != '/') $destdir .= '/';
 
+				// Get file name (with extension)
+				$file_name_complete = $params['filename'];
+				$destination = $destdir.$file_name_complete;
 
-			$destination = $destdir.'/'.$file_name_complete;
+				// Extract file extension
+				$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
 
-			// Extract file extension
-			$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
+				// Extract file name without extension
+				$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
 
-			// Extract file name without extension
-			$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
+				// Save an original file name variable to track while renaming if file already exists
+				$file_name_original = $file_name;
 
-			// Save an original file name variable to track while renaming if file already exists
-			$file_name_original = $file_name;
+				// Increment file name by 1
+				$num = 1;
 
-			// Increment file name by 1
-			$num = 1;
+				/**
+				 * Check if the same file name already exists in the upload folder,
+				 * append increment number to the original filename
+				 */
+				while (file_exists($destdir.$file_name.".".$extension)) {
+					$file_name = $file_name_original . ' (' . $num . ')';
+					$file_name_complete = $file_name . "." . $extension;
+					$destination = $destdir.$file_name_complete;
+					$num++;
+				}
 
-			/**
-			 * Check if the same file name already exists in the upload folder,
-			 * append increment number to the original filename
-			 */
-			while (file_exists($destdir."/".$file_name.".".$extension)) {
-				$file_name = $file_name_original . ' (' . $num . ')';
-				$file_name_complete = $file_name . "." . $extension;
-				$destination = $destdir.'/'.$file_name_complete;
-				$num++;
+				$destination = dol_sanitizePathName($destination);
+
+				file_put_contents($destination, $data);
 			}
-
-			$destination = dol_sanitizePathName($destination);
-
-			file_put_contents($destination, $data);
 		}
 
 		// TEXT
@@ -3448,9 +3454,9 @@ class EmailCollector extends CommonObject
 		}
 
 		// SUBPART RECURSION
-		if ($p->parts) {
+		if (!empty($p->parts)) {
 			foreach ($p->parts as $partno0 => $p2) {
-				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1)); // 1.2, 1.2.1, etc.
+				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1), $destdir); // 1.2, 1.2.1, etc.
 			}
 		}
 	}

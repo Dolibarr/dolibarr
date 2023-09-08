@@ -52,6 +52,11 @@ class RssParser
 	private $_rssarray = array();
 
 	private $current_namespace;
+	public $items = array();
+	public $current_item = array();
+	public $channel = array();
+	public $textinput = array();
+	public $image = array();
 
 	private $initem;
 	private $intextinput;
@@ -679,6 +684,7 @@ class RssParser
 			$str1 = "";
 		}
 		$str1 .= $str2;
+		return $str1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

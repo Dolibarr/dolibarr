@@ -94,7 +94,7 @@ class box_members_by_type extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year-$numberyears).' - '.$year.')' : ''));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 			// Show array
@@ -252,7 +252,7 @@ class box_members_by_type extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror())
 				);
 			}
 		} else {

@@ -25,9 +25,13 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+if (isModEnabled('workstation')) {
+	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+}
+
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -37,6 +41,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class BOM extends CommonObject
 {
+
+	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'bom';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -62,6 +72,10 @@ class BOM extends CommonObject
 	 */
 	public $picto = 'bom';
 
+	/**
+	 * @var Product	Object product of the BOM
+	 */
+	public $product;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -154,6 +168,10 @@ class BOM extends CommonObject
 	 */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_valid
+	 */
+	public $date_valid;
 
 	public $tms;
 
@@ -166,6 +184,16 @@ class BOM extends CommonObject
 	 * @var int Id User modifying
 	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_user_valid;
+
+	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_warehouse;
 
 	/**
 	 * @var string import key
@@ -182,6 +210,7 @@ class BOM extends CommonObject
 	 */
 	public $fk_product;
 	public $qty;
+	public $duration;
 	public $efficiency;
 	// END MODULEBUILDER PROPERTIES
 
@@ -679,9 +708,10 @@ class BOM extends CommonObject
 	 * @param	string	$import_key				Import Key
 	 * @param	int		$fk_unit				Unit of line
 	 * @param	array	$array_options			extrafields array
+	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0, $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -759,6 +789,9 @@ class BOM extends CommonObject
 				foreach ($array_options as $key => $value) {
 					$line->array_options[$key] = $array_options[$key];
 				}
+			}
+			if ($fk_default_workstation > 0 && $line->fk_default_workstation != $fk_default_workstation) {
+				$line->fk_default_workstation = $fk_default_workstation;
 			}
 
 			$result = $line->update($user);
@@ -884,7 +917,7 @@ class BOM extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1302,7 +1335,7 @@ class BOM extends CommonObject
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+			$modele = '';
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
@@ -1312,8 +1345,11 @@ class BOM extends CommonObject
 		}
 
 		$modelpath = "core/modules/bom/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if (!empty($modele)) {
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -1326,7 +1362,7 @@ class BOM extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 		$this->ref = 'BOM-123';
-		$this->date = $this->date_creation;
+		$this->date_creation = dol_now() - 20000;
 	}
 
 

@@ -129,7 +129,7 @@ $arrayfields = array(
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(!empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)))
+	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>'getDolGlobalConst("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
 );
 
 // Extra fields
@@ -230,9 +230,9 @@ if (empty($reshook)) {
 		sort($receptions);
 		foreach ($receptions as $id_reception) {
 			$rcp = new Reception($db);
-			 // We only invoice reception that are validated
-			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != $rcp::STATUS_VALIDATED) {
-				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusSupplierOrderValidatedShort"));
+			 // We not allow invoice reception that are in draft status
+			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut == $rcp::STATUS_DRAFT) {
+				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusReceptionValidatedShort"));
 				$error++;
 				continue;
 			}
@@ -554,6 +554,7 @@ if (empty($reshook)) {
 				}
 
 				$id = $objecttmp->id; // For builddoc action
+				$lastref = $objecttmp->ref; // generated ref
 				$object  =$objecttmp;
 
 				// Fac builddoc
@@ -860,7 +861,7 @@ $arrayofmassactions = array(
 	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
+if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->rights->supplier_invoice->creer) {
 	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisReceptions");
 }
 if ($massaction == 'createbills') {

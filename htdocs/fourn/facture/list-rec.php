@@ -66,7 +66,6 @@ $objecttype = 'facture_fourn_rec';
 if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
-$result = restrictedArea($user, 'facture', $id, $objecttype);
 
 $search_ref = GETPOST('search_ref');
 $search_societe = GETPOST('search_societe');
@@ -169,7 +168,7 @@ if ($socid > 0) {
 }
 $objecttype = 'facture_fourn_rec';
 
-$result = restrictedArea($user, 'facture', $object->id, $objecttype);
+$result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
 
 
 /*
@@ -233,8 +232,8 @@ if (empty($reshook)) {
 	// Mass actions
 	/*$objectclass='MyObject';
 	$objectlabel='MyObject';
-	$permissiontoread = $user->rights->mymodule->read;
-	$permissiontodelete = $user->rights->mymodule->delete;
+	$permissiontoread = $user->hasRight("mymodule", "read");
+	$permissiontodelete = $user->hasRight("mymodule", "delete");
 	$uploaddir = $conf->mymodule->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
@@ -283,12 +282,12 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn_rec as f';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_rec_extrafields as ef ON ef.fk_object = f.rowid';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '. (int) $user->id;
 }
 if ($search_ref) {
@@ -873,7 +872,7 @@ if ($resql) {
 			}
 			// Action column
 			print '<td class="center tdoverflowmax125">';
-			if ($user->rights->facture->creer && empty($supplierinvoicerectmp->suspended)) {
+			if ($user->hasRight('facture', 'creer') && empty($supplierinvoicerectmp->suspended)) {
 				if ($supplierinvoicerectmp->isMaxNbGenReached()) {
 					print $langs->trans("MaxNumberOfGenerationReached");
 				} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
@@ -902,7 +901,7 @@ if ($resql) {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	// Show total line

@@ -204,6 +204,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0c');
 
+		$test='/user/perms.php?id=1&action=addrights&entity=1&rights=123&confirm=yes&token=123456789&updatedmodulename=lmscoursetracking';
+		$result=testSqlAndScriptInject($test, 1);
+		print "test=".$test." result=".$result."\n";
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject with a valid url');
+
 		// Should detect attack
 		$expectedresult=1;
 
@@ -335,6 +340,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="<a onpointerdown=alert(document.domain)>XSS</a>";
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject lll');
+
+		$test='<a onscrollend=alert(1) style="display:block;overflow:auto;border:1px+dashed;width:500px;height:100px;"><br><br><br><br><br><span+id=x>test</span></a>';	// Add the char %F6 into the variable
+		$result=testSqlAndScriptInject($test, 0);
+		//print "test=".$test." result=".$result."\n";
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject mmm');
+
 
 		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$result=testSqlAndScriptInject($test, 0);	// result must be 0
@@ -562,8 +573,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');	// With some PHP and libxml version, we got this when parsong invalid HTML
-		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');		// On other we got a HTML that has been cleaned
+		$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');					// With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
+		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');	// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
 
 		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
@@ -691,6 +702,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
 		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
 
+		$stringtotest = 'text <link href="aaa"> text';
+		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1, 0, array(), 0);
+		$this->assertEquals('text  text', $decodedstring, 'Function did not sanitize correclty with test 4a');
+
+		$stringtotest = 'text <link href="aaa"> text';
+		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1, 0, array(), 1);
+		$this->assertEquals('text <link href="aaa"> text', $decodedstring, 'Function did not sanitize correclty with test 4b');
+
 		return 0;
 	}
 
@@ -782,7 +801,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(301, $tmp['http_code'], 'Should GET url 301 without a follow -> 301');
+		$this->assertEquals(301, $tmp['http_code'], 'Should GET url 301 response and stop here');
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
@@ -941,7 +960,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
-		$result=dol_eval('$a=function() { }; $a;', 1, 1, '');
+		$result=dol_eval('$a=function() { }; $a;', 1, 1, '0');
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
@@ -980,9 +999,19 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
 
-		// Same with syntax error
+		// Same with a value that does not match
 		$leftmenu = 'XXX';
 		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
+
+		$leftmenu = 'AAA';
+		$result=dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertTrue($result);
+
+		$leftmenu = 'XXX';
+		$result=dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
 		print "result = ".$result."\n";
 		$this->assertFalse($result);
 
@@ -995,6 +1024,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=dol_eval("(\$a.'aa')", 1, 0);
 		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a="abs" && $a(5)', 1, 0);
+		print "result = a".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 	}
 

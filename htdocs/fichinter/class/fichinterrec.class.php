@@ -121,7 +121,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 
@@ -150,13 +150,11 @@ class FichinterRec extends Fichinter
 		$fichintsrc = new Fichinter($this->db);
 
 		$result = $fichintsrc->fetch($this->id_origin);
-		$result = $fichintsrc->fetch_lines(); // to get all lines
-
+		if ($result > 0) {
+			$result = $fichintsrc->fetch_lines(); // to get all lines
+		}
 
 		if ($result > 0) {
-			// On positionne en mode brouillon la facture
-			$this->brouillon = 1;
-
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter_rec (";
 			$sql .= "titre";
 			$sql .= ", fk_soc";
@@ -170,7 +168,6 @@ class FichinterRec extends Fichinter
 			$sql .= ", fk_projet";
 			$sql .= ", fk_contrat";
 			$sql .= ", modelpdf";
-
 			$sql .= ", frequency";
 			$sql .= ", unit_frequency";
 			$sql .= ", date_when";
@@ -178,7 +175,6 @@ class FichinterRec extends Fichinter
 			$sql .= ", nb_gen_done";
 			$sql .= ", nb_gen_max";
 			// $sql.= ", auto_validate";
-
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->title)."'";
 			$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : 'null');
@@ -199,12 +195,12 @@ class FichinterRec extends Fichinter
 
 			$sql .= ", ".(!empty($fichintsrc->model_pdf) ? "'".$this->db->escape($fichintsrc->model_pdf)."'" : "''");
 
-			// récurrence
+			// Frequency
 			$sql .= ", ".(!empty($this->frequency) ? ((int) $this->frequency) : "null");
 			$sql .= ", '".$this->db->escape($this->unit_frequency)."'";
 			$sql .= ", ".(!empty($this->date_when) ? "'".$this->db->idate($this->date_when)."'" : 'null');
 			$sql .= ", ".(!empty($this->date_last_gen) ? "'".$this->db->idate($this->date_last_gen)."'" : 'null');
-			$sql .= ", 0"; // we start à 0
+			$sql .= ", 0"; // we start at 0
 			$sql .= ", ".((int) $this->nb_gen_max);
 			// $sql.= ", ".$this->auto_validate;
 			$sql .= ")";
@@ -299,7 +295,8 @@ class FichinterRec extends Fichinter
 				$this->datec				= $obj->datec;
 				$this->duration = $obj->duree;
 				$this->socid				= $obj->fk_soc;
-				$this->statut = 0;
+				$this->status = 0;
+				$this->statut = 0;	// deprecated
 				$this->fk_project			= $obj->fk_projet;
 				$this->fk_contrat			= $obj->fk_contrat;
 				$this->note_private = $obj->note_private;
@@ -316,8 +313,6 @@ class FichinterRec extends Fichinter
 				$this->nb_gen_done = $obj->nb_gen_done;
 				$this->nb_gen_max = $obj->nb_gen_max;
 				$this->auto_validate		= $obj->auto_validate;
-
-				$this->brouillon = 1;
 
 				// Lines
 				$result = $this->fetch_lines();
@@ -483,7 +478,7 @@ class FichinterRec extends Fichinter
 			return -1;
 		}
 
-		if ($this->brouillon) {
+		if ($this->status == self::STATUS_DRAFT) {
 			// Clean parameters
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);

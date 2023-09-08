@@ -717,6 +717,7 @@ if (($action == "create") || ($action == "edit")) {
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
 	if (!$object->status) {
+		print img_picto('', 'object_calendarday').' <span class="opacitymedium strikefordisabled">'.$form->textwithpicto(dol_print_date($object->datenextrun, 'dayhoursec'), $langs->trans("CurrentTimeZone")).'</span> ';
 		print $langs->trans("Disabled");
 	} elseif (!empty($object->datenextrun)) {
 		print img_picto('', 'object_calendarday').' '.$form->textwithpicto(dol_print_date($object->datenextrun, 'dayhoursec'), $langs->trans("CurrentTimeZone"));

@@ -2,7 +2,7 @@
 ContractsArea=Maes contractau
 ListOfContracts=Rhestr o gontractau
 AllContracts=Pob contract
-ContractCard=Cerdyn contract
+ContractCard=Contract
 ContractStatusNotRunning=Ddim yn rhedeg
 ContractStatusDraft=Drafft
 ContractStatusValidated=Wedi'i ddilysu

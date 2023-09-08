@@ -194,7 +194,7 @@ class PaiementFourn extends Paiement
 				continue;
 			}
 			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
-			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
+			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
@@ -270,7 +270,7 @@ class PaiementFourn extends Paiement
 					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)';
-						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? '"'.$this->db->escape($currencyofpayment).'"' : 'NULL').', '.(!empty($currencytxofpayment) ? (double) $currencytxofpayment : 1).')';
+						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').', '.(!empty($currencytxofpayment) ? (double) $currencytxofpayment : 1).')';
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$invoice = new FactureFournisseur($this->db);

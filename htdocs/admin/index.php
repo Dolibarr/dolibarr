@@ -83,7 +83,7 @@ print '</span>';
 print '<br>';
 
 // Show info setup company
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) || !empty($conf->global->MAIN_INFO_SOCIETE_SETUP_TODO_WARNING)) {
 	$setupcompanynotcomplete = 1;
 }
 

@@ -73,7 +73,6 @@
  * <dol_value_customer_mail>                        Replaced by customer mail
  * <dol_value_customer_phone>                       Replaced by customer phone
  * <dol_value_customer_mobile>                      Replaced by customer mobile
- * <dol_value_customer_skype>                       Replaced by customer skype
  * <dol_value_customer_tax_number>                  Replaced by customer VAT number
  * <dol_value_customer_account_balance>             Replaced by customer account balance
  * <dol_value_mysoc_name>                           Replaced by mysoc name
@@ -232,7 +231,6 @@ class dolReceiptPrinter extends Printer
 			'dol_value_customer_lastname' => 'DOL_VALUE_CUSTOMER_LASTNAME',
 			'dol_value_customer_mail' => 'DOL_VALUE_CUSTOMER_MAIL',
 			'dol_value_customer_phone' => 'DOL_VALUE_CUSTOMER_PHONE',
-			'dol_value_customer_skype' => 'DOL_VALUE_CUSTOMER_SKYPE',
 			'dol_value_customer_tax_number' => 'DOL_VALUE_CUSTOMER_TAX_NUMBER',
 			//'dol_value_customer_account_balance' => 'DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE',
 			//'dol_value_customer_points' => 'DOL_VALUE_CUSTOMER_POINTS',
