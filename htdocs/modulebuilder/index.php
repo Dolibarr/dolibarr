@@ -836,7 +836,7 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 				}
 			}
 			$stringLog = implode("\n", $strreplace);
-			dolREplaceInFile($destfile, array('//include::ChangeLog.md[]' => '','__CHANGELOG__' => $stringLog));
+			dolReplaceInFile($destfile, array('//include::ChangeLog.md[]' => '','__CHANGELOG__' => $stringLog));
 		}
 
 		// Delete old documentation files
@@ -5176,14 +5176,14 @@ if ($module == 'initmodule') {
 					var groupedRights = ' . $groupedRights_json . ';
 					var objectsSelect = $("select[id=\'objects\']");
 					var permsSelect = $("select[id=\'perms\']");
-				
+
 					objectsSelect.change(function() {
 						var selectedObject = $(this).val();
-				
+
 						permsSelect.empty();
-				
+
 						var rights = groupedRights[selectedObject];
-				
+
 						if (rights) {
 							for (var i = 0; i < rights.length; i++) {
 								var right = rights[i];
@@ -5194,7 +5194,7 @@ if ($module == 'initmodule') {
 							var option = $("<option></option>").attr("value", "read").text("read");
 								permsSelect.append(option);
 						}
-						
+
 						if (selectedObject !== "" && selectedObject !== null && rights) {
 							permsSelect.show();
 						} else {
