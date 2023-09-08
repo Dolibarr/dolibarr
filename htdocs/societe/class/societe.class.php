@@ -2171,16 +2171,30 @@ class Societe extends CommonObject
 	 *  Define third party as a customer
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
+	 *  @deprecated
+	 *  @see setAsCustomer()
 	 */
 	public function set_as_client()
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_as_client is deprecated use setAsCustomer instead", LOG_NOTICE);
+		return $this->setAsCustomer();
+	}
+
+	/**
+	 *  Define third party as a customer
+	 *
+	 *	@return		int		<0 if KO, >0 if OK
+	 *  @since dolibarr v19
+	 */
+	public function setAsCustomer()
+	{
 		if ($this->id) {
 			$newclient = 1;
-			if (($this->client == 2 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+			if (($this->client == 2 || $this->client == 3) && !getDolGlobalInt('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET client = ".((int) $newclient);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
