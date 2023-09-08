@@ -9241,7 +9241,9 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 				}
 			}
 			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);
-			$scheck = preg_replace('/\s[a-zA-Z0-9_]+\(/', ' __FUNCTION__', $scheck);
+			$scheck = preg_replace('/^\(/', '__PARENTHESIS__', $scheck);
+			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__', $scheck);
+			$scheck = preg_replace('/(|\s)[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck);
 			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."\n";
 			if (strpos($scheck, '(') !== false) {
