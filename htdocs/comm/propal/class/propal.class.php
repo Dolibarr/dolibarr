@@ -116,8 +116,21 @@ class Propal extends CommonObject
 	/**
 	 * Ref from thirdparty
 	 * @var string
+	 * @deprecated
+	 * @see $ref_customer
 	 */
 	public $ref_client;
+
+	/**
+	 * Ref from thirdparty
+	 * @var string
+	 */
+	public $ref_customer;
+
+	/**
+	 * @var Propal oldcopy with propal properties
+	 */
+	public $oldcopy;
 
 	/**
 	 * Status of the quote
@@ -240,7 +253,21 @@ class Propal extends CommonObject
 	public $address_type;
 	public $address;
 
+	/**
+	 * @var int availabilty ID
+	 */
 	public $availability_id;
+
+	/**
+	 * @var int availabilty ID
+	 * @deprecated
+	 * @see $availability_id
+	 */
+	public $fk_availability;
+
+	/**
+	 * @var string availabilty code
+	 */
 	public $availability_code;
 
 	public $duree_validite;
@@ -256,6 +283,10 @@ class Propal extends CommonObject
 	 * @var PropaleLigne[]
 	 */
 	public $lines = array();
+
+	/**
+	 * @var PropaleLigne
+	 */
 	public $line;
 
 	public $labelStatus = array();
