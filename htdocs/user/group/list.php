@@ -440,7 +440,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		print $object->getNomUrl(1);
 		if (isModEnabled('multicompany') && !$obj->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
@@ -457,12 +457,12 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		print '<td class="center">'.$obj->nb.'</td>';
+		print '<td class="center">'.dol_escape_htmltag($obj->nb).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 		print '<td class="center">';
-		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.$obj->nbpermissions.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.dol_escape_htmltag($obj->nbpermissions).'</a>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

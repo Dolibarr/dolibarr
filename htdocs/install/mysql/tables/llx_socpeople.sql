@@ -44,16 +44,6 @@ create table llx_socpeople
   email				varchar(255),
 
   socialnetworks    text DEFAULT NULL,                          -- json with socialnetworks
-  --jabberid			varchar(255),
-  --skype				varchar(255),
-  --twitter			varchar(255),                        		--
-  --facebook			varchar(255),                        		--
-  --linkedin            			varchar(255),                       		--
-  --instagram                varchar(255),                        		--
-  --snapchat                 varchar(255),                        		--
-  --googleplus               varchar(255),                        		--
-  --youtube                  varchar(255),                        		--
-  --whatsapp                 varchar(255),                        		--
 
   photo				varchar(255),
   no_email			smallint NOT NULL DEFAULT 0,				-- deprecated. Use table llx_mailing_unsubscribe instead
