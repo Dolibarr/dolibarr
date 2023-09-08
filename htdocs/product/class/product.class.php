@@ -173,6 +173,7 @@ class Product extends CommonObject
 	public $multiprices = array();
 	public $multiprices_ttc = array();
 	public $multiprices_base_type = array();
+	public $multiprices_default_vat_code = array();
 	public $multiprices_min = array();
 	public $multiprices_min_ttc = array();
 	public $multiprices_tva_tx = array();
@@ -183,6 +184,11 @@ class Product extends CommonObject
 	public $prices_by_qty = array();
 	public $prices_by_qty_id = array();
 	public $prices_by_qty_list = array();
+
+	/**
+	 * @var int price level set after updateprice for trigger
+	 */
+	public $level;
 
 	//! Array for multilangs
 	public $multilangs = array();
