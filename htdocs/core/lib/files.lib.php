@@ -2638,7 +2638,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->user->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphotopublic' && !empty($conf->user->dir_output)) {
-		// Wrapping for users photos that were set to public by their owner (public user photos can be read with the public link and securekey)
+		// Wrapping for users photos that were set to public (for virtual credit card) by their owner (public user photos can be read
+		// with the public link and securekey)
 		$accessok = false;
 		$reg = array();
 		if (preg_match('/^(\d+)\/photos\//', $original_file, $reg)) {
