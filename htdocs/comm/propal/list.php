@@ -1144,7 +1144,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view products
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read') && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read') && ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'))) {
 		$searchCategoryProductOperator = -1;
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1185,7 +1185,7 @@ if ($resql) {
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 
@@ -1715,7 +1715,7 @@ if ($resql) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
@@ -1834,8 +1834,8 @@ if ($resql) {
 
 			// Town
 			if (!empty($arrayfields['s.town']['checked'])) {
-				print '<td class="nocellnopadd">';
-				print $obj->town;
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
+				print dol_escape_htmltag($obj->town);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2130,7 +2130,7 @@ if ($resql) {
 
 			if (!empty($arrayfields['sale_representative']['checked'])) {
 				// Sales representatives
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->socid > 0) {
 					$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 					if ($listsalesrepresentatives < 0) {

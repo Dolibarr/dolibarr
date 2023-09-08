@@ -80,6 +80,11 @@ class Expedition extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'dolly';
@@ -113,8 +118,6 @@ class Expedition extends CommonObject
 	 * @var string Customer ref
 	 */
 	public $ref_customer;
-
-	public $brouillon;
 
 	/**
 	 * @var int warehouse id
@@ -326,14 +329,12 @@ class Expedition extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
 		}
 
 		$this->user = $user;
-
 
 		$this->db->begin();
 
@@ -648,10 +649,6 @@ class Expedition extends CommonObject
 
 				$this->db->free($result);
 
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
-
 				// Tracking url
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
@@ -682,7 +679,7 @@ class Expedition extends CommonObject
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::Fetch no expedition found', LOG_ERR);
-				$this->error = 'Delivery with id '.$id.' not found';
+				$this->error = 'Shipment with id '.$id.' not found';
 				return 0;
 			}
 		} else {
@@ -1964,9 +1961,8 @@ class Expedition extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ExpeditionLigne($this->db);
-			$line->desc = $langs->trans("Description")." ".$xnbp;
-			$line->libelle = $langs->trans("Description")." ".$xnbp; // deprecated
-			$line->label = $langs->trans("Description")." ".$xnbp;
+			$line->product_desc = $langs->trans("Description")." ".$xnbp;
+			$line->product_label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 			$line->qty_asked = 5;
 			$line->qty_shipped = 4;
@@ -2112,13 +2108,13 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as closed.
+	 *	Classify the shipping as closed (this record also the stock movement)
 	 *
 	 *	@return     int     <0 if KO, >0 if OK
 	 */
 	public function setClosed()
 	{
-		global $conf, $langs, $user;
+		global $conf, $user;
 
 		$error = 0;
 
@@ -2284,7 +2280,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
+	 *	Classify the shipping as invoiced (used for exemple by trigger when WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
@@ -2295,17 +2291,17 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1'; // TODO Update only billed
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET billed = 1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->statut = self::STATUS_CLOSED;
 			$this->billed = 1;
 
 			// Call trigger
 			$result = $this->call_trigger('SHIPPING_BILLED', $user);
 			if ($result < 0) {
+				$this->billed = 0;
 				$error++;
 			}
 		} else {
@@ -2317,8 +2313,6 @@ class Expedition extends CommonObject
 			$this->db->commit();
 			return 1;
 		} else {
-			$this->statut = self::STATUS_VALIDATED;
-			$this->billed = 0;
 			$this->db->rollback();
 			return -1;
 		}
@@ -2751,8 +2745,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function insert($user, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		// Check parameters

@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
+ *	\file       htdocs/projet/tasks/comment.php
  *	\ingroup    project
- *	\brief      Page of a project task
+ *	\brief      Page of a project task comment
  */
 
 require "../../main.inc.php";

@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = În formularul pentru a creare/adăugar
 #
 # Object
 #
+OrganizedEvent=Eveniment organizat
 EventOrganizationConfOrBooth= Conferinţe sau Stand-uri
 EventOrganizationConfOrBoothes=Conferințe sau Standuri
 ManageOrganizeEvent = Administrează organizarea unui eveniment
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Link către un terț (client, furnizor sau par
 OrganizationEvenLabelName=Nume public conferință sau stand
 
 NewSuggestionOfBooth=Aplicare pentru stand
-NewSuggestionOfConference=Aplicare pentru conferinţă
+NewSuggestionOfConference=Propunere pentru organizarea unei conferințe 
 
 #
 # Vote page
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Nu sunt acțiuni publice deschise pentru aces
 MaxNbOfAttendees=Număr maxim de participanți
 DateStartEvent=Dată start eveniment
 DateEndEvent=Dată sfârșit eveniment
+ModifyStatus=Modificare status
+ConfirmModifyStatus=Confirmare modificare status
+ConfirmModifyStatusQuestion=Ești sigur că vrei să modifici înregistrăr(ile) selectate %s ?
+RecordsUpdated = %s înregistrări actualizate
+RecordUpdated = Înregistrare actualizată
+NoRecordUpdated = Nicio înregistrare actualizată

@@ -128,7 +128,7 @@ $conf->db->pass = $dolibarr_main_db_pass;
 $conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : '';
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
-$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
@@ -231,11 +231,19 @@ if ($ok && GETPOST('standard', 'alpha')) {
 
 if ($ok && GETPOST('standard', 'alpha')) {
 	$extrafields = new ExtraFields($db);
+
+	// List of tables that has an extrafield table
 	$listofmodulesextra = array('societe'=>'societe', 'adherent'=>'adherent', 'product'=>'product',
-				'socpeople'=>'socpeople', 'propal'=>'propal', 'commande'=>'commande', 'facture'=>'facture',
-				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur', 'facture_fourn'=>'facture_fourn',
+				'socpeople'=>'socpeople', 'propal'=>'propal', 'commande'=>'commande',
+				'facture'=>'facture', 'facturedet'=>'facturedet', 'facture_rec'=>'facture_rec', 'facturedet_rec'=>'facturedet_rec',
+				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur',
+				'facture_fourn'=>'facture_fourn', 'facture_fourn_rec'=>'facture_fourn_rec', 'facture_fourn_det'=>'facture_fourn_det', 'facture_fourn_det_rec'=>'facture_fourn_det_rec',
+				'fichinter'=>'fichinter', 'fichinterdet'=>'fichinterdet',
+				'inventory'=>'inventory',
 				'actioncomm'=>'actioncomm', 'bom_bom'=>'bom_bom', 'mrp_mo'=>'mrp_mo',
-				'adherent_type'=>'adherent_type', 'user'=>'user', 'projet'=>'projet', 'projet_task'=>'projet_task');
+				'adherent_type'=>'adherent_type', 'user'=>'user', 'partnershiap'=>'partnershiap', 'projet'=>'projet', 'projet_task'=>'projet_task', 'ticket'=>'ticket');
+	//$listofmodulesextra = array('fichinter'=>'fichinter');
+
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach ($listofmodulesextra as $tablename => $elementtype) {
 		// Get list of fields
@@ -248,7 +256,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		$arrayoffieldsfound = array();
 		$resql = $db->DDLDescTable($tableextra);
 		if ($resql) {
-			print '<tr><td>Check availability of extra field for '.$tableextra."<br>\n";
+			print '<tr><td>Check availability of extra field for '.$tableextra;
 			$i = 0;
 			while ($obj = $db->fetch_object($resql)) {
 				$fieldname = $fieldtype = '';
@@ -268,6 +276,11 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				}
 				$arrayoffieldsfound[$fieldname] = array('type'=>$fieldtype);
 			}
+			print ' - Found '.count($arrayoffieldsfound).' fields into table';
+			if (count($arrayoffieldsfound) > 0) {
+				print ' <span class="opacitymedium">('.join(', ', array_keys($arrayoffieldsfound)).')</span>';
+			}
+			print '<br>'."\n";
 
 			// If it does not match, we create fields
 			foreach ($arrayoffieldsdesc as $code => $label) {
@@ -325,7 +338,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 
 			print "</td><td>&nbsp;</td></tr>\n";
 		} else {
-			dol_print_error($db);
+			print '<tr><td>Table '.$tableextra.' is not found</td><td></td></tr>'."\n";
 		}
 	}
 }
@@ -1508,6 +1521,57 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
 	echo '<tr><td><h3>SQL queries with errors:</h3></tr></td>';
 	echo '<tr><td>'.join('</td></tr><tr><td>', $errors).'</td></tr>';
+}
+
+// Repair llx_commande_fournisseur to eleminate duplicate reference
+if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
+	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+	$db->begin();
+
+	$err = 0;
+
+	// Query to find all duplicate supplier orders
+	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "commande_fournisseur";
+	$sql .= " WHERE ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf GROUP BY cf.ref, cf.entity HAVING COUNT(cf.rowid) > 1)";
+
+	// Build a list of ref => []CommandeFournisseur
+	$duplicateSupplierOrders = [];
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($rawSupplierOrder = $db->fetch_object($resql)) {
+			$supplierOrder = new CommandeFournisseur($db);
+			$supplierOrder->setVarsFromFetchObj($rawSupplierOrder);
+
+			$duplicateSupplierOrders[$rawSupplierOrder->ref] [] = $supplierOrder;
+		}
+	} else {
+		$err++;
+	}
+
+	// Process all duplicate supplier order and regenerate the reference for all except the first one
+	foreach ($duplicateSupplierOrders as $ref => $supplierOrders) {
+		/** @var CommandeFournisseur $supplierOrder */
+		foreach (array_slice($supplierOrders, 1) as $supplierOrder) {
+			// Definition of supplier order numbering model name
+			$soc = new Societe($db);
+			$soc->fetch($supplierOrder->fourn_id);
+
+			$newRef = $supplierOrder->getNextNumRef($soc);
+
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "commande_fournisseur cf SET cf.ref = '" . $db->escape($newRef) . "' WHERE cf.rowid = " . (int) $supplierOrder->id;
+			if (!$db->query($sql)) {
+				$err++;
+			}
+		}
+	}
+
+	if ($err == 0) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
 }
 
 print '</table>';

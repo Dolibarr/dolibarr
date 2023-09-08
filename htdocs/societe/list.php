@@ -1018,10 +1018,16 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+if (!empty($place)) {
+	print '<input type="hidden" name="place" value="'.$place.'">';
+}
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 if (empty($arrayfields['customerorsupplier']['checked'])) {
 	print '<input type="hidden" name="type" value="'.$type.'">';
+}
+if (!empty($place)) {
+	print '<input type="hidden" name="place" value="'.$place.'">';
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -1568,7 +1574,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -1733,10 +1739,12 @@ while ($i < $imaxinloop) {
 		// Staff
 		if (!empty($arrayfields['staff.code']['checked'])) {
 			print '<td class="center">';
-			if (!is_array($staffArray) || count($staffArray) == 0) {
-				$staffArray = $formcompany->effectif_array(1);
+			if (!empty($obj->staff_code)) {
+				if (empty($conf->cache['staffArray'])) {
+					$conf->cache['staffArray'] = $formcompany->effectif_array(1);
+				}
+				print $conf->cache['staffArray'][$obj->staff_code];
 			}
-			print $staffArray[$obj->staff_code];
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1826,7 +1834,7 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 			// Prospect level
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print $companystatic->getLibProspLevel();
 			print "</td>";
 			if (!$i) {
@@ -1836,7 +1844,7 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 			// Prospect status
-			print '<td class="center nowrap">';
+			print '<td class="center nowraponall">';
 
 			$prospectid = $obj->rowid;
 			$statusprospect = $obj->stcomm_id;

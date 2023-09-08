@@ -352,7 +352,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 	print '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication)) {
+if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication) && strpos($conf->browser->ua, 'DoliDroid') === false) {
 	$langs->load("users");
 
 	echo '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';

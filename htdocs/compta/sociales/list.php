@@ -614,6 +614,7 @@ print '</tr>';
 
 $i = 0;
 $totalarray = $TLoadedUsers = array();
+$savnbfield = $totalarray['nbfield'];
 $totalarray['nbfield'] = 0;
 $totalarray['val']['totalttcfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
@@ -636,7 +637,7 @@ while ($i < $imaxinloop) {
 	}
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban

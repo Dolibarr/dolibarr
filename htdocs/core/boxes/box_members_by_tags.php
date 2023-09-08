@@ -22,21 +22,21 @@
 /**
  *	\file       htdocs/core/boxes/box_members_by_tags.php
  *	\ingroup    adherent
- *	\brief      Module to show box of members
+ *	\brief      Module to show box of members by tags
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show (last modified) members by tags
  */
 class box_members_by_tags extends ModeleBoxes
 {
-	public $boxcode = "box_members_by_tags";
-	public $boximg = "object_user";
+	public $boxcode  = "box_members_by_tags";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxTitleMembersByTags";
-	public $depends = array("adherent", "categorie");
+	public $depends  = array("adherent", "categorie");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -93,7 +93,7 @@ class box_members_by_tags extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByTags").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
@@ -252,7 +252,7 @@ class box_members_by_tags extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror())
 				);
 			}
 		} else {

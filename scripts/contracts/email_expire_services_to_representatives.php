@@ -109,7 +109,7 @@ if ($resql) {
 			if (($obj->email != $oldemail || $obj->uid != $olduid) || $oldemail == 'none') {
 				// Break onto sales representative (new email or uid)
 				if (dol_strlen($oldemail) && $oldemail != 'none') {
-					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
+					sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
 				} else {
 					if ($oldemail != 'none') {
 						print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -157,7 +157,7 @@ if ($resql) {
 		// Si il reste des envois en buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none') { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
+				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
 			} else {
 				if ($oldemail != 'none') {
 					print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -179,16 +179,16 @@ if ($resql) {
 /**
  * Send email
  *
- * @param string $mode					Mode (test | confirm)
- * @param string $oldemail				Old email
- * @param string $message				Message to send
- * @param string $total					Total amount of unpayed invoices
- * @param string $userlang				Code lang to use for email output.
- * @param string $oldsalerepresentative	Old sale representative
- * @param int $duration_value			Duration value
- * @return int 							<0 if KO, >0 if OK
+ * @param string 	$mode					Mode (test | confirm)
+ * @param string 	$oldemail				Target Email
+ * @param string 	$message				Message to send
+ * @param string 	$total					Total amount of unpayed invoices
+ * @param string 	$userlang				Code lang to use for email output.
+ * @param string 	$oldtarget				Target name of sale representative
+ * @param int 		$duration_value			Duration value
+ * @return int 								Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepresentative, $duration_value)
+function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
 	global $conf, $langs;
 
@@ -217,7 +217,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	$errorsto = empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = - 1;
 
-	print "- Send email for ".$oldsalerepresentative." (".$oldemail."), total: ".$total."\n";
+	print "- Send email for ".$oldtarget." (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_expire_services_to_representatives.php: send mail to ".$oldemail);
 
 	$usehtml = 0;

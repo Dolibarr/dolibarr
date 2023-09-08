@@ -56,8 +56,8 @@ class Donations extends DolibarrApi
 	 *
 	 * Return an array with donation informations
 	 *
-	 * @param       int         $id         ID of order
-	 * @return 	array|mixed data without useless information
+	 * @param   int         $id         ID of order
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */

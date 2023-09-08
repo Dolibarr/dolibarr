@@ -69,10 +69,14 @@ create table llx_societe_rib
   starting_date date,
   total_amount_of_all_payments double(24,8),
 
-  --For Stripe
+  --For Stripe, Stancer, ...
   stripe_card_ref varchar(128),								-- 'card_...'
   stripe_account varchar(128),								-- 'pk_live_...'
 
+  ext_payment_site varchar(128),						    -- name of external paymentmode (for example 'StripeLive')
+
+  extraparams    varchar(255),                      -- for other parameters with json format
+    
   comment        varchar(255),
   ipaddress      varchar(68),
   status integer NOT NULL DEFAULT 1,						-- 1=ACTIVE, 0=IN_TRASH

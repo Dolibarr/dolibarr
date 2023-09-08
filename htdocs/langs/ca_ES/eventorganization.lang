@@ -18,7 +18,7 @@
 # Generic
 #
 ModuleEventOrganizationName = Organització d'esdeveniments
-EventOrganizationDescription = Organització d’esdeveniments mitjançant Projecte de mòduls
+EventOrganizationDescription = Organització d'esdeveniments mitjançant el mòdul Projectes
 EventOrganizationDescriptionLong= Gestionar l'organització d'un esdeveniment (espectacle, conferències, assistents o ponents, amb pàgines públiques de suggeriment, votació o registre)
 #
 # Menu
@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = En el formulari per a crear/afegir un a
 #
 # Object
 #
+OrganizedEvent=Esdeveniment organitzat
 EventOrganizationConfOrBooth= Conferència o estand
 EventOrganizationConfOrBoothes=Conferències o Estands
 ManageOrganizeEvent = Gestionar l’organització d’un esdeveniment
@@ -115,15 +116,15 @@ EvntOrgRegistrationHelpMessage = Aquí podeu votar per una conferència o sugger
 EvntOrgRegistrationConfHelpMessage = Aquí podeu suggerir una nova conferència per animar durant l'esdeveniment.
 EvntOrgRegistrationBoothHelpMessage = Aquí, podeu sol·licitar tenir un estand durant l'esdeveniment.
 ListOfSuggestedConferences = Llista de conferències suggerides
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Estands suggerits
+ListOfConferencesOrBooths=Conferències o estands del projecte d'esdeveniments
 SuggestConference = Suggereixi una conferència nova
 SuggestBooth = Suggereixi un estand
 ViewAndVote = Consulteu i voteu els esdeveniments suggerits
 PublicAttendeeSubscriptionGlobalPage = Enllaç públic per inscriure’s a l’esdeveniment
-PublicAttendeeSubscriptionPage = Enllaç públic per registrar-se només a aquest esdeveniment
+PublicAttendeeSubscriptionPage = Enllaç públic només per a la inscripció d'aquest esdeveniment
 MissingOrBadSecureKey = Falta la clau de seguretat o no és vàlida
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = Aquest formulari us permet registrar-vos com a nou participant a l'esdeveniment
 EvntOrgDuration = Aquesta conferència comença el dia %s i finalitza el dia %s.
 ConferenceAttendeeFee = Tarifa de l'assistent a la conferència per a l'esdeveniment: "%s" que passa de %s a %s.
 BoothLocationFee = Ubicació de l'estand per a l'esdeveniment: "%s" que passa de %s a %s
@@ -145,14 +146,14 @@ OrganizationEventLinkToThirdParty=Enllaç a tercers (client, proveïdor o soci)
 OrganizationEvenLabelName=Nom públic de la conferència o estand
 
 NewSuggestionOfBooth=Sol·licitud d'estand
-NewSuggestionOfConference=Sol·licitud per a una conferència
+NewSuggestionOfConference=Sol·licitud per a fer una conferència
 
 #
 # Vote page
 #
-EvntOrgRegistrationWelcomeMessage = Benvingut a la pàgina de suggeriments de conferències o estands.
-EvntOrgRegistrationConfWelcomeMessage = Benvingut a la pàgina de suggeriments de conferències.
-EvntOrgRegistrationBoothWelcomeMessage = Benvingut a la pàgina de suggeriments de l'estand.
+EvntOrgRegistrationWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de conferències o estands.
+EvntOrgRegistrationConfWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de la conferència.
+EvntOrgRegistrationBoothWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de l'estand.
 EvntOrgVoteHelpMessage = Aquí podeu veure i votar els esdeveniments suggerits per al projecte
 VoteOk = El vostre vot s’ha acceptat.
 AlreadyVoted = Ja heu votat per aquest esdeveniment.
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=No hi ha cap acció pública oberta al públi
 MaxNbOfAttendees=Nombre màxim d'assistents
 DateStartEvent=Data d'inici de l'esdeveniment
 DateEndEvent=Data de finalització de l'esdeveniment
+ModifyStatus=Modificar l'estat
+ConfirmModifyStatus=Confirmeu la modificació de l'estat
+ConfirmModifyStatusQuestion=Esteu segur que voleu modificar el(s) %s registres seleccionats?
+RecordsUpdated = %s Registres actualitzats
+RecordUpdated = Registre actualitzat
+NoRecordUpdated = No s'ha actualitzat cap registre
