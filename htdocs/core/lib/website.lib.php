@@ -171,6 +171,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
 	$content = str_replace('src="javascript.js.php', 'src="!~!~!~javascript.js.php', $content);
 	$content = str_replace('href="http', 'href="!~!~!~http', $content);
+	$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 	$content = str_replace('href="//', 'href="!~!~!~//', $content);
 	$content = str_replace('src="//', 'src="!~!~!~//', $content);
 	$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
@@ -311,6 +312,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
 		$content = str_replace('src="javascript.css.php', 'src="!~!~!~javascript.css.php', $content);
 		$content = str_replace('href="http', 'href="!~!~!~http', $content);
+		$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
 		$content = str_replace('src="//', 'src="!~!~!~//', $content);
 		$content = str_replace(array('src="viewimage.php', 'src="/viewimage.php'), 'src="!~!~!~/viewimage.php', $content);
