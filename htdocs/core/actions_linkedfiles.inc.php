@@ -191,7 +191,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	}
 } elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha') && !empty($permissiontoadd)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$langs->load('link');
+
 	$link = new Link($db);
 	$f = $link->fetch(GETPOST('linkid', 'int'));
 	if ($f) {

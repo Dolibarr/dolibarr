@@ -653,6 +653,7 @@ class SMTPs
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		/**
 		 * Default return value
 		 */
