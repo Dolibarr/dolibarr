@@ -1037,14 +1037,16 @@ if ($action == 'create') {
 
 			print '<script type="text/javascript">
             jQuery(document).ready(function() {
-	            jQuery("#autofill").click(function() {';
+	            jQuery("#autofill").click(function(event) {
+					event.preventDefault();';
 			$i = 1;
 			while ($i <= $numAsked) {
 				print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
 				$i++;
 			}
 			print '});
-	            jQuery("#autoreset").click(function() {';
+	            jQuery("#autoreset").click(function(event) {
+					event.preventDefault();';
 			$i = 1;
 			while ($i <= $numAsked) {
 				print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
@@ -1072,8 +1074,8 @@ if ($action == 'create') {
 					print '<td>'.$langs->trans("BuyingPrice").'</td>';
 				}
 				if (isModEnabled('productbatch')) {
-					print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
-					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+					print ' <br><center><a href="#" id="autofill"><span class="fas fa-fill pictofixedwidth" style=""></span> '.$langs->trans("Fill").'</a>';
+					print ' &nbsp; &nbsp; <a href="#" id="autoreset"><span class="fas fa-eraser pictofixedwidth" style=""></span>'.$langs->trans("Reset").'</a></center><br>';
 				}
 				print '</td>';
 				if (isModEnabled('stock')) {
@@ -1370,6 +1372,11 @@ if ($action == 'create') {
 			}
 
 			$text = $langs->trans("ConfirmValidateReception", $numref);
+			if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')) {
+				$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementWillBeRecorded").'.';
+			} elseif (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
+				$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementNotYetRecorded").'.';
+			}
 
 			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -1378,7 +1385,7 @@ if ($action == 'create') {
 				$text .= $notify->confirmMessage('RECEPTION_VALIDATE', $object->socid, $object);
 			}
 
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateReception'), $text, 'confirm_valid', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateReception'), $text, 'confirm_valid', '', 0, 1, 250);
 		}
 
 		// Confirm cancelation

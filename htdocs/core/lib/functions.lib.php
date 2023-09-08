@@ -274,6 +274,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 
 	// fix different element names (France to English)
 	switch ($element) {
+		case 'projet':
+			$element = 'project';
+			break;
 		case 'contrat':
 			$element = 'contract';
 			break; // "/contrat/class/contrat.class.php"
@@ -6931,7 +6934,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
  *	Creation of a directory (this can create recursive subdir)
  *
  *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
+ *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning, on first dir, saying PHP has no permission when open_basedir is used)
  *  @param	string		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
  *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
  */
@@ -6964,6 +6967,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 		} else {
 			$ccdir .= $cdir[$i];
 		}
+		$regs = array();
 		if (preg_match("/^.:$/", $ccdir, $regs)) {
 			continue; // Si chemin Windows incomplet, on poursuit par rep suivant
 		}
@@ -9242,8 +9246,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpstrings = array('$$');
 		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
 
-		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI", "verifCond", "base64_decode");
+		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval");
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond"));	// native dolibarr functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode"));	// decode string functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 
 		$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';

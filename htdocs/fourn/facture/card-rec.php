@@ -126,7 +126,8 @@ $now = dol_now();
 
 $error = 0;
 
-$result = restrictedArea($user, 'facture', $object->id, $objecttype);
+$result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
+
 
 
 /*
