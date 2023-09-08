@@ -92,3 +92,9 @@ ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_availability integer DEFAULT NU
 
 ALTER TABLE llx_product_lot ADD COLUMN qc_frequency integer DEFAULT NULL;
 ALTER TABLE llx_product_lot ADD COLUMN lifetime integer DEFAULT NULL;
+
+
+ALTER TABLE llx_bookcal_availabilities ADD COLUMN fk_bookcal_calendar integer NOT NULL;
+
+ALTER TABLE llx_bookcal_calendar ADD COLUMN visibility integer NOT NULL DEFAULT 1;
+
