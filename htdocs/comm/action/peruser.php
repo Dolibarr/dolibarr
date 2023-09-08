@@ -539,7 +539,7 @@ $sql .= " a.fk_user_author,a.fk_user_action,";
 $sql .= " a.transparency, a.priority, a.fulldayevent, a.location,";
 $sql .= " a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,";
 $sql .= " ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto";
-$sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncomm as a";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
