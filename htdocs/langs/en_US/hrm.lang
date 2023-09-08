@@ -92,4 +92,4 @@ JobsExtraFields=Attributs supplémentaires (Job profile)
 EvaluationsExtraFields=Attributs supplémentaires (Evaluations)
 NeedBusinessTravels=Need business travels
 NoDescription=No description
-TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has not skill defined on it. Please fix this before, then delete and restart the evaluation.
+TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has no skill defined on it. Please add skill(s), then delete and restart the evaluation.
