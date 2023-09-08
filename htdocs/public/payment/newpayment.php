@@ -93,7 +93,7 @@ if (!GETPOST("currency", 'alpha')) {
 	$currency = GETPOST("currency", 'aZ09');
 }
 $source = GETPOST("s", 'aZ09') ?GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
-//$download = GETPOST('d', 'int') ?GETPOST('d', 'int') : GETPOST('download', 'int');
+$getpostlang = GETPOST('lang', 'aZ09');
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -239,6 +239,10 @@ if (!empty($SECUREKEY)) {
 if (!empty($entity)) {
 	$urlok .= 'e='.urlencode($entity).'&';
 	$urlko .= 'e='.urlencode($entity).'&';
+}
+if (!empty($getpostlang)) {
+	$urlok .= 'lang='.urlencode($getpostlang).'&';
+	$urlko .= 'lang='.urlencode($getpostlang).'&';
 }
 $urlok = preg_replace('/&$/', '', $urlok); // Remove last &
 $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
@@ -827,7 +831,7 @@ $form = new Form($db);
 
 $head = '';
 if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.(!empty($getpostlang) ? $getpostlang: $langs->defaultlang).'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -866,6 +870,7 @@ print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECUREKEY).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 print "\n";
 
 
@@ -2245,6 +2250,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
 		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id', 'int').'" />';
+		print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 
 		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || !empty($conf->global->STRIPE_USE_NEW_CHECKOUT)) {	// Use a SCA ready method
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -2460,7 +2466,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			} elseif (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
 				?>
 			// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set to 1 or 2
-			
+
 			// Create a Stripe client.
 				<?php
 				if (empty($stripeacc)) {
