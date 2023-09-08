@@ -5056,7 +5056,7 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('products', 'other');
+		$langs->loadLangs(array('products', 'other'));
 
 		$datas = array();
 		$nofetch = !empty($params['nofetch']);

@@ -6165,7 +6165,7 @@ abstract class CommonObject
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;        // We set a global variable to $objectoffield so
 								$objectoffield = $this;        // we can use it inside computed formula
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -6294,8 +6294,8 @@ abstract class CommonObject
 
 				if (!empty($attrfieldcomputed)) {
 					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-						$value = dol_eval($attrfieldcomputed, 1, 0, '');
-						dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
+						$value = dol_eval($attrfieldcomputed, 1, 0, '2');
+						dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 						$new_array_options[$key] = $value;
 					} else {
 						$new_array_options[$key] = null;
@@ -6675,7 +6675,7 @@ abstract class CommonObject
 
 			if (!empty($attrfieldcomputed)) {
 				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-					$value = dol_eval($attrfieldcomputed, 1, 0, '');
+					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
 				} else {
@@ -7597,7 +7597,7 @@ abstract class CommonObject
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = dol_eval($computed, 1, 0, '');
+			$value = dol_eval($computed, 1, 0, '2');
 		}
 
 		if (empty($morecss)) {

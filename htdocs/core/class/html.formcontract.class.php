@@ -188,15 +188,13 @@ class FormContract
 	 *  @param  int     $showempty	Show empty line
 	 *  @param  int     $showRef    Show customer and supplier reference on each contract (when found)
 	 *  @param	int		$noouput	1=Return the output instead of display
-	 *  @return int                 Nbr of project if OK, <0 if KO
+	 *  @return string|void         html string
 	 */
 	public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
 	{
 		global $langs;
 
-		$ret = '';
-
-		$ret .= '<form method="post" action="'.$page.'">';
+		$ret = '<form method="post" action="'.$page.'">';
 		$ret .= '<input type="hidden" name="action" value="setcontract">';
 		$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$ret .= $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef, 1);
@@ -208,7 +206,5 @@ class FormContract
 		}
 
 		print $ret;
-
-		return $result;
 	}
 }

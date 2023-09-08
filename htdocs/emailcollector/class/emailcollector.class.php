@@ -3225,6 +3225,7 @@ class EmailCollector extends CommonObject
 		} else {
 			$langs->load("admin");
 			$output = $langs->trans('NoNewEmailToProcess');
+			$output .= ' (defaultlang='.$langs->defaultlang.')';
 		}
 
 		// Disconnect
