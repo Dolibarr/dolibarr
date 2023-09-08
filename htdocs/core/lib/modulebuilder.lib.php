@@ -448,7 +448,34 @@ function dolGetListOfObjectClasses($destdir)
 
 	return -1;
 }
+/**
+ * function for check if comment begin an end exist in modMyModule class
+ * @param  string  $file    filename or path
+ * @param  int     $number   0 = For Menus,1 = For permissions, 2 = For Dictionaries
+ * @return int     1 if OK , -1 if KO
+ */
+function checkExistComment($file, $number)
+{
 
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file_get_contents($file);
+	if ($number === 0) {
+		if (strpos($content, '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */') !== false && strpos($content, '/* END MODULEBUILDER LEFTMENU MYOBJECT */') !== false) {
+			return 1;
+		}
+	} elseif ($number === 1) {
+		if (strpos($content, '/* BEGIN MODULEBUILDER PERMISSIONS */') !== false && strpos($content, '/* END MODULEBUILDER PERMISSIONS */') !== false) {
+			return 1;
+		}
+	} elseif ($number == 2) {
+		if (strpos($content, '/* BEGIN MODULEBUILDER DICTIONARIES */') !== false && strpos($content, '/* END MODULEBUILDER DICTIONARIES */') !== false) {
+			return 1;
+		}
+	}
+	return -1;
+}
 /**
  * Delete all permissions
  *
@@ -616,6 +643,52 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 }
 
 /**
+ * Converts a formatted properties string into an associative array.
+ *
+ * @param string $string The formatted properties string.
+ * @return array The resulting associative array.
+ */
+function parsePropertyString($string)
+{
+
+	$string = str_replace("'", '', $string);
+
+	// Uses a regular expression to capture keys and values
+	preg_match_all('/\s*([^\s=>]+)\s*=>\s*([^,]+),?/', $string, $matches, PREG_SET_ORDER);
+	$propertyArray = [];
+
+	foreach ($matches as $match) {
+		$key = trim($match[1]);
+		$value = trim($match[2]);
+
+		if (strpos($value, 'array(') === 0) {
+			$nestedArray = substr($value, 6);
+			$nestedArray = parsePropertyString($nestedArray);
+			$value = $nestedArray;
+		} elseif (strpos($value, '"Id")') !== false) {
+			$value = str_replace(')', '', $value);
+		} else {
+			if (is_numeric($value)) {
+				if (strpos($value, '.') !== false) {
+					$value = (float) $value;
+				} else {
+					$value = (int) $value;
+				}
+			} else {
+				if ($value === 'true') {
+					$value = true;
+				} elseif ($value === 'false') {
+					$value = false;
+				}
+			}
+		}
+		$propertyArray[$key] = $value;
+	}
+
+	return $propertyArray;
+}
+
+/**
  * Write all properties of the object in AsciiDoc format
  * @param  string   $file           path of the class
  * @param  string   $objectname     name of the objectClass
@@ -626,7 +699,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 {
 
 	// stock all properties in array
-	$attributesUnique = array ('label', 'type', 'arrayofkeyval', 'notnull', 'default', 'index', 'foreignkey', 'position', 'enabled', 'visible', 'noteditable', 'alwayseditable', 'searchall', 'isameasure', 'css','cssview','csslist', 'help', 'showoncombobox', 'validate','comment','picto' );
+	$attributesUnique = array ('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
 
 	$start = "public \$fields=array(";
 	$end = ");";
@@ -657,32 +730,53 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 		$table .= "|".$attUnique;
 	}
 	$table .="\n";
+	$valuesModif = array();
 	foreach ($keys as $string) {
 		$string = trim($string, "'");
 		$string = rtrim($string, ",");
-		$array = eval("return [$string];");
 
-		// check if is array after cleaning string
+		$array = parsePropertyString($string);
+
+		// Iterate through the array to merge all key to one array
+		$code = '';
+		foreach ($array as $key => $value) {
+			if (is_array($value)) {
+				$code = $key;
+				continue;
+			} else {
+				$array[$code][$key] = $value;
+				unset($array[$key]);
+			}
+		}
+		// check if is array after parsing the string
 		if (!is_array($array)) {
 			return -1;
 		}
-
 		$field = array_keys($array);
+		if ($field[0] === '') {
+			$field[0] = 'label';
+		}
 		$values = array_values($array)[0];
 
 		// check each field has all properties and add it if missed
 		foreach ($attributesUnique as $attUnique) {
+			if ($attUnique == 'type' && $field[0] === 'label') {
+				$values[$attUnique] = 'varchar(255)';
+			}
 			if (!array_key_exists($attUnique, $values)) {
-				$values[$attUnique] = '';
+				$valuesModif[$attUnique] = '';
+			} else {
+				$valuesModif[$attUnique] = $values[$attUnique];
 			}
 		}
-
 		$table .= "|*" . $field[0] . "*|";
-		$table .= implode("|", $values) . "\n";
+		$table .= implode("|", $valuesModif) . "\n";
 	}
+
 	// end table
 	$table .= "|===\n";
 	$table .= "__ end table for object $objectname\n";
+
 	//write in file
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
 	if ($writeInFile<0) {
@@ -691,13 +785,14 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	return 1;
 }
 
+
 /**
- * Delete property from documentation if we delete object
+ * Delete property and permissions from documentation if we delete object
  * @param  string  $file         file or path
  * @param  string  $objectname   name of object wants to deleted
  * @return void
  */
-function deletePropsFromDoc($file, $objectname)
+function deletePropsAndPermsFromDoc($file, $objectname)
 {
 
 	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
@@ -706,7 +801,15 @@ function deletePropsFromDoc($file, $objectname)
 	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
 	$new_contents = preg_replace($search, '', $str);
 	file_put_contents($file, $new_contents);
+
+	//perms If Exist
+	$perms = "|*".strtolower($objectname)."*|";
+	$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
+	$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
+	file_put_contents($file, $new_contents);
 }
+
+
 
 /**
  * Search a string and return all lines needed from file
@@ -1213,4 +1316,32 @@ function writeApiUrlsInDoc($file_api, $file_doc)
 		return 1;
 	}
 	return -1;
+}
+
+
+/**
+ * count directories or files in modulebuilder folder
+ * @param  string $path  path of directory
+ * @param  int    $type  type of file 1= file,2=directory
+ * @return int|bool
+ */
+function countItemsInDirectory($path, $type = 1)
+{
+	if (!is_dir($path)) {
+		return false;
+	}
+
+	$allFilesAndDirs = scandir($path);
+	$count = 0;
+
+	foreach ($allFilesAndDirs as $item) {
+		if ($item != '.' && $item != '..') {
+			if ($type == 1 && is_file($path . DIRECTORY_SEPARATOR . $item) && strpos($item, '.back') === false) {
+				$count++;
+			} elseif ($type == 2 && is_dir($path . DIRECTORY_SEPARATOR . $item)) {
+				$count++;
+			}
+		}
+	}
+	return $count;
 }

@@ -960,7 +960,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
-		$result=dol_eval('$a=function() { }; $a;', 1, 1, '');
+		$result=dol_eval('$a=function() { }; $a;', 1, 1, '0');
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
@@ -999,9 +999,19 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
 
-		// Same with syntax error
+		// Same with a value that does not match
 		$leftmenu = 'XXX';
 		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
+
+		$leftmenu = 'AAA';
+		$result=dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertTrue($result);
+
+		$leftmenu = 'XXX';
+		$result=dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
 		print "result = ".$result."\n";
 		$this->assertFalse($result);
 
@@ -1014,6 +1024,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=dol_eval("(\$a.'aa')", 1, 0);
 		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a="abs" && $a(5)', 1, 0);
+		print "result = a".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 	}
 

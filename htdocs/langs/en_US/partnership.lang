@@ -82,10 +82,10 @@ YourPartnershipRefusedTopic=Partnership refused
 YourPartnershipAcceptedTopic=Partnership accepted
 YourPartnershipCanceledTopic=Partnership canceled
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
+YourPartnershipWillSoonBeCanceledContent=We would like to inform you that your partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership is missing). Contact us by email if this is an error.
+YourPartnershipRefusedContent=We inform you that your partnership request has been refused. May be a prerequisite is missing. Contact us if you need more information.
 YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipCanceledContent=We inform you that your partnership has been canceled. May be a prerequisite is missing. Contact us if you need more information.
 
 CountLastUrlCheckError=Number of errors for last URL check
 LastCheckBacklink=Date of last URL check

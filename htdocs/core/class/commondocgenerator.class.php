@@ -109,6 +109,11 @@ abstract class CommonDocGenerator
 	public $option_escompte;
 	public $option_credit_note;
 
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
 	/**
 	 * @var int Tab Title Height
 	 */
@@ -145,12 +150,17 @@ abstract class CommonDocGenerator
 	 */
 	public $result;
 
+	public $posxlabel;
+	public $posxup;
 	public $posxref;
 	public $posxpicture;	// For picture
 	public $posxdesc;		// For description
 	public $posxqty;
 	public $posxpuht;
-
+	public $posxtva;
+	public $atleastonephoto;
+	public $atleastoneratenotnull;
+	public $atleastonediscount;
 
 	/**
 	 *	Constructor

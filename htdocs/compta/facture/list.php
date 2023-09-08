@@ -180,8 +180,6 @@ $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 $diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user->id;
 
-$object = new Facture($db);
-
 $now = dol_now();
 $error = 0;
 
