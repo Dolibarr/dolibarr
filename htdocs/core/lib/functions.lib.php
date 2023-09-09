@@ -6939,7 +6939,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
  *	Creation of a directory (this can create recursive subdir)
  *
  *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
+ *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning, on first dir, saying PHP has no permission when open_basedir is used)
  *  @param	string		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
  *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
  */
@@ -6972,6 +6972,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 		} else {
 			$ccdir .= $cdir[$i];
 		}
+		$regs = array();
 		if (preg_match("/^.:$/", $ccdir, $regs)) {
 			continue; // Si chemin Windows incomplet, on poursuit par rep suivant
 		}
@@ -9146,6 +9147,33 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 }
 
 /**
+ *	Check if a variable with name $var start with $text.
+ *  Can be used to forge dol_eval() conditions.
+ *
+ *  @param	$var		string		Variable
+ *  @param	$regextext	string		Text that must be a valid regex string
+ *  @param	$matchrule	int			1=Test if start with, 0=Test if equal
+ *  @return	boolean|string			True or False, text if bad use.
+ */
+function isStringVarMatching($var, $regextext, $matchrule = 1)
+{
+	if ($matchrule == 1) {
+		if ($var == 'mainmenu') {
+			global $mainmenu;
+			return (preg_match('/^'.$regextext.'/', $mainmenu));
+		} elseif ($var == 'leftmenu') {
+			global $leftmenu;
+			return (preg_match('/^'.$regextext.'/', $leftmenu));
+		} else {
+			return 'This variable is not accessible with dol_eval';
+		}
+	} else {
+		return 'This value for matchrule is not implemented';
+	}
+}
+
+
+/**
  * Verify if condition in string is ok or not
  *
  * @param 	string		$strToEvaluate	String with condition to check
@@ -9153,15 +9181,15 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
  */
 function verifCond($strToEvaluate)
 {
-	global $user, $conf, $langs;
+	global $conf;	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
+	global $user, $langs;
 	global $leftmenu;
-	global $rights; // To export to dol_eval function
 
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		//var_dump($strToEvaluate);
-		$rep = dol_eval($strToEvaluate, 1, 1, '1'); // The dol_eval must contains all the global $xxx for all variables $xxx found into the string condition
+		$rep = dol_eval($strToEvaluate, 1, 1, '1'); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
 		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
@@ -9175,29 +9203,36 @@ function verifCond($strToEvaluate)
  * @param 	string	$s					String to evaluate
  * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	'0' (used for computed property of extrafields)=Accept all chars, '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',  '2' (rarely used)=Accept also '[]'
+ * @param	string	$onlysimplestring	'0' (deprecated, used for computed property of extrafields)=Accept all chars,
+ * 										'1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
+ * 										'2' (rarely used)=Accept also '[]'
  * @return	mixed						Nothing or return result of eval
+ * @see verifCond()
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
 {
-	// Only global variables can be changed by eval function and returned to caller
-	global $db, $langs, $user, $conf, $website, $websitepage;
+	// Only this global variables can be read by eval function and returned to caller
+	global $conf;	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
+	global $db, $langs, $user, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
-	global $objectoffield;
+	global $objectoffield;	// To allow the use of $objectoffield in computed fields
 
 	// Old variables used
-	global $rights;
 	global $object;
-	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
-	global $soc; // For backward compatibility
+	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	//global $rights;
+	//global $soc; // For backward compatibility
+
+	if (!in_array($onlysimplestring, array('0', '1', '2'))) {
+		return "Bad call of dol_eval. Parameter onlysimplestring must be '0' (deprecated), '1' or '2'";
+	}
 
 	try {
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
 		if ($onlysimplestring == '1') {
-			// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
-			// We must accept: '$conf->barcode->enabled || preg_match(\'/^AAA/\',$leftmenu)'
-			// We must accept: '$user->rights->cabinetmed->read && !$object->canvas=="patient@cabinetmed"'
+			// We must accept: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
+			// We must accept: '$user->hasRight("cabinetmed", "read") && !$object->canvas=="patient@cabinetmed"'
 			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
@@ -9205,10 +9240,24 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
 					return '';
 				}
-				// TODO
-				// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
-				// ...
 			}
+			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
+			$scheck = preg_replace('/^\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '(...'
+			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '... ('
+			$scheck = preg_replace('/^[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function('
+			$scheck = preg_replace('/\s[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function('
+			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."\n";
+			if (strpos($scheck, '(') !== false) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					return '';
+				}
+			}
+			// TODO
+			// We can exclude $ char that are not: $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object...,
 		} elseif ($onlysimplestring == '2') {
 			// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
 			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@[]', '/').']/i', $s)) {
@@ -9218,10 +9267,24 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
 					return '';
 				}
-				// TODO
-				// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
-				// ...
 			}
+			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
+			$scheck = preg_replace('/^\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '(...'
+			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '... ('
+			$scheck = preg_replace('/^[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function('
+			$scheck = preg_replace('/\s[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function('
+			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."\n";
+			if (strpos($scheck, '(') !== false) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					return '';
+				}
+			}
+			// TODO
+			// We can exclude $ char that are not: $db, $leftmenu, $topmenu, $user, $langs, $object...,
 		}
 		if (is_array($s) || $s === 'Array') {
 			return 'Bad string syntax to evaluate (value is Array) '.var_export($s, true);
@@ -9255,9 +9318,13 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpstrings = array('$$');
 		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
 
-		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI", "verifCond", "base64_decode");
+		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen");
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond"));	// native dolibarr functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode")); // decode string functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 
 		$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
 

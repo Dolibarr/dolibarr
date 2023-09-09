@@ -100,3 +100,8 @@ ALTER TABLE llx_societe_rib ADD COLUMN online_sign_ip varchar(48) AFTER date_sig
 ALTER TABLE llx_societe_rib ADD COLUMN online_sign_name		varchar(64) AFTER online_sign_ip;
 
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PROPOSAL_ALLOW_ONLINESIGN', 1, '1', 'string', 0);
+
+
+ALTER TABLE llx_bookcal_availabilities ADD COLUMN fk_bookcal_calendar integer NOT NULL;
+
+ALTER TABLE llx_bookcal_calendar ADD COLUMN visibility integer NOT NULL DEFAULT 1;

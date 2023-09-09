@@ -1889,7 +1889,7 @@ if ($action == 'create') {
 
 		$thirdparty = $soc;
 		$discount_type = 0;
-		$backtopage = urlencode($_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid'));
+		$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 		print '</td></tr>';
 	}
@@ -2473,7 +2473,7 @@ if ($action == 'create') {
 
 	$thirdparty = $soc;
 	$discount_type = 0;
-	$backtopage = urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+	$backtopage = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 	print '</td></tr>';
