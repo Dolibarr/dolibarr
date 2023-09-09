@@ -126,6 +126,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->rollback();
 
+		// Restore value to a neutral value (it was set to a test value by some tests)
+		unset($_SERVER["PHP_SELF"]);
+
 		print __METHOD__."\n";
 	}
 

@@ -70,7 +70,7 @@ if (isset($_GET["modulepart"])) {
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
-	// User photo
+	// User photo when user has made its profile public (for virtual credi card)
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}

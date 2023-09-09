@@ -818,6 +818,27 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 			writeApiUrlsInDoc($apiFile, $destfile);
 		}
 
+		// add ChangeLog in Doc
+		if (file_exists($dirins.'/'.strtolower($module).'/ChangeLog.md')) {
+			$changeLog = $dirins.'/'.strtolower($module).'/ChangeLog.md';
+			$string = file_get_contents($changeLog);
+
+			$replace = explode("\n", $string);
+			$strreplace = array();
+			foreach ($replace as $line) {
+				if ($line === '') {
+					continue;
+				}
+				if (strpos($line, '##') !== false) {
+					$strreplace[$line] = str_replace('##', '', $line);
+				} else {
+					$strreplace[$line] = $line;
+				}
+			}
+			$stringLog = implode("\n", $strreplace);
+			dolReplaceInFile($destfile, array('//include::ChangeLog.md[]' => '','__CHANGELOG__' => $stringLog));
+		}
+
 		// Delete old documentation files
 		$FILENAMEDOC = $modulelowercase.'.html';
 		$FILENAMEDOCPDF = $modulelowercase.'.pdf';
@@ -3964,6 +3985,7 @@ if ($module == 'initmodule') {
 								print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 								print ' ';
 								print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+								print $form->textwithpicto('', $langs->trans("InfoForApiFile"), 1, 'warning');
 								print ' &nbsp; ';
 								if (empty($conf->global->$const_name)) {	// If module is not activated
 									print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
@@ -5155,14 +5177,14 @@ if ($module == 'initmodule') {
 					var groupedRights = ' . $groupedRights_json . ';
 					var objectsSelect = $("select[id=\'objects\']");
 					var permsSelect = $("select[id=\'perms\']");
-				
+
 					objectsSelect.change(function() {
 						var selectedObject = $(this).val();
-				
+
 						permsSelect.empty();
-				
+
 						var rights = groupedRights[selectedObject];
-				
+
 						if (rights) {
 							for (var i = 0; i < rights.length; i++) {
 								var right = rights[i];
@@ -5173,7 +5195,7 @@ if ($module == 'initmodule') {
 							var option = $("<option></option>").attr("value", "read").text("read");
 								permsSelect.append(option);
 						}
-						
+
 						if (selectedObject !== "" && selectedObject !== null && rights) {
 							permsSelect.show();
 						} else {

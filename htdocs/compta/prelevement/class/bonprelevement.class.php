@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 
 /**
@@ -950,6 +950,8 @@ class BonPrelevement extends CommonObject
 
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+
 			$soc = new Societe($this->db);
 
 			// Check BAN
