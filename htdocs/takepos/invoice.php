@@ -1316,7 +1316,9 @@ print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
 // In phone version only show when it is invoice page
 if (empty($mobilepage) || $mobilepage == "invoice") {
+	print '<!-- hidden var used by some js functions -->';
 	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
+	print '<input type="hidden" name="thirdpartyid" id="thirdpartyid" value="'.$invoice->socid.'">';
 }
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
