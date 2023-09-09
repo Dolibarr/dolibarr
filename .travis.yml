@@ -373,6 +373,7 @@ script:
     echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
     echo '$'force_install_main_data_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $INSTALL_FORCED_FILE
     #cat $INSTALL_FORCED_FILE
+    echo
   
   - |
     echo "Upgrading Dolibarr"
@@ -441,12 +442,14 @@ script:
     php upgrade.php 18.0.0 19.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade18001900.log || cat $TRAVIS_BUILD_DIR/upgrade18001900.log
     php upgrade2.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-2.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-2.log
     php step5.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-3.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-3.log
-    set -e
+    set +e
+    echo
 
   - |
     echo Show some debug info like table content or log
     #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
     cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    echo
 
   - |
     echo Result of migration scripts
@@ -470,6 +473,7 @@ script:
     echo
     #cat /tmp/dolibarr_install.log
     cat $TRAVIS_BUILD_DIR/enablemodule.log
+    echo
 
   - |
     echo "Unit testing"
@@ -479,6 +483,7 @@ script:
     phpunitresult=$?
     echo "Phpunit return code = $phpunitresult"
     set +e
+    echo
 
 after_script:
   - |

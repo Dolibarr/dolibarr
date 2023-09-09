@@ -282,11 +282,9 @@ class CompanyBankAccount extends Account
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec";
-		$sql .= ", model_pdf";
-		$sql .= ")";
-		$sql .= " VALUES (".((int) $this->socid).", '".$this->type."', '".$this->db->idate($this->datec)."'";
-		$sql .= ",\"".$this->db->escape(getDolGlobalString("BANKADDON_PDF"))."\"";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec, model_pdf)";
+		$sql .= " VALUES (".((int) $this->socid).", '".$this->type."', '".$this->db->idate($this->datec)."',";
+		$sql .= " '".$this->db->escape(getDolGlobalString("BANKADDON_PDF"))."'";
 		$sql .= ")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
