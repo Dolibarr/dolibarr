@@ -442,9 +442,9 @@ script:
     php upgrade2.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-2.log
     php step5.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-3.log
 
-    #show table content and log
+    show table content and log
     #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-    #cat $TRAVIS_BUILD_DIR/upgrade500600.log
+    cat $TRAVIS_BUILD_DIR/upgrade18001900-2.log
 
   - |
     echo Result of migration scripts
