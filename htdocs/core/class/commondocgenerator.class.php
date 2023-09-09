@@ -158,6 +158,8 @@ abstract class CommonDocGenerator
 	public $posxqty;
 	public $posxpuht;
 	public $posxtva;
+	public $posxtotalht;
+	public $postotalht;
 	public $atleastonephoto;
 	public $atleastoneratenotnull;
 	public $atleastonediscount;
