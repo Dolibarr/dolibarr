@@ -1433,7 +1433,7 @@ class Asset extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("asset@asset");
+			//$langs->load("assets");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
 			$this->labelStatus[self::STATUS_DISPOSED] = $langs->transnoentitiesnoconv('AssetDisposed');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
@@ -1516,7 +1516,7 @@ class Asset extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("asset@asset");
+		$langs->load("assets");
 
 		if (empty($conf->global->ASSET_ASSET_ADDON)) {
 			$conf->global->ASSET_ASSET_ADDON = 'mod_asset_standard';
@@ -1581,7 +1581,7 @@ class Asset extends CommonObject
 	//      $result = 0;
 	//      $includedocgeneration = 1;
 	//
-	//      $langs->load("asset@asset");
+	//      $langs->load("assets");
 	//
 	//      if (!dol_strlen($modele)) {
 	//          $modele = 'standard_asset';
