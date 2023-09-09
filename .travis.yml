@@ -443,7 +443,7 @@ script:
     php step5.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-3.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-3.log
 
   - |
-    echo Show table content and log
+    echo Show some debug info like table content or log
     #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
     cat $TRAVIS_BUILD_DIR/upgrade18001900.log
 
@@ -473,7 +473,7 @@ script:
   - |
     echo "Unit testing"
     # Ensure we catch errors with -e. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
-    set +e
+    set -e
     phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
     phpunitresult=$?
     echo "Phpunit return code = $phpunitresult"
