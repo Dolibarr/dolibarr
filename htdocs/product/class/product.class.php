@@ -173,6 +173,7 @@ class Product extends CommonObject
 	public $multiprices = array();
 	public $multiprices_ttc = array();
 	public $multiprices_base_type = array();
+	public $multiprices_default_vat_code = array();
 	public $multiprices_min = array();
 	public $multiprices_min_ttc = array();
 	public $multiprices_tva_tx = array();
@@ -183,6 +184,11 @@ class Product extends CommonObject
 	public $prices_by_qty = array();
 	public $prices_by_qty_id = array();
 	public $prices_by_qty_list = array();
+
+	/**
+	 * @var int price level set after updateprice for trigger
+	 */
+	public $level;
 
 	//! Array for multilangs
 	public $multilangs = array();
@@ -2829,7 +2835,7 @@ class Product extends CommonObject
 			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
 			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
 			if (empty($user->rights->societe->client->voir) && !$socid) {
-				$sql .= "INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
+				$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE ";
 			$sql .= " c.entity IN (".getEntity('mo').")";
