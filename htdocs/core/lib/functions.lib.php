@@ -2795,11 +2795,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
-		dol_print_error('', "Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
+		dol_print_error('', "Functions.lib::dol_print_date function called with a bad value from page ".(empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]));
 		return '';
 	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)) {    // Still available to solve problems in extrafields of type date
 		// This part of code should not be used anymore.
-		dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".(empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]), LOG_WARNING);
 		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
 		$syear	= (!empty($reg[1]) ? $reg[1] : '');
