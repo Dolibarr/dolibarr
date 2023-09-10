@@ -625,7 +625,7 @@ if ($mode == 'show_day') {
 	$sql .= " OR ";
 	$sql .= " (a.datep < '".$db->idate($firstdaytoshow - (60 * 60 * 24 * 2))."'";
 	$sql .= " AND a.datep2 > '".$db->idate($lastdaytoshow + (60 * 60 * 24 * 2))."')";
-	$sql .= ')';
+	$sql .= ")";
 }
 if ($type) {
 	$sql .= " AND ca.id = ".((int) $type);
@@ -648,7 +648,7 @@ if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
 }
 // Sort on date
-$sql .= $db->order("fk_user_action, datep'");
+$sql .= $db->order("fk_user_action, datep");
 //print $sql;
 
 dol_syslog("comm/action/peruser.php", LOG_DEBUG);
