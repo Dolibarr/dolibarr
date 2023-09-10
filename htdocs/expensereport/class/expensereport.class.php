@@ -2252,7 +2252,7 @@ class ExpenseReport extends CommonObject
 			$this->applyOffset();
 			$this->checkRules();
 
-			$result = $this->line->update($user);
+			$result = $this->line->update($user, $notrigger);
 			if ($result < 0) {
 				$error++;
 			}
