@@ -552,7 +552,7 @@ if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
 	if ($filtert > 0) {
-		$sql .= " AND ar.fk_element = ".$filtert;
+		$sql .= " AND ar.fk_element = ".((int) $filtert);
 	}
 	if ($usergroup > 0) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
