@@ -117,8 +117,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $label;
 
-	public $socid;
-
 	//Check constants for types
 	public $type = self::TYPE_STANDARD;
 
@@ -135,19 +133,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
 	 */
 	public $status;
-
-	/**
-	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
-	 * ! Closing when no payment: replaced, abandoned
-	 * @var string Close code
-	 */
-	public $close_code;
-
-	/**
-	 * ! Comment if paid without full payment
-	 * @var string Close note
-	 */
-	public $close_note;
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
@@ -170,13 +155,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @var integer
 	 */
 	public $tms;
-
-	/**
-	 * Invoice date (date)
-	 *
-	 * @var integer
-	 */
-	public $date;
 
 	/**
 	 * Max payment date (date_echeance)
@@ -222,18 +200,10 @@ class FactureFournisseur extends CommonInvoice
 	public $note_public;
 	public $propalid;
 
-	public $cond_reglement_id;
-	public $cond_reglement_code;
-	public $cond_reglement_label;
-	public $cond_reglement_doc;
-
 	/**
 	 * @var int ID
 	 */
 	public $fk_account;		// default bank account
-
-	public $mode_reglement_id;
-	public $mode_reglement_code;
 
 	/**
 	 * @var int transport mode id
@@ -2863,7 +2833,7 @@ class FactureFournisseur extends CommonInvoice
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
