@@ -271,6 +271,7 @@ $colortext = join(',', colorStringToArray($colortext));
 $colortextlink = join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries = $menumanager->showmenu('topnb');
+$nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
 	$nbtopmenuentries = max($nbtopmenuentries, 10);
 }

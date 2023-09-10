@@ -265,11 +265,10 @@ $colortext = join(',', colorStringToArray($colortext));
 $colortextlink = join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries = $menumanager->showmenu('topnb');
-
+$nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
 	$nbtopmenuentries = max($nbtopmenuentries, 10);
 }
-
 
 $minwidthtmenu = 66; /* minimum width for one top menu entry */
 $heightmenu = 50; /* height of top menu, part with image */

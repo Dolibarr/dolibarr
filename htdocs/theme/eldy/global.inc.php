@@ -7796,7 +7796,7 @@ table.jPicker {
 		max-width: 370px;
 	}
 }
-/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again (<?php echo $nbtopmenuentries ?> menu entries) */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
@@ -7806,7 +7806,7 @@ table.jPicker {
 		height: 23px;
 	}
 	div.tmenucenter {
-		max-width: <?php echo round(26); ?>px;	/* size of viewport */
+		max-width: <?php echo max(26, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
 		  text-overflow: clip;
 	}
 	span.mainmenuaspan {
