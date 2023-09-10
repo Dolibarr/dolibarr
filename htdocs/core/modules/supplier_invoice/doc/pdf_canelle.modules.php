@@ -607,12 +607,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf            Object PDF
-	 *	@param  Object		$object         Object invoice
-	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
-	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
-	 *	@return int							Position pour suite
+	 *	@param	TCPDF				$pdf            Object PDF
+	 *	@param  FactureFournisseur	$object         Object invoice
+	 *	@param  int					$deja_regle     Amount already paid (in the currency of invoice)
+	 *	@param	int					$posy			Position depart
+	 *	@param	Translate			$outputlangs	Objet langs
+	 *	@return int									Position of cursor after output
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
