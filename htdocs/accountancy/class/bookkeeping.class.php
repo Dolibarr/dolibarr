@@ -2613,7 +2613,7 @@ class BookKeeping extends CommonObject
 					$error++;
 				} else {
 					$now = dol_now();
-                    $income_statement_amount = 0;
+					$income_statement_amount = 0;
 					while ($obj = $this->db->fetch_object($resql)) {
 						if (in_array($obj->pcg_type, $accounting_groups_used_for_income_statement)) {
 							$income_statement_amount += $obj->opening_balance;
