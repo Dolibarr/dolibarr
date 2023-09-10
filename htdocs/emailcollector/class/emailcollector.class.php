@@ -1105,8 +1105,8 @@ class EmailCollector extends CommonObject
 		$searchfilterisanswer = 0;
 		$searchfilterisnotanswer = 0;
 		$searchfilterreplyto = 0;
-		$searchfilterexcludebody = '';
-		$searchfilterexcludesubject = '';
+		$searchfilterexcludebodyarray = array();
+		$searchfilterexcludesubjectarray = array();
 		$operationslog = '';
 
 		$now = dol_now();
@@ -1300,7 +1300,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'subject') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//array_push($criteria, array("NOT SUBJECT" => $rule['rulevalue']));
-						$searchfilterexcludesubject = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
 					}
@@ -1308,7 +1308,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'body') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//array_push($criteria, array("NOT BODY" => $rule['rulevalue']));
-						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						array_push($criteria, array("BODY" => $rule['rulevalue']));
 					}
@@ -1431,7 +1431,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'subject') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-						$searchfilterexcludesubject = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
@@ -1439,7 +1439,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'body') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
 						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
@@ -1771,12 +1771,14 @@ class EmailCollector extends CommonObject
 					continue; // Exclude email
 				}
 
-				if ($searchfilterexcludebody) {
-					if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
-						$nbemailprocessed++;
-						$operationslog .= '<br>Discarded - Email body contains string '.$searchfilterexcludebody;
-						dol_syslog(" Discarded - Email body contains string ".$searchfilterexcludebody);
-						continue; // Exclude email
+				if (!empty($searchfilterexcludebodyarray)) {
+					foreach ($searchfilterexcludebodyarray as $searchfilterexcludebody) {
+						if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
+							$nbemailprocessed++;
+							$operationslog .= '<br>Discarded - Email body contains string '.$searchfilterexcludebody;
+							dol_syslog(" Discarded - Email body contains string ".$searchfilterexcludebody);
+							continue 2; // Exclude email
+						}
 					}
 				}
 
@@ -1863,12 +1865,14 @@ class EmailCollector extends CommonObject
 					//var_dump($msgid);exit;
 				}
 
-				if ($searchfilterexcludesubject) {
-					if (preg_match('/'.preg_quote($searchfilterexcludesubject, '/').'/ms', $subject)) {
-						$nbemailprocessed++;
-						$operationslog .= '<br>Discarded - Email subject contains string '.$searchfilterexcludesubject;
-						dol_syslog(" Discarded - Email subject contains string ".$searchfilterexcludesubject);
-						continue; // Exclude email
+				if (!empty($searchfilterexcludesubjectarray)) {
+					foreach ($searchfilterexcludesubjectarray as $searchfilterexcludesubject) {
+						if (preg_match('/'.preg_quote($searchfilterexcludesubject, '/').'/ms', $subject)) {
+							$nbemailprocessed++;
+							$operationslog .= '<br>Discarded - Email subject contains string '.$searchfilterexcludesubject;
+							dol_syslog(" Discarded - Email subject contains string ".$searchfilterexcludesubject);
+							continue 2; // Exclude email
+						}
 					}
 				}
 
@@ -2272,12 +2276,16 @@ class EmailCollector extends CommonObject
 												}
 											} else {
 												// Regex not found
-												$idtouseforthirdparty = null;
-												$nametouseforthirdparty = null;
-												$emailtouseforthirdparty = null;
-												$namealiastouseforthirdparty = null;
+												if (in_array($propertytooverwrite, array('id', 'email', 'name', 'name_alias'))) {
+													$idtouseforthirdparty = null;
+													$nametouseforthirdparty = null;
+													$emailtouseforthirdparty = null;
+													$namealiastouseforthirdparty = null;
 
-												$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found. Property searched is critical so we cancel the search.';
+												} else {
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
+												}
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
@@ -2319,7 +2327,7 @@ class EmailCollector extends CommonObject
 
 								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty || $namealiastouseforthirdparty)) {
 									// We make another search on thirdparty
-									$operationslog .= '<br>We have this data to search thirdparty: '.$idtouseforthirdparty.' '.$emailtouseforthirdparty.' '.$nametouseforthirdparty.' '.$namealiastouseforthirdparty;
+									$operationslog .= '<br>We have this data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty;
 
 									$tmpobject = new stdClass();
 									$tmpobject->element == 'generic';
@@ -3225,6 +3233,7 @@ class EmailCollector extends CommonObject
 		} else {
 			$langs->load("admin");
 			$output = $langs->trans('NoNewEmailToProcess');
+			$output .= ' (defaultlang='.$langs->defaultlang.')';
 		}
 
 		// Disconnect

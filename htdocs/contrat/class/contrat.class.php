@@ -499,7 +499,7 @@ class Contrat extends CommonObject
 
 		// A contract is validated so we can move thirdparty to status customer
 		if (empty($conf->global->CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION)) {
-			$result = $this->thirdparty->set_as_client();
+			$result = $this->thirdparty->setAsCustomer();
 		}
 
 		// Define new ref
