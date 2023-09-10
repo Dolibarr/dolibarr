@@ -6156,7 +6156,7 @@ abstract class CommonObject
 
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
-						if ($extrafields->attributes[$this->table_element]['type'][$key] == 'password') {
+						if (!empty($extrafields->attributes[$this->table_element]['type'][$key]) && $extrafields->attributes[$this->table_element]['type'][$key] == 'password') {
 							if (preg_match('/^dolcrypt:/', $value)) {
 								$this->array_options["options_".$key] = dolDecrypt($value);
 							}
