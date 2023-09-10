@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 
 /**
@@ -895,9 +895,11 @@ class BonPrelevement extends CommonObject
 		$factures_errors = array();
 
 		if (!$error) {
+			dol_syslog(__METHOD__." Read invoices for did=".((int) $did), LOG_DEBUG);
+
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid, f.fk_soc";
-			$sql .= ", pfd.code_banque, pfd.code_guichet, pfd.number, pfd.cle_rib";
-			$sql .= ", pfd.amount";
+			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
+			$sql .= ", pd.amount";
 			$sql .= ", s.nom as name";
 			$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
 			if ($type != 'bank-transfer') {
@@ -919,7 +921,6 @@ class BonPrelevement extends CommonObject
 			if ($did > 0) {
 				$sql .= " AND pd.rowid = ".((int) $did);
 			}
-			dol_syslog(__METHOD__." Read invoices,", LOG_DEBUG);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -941,12 +942,16 @@ class BonPrelevement extends CommonObject
 				dol_syslog(__METHOD__." Read invoices, ".$i." invoices to withdraw", LOG_DEBUG);
 			} else {
 				$error++;
-				dol_syslog(__METHOD__." Read invoices error ".$this->db->error(), LOG_ERR);
+				$this->error = $this->db->lasterror();
+				dol_syslog(__METHOD__." Read invoices error ".$this->db->lasterror(), LOG_ERR);
+				return -1;
 			}
 		}
 
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+
 			$soc = new Societe($this->db);
 
 			// Check BAN
@@ -965,7 +970,7 @@ class BonPrelevement extends CommonObject
 					if ($resfetch >= 0) {		// Field 0 of $fac is rowid of invoice
 					*/
 
-						// Check if $fac[8] s.nom is null
+					// Check if $fac[8] s.nom is null
 					if ($fac[8] != null) {
 						//$bac = new CompanyBankAccount($this->db);
 						//$bac->fetch(0, $soc->id);
