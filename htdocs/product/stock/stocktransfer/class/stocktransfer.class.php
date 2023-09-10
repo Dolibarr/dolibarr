@@ -87,6 +87,7 @@ class StockTransfer extends CommonObject
 	public $date_prevue_arrivee;
 	public $date_reelle_depart;
 	public $date_reelle_arrivee;
+	public $origin_type;
 
 
 	const STATUS_DRAFT      = 0;
