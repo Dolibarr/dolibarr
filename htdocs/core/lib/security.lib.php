@@ -111,8 +111,8 @@ function dolGetRandomBytes($length)
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
- *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$chain		String to encode
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string

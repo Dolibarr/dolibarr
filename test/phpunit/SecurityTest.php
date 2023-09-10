@@ -126,6 +126,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->rollback();
 
+		// Restore value to a neutral value (it was set to a test value by some tests)
+		unset($_SERVER["PHP_SELF"]);
+
 		print __METHOD__."\n";
 	}
 
@@ -1028,7 +1031,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result18 = ".$result."\n";
 		$this->assertFalse($result);
 
-		$result = (string) dol_eval("(\$a.'aa')", 1, 0);
+		$a='ab';
+		$result = (string) dol_eval("(\$a.'s')", 1, 0);
 		print "result19 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
