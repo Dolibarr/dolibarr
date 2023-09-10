@@ -307,7 +307,7 @@ if (isset($current_fiscal_period)) {
 			print '<tr class="oddeven">';
 			if ($nb_years > 1) print '<td class="right">' . $info['year'] . '</td>';
 			for ($i = 1; $i <= 12; $i++) {
-				print '<td class="right">' . ((int)$info['count'][$i]) . '</td>';
+				print '<td class="right">' . ((int) $info['count'][$i]) . '</td>';
 			}
 			print '<td class="right"><b>' . $info['total'] . '</b></td></tr>';
 		}
@@ -323,7 +323,7 @@ if (isset($current_fiscal_period)) {
 	$head[0][2] = 'step2';
 	print dol_get_fiche_head($head, 'step2', '', -1, 'title_accountancy');
 
-//	print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
+	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
 
 	if (empty($count_by_month['total']) && empty($current_fiscal_period['status'])) {
 		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_2&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureClose") . '</a>';
@@ -339,7 +339,7 @@ if (isset($current_fiscal_period)) {
 	$head[0][2] = 'step3';
 	print dol_get_fiche_head($head, 'step3', '', -1, 'title_accountancy');
 
-//	print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep3Desc") . '</span><br>';
+	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep3Desc") . '</span><br>';
 
 	if (empty($current_fiscal_period['status'])) {
 		$button = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AccountancyClosureAccountingReversal") . '</a>';

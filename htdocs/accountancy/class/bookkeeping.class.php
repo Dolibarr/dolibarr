@@ -2341,7 +2341,7 @@ class BookKeeping extends CommonObject
 		if (!isset(self::$active_fiscal_period_cached) || $force) {
 			$sql = "SELECT date_start, date_end";
 			$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
-			$sql .= " WHERE entity = " . ((int)$conf->entity);
+			$sql .= " WHERE entity = " . ((int) $conf->entity);
 			$sql .= " AND statut = 0";
 
 			$resql = $this->db->query($sql);
@@ -2376,7 +2376,7 @@ class BookKeeping extends CommonObject
 
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
-		$sql .= " WHERE entity = " . ((int)$conf->entity);
+		$sql .= " WHERE entity = " . ((int) $conf->entity);
 		if (!empty($filter)) $sql .= " AND (" . $filter . ')';
 		$sql .= $this->db->order('date_start', 'ASC');
 
@@ -2449,7 +2449,7 @@ class BookKeeping extends CommonObject
 				'total' => (int) $obj->total,
 			);
 			for ($i = 1; $i <= 12; $i++) {
-				$year_list['count'][$i] = (int)$obj->{'month' . $i};
+				$year_list['count'][$i] = (int) $obj->{'month' . $i};
 			}
 
 			$list[] = $year_list;
@@ -2479,7 +2479,7 @@ class BookKeeping extends CommonObject
 		// Specify as export : update field date_validated on selected month/year
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 		$sql .= " SET date_validated = '" . $this->db->idate($now) . "'";
-		$sql .= " WHERE entity = " . ((int)$conf->entity);
+		$sql .= " WHERE entity = " . ((int) $conf->entity);
 		$sql .= " AND DATE(doc_date) >= '" . $this->db->idate($date_start) . "'";
 		$sql .= " AND DATE(doc_date) <= '" . $this->db->idate($date_end) . "'";
 		$sql .= " AND date_validated IS NULL";
@@ -2596,8 +2596,8 @@ class BookKeeping extends CommonObject
 				$sql .= " (SUM(t.credit) - SUM(t.debit)) as opening_balance";
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 				$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'accounting_account as aa ON aa.account_number = t.numero_compte';
-				$sql .= ' WHERE t.entity = ' . ((int)$conf->entity); // Do not use getEntity for accounting features
-				$sql .= " AND aa.entity = ".$conf->entity;
+				$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
+				$sql .= " AND aa.entity = ". ((int) $conf->entity);
 				$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid = '.((int) getDolGlobalInt('CHARTOFACCOUNTS')).')';
 				$sql .= ' AND aa.pcg_type IN (' . implode(',', $pcg_type_filter) . ')';
 				$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($fiscal_period->date_start) . "'";
@@ -2616,7 +2616,7 @@ class BookKeeping extends CommonObject
                     $income_statement_amount = 0;
 					while ($obj = $this->db->fetch_object($resql)) {
 						if (in_array($obj->pcg_type, $accounting_groups_used_for_income_statement)) {
-                            $income_statement_amount += $obj->opening_balance;
+							$income_statement_amount += $obj->opening_balance;
 						} else {
 							// Insert bookkeeping record for balance sheet account
 							$mt = $obj->opening_balance;
@@ -2787,7 +2787,7 @@ class BookKeeping extends CommonObject
 
 		$sql = 'SELECT t.rowid';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		$sql .= ' WHERE t.entity = ' . ((int)$conf->entity); // Do not use getEntity for accounting features
+		$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		$sql .= " AND code_journal = '" . $this->db->escape($inventory_journal->code) . "'";
 		$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($date_start) . "'";
 		$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($date_end) . "'";
@@ -2827,7 +2827,7 @@ class BookKeeping extends CommonObject
 
 				$bookkeeping->montant = -$bookkeeping->montant;
 				$bookkeeping->sens = ($bookkeeping->montant >= 0) ? 'C' : 'D';
-                $old_debit = $bookkeeping->debit;
+				$old_debit = $bookkeeping->debit;
 				$bookkeeping->debit = $bookkeeping->credit;
 				$bookkeeping->credit = $old_debit;
 
