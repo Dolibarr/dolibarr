@@ -288,15 +288,9 @@ class Lettering extends BookKeeping
 	public function updateLettering($ids = array(), $notrigger = false)
 	{
 		$error = 0;
-		if (getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS')) {
-			if (getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS') == 3) {
-				$lettre = 'AAA';
-			} elseif (getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS') == 2) {
-				$lettre = 'AA';
-			}
-		} else {
-			$lettre = 'AAA';
-		}
+
+		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...)
+		$lettre = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), "A");
 
 		$sql = "SELECT DISTINCT ab2.lettering_code";
 		$sql .=	" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
