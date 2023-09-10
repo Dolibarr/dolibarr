@@ -3169,7 +3169,6 @@ class ExpenseReportLine extends CommonObjectLine
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			if (!$error && !$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
