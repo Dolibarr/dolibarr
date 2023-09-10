@@ -2251,7 +2251,7 @@ class BookKeeping extends CommonObject
 	 * @param 	bool		$force		Force reload
 	 * @return 	string					SQL filter
 	 */
-	function getCanModifyBookkeepingSQL($alias = '', $force = false)
+	public function getCanModifyBookkeepingSQL($alias = '', $force = false)
 	{
 		$alias = trim($alias);
 		$alias = !empty($alias) && strpos($alias, '.') < 0 ? $alias . "." : $alias;
@@ -2280,7 +2280,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$id		Bookkeeping ID
 	 * @return 	int				<0 if KO, == 0 if No, == 1 if Yes
 	 */
-	function canModifyBookkeeping($id)
+	public function canModifyBookkeeping($id)
 	{
 		$result = $this->loadActiveFiscalPeriods();
 		if ($result < 0) {
@@ -2310,7 +2310,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$date		Bookkeeping date
 	 * @return 	int					<0 if KO, == 0 if No, == 1 if Yes
 	 */
-	function validBookkeepingDate($date)
+	public function validBookkeepingDate($date)
 	{
 		$result = $this->loadActiveFiscalPeriods();
 		if ($result < 0) {
@@ -2334,7 +2334,7 @@ class BookKeeping extends CommonObject
 	 * @param 	bool	$force		Force reload
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	function loadActiveFiscalPeriods($force = false)
+	public function loadActiveFiscalPeriods($force = false)
 	{
 		global $conf;
 
@@ -2369,7 +2369,7 @@ class BookKeeping extends CommonObject
 	 * @param 	string	$filter		Filter
 	 * @return 	array|int			<0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
-	function getFiscalPeriods($filter = '')
+	public function getFiscalPeriods($filter = '')
 	{
 		global $conf;
 		$list = array();
@@ -2406,7 +2406,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int			$date_end		Date end
 	 * @return 	array|int					<0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
-	function getCountByMonthForFiscalPeriod($date_start, $date_end)
+	public function getCountByMonthForFiscalPeriod($date_start, $date_end)
 	{
 		$total = 0;
 		$list = array();
@@ -2470,7 +2470,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$date_end		Date end
 	 * @return	int						int <0 if KO, >0 if OK
 	 */
-	function validateMovementForFiscalPeriod($date_start, $date_end)
+	public function validateMovementForFiscalPeriod($date_start, $date_end)
 	{
 		global $conf;
 
@@ -2502,7 +2502,7 @@ class BookKeeping extends CommonObject
 	 * @param 	bool	$generate_bookkeeping_records	Generate closure bookkeeping records
 	 * @return	int										int <0 if KO, >0 if OK
 	 */
-	function closeFiscalPeriod($fiscal_period_id, $new_fiscal_period_id, $generate_bookkeeping_records = true)
+	public function closeFiscalPeriod($fiscal_period_id, $new_fiscal_period_id, $generate_bookkeeping_records = true)
 	{
 		global $conf, $langs, $user;
 
@@ -2720,7 +2720,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$date_end				Date end
 	 * @return	int								int <0 if KO, >0 if OK
 	 */
-	function insertAccountingReversal($fiscal_period_id, $inventory_journal_id, $new_fiscal_period_id, $date_start, $date_end)
+	public function insertAccountingReversal($fiscal_period_id, $inventory_journal_id, $new_fiscal_period_id, $date_start, $date_end)
 	{
 		global $conf, $langs, $user;
 
