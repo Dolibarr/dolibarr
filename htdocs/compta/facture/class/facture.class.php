@@ -106,11 +106,6 @@ class Facture extends CommonInvoice
 	 */
 	protected $table_ref_field = 'ref';
 
-	/**
-	 * @var int thirdparty ID
-	 */
-	public $socid;
-
 	public $author;
 
 	/**
@@ -149,7 +144,6 @@ class Facture extends CommonInvoice
 	 */
 	public $fk_user_modif;
 
-	public $date; // Date invoice
 	public $datem;
 
 	/**
@@ -195,19 +189,6 @@ class Facture extends CommonInvoice
 	public $resteapayer;
 
 	/**
-	 * ! Closing after partial payment: discount_vat, badcustomer or badsupplier, bankcharge, other
-	 * ! Closing when no payment: replaced, abandoned
-	 * @var string Close code
-	 */
-	public $close_code;
-
-	/**
-	 * ! Comment if paid without full payment
-	 * @var string Close note
-	 */
-	public $close_note;
-
-	/**
 	 * 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
 	 */
 	public $paye;
@@ -223,9 +204,6 @@ class Facture extends CommonInvoice
 	public $linked_objects = array();
 
 	public $date_lim_reglement;
-	public $cond_reglement_code; // Code in llx_c_paiement
-	public $cond_reglement_doc; // Code in llx_c_paiement
-	public $mode_reglement_code; // Code in llx_c_paiement
 
 	/**
 	 * @var int ID Field to store bank id to use when payment mode is withdraw
