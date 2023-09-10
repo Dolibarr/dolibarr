@@ -490,14 +490,14 @@ function getBrowserInfo($user_agent)
  */
 function dol_shutdown()
 {
-	global $user, $langs, $db;
+	global $db;
 	$disconnectdone = false;
 	$depth = 0;
 	if (is_object($db) && !empty($db->connected)) {
 		$depth = $db->transaction_opened;
 		$disconnectdone = $db->close();
 	}
-	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth) ? ' (Warn: db disconnection forced, transaction depth was '.$depth.')' : ''), (($disconnectdone && $depth) ? LOG_WARNING : LOG_INFO));
+	dol_syslog("--- End access to ".(empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SEVER["PHP_SELF"]).(($disconnectdone && $depth) ? ' (Warn: db disconnection forced, transaction depth was '.$depth.')' : ''), (($disconnectdone && $depth) ? LOG_WARNING : LOG_INFO));
 }
 
 /**
