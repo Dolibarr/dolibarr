@@ -568,7 +568,7 @@ class Ticket extends CommonObject
 			}
 
 			// Assign user if defined
-			if ($this->fk_user_assign > 0) {
+			if ($this->fk_user_assign > 0 && !$error) {
 				if ($this->assignUser($user, $this->fk_user_assign, $notrigger) < 0) {
 					$error++;
 				}
