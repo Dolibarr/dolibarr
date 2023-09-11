@@ -464,7 +464,7 @@ if ($action == 'edit') {
 	print '<td class="nowrap"><input class="oddeven" name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(!empty($object->conf->MAIN_LANDING_PAGE) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> '.$langs->trans("UsePersonalValue").'</td>';
-	print '<td class="tdoverflowmax300xxx">';
+	print '<td class="tdoverflowmax300">';
 	if (!empty($object->conf->MAIN_LANDING_PAGE)) {
 		$urltoshow = '';
 		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
