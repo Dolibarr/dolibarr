@@ -3341,7 +3341,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_product.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_product.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Products')."</b><br>\n";
 	} else {
@@ -3355,7 +3355,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_soc.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_soc.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Suppliers')."</b><br>\n";
 	} else {
@@ -3369,7 +3369,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_soc.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_soc.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Customers')."</b><br>\n";
 	} else {
@@ -3383,7 +3383,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_member.')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_member.')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Members')."</b><br>\n";
 	} else {
@@ -3397,7 +3397,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_socpeople.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_socpeople.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Contacts')."</b><br>\n";
 	} else {
@@ -3411,7 +3411,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_account.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_account.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Accounts')."</b><br>\n";
 	} else {
@@ -3425,7 +3425,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_project.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_project.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Projects')."</b><br>\n";
 	} else {
@@ -3439,7 +3439,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_user.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_user.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Users')."</b><br>\n";
 	} else {
@@ -3453,7 +3453,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_warehouse.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_warehouse.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Warehouses')."</b><br>\n";
 	} else {
@@ -3467,7 +3467,7 @@ function migrate_element_category($db, $langs, $conf)
 	$result = $db->query($sql);
 	if ($result) {
 		while ($obj = $db->fetch_object($result)) {
-			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_actioncomm.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+			$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_actioncomm.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 		}
 		print '<b>'.$langs->trans('MigrationCategories', 'Actioncomms')."</b><br>\n";
 	} else {
@@ -3483,7 +3483,7 @@ function migrate_element_category($db, $langs, $conf)
 		$result = $db->query($sql);
 		if ($result) {
 			while ($obj = $db->fetch_object($result)) {
-				$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_website_page.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+				$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_website_page.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 			}
 			print '<b>'.$langs->trans('MigrationCategories', 'WebsitePages')."</b><br>\n";
 		} else {
@@ -3502,7 +3502,7 @@ function migrate_element_category($db, $langs, $conf)
 		$result = $db->query($sql);
 		if ($result) {
 			while ($obj = $db->fetch_object($result)) {
-				$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_ticket.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+				$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_ticket.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 			}
 			print '<b>'.$langs->trans('MigrationCategories', 'Tickets')."</b><br>\n";
 		} else {
@@ -3521,7 +3521,7 @@ function migrate_element_category($db, $langs, $conf)
 		$result = $db->query($sql);
 		if ($result) {
 			while ($obj = $db->fetch_object($result)) {
-				$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int)$obj->fk_knowledgemanagement.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
+				$db->query('INSERT INTO '.MAIN_DB_PREFIX.'element_category (fk_category, fk_element, import_key) VALUES('.(int) $obj->fk_categorie.','.(int) $obj->fk_knowledgemanagement.', '.(is_null($obj->import_key) ? 'null' : $db->escape($obj->import_key)).')');
 			}
 			print '<b>'.$langs->trans('MigrationCategories', 'Knowledgemanagement')."</b><br>\n";
 		} else {
