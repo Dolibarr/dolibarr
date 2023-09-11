@@ -7,7 +7,7 @@
  * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
  * Copyright (C) 2005-2019	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2010-2023	Juanjo Menent				<jmenent@simnandez.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2021	Alexandre Spangaro			<aspangaro@open-dsi.fr>
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
@@ -212,7 +212,8 @@ function isModEnabled($module)
 	$arrayconv = array(
 		'project' => 'projet',
 		'contract' => 'contrat',
-		'bank' => 'banque'
+		'bank' => 'banque',
+		'category' => 'categorie'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
