@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return FilesLibTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -79,7 +81,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -92,7 +94,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -105,7 +107,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -120,7 +122,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -417,7 +419,9 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$errorstring = '';
 
 		dol_mkdir($conf->admin->dir_temp);
-		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1;
+		$conf->modules['syslog'] = 'syslog';
+		$_REQUEST['logtohtml']=1;
 		$conf->logbuffer=array();
 
 		$result=dol_compress_file($filein, $fileout, $format, $errorstring);
@@ -427,6 +431,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
 		$result=dol_uncompress($fileout, $dirout);
 		print __METHOD__." uncompress result=".join(',', $result)."\n";
+		print join(', ', $conf->logbuffer);
 		$this->assertEquals(0, count($result), "Pb with dol_uncompress_file of file ".$fileout);
 
 		// Format gz
@@ -445,7 +450,9 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$errorstring = '';
 
 		dol_mkdir($conf->admin->dir_temp);
-		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1;
+		$conf->modules['syslog'] = 'syslog';
+		$_REQUEST['logtohtml']=1;
 		$conf->logbuffer=array();
 
 		$result=dol_compress_file($filein, $fileout, $format, $errorstring);
@@ -470,25 +477,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testDolDirList
-	 *
-	 * @return	void
-	 *
-	 * @depends	testDolCompressUnCompress
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testDolDirList()
-	{
-		global $conf,$user,$langs,$db;
-
-		// Scan dir to guaruante we on't have library jquery twice (we accept exception of duplicte into ckeditor because all dir is removed for debian package, so there is no duplicate).
-		$founddirs=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
-		print __METHOD__." count(founddirs)=".count($founddirs)."\n";
-		$this->assertEquals(1, count($founddirs));
-	}
-
-
-	/**
 	 * testDolCheckSecureAccessDocument
 	 *
 	 * @return void
@@ -501,18 +489,16 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-
-		if (empty($user->rights->facture)) {
-			$user->rights->facture = new stdClass();
-		}
-
 		//$dummyuser=new User($db);
 		//$result=restrictedArea($dummyuser,'societe');
 
 		// We save user properties
-		$savpermlire = $user->rights->facture->lire;
-		$savpermcreer = $user->rights->facture->creer;
+		$savpermlire = $user->hasRight('facture', 'lire');
+		$savpermcreer = $user->hasRight('facture', 'creer');
 
+		if (empty($user->rights->facture)) {
+			$user->rights->facture = new stdClass();
+		}
 
 		// Check access to SPECIMEN
 		$user->rights->facture->lire = 0;
@@ -558,5 +544,73 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		// We restore user properties
 		$user->rights->facture->lire = $savpermlire;
 		$user->rights->facture->creer = $savpermcreer;
+	}
+
+	/**
+	 * testDolDirMove
+	 *
+	 * @return void
+	 */
+	public function testDolDirMove()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		// To test a move of empty directory that should work
+		$dirsrcpath = $conf->admin->dir_temp.'/directory';
+		$dirdestpath = $conf->admin->dir_temp.'/directory2';
+		$file=dirname(__FILE__).'/Example_import_company_1.csv';
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with empty directory');
+
+		// To test a move on existing directory with overwrite
+		dol_mkdir($dirsrcpath);
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory on existing directory with empty directory');
+
+		// To test a move on existing directory without overwrite
+		dol_mkdir($dirsrcpath);
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 0, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertFalse($result, 'move of directory on existing directory without overwrite');
+
+		// To test a move with a file to rename in src directory
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		dol_copy($file, $dirsrcpath.'/directory_file.csv');
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with file in directory');
+
+		// To test a move without a file to rename in src directory
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		dol_copy($file, $dirsrcpath.'/file.csv');
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with file whitout rename needed in directory');
+
+		// To test a move with a directory to rename in src directory
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		dol_mkdir($dirsrcpath.'/directory');
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with file with rename needed in directory');
+
+		// To test a move without a directory to rename in src directory
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		dol_mkdir($dirsrcpath.'/notorename');
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with directory whitout rename needed in directory');
 	}
 }

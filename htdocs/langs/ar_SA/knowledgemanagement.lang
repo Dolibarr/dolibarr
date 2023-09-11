@@ -18,37 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = نظام إدارة المعرفة
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=إدارة إدارة المعرفة (KM) أو قاعدة مكتب المساعدة
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = إعداد نظام إدارة المعرفة
 Settings = إعدادات
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = صفحة إعداد نظام إدارة المعرفة
 
 
 #
 # About page
 #
 About = حول
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = حول إدارة المعرفة
+KnowledgeManagementAboutPage = إدارة المعرفة حول الصفحة
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementArea = إدارة المعرفة
+MenuKnowledgeRecord = قاعدة المعرفة
+ListKnowledgeRecord = قائمة المقالات
+NewKnowledgeRecord = مقال جديد
+ValidateReply = تحقق من صحة الحل
+KnowledgeRecords = مقالات
 KnowledgeRecord = عنصر
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+KnowledgeRecordExtraFields = Extrafields للمادة
+GroupOfTicket=مجموعة التذاكر
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+SuggestedForTicketsInGroup=اقترح للتذاكر عندما تكون المجموعة
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=تعيين كما عفا عليها الزمن
+ConfirmCloseKM=هل تؤكد أن إغلاق هذا المقال قد عفا عليه الزمن؟
+ConfirmReopenKM=هل تريد استعادة هذه المقالة إلى الحالة "تم التحقق منها"؟

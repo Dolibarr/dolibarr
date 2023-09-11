@@ -65,38 +65,83 @@ if (empty($dolibarr_nocache)) {
 
 
 // Wrapper to show tooltips (html or onclick popup)
-print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */\n";
-print "jQuery(document).ready(function () {\n";
+print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */
+jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
-	print 'jQuery(".classfortooltip").tooltip({
+	print '
+	jQuery(".classfortooltip").tooltip({
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
 		hide: { delay: 250, duration: 20 },
 		tooltipClass: "mytooltip",
 		content: function () {
-    		console.log("Return title for popup");
-            return $(this).prop("title");		/* To force to get title as is */
-   		}
-	});'."\n";
+			console.log("Return title for popup");
+			return $(this).prop("title");		/* To force to get title as is */
+		}
+	});
+
+	var opendelay = 80;
+	var elemtostoretooltiptimer = jQuery("#dialogforpopup");
+	var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+
+	target = jQuery(".classforajaxtooltip");
+	target.tooltip({
+		tooltipClass: "mytooltip",
+		show: { collision: "flipfit", effect:"toggle", delay: 0, duration: 20 },
+		hide: { delay: 250, duration: 20 }
+	});
+
+	target.off("mouseover mouseout");
+	target.on("mouseover", function(event) {
+		console.log("we will create timer for ajax call");
+		var params = JSON.parse($(this).attr("data-params"));
+		params.token = currenttoken;
+		var elemfortooltip = $(this);
+
+	    event.stopImmediatePropagation();
+		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
+			target.tooltip("close");
+			$.ajax({
+					url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
+					type: "post",
+					async: true,
+					data: params,
+					success: function(response){
+						// Setting content option
+						console.log("ajax success");
+						elemfortooltip.tooltip("option","content",response);
+						elemfortooltip.tooltip("open");
+					}
+				});
+			 }, opendelay));
+	});
+	target.on("mouseout", function(event) {
+		console.log("mouse out");
+	    event.stopImmediatePropagation();
+	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+	    target.tooltip("close");
+	});
+	';
 }
 
 print '
-jQuery(".classfortooltiponclicktext").dialog({
-    closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-    maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
-    modal: true,
-    autoOpen: false
-    }).css("z-index: 5000");
-jQuery(".classfortooltiponclick").click(function () {
-    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-    if ($(this).attr(\'dolid\')) {
-        obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
-        obj.dialog("open");
-        return false;
-    }
-});'."\n";
-
-print "});\n";
+	jQuery(".classfortooltiponclicktext").dialog({
+		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
+		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700).',
+		modal: true,
+		autoOpen: false
+	}).css("z-index: 5000");
+	jQuery(".classfortooltiponclick").click(function () {
+		console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
+		if ($(this).attr(\'dolid\')) {
+			obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
+			obj.dialog("open");
+			return false;
+		}
+	});
+});
+';
 
 
 // Wrapper to manage dropdown
@@ -108,8 +153,10 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   // Click onto the link "link to" or "hamburger", toggle dropdown
 				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
+                  	  setTimeout(() => { $(\'.inputsearch_dropdownselectedfields\').focus(); }, 200);
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
+                      $(".ulselectedfields").removeClass("open");
 					  $(this).parent().parent().find(\'dd ul\').toggleClass("open");
 
 					  if ($(this).parent().parent().find(\'dd ul\').hasClass("open")) {
@@ -231,33 +278,41 @@ print '
 				);
 
 				jQuery(\'.clipboardCPValue, .clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
-					/* console.log(this.parentNode); */
 					console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class and we want to copy content of clipboardCPValue class");
 
 					if (window.getSelection) {
-						range = document.createRange();
-
-						/* We select value to print using the parent. */
-						/* We should use the class clipboardCPValue but it may have several element with copy/paste so class to select is not enough */
-						range.selectNodeContents(this.parentNode.firstChild);
+						jqobj=$(this).parent().children(".clipboardCPValue");
+						console.log(jqobj.html());
 
 						selection = window.getSelection();	/* get the object used for selection */
 						selection.removeAllRanges();		/* clear current selection */
+
+						/* We select the value to print using the parentNode.firstChild */
+						/* We should use the class clipboardCPValue but it may have several element with copy/paste so class to select is not enough */
+						range = document.createRange();
+						range.selectNodeContents(this.parentNode.firstChild);
 						selection.addRange(range);			/* make the new selection with the value to copy */
+
+						/* copy selection into clipboard */
+						var succeed;
+					    try {
+							console.log("We set the style display to unset for the span so the copy will work");
+							jqobj.css("display", "unset");	/* Because copy does not work on "block" object */
+
+							succeed = document.execCommand(\'copy\');
+
+							console.log("We set the style display back to inline-block");
+							jqobj.css("display", "inline-block");
+					    } catch(e) {
+					        succeed = false;
+					    }
+
+						/* Remove the selection to avoid to see the hidden field to copy selected */
+						window.getSelection().removeAllRanges();
 					}
 
-					/* copy selection into clipboard */
-					var succeed;
-				    try {
-				    	succeed = document.execCommand(\'copy\');
-				    } catch(e) {
-				        succeed = false;
-				    }
-
-					/* Remove the selection to avoid to see the hidden field to copy selected */
-					window.getSelection().removeAllRanges();
-
 					/* Show message */
+					/* TODO Show message into a top left corner or center of screen */
 					var lastchild = this.parentNode.lastChild;		/* .parentNode is clipboardCP and last child is clipboardCPText */
 					var tmp = lastchild.innerHTML
 					if (succeed) {
@@ -275,11 +330,12 @@ print '
 	jQuery(document).ready(function() {
 		jQuery(".cssforclicktodial").click(function() {
 			event.preventDefault();
-			console.log("We click on a cssforclicktodial class with url="+this.href);
+			var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+			console.log("We click on a cssforclicktodial class with href="+this.href);
 			$.ajax({
 			  url: this.href,
 			  type: \'GET\',
-			  data: { token: \''.newToken().'\' }
+			  data: { token: currenttoken }
 			}).done(function(xhr, textStatus, errorThrown) {
 			    /* do nothing */
 			}).fail(function(xhr, textStatus, errorThrown) {

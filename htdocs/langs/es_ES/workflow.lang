@@ -7,6 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear automáticamente un pedido de cliente
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente después de la firma de un presupuesto (la nueva factura tendrá el mismo importe que el presupuesto)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear una factura a cliente automáticamente al validar un contrato
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente al cierre del pedido de cliente (la nueva factura tendrá el mismo importe que el pedido)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=En la creación del ticket, crea automáticamente una intervención.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar presupuesto origen como facturado cuando el pedido de cliente sea marcado como facturado (y si el importe del pedido es igual al  importe del presupuesto relacionado)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar los presupuesto origen como facturado cuando la factura a cliente sea validada (y si el importe de la factura es igual al importe del presupuesto relacionado)
@@ -21,10 +22,15 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar automátic
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Clasifique la orden de compra de fuente vinculada como recibida cuando se valida una recepción (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra para actualizar)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Clasifique la orden de compra de fuente vinculada como recibida cuando una recepción está cerrada (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra para actualizar)
 # Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=Clasificar las recepciones como "facturadas" cuando se valida un pedido de proveedor vinculado
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Clasificar las recepciones como "facturadas" cuando se valida una factura de compra vinculada (y si el monto de la factura es el mismo que el monto total de las recepciones vinculadas)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Al crear un ticket, vincule los contratos disponibles de terceros coincidentes
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=A la hora de vincular contratos, buscar entre los de las casas matrices
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Cerrar todas las intervenciones vinculadas al ticket cuando se cierra un ticket
 AutomaticCreation=Creación automática
 AutomaticClassification=Clasificación automática
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Clasificar el envío vinculado como cerrado cuando se valida la factura del cliente
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Clasifique el envío de origen vinculado como cerrado cuando se valide la factura del cliente (y si el monto de la factura es el mismo que el monto total de los envíos vinculados)
+AutomaticClosing=Cierre automático
+AutomaticLinking=Enlace automático

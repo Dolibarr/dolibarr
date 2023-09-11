@@ -22,6 +22,7 @@
  * \brief		Setup page to configure resource module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Class

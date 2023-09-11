@@ -20,6 +20,7 @@ ModulePartnershipName=Gestion des partenariats
 PartnershipDescription=Module de gestion des partenariats
 PartnershipDescriptionLong= Module de gestion des partenariats
 Partnership=Partenariat
+Partnerships=Partenariats
 AddPartnership=Ajouter un partenariat
 CancelPartnershipForExpiredMembers=Partenariat : annuler le partenariat des adhérents dont les cotisations ont expirés
 PartnershipCheckBacklink=Partenariat : Vérifiez le backlink référent
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partenariat : Vérifiez le backlink référent
 # Menu
 #
 NewPartnership=Nouveau partenariat
+NewPartnershipbyWeb=Votre demande de partenariat a été ajoutée avec succès. Nous pourrions vous contacter bientôt...
 ListOfPartnerships=Listes des partenariats
 
 #
@@ -42,6 +44,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Liens de retour à vérifier
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de jours avant l'annulation de l'état d'un partenariat lorsque la cotisation a expiré
 ReferingWebsiteCheck=Vérification du site référent
 ReferingWebsiteCheckDesc=Vous pouvez activer une fonctionnalité pour vérifier que vos partenaires ont ajouté un rétrolien vers les domaines de votre site Web sur leur propre site Web.
+PublicFormRegistrationPartnerDesc=Dolibarr peut vous fournir une URL/un site Web public pour permettre aux visiteurs externes de demander à faire partie du programme de partenariat.
 
 #
 # Object
@@ -59,6 +62,12 @@ BacklinkNotFoundOnPartnerWebsite=Lien de retour non trouvé sur le site web part
 ConfirmClosePartnershipAsk=Êtes-vous sûr de vouloir annuler ce partenariat ?
 PartnershipType=Type de partenariat
 PartnershipRefApproved=Partenariat %s approuvé
+KeywordToCheckInWebsite=Si vous souhaitez vérifier qu'un mot-clé donné est présent dans le site de chaque partenaire, définissez ce mot-clé ici
+PartnershipDraft=Brouillon
+PartnershipAccepted=Accepté
+PartnershipRefused=Refusé
+PartnershipCanceled=Annulé
+PartnershipManagedFor=Les partenaires sont
 
 #
 # Template Mail
@@ -82,11 +91,7 @@ CountLastUrlCheckError=Nombre d'erreurs lors de la dernière vérification d'URL
 LastCheckBacklink=Date de la dernière vérification d'URL
 ReasonDeclineOrCancel=Raison du refus
 
-#
-# Status
-#
-PartnershipDraft=Brouillon
-PartnershipAccepted=Accepté
-PartnershipRefused=Refusé
-PartnershipCanceled=Annulé
-PartnershipManagedFor=Les partenaires sont
+NewPartnershipRequest=Nouvelle demande de partenariat
+NewPartnershipRequestDesc=Ce formulaire vous permet de demander à faire partie de l'un de nos programmes de partenariat. Si vous avez besoin d'aide pour remplir ce formulaire, veuillez contacter par email <b>%s</b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Cette page doit contenir au moins un lien vers l'un des domaines suivants: %s
+

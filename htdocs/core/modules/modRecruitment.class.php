@@ -117,12 +117,12 @@ class modRecruitment extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("recruitment");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -134,9 +134,20 @@ class modRecruitment extends DolibarrModules
 		// Example: $this->const=array(1 => array('RECRUITMENT_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('RECRUITMENT_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array(
-			// 1 => array('RECRUITMENT_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
-		);
+		$r = 0;
+		$this->const[$r][0] = "RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_recruitmentjobposition_standard";
+		$this->const[$r][3] = 'Name of manager to generate recruitment job position ref number';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_recruitmentcandidature_standard";
+		$this->const[$r][3] = 'Name of manager to generate recruitment candidature ref number';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
@@ -166,7 +177,7 @@ class modRecruitment extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -250,11 +261,11 @@ class modRecruitment extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'hrm',
 			'leftmenu'=>'recruitmentjobposition',
-			'url'=>'/recruitment/recruitmentindex.php',
+			'url'=>'/recruitment/index.php',
 			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->recruitment->recruitmentjobposition->read', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -282,7 +293,7 @@ class modRecruitment extends DolibarrModules
 			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->recruitment->recruitmentjobposition->read', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -310,7 +321,7 @@ class modRecruitment extends DolibarrModules
 			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->recruitment->recruitmentjobposition->read', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -400,7 +411,7 @@ class modRecruitment extends DolibarrModules
 		$sql = array();
 
 		// Document template
-		$moduledir = 'mymodule';
+		$moduledir = 'recruitment';
 		$myTmpObjects = array();
 		$myTmpObjects['RecruitmentJobPosition'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
 
@@ -408,10 +419,10 @@ class modRecruitment extends DolibarrModules
 			if ($myTmpObjectKey == 'MyObject') {
 				continue;
 			}
-			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/mymodule';
-				$dest = $dirodt.'/template_myobjects.odt';
+			if ($myTmpObjectArray['includedocgeneration']) {
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_recruitmentjobposition.odt';
+				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
+				$dest = $dirodt.'/template_recruitmentjobposition.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -427,6 +438,7 @@ class modRecruitment extends DolibarrModules
 				$sql = array_merge($sql, array(
 					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
 					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".$this->db->escape(strtolower($myTmpObjectKey))."',".((int) $conf->entity).")",
+
 					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
 					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
 				));

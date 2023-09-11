@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2005           Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2010-2015      Juanjo Menent        <jmenent@2byte.es>
--- Copyright (C) 2011-2012      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2011-2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 create table llx_c_tva
 (
   rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity            integer DEFAULT 1 NOT NULL,
   fk_pays           integer NOT NULL,
   code              varchar(10) DEFAULT '',                         -- a key to describe vat entry, for example FR20
   taux              double  NOT NULL,
@@ -28,6 +29,7 @@ create table llx_c_tva
   localtax1_type	varchar(10)	 NOT NULL DEFAULT '0',
   localtax2         varchar(20)  NOT NULL DEFAULT '0',
   localtax2_type	varchar(10)  NOT NULL DEFAULT '0',
+  use_default	    tinyint DEFAULT 0,								-- set to 1 to be the default vat when no vat defined on product
   recuperableonly   integer NOT NULL DEFAULT 0,
   note              varchar(128),
   active            tinyint DEFAULT 1 NOT NULL,

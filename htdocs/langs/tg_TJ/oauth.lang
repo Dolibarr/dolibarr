@@ -9,12 +9,13 @@ HasAccessToken=Нишон тавлид шуд ва дар пойгоҳи дод�
 NewTokenStored=Токен қабул ва захира карда шуд
 ToCheckDeleteTokenOnProvider=Барои тафтиш/нест кардани иҷозати аз ҷониби провайдери %s OAuth сабтшуда ин ҷо клик кунед
 TokenDeleted=Нишон нест карда шуд
-RequestAccess=Барои дархост кардан/нав кардани дастрасӣ ва гирифтани аломати нав барои наҷот ин ҷо клик кунед
-DeleteAccess=Барои нест кардани аломат ин ҷо клик кунед
+RequestAccess=Click here to request/renew access and receive a new token
+DeleteAccess=Click here to delete token
 UseTheFollowingUrlAsRedirectURI=Ҳангоми эҷоди эътимодномаи худ бо провайдери OAuth URL -и зеринро ҳамчун URI масир истифода баред:
-ListOfSupportedOauthProviders=Эътимодномаеро, ки провайдери OAuth2 пешниҳод кардааст, ворид кунед. Дар ин ҷо танҳо провайдерҳои пуштибони OAuth2 номбар шудаанд. Ин хидматҳо метавонанд аз ҷониби дигар модулҳое истифода шаванд, ки ба тасдиқи OAuth2 ниёз доранд.
-OAuthSetupForLogin=Саҳифа барои тавлиди OAuth
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
 SeePreviousTab=Ба ҷадвали қаблӣ нигаред
+OAuthProvider=OAuth provider
 OAuthIDSecret=ID ва махфияти OAuth
 TOKEN_REFRESH=Ҳозираи навсозии токен
 TOKEN_EXPIRED=Мӯҳлати нишона гузаштааст
@@ -23,10 +24,13 @@ TOKEN_DELETE=Нишони захирашударо нест кунед
 OAUTH_GOOGLE_NAME=Хидмати OAuth Google
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=Сирри Google OAuth
-OAUTH_GOOGLE_DESC=Ба <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> ба ин саҳифа равед </a> ва сипас "Эътимоднома" барои эҷоди маълумоти OAuth
 OAUTH_GITHUB_NAME=Хидмати OAuth GitHub
 OAUTH_GITHUB_ID=Шиносаи OAuth GitHub
 OAUTH_GITHUB_SECRET=Сирри OAuth GitHub
-OAUTH_GITHUB_DESC=Ба <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> ба ин саҳифа равед </a> ва сипас "Эҷоди як барномаи навро сабт кунед" то эътимодномаи OAuth эҷод кунед.
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=Санҷиши рахи OAuth
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

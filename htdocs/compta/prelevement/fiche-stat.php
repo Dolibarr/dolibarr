@@ -23,8 +23,10 @@
  *	\brief      Debit order or credit transfer statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -74,6 +76,8 @@ if ($type == 'bank-transfer') {
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
@@ -93,18 +97,18 @@ if ($id > 0 || $ref) {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-		if ($object->date_trans <> 0) {
+		if (!empty($object->date_trans)) {
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
+			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if ($object->date_credit <> 0) {
+		if (!empty($object->date_credit)) {
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
 			print '</td></tr>';
@@ -117,15 +121,23 @@ if ($id > 0 || $ref) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
+		// Get bank account for the payment
 		$acc = new Account($db);
-		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$fk_bank_account = $object->fk_bank_account;
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
+		}
+		if ($fk_bank_account > 0) {
+			$result = $acc->fetch($fk_bank_account);
+		}
 
-		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
 		if ($object->type == 'bank-transfer') {
 			$labelofbankfield = 'BankToPayCreditTransfer';
 		}
-		print $langs->trans($labelofbankfield);
+
+		print '<tr><td class="titlefieldcreate">';
+		print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
 		print '</td>';
 		print '<td>';
 		if ($acc->id > 0) {
@@ -134,17 +146,34 @@ if ($id > 0 || $ref) {
 		print '</td>';
 		print '</tr>';
 
-		print '<tr><td class="titlefield">';
+		$modulepart = 'prelevement';
+		if ($object->type == 'bank-transfer') {
+			$modulepart = 'paymentbybanktransfer';
+		}
+
+		print '<tr><td class="titlefieldcreate">';
 		$labelfororderfield = 'WithdrawalFile';
 		if ($object->type == 'bank-transfer') {
 			$labelfororderfield = 'CreditTransferFile';
 		}
 		print $langs->trans($labelfororderfield).'</td><td>';
-		$relativepath = 'receipts/'.$object->ref.'.xml';
-		$modulepart = 'prelevement';
-		if ($object->type == 'bank-transfer') {
-			$modulepart = 'paymentbybanktransfer';
+
+		if (isModEnabled('multicompany')) {
+			$labelentity = $conf->entity;
+			$relativepath = 'receipts/'.$object->ref.'-'.$labelentity.'.xml';
+
+			if ($type != 'bank-transfer') {
+				$dir = $conf->prelevement->dir_output;
+			} else {
+				$dir = $conf->paymentbybanktransfer->dir_output;
+			}
+			if (!dol_is_file($dir.'/'.$relativepath)) {	// For backward compatibility
+				$relativepath = 'receipts/'.$object->ref.'.xml';
+			}
+		} else {
+			$relativepath = 'receipts/'.$object->ref.'.xml';
 		}
+
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
 		print img_picto('', 'download', 'class="paddingleft"');
 		print '</a>';

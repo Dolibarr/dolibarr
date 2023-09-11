@@ -59,7 +59,7 @@ class box_ficheinter extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->ficheinter->lire);
+		$this->hidden = !($user->hasRight('ficheinter', 'lire'));
 	}
 
 	/**
@@ -115,6 +115,7 @@ class box_ficheinter extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
+					$datem = $this->db->jdate($objp->datem);
 
 					$ficheinterstatic->statut = $objp->status;
 					$ficheinterstatic->status = $objp->status;
@@ -144,8 +145,8 @@ class box_ficheinter extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$i][] = array(

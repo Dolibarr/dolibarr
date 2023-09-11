@@ -41,7 +41,6 @@ Address=Drección
 State=Estado/Provincia
 StateCode=Código postal del Estado/Provincia
 CountryCode=Código de País
-CountryId=ID de País
 Chat=Chate
 PhonePerso=Teléfono Persona
 PhoneMobile=Celular

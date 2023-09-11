@@ -60,11 +60,12 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return description of module
 	 *
-	 *  @return     string      Texte descripif
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -83,11 +84,13 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
+		$mask = getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK');
+
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplier_proposal" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -131,14 +134,14 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
+		$mask = empty($conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK) ? '' : $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		$date = $supplier_proposal->datep;
+		$date = $supplier_proposal->date;
 		$customercode = $objsoc->code_client;
 		$numFinal = get_next_value($db, $mask, 'supplier_proposal', 'ref', '', $customercode, $date);
 

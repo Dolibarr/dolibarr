@@ -52,12 +52,11 @@ function dol_getwebuser($mode)
  *	@param		string	$entitytotest		Instance of data we must check
  *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
- *  @return		string						Login or ''
+ *  @return		string						Login or '' or '--bad-login-validity--'
  */
 function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
 	global $conf, $langs;
-	//global $dolauthmode;    // To return authentication finally used
 
 	// Check parameters
 	if ($entitytotest == '') {
@@ -97,13 +96,14 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Call function to check user/password
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
-					if ($login && $login != '--bad-login-validity--') {	// Login is successfull
+					if ($login && $login != '--bad-login-validity--') {
+						// Login is successfull with this method
 						$test = false; // To stop once at first login success
 						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
-						$dol_tz = GETPOST('tz');
+						/*$dol_tz = GETPOST('tz');
 						$dol_dst = GETPOST('dst');
 						$dol_screenwidth = GETPOST('screenwidth');
-						$dol_screenheight = GETPOST('screenheight');
+						$dol_screenheight = GETPOST('screenheight');*/
 					}
 				} else {
 					dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);
@@ -159,7 +159,7 @@ if (!function_exists('dol_loginfunction')) {
 		/*
 		$conf->css = "/theme/".(GETPOST('theme','aZ09')?GETPOST('theme','aZ09'):$conf->theme)."/style.css.php";
 		$themepath=dol_buildpath($conf->css,1);
-		if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
+		if (!empty($conf->modules_parts['theme']))		// Using this feature slow down application
 		{
 			foreach($conf->modules_parts['theme'] as $reldir)
 			{
@@ -191,8 +191,26 @@ if (!function_exists('dol_loginfunction')) {
 		// and the conf file is loaded.
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
+
 		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
-			setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
+			if (session_status() != PHP_SESSION_ACTIVE) {
+				if (PHP_VERSION_ID < 70300) {
+					session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+				} else {
+					// Only available for php >= 7.3
+					$sessioncookieparams = array(
+						'lifetime' => 0,
+						'path' => '/',
+						//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
+						'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+						'httponly' => true,
+						'samesite' => 'Lax'	// None || Lax  || Strict
+					);
+					session_set_cookie_params($sessioncookieparams);
+				}
+
+				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
+			}
 		}
 
 		if (GETPOST('urlfrom', 'alpha')) {
@@ -374,13 +392,16 @@ function encodedecode_dbpassconf($level = 0)
 
 			$lineofpass = 0;
 
+			$reg = array();
 			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save crypted value
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
 				if (!empty($val)) {
 					$passwd_crypted = $val;
+					// method dol_encode/dol_decode
 					$val = dol_decode($val);
+					//$val = dolEncrypt($val);
 					$passwd = $val;
 					$lineofpass = 1;
 				}
@@ -389,14 +410,26 @@ function encodedecode_dbpassconf($level = 0)
 				$val = preg_replace('/^["\']/', '', $val);
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
 				if (preg_match('/crypted:/i', $buffer)) {
+					// method dol_encode/dol_decode
+					$mode = 'crypted:';
 					$val = preg_replace('/crypted:/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
+				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
+					// method dolEncrypt/dolDecrypt
+					$mode = 'dolcrypt:';
+					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
+					$passwd_crypted = $val;
+					$val = dolDecrypt($buffer);
+					$passwd = $val;
 				} else {
 					$passwd = $val;
+					$mode = 'crypted:';
 					$val = dol_encode($val);
 					$passwd_crypted = $val;
+					// TODO replace with dolEncrypt()
+					// ...
 				}
 				$lineofpass = 1;
 			}
@@ -408,7 +441,7 @@ function encodedecode_dbpassconf($level = 0)
 					$config .= '$dolibarr_main_db_pass=\''.$passwd.'\';'."\n";
 				}
 				if ($level == 1) {
-					$config .= '$dolibarr_main_db_pass=\'crypted:'.$passwd_crypted.'\';'."\n";
+					$config .= '$dolibarr_main_db_pass=\''.$mode.$passwd_crypted.'\';'."\n";
 				}
 
 				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
@@ -429,7 +462,7 @@ function encodedecode_dbpassconf($level = 0)
 
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch
-			//@chmod($file, octdec('0600'));
+			//dolChmod($file, '0600');
 
 			return 1;
 		} else {
@@ -449,7 +482,7 @@ function encodedecode_dbpassconf($level = 0)
  * @param		array		$replaceambiguouschars	Discard ambigous characters. For example array('I').
  * @param       int         $length                 Length of random string (Used only if $generic is true)
  * @return		string		    					New value for password
- * @see dol_hash()
+ * @see dol_hash(), dolJSToSetRandomPassword()
  */
 function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)
 {
@@ -526,4 +559,45 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	}
 
 	return $generated_password;
+}
+
+/**
+ * Ouput javacript to autoset a generated password using default module into a HTML element.
+ *
+ * @param		string 		$htmlname			HTML name of element to insert key into
+ * @param		string		$htmlnameofbutton	HTML name of button
+ * @param		int			$generic			1=Return a generic pass, 0=Return a pass following setup rules
+ * @return		string		    				HTML javascript code to set a password
+ * @see getRandomPassword()
+ */
+function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token', $generic = 1)
+{
+	global $conf;
+
+	$out = '';
+
+	if (!empty($conf->use_javascript_ajax)) {
+		$out .= "\n".'<!-- Js code to suggest a security key -->';
+		$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
+		$out .= 'jQuery(document).ready(function () {
+            jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
+				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currentotken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+            		action: \'getrandompassword\',
+            		generic: '.($generic ? '1' : '0').',
+					token: currenttoken
+				},
+				function(result) {
+					if (jQuery("input#'.dol_escape_js($htmlname).'").attr("type") == "password") {
+						jQuery("input#'.dol_escape_js($htmlname).'").attr("type", "text");
+					}
+					jQuery("#'.dol_escape_js($htmlname).'").val(result);
+				});
+            });
+		});'."\n";
+		$out .= '</script>';
+	}
+
+	return $out;
 }

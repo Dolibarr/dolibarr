@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Math o linell (0=cynnyrch, 1=gwasanaeth)
 FileWithDataToImport=Ffeil gyda data i fewnforio
 FileToImport=Ffeil ffynhonnell i fewnforio
 FileMustHaveOneOfFollowingFormat=Rhaid i ffeil i'w mewnforio gael un o'r fformatau canlynol
-DownloadEmptyExample=Lawrlwythwch ffeil templed gyda gwybodaeth cynnwys maes
-StarAreMandatory=* yn feysydd gorfodol
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Dewiswch y fformat ffeil i'w ddefnyddio fel fformat ffeil mewnforio trwy glicio ar yr eicon %s i'w ddewis...
 ChooseFileToImport=Llwythwch ffeil i fyny ac yna cliciwch ar yr eicon %s i ddewis ffeil fel ffeil mewnforio ffynhonnell...
 SourceFileFormat=Fformat ffeil ffynhonnell
@@ -135,3 +135,6 @@ NbInsert=Nifer y llinellau a fewnosodwyd: %s
 NbUpdate=Nifer y llinellau wedi'u diweddaru: %s
 MultipleRecordFoundWithTheseFilters=Mae cofnodion lluosog wedi'u canfod gyda'r hidlwyr hyn: %s
 StocksWithBatch=Stociau a lleoliad (warws) cynhyrchion gyda rhif swp/cyfres
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

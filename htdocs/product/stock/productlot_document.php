@@ -26,9 +26,10 @@
 /**
  *       \file       htdocs/product/stock/productlot_document.php
  *       \ingroup    product
- *       \brief      Page of attached documents for porudct lots
+ *       \brief      Page of attached documents for product lots
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -37,11 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
+global $conf, $db, $langs, $user;
+
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'products'));
 
-$id     = GETPOST('id', 'int');
-$ref    = GETPOST('ref', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -83,16 +86,22 @@ if ($id || $ref) {
 		$batch = $tmp[1];
 	}
 	$object->fetch($id, $productid, $batch);
-	$object->ref = $object->batch; // For document management ( it use $object->ref)
+	$object->ref = $object->batch; // Old system for document management ( it uses $object->ref)
 
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
+		$filearray = dol_dir_list($upload_dir, "files");
+		if (empty($filearray)) {
+			// If no files linked yet, use new system on lot id. (Batch is not unique and can be same on different product)
+			$object->fetch($id, $productid, $batch);
+			$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
+		}
 	}
 }
 
-$usercanread = $user->rights->produit->lire;
-$usercancreate = $user->rights->produit->creer;
-$usercandelete = $user->rights->produit->supprimer;
+$usercanread = $user->hasRight('produit', 'lire');
+$usercancreate = $user->hasRight('produit', 'creer');
+$usercandelete = $user->hasRight('produit', 'supprimer');
 
 if (empty($upload_dir)) {
 	$upload_dir = $conf->productbatch->multidir_output[$conf->entity];
@@ -104,7 +113,7 @@ $permtoedit = $user->rights->produit->creer;
 //$permissiontodelete = $usercandelete;
 
 // Security check
-if (empty($conf->productbatch->enabled)) {
+if (!isModEnabled('productbatch')) {
 	accessforbidden('Module not enabled');
 }
 $socid = 0;
@@ -190,7 +199,7 @@ if ($object->id) {
 	print '</table>';
 
 	print '</div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 

@@ -28,6 +28,7 @@
  *  \brief      Tab of calendar events per user
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -84,13 +85,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (empty($user->rights->agenda->myactions->read)) {
+if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
-if (empty($user->rights->agenda->allactions->read)) {
+if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
-if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // If no permission to see all, we show only affected to me
+if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -101,7 +102,7 @@ $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
 $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 $day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
 $pid = GETPOSTISSET("search_projectid") ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
-$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'alpha') : GETPOST("status", 'alpha');
+$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
 $maxprint = ((GETPOST("maxprint", 'int') != '') ?GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -196,7 +197,7 @@ if ($action == 'delete_action' && $user->rights->agenda->delete) {
 	$event->fetch($actionid);
 	$event->fetch_optionals();
 	$event->fetch_userassigned();
-	$event->oldcopy = clone $event;
+	$event->oldcopy = dol_clone($event);
 
 	$result = $event->delete();
 }
@@ -233,7 +234,7 @@ if ($reshook < 0) {
 $form = new Form($db);
 $companystatic = new Societe($db);
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 $now = dol_now();
@@ -348,27 +349,30 @@ $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
 
-// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'gmt');
-
+// Define firstdaytoshow and lastdaytoshow. Warning: lastdaytoshow is last second to show + 1
+// $firstdaytoshow and lastdaytoshow become a gmt dates to use to search/compare because first_xxx are in tz idea and we used tzuserrel
+$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'tzuserrel');
 $nb_weeks_to_show = (!empty($conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER)) ? ((int) $conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER * 7) : 7;
 $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, $nb_weeks_to_show, 'd');
 //print $firstday.'-'.$first_month.'-'.$first_year;
-//print dol_print_date($firstdaytoshow,'dayhour');
-//print dol_print_date($lastdaytoshow,'dayhour');
+//print dol_print_date($firstdaytoshow, 'dayhour', 'gmt');
+//print dol_print_date($lastdaytoshow,'dayhour', 'gmt');
 
 $max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year, 'gmt'));
 
 $tmpday = $first_day;
 $picto = 'calendarweek';
 
-$nav = "<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp; \n";
+// Show navigation bar
+$nav = '<div class="navselectiondate inline-block nowraponall">';
+$nav .= "<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp; \n";
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("Week")." ".$week;
 $nav .= " </span>\n";
 $nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
 if (empty($conf->dol_optimize_smallscreen)) {
-	$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a> ";
+	$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param.'" class="datenowlink">'.$langs->trans("Today").'</a> ';
 }
+$nav .= '</div>';
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 $nav .= ' <button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 
@@ -432,7 +436,7 @@ $massactionbutton = '';
 $viewmode = '';
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
@@ -474,7 +478,7 @@ if (empty($reshook)) {
 
 $newparam = '';
 $newcardbutton = '';
-if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
+if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
 	$newparam .= '&month='.urlencode(str_pad($month, 2, "0", STR_PAD_LEFT)).'&year='.urlencode($tmpforcreatebutton['year']);
@@ -514,7 +518,6 @@ $s = $newtitle;
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-
 print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 print '</div>';
 
@@ -628,12 +631,14 @@ if ($type) {
 if ($status == '0') {
 	$sql .= " AND a.percent = 0";
 }
-if ($status == '-1') {
+if ($status === 'na') {
+	// Not applicable
 	$sql .= " AND a.percent = -1";
-}	// Not applicable
+}
 if ($status == '50') {
+	// Running already started
 	$sql .= " AND (a.percent > 0 AND a.percent < 100)";
-}	// Running already started
+}
 if ($status == 'done' || $status == '100') {
 	$sql .= " AND (a.percent = 100)";
 }
@@ -653,7 +658,7 @@ if ($filtert > 0 || $usergroup > 0) {
 }
 // Sort on date
 $sql .= ' ORDER BY fk_user_action, datep'; //fk_user_action
-
+//print $sql;
 
 dol_syslog("comm/action/peruser.php", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -663,6 +668,7 @@ if ($resql) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
+		//print $obj->fk_user_action.' '.$obj->id."<br>";
 
 		// Discard auto action if option is on
 		if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->code == 'AC_OTH_AUTO') {
@@ -672,6 +678,7 @@ if ($resql) {
 
 		$datep = $db->jdate($obj->datep);
 		$datep2 = $db->jdate($obj->datep2);
+
 
 		// Create a new object action
 		$event = new ActionComm($db);
@@ -715,13 +722,15 @@ if ($resql) {
 			}
 		}
 
+		//print '<br>'.$i.' - eventid='.$event->id.' '.dol_print_date($event->date_start_in_calendar, 'dayhour').' '.dol_print_date($firstdaytoshow, 'dayhour').' - '.dol_print_date($event->date_end_in_calendar, 'dayhour').' '.dol_print_date($lastdaytoshow, 'dayhour').'<br>'."\n";
+
 		// Check values
 		if ($event->date_end_in_calendar < $firstdaytoshow ||
 		$event->date_start_in_calendar >= $lastdaytoshow) {
 			// This record is out of visible range
 			unset($event);
 		} else {
-			//print $i.' - '.dol_print_date($this->date_start_in_calendar, 'dayhour').' - '.dol_print_date($this->date_end_in_calendar, 'dayhour').'<br>'."\n";
+			//print $i.' - eventid='.$event->id.' '.dol_print_date($event->date_start_in_calendar, 'dayhour').' - '.dol_print_date($event->date_end_in_calendar, 'dayhour').'<br>'."\n";
 			$event->fetch_userassigned(); // This load $event->userassigned
 
 			if ($event->date_start_in_calendar < $firstdaytoshow) {
@@ -742,7 +751,7 @@ if ($resql) {
 			$loop = true; $j = 0;
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 			do {
-				//if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
+				//print 'Add event into eventarray for daykey='.$daykey.'='.dol_print_date($daykey, 'dayhour', 'gmt').' '.$event->id.' '.$event->datep.' '.$event->datef.'<br>';
 
 				$eventarray[$daykey][] = $event;
 				$j++;
@@ -800,6 +809,7 @@ echo '<input type="hidden" name="newdate" id="newdate">';
 
 $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
+//print dol_print_date($currentdaytoshow, 'dayhour', 'gmt');
 
 while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<table class="centpercent noborder nocellnopadd cal_month">';
@@ -851,9 +861,9 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) {
-			print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day');
+			print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day', 'tzuserrel');
 		} else {
-			print dol_print_date($currentdaytoshow, 'day');
+			print dol_print_date($currentdaytoshow, 'day', 'tzuserrel');
 		}
 		echo "</td>\n";
 		$i++;
@@ -900,7 +910,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		/* Use this list to have for all users */
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
 			$sql .= " AND ug.fk_user = u.rowid ";
@@ -913,6 +923,10 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$sql .= " AND u.statut = 1";
 		if ($usergroup > 0)	{
 			$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
+		}
+		if ($user->socid > 0) {
+			// External users should see only contacts of their company
+			$sql .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 
 		//print $sql;
@@ -938,26 +952,6 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$usernames[] = $tmpuser;
 	}
 
-	/*
-	if ($filtert > 0)
-	{
-		$tmpuser = new User($db);
-		$tmpuser->fetch($filtert);
-		$usernames[] = $tmpuser;
-	}
-	else if ($usergroup)
-	{
-		$tmpgroup = new UserGroup($db);
-		$tmpgroup->fetch($usergroup);
-		$usernames = $tmpgroup->listUsersForGroup();
-	}
-	else
-	{
-		$tmpgroup = new UserGroup($db);
-		//$tmpgroup->fetch($usergroup); No fetch, we want all users for all groups
-		$usernames = $tmpgroup->listUsersForGroup();
-	}*/
-
 	// Load array of colors by type
 	$colorsbytype = array();
 	$labelbytype = array();
@@ -974,10 +968,12 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	$showheader = true;
 	$var = false;
 	foreach ($usernames as $username) {
+		//if ($username->login != 'admin') continue;
+
 		$var = !$var;
 		echo "<tr>";
 		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').'">';
-		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '');
+		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '', 'paddingleft');
 		print '</td>';
 		$tmpday = $sav;
 
@@ -991,10 +987,10 @@ while ($currentdaytoshow < $lastdaytoshow) {
 
 			// Show days of the current week
 			$curtime = dol_time_plus_duree($currentdaytoshow, $iter_day, 'd');
-			$tmparray = dol_getdate($curtime, 'fast');
-			$tmpday = $tmparray['mday'];
-			$tmpmonth = $tmparray['mon'];
-			$tmpyear = $tmparray['year'];
+			// $curtime is a gmt time, but we want the day, month, year in user TZ
+			$tmpday = dol_print_date($curtime, "%d", "tzuserrel");
+			$tmpmonth = dol_print_date($curtime, "%m", "tzuserrel");
+			$tmpyear = dol_print_date($curtime, "%Y", "tzuserrel");
 			//var_dump($curtime.' '.$tmpday.' '.$tmpmonth.' '.$tmpyear);
 
 			$style = 'cal_current_month';
@@ -1132,17 +1128,22 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	//if ($username->id && $day==1) {
 	//var_dump($eventarray);
 	//}
+	//var_dump("------ username=".$username->login." for day=".$day);
 
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused) {
-		$annee = dol_print_date($daykey, '%Y');
-		$mois =  dol_print_date($daykey, '%m');
-		$jour =  dol_print_date($daykey, '%d');
+		$annee = dol_print_date($daykey, '%Y', 'tzuserrel');
+		$mois =  dol_print_date($daykey, '%m', 'tzuserrel');
+		$jour =  dol_print_date($daykey, '%d', 'tzuserrel');
+		//var_dump("daykey=$daykey day=$day jour=$jour, month=$month mois=$mois, year=$year annee=$annee");
 
-		if ($day == $jour && $month == $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
+
+		if ($day == $jour && (int) $month == (int) $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
+			//var_dump("day=$day jour=$jour month=$month mois=$mois year=$year annee=$annee");
+
 			// Scan all event for this date
 			foreach ($eventarray[$daykey] as $index => $event) {
-				//print $daykey.' '.dol_print_date($daykey, 'dayhour', 'gmt').' '.$year.'-'.$month.'-'.$day.' -> '.$event->id.' '.$index.' '.$annee.'-'.$mois.'-'.$jour."<br>\n";
+				//print 'daykey='.$daykey.'='.dol_print_date($daykey, 'dayhour', 'gmt').' '.$year.'-'.$month.'-'.$day.' -> This event: '.$event->id.' '.$index.' is open for this daykey '.$annee.'-'.$mois.'-'.$jour."<br>\n";
 				//var_dump($event);
 
 				$keysofuserassigned = array_keys($event->userassigned);
@@ -1351,7 +1352,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 	}
 
-	// Now output $casesX
+	// Now output $casesX from start hour to end hour
 	for ($h = $begin_h; $h < $end_h; $h++) {
 		$color1 = ''; $color2 = '';
 		$style1 = ''; $style2 = '';
@@ -1395,10 +1396,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$ids1 = '';
 		$ids2 = '';
 		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) {
-			$ids1 = join(',', array_keys($cases1[$h]));
+			$ids1 = join(', ', array_keys($cases1[$h]));
 		}
 		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) {
-			$ids2 = join(',', array_keys($cases2[$h]));
+			$ids2 = join(', ', array_keys($cases2[$h]));
 		}
 
 		if ($h == $begin_h) {
@@ -1433,7 +1434,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			$color2 = '222222';
 		}
-		print '<table class="nobordernopadding" width="100%">';
+		print '<table class="nobordernopadding case centpercent">';
 		print '<tr><td ';
 		if ($style1 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color1 ? $color1 : "888").' !important" ';

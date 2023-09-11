@@ -26,7 +26,7 @@
 require_once DOL_DOCUMENT_ROOT . '/core/modules/workstation/modules_workstation.php';
 
 /**
- *	Class to manage customer order numbering rules standard
+ * Class to manage the Standard numbering rule for Workstation
  */
 class mod_workstation_standard extends ModeleNumRefWorkstation
 {
@@ -52,9 +52,10 @@ class mod_workstation_standard extends ModeleNumRefWorkstation
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefNoDateModelDesc", $this->prefix);

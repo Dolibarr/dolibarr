@@ -21,6 +21,7 @@
  *	\brief      Page des marges des factures clients pour un produit
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -73,7 +74,9 @@ if (empty($user->rights->margins->liretous)) {
 $invoicestatic = new Facture($db);
 
 $form = new Form($db);
-
+$totalMargin = 0;
+$marginRate = 0;
+$markRate = 0;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
@@ -130,12 +133,12 @@ if ($id > 0 || !empty($ref)) {
 		print "</table>";
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
 
-		if ($user->rights->facture->lire) {
+		if ($user->hasRight("facture", "read")) {
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";

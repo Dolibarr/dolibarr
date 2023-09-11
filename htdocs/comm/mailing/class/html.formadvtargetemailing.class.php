@@ -128,7 +128,8 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 
-				array_multisort($label, SORT_ASC, $countryArray);
+				$array1_sort_order = SORT_ASC;
+				array_multisort($label, $array1_sort_order, $countryArray);
 
 				foreach ($countryArray as $row) {
 					$label = dol_trunc($row['label'], $maxlength, 'middle');
@@ -354,7 +355,7 @@ class FormAdvTargetEmailing extends Form
 		$out = '';
 
 		$sql = "SELECT c.rowid, c.name, c.fk_element";
-		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as c";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_advtarget as c";
 		$sql .= " WHERE type_element = '".$this->db->escape($type_element)."'";
 		$sql .= " ORDER BY c.name";
 

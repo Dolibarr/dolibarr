@@ -13,7 +13,6 @@ ErrorWrongValueForParameter=Você pode ter digitado um valor incorreto para o pa
 ErrorFailedToCreateDatabase=Erro ao criar a base de dados' %s'.
 ErrorFailedToConnectToDatabase=Falha ao conectar com o banco de dados' %s'.
 ErrorDatabaseVersionTooLow=Versao do banco de dados (%s) é muito antiga. Versao %s ou maior e requerida.
-ErrorPHPVersionTooLow=A versão do PHP é muito antiga. Versão %s é requerida.
 ErrorDatabaseAlreadyExists=Base de dados' %s' já existe.
 IfDatabaseExistsGoBackAndCheckCreate=Caso dados já existe, volte e desmarque a opção  "Criar uma base de dados".
 License=Usando licença

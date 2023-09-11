@@ -67,7 +67,11 @@ class PrintingDriver
 		$list = array();
 
 		$listoffiles = array();
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
 		foreach ($dirmodels as $dir) {
 			$tmpfiles = dol_dir_list(dol_buildpath($dir, 0), 'all', 0, '\.modules.php', '', 'name', SORT_ASC, 0);
 			if (!empty($tmpfiles)) {

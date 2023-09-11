@@ -20,9 +20,9 @@
  */
 
 /**
- *     	\file       htdocs/public/payment/paymentok.php
+ *     	\file       htdocs/public/eventorganization/subscriptionok.php
  *		\ingroup    core
- *		\brief      File to show page after a successful payment
+ *		\brief      File to show page after a successful subscription.
  *                  This page is called by payment system with url provided to it completed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  */
@@ -48,11 +48,12 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
@@ -75,9 +76,9 @@ if ($securekeyreceived != $securekeytocompare) {
 	exit;
 }
 
-// Security check
+// Module check
 if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 
@@ -97,7 +98,7 @@ dol_syslog("Callback url when a payment was done. query_string=".(dol_escape_htm
 
 $tracepost = "";
 foreach ($_POST as $k => $v) {
-	$tracepost .= "{$k} - {$v}\n";
+	$tracepost .= "$k - $v\n";
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
@@ -166,7 +167,7 @@ print $langs->trans("SubscriptionOk");
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 
 // Clean session variables to avoid duplicate actions if post is resent

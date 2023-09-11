@@ -1,32 +1,36 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=OAuth Configuration
-OAuthServices=OAuth Services
+ConfigOAuth=Konfiguracja OAuth
+OAuthServices=Usługi OAuth
 ManualTokenGeneration=Ręczne generowanie tokena
-TokenManager=Token Manager
+TokenManager=Menedżer tokenów
 IsTokenGenerated=Czy wygenerowano token?
 NoAccessToken=Brak tokenu zapisanego w lokalnej bazie danych
 HasAccessToken=Token wygenerowano i zapisano w lokalnej bazie danych
 NewTokenStored=Token odebrany i zapisany
-ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
+ToCheckDeleteTokenOnProvider=Kliknij tutaj, aby sprawdzić / usunąć autoryzację zapisaną przez dostawcę OAuth %s
 TokenDeleted=Token usunięto
-RequestAccess=Kliknij tutaj w celu wysłania zapotrzebowania/odnowienia dostępu i otrzymania nowego tokena.
+RequestAccess=Click here to request/renew access and receive a new token
 DeleteAccess=Kliknuj tutaj, aby usunąć token
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credentials with your OAuth provider:
-ListOfSupportedOauthProviders=Enter the credentials provided by your OAuth2 provider. Only supported OAuth2 providers are listedd here. These services may be used by other modules that need OAuth2 authentication.
-OAuthSetupForLogin=Strona do generowania tokena OAuth
-SeePreviousTab=See previous tab
-OAuthIDSecret=OAuth ID and Secret
+UseTheFollowingUrlAsRedirectURI=Podczas tworzenia poświadczeń u dostawcy OAuth użyj następującego adresu URL jako identyfikatora URI przekierowania:
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
+SeePreviousTab=Zobacz poprzednią kartę
+OAuthProvider=OAuth provider
+OAuthIDSecret=Identyfikator i tajny identyfikator OAuth
 TOKEN_REFRESH=Reklamowe Odśwież Present
 TOKEN_EXPIRED=Token wygasł
 TOKEN_EXPIRE_AT=Token wygaśnie za
 TOKEN_DELETE=Usuń zachowany token
-OAUTH_GOOGLE_NAME=OAuth Google service
-OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_NAME=Usługa OAuth Google
+OAUTH_GOOGLE_ID=Identyfikator Google OAuth
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Go to <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create OAuth credentials
-OAUTH_GITHUB_NAME=OAuth GitHub service
-OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_NAME=Usługa OAuth GitHub
+OAUTH_GITHUB_ID=Identyfikator OAuth GitHub
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Go to <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create OAuth credentials
-OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
-OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
+OAUTH_STRIPE_TEST_NAME=Test paska OAuth
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe na żywo
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

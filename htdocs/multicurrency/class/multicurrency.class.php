@@ -299,7 +299,7 @@ class MultiCurrency extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " name = '".$this->db->escape($this->name)."'";
+		$sql .= " name = '".$this->db->escape($this->name)."',";
 		$sql .= " code = '".$this->db->escape($this->code)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -428,7 +428,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param	string	$code	currency code
 	 * @param	double	$rate	new rate
-	 * @return int -1 if KO, 1 if OK, 2 if label found and OK
+	 * @return 	int 			-1 if KO, 1 if OK, 2 if label found and OK
 	 */
 	public function addRateFromDolibarr($code, $rate)
 	{
@@ -488,6 +488,8 @@ class MultiCurrency extends CommonObject
 			$this->rate = new CurrencyRate($this->db);
 			return $this->rate->fetch($obj->rowid);
 		}
+
+		return -1;
 	}
 
 	 /**
@@ -559,15 +561,20 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get the conversion of amount with invoice rate
 	 *
-	 * @param	int				$fk_facture				id of facture
+	 * @param	int				$fk_facture				Id of invoice
 	 * @param	double			$amount					amount to convert
 	 * @param	string			$way					'dolibarr' mean the amount is in dolibarr currency
-	 * @param	string			$table					facture or facture_fourn
+	 * @param	string			$table					'facture' or 'facture_fourn'
+	 * @param	float|null		$invoice_rate			Invoice rate if known (to avoid to make the getInvoiceRate call)
 	 * @return	double|boolean 							amount converted or false if conversion fails
 	 */
-	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
+	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture', $invoice_rate = null)
 	{
-		$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+		if (!is_null($invoice_rate)) {
+			$multicurrency_tx = $invoice_rate;
+		} else {
+			$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+		}
 
 		if ($multicurrency_tx) {
 			if ($way == 'dolibarr') {
@@ -609,14 +616,14 @@ class MultiCurrency extends CommonObject
 	 * @param   stdClass	$TRate	Object containing all currencies rates
 	 * @return	int					-1 if KO, 0 if nothing, 1 if OK
 	 */
-	public static function recalculRates(&$TRate)
+	public function recalculRates(&$TRate)
 	{
 		global $conf;
 
-		if ($conf->currency != $conf->global->MULTICURRENCY_APP_SOURCE) {
+		if ($conf->currency != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
 			$alternate_source = 'USD'.$conf->currency;
-			if (!empty($TRate->{$alternate_source})) {
-				$coef = $TRate->USDUSD / $TRate->{$alternate_source};
+			if (!empty($TRate->$alternate_source)) {
+				$coef = $TRate->USDUSD / $TRate->$alternate_source;
 				foreach ($TRate as $attr => &$rate) {
 					$rate *= $coef;
 				}
@@ -637,7 +644,7 @@ class MultiCurrency extends CommonObject
 	 * @param   int     $addifnotfound      Add if not found
 	 * @return  int							<0 if KO, >0 if OK
 	 */
-	public static function syncRates($key, $addifnotfound = 0)
+	public function syncRates($key, $addifnotfound = 0)
 	{
 		global $conf, $db, $langs;
 
@@ -656,16 +663,16 @@ class MultiCurrency extends CommonObject
 
 			if ($response->success) {
 				$TRate = $response->quotes;
-				$timestamp = $response->timestamp;
+				//$timestamp = $response->timestamp;
 
-				if (self::recalculRates($TRate) >= 0) {
+				if ($this->recalculRates($TRate) >= 0) {
 					foreach ($TRate as $currency_code => $rate) {
 						$code = substr($currency_code, 3, 3);
 						$obj = new MultiCurrency($db);
-						if ($obj->fetch(null, $code) > 0) {
+						if ($obj->fetch(0, $code) > 0) {
 							$obj->updateRate($rate);
 						} elseif ($addifnotfound) {
-							self::addRateFromDolibarr($code, $rate);
+							$this->addRateFromDolibarr($code, $rate);
 						}
 					}
 				}
@@ -677,6 +684,8 @@ class MultiCurrency extends CommonObject
 
 				return -1;
 			}
+		} else {
+			return -1;
 		}
 	}
 

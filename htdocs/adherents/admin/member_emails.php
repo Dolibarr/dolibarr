@@ -29,6 +29,7 @@
  *		\brief      Page to setup the module Foundation
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -47,18 +48,24 @@ $action = GETPOST('action', 'aZ09');
 
 $error = 0;
 
+$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+//$helptext.='__YEAR__, __MONTH__, __DAY__';	// Not supported
+
 // Editing global variables not related to a specific theme
 $constantes = array(
 	'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
-	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>'emailtemplate:member',
-	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_AUTOREGISTER_MAIL
-	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_VALID
-	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_COTIS
-	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_RESIL
-	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>'emailtemplate:member',
-	'ADHERENT_MAIL_FROM'							=>'string',
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>'string',
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>'html',
+	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_MAIL_FROM'							=>array('type'=>'string','label'=>''),
+	'ADHERENT_CC_MAIL_FROM'							=>array('type'=>'string','label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>array('type'=>'string','label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>array('type'=>'html', 'tooltip'=>$helptext,'label'=>'')
 );
 
 
@@ -146,12 +153,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-//$helptext.='__YEAR__, __MONTH__, __DAY__';	// Not supported
-
-form_constantes($constantes, 3, $helptext);
+form_constantes($constantes, 3, '');
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 print '</form>';

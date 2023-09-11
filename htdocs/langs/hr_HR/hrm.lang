@@ -12,7 +12,7 @@ OpenEtablishment=Otvori ustanovu
 CloseEtablishment=Zatvori ustanovu
 # Dictionary
 DictionaryPublicHolidays=Leave - Public holidays
-DictionaryDepartment=HRM - popis odjela
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=HRM - Job positions
 # Module
 Employees=Zaposlenici
@@ -70,9 +70,9 @@ RequiredSkills=Required skills for this job
 UserRank=User Rank
 SkillList=Popis vještina
 SaveRank=Save rank
-knowHow=Know how
-HowToBe=How to be
-knowledge=Znanje
+TypeKnowHow=Know how
+TypeHowToBe=How to be
+TypeKnowledge=Znanje
 AbandonmentComment=Abandonment comment
 DateLastEval=Date last evaluation
 NoEval=No evaluation done for this employee
@@ -88,3 +88,4 @@ DeleteSkill = Vještina uklonjena
 SkillsExtraFields=Attributs supplémentaires (Compétences)
 JobsExtraFields=Attributs supplémentaires (Emplois)
 EvaluationsExtraFields=Attributs supplémentaires (Evaluations)
+NeedBusinessTravels=Need business travels

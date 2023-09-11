@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,6 +40,8 @@ class PartnershipUtils
 	public $db; //!< To store db handler
 	public $error; //!< To return error code (or message)
 	public $errors = array(); //!< To return several error codes (or messages)
+
+	public $output;	// To store output of some cron methods
 
 
 	/**
@@ -157,7 +159,7 @@ class PartnershipUtils
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
@@ -231,6 +233,8 @@ class PartnershipUtils
 		$this->output = '';
 		$this->error = '';
 		$partnershipsprocessed = array();
+		$emailnotfound = '';
+		$websitenotfound = '';
 
 		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
 		if ($gracedelay < 1) {
@@ -249,21 +253,16 @@ class PartnershipUtils
 
 		$sql = "SELECT p.rowid, p.status, p.".$fk_partner;
 		$sql .= ", p.last_check_backlink";
-
 		$sql .= ', partner.url, partner.email';
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p";
-
 		if ($managedfor == 'member') {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as partner on (partner.rowid = p.fk_member)";
 		} else {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as partner on (partner.rowid = p.fk_soc)";
 		}
-
-		$sql .= " WHERE 1 = 1";
-		$sql .= " AND p.".$fk_partner." > 0";
-		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted not yet canceled
-		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 7 * 24 * 3600)."')"; // Every week, check that website contains a link to dolibarr.
+		$sql .= " WHERE p.".$fk_partner." > 0";
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted and not yet canceled
+		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referal link.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
 
@@ -272,7 +271,6 @@ class PartnershipUtils
 			$numofexpiredmembers = $this->db->num_rows($resql);
 			$somethingdoneonpartnership = 0;
 			$ifetchpartner = 0;
-			$websitenotfound = '';
 			while ($ifetchpartner < $numofexpiredmembers) {
 				$ifetchpartner++;
 
@@ -323,7 +321,7 @@ class PartnershipUtils
 								// Define output language
 								$outputlangs = $langs;
 								$newlang = '';
-								if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 								if (!empty($newlang)) {
 									$outputlangs = new Translate("", $conf);
 									$outputlangs->setDefaultLang($newlang);
@@ -374,18 +372,16 @@ class PartnershipUtils
 
 		if (!$error) {
 			$this->db->commit();
-			$this->output = $numofexpiredmembers.' partnership checked'."\n";
-			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
-			if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
-			if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
+			$this->output = "";
 		} else {
 			$this->db->rollback();
 			$this->output = "Rollback after error\n";
-			$this->output .= $numofexpiredmembers.' partnership checked'."\n";
-			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
-			if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
-			if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
 		}
+		$this->output .= $numofexpiredmembers.' partnership checked'."\n";
+		if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
+		if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
+		if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
+		$this->output .= "\nSQL used to find partnerships to scan: ".$sql;
 
 		return ($error ? 1 : 0);
 	}
@@ -393,7 +389,7 @@ class PartnershipUtils
 	/**
 	 * Action to check if Dolibarr backlink not found on partner website
 	 *
-	 * @param  $website      Website	Partner's website
+	 * @param  	string	$website      	Partner's website URL
 	 * @return  int                 	0 if KO, 1 if OK
 	 */
 	private function checkDolibarrBacklink($website = null)

@@ -21,7 +21,6 @@
  */
 class FormSetup
 {
-
 	/**
 	 * @var DoliDB Database handler.
 	 */
@@ -78,6 +77,10 @@ class FormSetup
 	 */
 	public $formHiddenInputs = array();
 
+	/**
+	 * @var string[] $errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor
@@ -244,12 +247,12 @@ class FormSetup
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
-		global $hookmanager;
+		global $hookmanager, $conf;
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
-			$this->setErrors($hookmanager->errors);
+			$this->errors = $hookmanager->errors;
 			return -1;
 		}
 
@@ -265,6 +268,10 @@ class FormSetup
 		$this->db->begin();
 		$error = 0;
 		foreach ($this->items as $item) {
+			if ($item->getType() == 'yesno' && !empty($conf->use_javascript_ajax)) {
+				continue;
+			}
+
 			$res = $item->setValueFromPost();
 			if ($res > 0) {
 				$item->saveConfValue();
@@ -339,8 +346,8 @@ class FormSetup
 	/**
 	 * Method used to test  module builder convertion to this form usage
 	 *
-	 * @param array 	$params 	an array of arrays of params from old modulBuilder params
-	 * @return null
+	 * @param 	array 	$params 	an array of arrays of params from old modulBuilder params
+	 * @return 	boolean
 	 */
 	public function addItemsFromParamsArray($params)
 	{
@@ -348,6 +355,7 @@ class FormSetup
 		foreach ($params as $confKey => $param) {
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
+		return true;
 	}
 
 
@@ -422,7 +430,7 @@ class FormSetup
 
 		if (!array($this->items)) { return false; }
 		foreach ($this->items as $item) {
-			$item->reloadValueFromConf();
+			$item->loadValueFromConf();
 		}
 
 		return true;
@@ -587,8 +595,11 @@ class FormSetupItem
 	/** @var string $fieldValue  */
 	public $fieldValue;
 
+	/** @var string $defaultFieldValue  */
+	public $defaultFieldValue = null;
+
 	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
-	public $fieldAttr;
+	public $fieldAttr = array();
 
 	/** @var bool|string set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too */
 	public $fieldOverride = false;
@@ -612,7 +623,7 @@ class FormSetupItem
 	public $setValueFromPostCallBack;
 
 	/**
-	 * @var string $errors
+	 * @var string[] $errors
 	 */
 	public $errors = array();
 
@@ -648,23 +659,40 @@ class FormSetupItem
 		$this->entity = $conf->entity;
 
 		$this->confKey = $confKey;
-		$this->fieldValue = $conf->global->{$this->confKey};
+		$this->loadValueFromConf();
 	}
 
 	/**
-	 * reload conf value from databases
-	 * @return null
+	 * load conf value from databases
+	 * @return bool
+	 */
+	public function loadValueFromConf()
+	{
+		global $conf;
+		if (isset($conf->global->{$this->confKey})) {
+			$this->fieldValue = getDolGlobalString($this->confKey);
+			return true;
+		} else {
+			$this->fieldValue = null;
+			return false;
+		}
+	}
+
+	/**
+	 * reload conf value from databases is an aliase of loadValueFromConf
+	 * @deprecated
+	 * @return bool
 	 */
 	public function reloadValueFromConf()
 	{
-		global $conf;
-		$this->fieldValue = $conf->global->{$this->confKey};
+		return $this->loadValueFromConf();
 	}
 
 
 	/**
 	 * Save const value based on htdocs/core/actions_setmoduleoptions.inc.php
-	 *	@return     int         			-1 if KO, 1 if OK
+	 *
+	 * @return     int         			-1 if KO, 1 if OK
 	 */
 	public function saveConfValue()
 	{
@@ -695,10 +723,13 @@ class FormSetupItem
 				return 1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
 	 * Set an override function for saving data
+	 *
 	 * @param callable $callBack a callable function
 	 * @return void
 	 */
@@ -739,6 +770,8 @@ class FormSetupItem
 				$val = GETPOST($this->confKey, 'array');
 				if ($val && is_array($val)) {
 					$val_const = implode(',', $val);
+				} else {
+					$val_const = '';
 				}
 			} elseif ($this->type == 'html') {
 				$val_const = GETPOST($this->confKey, 'restricthtml');
@@ -791,6 +824,12 @@ class FormSetupItem
 			return $this->fieldInputOverride;
 		}
 
+		// Set default value
+		if (is_null($this->fieldValue)) {
+			$this->fieldValue = $this->defaultFieldValue;
+		}
+
+
 		$this->fieldAttr['name'] = $this->confKey;
 		$this->fieldAttr['id'] = 'setup-'.$this->confKey;
 		$this->fieldAttr['value'] = $this->fieldValue;
@@ -803,12 +842,20 @@ class FormSetupItem
 			$out.= $this->generateInputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out.= $this->generateInputFieldSelect();
+		} elseif ($this->type == 'selectUser') {
+			$out.= $this->generateInputFieldSelectUser();
 		} elseif ($this->type == 'textarea') {
 			$out.= $this->generateInputFieldTextarea();
 		} elseif ($this->type== 'html') {
 			$out.= $this->generateInputFieldHtml();
+		} elseif ($this->type== 'color') {
+			$out.=  $this->generateInputFieldColor();
 		} elseif ($this->type == 'yesno') {
-			$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+			if (!empty($conf->use_javascript_ajax)) {
+				$out.= ajax_constantonoff($this->confKey);
+			} else {
+				$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			$out.= $this->generateInputFieldEmailTemplate();
 		} elseif (preg_match('/category:/', $this->type)) {
@@ -820,17 +867,25 @@ class FormSetupItem
 		} elseif ($this->type == 'securekey') {
 			$out.= $this->generateInputFieldSecureKey();
 		} elseif ($this->type == 'product') {
-			if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			if (isModEnabled("product") || isModEnabled("service")) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} else {
-			if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
-
-			$out.= '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+			$out.= $this->generateInputFieldText();
 		}
 
 		return $out;
+	}
+
+	/**
+	 * generatec default input field
+	 * @return string
+	 */
+	public function generateInputFieldText()
+	{
+		if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
+		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 	}
 
 	/**
@@ -853,7 +908,7 @@ class FormSetupItem
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 		return $doleditor->Create(1);
 	}
 
@@ -917,21 +972,11 @@ class FormSetupItem
 		if (!empty($conf->use_javascript_ajax)) {
 			$out.= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
 		}
-		if (!empty($conf->use_javascript_ajax)) {
-			$out .= "\n" . '<script type="text/javascript">';
-			$out .= '$(document).ready(function () {
-                        $("#generate_token' . $this->confKey . '").click(function() {
-                	        $.get( "' . DOL_URL_ROOT . '/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#' . $this->confKey . '").val(token);
-            				});
-                         });
-                    });';
-			$out .= '</script>';
-		}
+
+		// Add button to autosuggest a key
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+
 		return $out;
 	}
 
@@ -959,6 +1004,14 @@ class FormSetupItem
 	}
 
 	/**
+	 * @return string
+	 */
+	public function generateInputFieldSelectUser()
+	{
+		return $this->form->select_dolusers($this->fieldValue, $this->confKey);
+	}
+
+	/**
 	 * get the type : used for old module builder setup conf style conversion and tests
 	 * because this two class will quickly evolve it's important to not set or get directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
@@ -974,6 +1027,7 @@ class FormSetupItem
 	 * set the type from string : used for old module builder setup conf style conversion and tests
 	 * because this two class will quickly evolve it's important to not set directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
+	 *
 	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup convertion
 	 * @return bool
@@ -981,11 +1035,13 @@ class FormSetupItem
 	public function setTypeFromTypeString($type)
 	{
 		$this->type = $type;
+
 		return true;
 	}
 
 	/**
 	 * Add error
+	 *
 	 * @param array|string $errors the error text
 	 * @return null
 	 */
@@ -1003,11 +1059,13 @@ class FormSetupItem
 	}
 
 	/**
-	 * @return bool|string Generate the output html for this item
+	 * generateOutputField
+	 *
+	 * @return bool|string 		Generate the output html for this item
 	 */
 	public function generateOutputField()
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
@@ -1027,21 +1085,35 @@ class FormSetupItem
 			$out.= $this->generateOutputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out.= $this->generateOutputFieldSelect();
+		} elseif ($this->type == 'selectUser') {
+			$out.= $this->generateOutputFieldSelectUser();
 		} elseif ($this->type== 'html') {
 			$out.=  $this->fieldValue;
+		} elseif ($this->type== 'color') {
+			$out.=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
-			$out.= ajax_constantonoff($this->confKey);
-		} elseif (preg_match('/emailtemplate:/', $this->type)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-			$formmail = new FormMail($this->db);
-
-			$tmp = explode(':', $this->type);
-
-			$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $this->fieldValue);
-			if ($template<0) {
-				$this->setErrors($formmail->errors);
+			if (!empty($conf->use_javascript_ajax)) {
+				$out.= ajax_constantonoff($this->confKey);
+			} else {
+				if ($this->fieldValue == 1) {
+					$out.= $langs->trans('yes');
+				} else {
+					$out.= $langs->trans('no');
+				}
 			}
-			$out.= $this->langs->trans($template->label);
+		} elseif (preg_match('/emailtemplate:/', $this->type)) {
+			if ($this->fieldValue > 0) {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+				$formmail = new FormMail($this->db);
+
+				$tmp = explode(':', $this->type);
+
+				$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $this->fieldValue);
+				if (is_numeric($template) && $template < 0) {
+					$this->setErrors($formmail->errors);
+				}
+				$out.= $this->langs->trans($template->label);
+			}
 		} elseif (preg_match('/category:/', $this->type)) {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$c = new Categorie($this->db);
@@ -1066,6 +1138,8 @@ class FormSetupItem
 				$out.= $this->langs->trans("NorProspectNorCustomer");
 			}
 		} elseif ($this->type == 'product') {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
 			$product = new Product($this->db);
 			$resprod = $product->fetch($this->fieldValue);
 			if ($resprod > 0) {
@@ -1082,6 +1156,8 @@ class FormSetupItem
 
 
 	/**
+	 * generateOutputFieldMultiSelect
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldMultiSelect()
@@ -1102,8 +1178,30 @@ class FormSetupItem
 		return $outPut;
 	}
 
+	/**
+	 * generateOutputFieldColor
+	 *
+	 * @return string
+	 */
+	public function generateOutputFieldColor()
+	{
+		$this->fieldAttr['disabled']=null;
+		return $this->generateInputField();
+	}
+	/**
+	 * generateInputFieldColor
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldColor()
+	{
+		$this->fieldAttr['type']= 'color';
+		return $this->generateInputFieldText();
+	}
 
 	/**
+	 * generateOutputFieldSelect
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldSelect()
@@ -1116,12 +1214,27 @@ class FormSetupItem
 		return $outPut;
 	}
 
+	/**
+	 * generateOutputFieldSelectUser
+	 *
+	 * @return string
+	 */
+	public function generateOutputFieldSelectUser()
+	{
+		$outPut = '';
+		$user = new User($this->db);
+		$user->fetch($this->fieldValue);
+		$outPut = $user->firstname . " "  . $user->lastname;
+		return $outPut;
+	}
+
 	/*
 	 * METHODS FOR SETTING DISPLAY TYPE
 	 */
 
 	/**
 	 * Set type of input as string
+	 *
 	 * @return self
 	 */
 	public function setAsString()
@@ -1131,7 +1244,19 @@ class FormSetupItem
 	}
 
 	/**
+	 * Set type of input as color
+	 *
+	 * @return self
+	 */
+	public function setAsColor()
+	{
+		$this->type = 'color';
+		return $this;
+	}
+
+	/**
 	 * Set type of input as textarea
+	 *
 	 * @return self
 	 */
 	public function setAsTextarea()
@@ -1142,6 +1267,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as html editor
+	 *
 	 * @return self
 	 */
 	public function setAsHtml()
@@ -1152,6 +1278,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as emailtemplate selector
+	 *
 	 * @param string $templateType email template type
 	 * @return self
 	 */
@@ -1163,6 +1290,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as thirdparty_type selector
+	 *
 	 * @return self
 	 */
 	public function setAsThirdpartyType()
@@ -1173,6 +1301,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as Yes
+	 *
 	 * @return self
 	 */
 	public function setAsYesNo()
@@ -1183,6 +1312,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as secure key
+	 *
 	 * @return self
 	 */
 	public function setAsSecureKey()
@@ -1193,6 +1323,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as product
+	 *
 	 * @return self
 	 */
 	public function setAsProduct()
@@ -1204,6 +1335,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a category selector
 	 * TODO add default value
+	 *
 	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @return self
 	 */
@@ -1214,8 +1346,8 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @return self
 	 */
 	public function setAsTitle()
@@ -1226,8 +1358,8 @@ class FormSetupItem
 
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @param array $fieldOptions A table of field options
 	 * @return self
 	 */
@@ -1242,8 +1374,8 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @param array $fieldOptions  A table of field options
 	 * @return self
 	 */
@@ -1254,6 +1386,17 @@ class FormSetupItem
 		}
 
 		$this->type = 'select';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a simple title. No data to store
+	 *
+	 * @return self
+	 */
+	public function setAsSelectUser()
+	{
+		$this->type = 'selectUser';
 		return $this;
 	}
 }

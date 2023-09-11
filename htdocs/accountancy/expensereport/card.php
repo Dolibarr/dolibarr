@@ -42,13 +42,13 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -57,7 +57,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write) {
+if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	if (!$cancel) {
 		if ($codeventil < 0) {
 			$codeventil = 0;

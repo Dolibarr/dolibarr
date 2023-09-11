@@ -1,5 +1,0 @@
-# Dolibarr language file - Source file is en_US - externalsite
-ExternalSiteSetup=Налаштування посилання на зовнішній веб-сайт
-ExternalSiteURL=URL-адреса зовнішнього сайту вмісту iframe HTML
-ExternalSiteModuleNotComplete=Модуль ExternalSite неправильно налаштовано.
-ExampleMyMenuEntry=Мій запис в меню

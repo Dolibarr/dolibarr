@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -70,7 +70,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 		if ($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE' || $action === 'BILL_CREATE'
 			|| $action === 'ORDER_SUPPLIER_CREATE' || $action === 'BILL_SUPPLIER_CREATE' || $action === 'PROPOSAL_SUPPLIER_CREATE'
 			|| $action === 'CONTRACT_CREATE' || $action === 'FICHINTER_CREATE' || $action === 'PROJECT_CREATE' || $action === 'TICKET_CREATE') {
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 			$socid = (property_exists($object, 'socid') ? $object->socid : $object->fk_soc);
 
@@ -107,9 +107,13 @@ class InterfaceContactRoles extends DolibarrTriggers
 						}
 					}
 
+					// We disable this message, it shows the message in api, public page or batch actions when it should not.
+					// Message setting must be done by the calling GUI page and not set inside the trigger.
+					/*
 					if ($nb > 0) {
 						setEventMessages($langs->trans('ContactAddedAutomatically', $nb), null, 'mesgs');
 					}
+					*/
 				}
 			}
 		}
