@@ -946,7 +946,14 @@ while ($i < $imaxinloop) {
 		}
 	}
 	if (!empty($arrayfields['f.unit_frequency']['checked'])) {
-		print '<td class="center">'.($objp->frequency > 0 ? $objp->unit_frequency : '').'</td>';
+		print '<td class="center">';
+		if ($objp->frequency > 1) {
+			$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+		} else {
+			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+		}
+		print ($objp->frequency > 0 ? $dur[$objp->unit_frequency] : '');
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
