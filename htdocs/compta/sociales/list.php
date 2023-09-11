@@ -6,7 +6,7 @@
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -630,10 +630,13 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->date_ech = $obj->date_ech;
 
 
+	$projectstatic = '';
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
+
+		$projectstatic = $projectstatic->getNomUrl(1);
 	}
 	if ($mode == 'kanban') {
 		if ($i == 0) {
@@ -641,7 +644,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $chargesociale_static->getKanbanView('', array('projectlink'=> $projectstatic->getNomUrl(1), 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
+		print $chargesociale_static->getKanbanView('', array('projectlink'=> $projectstatic, 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
