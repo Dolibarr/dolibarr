@@ -63,8 +63,21 @@ if (!$sortfield) {
 }
 
 $object = new Salary($db);
+$childids = $user->getAllChildIds(1);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
+
+	// Check current user can read this salary
+	$canread = 0;
+	if (!empty($user->rights->salaries->readall)) {
+		$canread = 1;
+	} elseif (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+
+	if (!$canread) {
+		accessforbidden();
+	}
 }
 
 $upload_dir = $conf->salaries->dir_output.'/'.dol_sanitizeFileName($object->id);
