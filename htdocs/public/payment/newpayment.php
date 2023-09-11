@@ -2111,7 +2111,6 @@ if ($action != 'dopayment') {
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
-
 				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) {
 					$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY = 'integral';
 				}
