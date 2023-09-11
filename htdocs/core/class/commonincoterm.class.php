@@ -116,7 +116,7 @@ trait CommonIncoterm
 				$this->fk_incoterms = $id_incoterm;
 				$this->location_incoterms = $location;
 
-				$sql = 'SELECT libelle as label_incotermsFROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+				$sql = 'SELECT libelle as label_incoterms FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
 				$res = $this->db->query($sql);
 				if ($res) {
 					$obj = $this->db->fetch_object($res);

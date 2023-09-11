@@ -45,8 +45,14 @@ if ($mode == 'customer' && !$user->rights->commande->lire) {
 if ($mode == 'supplier' && !$user->rights->fournisseur->commande->lire) {
 	accessforbidden();
 }
+if ($mode == 'supplier') {
+	$object_status = GETPOST('object_status', 'array:int');
+	$object_status = implode(',', $object_status);
+} else {
+	$object_status = GETPOST('object_status', 'intcomma');
+}
 
-$object_status = GETPOST('object_status', 'intcomma');
+
 $typent_id = GETPOST('typent_id', 'int');
 $categ_id = GETPOST('categ_id', 'categ_id');
 

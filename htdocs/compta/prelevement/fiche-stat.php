@@ -38,7 +38,7 @@ if ($user->socid > 0) {
 }
 
 // Get supervariables
-$prev_id = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 $type = GETPOST('type', 'aZ09');
@@ -76,8 +76,8 @@ if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transf
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id > 0 || $ref) {
-	if ($object->fetch($prev_id, $ref) >= 0) {
+if ($id > 0 || $ref) {
+	if ($object->fetch($id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
 		print dol_get_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 

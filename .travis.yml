@@ -9,6 +9,8 @@ dist: xenial
 
 language: php
 
+scan_logs: false
+
 git:
   depth: 1
 
@@ -50,7 +52,7 @@ jobs:
       env: DB=postgresql
     - stage: PHP 5.6-7.4
       if: type = pull_request OR type = push
-      php: '7.4'
+      php: '7.4.22'
       env: DB=mysql
     - stage: PHP Dev
       if: type = push AND branch = develop
@@ -106,7 +108,7 @@ install:
                         php-parallel-lint/php-console-highlighter ^0 \
                         squizlabs/php_codesniffer ^3
   fi
-  if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '7.4.22' ]; then
     composer -n require phpunit/phpunit ^7 \
                         php-parallel-lint/php-parallel-lint ^1.2 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -241,7 +243,7 @@ before_script:
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - |
-    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '7.4.22' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       # Copy the included pool
       sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
     fi
@@ -276,7 +278,7 @@ script:
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
   # Exclusions are defined in the ruleset.xml file
-  if [ "$TRAVIS_PHP_VERSION" = "7.4" ]; then
+  if [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
     parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
       --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
       --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
@@ -291,7 +293,7 @@ script:
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4" ]; then
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
     phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
   fi
   set +e

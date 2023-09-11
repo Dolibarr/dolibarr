@@ -326,7 +326,7 @@ if ($action == 'create') {
 	if ($conf->use_javascript_ajax) {
 		print "\n".'<script type="text/javascript" language="javascript">';
 		print 'jQuery(document).ready(function () {
-                    jQuery("#selecttype").change(function() {
+                    jQuery("#type").change(function() {
                         document.formsoc.action.value="create";
                         document.formsoc.submit();
                     });
@@ -349,16 +349,16 @@ if ($action == 'create') {
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(GETPOST("ref") ?GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
+	print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
-	print '<td><input type="text" class="flat maxwidth150onsmartphone" name="label" value="'.dol_escape_htmltag(GETPOST("label", 'alpha')).'"></td></tr>';
+	print '<td><input type="text" class="flat maxwidth150onsmartphone" name="label" value="'.dol_escape_htmltag(GETPOST('label', 'alpha')).'"></td></tr>';
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td>';
-	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST("type") : Account::TYPE_CURRENT, "type");
+	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST('type', 'int') : Account::TYPE_CURRENT, 'type');
 	print '</td></tr>';
 
 	// Currency
@@ -376,7 +376,7 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
-	print $form->selectarray("clos", $object->status, (GETPOST("clos", 'int') != '' ?GETPOST("clos", 'int') : $object->clos), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150onsmartphone');
+	print $form->selectarray("clos", $object->status, (GETPOST('clos', 'int') != '' ? GETPOST('clos', 'int') : $object->clos), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Country
@@ -471,7 +471,7 @@ if ($action == 'create') {
 	print '</table>';
 	print '<br>';
 
-	$type = GETPOST('type');
+	$type = (GETPOSTISSET("type") ? GETPOST('type', 'int') : Account::TYPE_CURRENT); // add default value
 	if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 		print '<table class="border centpercent">';
 
@@ -759,6 +759,7 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
+			// TODO ICS is not used with bank transfer !
 			if ($conf->paymentbybanktransfer->enabled) {
 				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td>'.$object->ics_transfer.'</td>';
@@ -820,7 +821,7 @@ if ($action == 'create') {
 		if ($conf->use_javascript_ajax) {
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print 'jQuery(document).ready(function () {
-                        jQuery("#selecttype").change(function() {
+                        jQuery("#type").change(function() {
                             document.formsoc.action.value="edit";
                             document.formsoc.submit();
                         });
@@ -848,16 +849,16 @@ if ($action == 'create') {
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET("ref") ? GETPOST("ref") : $object->ref).'"></td></tr>';
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(GETPOSTISSET("label") ? GETPOST("label") : $object->label).'"></td></tr>';
+		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(GETPOSTISSET('label') ? GETPOST('label', 'alpha') : $object->label).'"></td></tr>';
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		$formbank->selectTypeOfBankAccount((GETPOSTISSET("type") ? GETPOST("type") : $object->type), "type");
+		$formbank->selectTypeOfBankAccount((GETPOSTISSET('type') ? GETPOST('type', 'int') : $object->type), 'type');
 		print '</td></tr>';
 
 		// Currency
@@ -878,7 +879,7 @@ if ($action == 'create') {
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		print $form->selectarray("clos", $object->status, (GETPOSTISSET("clos") ? GETPOST("clos") : $object->clos));
+		print $form->selectarray("clos", $object->status, (GETPOSTISSET("clos") ? GETPOST("clos", "int") : $object->clos));
 		print '</td></tr>';
 
 		// Country
@@ -1002,7 +1003,8 @@ if ($action == 'create') {
 
 		print '</table>';
 
-		if (GETPOST("type") == Account::TYPE_SAVINGS || GETPOST("type") == Account::TYPE_CURRENT) {
+		$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : $object->type); // add default current value
+		if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 			print '<br>';
 
 			//print '<div class="underbanner clearboth"></div>';

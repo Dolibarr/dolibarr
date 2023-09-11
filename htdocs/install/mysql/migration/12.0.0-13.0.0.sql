@@ -69,6 +69,7 @@ ALTER TABLE llx_bom_bom ADD COLUMN bomtype integer DEFAULT 0;
 
 UPDATE llx_emailcollector_emailcollector SET ref = 'Collect_Ticket_Requests' WHERE ref = 'Collect_Ticket_Requets';
 UPDATE llx_emailcollector_emailcollector SET ref = 'Collect_Responses_In' WHERE ref = 'Collect_Responses';
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 UPDATE llx_document_model set nom = 'standard' where nom = 'Standard' and type ='stock';
@@ -566,7 +567,8 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_customers_outstanding_bill_reached.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_customers_outstanding_bill_reached.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_scheduled_jobs.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_scheduled_jobs.php' AND entity = 1);
 
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging varchar(64) DEFAULT NULL;
 
 ALTER TABLE llx_projet ADD COLUMN fk_opp_status_end integer DEFAULT NULL;
 

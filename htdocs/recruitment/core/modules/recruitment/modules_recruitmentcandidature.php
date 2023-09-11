@@ -51,7 +51,7 @@ abstract class ModelePDFRecruitmentCandidature extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type = 'recruitmentjobposition';
+		$type = 'recruitmentjobcandidature';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

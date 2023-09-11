@@ -39,12 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
-
 $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
@@ -54,6 +48,8 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
 $id_bankaccount = GETPOST('id_bankaccount', 'int');
+$executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
@@ -63,6 +59,17 @@ $offset = $limit * $page;
 
 $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
+
+$error = 0;
 
 /*
  * Actions
@@ -95,13 +102,15 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
 		$bank->fetch($conf->global->{$default_account});
-		if ((empty($bank->ics) && $type !== 'bank-transfer')
+		// ICS is not mandatory with payment by bank transfer
+		/*if ((empty($bank->ics) && $type !== 'bank-transfer')
 			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
-		) {
+		) {*/
+		if (empty($bank->ics) && $type !== 'bank-transfer') {
 			$errormessage = str_replace('{url}', $bank->getNomUrl(1, '', '', -1, 1), $langs->trans("ErrorICSmissing", '{url}'));
 			setEventMessages($errormessage, null, 'errors');
-			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/create.php');
-			exit;
+			$action = '';
+			$error++;
 		}
 
 
@@ -136,12 +145,16 @@ if (empty($reshook)) {
 				setEventMessages($texttoshow, null);
 			}
 
-			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$bprev->id);
+			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.urlencode($bprev->id).'&type='.urlencode($type));
 			exit;
 		}
 	}
 	$objectclass = "BonPrelevement";
-	$uploaddir = $conf->prelevement->dir_output;
+	if ($type == 'bank-transfer') {
+		$uploaddir = $conf->paymentbybanktransfer->dir_output;
+	} else {
+		$uploaddir = $conf->prelevement->dir_output;
+	}
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -372,6 +385,9 @@ if ($resql) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	if (!empty($limit)) {
 		print '<input type="hidden" name="limit" value="'.$limit.'"/>';
+	}
+	if ($type != '') {
+		print '<input type="hidden" name="type" value="'.$type.'">';
 	}
 
 	$title = $langs->trans("InvoiceWaitingWithdraw");

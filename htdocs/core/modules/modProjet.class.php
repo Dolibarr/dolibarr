@@ -222,7 +222,7 @@ class modProjet extends DolibarrModules
 			's.phone'=>'Text', 's.email'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text',
 			'p.rowid'=>"List:projet:ref::project", 'p.ref'=>"Text", 'p.title'=>"Text",
 			'p.usage_opportunity'=>'Boolean', 'p.usage_task'=>'Boolean', 'p.usage_bill_time'=>'Boolean',
-			'p.datec'=>"Date", 'p.dateo'=>"Date", 'p.datee'=>"Date", 'p.fk_statut'=>'Status', 'cls.code'=>"Text", 'p.opp_percent'=>'Numeric', 'p.opp_amount'=>'Numeric', 'p.description'=>"Text", 'p.entity'=>'Numeric',
+			'p.datec'=>"Date", 'p.dateo'=>"Date", 'p.datee'=>"Date", 'p.fk_statut'=>'Status', 'cls.code'=>"Text", 'p.opp_percent'=>'Numeric', 'p.opp_amount'=>'Numeric', 'p.description'=>"Text", 'p.entity'=>'Numeric', 'p.budget_amount'=>'Numeric',
 			'pt.rowid'=>'Numeric', 'pt.ref'=>'Text', 'pt.label'=>'Text', 'pt.dateo'=>"Date", 'pt.datee'=>"Date", 'pt.duration_effective'=>"Duree", 'pt.planned_workload'=>"Numeric", 'pt.progress'=>"Numeric", 'pt.description'=>"Text",
 			'ptt.rowid'=>'Numeric', 'ptt.task_date'=>'Date', 'ptt.task_duration'=>"Duree", 'ptt.fk_user'=>"List:user:CONCAT(lastname,' ',firstname)", 'ptt.note'=>"Text"
 		);
@@ -235,7 +235,7 @@ class modProjet extends DolibarrModules
 			's.phone'=>'Phone', 's.email'=>'Email', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode',
 			'p.rowid'=>"ProjectId", 'p.ref'=>"RefProject", 'p.title'=>'ProjectLabel',
 			'p.usage_opportunity'=>'ProjectFollowOpportunity', 'p.usage_task'=>'ProjectFollowTasks', 'p.usage_bill_time'=>'BillTime',
-			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.description'=>"Description"
+			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.budget_amount'=>'Budget', 'p.description'=>"Description"
 		);
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {

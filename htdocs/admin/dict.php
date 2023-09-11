@@ -911,7 +911,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 			} else {
-				dol_print_error($db);
+				setEventMessages($db->error(), null, 'errors');
 			}
 		}
 	}
@@ -1963,7 +1963,7 @@ if ($id) {
 							} elseif ($value == 'fk_tva') {
 								foreach ($form->cache_vatrates as $key => $Tab) {
 									if ($form->cache_vatrates[$key]['rowid'] == $valuetoshow) {
-										$valuetoshow = $form->cache_vatrates[$key]['libtva'];
+										$valuetoshow = $form->cache_vatrates[$key]['label'];
 										break;
 									}
 								}

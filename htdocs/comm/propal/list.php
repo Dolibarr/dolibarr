@@ -349,9 +349,9 @@ if ($action == 'validate' && $permissiontovalidate) {
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 0) {
-					if ($tmpproposal->valid($user)) {
+			if ($tmpproposal->fetch($checked) > 0) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_DRAFT) {
+					if ($tmpproposal->valid($user) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
 					} else {
 						setEventMessage($langs->trans('CantBeValidated'), 'errors');
@@ -362,7 +362,7 @@ if ($action == 'validate' && $permissiontovalidate) {
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}
@@ -380,13 +380,13 @@ if ($action == "sign" && $permissiontoclose) {
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
+			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
-					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;;
-					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED)) {
+					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED) >= 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 					} else {
-						dol_print_error($db);
+						setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
@@ -394,7 +394,7 @@ if ($action == "sign" && $permissiontoclose) {
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}
@@ -405,27 +405,28 @@ if ($action == "sign" && $permissiontoclose) {
 		}
 	}
 }
+
 if ($action == "nosign" && $permissiontoclose) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
+			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
 					$tmpproposal->statut = $tmpproposal::STATUS_NOTSIGNED;
-					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED)) {
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
 					} else {
-						dol_print_error($db);
+						setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeClosed'), 'errors');
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeNoSign'), 'errors');
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}
@@ -1914,7 +1915,7 @@ if ($resql) {
 		// Note public
 		if (!empty($arrayfields['p.note_public']['checked'])) {
 			print '<td class="center">';
-			print dol_escape_htmltag($obj->note_public);
+			print dol_string_nohtmltag($obj->note_public);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1923,7 +1924,7 @@ if ($resql) {
 		// Note private
 		if (!empty($arrayfields['p.note_private']['checked'])) {
 			print '<td class="center">';
-			print dol_escape_htmltag($obj->note_private);
+			print dol_string_nohtmltag($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

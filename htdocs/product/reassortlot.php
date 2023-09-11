@@ -88,6 +88,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'produit|service', 0, 'product&product');
 
+$hookmanager->initHooks(array('reassortlotlist'));
+
 
 /*
  * Actions
@@ -135,11 +137,11 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
 }
 if ($sall) {
@@ -178,7 +180,7 @@ if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 if ($search_warehouse) {
@@ -277,7 +279,7 @@ if ($resql) {
 	if ($search_sale) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
 	/*if ($eatby)		$param.="&eatby=".$eatby;

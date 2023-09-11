@@ -1295,33 +1295,35 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		}
-	}
 
-	if (!$error) {
-		$addfieldentry = array(
-			'name'=>GETPOST('propname', 'aZ09'),
-			'label'=>GETPOST('proplabel', 'alpha'),
-			'type'=>GETPOST('proptype', 'alpha'),
-			'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
-			'visible'=>GETPOST('propvisible', 'int'),
-			'enabled'=>GETPOST('propenabled', 'int'),
-			'position'=>GETPOST('propposition', 'int'),
-			'notnull'=>GETPOST('propnotnull', 'int'),
-			'index'=>GETPOST('propindex', 'int'),
-			'searchall'=>GETPOST('propsearchall', 'int'),
-			'isameasure'=>GETPOST('propisameasure', 'int'),
-			'comment'=>GETPOST('propcomment', 'alpha'),
-			'help'=>GETPOST('prophelp', 'alpha'),
-			'css'=>GETPOST('propcss', 'aZ09'),
-			'cssview'=>GETPOST('propcssview', 'aZ09'),
-			'csslist'=>GETPOST('propcsslist', 'aZ09'),
-			'default'=>GETPOST('propdefault', 'restricthtml'),
-			'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
-		);
+		if (!$error && !GETPOST('regenerateclasssql') && !GETPOST('regeneratemissing')) {
+			$addfieldentry = array(
+				'name'=>GETPOST('propname', 'aZ09'),
+				'label'=>GETPOST('proplabel', 'alpha'),
+				'type'=>GETPOST('proptype', 'alpha'),
+				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'visible'=>GETPOST('propvisible', 'int'),
+				'enabled'=>GETPOST('propenabled', 'int'),
+				'position'=>GETPOST('propposition', 'int'),
+				'notnull'=>GETPOST('propnotnull', 'int'),
+				'index'=>GETPOST('propindex', 'int'),
+				'searchall'=>GETPOST('propsearchall', 'int'),
+				'isameasure'=>GETPOST('propisameasure', 'int'),
+				'comment'=>GETPOST('propcomment', 'alpha'),
+				'help'=>GETPOST('prophelp', 'alpha'),
+				'css'=>GETPOST('propcss', 'aZ09'),
+				'cssview'=>GETPOST('propcssview', 'aZ09'),
+				'csslist'=>GETPOST('propcsslist', 'aZ09'),
+				'default'=>GETPOST('propdefault', 'restricthtml'),
+				'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
+			);
 
-		if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
-			$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
+			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
+				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
+			}
 		}
+	} else {
+		$addfieldentry = array();
 	}
 
 	/*if (GETPOST('regeneratemissing'))
@@ -3187,7 +3189,7 @@ if ($module == 'initmodule') {
 						print '</td>';
 
 						print '<td>';
-						print $perm[1];
+						print $langs->trans($perm[1]);
 						print '</td>';
 
 						print '<td>';

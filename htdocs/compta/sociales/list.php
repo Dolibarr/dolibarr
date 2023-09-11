@@ -61,7 +61,7 @@ $search_account				= GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortorder			= GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -206,7 +206,7 @@ if (!empty($conf->projet->enabled)) {
 	}
 }
 if (!empty($search_users)) {
-	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
+	$sql .= ' AND cs.fk_user IN ('.$db->sanitize(implode(', ', $search_users)).')';
 }
 if (!empty($search_type) && $search_type > 0) {
 	$sql .= ' AND cs.fk_mode_reglement='.$search_type;

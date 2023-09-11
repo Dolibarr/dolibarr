@@ -44,8 +44,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = GETPOST("sortorder", 'aZ09');
-$sortfield = GETPOST("sortfield", 'aZ09');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -57,6 +57,7 @@ $socid = GETPOST('socid', 'int');
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
+if ($selected_cat == -1) $selected_cat = '';
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;

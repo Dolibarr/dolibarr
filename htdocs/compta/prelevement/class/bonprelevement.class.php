@@ -334,74 +334,6 @@ class BonPrelevement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Set credite and set status of linked invoices. Still used ??
-	 *
-	 * @return		int		<0 if KO, >=0 if OK
-	 */
-	public function set_credite()
-	{
-		// phpcs:enable
-		global $user, $conf;
-
-		$error = 0;
-
-		if ($this->db->begin()) {
-			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-			$sql .= " SET statut = ".self::STATUS_TRANSFERED;
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $conf->entity);
-
-			$result = $this->db->query($sql);
-			if (!$result) {
-				dol_syslog(get_class($this)."::set_credite Erreur 1");
-				$error++;
-			}
-
-			if (!$error) {
-				$facs = array();
-				$facs = $this->getListInvoices();
-
-				$num = count($facs);
-				for ($i = 0; $i < $num; $i++) {
-					/* Tag invoice as paid */
-					dol_syslog(get_class($this)."::set_credite set_paid fac ".$facs[$i]);
-					$fac = new Facture($this->db);
-					$fac->fetch($facs[$i]);
-					$result = $fac->setPaid($user);
-				}
-			}
-
-			if (!$error) {
-				$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
-				$sql .= " SET statut = 2";
-				$sql .= " WHERE fk_prelevement_bons = ".((int) $this->id);
-
-				if (!$this->db->query($sql)) {
-					dol_syslog(get_class($this)."::set_credite Erreur 1");
-					$error++;
-				}
-			}
-
-			/*
-			 * End of procedure
-			 */
-			if (!$error) {
-				$this->db->commit();
-				return 0;
-			} else {
-				$this->db->rollback();
-				dol_syslog(get_class($this)."::set_credite ROLLBACK ");
-
-				return -1;
-			}
-		} else {
-			dol_syslog(get_class($this)."::set_credite Ouverture transaction SQL impossible ");
-			return -2;
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 *	Set direct debit or credit transfer order to "paid" status.
 	 *
 	 *	@param	User	$user			Id of user
@@ -506,11 +438,13 @@ class BonPrelevement extends CommonObject
 					} else {
 						if ($this->type == 'bank-transfer') {
 							$modeforaddpayment = 'payment_supplier';
+							$labelforaddpayment = '(BankTransferPayment)';
 						} else {
 							$modeforaddpayment = 'payment';
+							$labelforaddpayment = '(WithdrawalPayment)';
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $bankaccount, '', '');
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $bankaccount, '', '');
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;
@@ -518,9 +452,6 @@ class BonPrelevement extends CommonObject
 							dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error ".$this->error);
 						}
 					}
-					//var_dump($paiement->amounts);
-					//var_dump($thirdpartyid);
-					//var_dump($cursoramounts);
 				}
 
 				// Update withdrawal line
@@ -1107,15 +1038,15 @@ class BonPrelevement extends CommonObject
 					$account = new Account($this->db);
 					if ($account->fetch($id) > 0) {
 						$this->emetteur_code_banque = $account->code_banque;
-						$this->emetteur_code_guichet       = $account->code_guichet;
-						$this->emetteur_numero_compte      = $account->number;
+						$this->emetteur_code_guichet = $account->code_guichet;
+						$this->emetteur_numero_compte = $account->number;
 						$this->emetteur_number_key = $account->cle_rib;
-						$this->emetteur_iban               = $account->iban;
-						$this->emetteur_bic                = $account->bic;
+						$this->emetteur_iban = $account->iban;
+						$this->emetteur_bic = $account->bic;
 
-						$this->emetteur_ics                = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
+						$this->emetteur_ics = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
 
-						$this->raison_sociale              = $account->proprio;
+						$this->raison_sociale = $account->proprio;
 					}
 
 					$this->factures = $factures_prev_id;
@@ -1125,8 +1056,6 @@ class BonPrelevement extends CommonObject
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {
-						/*var_dump($this->error);
-						var_dump($this->invoice_in_error); */
 						$error++;
 					}
 				}
@@ -1752,7 +1681,7 @@ class BonPrelevement extends CommonObject
 
 		fclose($this->file);
 		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($this->file, octdec($conf->global->MAIN_UMASK));
+			@chmod($this->filename, octdec($conf->global->MAIN_UMASK));
 		}
 
 		return $result;
@@ -2248,7 +2177,8 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
 		} else {
-			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
+			fputs($this->file, 'INCORRECT EMETTEUR '.$this->raison_sociale.$CrLf);
+			$XML_SEPA_INFO = '';
 		}
 		return $XML_SEPA_INFO;
 	}

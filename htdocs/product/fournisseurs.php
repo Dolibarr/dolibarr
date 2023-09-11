@@ -286,43 +286,18 @@ if (empty($reshook)) {
 				if (GETPOSTISSET('ref_fourn_price_id')) {
 					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
 				}
-
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
-				if (!empty($extrafield_values)) {
-					$resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".$object->product_fourn_price_id);
-					// Insert a new extrafields row, if none exists
-					if ($db->num_rows($resql) != 1) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields (fk_object, ";
-						foreach ($extrafield_values as $key => $value) {
-							$sql .= str_replace('options_', '', $key).', ';
-						}
-						$sql = substr($sql, 0, strlen($sql) - 2).") VALUES (".$object->product_fourn_price_id.", ";
-						foreach ($extrafield_values as $key => $value) {
-							$sql .= '"'.$value.'", ';
-						}
-						$sql = substr($sql, 0, strlen($sql) - 2).')';
-					} else {
-						// update the existing one
-						$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields SET ";
-						foreach ($extrafield_values as $key => $value) {
-							$sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
-						}
-						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.((int) $object->product_fourn_price_id);
-					}
-
-					// Execute the sql command from above
-					$db->query($sql);
-				}
 
 				$newprice = price2num(GETPOST("price", "alpha"));
 
 				if (empty($packaging)) {
 					$packaging = 1;
 				}
+				/* We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
-				}
+				}*/
 				$object->packaging = $packaging;
 
 				if (!empty($conf->multicurrency->enabled)) {
@@ -330,9 +305,9 @@ if (empty($reshook)) {
 					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type);
+					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				} else {
-					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type);
+					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				}
 				if ($ret < 0) {
 					$error++;

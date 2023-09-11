@@ -317,7 +317,7 @@ if (empty($reshook)) {
 
 		//var_dump($batch_line[2]);
 
-		if ($totalqty > 0) {		// There is at least one thing to ship
+		if ($totalqty > 0 || !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {		// There is at least one thing to ship
 			//var_dump($_POST);exit;
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
@@ -327,7 +327,7 @@ if (empty($reshook)) {
 						//shipment from multiple stock locations
 						$nbstockline = count($stockLine[$i]);
 						for ($j = 0; $j < $nbstockline; $j++) {
-							if ($stockLine[$i][$j]['qty'] > 0) {
+							if ($stockLine[$i][$j]['qty'] > 0 || ($stockLine[$i][$j]['qty'] == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))) {
 								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
 								if ($ret < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
@@ -336,7 +336,7 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
 							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
@@ -540,6 +540,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new ExpeditionLigne($db);
+		$line->fk_expedition = $object->id;
 
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
@@ -580,7 +581,9 @@ if (empty($reshook)) {
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {		// we have found line to update
+				$update_done = false;
 				$line = new ExpeditionLigne($db);
+				$line->fk_expedition = $object->id;
 
 				// Extrafields Lines
 				$line->array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
@@ -619,6 +622,8 @@ if (empty($reshook)) {
 								if ($line->update($user) < 0) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
+								} else {
+									$update_done=true;
 								}
 							} else {
 								setEventMessages($lotStock->error, $lotStock->errors, 'errors');
@@ -661,6 +666,8 @@ if (empty($reshook)) {
 									if ($line->update($user) < 0) {
 										setEventMessages($line->error, $line->errors, 'errors');
 										$error++;
+									} else {
+										$update_done=true;
 									}
 								} else {
 									setEventMessages($line->error, $line->errors, 'errors');
@@ -678,6 +685,8 @@ if (empty($reshook)) {
 								if ($object->create_line_batch($line, $line->array_options) < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
+								} else {
+									$update_done=true;
 								}
 							}
 						} else {
@@ -715,6 +724,8 @@ if (empty($reshook)) {
 										if ($line->update($user) < 0) {
 											setEventMessages($line->error, $line->errors, 'errors');
 											$error++;
+										} else {
+											$update_done=true;
 										}
 									}
 									unset($_POST[$stockLocation]);
@@ -729,6 +740,8 @@ if (empty($reshook)) {
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
+							} else {
+								$update_done=true;
 							}
 							unset($_POST[$qty]);
 						}
@@ -741,9 +754,16 @@ if (empty($reshook)) {
 						if ($line->update($user) < 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
+						} else {
+							$update_done=true;
 						}
 						unset($_POST[$qty]);
 					}
+				}
+
+				if (empty($update_done)) {
+					$line->id = $lines[$i]->id;
+					$line->insertExtraFields();
 				}
 			}
 		}
@@ -1193,6 +1213,11 @@ if ($action == 'create') {
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$deliverableQty.'">';
 							} else {
+								if (! empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+									print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+									print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="hidden" value="0">';
+								}
+
 								print $langs->trans("NA");
 							}
 							print '</td>';
@@ -1372,6 +1397,10 @@ if ($action == 'create') {
 										print '<input '.$tooltip.' name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
+										if (! empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+											print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="hidden" value="0">';
+										}
+
 										print $langs->trans("NA");
 									}
 									print '</td>';
@@ -1436,6 +1465,10 @@ if ($action == 'create') {
 							}
 
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
+									// if a warehouse was selected by user, picking is limited to this warehouse and his children.
+									continue;
+								}
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {

@@ -650,6 +650,7 @@ if ($result) {
 
 		// Accounting account
 		if ($arrayfields['account']['checked']) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
 			print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';

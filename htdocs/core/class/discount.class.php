@@ -54,12 +54,21 @@ class DiscountAbsolute
 	public $fk_soc;
 
 	public $discount_type; // 0 => customer discount, 1 => supplier discount
-	public $amount_ht; //
-	public $amount_tva; //
-	public $amount_ttc; //
-	public $multicurrency_amount_ht;
-	public $multicurrency_amount_tva;
-	public $multicurrency_amount_ttc;
+
+	public $total_ht;
+	public $total_tva;
+	public $total_ttc;
+	public $amount_ht; 	// deprecated
+	public $amount_tva; // deprecated
+	public $amount_ttc; // deprecated
+
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+	public $multicurrency_amount_ht;	// deprecated
+	public $multicurrency_amount_tva;	// deprecated
+	public $multicurrency_amount_ttc;	// deprecated
+
 	// Vat rate
 	public $tva_tx;
 	public $vat_src_code;
@@ -163,13 +172,21 @@ class DiscountAbsolute
 				$this->fk_soc = $obj->fk_soc;
 				$this->discount_type = $obj->discount_type;
 
-				$this->amount_ht = $obj->amount_ht;
-				$this->amount_tva = $obj->amount_tva;
-				$this->amount_ttc = $obj->amount_ttc;
+				$this->total_ht = $obj->amount_ht;
+				$this->total_tva = $obj->amount_tva;
+				$this->total_ttc = $obj->amount_ttc;
+				// For backward compatibility
+				$this->amount_ht = $this->total_ht;
+				$this->amount_tva = $this->total_tva;
+				$this->amount_ttc = $this->total_ttc;
 
-				$this->multicurrency_amount_ht = $this->multicurrency_subprice = $obj->multicurrency_amount_ht;
-				$this->multicurrency_amount_tva = $obj->multicurrency_amount_tva;
-				$this->multicurrency_amount_ttc = $obj->multicurrency_amount_ttc;
+				$this->multicurrency_total_ht = $this->multicurrency_subprice = $obj->multicurrency_amount_ht;
+				$this->multicurrency_total_tva = $obj->multicurrency_amount_tva;
+				$this->multicurrency_total_ttc = $obj->multicurrency_amount_ttc;
+				// For backward compatibility
+				$this->multicurrency_amount_ht = $this->multicurrency_total_ht;
+				$this->multicurrency_amount_tva = $this->multicurrency_total_tva;
+				$this->multicurrency_amount_ttc = $this->multicurrency_total_ttc;
 
 				$this->tva_tx = $obj->tva_tx;
 				$this->vat_src_code = $obj->vat_src_code;

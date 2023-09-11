@@ -41,12 +41,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-$fieldname = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
+$object = new RemiseCheque($db);
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -63,11 +58,22 @@ if (empty($page) || $page == -1) {
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-$dir = $conf->bank->dir_output.'/checkdeposits/';
+$upload_dir = $conf->bank->multidir_output[$object->entity ? $object->entity : $conf->entity]."/checkdeposits";
+
 $filterdate = dol_mktime(0, 0, 0, GETPOST('fdmonth'), GETPOST('fdday'), GETPOST('fdyear'));
 $filteraccountid = GETPOST('accountid', 'int');
 
-$object = new RemiseCheque($db);
+// Security check
+$fieldname = (!empty($ref) ? 'ref' : 'rowid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
+
+$usercanread = $user->rights->banque->cheque;
+$usercancreate = $user->rights->banque->cheque;
+$usercandelete = $user->rights->banque->cheque;
+
 
 
 /*
@@ -242,7 +248,9 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 
 		$langs->load("other");
 
-		$file = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'cheque').GETPOST('file');
+		$filetodelete = GETPOST('file', 'alpha');
+		$file = $upload_dir.'/'.$filetodelete;
+
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
@@ -633,6 +641,12 @@ if ($action == 'new') {
 		$i = 1;
 		if ($num > 0) {
 			while ($objp = $db->fetch_object($resql)) {
+				$paymentstatic->id = $objp->pid;
+				$paymentstatic->ref = $objp->pref;
+
+				$accountlinestatic->id = $objp->rowid;
+				$accountlinestatic->ref = $objp->ref;
+
 				print '<tr class="oddeven">';
 				print '<td class="center">'.$i.'</td>';
 				print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>'; // Operation date
@@ -642,8 +656,6 @@ if ($action == 'new') {
 				print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 				// Link to payment
 				print '<td class="center">';
-				$paymentstatic->id = $objp->pid;
-				$paymentstatic->ref = $objp->pref;
 				if ($paymentstatic->id) {
 					print $paymentstatic->getNomUrl(1);
 				} else {
@@ -652,8 +664,6 @@ if ($action == 'new') {
 				print '</td>';
 				// Link to bank transaction
 				print '<td class="center">';
-				$accountlinestatic->id = $objp->rowid;
-				$accountlinestatic->ref = $objp->ref;
 				if ($accountlinestatic->id > 0) {
 					print $accountlinestatic->getNomUrl(1);
 				} else {
@@ -663,10 +673,10 @@ if ($action == 'new') {
 				// Action button
 				print '<td class="right">';
 				if ($object->statut == 0) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&lineid='.$objp->rowid.'">'.img_delete().'</a>';
 				}
 				if ($object->statut == 1 && $objp->statut != 2) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"), 'disable').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reject_check&token='.newToken().'&lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"), 'disable').'</a>';
 				}
 				if ($objp->statut == 2) {
 					print ' &nbsp; '.img_picto($langs->trans('CheckRejected'), 'statut8').'</a>';
@@ -722,11 +732,13 @@ print '</div>';
 
 if ($action != 'new') {
 	if ($object->statut == 1) {
-		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'checkdeposits');
+		// Documents
+		$objref = dol_sanitizeFileName($object->ref);
+		$filedir = $upload_dir.'/'.$objref;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-
-		print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
+		$genallowed = $usercancreate;
+		$delallowed = $usercandelete;
+		print $formfile->showdocuments('remisecheque', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 
 		print '<br>';
 	}

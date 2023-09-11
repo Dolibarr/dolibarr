@@ -141,6 +141,7 @@ $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
 $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
+$separator_used     = str_replace('\t', "\t", $separator);
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -773,7 +774,7 @@ if ($step == 4 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 	if ($model == 'xlsx') {
@@ -1334,7 +1335,7 @@ if ($step == 5 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 
@@ -1783,7 +1784,7 @@ if ($step == 6 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 

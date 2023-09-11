@@ -820,7 +820,7 @@ class Conf
 			}
 
 			// If we are in develop mode, we activate the option MAIN_SECURITY_CSRF_WITH_TOKEN to 1 if not already defined.
-			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $this->global->MAIN_FEATURES_LEVEL >= 2) {
+			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && isset($this->global->MAIN_FEATURES_LEVEL) && $this->global->MAIN_FEATURES_LEVEL >= 2) {
 				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
 			}
 

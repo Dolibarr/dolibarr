@@ -391,7 +391,7 @@ foreach ($search as $key => $val) {
 		continue;
 	}
 	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-	if ($search[$key] != '') {
+	if ($search[$key] != '' && !is_array($val)) {
 		$sql .= natural_search($key, $search[$key], $mode_search);
 	}
 }
@@ -609,9 +609,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 foreach ($search as $key => $val) {
-	if (is_array($search[$key]) && count($search[$key])) {
-		foreach ($search[$key] as $skey) {
-			$param .= '&search_'.$key.'[]='.urlencode($skey);
+	if (is_array($val) && count($val)) {
+		foreach ($val as $skey) {
+			$param .= (!empty($val)) ? '&search_'.$key.'[]='.urlencode($skey) : "";
 		}
 	} else {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);

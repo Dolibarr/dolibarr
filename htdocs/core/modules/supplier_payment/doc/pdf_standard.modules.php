@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 		Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015           Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2022           Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->db = $db;
 		$this->name = "standard";
 		$this->description = $langs->trans('DocumentModelStandardPDF');
-		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 0;		// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';

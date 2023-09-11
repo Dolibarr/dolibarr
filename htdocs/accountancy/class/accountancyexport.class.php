@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2023  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
@@ -518,7 +518,7 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus (Format ASCII)
 	 * Format since 2015 compatible QuadraCOMPTA
-	 * Last review for this format : 2021/09/13 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2023/01/28 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
 	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
@@ -536,6 +536,14 @@ class AccountancyExport
 		// $date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		// $date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ($TData as $data) {
+			// Clean some data
+			$data->doc_ref = dol_string_unaccent($data->doc_ref);
+			$data->label_operation = dol_string_unaccent($data->label_operation);
+			$data->numero_compte = dol_string_unaccent($data->numero_compte);
+			$data->label_compte = dol_string_unaccent($data->label_compte);
+			$data->subledger_account = dol_string_unaccent($data->subledger_account);
+			$data->subledger_label = dol_string_unaccent($data->subledger_label);
+
 			$code_compta = $data->numero_compte;
 			if (!empty($data->subledger_account)) {
 				$code_compta = $data->subledger_account;
@@ -567,9 +575,9 @@ class AccountancyExport
 				if ($data->doc_type == 'customer_invoice') {
 					$Tab['type_compte'] = 'C';
 				} elseif ($data->doc_type == 'supplier_invoice') {
-					$Tab['coll_compte'] = 'F';
+					$Tab['type_compte'] = 'F';
 				} else {
-					$Tab['coll_compte'] = 'G';
+					$Tab['type_compte'] = 'G';
 				}
 
 				$Tab['filler3'] = str_repeat(' ', 235);
@@ -590,7 +598,7 @@ class AccountancyExport
 			//$Tab['date_ecriture'] = $date_ecriture;
 			$Tab['date_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
 			$Tab['filler'] = ' ';
-			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 20), 20);
+			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref.' '.$data->label_operation, 20), 20);
 
 			// Credit invoice - invert sens
 			/*
@@ -640,8 +648,8 @@ class AccountancyExport
 			// TODO: we should filter more than only accent to avoid wrong line size
 			// TODO: remove invoice number doc_ref in libelle,
 			// TODO: we should offer an option for customer to build the libelle using invoice number / name / date in accounting software
-			//$Tab['libelle_ecriture2'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref) . ' ' . dol_string_unaccent($data->label_operation), 30), 30);
-			$Tab['libelle_ecriture2'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 30), 30);
+			//$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 30), 30);
+			$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->label_operation, 30), 30);
 			$Tab['codetva'] = str_repeat(' ', 2);
 
 			// We need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
@@ -657,9 +665,12 @@ class AccountancyExport
 
 	/**
 	 * Export format : WinFic - eWinfic - WinSis Compta
+	 * Last review for this format : 2022-11-01 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
+	 * Help : https://wiki.gestan.fr/lib/exe/fetch.php?media=wiki:v15:compta:accountancy-format_winfic-ewinfic-winsiscompta.pdf
 	 *
 	 * @param array $TData data
+	 *
 	 * @return void
 	 */
 	public function exportWinfic(&$TData)
@@ -667,10 +678,14 @@ class AccountancyExport
 		global $conf;
 
 		$end_line = "\r\n";
+		$index = 1;
 
 		//We should use dol_now function not time however this is wrong date to transfert in accounting
 		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
+
+		// Warning ! When truncation is necessary, no dot because 3 dots = three characters. The columns are shifted
+
 		foreach ($TData as $data) {
 			$code_compta = $data->numero_compte;
 			if (!empty($data->subledger_account)) {
@@ -679,7 +694,7 @@ class AccountancyExport
 
 			$Tab = array();
 			//$Tab['type_ligne'] = 'M';
-			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
+			$Tab['code_journal'] = str_pad(dol_trunc($data->code_journal, 2, 'right', 'UTF-8', 1), 2);
 
 			//We use invoice date $data->doc_date not $date_ecriture which is the transfert date
 			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
@@ -688,11 +703,11 @@ class AccountancyExport
 
 			$Tab['folio'] = '     1';
 
-			$Tab['num_ecriture'] = str_pad(self::trunc($data->piece_num, 6), 6, ' ', STR_PAD_LEFT);
+			$Tab['num_ecriture'] = str_pad(dol_trunc($index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
 
 			$Tab['jour_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
 
-			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 6), 6, '0');
+			$Tab['num_compte'] = str_pad(dol_trunc($code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
 
 			if ($data->sens == 'D') {
 				$Tab['montant_debit']  = str_pad(number_format($data->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
@@ -704,11 +719,11 @@ class AccountancyExport
 				$Tab['montant_crebit'] = str_pad(number_format($data->credit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			}
 
-			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30), 30);
+			$Tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30, 'right', 'UTF-8', 1), 30);
 
-			$Tab['lettrage'] = str_repeat(' ', 2);
+			$Tab['lettrage'] = str_repeat(dol_trunc($data->lettering_code, 2, 'left', 'UTF-8', 1), 2);
 
-			$Tab['code_piece'] = str_repeat(' ', 5);
+			$Tab['code_piece'] = str_pad(dol_trunc($data->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
 
 			$Tab['code_stat'] = str_repeat(' ', 4);
 
@@ -732,6 +747,8 @@ class AccountancyExport
 			$Tab['end_line'] = $end_line;
 
 			print implode('|', $Tab);
+
+			$index++;
 		}
 	}
 

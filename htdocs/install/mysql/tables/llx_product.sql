@@ -40,8 +40,8 @@ create table llx_product
   customcode                    varchar(32),                        -- Optionnal custom code
   fk_country                    integer DEFAULT NULL,               -- Optionnal id of original country
   fk_state                      integer DEFAULT NULL,               -- Optionnal id of original state/province
-  price                         double(24,8) DEFAULT 0,
-  price_ttc                     double(24,8) DEFAULT 0,
+  price                         double(24,8) DEFAULT 0,				-- price without tax
+  price_ttc                     double(24,8) DEFAULT 0,				-- price inc vat (but not localtax1 nor localtax2)
   price_min                     double(24,8) DEFAULT 0,
   price_min_ttc                 double(24,8) DEFAULT 0,
   price_base_type               varchar(3)   DEFAULT 'HT',

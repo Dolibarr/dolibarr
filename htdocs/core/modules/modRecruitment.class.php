@@ -423,7 +423,7 @@ class modRecruitment extends DolibarrModules
 		$sql = array();
 
 		// Document template
-		$moduledir = 'mymodule';
+		$moduledir = 'recruitment';
 		$myTmpObjects = array();
 		$myTmpObjects['RecruitmentJobPosition'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
 
@@ -431,10 +431,10 @@ class modRecruitment extends DolibarrModules
 			if ($myTmpObjectKey == 'MyObject') {
 				continue;
 			}
-			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/mymodule';
-				$dest = $dirodt.'/template_myobjects.odt';
+			if ($myTmpObjectArray['includedocgeneration']) {
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_recruitmentjobposition.odt';
+				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
+				$dest = $dirodt.'/template_recruitmentjobposition.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -450,8 +450,6 @@ class modRecruitment extends DolibarrModules
 				$sql = array_merge($sql, array(
 					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
 					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".$conf->entity.")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
 				));
 			}
 		}

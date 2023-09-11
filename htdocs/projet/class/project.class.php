@@ -838,7 +838,7 @@ class Project extends CommonObject
 		}
 
 		// Fetch tasks
-		$this->getLinesArray($user);
+		$this->getLinesArray($user, 0);
 
 		// Delete tasks
 		$ret = $this->deleteTasks($user);
@@ -2204,14 +2204,15 @@ class Project extends CommonObject
 	/**
 	 * 	Create an array of tasks of current project
 	 *
-	 *  @param  User   $user       Object user we want project allowed to
-	 * 	@return int		           >0 if OK, <0 if KO
+	 *  @param  User	$user       Object user we want project allowed to
+	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
+	 * 	@return int		>0 if OK, <0 if KO
 	 */
-	public function getLinesArray($user)
+	public function getLinesArray($user, $loadRoleMode = 1)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$taskstatic = new Task($this->db);
 
-		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
+		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0, '',  '-1', '', 0, 0, array(),  0,  array(),  0,  $loadRoleMode);
 	}
 }

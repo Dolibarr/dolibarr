@@ -733,11 +733,19 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "members"));
 
-			if (empty($object->actionmsg2)) {
-				$object->actionmsg2 = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $object->getFullName($langs));
+			$member = $this->context['member'];
+			if (!is_object($member)) {	// This should not happen but it happen when deleting a subscription from adherents/subscription/card.php
+				dol_syslog("Execute a trigger MEMBER_SUBSCRIPTION_CREATE with context key 'member' not an object");
+				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$member = new Adherent($this->db);
+				$member->fetch($object->fk_adherent);
 			}
-			$object->actionmsg = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $object->getFullName($langs));
-			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $member->getFullName($langs));
+			}
+			$object->actionmsg = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $member->getFullName($langs));
+			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$member->getFullName($langs);
 			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
 			$object->actionmsg .= "\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
 			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start, 'day').' - '.dol_print_date($object->last_subscription_date_end, 'day');

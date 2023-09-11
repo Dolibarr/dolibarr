@@ -62,7 +62,7 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 	 exit;
 }
 
-if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $user->rights->societe->creer) {
+if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -153,7 +153,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $user-
 	}
 }
 
-if ($action == 'setremise' && $user->rights->societe->creer) {
+if ($action == 'setremise' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -192,7 +192,7 @@ if ($action == 'setremise' && $user->rights->societe->creer) {
 	}
 }
 
-if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $user->rights->societe->creer) {
+if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 

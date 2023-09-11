@@ -1215,7 +1215,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		} elseif ($yearlen == 2) {
 			$yearcomp = sprintf("%02d", date("y", $date) + $yearoffset);
 		} elseif ($yearlen == 1) {
-			$yearcomp = substr(date("y", $date), 2, 1) + $yearoffset;
+			$yearcomp = substr(date('y', $date), 1, 1) + $yearoffset;
 		}
 		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
 			if ($yearlen == 4) {

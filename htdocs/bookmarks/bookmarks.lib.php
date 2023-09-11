@@ -29,35 +29,45 @@
  */
 function printDropdownBookmarksList()
 {
-	global $conf, $user, $db, $langs;
+	global $conf, $user, $db, $langs, $sortfield, $sortorder;
 
 	require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 	$langs->load("bookmarks");
 
+	$authorized_var=array('limit','optioncss','contextpage');
 	$url = $_SERVER["PHP_SELF"];
-
+	$url_param=array();
 	if (!empty($_SERVER["QUERY_STRING"])) {
-		$url .= (dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '');
-	} else {
-		global $sortfield, $sortorder;
-		$tmpurl = '';
-		// No urlencode, all param $url will be urlencoded later
-		if ($sortfield) {
-			$tmpurl .= ($tmpurl ? '&' : '').'sortfield='.urlencode($sortfield);
-		}
-		if ($sortorder) {
-			$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.urlencode($sortorder);
-		}
-		if (is_array($_POST)) {
-			foreach ($_POST as $key => $val) {
-				if (preg_match('/^search_/', $key) && $val != '') {
-					$tmpurl .= ($tmpurl ? '&' : '').http_build_query(array($key => $val));
+		if (is_array($_GET)) {
+			foreach ($_GET as $key => $val) {
+				if ($val != '') {
+					$url_param[$key]=http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
 				}
 			}
 		}
-		$url .= ($tmpurl ? '?'.$tmpurl : '');
+	}
+	$tmpurl = '';
+	// No urlencode, all param $url will be urlencoded later
+	if ($sortfield) {
+		$tmpurl .= ($tmpurl ? '&' : '').'sortfield='.urlencode($sortfield);
+	}
+	if ($sortorder) {
+		$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.urlencode($sortorder);
+	}
+	if (is_array($_POST)) {
+		foreach ($_POST as $key => $val) {
+			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
+				&& $val != ''
+				&& !array_key_exists($key, $url_param)) {
+				$url_param[$key]=http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+			}
+		}
+	}
+	$url .= ($tmpurl ? '?'.$tmpurl : '');
+	if (!empty($url_param)) {
+		$url .= '&'.implode('&', $url_param);
 	}
 
 	$searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
@@ -66,7 +76,7 @@ function printDropdownBookmarksList()
 
 
 	// Url to list bookmark
-	$listbtn = '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
+	$listbtn = '<a class="top-menu-dropdown-link" title="'.$langs->trans('ListOfBookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
 	$listbtn .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
 
 	// Url to go on create new bookmark page

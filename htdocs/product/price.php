@@ -171,10 +171,52 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
-		if ($error) {
-			//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
-			$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
-			$object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode);
+		if (!$error) {
+			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+					// Force the update of the price of the product using the new VAT
+					if ($object->multiprices_base_type[$i] == 'HT') {
+						$oldprice = $object->multiprices[$i];
+						$oldminprice = $object->multiprices_min[$i];
+					} else {
+						$oldprice = $object->multiprices_ttc[$i];
+						$oldminprice = $object->multiprices_min_ttc[$i];
+					}
+					$oldpricebasetype = $object->multiprices_base_type[$i];
+					$oldnpr = $object->multiprices_recuperableonly[$i];
+
+					//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
+					$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
+					$level = $i;
+					$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode);
+
+					if ($ret < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+			} else {
+				// Force the update of the price of the product using the new VAT
+				if ($object->price_base_type == 'HT') {
+					$oldprice = $object->price;
+					$oldminprice = $object->price_min;
+				} else {
+					$oldprice = $object->price_ttc;
+					$oldminprice = $object->price_min_ttc;
+				}
+				$oldpricebasetype = $object->price_base_type;
+				$oldnpr = $object->tva_npr;
+
+				//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
+				$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
+				$level = 0;
+				$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode);
+
+				if ($ret < 0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
 		}
 
 		if (!$error) {
@@ -394,13 +436,21 @@ if (empty($reshook)) {
 	if ($action == 'activate_price_by_qty') {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOST('level', 'int');
-		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+		$ret = $object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+
+		if ($ret < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 	// Unset Price by quantity
 	if ($action == 'disable_price_by_qty') {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOST('level', 'int');
-		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 0);
+		$ret = $object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 0);
+
+		if ($ret < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
@@ -1469,6 +1519,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 	}
 	$sql .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
 	// $sql .= $db->plimit();
+	//print $sql;
 
 	$result = $db->query($sql);
 	if ($result) {
@@ -1483,13 +1534,17 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
 			// We emulate the change of the price from interface with the same value than the one into table llx_product
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				$object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1);
+				$ret = $object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1);
 			} else {
-				$object->updatePrice(($object->price_base_type == 'TTC' ? $object->price_ttc : $object->price), $object->price_base_type, $user, $object->tva_tx, ($object->price_base_type == 'TTC' ? $object->price_min_ttc : $object->price_min));
+				$ret = $object->updatePrice(($object->price_base_type == 'TTC' ? $object->price_ttc : $object->price), $object->price_base_type, $user, $object->tva_tx, ($object->price_base_type == 'TTC' ? $object->price_min_ttc : $object->price_min));
 			}
 
-			$result = $db->query($sql);
-			$num = $db->num_rows($result);
+			if ($ret < 0) {
+				dol_print_error($db, $object->error, $object->errors);
+			} else {
+				$result = $db->query($sql);
+				$num = $db->num_rows($result);
+			}
 		}
 
 		if ($num > 0) {
@@ -1503,8 +1558,9 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 				print_barre_liste($langs->trans("PriceByCustomerLog"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $num, 'title_accountancy.png');
 			}
 
-			print '<div class="div-table-responsive">';
-			print '<table class="liste centpercent">';
+			print '<!-- List of log prices -->'."\n";
+			print '<div class="div-table-responsive">'."\n";
+			print '<table class="liste centpercent">'."\n";
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
@@ -1522,6 +1578,9 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			}
 			print '<td class="right">'.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("TTC").'</td>';
+			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
+				print '<td class="right">'.$langs->trans("INCT").'</td>';
+			}
 			if (!empty($conf->dynamicprices->enabled)) {
 				print '<td class="right">'.$langs->trans("PriceExpressionSelected").'</td>';
 			}
@@ -1588,6 +1647,24 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 					print "</td>";
 				}
 
+				// Line for default price
+				if ($objp->price_base_type == 'HT') {
+					$pu = $objp->price;
+				} else {
+					$pu = $objp->price_ttc;
+				}
+
+				// Local tax was not saved into table llx_product on old version. So we will use value linked to VAT code.
+				$localtaxarray = getLocalTaxesFromRate($objp->tva_tx.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), 0, $mysoc, $mysoc);
+				// Define part of HT, VAT, TTC
+				$resultarray = calcul_price_total(1, $pu, 0, $objp->tva_tx, 1, 1, 0, $objp->price_base_type, $objp->recuperableonly, $object->type, $mysoc, $localtaxarray);
+				// Calcul du total ht sans remise
+				$total_ht = $resultarray[0];
+				$total_vat = $resultarray[1];
+				$total_localtax1 = $resultarray[9];
+				$total_localtax2 = $resultarray[10];
+				$total_ttc = $resultarray[2];
+
 				// Price
 				if (!empty($objp->fk_price_expression) && !empty($conf->dynamicprices->enabled)) {
 					$price_expression = new PriceExpression($db);
@@ -1595,32 +1672,46 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 					$title = $price_expression->title;
 					print '<td class="right"></td>';
 					print '<td class="right"></td>';
+					if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
+						print '<td class="right"></td>';
+					}
 					print '<td class="right">'.$title."</td>";
 				} else {
+					// Price HT
 					print '<td class="right">';
 					if (empty($objp->price_by_qty)) {
 						print price($objp->price);
 					}
 					print "</td>";
+					// Price TTC
 					print '<td class="right">';
 					if (empty($objp->price_by_qty)) {
-						print price($objp->price_ttc);
+						$price_ttc = $objp->price_ttc;
+						print price($price_ttc);
 					}
 					print "</td>";
+					if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
+						print '<td class="right">';
+						print $resultarray[2];
+						print '</td>';
+					}
 					if (!empty($conf->dynamicprices->enabled)) { //Only if module is enabled
 						print '<td class="right"></td>';
 					}
 				}
 
+				// Price min
 				print '<td class="right">';
 				if (empty($objp->price_by_qty)) {
 					print price($objp->price_min);
 				}
 				print '</td>';
 
+				// Price min inc tax
 				print '<td class="right">';
 				if (empty($objp->price_by_qty)) {
-					print price($objp->price_min_ttc);
+					$price_min_ttc = $objp->price_min_ttc;
+					print price($price_min_ttc);
 				}
 				print '</td>';
 
@@ -1911,11 +2002,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 			print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
 			print '<td class="right">'.$langs->trans("HT").'</td>';
+			print '<td class="right">'.$langs->trans("TTC").'</td>';
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
-				//print '<td class="right">' . $langs->trans("INCVATONLY") . '</td>';
 				print '<td class="right">'.$langs->trans("INCT").'</td>';
-			} else {
-				print '<td class="right">'.$langs->trans("TTC").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
@@ -1976,11 +2065,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print "</td>";
 				print '<td class="right">'.price($line->price)."</td>";
 
+				print '<td class="right">'.price($line->price_ttc)."</td>";
 				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
-					//print '<td class="right">' . price($line->price_ttc) . "</td>";
 					print '<td class="right">'.price($resultarray[2]).'</td>';
-				} else {
-					print '<td class="right">'.price($line->price_ttc)."</td>";
 				}
 
 				print '<td class="right">'.price($line->price_min).'</td>';
@@ -2023,12 +2110,15 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="liste centpercent">';
+		print '<!-- List of prices per customer -->'."\n";
+		print '<div class="div-table-responsive-no-min">'."\n";
+		print '<table class="liste centpercent">'."\n";
 
 		if (count($prodcustprice->lines) > 0 || $search_soc) {
 			$colspan = 9;
-			//if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") $colspan++;
+			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
+				$colspan++;
+			}
 
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="'.$search_soc.'" size="20"></td>';
@@ -2048,13 +2138,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 		print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
 		print '<td class="right">'.$langs->trans("HT").'</td>';
+		print '<td class="right">'.$langs->trans("TTC").'</td>';
 		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
-			//print '<td class="right">' . $langs->trans("INCVATONLY") . '</td>';
 			print '<td class="right">'.$langs->trans("INCT").'</td>';
-		} else {
-			print '<td class="right">'.$langs->trans("TTC").'</td>';
 		}
-
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
 		print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
@@ -2068,7 +2155,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			$pu = $object->price_ttc;
 		}
 
-		// Local tax is not saved into table of product. We use value linked to VAT code.
+		// Local tax was not saved into table llx_product on old version. So we will use value linked to VAT code.
 		$localtaxarray = getLocalTaxesFromRate($object->tva_tx.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), 0, $mysoc, $mysoc);
 		// Define part of HT, VAT, TTC
 		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, $object->recuperableonly, $object->type, $mysoc, $localtaxarray);
@@ -2106,13 +2193,11 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '<td class="right">'.price($object->price)."</td>";
 
+		print '<td class="right">'.price($object->price_ttc)."</td>";
 		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 			//print '<td class="right">' . price($object->price_ttc) . "</td>";
 			print '<td class="right">'.price($resultarray[2]).'</td>';
-		} else {
-			print '<td class="right">'.price($object->price_ttc)."</td>";
 		}
-
 
 		print '<td class="right">'.price($object->price_min).'</td>';
 		print '<td class="right">'.price($object->price_min_ttc).'</td>';
@@ -2184,11 +2269,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print "</td>";
 				print '<td class="right">'.price($line->price)."</td>";
 
+				print '<td class="right">'.price($line->price_ttc)."</td>";
 				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 					//print '<td class="right">' . price($line->price_ttc) . "</td>";
 					print '<td class="right">'.price($resultarray[2]).'</td>';
-				} else {
-					print '<td class="right">'.price($line->price_ttc)."</td>";
 				}
 
 				print '<td class="right">'.price($line->price_min).'</td>';

@@ -97,6 +97,7 @@ if (!GETPOST("currency", 'alpha')) {
 }
 $source = GETPOST("s", 'aZ09') ?GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $download = GETPOST('d', 'int') ?GETPOST('d', 'int') : GETPOST('download', 'int');
+$getpostlang = GETPOST('lang', 'aZ09');
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -242,6 +243,10 @@ if (!empty($entity)) {
 	$urlok .= 'e='.urlencode($entity).'&';
 	$urlko .= 'e='.urlencode($entity).'&';
 }
+if (!empty($getpostlang)) {
+	$urlok .= 'lang='.urlencode($getpostlang).'&';
+	$urlko .= 'lang='.urlencode($getpostlang).'&';
+}
 $urlok = preg_replace('/&$/', '', $urlok); // Remove last &
 $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 
@@ -291,6 +296,11 @@ $parameters = [
 	'validpaymentmethod' => &$validpaymentmethod
 ];
 $reshook = $hookmanager->executeHooks('doValidatePayment', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif ($reshook > 0) {
+	print $hookmanager->resPrint;
+}
 
 // Check security token
 $tmpsource = $source;
@@ -809,7 +819,7 @@ $form = new Form($db);
 
 $head = '';
 if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.(!empty($getpostlang) ? $getpostlang: $langs->defaultlang).'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -848,6 +858,7 @@ print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECUREKEY).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 print "\n";
 
 
@@ -2026,6 +2037,12 @@ if ($action != 'dopayment') {
 			'object' => $object
 		];
 		$reshook = $hookmanager->executeHooks('doCheckStatus', $parameters, $object, $action);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		} elseif ($reshook > 0) {
+			print $hookmanager->resPrint;
+		}
+
 		if ($source == 'order' && $object->billed) {
 			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("OrderBilled").'</span>';
 		} elseif ($source == 'invoice' && $object->paye) {
@@ -2047,6 +2064,12 @@ if ($action != 'dopayment') {
 				'paymentmethod' => $paymentmethod
 			];
 			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} elseif ($reshook > 0) {
+				print $hookmanager->resPrint;
+			}
+
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 				print '<br>';
@@ -2192,6 +2215,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
 		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id', 'int').'" />';
+		print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 
 		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || !empty($conf->global->STRIPE_USE_NEW_CHECKOUT)) {	// Use a SCA ready method
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -2651,8 +2675,12 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		'dopayment' => GETPOST('dopayment', 'alpha')
 	];
 	$reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif ($reshook > 0) {
+		print $hookmanager->resPrint;
+	}
 }
-
 
 htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 

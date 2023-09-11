@@ -326,7 +326,7 @@ class modBom extends DolibarrModules
 		$this->import_code[$r] = 'bom_'.$r;
 		$this->import_label[$r] = 'BillOfMaterials';
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];
+		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = ['b' => MAIN_DB_PREFIX.'bom_bom', 'extra' => MAIN_DB_PREFIX.'bom_bom_extrafields'];
 		$this->import_tables_creator_array[$r] = ['b' => 'fk_user_creat']; // Fields to store import user id
 		$this->import_fields_array[$r] = [
@@ -351,7 +351,7 @@ class modBom extends DolibarrModules
 		];
 
 		// Add extra fields
-		$import_extrafield_sample = [];
+		$import_extrafield_sample = array();
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bom' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 
@@ -407,7 +407,7 @@ class modBom extends DolibarrModules
 		$this->import_code[$r] = 'bom_lines_'.$r;
 		$this->import_label[$r] = 'BillOfMaterialsLine';
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];
+		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = ['bd' => MAIN_DB_PREFIX.'bom_bomline', 'extra' => MAIN_DB_PREFIX.'bom_bomline_extrafields'];
 		$this->import_fields_array[$r] = [
 			'bd.fk_bom'         => 'Document Ref*',
@@ -434,7 +434,7 @@ class modBom extends DolibarrModules
 		// End add extra fields
 
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bomline'];
-		$this->import_regex_array[$r] = [];
+		$this->import_regex_array[$r] = array();
 		$this->import_updatekeys_array[$r] = ['bd.fk_bom' => 'BOM Id'];
 		$this->import_convertvalue_array[$r] = [
 			'bd.fk_bom' => [

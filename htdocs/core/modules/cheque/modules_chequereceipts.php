@@ -126,8 +126,7 @@ abstract class ModeleNumRefChequeReceipts
 }
 
 /**
- *	\class      ModeleChequeReceipts
- *	\brief      Classe mere des modeles de
+ *	Class parent for templates of document generation
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {

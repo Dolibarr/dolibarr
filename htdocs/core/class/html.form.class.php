@@ -3400,7 +3400,7 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'price_ht'=>price2num($objp->unitprice, 'MT'),
+						'price_ht'=>price2num($objp->unitprice, 'MU'),
 						'discount'=>$outdiscount,
 						'type'=>$outtype,
 						'duration_value'=>$outdurationvalue,
@@ -6782,7 +6782,13 @@ class Form
 		}
 
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array(
+			'object' => $objecttmp,
+			'htmlname' => $htmlname,
+			'filter' => $filter,
+			'searchkey' => $searchkey
+		);
+
 		$reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		if (!empty($hookmanager->resPrint)) {
 			$sql .= $hookmanager->resPrint;

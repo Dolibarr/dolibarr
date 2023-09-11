@@ -344,6 +344,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0').'_'.$filearrayindatabase[$key2]['name'];
 				$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
 				$filearray[$key]['cover'] = $filearrayindatabase[$key2]['cover'];
+				$filearray[$key]['keywords'] = $filearrayindatabase[$key2]['keywords'];
 				$filearray[$key]['acl'] = $filearrayindatabase[$key2]['acl'];
 				$filearray[$key]['rowid'] = $filearrayindatabase[$key2]['rowid'];
 				$filearray[$key]['label'] = $filearrayindatabase[$key2]['label'];
@@ -2193,7 +2194,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 					if (!$file->isDir()) {
 						// Get real and relative path for current file
 						$filePath = $file->getRealPath();
-						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen(realpath($inputdir)) + 1);
 
 						if (empty($excludefiles) || !preg_match($excludefiles, $filePath)) {
 							// Add current file to archive
@@ -2660,7 +2661,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
 				$tmptask->fetch('', $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;

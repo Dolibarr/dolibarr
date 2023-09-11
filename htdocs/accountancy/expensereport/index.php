@@ -188,6 +188,7 @@ $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseRepo
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
+$sql .= ' ORDER BY aa.account_number';
 
 dol_syslog('/accountancy/expensereport/index.php:: sql='.$sql);
 $resql = $db->query($sql);

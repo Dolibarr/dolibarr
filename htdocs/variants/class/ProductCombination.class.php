@@ -536,7 +536,14 @@ class ProductCombination
 							$new_price += $variation_price;
 						}
 
-						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
+						$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
+
+						if ($ret < 0) {
+							$this->db->rollback();
+							$this->error = $child->error;
+							$this->errors = $child->errors;
+							return $ret;
+						}
 					}
 				}
 			} else {
@@ -558,7 +565,14 @@ class ProductCombination
 					$new_price += $this->variation_price;
 				}
 
-				$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+
+				if ($ret < 0) {
+					$this->db->rollback();
+					$this->error = $child->error;
+					$this->errors = $child->errors;
+					return $ret;
+				}
 			}
 
 			$this->db->commit();
@@ -567,6 +581,8 @@ class ProductCombination
 		}
 
 		$this->db->rollback();
+		$this->error = $child->error;
+		$this->errors = $child->errors;
 		return -1;
 	}
 
@@ -585,6 +601,10 @@ class ProductCombination
 
 		$prodcomb2val = new ProductCombination2ValuePair($this->db);
 		$prodcomb = new ProductCombination($this->db);
+
+		$features = array_filter($features, function ($v) {
+			return !empty($v);
+		});
 
 		foreach ($features as $attr => $attr_val) {
 			$actual_comp[$attr] = $attr_val;

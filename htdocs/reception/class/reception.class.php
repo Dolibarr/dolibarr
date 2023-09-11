@@ -236,7 +236,6 @@ class Reception extends CommonObject
 
 		$this->user = $user;
 
-
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."reception (";
@@ -273,12 +272,12 @@ class Reception extends CommonObject
 		$sql .= ", ".$this->fk_project;
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql .= ", ".$this->weight;
-		$sql .= ", ".$this->sizeS; // TODO Should use this->trueDepth
-		$sql .= ", ".$this->sizeW; // TODO Should use this->trueWidth
-		$sql .= ", ".$this->sizeH; // TODO Should use this->trueHeight
-		$sql .= ", ".$this->weight_units;
-		$sql .= ", ".$this->size_units;
+		$sql .= ", ".(is_null($this->weight) ? "NULL" : ((double) $this->weight));
+		$sql .= ", ".(is_null($this->sizeS) ? "NULL" : ((double) $this->sizeS)); // TODO Should use this->trueDepth
+		$sql .= ", ".(is_null($this->sizeW) ? "NULL" : ((double) $this->sizeW)); // TODO Should use this->trueWidth
+		$sql .= ", ".(is_null($this->sizeH) ? "NULL" : ((double) $this->sizeH)); // TODO Should use this->trueHeight
+		$sql .= ", ".(is_null($this->weight_units) ? "NULL" : ((double) $this->weight_units));
+		$sql .= ", ".(is_null($this->size_units) ? "NULL" : ((double) $this->size_units));
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
@@ -378,7 +377,7 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -410,6 +409,7 @@ class Reception extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id                   = $obj->rowid;
+				$this->entity               = $obj->entity;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
 				$this->ref_supplier = $obj->ref_supplier;
@@ -566,7 +566,7 @@ class Reception extends CommonObject
 
 			// Loop on each product line to add a stock movement
 			// TODO in future, reception lines may not be linked to order line
-			$sql = "SELECT cd.fk_product, cd.subprice,";
+			$sql = "SELECT cd.fk_product, cd.subprice, cd.remise_percent,";
 			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql .= " ed.eatby, ed.sellby, ed.batch";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
@@ -592,12 +592,19 @@ class Reception extends CommonObject
 					$mouvS = new MouvementStock($this->db);
 					$mouvS->origin = &$this;
 
+					// get unit price with discount
+					$up_ht_disc = $obj->subprice;
+					if (!empty($obj->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) {
+						$up_ht_disc = price2num($up_ht_disc * (100 - $obj->remise_percent) / 100, 'MU');
+					}
+
 					if (empty($obj->batch)) {
 						// line without batch detail
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 						$inventorycode = '';
-						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
+						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $up_ht_disc, $langs->trans("ReceptionValidatedInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
+
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
@@ -610,7 +617,8 @@ class Reception extends CommonObject
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 						// Note: ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
 						$inventorycode = '';
-						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
+						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $up_ht_disc, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
+
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
@@ -727,8 +735,14 @@ class Reception extends CommonObject
 		$line->qty = $qty;
 
 		$supplierorderline = new CommandeFournisseurLigne($this->db);
-		$supplierorderline->fetch($id);
+		$result = $supplierorderline->fetch($id);
+		if ($result <= 0) {
+			$this->error = $supplierorderline->error;
+			$this->errors = $supplierorderline->errors;
+			return -1;
+		}
 
+		$fk_product = 0;
 		if (!empty($conf->stock->enabled) && !empty($supplierorderline->fk_product)) {
 			$fk_product = $supplierorderline->fk_product;
 

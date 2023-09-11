@@ -103,6 +103,8 @@ if ($cancel) {
 	$action = '';
 }
 
+$error = 0;
+
 if ($action == 'cancel_record' && $permissiontoadd) {
 	$object->setCanceled($user);
 }
@@ -110,6 +112,8 @@ if ($action == 'cancel_record' && $permissiontoadd) {
 if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 	$stockmovment = new MouvementStock($db);
 	$stockmovment->origin = $object;
+
+	$cacheOfProducts = array();
 
 	$db->begin();
 
@@ -127,8 +131,29 @@ if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 			$qty_stock = $line->qty_stock;
 			$qty_view = $line->qty_view;		// The quantity viewed by inventorier, the qty we target
 
+			// Load real stock we have now.
+			$option = '';
+			if (isset($cacheOfProducts[$line->fk_product])) {
+				$product_static = $cacheOfProducts[$line->fk_product];
+			} else {
+				$product_static = new Product($db);
+				$result = $product_static->fetch($line->fk_product, '', '', '', 1, 1, 1);
+
+				//$option = 'nobatch';
+				$option .= ',novirtual';
+				$product_static->load_stock($option); // Load stock_reel + stock_warehouse.
+
+				$cacheOfProducts[$product_static->id] = $product_static;
+			}
+
+			// Get the real quantity in stock now, but before the stock move for inventory.
+			$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
+			if ($conf->productbatch->enabled && $product_static->hasbatch()) {
+				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
+			}
+
 			if (!is_null($qty_view)) {
-				$stock_movement_qty = price2num($qty_view - $qty_stock, 'MS');
+				$stock_movement_qty = price2num($qty_view - $realqtynow, 'MS');
 				if ($stock_movement_qty != 0) {
 					if ($stock_movement_qty < 0) {
 						$movement_type = 1;
@@ -143,6 +168,19 @@ if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 						$error++;
 						setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
 						break;
+					}
+
+					// Update line with id of stock movement (and the start quantity if it has changed this last recording)
+					if ($qty_stock != $realqtynow) {
+						$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventorydet";
+						$sqlupdate .= " SET qty_stock = ".((float) $realqtynow);
+						$sqlupdate .= " WHERE rowid = ".((int) $line->rowid);
+						$resqlupdate = $db->query($sqlupdate);
+						if (! $resqlupdate) {
+							$error++;
+							setEventMessages($db->lasterror(), null, 'errors');
+							break;
+						}
 					}
 				}
 			}
@@ -191,6 +229,7 @@ if ($action =='updateinventorylines' && $permissiontoadd) {
 					setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
 				}
 				if ($result > 0) {
+					$inventoryline->qty_stock = price2num(GETPOST('stock_qty_'.$lineid, 'alpha'), 'MS');	// The new value that was set in as hidden field
 					$inventoryline->qty_view = $qtytoupdate;
 					$resultupdate = $inventoryline->update($user);
 				}
@@ -601,6 +640,7 @@ if ($object->id > 0) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+	$sql .= ' ORDER BY id.rowid';
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
@@ -625,13 +665,14 @@ if ($object->id > 0) {
 				$cacheOfWarehouses[$warehouse_static->id] = $warehouse_static;
 			}
 
+			$option = '';
 			if (isset($cacheOfProducts[$obj->fk_product])) {
 				$product_static = $cacheOfProducts[$obj->fk_product];
 			} else {
 				$product_static = new Product($db);
 				$result = $product_static->fetch($obj->fk_product, '', '', '', 1, 1, 1);
 
-				$option = 'nobatch';
+				//$option = 'nobatch';
 				$option .= ',novirtual';
 				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
 
@@ -654,7 +695,17 @@ if ($object->id > 0) {
 
 			// Expected quantity
 			print '<td class="right expectedqty" id="id_'.$obj->rowid.'">';
-			print $obj->qty_stock;
+			$valuetoshow = $obj->qty_stock;
+			// For inventory not yet close, we overwrite with the real value in stock now
+			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
+				if (!empty($conf->productbatch->enabled) && $product_static->hasbatch()) {
+					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
+				} else {
+					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
+				}
+			}
+			print price2num($valuetoshow, 'MS');
+			print '<input type="hidden" name="stock_qty_'.$obj->rowid.'" value="'.$valuetoshow.'">';
 			print '</td>';
 
 			// Real quantity

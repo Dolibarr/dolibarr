@@ -137,9 +137,9 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $user->rights->acco
 	if (!$error) {
 		$db->begin();
 
-		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as l";
-		$sql1 .= " SET l.fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
-		$sql1 .= ' WHERE l.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
+		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet";
+		$sql1 .= " SET fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
+		$sql1 .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/customer/lines.php::changeaccount sql= '.$sql1);
 		$resql1 = $db->query($sql1);

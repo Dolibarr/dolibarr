@@ -375,11 +375,15 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						$mesg = $srcobject->error;
+						$langs->load("errors");
+						setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+						$action = 'create';
 						$error++;
 					}
 				} else {
-					$mesg = $object->error;
+					$langs->load("errors");
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'create';
 					$error++;
 				}
 			} else {
@@ -403,12 +407,14 @@ if (empty($reshook)) {
 						$langs->load("errors");
 						setEventMessages($object->error, $object->errors, 'errors');
 						$action = 'create';
+						$error++;
 					}
 				}
 			}
 		} else {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"));
 			$action = 'create';
+			$error++;
 		}
 	} elseif ($action == 'update' && $user->rights->ficheinter->creer) {
 		$object->socid = $socid;

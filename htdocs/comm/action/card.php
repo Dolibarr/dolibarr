@@ -659,7 +659,7 @@ if (empty($reshook) && $action == 'update') {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-				$object->loadReminders();
+				$object->loadReminders($remindertype, 0, false);
 				if (!empty($object->reminders) && $object->datep > dol_now()) {
 					foreach ($object->reminders as $reminder) {
 						$reminder->delete($user);
@@ -1439,6 +1439,10 @@ if ($id > 0) {
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
+	            		$("#actioncode").change(function() {
+                        	if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
+                        	else $("#dateend").removeClass("fieldrequired");
+                    	});
                    })';
 			print '</script>'."\n";
 		}
@@ -1483,7 +1487,12 @@ if ($id > 0) {
 		print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
 
 		// Date start - end
-		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
+		print '<tr><td class="nowrap">';
+		print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
+		print ' - ';
+		print '<span id="dateend"'.($object->type_code == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
+		print '</td><td td colspan="3">';
+		//print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
 		if (GETPOST("afaire") == 1) {
 			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
 		} elseif (GETPOST("afaire") == 2) {

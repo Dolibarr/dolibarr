@@ -95,7 +95,7 @@ $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
-$lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
+$firstdaytoshowgmt = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'gmt');
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
 	$usertoprocess = $user;
@@ -492,7 +492,7 @@ print img_picto('', 'projecttask', 'class="pictofixedwidth"');
 $formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, '', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
-print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid', 0, 'maxwidth150onsmartphone');
+print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'position', 0, 'maxwidth150onsmartphone');
 print '<input type="submit" class="button valignmiddle smallonsmartphone" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
@@ -503,6 +503,11 @@ $startday = dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['
 
 // Get if user is available or not for each day
 $isavailable = array();
+
+// Assume from Monday to Friday if conf empty or badly formed
+$numstartworkingday = 1;
+$numendworkingday = 5;
+
 if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS)) {
 	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
 	if (count($tmparray) >= 2) {
@@ -513,25 +518,18 @@ if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS)) {
 
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
-
-	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
-	//$tmparray = dol_getdate($dayinloop);
-	//$dayinloopwithouthours=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
-	//print dol_print_date($dayinloop, 'dayhour').' ';
-	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';
-	//print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour').'<br>';
+	$dayinloopfromfirstdaytoshowgmt = dol_time_plus_duree($firstdaytoshowgmt, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
 
 	$statusofholidaytocheck = Holiday::STATUS_APPROVED;
 
 	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow, $statusofholidaytocheck);
 	$isavailable[$dayinloopfromfirstdaytoshow] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-	$test = num_public_holiday($dayinloopfromfirstdaytoshow, $dayinloopfromfirstdaytoshow + 86400, $mysoc->country_code);
+	$test = num_public_holiday($dayinloopfromfirstdaytoshowgmt, $dayinloopfromfirstdaytoshowgmt + 86400, $mysoc->country_code);
 	if ($test) {
 		$isavailable[$dayinloopfromfirstdaytoshow] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 	}
 }
-//var_dump($isavailable);
 
 
 
@@ -663,13 +661,7 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 }
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
-	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
-	/*print $dayinloopfromfirstdaytoshow;
-	print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour', 'gmt');
-	print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour');
-	print dol_print_date($dayinloopfromfirstdaytoshow, '%a', 'gmt');
-	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
-	print '<br>';*/
+
 	$cssweekend = '';
 	if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
 		$cssweekend = 'weekend';

@@ -777,6 +777,29 @@ class ImportXlsx extends ModeleImports
 							$tmp = explode('-', $val, 2);
 							$listfields[] = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
 							$listvalues[] = "'" . $tmp[1] . "'";
+						} elseif (preg_match('/^rule-/', $val)) {
+							$fieldname = $key;
+							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
+								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {
+									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
+									$class = $objimport->array_import_convertvalue[0][$fieldname]['class'];
+									$method = $objimport->array_import_convertvalue[0][$fieldname]['method'];
+									$resultload = dol_include_once($file);
+									if (empty($resultload)) {
+										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+										break;
+									}
+									$classinstance = new $class($this->db);
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
+									if ($res < 0) {
+										if (!empty($objimport->array_import_convertvalue[0][$fieldname]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, end($listvalues), 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$fieldname]['dict']));
+										else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
+										$this->errors[$error]['type'] = 'FOREIGNKEY';
+										$errorforthistable++;
+										$error++;
+									}
+								}
+							}
 						} else {
 							$this->errors[$error]['lib'] = 'Bad value of profile setup ' . $val . ' for array_import_fieldshidden';
 							$this->errors[$error]['type'] = 'Import profile setup';

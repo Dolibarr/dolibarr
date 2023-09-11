@@ -260,7 +260,7 @@ if ($action == "confirm_update") {
 			if ($mode != '_tmp') {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			}
-			$action = 'update';
+			$action = '';
 			$id = $object->id;
 			$piece_num = $object->piece_num;
 		}
@@ -537,7 +537,7 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document creation
+		// Date document export
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
 		print '<td>';
@@ -545,7 +545,7 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document creation
+		// Date document validation
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
 		print '<td>';
@@ -604,6 +604,7 @@ if ($action == 'create') {
 		print '<br>';
 
 		$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
+
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -636,12 +637,21 @@ if ($action == 'create') {
 				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
-					print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 				} else {
 					print_liste_field_titre("");
 				}
 
 				print "</tr>\n";
+
+				// Add an empty line if there is not yet
+				if (!empty($object->linesmvt[0])) {
+					$tmpline = $object->linesmvt[0];
+					if (!empty($tmpline->numero_compte)) {
+						$line = new BookKeepingLine();
+						$object->linesmvt[] = $line;
+					}
+				}
 
 				foreach ($object->linesmvt as $line) {
 					print '<tr class="oddeven">';
@@ -673,7 +683,31 @@ if ($action == 'create') {
 						print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
+					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
+						if ($action == "" || $action == 'add') {
+							print '<!-- td columns in add mode -->';
+							print '<td>';
+							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
+							print '</td>';
+							print '<td>';
+							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+							// Also, it is not possible to use a value that is not in the list.
+							// Also, the label is not automatically filled when a value is selected.
+							if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
+							} else {
+								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
+							}
+							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+							print '</td>';
+							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
+							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
+							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
+							print '<td class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
+						}
 					} else {
+						print '<!-- td columns in display mode -->';
 						$accountingaccount->fetch(null, $line->numero_compte, true);
 						print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 0).'</td>';
 						print '<td>'.length_accounta($line->subledger_account);
@@ -715,33 +749,8 @@ if ($action == 'create') {
 					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_debit, $total_credit)), 'warnings');
 				}
 
-				if (empty($object->date_export) && empty($object->date_validation)) {
-					if ($action == "" || $action == 'add') {
-						print '<tr class="oddeven">';
-						print '<!-- td columns in add mode -->';
-						print '<td>';
-						print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
-						print '</td>';
-						print '<td>';
-						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-						// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-						// Also, it is not possible to use a value that is not in the list.
-						// Also, the label is not automatically filled when a value is selected.
-						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount('', 'subledger_account', 1);
-						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
-						}
-						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
-						print '</td>';
-						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-						print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
-						print '</tr>';
-					}
-					print '</table>';
-				}
+				print '</table>';
+				print '</div>';
 
 				if ($mode == '_tmp' && $action == '') {
 					print '<br>';

@@ -131,7 +131,7 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 				}
 				foreach ($listofoppcode as $rowid => $code) {
 					$dataseries[] = array(
-						'label' => $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $code, 'c_ticket_category', 'code', 'label', $code),
+						'label' => $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $code, 'c_ticket_type', 'code', 'label', $code),
 						'data' => (empty($data[$code]) ? 0 : $data[$code])
 					);
 				}

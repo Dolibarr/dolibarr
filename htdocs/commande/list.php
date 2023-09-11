@@ -337,15 +337,15 @@ if ($action == 'shipped' && $permissiontoadd) {
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
-				if ($objecttmp->statut == 1) {
+				if ($objecttmp->statut == 1 || $objecttmp->statut == 2) {
 					if ($objecttmp->cloture($user)) {
-						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInShippedStatus'), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($langs->trans('YouCantShipThis'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					setEventMessage($objecttmp->ref." ".$langs->trans('MustBeValidatedBefore'), 'errors');
 					$error++;
 				}
 			} else {
@@ -1762,7 +1762,7 @@ if ($resql) {
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
 			print '<td align="center" class="nowrap">';
-			print dol_escape_htmltag($obj->note_public);
+			print dol_string_nohtmltag($obj->note_public);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1772,7 +1772,7 @@ if ($resql) {
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
 			print '<td align="center" class="nowrap">';
-			print dol_escape_htmltag($obj->note_private);
+			print dol_string_nohtmltag($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

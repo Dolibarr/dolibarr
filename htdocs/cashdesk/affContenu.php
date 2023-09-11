@@ -26,7 +26,7 @@
 require_once 'class/Facturation.class.php';
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
-if (GETPOST('id', 'int') == 'NOUV') {
+if (GETPOST('id', 'aZ09') == 'NOUV') {
 	unset($_SESSION['serObjFacturation']);
 	unset($_SESSION['poscart']);
 }

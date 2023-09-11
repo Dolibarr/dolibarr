@@ -32,6 +32,7 @@
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php';
 
 
 /**
@@ -92,6 +93,7 @@ class ProductFournisseur extends Product
 	public $fk_availability;
 
 	public $fourn_unitprice;
+	public $fourn_unitprice_with_discount;	// not saved into database
 	public $fourn_tva_tx;
 	public $fourn_tva_npr;
 
@@ -255,9 +257,10 @@ class ProductFournisseur extends Product
 	 *    @param  	string		$desc_fourn     	            Custom description for product_fourn_price
 	 *    @param  	string		$barcode     	                Barcode
 	 *    @param  	int		    $fk_barcode_type     	        Barcode type
+	 *    @param  	array		$options		     	       	Extrafields of product fourn price
 	 *    @return	int											<0 if KO, >=0 if OK
 	 */
-	public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '')
+	public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '', $options = array())
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -316,7 +319,9 @@ class ProductFournisseur extends Product
 		$qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
 
-		$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
+		// We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
+		//$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
+		$packaging = price2num((empty($this->packaging) ? $qty : $this->packaging), 'MS');
 
 		$error = 0;
 		$now = dol_now();
@@ -404,6 +409,25 @@ class ProductFournisseur extends Product
 				$sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
+
+			if (!$error) {
+				if (!empty($options) && is_array($options)) {
+					$productfournisseurprice = new ProductFournisseurPrice($this->db);
+					$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
+					if ($res > 0) {
+						foreach ($options as $key=>$value) {
+							$productfournisseurprice->array_options[$key] = $value;
+						}
+						$res = $productfournisseurprice->update($user);
+						if ($res < 0) {
+							$this->error = $productfournisseurprice->error;
+							$this->errors = $productfournisseurprice->errors;
+							$error++;
+						}
+					}
+				}
+			}
+
 			// TODO Add price_base_type and price_ttc
 
 			dol_syslog(get_class($this).'::update_buyprice update knowing id of line = product_fourn_price_id = '.$this->product_fourn_price_id, LOG_DEBUG);
@@ -486,7 +510,26 @@ class ProductFournisseur extends Product
 				if ($resql) {
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
 				} else {
+					$this->error = $this->db->lasterror();
 					$error++;
+				}
+
+				if (!$error) {
+					if (!empty($options) && is_array($options)) {
+						$productfournisseurprice = new ProductFournisseurPrice($this->db);
+						$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
+						if ($res > 0) {
+							foreach ($options as $key=>$value) {
+								$productfournisseurprice->array_options[$key] = $value;
+							}
+							$res = $productfournisseurprice->update($user);
+							if ($res < 0) {
+								$this->error = $productfournisseurprice->error;
+								$this->errors = $productfournisseurprice->errors;
+								$error++;
+							}
+						}
+					}
 				}
 
 				if (!$error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
@@ -544,7 +587,7 @@ class ProductFournisseur extends Product
 		$sql .= " pfp.supplier_reputation, pfp.fk_user, pfp.datec,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
 		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging,";
-		$sql .= " p.ref as product_ref";
+		$sql .= " p.ref as product_ref, p.tosell as status, p.tobuy as status_buy";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE pfp.rowid = ".(int) $rowid;
 		$sql .= " AND pfp.fk_product = p.rowid";
@@ -560,7 +603,8 @@ class ProductFournisseur extends Product
 				$this->fk_product				= $obj->fk_product;
 				$this->product_id				= $obj->fk_product;
 				$this->product_ref				= $obj->product_ref;
-
+				$this->status					= $obj->status;
+				$this->status_buy				= $obj->status_buy;
 				$this->fourn_id					= $obj->fk_soc;
 				$this->fourn_ref				= $obj->ref_fourn; // deprecated
 				$this->ref_supplier             = $obj->ref_fourn;
@@ -592,13 +636,7 @@ class ProductFournisseur extends Product
 					$this->supplier_barcode = $obj->barcode;
 					$this->supplier_fk_barcode_type = $obj->fk_barcode_type;
 				}
-
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					$this->packaging = $obj->packaging;
-					if ($this->packaging < $this->fourn_qty) {
-						$this->packaging = $this->fourn_qty;
-					}
-				}
+				$this->packaging = $obj->packaging;
 
 				if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
 					$priceparser = new PriceParser($this->db);
@@ -642,14 +680,11 @@ class ProductFournisseur extends Product
 		// phpcs:enable
 		global $conf;
 
-		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref,";
+		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, ";
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
-		$sql .= " pfp.barcode, pfp.fk_barcode_type";
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= ", pfp.packaging";
-		}
+		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND pfp.fk_soc = s.rowid AND pfp.fk_product = p.rowid";
@@ -674,6 +709,8 @@ class ProductFournisseur extends Product
 
 				$prodfourn->product_ref = $record["product_ref"];
 				$prodfourn->product_fourn_price_id = $record["product_fourn_pri_id"];
+				$prodfourn->status					= $record["status"];
+				$prodfourn->status_buy				= $record["status_buy"];
 				$prodfourn->product_fourn_id = $record["product_fourn_id"];
 				$prodfourn->product_fourn_entity = $record["entity"];
 				$prodfourn->ref_supplier			= $record["ref_fourn"];
@@ -703,12 +740,7 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_multicurrency_id          = $record["fk_multicurrency"];
 				$prodfourn->fourn_multicurrency_code        = $record["multicurrency_code"];
 
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					$prodfourn->packaging = $record["packaging"];
-					if ($prodfourn->packaging < $prodfourn->fourn_qty) {
-						$prodfourn->packaging = $prodfourn->fourn_qty;
-					}
-				}
+				$prodfourn->packaging = $record["packaging"];
 
 				if (!empty($conf->barcode->enabled)) {
 					$prodfourn->supplier_barcode = $record["barcode"];
@@ -817,8 +849,10 @@ class ProductFournisseur extends Product
 				$min = -1;
 				foreach ($record_array as $record) {
 					$fourn_price = $record["price"];
-					// discount calculated buy price
-					$fourn_unitprice = $record["unitprice"] * (1 - $record["remise_percent"] / 100) - $record["remise"];
+					// calculate unit price for quantity 1
+					$fourn_unitprice = $record["unitprice"];
+					$fourn_unitprice_with_discount = $record["unitprice"] * (1 - $record["remise_percent"] / 100);
+
 					if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
@@ -835,6 +869,7 @@ class ProductFournisseur extends Product
 							} else {
 								$fourn_unitprice = $fourn_price;
 							}
+							$fourn_unitprice_with_discount = $fourn_unitprice * (1 - $record["remise_percent"] / 100);
 						}
 					}
 					if ($fourn_unitprice < $min || $min == -1) {
@@ -847,6 +882,7 @@ class ProductFournisseur extends Product
 						$this->fourn_remise_percent     = $record["remise_percent"];
 						$this->fourn_remise             = $record["remise"];
 						$this->fourn_unitprice          = $fourn_unitprice;
+						$this->fourn_unitprice_with_discount = $fourn_unitprice_with_discount;
 						$this->fourn_charges            = $record["charges"]; // deprecated
 						$this->fourn_tva_tx             = $record["tva_tx"];
 						$this->fourn_id                 = $record["fourn_id"];

@@ -248,7 +248,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		exit();
 	}
 
-	$prodcomb->variation_weight = $weight_impact;
+	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
 	if ($conf->global->PRODUIT_MULTIPRICES) {
@@ -467,7 +467,7 @@ if (!empty($id) || !empty($ref)) {
 		}
 
 		if ($action == 'add') {
-			$prodattr_all = $prodattr->fetchAll();
+			$prodattr_all = $prodattr->fetchAll(1);
 
 			if (!$selected) {
 				$selected = $prodattr_all[key($prodattr_all)]->id;
@@ -478,7 +478,6 @@ if (!empty($id) || !empty($ref)) {
 			foreach ($prodattr_all as $each) {
 				$prodattr_alljson[$each->id] = $each;
 			}
-
 			?>
 
 		<script type="text/javascript">

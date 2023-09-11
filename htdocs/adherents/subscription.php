@@ -1061,12 +1061,12 @@ if ($rowid > 0) {
 				// Bank account
 				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
 				print img_picto('', 'bank_account');
-				$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2);
+				$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2, '', 0, 'minwidth200');
 				print "</td></tr>\n";
 
 				// Payment mode
 				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-				$form->select_types_paiements(GETPOST('operation'), 'operation', '', 2);
+				$form->select_types_paiements(GETPOST('operation'), 'operation', '', 2, 1, 0, 0, 1, 'minwidth200');
 				print "</td></tr>\n";
 
 				// Date of payment

@@ -55,8 +55,8 @@ class AccountancyImport
 			$fieldname = $fieldArr[1];
 		}
 
-		$debit  = trim($arrayrecord[11]['val']);
-		$credit = trim($arrayrecord[12]['val']);
+		$debit  = floatval(trim($arrayrecord[11]['val']));
+		$credit = floatval(trim($arrayrecord[12]['val']));
 		if (!empty($debit)) {
 			$amount = $debit;
 		} else {
@@ -86,7 +86,7 @@ class AccountancyImport
 			$fieldname = $fieldArr[1];
 		}
 
-		$debit = trim($arrayrecord[11]['val']);
+		$debit = floatval(trim($arrayrecord[11]['val']));
 		if (!empty($debit)) {
 			$sens = 'D';
 		} else {

@@ -303,8 +303,20 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				if ($origin && $originid) {
-					$element = 'supplier_proposal';
-					$subelement = 'supplier_proposal';
+					$element = $subelement = $origin;
+					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+						$element = $regs[1];
+						$subelement = $regs[2];
+					}
+
+					// For compatibility
+					if ($element == 'order') {
+						$element = $subelement = 'commande';
+					}
+					if ($element == 'propal') {
+						$element = 'comm/propal';
+						$subelement = 'propal';
+					}
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -395,6 +407,7 @@ if (empty($reshook)) {
 							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 																											   // modified by hook
 							if ($reshook < 0) {
+								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 								$error++;
 							}
 						} else {
@@ -1063,8 +1076,20 @@ if ($action == 'create') {
 
 	// Load objectsrc
 	if (!empty($origin) && !empty($originid)) {
-		$element = 'supplier_proposal';
-		$subelement = 'supplier_proposal';
+		$element = $subelement = GETPOST('origin');
+		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs)) {
+			$element = $regs[1];
+			$subelement = $regs[2];
+		}
+
+		// For compatibility
+		if ($element == 'order' || $element == 'commande') {
+			$element = $subelement = 'commande';
+		}
+		if ($element == 'propal') {
+			$element = 'comm/propal';
+			$subelement = 'propal';
+		}
 
 		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 

@@ -120,6 +120,14 @@ if ($object->id > 0) {
 	}
 }
 
+$candelete = 0;
+if (!empty($user->rights->expensereport->supprimer)) {
+	$candelete = 1;
+}
+if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->rights->expensereport->write && in_array($object->fk_user_author, $childids)) {
+	$candelete = 1;
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -195,7 +203,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->supprimer) {
+	if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $candelete) {
 		$object = new ExpenseReport($db);
 		$result = $object->fetch($id);
 		$result = $object->delete($user);
@@ -1150,11 +1158,17 @@ if (empty($reshook)) {
 
 				unset($date);
 			} else {
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
-		$action = '';
+		if (!$error) {
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+			exit;
+		} else {
+			$action = '';
+		}
 	}
 
 	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->rights->expensereport->creer) {
@@ -1274,6 +1288,15 @@ if (empty($reshook)) {
 
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
+
+					unset($qty);
+					unset($value_unit_ht);
+					unset($value_unit);
+					unset($vatrate);
+					unset($comments);
+					unset($fk_c_type_fees);
+					unset($fk_project);
+					unset($date);
 				}
 
 				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
@@ -2051,7 +2074,8 @@ if ($action == 'create') {
 						// IK
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 							print '<td class="fk_c_exp_tax_cat">';
-							print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+							$exp_tax_cat_label = dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+							print $langs->trans($exp_tax_cat_label);
 							print '</td>';
 						}
 
@@ -2657,7 +2681,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED) {
 		// Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
-	} elseif ($user->rights->expensereport->supprimer && $object->status != ExpenseReport::STATUS_CLOSED) {
+	} elseif ($candelete && $object->status != ExpenseReport::STATUS_CLOSED) {
 		// Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}

@@ -842,7 +842,9 @@ class MouvementStock extends CommonObject
 	 */
 	private function createBatch($dluo, $qty)
 	{
-		global $user;
+		global $user, $langs;
+
+		$langs->load('productbatch');
 
 		$pdluo = new Productbatch($this->db);
 
@@ -853,7 +855,7 @@ class MouvementStock extends CommonObject
 			$result = $pdluo->fetch($dluo);
 			if (empty($pdluo->id)) {
 				// We didn't find the line. May be it was deleted before by a previous move in same transaction.
-				$this->error = 'Error. You ask a move on a record for a serial that does not exists anymore. May be you take the same serial on same warehouse several times in same shipment or it was used by another shipment. Remove this shipment and prepare another one.';
+				$this->error = $langs->trans('CantMoveNonExistantSerial');
 				$this->errors[] = $this->error;
 				$result = -2;
 			}
