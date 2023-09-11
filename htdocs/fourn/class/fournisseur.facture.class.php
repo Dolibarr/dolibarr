@@ -1200,14 +1200,14 @@ class FactureFournisseur extends CommonInvoice
 		if (empty($this->total_tva)) {
 			$this->total_tva = 0;
 		}
-		if (isset($this->total_localtax1)) {
-			$this->total_localtax1=trim($this->total_localtax1);
+		if (empty($this->total_localtax1)) {
+			$this->total_localtax1 = 0;
 		}
-		if (isset($this->total_localtax2)) {
-			$this->total_localtax2=trim($this->total_localtax2);
+		if (empty($this->total_localtax2)) {
+			$this->total_localtax2= 0;
 		}
-		if (isset($this->total_ttc)) {
-			$this->total_ttc = trim($this->total_ttc);
+		if (empty($this->total_ttc)) {
+			$this->total_ttc = 0;
 		}
 		if (isset($this->statut)) {
 			$this->statut = (int) $this->statut;
