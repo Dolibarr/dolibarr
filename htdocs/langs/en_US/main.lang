@@ -60,7 +60,7 @@ ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=%s)
 ErrorFileNotUploaded=File was not uploaded. Check that size does not exceed maximum allowed, that free space is available on disk and that there is not already a file with same name in this directory.
 ErrorInternalErrorDetected=Error detected
 ErrorWrongHostParameter=Wrong host parameter
-ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post the form again.
+ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Company/Foundation and post the form again.
 ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least one child record.
 ErrorWrongValue=Wrong value
 ErrorWrongValueForParameterX=Wrong value for parameter %s

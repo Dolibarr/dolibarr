@@ -158,6 +158,8 @@ abstract class CommonDocGenerator
 	public $posxqty;
 	public $posxpuht;
 	public $posxtva;
+	public $posxtotalht;
+	public $postotalht;
 	public $atleastonephoto;
 	public $atleastoneratenotnull;
 	public $atleastonediscount;
@@ -1730,5 +1732,52 @@ abstract class CommonDocGenerator
 		}
 
 		return 1;
+	}
+
+	/**
+	 *   Define Array Column Field into $this->cols
+	 *   This method must be implemented by the module that generate the document with its own columns.
+	 *
+	 *   @param		Object			$object    		Common object
+	 *   @param		Translate		$outputlangs    Langs
+	 *   @param		int			   	$hidedetails	Do not show line details
+	 *   @param		int			   	$hidedesc		Do not show desc
+	 *   @param		int			   	$hideref		Do not show ref
+	 *   @return	void
+	 */
+	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		// Default field style for content
+		$this->defaultContentsFieldsStyle = array(
+			'align' => 'R', // R,C,L
+			'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+		);
+
+		// Default field style for content
+		$this->defaultTitlesFieldsStyle = array(
+			'align' => 'C', // R,C,L
+			'padding' => array(0.5, 0, 0.5, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+		);
+
+		// Example
+		/*
+		$rank = 0; // do not use negative rank
+		$this->cols['desc'] = array(
+			'rank' => $rank,
+			'width' => false, // only for desc
+			'status' => true,
+			'title' => array(
+				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'align' => 'L',
+				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+				// 'label' => ' ', // the final label
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+			'content' => array(
+				'align' => 'L',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+		);
+		*/
 	}
 }

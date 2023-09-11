@@ -4,7 +4,7 @@
 NoErrorCommitIsDone=No error, we commit
 # Errors
 ErrorButCommitIsDone=Errors found but we validate despite this
-ErrorBadEMail=Email %s is incorrect
+ErrorBadEMail=Email address %s is incorrect
 ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
 ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
@@ -32,6 +32,7 @@ ErrorBadThirdPartyName=Bad value for third-party name
 ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
+ErrorAccountancyCodeSupplierIsMandatory=The accountancy code of supplier %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
@@ -240,7 +241,7 @@ ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
-ErrorSearchCriteriaTooSmall=Search criteria too small.
+ErrorSearchCriteriaTooSmall=Search criteria too short.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.

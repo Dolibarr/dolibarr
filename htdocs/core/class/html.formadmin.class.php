@@ -329,7 +329,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Affichage liste deroulante des menus
-		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select class="flat maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'">';
 		$oldprefix = '';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
