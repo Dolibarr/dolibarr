@@ -11,7 +11,7 @@ jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # important!
 
@@ -29,4 +29,3 @@ jobs:
           standard: 'dev/setup/codesniffer/ruleset.xml'
           fail_on_warnings: false
           scope: "blame"
-          encoding: "utf-8"
