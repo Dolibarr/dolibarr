@@ -410,7 +410,7 @@ if ($mode == 'overwrite') {
 				print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($obj->transvalue).'">';
 			} else {
 				//print $obj->transkey.' '.$langsenfileonly->tab_translate[$obj->transkey];
-				$titleforvalue = $langs->trans("Translation").' en_US for key '.$obj->transkey.':<br>'.($langsenfileonly->tab_translate[$obj->transkey] ? $langsenfileonly->trans($obj->transkey) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
+				$titleforvalue = $langs->trans("Translation").' en_US for key '.$obj->transkey.':<br>'.(!empty($langsenfileonly->tab_translate[$obj->transkey]) ? $langsenfileonly->trans($obj->transkey) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
 				/*if ($obj->lang != 'en_US') {
 					$titleforvalue .= '<br>'.$langs->trans("Translation").' '.$obj->lang.' '...;
 				}*/
@@ -427,9 +427,9 @@ if ($mode == 'overwrite') {
 				print ' &nbsp; ';
 				print '<input type="submit" class="button buttongen button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 			} else {
-				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit&token='.newToken().((empty($user->entity) && !empty($debug)) ? '&debug=1' : '').'">'.img_edit().'</a>';
 				print ' &nbsp; ';
-				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().((empty($user->entity) && !empty($debug)) ? '&debug=1' : '').'">'.img_delete().'</a>';
 			}
 			print '</td>';
 

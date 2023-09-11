@@ -502,7 +502,8 @@ if ($mode == 'feature') {
 	$interfaces = new Interfaces($db);
 	$triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external') ? '/'.$moduledir : '').'/core/triggers'));
 	foreach ($triggers as $triggercursor) {
-		if ($triggercursor['module'] == $moduledir) {
+		$tc = $triggercursor['module'] ?? null;
+		if ($tc == $moduledir) {
 			$yesno = 'Yes';
 			$moreinfoontriggerfile = ' ('.$triggercursor['relpath'].')';
 		}
