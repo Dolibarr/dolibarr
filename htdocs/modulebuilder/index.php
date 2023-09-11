@@ -3310,7 +3310,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = (count($objects) <= 0 ? $langs->trans("Objects") : $langs->trans("Objects")." (".count($objects).")");
+		$head2[$h][1] = ((!is_array($objects) || count($object) <= 0) ? $langs->trans("Objects") : $langs->trans("Objects")." (".count($objects).")");
 		$head2[$h][2] = 'objects';
 		$h++;
 
