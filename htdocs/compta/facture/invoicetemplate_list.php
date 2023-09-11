@@ -169,14 +169,6 @@ if ($socid > 0) {
 	}
 }
 
-if ($socid > 0) {
-		$tmpthirdparty = new Societe($db);
-		$res = $tmpthirdparty->fetch($socid);
-	if ($res > 0) {
-		$search_societe = $tmpthirdparty->name;
-	}
-}
-
 $objecttype = 'facture_rec';
 
 $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
@@ -254,8 +246,8 @@ if (empty($reshook)) {
 	// Mass actions
 	/*$objectclass='MyObject';
 	$objectlabel='MyObject';
-	$permissiontoread = $user->rights->mymodule->read;
-	$permissiontodelete = $user->rights->mymodule->delete;
+	$permissiontoread = $user->hasRight("mymodule", "read");
+	$permissiontodelete = $user->hasRight("mymodule", "delete");
 	$uploaddir = $conf->mymodule->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
@@ -317,7 +309,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -538,7 +530,7 @@ $arrayofmassactions = array(
 $massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 //$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -735,6 +727,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
@@ -853,7 +846,7 @@ while ($i < $imaxinloop) {
 	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="nowrap center">';
+		print '<td class="center tdoverflowmax125">';
 		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
 				print $langs->trans("MaxNumberOfGenerationReached");
@@ -940,7 +933,9 @@ while ($i < $imaxinloop) {
 		}
 	}
 	if (!empty($arrayfields['f.frequency']['checked'])) {
-		print '<td class="center">'.($objp->frequency > 0 ? $objp->frequency : '').'</td>';
+		print '<td class="center">';
+		print ($objp->frequency > 0 ? $objp->frequency : '');
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
