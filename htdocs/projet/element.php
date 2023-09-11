@@ -858,7 +858,11 @@ foreach ($listofreferent as $key => $value) {
 				} elseif ($tablename == 'fichinter') {
 					$total_ht_by_line = $element->getAmount();
 				} elseif ($tablename == 'stock_mouvement') {
-					$total_ht_by_line = $element->price * abs($element->qty);
+					if (!empty($conf->global->PROJECT_ALLOW_NEGATIVE_STOCK_MVT)) {
+						$total_ht_by_line = $element->price * $element->qty;
+					} else {
+						$total_ht_by_line = $element->price * abs($element->qty);
+					}
 				} elseif ($tablename == 'projet_task') {
 					$tmp = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee);
 					$total_ht_by_line = price2num($tmp['amount'], 'MT');
@@ -895,7 +899,11 @@ foreach ($listofreferent as $key => $value) {
 				} elseif ($tablename == 'fichinter') {
 					$total_ttc_by_line = $element->getAmount();
 				} elseif ($tablename == 'stock_mouvement') {
-					$total_ttc_by_line = $element->price * abs($element->qty);
+					if (!empty($conf->global->PROJECT_ALLOW_NEGATIVE_STOCK_MVT)) {
+						$total_ttc_by_line = $element->price * $element->qty;
+					} else {
+						$total_ttc_by_line = $element->price * abs($element->qty);
+					}
 				} elseif ($tablename == 'projet_task') {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
@@ -1397,7 +1405,11 @@ foreach ($listofreferent as $key => $value) {
 					} elseif ($tablename == 'fichinter') {
 						$total_ht_by_line = $element->getAmount();
 					} elseif ($tablename == 'stock_mouvement') {
-						$total_ht_by_line = $element->price * abs($element->qty);
+						if (!empty($conf->global->PROJECT_ALLOW_NEGATIVE_STOCK_MVT)) {
+							$total_ht_by_line = $element->price * $element->qty;
+						} else {
+							$total_ht_by_line = $element->price * abs($element->qty);
+						}
 					} elseif (in_array($tablename, array('projet_task'))) {
 						if (isModEnabled('salaries')) {
 							// TODO Permission to read daily rate to show value
@@ -1451,7 +1463,11 @@ foreach ($listofreferent as $key => $value) {
 					} elseif ($tablename == 'fichinter') {
 						$total_ttc_by_line = $element->getAmount();
 					} elseif ($tablename == 'stock_mouvement') {
-						$total_ttc_by_line = $element->price * abs($element->qty);
+						if (!empty($conf->global->PROJECT_ALLOW_NEGATIVE_STOCK_MVT)) {
+							$total_ttc_by_line = $element->price * $element->qty;
+						} else {
+							$total_ttc_by_line = $element->price * abs($element->qty);
+						}
 					} elseif ($tablename == 'projet_task') {
 						if (isModEnabled('salaries')) {
 							// TODO Permission to read daily rate
