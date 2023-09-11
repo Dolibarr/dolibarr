@@ -1649,7 +1649,7 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *    Mark a message as read
+	 *    Set an assigned user to a ticket.
 	 *
 	 *    @param    User	$user				Object user
 	 *    @param    int 	$id_assign_user		ID of user assigned
@@ -1658,8 +1658,6 @@ class Ticket extends CommonObject
 	 */
 	public function assignUser($user, $id_assign_user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$this->oldcopy = dol_clone($this);
