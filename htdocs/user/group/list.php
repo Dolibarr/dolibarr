@@ -513,12 +513,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}*/
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) {
-		if (!empty($val['checked'])) {
-			$colspan++;
-		}
-	}
+	$colspan = $savnbfield;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
