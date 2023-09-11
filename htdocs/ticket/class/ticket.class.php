@@ -509,7 +509,7 @@ class Ticket extends CommonObject
 			$sql .= "fk_contract,";
 			$sql .= "origin_email,";
 			$sql .= "fk_user_create,";
-			$sql .= "fk_user_assign,";
+			// $sql .= "fk_user_assign,";
 			$sql .= "email_msgid,";
 			$sql .= "email_date,";
 			$sql .= "subject,";
@@ -535,7 +535,7 @@ class Ticket extends CommonObject
 			$sql .= " ".($this->fk_contract > 0 ? $this->db->escape($this->fk_contract) : "null").",";
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
 			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? $user->id : 'NULL') : ($this->fk_user_create > 0 ? $this->fk_user_create : 'NULL')).",";
-			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
+			// $sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
 			$sql .= " ".(empty($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
@@ -566,6 +566,13 @@ class Ticket extends CommonObject
 
 			if (!$error) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
+			}
+
+			// Assign user if defined
+			$resultAssign = ($this->fk_user_assign > 0 ? $this->assignUser($user, $this->fk_user_assign, $notrigger) : 0);
+
+			if ($resultAssign < 0) {
+				$error++;
 			}
 
 			if (!$error && !empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
