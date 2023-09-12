@@ -193,7 +193,7 @@ foreach ($modulesdir as $dir) {
 
 $db->commit();
 
-// Read permissions of user
+// Read permissions of edited user
 $permsuser = array();
 
 $sql = "SELECT DISTINCT ur.fk_id";
@@ -591,7 +591,7 @@ if ($result) {
 		// Permission and tick (2 columns)
 		if (!empty($object->admin) && !empty($objMod->rights_admin_allowed)) {    // Permission granted because admin
 			if ($caneditperms) {
-				print '<td class="center">'.img_picto($langs->trans("Administrator"), 'star').'</td>';
+				print '<td class="center">'.img_picto($langs->trans("AdministratorDesc"), 'star').'</td>';
 			} else {
 				print '<td>&nbsp;</td>';
 			}
@@ -675,12 +675,20 @@ if ($result) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
 			}
 		}
-		// Special warning cas for the permission "Allow to modify other users password
+		// Special warning case for the permission "Allow to modify other users password"
 		if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
 			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
-				in_array($obj->id, $permsuser) ||
+				in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
 				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
 					print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
+			}
+		}
+		// Special warning case for the permission "Create/modify other users, groups and permissions"
+		if ($obj->module == 'user' && $obj->perms == 'user' && ($obj->subperms == 'creer' || $obj->subperms == 'create')) {
+			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
+				in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
+				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+					print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 			}
 		}
 		print '</td>';

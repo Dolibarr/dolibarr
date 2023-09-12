@@ -34,7 +34,6 @@ NameNotDefined=Name is not defined.
 ListOfUsers=List of users
 SuperAdministrator=Multicompany Administrator
 SuperAdministratorDesc=Multicompany system administrator (can change setup and users)
-AdministratorDesc=System administrator (can administer user, permissions but also system setup and modules configuration)
 DefaultRights=Default Permissions
 DefaultRightsDesc=Define here the <u>default</u> permissions that are automatically granted to a <u>new</u> user (to modify permissions for existing users, go to the user card).
 DolibarrUsers=Dolibarr users
