@@ -406,7 +406,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte .= getDolGlobalString('PROJECT_TASK_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 
 /**
@@ -950,6 +950,8 @@ class BonPrelevement extends CommonObject
 
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+
 			$soc = new Societe($this->db);
 
 			// Check BAN
@@ -1379,7 +1381,7 @@ class BonPrelevement extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

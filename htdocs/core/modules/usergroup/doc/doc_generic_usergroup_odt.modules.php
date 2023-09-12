@@ -109,7 +109,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$odtPath = trim(getDolGlobalString('USERGROUP_ADDON_PDF_ODT_PATH'));
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
@@ -154,7 +154,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= $odtPath;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -184,7 +184,26 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				$texte .= "</td></tr>";
 				$texte .= '</table>';
 			}
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			// Show list of found files
+			foreach ($listoffiles as $file) {
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=usergroups/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=USERGROUP_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
+			}
+			$texte .= '</div>';
 		}
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="USERGROUP_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 
 		$texte .= '</td>';
 

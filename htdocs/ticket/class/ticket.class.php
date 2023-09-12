@@ -1553,7 +1553,7 @@ class Ticket extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1649,7 +1649,7 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *    Mark a message as read
+	 *    Set an assigned user to a ticket.
 	 *
 	 *    @param    User	$user				Object user
 	 *    @param    int 	$id_assign_user		ID of user assigned
@@ -1658,8 +1658,6 @@ class Ticket extends CommonObject
 	 */
 	public function assignUser($user, $id_assign_user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$this->oldcopy = dol_clone($this);

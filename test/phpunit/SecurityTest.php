@@ -126,6 +126,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->rollback();
 
+		// Restore value to a neutral value (it was set to a test value by some tests)
+		unset($_SERVER["PHP_SELF"]);
+
 		print __METHOD__."\n";
 	}
 
@@ -956,41 +959,41 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('Parent project not found', $result);
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
-		$result=dol_eval($s, 1, 1, '2');
+		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result4 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
-		$result=dol_eval('$a=function() { }; $a;', 1, 1, '0');
+		$result = (string) dol_eval('$a=function() { }; $a;', 1, 1, '0');
 		print "result5 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('$a=function() { }; $a;', 1, 1, '1');
+		$result = (string) dol_eval('$a=function() { }; $a;', 1, 1, '1');
 		print "result6 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('$a=exec("ls");', 1, 1);
+		$result = (string) dol_eval('$a=exec("ls");', 1, 1);
 		print "result7 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('$a=exec ("ls")', 1, 1);
+		$result = (string) dol_eval('$a=exec ("ls")', 1, 1);
 		print "result8 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('$a="test"; $$a;', 1, 0);
+		$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
 		print "result9 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('`ls`', 1, 0);
+		$result = (string) dol_eval('`ls`', 1, 0);
 		print "result10 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval("('ex'.'ec')('echo abc')", 1, 0);
+		$result = (string) dol_eval("('ex'.'ec')('echo abc')", 1, 0);
 		print "result11 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
+		$result = (string) dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
 		print "result12 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
 		$result=dol_eval("90402.38+267678+0", 1, 1, 1);
 		print "result13 = ".$result."\n";
@@ -1024,19 +1027,19 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result17 = ".$result."\n";
 		$this->assertTrue($result);
 
-		// Case with param onlysimplestring = 1
-
 		$result=dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
 		print "result18 = ".$result."\n";
 		$this->assertFalse($result);
 
-		$result=dol_eval("(\$a.'aa')", 1, 0);
+		$a='ab';
+		$result = (string) dol_eval("(\$a.'s')", 1, 0);
 		print "result19 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('$a="abs" && $a(5)', 1, 0);
+		$leftmenu='abs';
+		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
 		print "result20 = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 	}
 
 
