@@ -22,7 +22,7 @@
  *	\ingroup    export
  *	\brief      File of parent class for import file readers
  */
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -243,7 +243,7 @@ class ModeleImports
 	 */
 	public function listOfAvailableImportFormat($db, $maxfilenamelength = 0)
 	{
-		dol_syslog(get_class($this) . "::listOfAvailableImportFormat");
+		dol_syslog(get_class($this)."::listOfAvailableImportFormat");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle = opendir($dir);
