@@ -1108,11 +1108,11 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete existing dispatched lines
 		$errOnDelete = 0;
+		$db->begin();
 		if($stockDelete){
 			$dispatchedLines = $object->getDispachedLines();
 			if (!empty($dispatchedLines)) {
 				foreach ($dispatchedLines as $dispatchedLine) {
-					$db->begin();
 					$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 					$result = $supplierorderdispatch->fetch($dispatchedLine['id']);
 						if ($result > 0) {
@@ -1145,23 +1145,21 @@ if (empty($reshook)) {
 							}
 						}
 					}
-					if ($errOnDelete > 0) {
-						$db->rollback();
-						setEventMessages('', $errorsOnDelete, 'errors');
-					} else {
-						$db->commit();
-					}
 				}
 			}
 		}
 		if (empty($errOnDelete)) {
 			$result = $object->delete($user);
 			if ($result > 0) {
+				$db->commit();
 				header("Location: " . DOL_URL_ROOT . '/fourn/commande/list.php?restore_lastsearch_values=1');
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+		} else {
+			$db->rollback();
+			setEventMessages('', $errorsOnDelete, 'errors');
 		}
 	}
 
