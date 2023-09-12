@@ -300,7 +300,7 @@ class FormListWebPortal
 			$sql .= " WHERE 1 = 1";
 		}
 		// filter on logged third-party
-		$sql .= " AND t.fk_soc = " . $context->logged_thirdparty->id;
+		$sql .= " AND t.fk_soc = " . $this->db->escape($context->logged_thirdparty->id);
 		foreach ($search as $key => $val) {
 			if (array_key_exists($key, $object->fields)) {
 				if (($key == 'status' || $key == 'fk_statut') && $search[$key] == $emptyValueKey) {
