@@ -18,9 +18,9 @@
 
 
 /**
- *    \file       htdocs/webportal/public/class/html.formlistwebportal.class.php
- *  \ingroup    webportal
- *    \brief      File of class with all html predefined components for WebPortal
+ * \file       htdocs/webportal/public/class/html.formlistwebportal.class.php
+ * \ingroup    webportal
+ * \brief      File of class with all html predefined components for WebPortal
  */
 
 dol_include_once('/webportal/public/class/html.formwebportal.class.php');
@@ -136,14 +136,14 @@ class FormCardWebPortal
 	/**
 	 * Init
 	 *
-	 * @param string $elementEn Element (english) : "member" (for adherent), "partnership"
-	 * @param int $id [=0] ID element
-	 * @param int $permissiontoread [=0] Permission to read (0 : access forbidden by default)
-	 * @param int $permissiontoadd [=0] Permission to add (0 : access forbidden by default), used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	 * @param int $permissiontodelete [=0] Permission to delete (0 : access forbidden by default)
-	 * @param int $permissionnote [=0] Permission to note (0 : access forbidden by default)
-	 * @param int $permissiondellink [=0] Permission to delete links (0 : access forbidden by default)
-	 * @return  void
+	 * @param	string	$elementEn				Element (english) : "member" (for adherent), "partnership"
+	 * @param	int		$id						[=0] ID element
+	 * @param	int		$permissiontoread		[=0] Permission to read (0 : access forbidden by default)
+	 * @param	int		$permissiontoadd		[=0] Permission to add (0 : access forbidden by default), used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+	 * @param	int		$permissiontodelete		[=0] Permission to delete (0 : access forbidden by default)
+	 * @param	int		$permissionnote			[=0] Permission to note (0 : access forbidden by default)
+	 * @param	int		$permissiondellink		[=0] Permission to delete links (0 : access forbidden by default)
+	 * @return	void
 	 */
 	public function init($elementEn, $id = 0, $permissiontoread = 0, $permissiontoadd = 0, $permissiontodelete = 0, $permissionnote = 0, $permissiondellink = 0)
 	{
@@ -220,7 +220,7 @@ class FormCardWebPortal
 	/**
 	 * Do actions
 	 *
-	 * @return void
+	 * @return	void
 	 */
 	public function doActions()
 	{
@@ -424,10 +424,10 @@ class FormCardWebPortal
 	}
 
 	/**
-	 *  Html for header
+	 * Html for header
 	 *
-	 * @param Context $context Context object
-	 * @return string
+	 * @param	Context	$context	Context object
+	 * @return	string
 	 */
 	protected function header($context)
 	{
@@ -621,7 +621,7 @@ class FormCardWebPortal
 	/**
 	 *  Html for body (edit mode)
 	 *
-	 * @return string
+	 * @return	string
 	 */
 	protected function bodyEdit()
 	{
@@ -712,9 +712,9 @@ class FormCardWebPortal
 	}
 
 	/**
-	 *  Html for footer
+	 * Html for footer
 	 *
-	 * @return    string
+	 * @return	string
 	 */
 	protected function footer()
 	{
@@ -728,8 +728,8 @@ class FormCardWebPortal
 	/**
 	 * Card for an element in the page context
 	 *
-	 * @param Context $context Context object
-	 * @return  string      Html output
+	 * @param	Context		$context	Context object
+	 * @return	string		Html output
 	 */
 	public function elementCard($context)
 	{

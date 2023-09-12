@@ -21,7 +21,7 @@ class LoginController extends Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return void
+	 * @return	void
 	 */
 	public function action()
 	{
@@ -42,7 +42,7 @@ class LoginController extends Controller
 	/**
 	 * Display
 	 *
-	 * @return void
+	 * @return	void
 	 */
 	public function display()
 	{

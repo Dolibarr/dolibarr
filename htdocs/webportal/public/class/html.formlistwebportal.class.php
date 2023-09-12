@@ -18,9 +18,9 @@
 
 
 /**
- *    \file       htdocs/webportal/public/class/html.formlistwebportal.class.php
- *  \ingroup    webportal
- *    \brief      File of class with all html predefined components for WebPortal
+ * \file       htdocs/webportal/public/class/html.formlistwebportal.class.php
+ * \ingroup    webportal
+ * \brief      File of class with all html predefined components for WebPortal
  */
 
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
@@ -114,8 +114,8 @@ class FormListWebPortal
 	/**
 	 * Init
 	 *
-	 * @param string $elementEn Element (english) : "propal", "order", "invoice"
-	 * @return  void
+	 * @param	string		$elementEn		Element (english) : "propal", "order", "invoice"
+	 * @return	void
 	 */
 	public function init($elementEn)
 	{
@@ -203,7 +203,7 @@ class FormListWebPortal
 	/**
 	 * Do actions
 	 *
-	 * @return void
+	 * @return	void
 	 */
 	public function doActions()
 	{
@@ -226,8 +226,8 @@ class FormListWebPortal
 	/**
 	 * List for an element in the page context
 	 *
-	 * @param Context $context Context object
-	 * @return  string      Html output
+	 * @param	Context		$context		Context object
+	 * @return	string		Html output
 	 */
 	public function elementList($context)
 	{

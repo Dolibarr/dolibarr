@@ -18,17 +18,16 @@
 
 
 /**
- *    \file       htdocs/webportal/public/class/html.formwebportal.class.php
- *  \ingroup    webportal
- *    \brief      File of class with all html predefined components for WebPortal
+ * \file       htdocs/webportal/public/class/html.formwebportal.class.php
+ * \ingroup    webportal
+ * \brief      File of class with all html predefined components for WebPortal
  */
 
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 /**
- *    Class to manage generation of HTML components
- *    Only common components for WebPortal must be here.
- *
+ * Class to manage generation of HTML components
+ * Only common components for WebPortal must be here.
  */
 class FormWebPortal extends Form
 {
@@ -56,15 +55,15 @@ class FormWebPortal extends Form
 	/**
 	 * Html for input with label
 	 *
-	 * @param string $type Type of input : button, checkbox, color, email, hidden, month, number, password, radio, range, tel, text, time, url, week
-	 * @param string $name Name
-	 * @param string $value [=''] Value
-	 * @param string $id [=''] Id
-	 * @param string $morecss [=''] Class
-	 * @param string $moreparam [=''] Add attributes (checked, required, etc)
-	 * @param string $label [=''] Label
-	 * @param string $addInputLabel [=''] Add label for input
-	 * @return  string  Html for input with label
+	 * @param	string	$type			Type of input : button, checkbox, color, email, hidden, month, number, password, radio, range, tel, text, time, url, week
+	 * @param	string	$name			Name
+	 * @param	string	$value			[=''] Value
+	 * @param	string	$id				[=''] Id
+	 * @param	string	$morecss		[=''] Class
+	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @param	string	$label			[=''] Label
+	 * @param	string	$addInputLabel	[=''] Add label for input
+	 * @return  string	Html for input with label
 	 */
 	public function inputType($type, $name, $value = '', $id = '', $morecss = '', $moreparam = '', $label = '', $addInputLabel = '')
 	{
@@ -91,13 +90,13 @@ class FormWebPortal extends Form
 	/**
 	 * Input for date
 	 *
-	 * @param string $name Name of html input
-	 * @param string $value [=''] Value of input (format : YYYY-MM-DD)
-	 * @param string $placeholder [=''] Placeholder for input (keep empty for no label)
-	 * @param string $id [=''] Id
-	 * @param string $morecss [=''] Class
-	 * @param string $moreparam [=''] Add attributes (checked, required, etc)
-	 * @return  string  Html for input date
+	 * @param	string	$name			Name of html input
+	 * @param	string	$value			[=''] Value of input (format : YYYY-MM-DD)
+	 * @param	string	$placeholder	[=''] Placeholder for input (keep empty for no label)
+	 * @param	string	$id				[=''] Id
+	 * @param	string	$morecss		[=''] Class
+	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string  Html for input date
 	 */
 	public function inputDate($name, $value = '', $placeholder = '', $id = '', $morecss = '', $moreparam = '')
 	{
@@ -124,26 +123,26 @@ class FormWebPortal extends Form
 	}
 
 	/**
-	 *  Return a HTML select string, built from an array of key+value.
-	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
+	 * Return a HTML select string, built from an array of key+value.
+	 * Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
-	 * @param string $htmlname Name of html select area.
-	 * @param array $array Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
-	 * @param string|string[] $id Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
-	 * @param int|string $show_empty 0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
-	 * @param int $key_in_label 1 to show key into label with format "[key] value"
-	 * @param int $value_as_key 1 to use value as key
-	 * @param string $moreparam Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 * @param int $translate 1=Translate and encode value
-	 * @param int $maxlen Length maximum for labels
-	 * @param int $disabled Html select box is disabled
-	 * @param string $sort 'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
-	 * @param string $morecss Add more class to css styles
-	 * @param int $addjscombo Add js combo
-	 * @param string $moreparamonempty Add more param on the empty option line. Not used if show_empty not set
-	 * @param int $disablebademail 1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
-	 * @param int $nohtmlescape No html escaping.
-	 * @return  string          HTML select string.
+	 * @param	string				$htmlname				Name of html select area.
+	 * @param	array				$array					Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param	string|string[]		$id						Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
+	 * @param	int|string			$show_empty				0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
+	 * @param	int					$key_in_label			1 to show key into label with format "[key] value"
+	 * @param	int					$value_as_key			1 to use value as key
+	 * @param	string				$moreparam				Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param	int					$translate				1=Translate and encode value
+	 * @param	int					$maxlen					Length maximum for labels
+	 * @param	int					$disabled				Html select box is disabled
+	 * @param	string				$sort					'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
+	 * @param	string				$morecss				Add more class to css styles
+	 * @param	int					$addjscombo				Add js combo
+	 * @param	string				$moreparamonempty		Add more param on the empty option line. Not used if show_empty not set
+	 * @param	int					$disablebademail		1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
+	 * @param	int					$nohtmlescape			No html escaping.
+	 * @return	string				HTML select string.
 	 */
 	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = 'minwidth75', $addjscombo = 1, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
 	{
@@ -236,9 +235,9 @@ class FormWebPortal extends Form
 	}
 
 	/**
-	 *    Show a Document icon with link(s)
-	 *  You may want to call this into a div like this:
-	 *  print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+	 * Show a Document icon with link(s)
+	 * You may want to call this into a div like this:
+	 * print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
 	 *
 	 * @param string $modulepart 'propal', 'facture', 'facture_fourn', ...
 	 * @param string $modulesubdir Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.

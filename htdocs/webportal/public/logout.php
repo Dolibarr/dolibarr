@@ -17,8 +17,9 @@
  */
 
 /**
- *      \file       htdocs/user/logout.php
- *      \brief      Page called to disconnect a user
+ * \file		htdocs/user/logout.php
+ * \ingroup		webportal
+ * \brief		Page called to disconnect a user
  */
 
 define('WEBPORTAL_NOREQUIREUSER', 1);

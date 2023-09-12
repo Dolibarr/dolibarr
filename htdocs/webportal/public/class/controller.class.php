@@ -33,7 +33,7 @@ class Controller
 	/**
 	 * Constructeur de la classe
 	 *
-	 * @return void
+	 * @return	void
 	 */
 	public function __construct()
 	{

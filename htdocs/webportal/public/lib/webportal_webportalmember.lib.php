@@ -25,8 +25,8 @@
 /**
  * Prepare array of tabs for WebPortalMember
  *
- * @param WebPortalMember $object Member
- * @return    array                        Array of tabs
+ * @param	WebPortalMember		$object		Member
+ * @return	array				Array of tabs
  */
 function webportalmemberPrepareHead($object)
 {

@@ -34,6 +34,7 @@ class PartnershipCardController extends Controller
 	 */
 	protected $formCard;
 
+
 	/**
 	 * Check current access to controller
 	 *

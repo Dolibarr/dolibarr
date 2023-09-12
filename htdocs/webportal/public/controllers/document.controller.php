@@ -62,7 +62,7 @@ class DocumentController extends Controller
 	/**
 	 * Init
 	 *
-	 * @return void
+	 * @return	void
 	 */
 	public function init()
 	{
