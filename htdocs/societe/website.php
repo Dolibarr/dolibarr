@@ -296,7 +296,7 @@ if ($objectwebsiteaccount->ismultientitymanaged == 1) {
 }
 $sql .= " AND fk_soc = ".((int) $object->id);
 if (!empty($site_filter_list)) {
-	$sql .= " AND t.site IN (".$db->sanitize("'".implode("','",$site_filter_list)."'", 1).")";
+	$sql .= " AND t.site IN (".$db->sanitize("'".implode("','", $site_filter_list)."'", 1).")";
 }
 foreach ($search as $key => $val) {
 	$mode_search = (($objectwebsiteaccount->isInt($objectwebsiteaccount->fields[$key]) || $objectwebsiteaccount->isFloat($objectwebsiteaccount->fields[$key])) ? 1 : 0);
