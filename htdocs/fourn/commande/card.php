@@ -1109,13 +1109,13 @@ if (empty($reshook)) {
 		// Delete existing dispatched lines
 		$errOnDelete = 0;
 		$db->begin();
-		if($stockDelete){
+		if ($stockDelete) {
 			$dispatchedLines = $object->getDispachedLines();
 			if (!empty($dispatchedLines)) {
 				foreach ($dispatchedLines as $dispatchedLine) {
 					$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 					$result = $supplierorderdispatch->fetch($dispatchedLine['id']);
-						if ($result > 0) {
+					if ($result > 0) {
 						$qty = $supplierorderdispatch->qty;
 						$entrepot = $supplierorderdispatch->fk_entrepot;
 						$product = $supplierorderdispatch->fk_product;
@@ -1124,7 +1124,6 @@ if (empty($reshook)) {
 						$eatby = $supplierorderdispatch->eatby;
 						$sellby = $supplierorderdispatch->sellby;
 						$batch = $supplierorderdispatch->batch;
-				
 						$result = $supplierorderdispatch->delete($user);
 					}
 					if ($result < 0) {
