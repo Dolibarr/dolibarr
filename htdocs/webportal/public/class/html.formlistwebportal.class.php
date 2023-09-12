@@ -278,9 +278,9 @@ class FormListWebPortal
 
 		// Build and execute select
 		// --------------------------------------------------------------------
-		$sql = 'SELECT ';
+		$sql = "SELECT ";
 		$sql .= $object->getFieldList('t');
-		$sql .= ', t.entity as element_entity';
+		$sql .= ", t.entity as element_entity";
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -289,7 +289,7 @@ class FormListWebPortal
 
 		$sqlfields = $sql; // $sql fields to remove for count total
 
-		$sql .= " FROM " . MAIN_DB_PREFIX . $object->table_element . " as t";
+		$sql .= " FROM " . $this->db->prefix() . $object->table_element . " as t";
 		// Add table from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
