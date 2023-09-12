@@ -245,7 +245,7 @@ class ModeleImports
 	{
 		dol_syslog(get_class($this) . "::listOfAvailableImportFormat");
 
-		$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
+		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle = opendir($dir);
 
 		// Recherche des fichiers drivers imports disponibles
@@ -256,8 +256,8 @@ class ModeleImports
 					$moduleid = $reg[1];
 
 					// Loading Class
-					$file = $dir . "/import_" . $moduleid . ".modules.php";
-					$classname = "Import" . ucfirst($moduleid);
+					$file = $dir."/import_".$moduleid.".modules.php";
+					$classname = "Import".ucfirst($moduleid);
 
 					require_once $file;
 					$module = new $classname($db, '');
@@ -355,7 +355,7 @@ class ModeleImports
 	 */
 	public function getElementFromTableWithPrefix($tableNameWithPrefix)
 	{
-		$tableElement = preg_replace('/^' . preg_quote($this->db->prefix(), '/') . '/', '', $tableNameWithPrefix);
+		$tableElement = preg_replace('/^'.preg_quote($this->db->prefix(), '/').'/', '', $tableNameWithPrefix);
 		$element = $tableElement;
 
 		if (isset(self::$mapTableToElement[$tableElement])) {
