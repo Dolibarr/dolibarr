@@ -130,7 +130,7 @@ class WebPortalPropal extends Propal
 	/**
 	 * Get propal for static method
 	 *
-	 * @return Propal
+	 * @return	Propal
 	 */
 	protected function getPropalStatic()
 	{
@@ -144,7 +144,7 @@ class WebPortalPropal extends Propal
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param	DoliDb	$db		Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -158,9 +158,9 @@ class WebPortalPropal extends Propal
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param array $params Params to construct tooltip data
-	 * @return    array
-	 * @since    v18
+	 * @param		array	$params		Params to construct tooltip data
+	 * @return		array
+	 * @since v18
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -183,13 +183,13 @@ class WebPortalPropal extends Propal
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 * @param int $withpicto Add picto into link
-	 * @param string $option Where point the link ('expedition', 'document', ...)
-	 * @param string $get_params Parametres added to url
-	 * @param int $notooltip 1=Disable tooltip
-	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @param int $addlinktonotes -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
-	 * @return     string                          String with URL
+	 * @param	int		$withpicto				Add picto into link
+	 * @param	string	$option					Where point the link ('expedition', 'document', ...)
+	 * @param	string	$get_params				Parametres added to url
+	 * @param	int		$notooltip				1=Disable tooltip
+	 * @param	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int		$addlinktonotes			-1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
+	 * @return	string	String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
 	{
@@ -252,11 +252,11 @@ class WebPortalPropal extends Propal
 	}
 
 	/**
-	 *    Return a thumb for kanban views
+	 * Return a thumb for kanban views
 	 *
-	 * @param string $option Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 * @param array $arraydata Array of data
-	 * @return        string                                HTML Code for Kanban thumb.
+	 * @param	string	$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param	array	$arraydata	Array of data
+	 * @return	string	HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -292,10 +292,10 @@ class WebPortalPropal extends Propal
 	}
 
 	/**
-	 *  Return the label of the status
+	 * Return the label of the status
 	 *
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return    string                   Label of status
+	 * @param	int		$mode				0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string	Label of status
 	 */
 	public function getLabelStatus($mode = 0)
 	{
@@ -303,10 +303,10 @@ class WebPortalPropal extends Propal
 	}
 
 	/**
-	 *  Return the label of the status
+	 * Return the label of the status
 	 *
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return    string                   Label of status
+	 * @param	int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string	Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -314,13 +314,12 @@ class WebPortalPropal extends Propal
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-
 	/**
-	 *  Return the label of a given status
+	 * Return the label of a given status
 	 *
-	 * @param int $status Id status
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return string                   Label of status
+	 * @param	int		$status		Id status
+	 * @param	int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string	Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{

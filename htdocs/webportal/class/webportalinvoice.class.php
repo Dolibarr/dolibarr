@@ -131,7 +131,7 @@ class WebPortalInvoice extends Facture
 	/**
 	 * Get invoice for static methods
 	 *
-	 * @return Facture
+	 * @return	Facture
 	 */
 	protected function getInvoiceStatic()
 	{
@@ -145,7 +145,7 @@ class WebPortalInvoice extends Facture
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param	DoliDb	 $db	Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -157,8 +157,8 @@ class WebPortalInvoice extends Facture
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param array $params ex option, infologin
-	 * @return array
+	 * @param 	array	$params		ex option, infologin
+	 * @return 	array
 	 * @since v18
 	 */
 	public function getTooltipContentArray($params)
@@ -175,16 +175,16 @@ class WebPortalInvoice extends Facture
 	/**
 	 *  Return clicable link of object (with eventually picto)
 	 *
-	 * @param int $withpicto Add picto into link
-	 * @param string $option Where point the link
-	 * @param int $max Maxlength of ref
-	 * @param int $short 1=Return just URL
-	 * @param string $moretitle Add more text to title tooltip
-	 * @param int $notooltip 1=Disable tooltip
-	 * @param int $addlinktonotes 1=Add link to notes
-	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @param string $target Target of link ('', '_self', '_blank', '_parent', '_backoffice', ...)
-	 * @return string                                String with URL
+	 * @param	int		$withpicto				Add picto into link
+	 * @param	string	$option					Where point the link
+	 * @param	int		$max					Maxlength of ref
+	 * @param	int		$short					1=Return just URL
+	 * @param	string	$moretitle				Add more text to title tooltip
+	 * @param	int		$notooltip				1=Disable tooltip
+	 * @param	int		$addlinktonotes			1=Add link to notes
+	 * @param	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	string	$target					Target of link ('', '_self', '_blank', '_parent', '_backoffice', ...)
+	 * @return	string	String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
 	{
@@ -263,11 +263,11 @@ class WebPortalInvoice extends Facture
 	}
 
 	/**
-	 *    Return clicable link of object (with eventually picto)
+	 * Return clicable link of object (with eventually picto)
 	 *
-	 * @param string $option Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 * @param array $arraydata Array of data
-	 * @return        string                                HTML Code for Kanban thumb.
+	 * @param	string	$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param	array 	$arraydata	Array of data
+	 * @return	string	HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -301,8 +301,8 @@ class WebPortalInvoice extends Facture
 	/**
 	 *  Return the label of the status
 	 *
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return    string                  Label of status
+	 * @param	int			$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string		Label of status
 	 */
 	public function getLabelStatus($mode = 0)
 	{
@@ -312,9 +312,9 @@ class WebPortalInvoice extends Facture
 	/**
 	 *  Return label of object status
 	 *
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 * @param int $alreadypaid 0=No payment already done, >0=Some payments were already done
-	 * @return     string                    Label of status
+	 * @param	int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 * @param	int			$alreadypaid	0=No payment already done, >0=Some payments were already done
+	 * @return 	string		Label of status
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
@@ -324,14 +324,14 @@ class WebPortalInvoice extends Facture
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return label of a status
+	 *  Return label of a status
 	 *
-	 * @param int $paye Status field paye
-	 * @param int $status Id status
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 * @param int $alreadypaid 0=No payment already done, >0=Some payments were already done
-	 * @param int $type Type invoice. If -1, we use $this->type
-	 * @return     string                    Label of status
+	 * @param	int		$paye			Status field paye
+	 * @param	int		$status			Id status
+	 * @param	int 	$mode 			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 * @param	int 	$alreadypaid	0=No payment already done, >0=Some payments were already done
+	 * @param	int 	$type 			Type invoice. If -1, we use $this->type
+	 * @return  string	Label of status
 	 */
 	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1)
 	{

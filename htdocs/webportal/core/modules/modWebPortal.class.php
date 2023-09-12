@@ -344,8 +344,8 @@ class modWebPortal extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-	 * @param string $options Options when enabling module ('', 'noboxes')
-	 * @return     int                1 if OK, 0 if KO
+	 * @param	string	$options	Options when enabling module ('', 'noboxes')
+	 * @return	int		1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -379,8 +379,8 @@ class modWebPortal extends DolibarrModules
 	 *  Remove from database constants, boxes and permissions from Dolibarr database.
 	 *  Data directories are not deleted
 	 *
-	 * @param string $options Options when enabling module ('', 'noboxes')
-	 * @return     int                 1 if OK, 0 if KO
+	 * @param	string $options		Options when enabling module ('', 'noboxes')
+	 * @return	int                 1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
 	{

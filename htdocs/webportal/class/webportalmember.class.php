@@ -174,7 +174,7 @@ class WebPortalMember extends Adherent
 	/**
 	 * Get member for static method
 	 *
-	 * @return Adherent
+	 * @return	Adherent
 	 */
 	protected function getMemberStatic()
 	{
@@ -188,7 +188,7 @@ class WebPortalMember extends Adherent
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param	DoliDb	$db		Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -213,9 +213,9 @@ class WebPortalMember extends Adherent
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param array $params Params to construct tooltip data
-	 * @return    array
-	 * @since    v18
+	 * @param	array	$params		Params to construct tooltip data
+	 * @return	array
+	 * @since v18
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -238,15 +238,15 @@ class WebPortalMember extends Adherent
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 * @param int $withpictoimg 0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 * @param int $maxlen length max label
-	 * @param string $option Page for link ('card', 'category', 'subscription', ...)
-	 * @param string $mode ''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'lastname'=Show only lastname, 'login'=Show login, 'ref'=Show ref
-	 * @param string $morecss Add more css on link
-	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @param int $notooltip 1=Disable tooltip
-	 * @param int $addlinktonotes 1=Add link to notes
-	 * @return    string                                Chaine avec URL
+	 * @param	int		$withpictoimg			0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 * @param	int		$maxlen					Length max label
+	 * @param	string	$option					Page for link ('card', 'category', 'subscription', ...)
+	 * @param	string	$mode					''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'lastname'=Show only lastname, 'login'=Show login, 'ref'=Show ref
+	 * @param	string	$morecss				Add more css on link
+	 * @param	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int		$notooltip				1=Disable tooltip
+	 * @param	int		$addlinktonotes			1=Add link to notes
+	 * @return	string 	String wit Url
 	 */
 	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0, $addlinktonotes = 0)
 	{
@@ -378,10 +378,10 @@ class WebPortalMember extends Adherent
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un adherent (brouillon, valide, resilie, exclu)
+	 * Retourne le libelle du statut d'un adherent (brouillon, valide, resilie, exclu)
 	 *
-	 * @param int $mode 0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return string                Label
+	 * @param	int		$mode		0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string	Label
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -391,13 +391,13 @@ class WebPortalMember extends Adherent
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 * Renvoi le libelle d'un statut donne
 	 *
-	 * @param int $status Id status
-	 * @param int $need_subscription 1 if member type need subscription, 0 otherwise
-	 * @param int $date_end_subscription Date fin adhesion
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return string                            Label
+	 * @param	int		$status					Id status
+	 * @param	int		$need_subscription		1 if member type need subscription, 0 otherwise
+	 * @param	int		$date_end_subscription	Date fin adhesion
+	 * @param	int		$mode					0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string	Label
 	 */
 	public function LibStatut($status, $need_subscription, $date_end_subscription, $mode = 0)
 	{
@@ -406,10 +406,10 @@ class WebPortalMember extends Adherent
 	}
 
 	/**
-	 *    Return full address for banner
+	 * Return full address for banner
 	 *
-	 * @param string $htmlkey HTML id to make banner content unique
-	 * @return        string                            Full address string
+	 * @param	string	$htmlkey	HTML id to make banner content unique
+	 * @return	string	Full address string
 	 */
 	public function getBannerAddressForWebPortal($htmlkey)
 	{

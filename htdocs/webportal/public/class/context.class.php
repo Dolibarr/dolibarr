@@ -14,6 +14,11 @@ class Context
 	 */
 	private static $_instance = null;
 
+	/**
+	 * @var	DoliDb	$db		Database handler
+	 */
+	public $db;
+
 	public $title;
 	public $desc;
 
@@ -93,7 +98,9 @@ class Context
 	 */
 	private function __construct()
 	{
-		global $conf;
+		global $conf, $db;
+
+		$this->db = $db;
 
 		$this->tplDir = __DIR__ . '/../';
 
@@ -123,7 +130,7 @@ class Context
 	/**
 	 * Singleton method to create one instance of this object
 	 *
-	 * @return Context Instance
+	 * @return	Context	Instance
 	 */
 	public static function getInstance()
 	{
@@ -175,9 +182,9 @@ class Context
 	/**
 	 * Add controller definition
 	 *
-	 * @param string $controller Name
-	 * @param string $path Path
-	 * @param string $className Class name
+	 * @param	string	$controller		Name
+	 * @param	string	$path			Path
+	 * @param	string	$className		Class name
 	 * @return  bool
 	 */
 	public function addControllerDefinition($controller, $path, $className)
@@ -233,10 +240,10 @@ class Context
 	/**
 	 * Get root url
 	 *
-	 * @param string $controller Controller name
-	 * @param string|array $moreParams More parameters
-	 * @param bool $addToken Add token hash only if $controller is setted
-	 * @return  string
+	 * @param	string			$controller		Controller name
+	 * @param	string|array	$moreParams		More parameters
+	 * @param	bool			$addToken		Add token hash only if $controller is setted
+	 * @return	string
 	 * @deprecated see getControllerUrl()
 	 */
 	public function getRootUrl($controller = false, $moreParams = '', $addToken = true)
@@ -244,14 +251,13 @@ class Context
 		return self::getControllerUrl($controller, $moreParams, $addToken);
 	}
 
-
 	/**
 	 * Get controller url according to context
 	 *
-	 * @param string $controller Controller name
-	 * @param string|array $moreParams More parameters
-	 * @param bool $addToken add token hash only if $controller is setted
-	 * @return  string
+	 * @param	string			$controller		Controller name
+	 * @param	string|array	$moreParams		More parameters
+	 * @param	bool			$addToken		Add token hash only if controller is set
+	 * @return	string
 	 */
 	public function getControllerUrl($controller = false, $moreParams = '', $addToken = true)
 	{
@@ -278,9 +284,9 @@ class Context
 	 * Used for external link (like email or web page)
 	 * so remove token and contextual behavior associate with current user
 	 *
-	 * @param 	bool $controller 			Controller
-	 * @param 	string|array $moreParams	More parameters
-	 * @param	array $Tparams				Parameters
+	 * @param 	bool			$controller				Controller
+	 * @param 	string|array	$moreParams				More parameters
+	 * @param	array			$Tparams				Parameters
 	 * @return	string
 	 */
 	static public function getPublicControllerUrl($controller = false, $moreParams = '', $Tparams = array())
@@ -324,13 +330,12 @@ class Context
 		return $url;
 	}
 
-
 	/**
 	 * Url origin
 	 *
-	 * @param bool $withRequestUri With request URI
-	 * @param bool $use_forwarded_host Use formatted host
-	 * @return  string
+	 * @param	bool	$withRequestUri			With request URI
+	 * @param	bool	$use_forwarded_host		Use formatted host
+	 * @return 	string
 	 */
 	static public function urlOrigin($withRequestUri = true, $use_forwarded_host = false)
 	{
@@ -356,7 +361,7 @@ class Context
 	/**
 	 * Check if user is logged
 	 *
-	 * @return bool
+	 * @return	bool
 	 */
 	public function userIsLog()
 	{
@@ -370,7 +375,7 @@ class Context
 	/**
 	 * Is menu enabled ?
 	 *
-	 * @param   $menuName Menu name
+	 * @param   string	$menuName	Menu name
 	 * @return  bool
 	 */
 	public function menuIsActive($menuName)
@@ -381,8 +386,8 @@ class Context
 	/**
 	 * Set errors
 	 *
-	 * @param array $errors Errors
-	 * @return  void
+	 * @param 	array	$errors		Errors
+	 * @return	void
 	 */
 	public function setError($errors)
 	{
@@ -419,14 +424,13 @@ class Context
 		$this->errors = array();
 	}
 
-
 	/**
-	 *    Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
-	 *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
+	 * Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
+	 * Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
 	 *
-	 * @param string|string[] $mesgs Message string or array
-	 * @param string $style Which style to use ('mesgs' by default, 'warnings', 'errors')
-	 * @return    void
+	 * @param	string|string[]	$mesgs	Message string or array
+	 * @param	string			$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
+	 * @return	void
 	 */
 	public function setEventMessage($mesgs, $style = 'mesgs')
 	{
@@ -453,8 +457,8 @@ class Context
 	}
 
 	/**
-	 *  Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
-	 *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
+	 * Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
+	 * Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
 	 *
 	 * @param	string		$mesg	Message string
 	 * @param	array|null	$mesgs	Message array
@@ -479,7 +483,6 @@ class Context
 			}
 		}
 	}
-
 
 	/**
 	 * Load event messages
@@ -509,11 +512,11 @@ class Context
 
 	/**
 	 * Return the value of token currently saved into session with name 'newToken'.
-	 * This token must be send by any POST as it will be used by next page for comparison with value in session.
-	 * This token depend of controller
+	 * This token must be sent by any POST as it will be used by next page for comparison with value in session.
+	 * This token depends on controller
 	 *
-	 * @param false|string $controller Controller
-	 * @param bool $generateIfNull Generate if null
+	 * @param	false|string	$controller			Controller
+	 * @param	bool			$generateIfNull		Generate if null
 	 * @return  string
 	 */
 	public function newToken($controller = false, $generateIfNull = true)
@@ -535,8 +538,8 @@ class Context
 	/**
 	 * Generate new token.
 	 *
-	 * @param false|string $controller Controller
-	 * @return  string
+	 * @param	false|string		$controller		Controller
+	 * @return	string
 	 */
 	protected function generateNewToken($controller = false)
 	{
@@ -571,7 +574,7 @@ class Context
 	/**
 	 * Return the value of token currently saved into session with name 'token'.
 	 *
-	 * @param bool $controller controller
+	 * @param	bool		$controller		Controller
 	 * @return  string
 	 */
 	public function currentToken($controller = false)
@@ -586,8 +589,8 @@ class Context
 	/**
 	 * Validate token
 	 *
-	 * @param false $controller Controller
-	 * @param bool $erase Erase
+	 * @param	false 	$controller	Controller
+	 * @param	bool	$erase		Erase
 	 * @return  bool
 	 */
 	public function validateToken($controller = false, $erase = true)
@@ -612,8 +615,8 @@ class Context
 	/**
 	 * Get token url
 	 *
-	 * @param false|string $controller Controller
-	 * @return  string|null
+	 * @param	false|string	$controller		Controller
+	 * @return	string|null
 	 */
 	public function getUrlToken($controller = false)
 	{
@@ -630,7 +633,7 @@ class Context
 	/**
 	 * Get token input for form
 	 *
-	 * @param false|string $controller Controller
+	 * @param	false|string	$controller		Controller
 	 * @return  string|null
 	 */
 	public function getFormToken($controller = false)
@@ -648,33 +651,31 @@ class Context
 	/**
 	 * Try to find the third-party account id from
 	 *
-	 * @param string $login Login
-	 * @param string $pass Password
-	 * @return  int                    Third-party account id
+	 * @param	string	$login		Login
+	 * @param	string	$pass		Password
+	 * @return  int		Third-party account id
 	 */
 	public function getThirdPartyAccountFromLogin($login, $pass)
 	{
-		global $db;
-
 		$id = 0;
 
 		$sql = "SELECT sa.rowid as id";
-		$sql .= " FROM " . $db->prefix() . "societe_account as sa";
-		$sql .= " WHERE sa.login = '" . $db->escape($login) . "'";
-		$sql .= " AND sa.pass_crypted = '" . $db->escape($pass) . "'";
+		$sql .= " FROM " . $this->db->prefix() . "societe_account as sa";
+		$sql .= " WHERE sa.login = '" . $this->db->escape($login) . "'";
+		$sql .= " AND sa.pass_crypted = '" . $this->db->escape($pass) . "'";
 		$sql .= " AND sa.site = 'dolibarr_portal'";
 		$sql .= " AND sa.status = 1";
 		$sql .= " AND sa.entity IN (" . getEntity('societe') . ")";
 
 		dol_syslog(__METHOD__ . ' Try to find the third-party account id for login"' . $login . '" and site="dolibarr_portal"', LOG_DEBUG);
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result) {
-			if ($db->num_rows($result) == 1) {
-				$obj = $db->fetch_object($result);
+			if ($this->db->num_rows($result) == 1) {
+				$obj = $this->db->fetch_object($result);
 				$id = $obj->id;
 			}
 		} else {
-			$this->error = $db->lasterror();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 

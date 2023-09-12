@@ -130,7 +130,7 @@ class WebPortalOrder extends Commande
 	/**
 	 * Get order for static method
 	 *
-	 * @return Commande
+	 * @return	Commande
 	 */
 	protected function getOrderStatic()
 	{
@@ -144,7 +144,7 @@ class WebPortalOrder extends Commande
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param	DoliDb	$db		Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -158,9 +158,9 @@ class WebPortalOrder extends Commande
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param array $params Params to construct tooltip data
-	 * @return    array
-	 * @since    v18
+	 * @param	array $params	Params to construct tooltip data
+	 * @return	array
+	 * @since v18
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -181,17 +181,17 @@ class WebPortalOrder extends Commande
 	}
 
 	/**
-	 *    Return clicable link of object (with eventually picto)
+	 * Return clicable link of object (with eventually picto)
 	 *
-	 * @param int $withpicto Add picto into link
-	 * @param string $option Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 * @param int $max Max length to show
-	 * @param int $short ???
-	 * @param int $notooltip 1=Disable tooltip
-	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @param int $addlinktonotes Add link to notes
-	 * @param string $target attribute target for link
-	 * @return     string                              String with URL
+	 * @param	int		$withpicto				Add picto into link
+	 * @param	string	$option					Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param	int		$max					Max length to show
+	 * @param	int		$short					Short
+	 * @param	int		$notooltip				1=Disable tooltip
+	 * @param	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int		$addlinktonotes			Add link to notes
+	 * @param	string	$target					Attribute target for link
+	 * @return	string	String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '')
 	{
@@ -259,11 +259,11 @@ class WebPortalOrder extends Commande
 	}
 
 	/**
-	 *    Return clicable link of object (with eventually picto)
+	 * Return clicable link of object (with eventually picto)
 	 *
-	 * @param string $option Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 * @param array $arraydata Array of data
-	 * @return        string                                HTML Code for Kanban thumb.
+	 * @param	string	$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param	array	$arraydata	Array of data
+	 * @return	string	HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -299,8 +299,8 @@ class WebPortalOrder extends Commande
 	/**
 	 *  Return the label of the status
 	 *
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return    string                   Label of status
+	 * @param	int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string	Label of status
 	 */
 	public function getLabelStatus($mode = 0)
 	{
@@ -310,8 +310,8 @@ class WebPortalOrder extends Commande
 	/**
 	 *  Return the label of the status
 	 *
-	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return    string                   Label of status
+	 * @param	int			$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string		Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -319,15 +319,14 @@ class WebPortalOrder extends Commande
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-
 	/**
-	 *    Return label of status
+	 *  Return label of status
 	 *
-	 * @param int $status Id status
-	 * @param int $billed If invoiced
-	 * @param int $mode 0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @param int $donotshowbilled Do not show billed status after order status
-	 * @return     string                      Label of status
+	 * @param	int		$status				Id status
+	 * @param	int		$billed				If invoiced
+	 * @param	int 	$mode				0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param	int 	$donotshowbilled	Do not show billed status after order status
+	 * @return 	string	Label of status
 	 */
 	public function LibStatut($status, $billed, $mode, $donotshowbilled = 0)
 	{
