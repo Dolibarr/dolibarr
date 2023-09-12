@@ -53,7 +53,7 @@ class WebPortalMember extends Adherent
 	/**
 	 * MorPhy list : Moral or Physical
 	 */
-	const morphy_list = array(
+	const MORPHY_LIST = array(
 		'phy' => 'Physical',
 		'mor' => 'Moral',
 	);
@@ -61,7 +61,7 @@ class WebPortalMember extends Adherent
 	/**
 	 * Gender list
 	 */
-	const gender_list = array(
+	const GENDER_LIST = array(
 		'man' => 'Genderman',
 		'woman' => 'Genderwoman',
 		'other' => 'Genderother',
@@ -121,7 +121,7 @@ class WebPortalMember extends Adherent
 
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 4, 'position' => 30, 'showonheader' => 1,),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 4, 'position' => 35, 'showonheader' => 1,),
-		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => 4, 'position' => 50, 'arrayofkeyval' => self::gender_list, 'showonheader' => 1,),
+		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => 4, 'position' => 50, 'arrayofkeyval' => self::GENDER_LIST, 'showonheader' => 1,),
 		'company' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => 4, 'position' => 65, 'showonheader' => 1,),
 		'address' => array('type' => 'text', 'label' => 'Address', 'enabled' => 1, 'visible' => 4, 'position' => 75, 'showonheader' => 1,),
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => 4, 'position' => 80, 'showonheader' => 1,),
@@ -136,7 +136,7 @@ class WebPortalMember extends Adherent
 
 		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => 4, 'position' => 240,),
 		'typeid' => array('type' => 'integer:AdherentType:adherents/class/adherent_type.class.php', 'label' => 'Type', 'enabled' => 1, 'visible' => 4, 'notnull' => 1, 'position' => 255),
-		'morphy' => array('type' => 'varchar(3)', 'label' => 'MemberNature', 'enabled' => 1, 'visible' => 4, 'notnull' => 1, 'position' => 260, 'arrayofkeyval' => self::morphy_list,),
+		'morphy' => array('type' => 'varchar(3)', 'label' => 'MemberNature', 'enabled' => 1, 'visible' => 4, 'notnull' => 1, 'position' => 260, 'arrayofkeyval' => self::MORPHY_LIST,),
 		'civility_id' => array('type' => 'sellist:c_civility:label:rowid::active=1', 'label' => 'Civility', 'enabled' => 1, 'visible' => 4, 'position' => 270,),
 		'datefin' => array('type' => 'date', 'label' => 'SubscriptionEndDate', 'enabled' => 1, 'visible' => 5, 'position' => 280,),
 		'birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'visible' => 4, 'position' => 290,),

@@ -50,12 +50,10 @@ function getNavItem($item, $deep = 0)
 	if (!empty($item['overrride'])) {
 		$menu .= $item['overrride'];
 	} elseif (!empty($item['children'])) {
-
 		$menuChildren = '';
 		$haveChildActive = false;
 
 		foreach ($item['children'] as $child) {
-
 			$item = array_replace($itemDefault, $item); // applique les valeurs par default
 
 			if (!empty($child['separator'])) {
@@ -74,7 +72,6 @@ function getNavItem($item, $deep = 0)
 			} else {
 				$menuChildren .= '<li class="dropdown-item" data-deep="' . $deep . '" ><a href="' . $child['url'] . '" class="' . (!empty($child['active']) ? 'active' : '') . '" ">' . $child['name'] . '</a></li>';
 			}
-
 		}
 
 		$active = '';
@@ -86,7 +83,6 @@ function getNavItem($item, $deep = 0)
 		$menu .= '<a href="#" class="' . ($deep > 0 ? '' : 'nav-link') . ' dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">' . $item['name'] . ' <span class="caret"></span></a>';
 		$menu .= '<ul class="dropdown-menu ">' . $menuChildren . '</ul>';
 		$menu .= '</li>';
-
 	} else {
 		$menu .= '<li data-deep="' . $deep . '" class="' . ($deep > 0 ? 'dropdown-item' : 'nav-item ') . ' ' . ($item['active'] ? 'active' : '') . '"><a  href="' . $item['url'] . '" class="' . ($deep > 0 ? '' : 'nav-link') . '" >' . $item['name'] . '</a></li>';
 	}

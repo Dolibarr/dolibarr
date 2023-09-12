@@ -84,7 +84,6 @@ if ($context->userIsLog()) {
 		'url' => $context->getControllerUrl() . 'logout.php',
 		'name' => $langs->trans('Logout'),
 	);
-
 }
 
 // GROUP MENU
