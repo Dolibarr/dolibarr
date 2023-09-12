@@ -74,7 +74,7 @@ $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
-if (empty($id)) {
+if (empty($id) && $action != 'create') {
 	$id = $user->id;
 }
 
