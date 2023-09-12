@@ -88,3 +88,20 @@ ALTER TABLE llx_societe DROP COLUMN skype;
 
 ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
 
+ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_availability integer DEFAULT NULL;
+
+ALTER TABLE llx_product_lot ADD COLUMN qc_frequency integer DEFAULT NULL;
+ALTER TABLE llx_product_lot ADD COLUMN lifetime integer DEFAULT NULL;
+
+ALTER TABLE llx_societe_rib ADD COLUMN model_pdf varchar(255) AFTER currency_code;
+ALTER TABLE llx_societe_rib ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
+ALTER TABLE llx_societe_rib ADD COLUMN date_signature datetime AFTER stripe_account;
+ALTER TABLE llx_societe_rib ADD COLUMN online_sign_ip varchar(48) AFTER date_signature;
+ALTER TABLE llx_societe_rib ADD COLUMN online_sign_name		varchar(64) AFTER online_sign_ip;
+
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PROPOSAL_ALLOW_ONLINESIGN', 1, '1', 'string', 0);
+
+
+ALTER TABLE llx_bookcal_availabilities ADD COLUMN fk_bookcal_calendar integer NOT NULL;
+
+ALTER TABLE llx_bookcal_calendar ADD COLUMN visibility integer NOT NULL DEFAULT 1;

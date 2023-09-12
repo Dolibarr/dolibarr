@@ -301,7 +301,7 @@ class ActionsTicket extends CommonHookActions
 					//print '<tr>';
 					print '<tr class="oddeven">';
 					print '<td><strong>';
-					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datec'], 'dayhour');
+					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
 					if ($show_user) {
 						print '<td>';

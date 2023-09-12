@@ -157,11 +157,11 @@ if (empty($action)) {
 $object = new Website($db);
 $objectpage = new WebsitePage($db);
 
-$object->fetchAll('ASC', 'position'); // Init $object->lines with list of websites
+$listofwebsites = $object->fetchAll('ASC', 'position'); // Init list of websites
 
 // If website not defined, we take first found
 if (!($websiteid > 0) && empty($websitekey) && $action != 'createsite') {
-	foreach ($object->lines as $key => $valwebsite) {
+	foreach ($listofwebsites as $key => $valwebsite) {
 		$websitekey = $valwebsite->ref;
 		break;
 	}
@@ -2873,13 +2873,13 @@ if (!GETPOST('hide_websitemenu')) {
 
 		$out = '';
 		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
-		if (empty($object->lines)) {
+		if (empty($listofwebsites)) {
 			$out .= '<option value="-1">&nbsp;</option>';
 		}
 
 		// Loop on each sites
 		$i = 0;
-		foreach ($object->lines as $key => $valwebsite) {
+		foreach ($listofwebsites as $key => $valwebsite) {
 			if (empty($websitekey)) {
 				if ($action != 'createsite') {
 					$websitekey = $valwebsite->ref;
@@ -3731,6 +3731,13 @@ if ($action == 'editcss') {
 		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 	}
 	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
+
+	$uploadfolder = $conf->website->dir_output.'/'.$websitekey;
+	if (dol_is_file($uploadfolder.'/favicon.png')) {
+		print '<div class="inline-block valignmiddle marginrightonly">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=website&file='.$websitekey.'/favicon.png">';
+		print '</div>';
+	}
 	print '</tr></td>';
 
 	// CSS file

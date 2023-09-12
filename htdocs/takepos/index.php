@@ -331,7 +331,7 @@ function LoadProducts(position, issubcat) {
 		limit = maxproduct-1;
 	}
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log(data);
 		while (ishow < maxproduct) {
@@ -570,7 +570,7 @@ function Refresh() {
 
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
-	invoiceid = $("#invoiceid").val();
+	invoiceid = $("#invoiceid").val();		// This is a hidden field added by invoice.php
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
@@ -644,7 +644,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
@@ -1455,10 +1455,12 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 						//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
 						print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 					} else {
-						if (getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
-							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
-						} else {
+						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_PRICES')) {
 							print '<div class="" id="proprice'.$count.'"></div>';
+						}
+						if (getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
+							print '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
+						} else {
 							print '<img class="imgwrapper" title="" id="proimg'.$count.'">';
 						}
 					}

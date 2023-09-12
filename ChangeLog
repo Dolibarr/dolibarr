@@ -3,7 +3,15 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 1.0.0 compared to 18.0.0 *****
+***** ChangeLog for 19.0.0 compared to 18.0.0 *****
+
+For users:
+----------
+...
+
+For developers or integrators:
+------------------------------
+...
 
 
 WARNING:
@@ -11,13 +19,49 @@ WARNING:
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
 * The method get_substitutionarray_shipment_lines() has been removed. Use the generic get_substitutionarray_lines() instead.
+* Recheck setup of your module workflow to see if you need to enable the new setting to have shipment set to billed automatically 
+  when an invoice from a shipment is validated (and if your process is to make invoice on shipment and not on order).
+* It was possible to use a variable $soc or $right inside a php code condition of some extrafields properties, this is no more true (this vars are no more defined globaly).
 
+
+***** ChangeLog for 18.0.1 compared to 18.0.0 *****
+FIX: Adding a product in recurring invoice does not use the correct VAT
+FIX: API /product/getAttributes
+FIX: avoid php8 warnings
+FIX: bad balance of TR tag in multicurrency price view
+FIX: Bad calculation of localtax when price_base_type not defined.
+FIX: Bad link into message
+FIX: Bad message on menu to go to setup of accounting custom groups
+FIX: Bank receipt was empty
+FIX: Billing massaction should be possible on Processed Reception.
+FIX: clone when cloning object with ->lines containing not object
+FIX: Condition to show column POSModule and POSTerminal in invoice list
+FIX: CSS
+FIX: date survey : button to add dates would not work. Session would store cells numbers which would stay to 10 for next surveys created.
+FIX: dir output path for ODT models on reception card
+FIX: Duplicate tooltip on ref of an agenda event
+FIX: encrypt sensitive data must not be done for const MAIN_AGENDA_ACTIONAUTO
+FIX: Export when old file export_csv.modules.php is still present
+FIX: fatal error with bad definition of dictionaries
+FIX: fatal error with some parameters
+FIX: hook formBuilddocOptions was broken when used by 2 modules
+FIX: Line for revenuestamp in accountancy transfer must appear only if it exists
+FIX: Navigation between bank receipts
+FIX: payment card: misleading message when delete button disabled
+FIX: reception odt dir output path
+FIX: SQL request parenthesis
+FIX: Suppliers addlines never have VAT if buyprice for this supplier not set
+FIX: TakePOS receipt preview in admin #25648
+FIX: technical error on conciliation of lines
+FIX: the account in chart of account to use for revenue stamp is on dict
+FIX: url to check keyword not saved on partnership from public form
+FIX: when adding new times on a survey, all hours would be erased.
 
 
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
-For uses:
----------
+For users:
+----------
 
 NEW: PHP 8.2 compatibility (test not yet completed)
 NEW: Module Workstations Management upgraded to stable status
