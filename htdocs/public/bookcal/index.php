@@ -19,7 +19,7 @@
  */
 
 /**
- *     	\file       htdocs/public/onlinesign/newonlinesign.php
+ *     	\file       htdocs/public/bookcal/index.php
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  *					Example of URL: https://localhost/public/bookcal/booking.php?ref=PR...
@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "bookcal"));
 
@@ -179,7 +180,7 @@ print '<div class="bookcalpublicarea centpercent" style="position:absolute;top:5
 print '<div class="bookcalform center" style="width:70%;padding:5px;max-height:360px">';
 print '<h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2>';
 
-$sql = "SELECT b.rowid, b.ref, b.label, b.start, b.end, b.duration, b.startHour, b.endHour";
+$sql = "SELECT b.rowid, b.label, b.start, b.end, b.duration, b.startHour, b.endHour";
 $sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as b";
 $sql .= " WHERE b.status = ".(int) $availabilities::STATUS_VALIDATED;
 $sql .= " AND b.fk_bookcal_calendar = ".(int) $id;
@@ -192,7 +193,7 @@ if ($resql) {
 	while ($i < $num) {
 		$i++;
 		$obj = $db->fetch_object($resql);
-		print '<a href="'.DOL_URL_ROOT.'/public/bookcal/booking.php?id='.$obj->rowid.'&fk_calendar='.$id.'"><button type="button">'.(!empty($obj->label) ? $obj->label : $obj->ref).'</button>';
+		print '<a href="'.DOL_URL_ROOT.'/public/bookcal/booking.php?id='.$obj->rowid.'&fk_calendar='.$id.'"><button type="button">'.(!empty($obj->label) ? $obj->label : $obj->id).'</button>';
 	}
 }
 print '</div>';

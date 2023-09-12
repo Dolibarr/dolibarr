@@ -60,3 +60,4 @@ jobs:
           #committer_email: eldy@destailleur.fr
           message: 'PHP CS fixer github action'
           add: '*.php'
+

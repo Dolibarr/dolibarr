@@ -1885,7 +1885,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 		$linkObject->objectid = GETPOST('objectid', 'int');
 		$linkObject->label = GETPOST('label', 'alpha');
 		$res = $linkObject->create($user);
-		$langs->load('link');
+
 		if ($res > 0) {
 			setEventMessages($langs->trans("LinkComplete"), null, 'mesgs');
 		} else {
@@ -2441,10 +2441,10 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				// Initialize archive object
 				$zip = new ZipArchive();
 				$result = $zip->open($outputfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-				if (!$result) {
+				if ($result !== true) {
 					global $langs, $errormsg;
 					$langs->load("errors");
-					$errormsg = $langs->trans("ErrorFailedToWriteInFile", $outputfile);
+					$errormsg = $langs->trans("ErrorFailedToBuildArchive", $outputfile);
 					return -4;
 				}
 
@@ -2638,7 +2638,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->user->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphotopublic' && !empty($conf->user->dir_output)) {
-		// Wrapping for users photos that were set to public by their owner (public user photos can be read with the public link and securekey)
+		// Wrapping for users photos that were set to public (for virtual credit card) by their owner (public user photos can be read
+		// with the public link and securekey)
 		$accessok = false;
 		$reg = array();
 		if (preg_match('/^(\d+)\/photos\//', $original_file, $reg)) {
@@ -2884,7 +2885,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('societe', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/'.$original_file;

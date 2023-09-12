@@ -413,7 +413,9 @@ if (empty($reshook)) {
  */
 
 $product_static = new Product($db);
-$static_ws = new Workstation($db);
+if (isModEnabled('workstation')) {
+	$workstation_static = new Workstation($db);
+}
 $product_fourn = new ProductFournisseur($db);
 
 $title = $langs->trans("ProductsAndServices");
@@ -1270,7 +1272,7 @@ if (!empty($arrayfields['p.duration']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
-	print_liste_field_titre($arrayfields['pac.fk_product_parent']['label'], $_SERVER["PHP_SELF"], "pac.fk_product_parent", "", $param, '', $sortfield, $sortorder, '', $arrayfields['pac.fk_product_parent']['help']);
+	print_liste_field_titre($arrayfields['pac.fk_product_parent']['label'], $_SERVER["PHP_SELF"], "pac.fk_product_parent", "", $param, '', $sortfield, $sortorder, '', empty($arrayfields['pac.fk_product_parent']['help']) ? '' : $arrayfields['pac.fk_product_parent']['help']);
 }
 if (!empty($arrayfields['p.finished']['checked'])) {
 	print_liste_field_titre($arrayfields['p.finished']['label'], $_SERVER["PHP_SELF"], "p.finished", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1844,12 +1846,12 @@ while ($i < $imaxinloop) {
 		// Default Workstation
 		if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 			print '<td align="left">';
-			if (!empty($obj->fk_default_workstation)) {
-				$static_ws->id = $obj->fk_default_workstation;
-				$static_ws->ref = $obj->ref_workstation;
-				$static_ws->status = $obj->status_workstation;
+			if (isModEnabled('workstation') && !empty($obj->fk_default_workstation)) {
+				$workstation_static->id = $obj->fk_default_workstation;
+				$workstation_static->ref = $obj->ref_workstation;
+				$workstation_static->status = $obj->status_workstation;
 
-				print $static_ws->getNomUrl(1);
+				print $workstation_static->getNomUrl(1);
 			}
 			print '</td>';
 			if (!$i) {

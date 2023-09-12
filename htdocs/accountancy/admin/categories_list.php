@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -852,6 +852,9 @@ if ($resql) {
 			print "</tr>\n";
 			$i++;
 		}
+	} else {
+		$colspan = 11;
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 } else {
 	dol_print_error($db);

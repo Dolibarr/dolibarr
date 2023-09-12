@@ -91,6 +91,11 @@ class Facture extends CommonInvoice
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -100,11 +105,6 @@ class Facture extends CommonInvoice
 	 * {@inheritdoc}
 	 */
 	protected $table_ref_field = 'ref';
-
-	/**
-	 * @var int thirdparty ID
-	 */
-	public $socid;
 
 	public $author;
 
@@ -144,7 +144,6 @@ class Facture extends CommonInvoice
 	 */
 	public $fk_user_modif;
 
-	public $date; // Date invoice
 	public $datem;
 
 	/**
@@ -190,19 +189,6 @@ class Facture extends CommonInvoice
 	public $resteapayer;
 
 	/**
-	 * ! Closing after partial payment: discount_vat, badcustomer or badsupplier, bankcharge, other
-	 * ! Closing when no payment: replaced, abandoned
-	 * @var string Close code
-	 */
-	public $close_code;
-
-	/**
-	 * ! Comment if paid without full payment
-	 * @var string Close note
-	 */
-	public $close_note;
-
-	/**
 	 * 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
 	 */
 	public $paye;
@@ -218,9 +204,6 @@ class Facture extends CommonInvoice
 	public $linked_objects = array();
 
 	public $date_lim_reglement;
-	public $cond_reglement_code; // Code in llx_c_paiement
-	public $cond_reglement_doc; // Code in llx_c_paiement
-	public $mode_reglement_code; // Code in llx_c_paiement
 
 	/**
 	 * @var int ID Field to store bank id to use when payment mode is withdraw
@@ -1974,7 +1957,7 @@ class Facture extends CommonInvoice
 			if (!empty($this->total_tva)) {
 				$datas['amountvat'] = '<br><b>'.$langs->trans('AmountVAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 			}
-			if (!empty($this->revenuestamp)) {
+			if (!empty($this->revenuestamp) && $this->revenuestamp != 0) {
 				$datas['amountrevenustamp'] = '<br><b>'.$langs->trans('RevenueStamp').':</b> '.price($this->revenuestamp, 0, $langs, 0, -1, -1, $conf->currency);
 			}
 			if (!empty($this->total_localtax1) && $this->total_localtax1 != 0) {
@@ -2029,7 +2012,7 @@ class Facture extends CommonInvoice
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -3367,7 +3350,7 @@ class Facture extends CommonInvoice
 
 			if (!$error) {
 				// Define third party as a customer
-				$result = $this->thirdparty->set_as_client();
+				$result = $this->thirdparty->setAsCustomer();
 
 				// If active we decrement the main product and its components at invoice validation
 				if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_BILL) && $idwarehouse > 0) {
