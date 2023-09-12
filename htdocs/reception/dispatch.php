@@ -106,11 +106,20 @@ if (empty($conf->reception->enabled)) {
 	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
 }
 
-// $id is id of a purchase order.
-$result = restrictedArea($user, 'fournisseur', $object, 'reception');
+// $id is id of a reception
+if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
+	$result = restrictedArea($user, 'reception', $object->id);
+} else {
+	// We do not use the reception module, so we test permission on the supplier orders
+	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
+	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
+		accessforbidden();
+	}
+}
 
 if (!isModEnabled('stock')) {
-	accessforbidden();
+	accessforbidden('Module stock disabled');
 }
 
 $usercancreate = $user->hasRight('reception', 'creer');

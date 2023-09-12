@@ -96,7 +96,7 @@ if ($id > 0 || !empty($ref)) {
 $result = restrictedArea($user, 'expedition', $object, '');
 
 if (!isModEnabled('stock')) {
-	accessforbidden();
+	accessforbidden('Module stock disabled');
 }
 
 $usercancreate = $user->hasRight('expedition', 'creer');
@@ -167,9 +167,10 @@ if ($action == 'updatelines' && $usercancreate) {
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps";
 					$sql .= " ON ps.rowid = pb.fk_product_stock";
-					$sql .= " WHERE pb.batch ='".$db->escape($lot)."'";
+					$sql .= " WHERE pb.batch = '".$db->escape($lot)."'";
 					$sql .= " AND ps.fk_product =".((int) GETPOST($prod, 'int')) ;
 					$sql .= " AND ps.fk_entrepot =".((int) GETPOST($ent, 'int')) ;
+
 					$resql = $db->query($sql);
 					if ($resql) {
 						$num = $db->num_rows($resql);
@@ -758,8 +759,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '</td>';
 
 									print '<td>';
-									print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
-									//print '<input type="hidden" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+									print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+									//print '<input type="hidden" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
 									print '</td>';
 									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 										print '<td class="nowraponall">';
