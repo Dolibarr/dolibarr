@@ -1,0 +1,82 @@
+# Copyright (C) 2023		Lionel Vessiller	<lvessiller@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleWebPortalName'
+ModuleWebPortalName = Web portal
+# Module description 'ModuleWebPortalDesc'
+ModuleWebPortalDesc = Public web portal
+WebPortalDescription = Public web portal module for membership and partnership
+
+#
+# Admin page
+#
+WebPortalSetup = WebPortal setup
+Settings = Settings
+WebPortalSetupPage = WebPortal setup page
+WEBPORTAL_ROOT_URL = Public access url
+WebPortalRootUrlHelp = Public access url (http or https) if you have a virtual host or keep empty
+WebPortalAccessHidden = Hidden
+WebPortalAccessVisible = Visible
+WebPortalAccessEdit = Editable
+WEBPORTAL_MEMBER_CARD_ACCESS = Enable access to the membership record
+WebPortalMemberCardAccessHelp = Enable access to the membership record (Hidden / Visible or Editable)
+WEBPORTAL_PARTNERSHIP_CARD_ACCESS = Enable access to the partnership record
+WebPortalPartnerShipCardAccessHelp = Enable access to the partnership record (Hidden / Visible or Editable)
+WEBPORTAL_PROPAL_LIST_ACCESS = Enable access to the proposals
+WEBPORTAL_ORDER_LIST_ACCESS = Enable access to the orders
+WEBPORTAL_INVOICE_LIST_ACCESS = Enable access to the invoices
+WEBPORTAL_USER_LOGGED = Select a user
+WebPortalUserLoggedHelp = This user is used to update cards
+
+#
+# Public pages
+#
+WebPortalHomeTitle = Welcome
+WebPortalHomeDesc = Welcome to the public interface
+WebPortalPropalListMenu = Proposals
+WebPortalPropalListTitle = List of proposals
+WebPortalPropalListDesc = List of proposals
+WebPortalPropalListNothing = Proposals not found
+WebPortalOrderListMenu = Orders
+WebPortalOrderListTitle = List of orders
+WebPortalOrderListDesc = List of orders
+WebPortalOrderListNothing = Orders not found
+WebPortalInvoiceListMenu = Invoices
+WebPortalInvoiceListTitle = List of invoices
+WebPortalInvoiceListDesc = List of invoices
+WebPortalInvoiceListNothing = Invoices not found
+WebPortalMemberCardMenu = Member
+WebPortalMemberCardTitle = Member card
+WebPortalMemberCardDesc = Member card
+WebPortalPartnershipCardMenu = Partnership
+WebPortalPartnershipCardTitle = Partnership card
+WebPortalPartnershipCardDesc = Partnership card
+
+#
+# Errors
+#
+WebPortalError404 = Page not found
+WebPortalErrorPageNotExist = Page not exist
+WebPortalErrorFetchThirdPartyAccountFromLogin = Error when loading third-party account (login : %s)
+WebPortalErrorAuthentication = Authentication error
+WebPortalErrorFetchLoggedThirdPartyAccount = Error when loading third-party account (login : %s)
+WebPortalErrorFetchLoggedUser = Error when loading user (Id : %s)
+WebPortalErrorFetchLoggedThirdParty = Error when loading third-party (Id : %s)
+WebPortalErrorFetchLoggedMember = Error when loading member (Id : %s)
+WebPortalErrorFetchLoggedPartnership = Error when loading partnership (Third-party Id : %s, Member Id : %s)

@@ -1,0 +1,38 @@
+@charset "UTF-8";
+@import "pico.css";
+@import "mixin.css";
+@import "login.css";
+
+
+
+
+/**
+ * Navs
+ */
+
+body > nav {
+  --nav-link-spacing-vertical: 1rem;
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  z-index: 99;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  backdrop-filter: saturate(180%) blur(10px);
+  background-color: var(--nav-background-color);
+  box-shadow: 0px 1px 0 var(--nav-border-color);
+}
+
+.spacer{
+  --spacer-margin: calc(var(--font-size) * 2);
+  margin-top: var(--spacer-margin);
+  margin-bottom: var(--spacer-margin);;
+}
+
+html{
+  scroll-padding-top:100px;
+}
+
+#main-container{
+  padding-top: 200px;
+}

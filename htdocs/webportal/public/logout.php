@@ -1,0 +1,55 @@
+<?php
+/* Copyright (C) 2004-2017 	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *      \file       htdocs/user/logout.php
+ *      \brief      Page called to disconnect a user
+ */
+
+define('WEBPORTAL_NOREQUIREUSER', 1);
+define('WEBPORTAL_NOREQUIRETRAN', 1);
+define('WEBPORTAL_NOLOGIN', 1);
+
+if (!defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
+
+// Change this following line to use the correct relative path (../, ../../, etc)
+$res = 0;
+if (!$res && file_exists('../webportal.main.inc.php')) $res=@include '../webportal.main.inc.php';				// to work if your module directory is into dolibarr root htdocs directory
+if (!$res) die('Include of main fails');
+
+// Destroy session
+dol_syslog("End of session ".session_id());
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_destroy();
+}
+
+// Not sure this is required
+if (isset($_SESSION['webportal_logged_thirdparty_account_id'])) unset($_SESSION['webportal_logged_thirdparty_account_id']);
+
+if (GETPOST('noredirect')) {
+    return;
+}
+header("Location: ".$context->rootUrl); // Default behaviour is redirect to index.php page
+
+// End of page
+$db->close();
