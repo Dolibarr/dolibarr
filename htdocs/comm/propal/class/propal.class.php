@@ -116,8 +116,21 @@ class Propal extends CommonObject
 	/**
 	 * Ref from thirdparty
 	 * @var string
+	 * @deprecated
+	 * @see $ref_customer
 	 */
 	public $ref_client;
+
+	/**
+	 * Ref from thirdparty
+	 * @var string
+	 */
+	public $ref_customer;
+
+	/**
+	 * @var Propal oldcopy with propal properties
+	 */
+	public $oldcopy;
 
 	/**
 	 * Status of the quote
@@ -240,7 +253,21 @@ class Propal extends CommonObject
 	public $address_type;
 	public $address;
 
+	/**
+	 * @var int availabilty ID
+	 */
 	public $availability_id;
+
+	/**
+	 * @var int availabilty ID
+	 * @deprecated
+	 * @see $availability_id
+	 */
+	public $fk_availability;
+
+	/**
+	 * @var string availabilty code
+	 */
 	public $availability_code;
 
 	public $duree_validite;
@@ -256,6 +283,10 @@ class Propal extends CommonObject
 	 * @var PropaleLigne[]
 	 */
 	public $lines = array();
+
+	/**
+	 * @var PropaleLigne
+	 */
 	public $line;
 
 	public $labelStatus = array();
@@ -970,8 +1001,9 @@ class Propal extends CommonObject
 
 				$this->update_price(1, 'auto');
 
-				$this->fk_propal = $this->id;
-				$this->rowid = $rowid;
+				// $this is Propal
+				// $this->fk_propal = $this->id;
+				// $this->rowid = $rowid;
 
 				$this->db->commit();
 				return $result;
@@ -1448,7 +1480,7 @@ class Propal extends CommonObject
 										}
 									}
 								} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-									$prodcustprice = new Productcustomerprice($this->db);
+									$prodcustprice = new ProductCustomerPrice($this->db);
 									$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
 									$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 									if ($result) {
@@ -2702,7 +2734,7 @@ class Propal extends CommonObject
 				// The connected company is classified as a client
 				$soc=new Societe($this->db);
 				$soc->id = $this->socid;
-				$result = $soc->set_as_client();
+				$result = $soc->setAsCustomer();
 
 				if ($result < 0) {
 					$this->error=$this->db->lasterror();
@@ -3825,7 +3857,7 @@ class Propal extends CommonObject
 			if ($option != 'nolink') {
 				// Add param to save lastsearch_values or not
 				$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-				if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 					$add_save_lastsearch_values = 1;
 				}
 				if ($add_save_lastsearch_values) {

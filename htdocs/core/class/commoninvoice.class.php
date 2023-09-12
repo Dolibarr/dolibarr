@@ -44,6 +44,52 @@ abstract class CommonInvoice extends CommonObject
 	public $subtype;
 
 	/**
+	 * @var int Thirdparty ID
+	 */
+	public $socid;
+
+	/**
+	 * Invoice date (date)
+	 *
+	 * @var integer
+	 */
+	public $date;
+
+	public $cond_reglement_id; // Id in llx_c_paiement
+	public $cond_reglement_code; // Code in llx_c_paiement
+	public $cond_reglement_label;
+	public $cond_reglement_doc; // Code in llx_c_paiement
+
+	public $mode_reglement_id;
+	public $mode_reglement_code; // Code in llx_c_paiement
+
+	public $totalpaid;			// duplicate with sumpayed
+	public $totaldeposits;		// duplicate with sumdeposit
+	public $totalcreditnotes;	// duplicate with sumcreditnote
+
+	public $sumpayed;
+	public $sumpayed_multicurrency;
+	public $sumdeposit;
+	public $sumdeposit_multicurrency;
+	public $sumcreditnote;
+	public $sumcreditnote_multicurrency;
+	public $remaintopay;
+
+	/**
+	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing when no payment: replaced, abandoned
+	 * @var string Close code
+	 */
+	public $close_code;
+
+	/**
+	 * ! Comment if paid without full payment
+	 * @var string Close note
+	 */
+	public $close_note;
+
+
+	/**
 	 * Standard invoice
 	 */
 	const TYPE_STANDARD = 0;
@@ -102,18 +148,6 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
-
-	public $totalpaid;			// duplicate with sumpayed
-	public $totaldeposits;		// duplicate with sumdeposit
-	public $totalcreditnotes;	// duplicate with sumcreditnote
-
-	public $sumpayed;
-	public $sumpayed_multicurrency;
-	public $sumdeposit;
-	public $sumdeposit_multicurrency;
-	public $sumcreditnote;
-	public $sumcreditnote_multicurrency;
-	public $remaintopay;
 
 
 	/**
@@ -533,6 +567,18 @@ abstract class CommonInvoice extends CommonObject
 		return 0;
 	}
 
+	/**
+	 * Return next reference of invoice not already used (or last reference)
+	 *
+	 * @param	 Societe	$soc		Thirdparty object
+	 * @param    string		$mode		'next' for next value or 'last' for last value
+	 * @return   string					free ref or last ref
+	 */
+	public function getNextNumRef($soc, $mode = 'next')
+	{
+		// TODO Must be implemented into main class
+		return '';
+	}
 
 	/**
 	 *	Return label of type of invoice
@@ -907,16 +953,18 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *  Create a direct debit order into prelevement_bons then
-	 *  Send the payment order to Stripe (for a direct debit order or a credit transfer order) and record an event in llx_actioncomm.
+	 *  Create a direct debit order into prelevement_bons for a given prelevement_request, then
+	 *  Send the payment order to the service (for a direct debit order or a credit transfer order) and record an event in llx_actioncomm.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$did			ID of unitary payment request to pay
 	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
+	 *  @param		string	$service		'StripeTest', 'StripeLive', ...
+	 *  @param		string	$forcestripe	To force another stripe env: 'cus_account@pk_...:sk_...'
 	 *	@return     int         			<0 if KO, >0 if OK
 	 */
-	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture')
+	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture', $service = '', $forcestripe = '')
 	{
 		global $conf, $user, $langs;
 
@@ -926,10 +974,17 @@ abstract class CommonInvoice extends CommonObject
 		if ($type != 'direct-debit' && empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
 			return 0;
 		}
+		// Set a default value for service if not provided
+		if (empty($service)) {
+			$service = 'StripeTest';
+			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+				$service = 'StripeLive';
+			}
+		}
 
 		$error = 0;
 
-		dol_syslog(get_class($this)."::makeStripeSepaRequest start", LOG_DEBUG);
+		dol_syslog(get_class($this)."::makeStripeSepaRequest start did=".$did." type=".$type." service=".$service." sourcetype=".$sourcetype." forcestripe=".$forcestripe, LOG_DEBUG);
 
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			// Get the default payment mode for BAN payment of the third party
@@ -972,17 +1027,6 @@ abstract class CommonInvoice extends CommonObject
 					$companypaymentmode = new CompanyPaymentMode($this->db);	// table societe_rib
 					$companypaymentmode->fetch($bac->id);
 
-					// Start code for Stripe
-					// TODO We may have this coming as a parameter from the caller.
-					$service = 'StripeTest';
-					$servicestatus = 0;
-					if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
-						$service = 'StripeLive';
-						$servicestatus = 1;
-					}
-
-					dol_syslog("makeStripeSepaRequest amount = ".$amount." service=" . $service . " servicestatus=" . $servicestatus . " thirdparty_id=" . $this->socid." did=".$did);
-
 					$this->stripechargedone = 0;
 					$this->stripechargeerror = 0;
 
@@ -990,13 +1034,11 @@ abstract class CommonInvoice extends CommonObject
 
 					$currency = $conf->currency;
 
-					global $stripearrayofkeysbyenv;
-
 					$errorforinvoice = 0;     // We reset the $errorforinvoice at each invoice loop
 
 					$this->fetch_thirdparty();
 
-					dol_syslog("--- Process payment request thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
+					dol_syslog("--- Process payment request amount=".$amount." thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
 
 					//$alreadypayed = $this->getSommePaiement();
 					//$amount_credit_notes_included = $this->getSumCreditNotesUsed();
@@ -1059,6 +1101,13 @@ abstract class CommonInvoice extends CommonObject
 					if (!$error) {
 						if ($amountstripe > 0) {
 							try {
+								global $savstripearrayofkeysbyenv;
+								global $stripearrayofkeysbyenv;
+								$servicestatus = 0;
+								if ($service == 'StripeLive') {
+									$servicestatus = 1;
+								}
+
 								//var_dump($companypaymentmode);
 								dol_syslog("We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
 
@@ -1069,19 +1118,64 @@ abstract class CommonInvoice extends CommonObject
 								// So it inits or erases the $stripearrayofkeysbyenv
 								$stripe = new Stripe($this->db);
 
+								if (empty($savstripearrayofkeysbyenv)) $savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
 								dol_syslog("makeStripeSepaRequest Current Stripe environment is " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key']);
+								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
-								$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
-								\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+								$foundalternativestripeaccount = '';
 
+								// Force stripe to another value (by default this value is empty)
+								if (! empty($forcestripe)) {
+									dol_syslog("makeStripeSepaRequest A dedicated stripe account was forced, so we switch to it.");
 
-								dol_syslog("makeStripeSepaRequest get stripe connet account", LOG_DEBUG);
+									$tmparray = explode('@', $forcestripe);
+									if (! empty($tmparray[1])) {
+										$tmparray2 = explode(':', $tmparray[1]);
+										if (! empty($tmparray2[1])) {
+											$stripearrayofkeysbyenv[$servicestatus]["publishable_key"] = $tmparray2[0];
+											$stripearrayofkeysbyenv[$servicestatus]["secret_key"] = $tmparray2[1];
+
+											$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
+											\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+
+											$foundalternativestripeaccount = $tmparray[0];    // Store the customer id
+
+											dol_syslog("makeStripeSepaRequest We use now customer=".$foundalternativestripeaccount." publishable_key=".$stripearrayofkeys['publishable_key'], LOG_DEBUG);
+										}
+									}
+
+									if (! $foundalternativestripeaccount) {
+										$stripearrayofkeysbyenv = $savstripearrayofkeysbyenv;
+
+										$stripearrayofkeys = $savstripearrayofkeysbyenv[$servicestatus];
+										\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+										dol_syslog("makeStripeSepaRequest We found a bad value for Stripe Account for thirdparty id=".$thirdparty->id.", so we ignore it and keep using the global one, so ".$stripearrayofkeys['publishable_key'], LOG_WARNING);
+									}
+								} else {
+									$stripearrayofkeysbyenv = $savstripearrayofkeysbyenv;
+
+									$stripearrayofkeys = $savstripearrayofkeysbyenv[$servicestatus];
+									\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+									dol_syslog("makeStripeSepaRequest No dedicated Stripe Account requested, so we use global one, so ".$stripearrayofkeys['publishable_key'], LOG_DEBUG);
+								}
+
 								$stripeacc = $stripe->getStripeAccount($service, $this->socid);								// Get Stripe OAuth connect account if it exists (no network access here)
-								dol_syslog("makeStripeSepaRequest get stripe connect account return " . json_encode($stripeacc), LOG_DEBUG);
 
-								$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
-								if (empty($customer) && !empty($stripe->error)) {
-									$this->errors[] = $stripe->error;
+								if ($foundalternativestripeaccount) {
+									if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+										$customer = \Stripe\Customer::retrieve(array('id'=>"$foundalternativestripeaccount", 'expand[]'=>'sources'));
+									} else {
+										$customer = \Stripe\Customer::retrieve(array('id'=>"$foundalternativestripeaccount", 'expand[]'=>'sources'), array("stripe_account" => $stripeacc));
+									}
+								} else {
+									$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
+									if (empty($customer) && ! empty($stripe->error)) {
+										$this->errors[] = $stripe->error;
+									}
+									/*if (!empty($customer) && empty($customer->sources)) {
+									 $customer = null;
+									 $this->errors[] = '\Stripe\Customer::retrieve did not returned the sources';
+									 }*/
 								}
 
 								// $nbhoursbetweentries = (empty($conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES) ? 49 : $conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES);				// Must have more that 48 hours + 1 between each try (so 1 try every 3 daily batch)

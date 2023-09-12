@@ -264,6 +264,20 @@ class Categorie extends CommonObject
 	 */
 	public $childs = array();
 
+	/**
+	 * @var array multilangs
+	 */
+	public $multilangs;
+
+	/**
+	 * @var int imgWidth
+	 */
+	public $imgWidth;
+
+	/**
+	 * @var int imgHeight
+	 */
+	public $imgHeight;
 
 	/**
 	 *	Constructor
@@ -1886,27 +1900,27 @@ class Categorie extends CommonObject
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->label)."'";
-					$sql2 .= ", '".$this->db->escape($this->multilangs["$key"]["description"])."')";
+					$sql2 .= ", '".$this->db->escape($this->multilangs[$key]["description"])."')";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 				if (!$this->db->query($sql2)) {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
-			} elseif (isset($this->multilangs["$key"])) {
+			} elseif (isset($this->multilangs[$key])) {
 				if ($this->db->num_rows($result)) { // si aucune ligne dans la base
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
-					$sql2 .= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
-					$sql2 .= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
+					$sql2 .= " SET label='".$this->db->escape($this->multilangs[$key]["label"])."',";
+					$sql2 .= " description='".$this->db->escape($this->multilangs[$key]["description"])."'";
 					$sql2 .= " WHERE fk_category=".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
-					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->multilangs["$key"]["label"])."'";
-					$sql2 .= ",'".$this->db->escape($this->multilangs["$key"]["description"])."')";
+					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->multilangs[$key]["label"])."'";
+					$sql2 .= ",'".$this->db->escape($this->multilangs[$key]["description"])."')";
 				}
 
 				// on ne sauvegarde pas des champs vides
-				if ($this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"]) {
+				if ($this->multilangs[$key]["label"] || $this->multilangs[$key]["description"] || $this->multilangs[$key]["note"]) {
 					dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 				}
 				if (!$this->db->query($sql2)) {
@@ -1950,8 +1964,8 @@ class Categorie extends CommonObject
 					$this->label = $obj->label;
 					$this->description = $obj->description;
 				}
-				$this->multilangs["$obj->lang"]["label"] = $obj->label;
-				$this->multilangs["$obj->lang"]["description"] = $obj->description;
+				$this->multilangs[$obj->lang]["label"] = $obj->label;
+				$this->multilangs[$obj->lang]["description"] = $obj->description;
 			}
 			return 1;
 		} else {

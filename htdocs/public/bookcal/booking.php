@@ -19,7 +19,7 @@
  */
 
 /**
- *     	\file       htdocs/public/onlinesign/newonlinesign.php
+ *     	\file       htdocs/public/bookcal/booking.php
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  *					Example of URL: https://localhost/public/bookcal/booking.php?ref=PR...
@@ -44,7 +44,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bookcal/class/booking.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
@@ -170,12 +171,20 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 if ($action == 'add') {
 	$error = 0;
-	$urlback = '';
+	$idcontact = 0;
+	$calendar = new Calendar($db);
+	$contact = new Contact($db);
+	$actioncomm = new ActionComm($db);
+
+	$res = $calendar->fetch($fk_calendar);
+	if ($res < 0) {
+		$error++;
+		$errmsg .= $calendar->error." ".join(',', $calendar->errors);
+	}
+
 	if (!is_object($user)) {
 		$user = new User($db);
 	}
-
-	$booking = new Booking($db);
 
 	$db->begin();
 	if (!GETPOST("lastname")) {
@@ -192,21 +201,71 @@ if ($action == 'add') {
 	}
 
 	if (!$error) {
-		$booking->ref = $booking->getNextNumRef();
-		$booking->lastname = GETPOST("lastname");
-		$booking->firstname = GETPOST("firstname");
-		$booking->email = GETPOST("email");
-		$booking->description = GETPOST("description");
-		$booking->duration = GETPOST("duration");
-		$booking->start = GETPOST("datetimebooking", 'int');
-		$booking->fk_bookcal_availability = GETPOST("id", 'int');
+		$sql = "SELECT s.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as s";
+		$sql .= " WHERE s.lastname = '".GETPOST("lastname")."'";
+		$sql .= " AND s.firstname = '".GETPOST("firstname")."'";
+		$sql .= " AND s.email = '".GETPOST("email")."'";
+		$resql = $db->query($sql);
 
-		$result = $booking->create($user);
-		if ($result <= 0) {
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				$obj = $db->fetch_object($resql);
+				$idcontact = $obj->rowid;
+				$contact->fetch($idcontact);
+			} else {
+				$contact->lastname = GETPOST("lastname");
+				$contact->firstname = GETPOST("firstname");
+				$contact->email = GETPOST("email");
+				$result = $contact->create($user);
+				if ($result < 0) {
+					$error++;
+					$errmsg .= $contact->error." ".join(',', $contact->errors);
+				}
+			}
+		} else {
 			$error++;
-			$errmsg = ($booking->error ? $booking->error.'<br>' : '').join('<br>', $booking->errors);
+			$errmsg .= $db->lasterror();
 		}
 	}
+
+	if (!$error) {
+		$dateend = dol_time_plus_duree(GETPOST("datetimebooking", 'int'), GETPOST("duration"), 'i');
+
+		$actioncomm->label = "test";
+		$actioncomm->type = 'AC_RDV';
+		$actioncomm->type_id = 5;
+		$actioncomm->datep = GETPOST("datetimebooking", 'int');
+		$actioncomm->datef = $dateend;
+		$actioncomm->note_private = GETPOST("description");
+		$actioncomm->percentage = -1;
+		$actioncomm->fk_bookcal_availability = GETPOST("id", 'int');
+		$actioncomm->userownerid = $calendar->visibility;
+		$actioncomm->contact_id = $contact->id;
+		$actioncomm->socpeopleassigned = $contact->id;
+		$result = $actioncomm->create($user);
+		if ($result < 0) {
+			$error++;
+			$errmsg .= $actioncomm->error." ".join(',', $actioncomm->errors);
+		}
+
+		if (!$error) {
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources";
+			$sql .= "(fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
+			$sql .= ") VALUES (";
+			$sql .= (int) $actioncomm->id;
+			$sql .= ", 'socpeople'";
+			$sql .= ", ". (int) $contact->id;
+			$sql .= ", 0, 0, 0)";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				$error++;
+				$errmsg .= $db->lasterror();
+			}
+		}
+	}
+
 	if (!$error) {
 		$db->commit();
 		$action = 'afteradd';

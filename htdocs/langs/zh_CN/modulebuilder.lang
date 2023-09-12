@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - loan
 IdModule= Module id
-ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
+ModuleBuilderDesc=该工具只能由有经验的用户或开发人员使用。它提供了构建或编辑您自己的模块的实用程序。替代<a href="%s" target="_blank" rel="noopener noreferrer">手动开发的文档位于此处</a>。
 EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
 EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
@@ -163,11 +163,11 @@ ListOfTabsEntries=List of tab entries
 TabsDefDesc=Define here the tabs provided by your module
 TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
 BadValueForType=Bad value for type %s
-DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTable=Define the fields/properties from an existing table
 DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
 DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
-GeneratePermissions=I want to add the rights for this object
-GeneratePermissionsHelp=generate default rights for this object
+GeneratePermissions=I want to manage permissions on this object
+GeneratePermissionsHelp=If you check this, some code will be added to manage permissions to read, write and delete record of the objects
 PermissionDeletedSuccesfuly=Permission has been successfully removed
 PermissionUpdatedSuccesfuly=Permission has been successfully updated
 PermissionAddedSuccesfuly=Permission has been successfully added
@@ -180,3 +180,4 @@ CRUDCreateWrite=Create or Update
 FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.
 DictionariesCreated=Dictionary <b>%s</b> created successfully
 DictionaryDeleted=Dictionary <b>%s</b> removed successfully
+PropertyModuleUpdated=Property <b>%s</b> has been update successfully

@@ -28,7 +28,7 @@ OAUTH_GOOGLE_SECRET=OAuth Google Secret
 OAUTH_GITHUB_NAME=OAuth GitHub service
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
+OAUTH_URL_FOR_CREDENTIAL=前往<a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">此页面 <span class="fas fa-external-link-alt paddingleft"> </span> </a> 创建或获取您的 OAuth ID 和 Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
 OAUTH_ID=OAuth Client ID

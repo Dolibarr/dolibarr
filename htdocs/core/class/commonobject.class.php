@@ -659,9 +659,29 @@ abstract class CommonObject
 	 */
 	public $alreadypaid;
 
+	/**
+	 * @var array		Array with label of status
+	 */
 	public $labelStatus;
 
+	/**
+	 * @var array array of status string
+	 * @deprecated 	Use instead labelStatus
+	 */
+	public $statuts = array();
+
+	/**
+	 * @var array		Array with short label of status
+	 */
 	protected $labelStatusShort;
+
+	/**
+	 * @var array array of short status string
+	 * @deprecated 	Use instead labelStatusShort
+	 */
+	public $statuts_short = array();
+
+
 
 	/**
 	 * @var int 		show photo on popup
@@ -672,6 +692,7 @@ abstract class CommonObject
 	 * @var array 		nb used in load_stateboard
 	 */
 	public $nb = array();
+
 
 	/**
 	 * @var string output
@@ -1892,10 +1913,10 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::fetchObjectFrom', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$row = $this->db->fetch_row($resql);
+			$obj = $this->db->fetch_object($resql);
 			// Test for avoid error -1
-			if ($row[0] > 0) {
-				$result = $this->fetch($row[0]);
+			if ($obj) {
+				$result = $this->fetch($obj->rowid);
 			}
 		}
 
@@ -3715,18 +3736,21 @@ abstract class CommonObject
 			$this->multicurrency_total_ttc += isset($this->revenuestamp) ? ($this->revenuestamp * $multicurrency_tx) : 0;
 
 			// Situations totals
-			if (!empty($this->situation_cycle_ref) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits') && $this->type != $this::TYPE_CREDIT_NOTE) {
-				$prev_sits = $this->get_prev_sits();
+			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
+				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				if ($this->type != Facture::TYPE_CREDIT_NOTE) {
+					$prev_sits = $this->get_prev_sits();
 
-				foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
-					$this->total_ht -= $sit->total_ht;
-					$this->total_tva -= $sit->total_tva;
-					$this->total_localtax1 -= $sit->total_localtax1;
-					$this->total_localtax2 -= $sit->total_localtax2;
-					$this->total_ttc -= $sit->total_ttc;
-					$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
-					$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
-					$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+					foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
+						$this->total_ht -= $sit->total_ht;
+						$this->total_tva -= $sit->total_tva;
+						$this->total_localtax1 -= $sit->total_localtax1;
+						$this->total_localtax2 -= $sit->total_localtax2;
+						$this->total_ttc -= $sit->total_ttc;
+						$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
+						$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
+						$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+					}
 				}
 			}
 
@@ -4291,6 +4315,9 @@ abstract class CommonObject
 		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
 			return -1;
 		}
+		if (!preg_match('/^[_a-zA-Z0-9]+$/', $field_select)) {
+			dol_syslog('Invalid value $field_select for parameter '.$field_select.' in call to getAllItemsLinkedByObjectID(). Must be a single field name.', LOG_ERR);
+		}
 
 		global $db;
 
@@ -4305,6 +4332,35 @@ abstract class CommonObject
 		}
 
 		return $TRes;
+	}
+
+	/**
+	 * Count items linked to an object id in association table
+	 *
+	 * @param	int		$fk_object_where		id of object we need to get linked items
+	 * @param	string	$field_where			name of field of object we need to get linked items
+	 * @param	string	$table_element			name of association table
+	 * @return 	array|int						Array of record, -1 if empty
+	 */
+	public static function getCountOfItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
+	{
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
+
+		global $db;
+
+		$sql = "SELECT COUNT(*) as nb FROM ".$db->prefix().$table_element." WHERE ".$field_where." = ".((int) $fk_object_where);
+		$resql = $db->query($sql);
+		$n = 0;
+		if ($resql) {
+			$res = $db->fetch_object($resql);
+			if ($res) {
+				$n = $res->nb;
+			}
+		}
+
+		return $n;
 	}
 
 	/**
@@ -5380,7 +5436,9 @@ abstract class CommonObject
 		if (isset($this->lines) && is_array($this->lines)) {
 			$nboflines = count($this->lines);
 			for ($i = 0; $i < $nboflines; $i++) {
-				$this->lines[$i] = clone $this->lines[$i];
+				if (is_object($this->lines[$i])) {
+					$this->lines[$i] = clone $this->lines[$i];
+				}
 			}
 		}
 	}
@@ -5602,32 +5660,35 @@ abstract class CommonObject
 			// Set the public "share" key
 			$setsharekey = false;
 			if ($this->element == 'propal' || $this->element == 'proposal') {
-				if (!isset($conf->global->PROPOSAL_ALLOW_ONLINESIGN) || !empty($conf->global->PROPOSAL_ALLOW_ONLINESIGN)) {
+				if (getDolGlobalInt("PROPOSAL_ALLOW_ONLINESIGN")) {
 					$setsharekey = true;	// feature to make online signature is not set or set to on (default)
 				}
-				if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
+				if (getDolGlobalInt("PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD")) {
 					$setsharekey = true;
 				}
 			}
-			if ($this->element == 'commande' && !empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
+			if ($this->element == 'commande' && getDolGlobalInt("ORDER_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'facture' && !empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
+			if ($this->element == 'facture' && getDolGlobalInt("INVOICE_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'bank_account' && !empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
+			if ($this->element == 'bank_account' && getDolGlobalInt("BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'product' && !empty($conf->global->PRODUCT_ALLOW_EXTERNAL_DOWNLOAD)) {
+			if ($this->element == 'product' && getDolGlobalInt("PRODUCT_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
+			if ($this->element == 'contrat' && getDolGlobalInt("CONTRACT_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'fichinter' && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD)) {
+			if ($this->element == 'fichinter' && getDolGlobalInt("FICHINTER_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
+			if ($this->element == 'supplier_proposal' && getDolGlobalInt("SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD")) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'societe_rib' && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 				$setsharekey = true;
 			}
 
@@ -6095,6 +6156,11 @@ abstract class CommonObject
 
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
+						if (!empty($extrafields->attributes[$this->table_element]['type'][$key]) && $extrafields->attributes[$this->table_element]['type'][$key] == 'password') {
+							if (preg_match('/^dolcrypt:/', $value)) {
+								$this->array_options["options_".$key] = dolDecrypt($value);
+							}
+						}
 					}
 				}
 
@@ -6107,7 +6173,7 @@ abstract class CommonObject
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;        // We set a global variable to $objectoffield so
 								$objectoffield = $this;        // we can use it inside computed formula
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -6222,17 +6288,8 @@ abstract class CommonObject
 
 				// Similar code than into insertExtraFields
 				if ($attributeRequired) {
-					$mandatorypb = false;
-					if ($attributeType == 'link' && $this->array_options[$key] == '-1') {
-						$mandatorypb = true;
-					}
-					if ($this->array_options[$key] === '') {
-						$mandatorypb = true;
-					}
-					if ($attributeType == 'sellist' && $this->array_options[$key] == '0') {
-						$mandatorypb = true;
-					}
-					if ($mandatorypb) {
+					$v = $this->array_options[$key];
+					if (ExtraFields::isEmptyValue($v, $attributeType)) {
 						$langs->load("errors");
 						dol_syslog("Mandatory field '".$key."' is empty during create and set to required into definition of extrafields");
 						$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
@@ -6245,8 +6302,8 @@ abstract class CommonObject
 
 				if (!empty($attrfieldcomputed)) {
 					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-						$value = dol_eval($attrfieldcomputed, 1, 0, '');
-						dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
+						$value = dol_eval($attrfieldcomputed, 1, 0, '2');
+						dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 						$new_array_options[$key] = $value;
 					} else {
 						$new_array_options[$key] = null;
@@ -6296,17 +6353,25 @@ abstract class CommonObject
 									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 									} else {
-										// var_dump($algo);
-										$newvalue = dol_hash($this->array_options[$key], $algo);
-										$new_array_options[$key] = $newvalue;
+										if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
+											if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
+												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);
+											} else {
+												$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+											}
+										} else {
+											$newvalue = dol_hash($this->array_options[$key], $algo);
+											$new_array_options[$key] = $newvalue;
+										}
 									}
 								} else {
 									$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 								}
+							} else {
+								$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 							}
-						} else // Common usage
-						{
-							$new_array_options[$key] = $this->array_options[$key];
+						} else { // Common usage
+							$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 						}
 						break;
 					case 'date':
@@ -6598,10 +6663,12 @@ abstract class CommonObject
 
 			$value = $this->array_options["options_".$key];
 
+			$attributeKey      = $key;
 			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$key];
 			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$key];
 			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
+			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$key];
 
 			// Similar code than into insertExtraFields
@@ -6626,7 +6693,7 @@ abstract class CommonObject
 
 			if (!empty($attrfieldcomputed)) {
 				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-					$value = dol_eval($attrfieldcomputed, 1, 0, '');
+					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
 				} else {
@@ -6663,6 +6730,44 @@ abstract class CommonObject
 					 break;*/
 				case 'price':
 					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
+					break;
+				case 'password':
+					$new_array_options = array();
+					$algo = '';
+					if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
+						// If there is an encryption choice, we use it to crypt data before insert
+						$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']);
+						$algo = reset($tmparrays);
+						if ($algo != '') {
+							//global $action;		// $action may be 'create', 'update', 'update_extras'...
+							//var_dump($action);
+							//var_dump($this->oldcopy);exit;
+							if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
+								//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
+								if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+									$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+								} else {
+									if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
+										if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
+											$new_array_options[$key] = dolEncrypt($this->array_options[$key]);
+										} else {
+											$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+										}
+									} else {
+										$newvalue = dol_hash($this->array_options[$key], $algo);
+										$new_array_options[$key] = $newvalue;
+									}
+								}
+							} else {
+								$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+							}
+						} else {
+							$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+						}
+					} else { // Common usage
+						$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+					}
+					$this->array_options["options_".$key] = $new_array_options[$key];
 					break;
 				case 'date':
 				case 'datetime':
@@ -7467,13 +7572,13 @@ abstract class CommonObject
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
 	 *
-	 * @param  array   $val		       Array of properties of field to show
-	 * @param  string  $key            Key of attribute
-	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  $moreparam      To add more parametes on html input tag
-	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   $morecss        Value for css to define size. May also be a numeric.
+	 * @param  array   	$val		       	Array of properties of field to show
+	 * @param  string  	$key            	Key of attribute
+	 * @param  string  	$value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  	$moreparam      	To add more parameters on html tag
+	 * @param  string  	$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  	$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed   	$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
 	 * @return string
 	 */
 	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
@@ -7548,7 +7653,7 @@ abstract class CommonObject
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = dol_eval($computed, 1, 0, '');
+			$value = dol_eval($computed, 1, 0, '2');
 		}
 
 		if (empty($morecss)) {
@@ -8513,19 +8618,20 @@ abstract class CommonObject
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 *
+	 * @return stdClass		Object of permission for the module
 	 */
 	public function getRights()
 	{
 		global $user;
 
-		$module = $this->module;
+		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
-			return $user->rights->fournisseur->facture;
+			return empty($user->rights->fournisseur->facture) ? null : $user->rights->fournisseur->facture;
 		} elseif ($module && !empty($user->rights->$module->$element)) {
 			// for modules built with ModuleBuilder
 			return $user->rights->$module->$element;
@@ -9199,15 +9305,21 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
-	 * @param   string   $alias   	String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields defintion.
-	 * @return  string				list of alias fields
+	 * @param   string  $alias   		String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields defintion.
+	 * @param	array	$excludefields	Array of fields to exclude
+	 * @return  string					List of alias fields
 	 */
-	public function getFieldList($alias = '')
+	public function getFieldList($alias = '', $excludefields = array())
 	{
 		$keys = array_keys($this->fields);
 		if (!empty($alias)) {
 			$keys_with_alias = array();
 			foreach ($keys as $fieldname) {
+				if (!empty($excludefields)) {
+					if (in_array($fieldname, $excludefields)) {	// The field is excluded and must not be in output
+						continue;
+					}
+				}
 				$keys_with_alias[] = $alias . '.' . $fieldname;
 			}
 			return implode(',', $keys_with_alias);

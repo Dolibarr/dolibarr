@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 /**
  * Class CGenericDic
  */
-class CGenericDic extends Commondict
+class CGenericDic extends CommonDict
 {
 	/**
 	 * @var string Id to identify managed objects

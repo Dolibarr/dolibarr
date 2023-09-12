@@ -318,8 +318,10 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Σφάλμα: Η δι�
 ErrorMenuExistValue=Υπάρχει ήδη ένα μενού με αυτόν τον τίτλο ή τη διεύθυνση URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Τα αρχεία SVG δεν επιτρέπονται ως εξωτερικοί σύνδεσμοι χωρίς την επιλογή %s
 ErrorTypeMenu=Αδύνατη η προσθήκη ενός ακόμα μενού για την ίδια ενότητα στη γραμμή πλοήγησης, δεν υποστηρίζεται
-ErrorTableExist=Table <b>%s</b> already exist
-ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
+ErrorTableExist=Ο πίνακας <b> %s </b> υπάρχει ήδη
+ErrorDictionaryNotFound=Το λεξικό <b> %s </b> δεν βρέθηκε
+ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτή δεν είναι μια συνεπής ρύθμιση.
 WarningPasswordSetWithNoAccount=Ορίστηκε κωδικός πρόσβασης για αυτό το μέλος. Ωστόσο, δεν δημιουργήθηκε λογαριασμός χρήστη. Επομένως, αυτός ο κωδικός πρόσβασης είναι αποθηκευμένος, αλλά δεν μπορεί να χρησιμοποιηθεί για τη σύνδεση στο Dolibarr. Μπορεί να χρησιμοποιηθεί από μια εξωτερική ενότητα/διεπαφή, αλλά αν δεν χρειάζεται να ορίσετε κανένα στοιχείο σύνδεσης ή κωδικό πρόσβασης για ένα μέλος, μπορείτε να απενεργοποιήσετε την επιλογή "Διαχείριση σύνδεσης για κάθε μέλος" από τη ρύθμιση της ενότητας μέλους. Εάν θέλετε να διαχειριστείτε μια σύνδεση, αλλά δεν χρειάζεστε κωδικό πρόσβασης, μπορείτε να διατηρήσετε αυτό το πεδίο κενό για να αποφύγετε αυτήν την προειδοποίηση. Σημείωση: Το email μπορεί επίσης να χρησιμοποιηθεί ως σύνδεση εάν το μέλος είναι συνδεδεμένο με έναν χρήστη.
@@ -360,7 +362,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Η αυτόματη ε
 WarningModuleNeedRefrech = Η ενότητα <b> %s </b> έχει απενεργοποιηθεί. Μην ξεχάσετε να την ενεργοποιήσετε
 WarningPermissionAlreadyExist=Υπάρχοντα δικαιώματα για αυτό το αντικείμενο
 WarningGoOnAccountancySetupToAddAccounts=Εάν αυτή η λίστα είναι κενή, μεταβείτε στο μενού %s - %s - %s για να φορτώσετε ή να δημιουργήσετε λογαριασμούς για το λογιστικό σας σχέδιο.
-WarningCorrectedInvoiceNotFound=Corrected invoice not found
+WarningCorrectedInvoiceNotFound=Το διορθωμένο τιμολόγιο δεν βρέθηκε
 
 SwissQrOnlyVIR = Το SwissQR μπορεί να προστεθεί μόνο σε τιμολόγια που έχουν οριστεί για πληρωμή με πληρωμές μεταφοράς πίστωσης.
 SwissQrCreditorAddressInvalid = Η διεύθυνση του πιστωτή δεν είναι έγκυρη (Έχουν οριστεί ο ταχυδρομικός κώδικας και η πόλη; (%s)
@@ -389,4 +391,4 @@ BadSetupOfField = Σφάλμα κακή ρύθμιση του πεδίου
 BadSetupOfFieldClassNotFoundForValidation = Σφάλμα κακής ρύθμισης πεδίου: Η κλάση δεν βρέθηκε για επικύρωση
 BadSetupOfFieldFileNotFound = Σφάλμα κακής ρύθμισης πεδίου : Το αρχείο δεν βρέθηκε για συμπερίληψη
 BadSetupOfFieldFetchNotCallable = Σφάλμα κακής ρύθμισης του πεδίου : Fetch not callable on class
-ErrorTooManyAttempts= Too many attempts, please try again later
+ErrorTooManyAttempts= Πάρα πολλές προσπάθειες, παρακαλώ δοκιμάστε ξανά αργότερα

@@ -72,6 +72,8 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -182,6 +184,7 @@ if ($result) {
 	$tabrctva = array();
 	$tabrclocaltax1 = array();
 	$tabrclocaltax2 = array();
+	$vatdata_cache = array();
 
 	$num = $db->num_rows($result);
 
@@ -208,7 +211,13 @@ if ($result) {
 			}
 		}
 
-		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
+		$tax_id = $obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : '');
+		if (array_key_exists($tax_id, $vatdata_cache)) {
+			$vatdata = $vatdata_cache[$tax_id];
+		} else {
+			$vatdata = getTaxesFromId($tax_id, $mysoc, $mysoc, 0);
+				$vatdata_cache[$tax_id] = $vatdata;
+		}
 		$compta_tva = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
@@ -318,8 +327,16 @@ if ($result) {
 	dol_print_error($db);
 }
 
+// Check for too many invoices first.
+if (count($tabfac) > 10000) { // Global config in htdocs/admin/const.php???
+	$error++;
+	setEventMessages("TooManyInvoicesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
+}
+
 $errorforinvoice = array();
 
+/*
+// Old way, 1 query for each invoice
 // Loop in invoices to detect lines with not binding lines
 foreach ($tabfac as $key => $val) {		// Loop on each invoice
 	$sql = "SELECT COUNT(fd.rowid) as nb";
@@ -336,12 +353,38 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		dol_print_error($db);
 	}
 }
+*/
+// New way, single query, load all unbound lines
+$sql = "
+SELECT
+    fk_facture_fourn,
+    COUNT(fd.rowid) as nb
+FROM
+    llx_facture_fourn_det as fd
+WHERE
+    fd.product_type <= 2
+    AND fd.fk_code_ventilation <= 0
+    AND fd.total_ttc <> 0
+	AND fk_facture_fourn IN (".$db->sanitize(join(",", array_keys($tabfac))).")
+GROUP BY fk_facture_fourn
+";
+$resql = $db->query($sql);
+
+$num = $db->num_rows($resql);
+$i = 0;
+while ($i < $num) {
+	$obj = $db->fetch_object($resql);
+	if ($obj->nb > 0) {
+		$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+	}
+	$i++;
+}
 //var_dump($errorforinvoice);exit;
 
 
 
 // Bookkeeping Write
-if ($action == 'writebookkeeping') {
+if ($action == 'writebookkeeping' && !$error) {
 	$now = dol_now();
 	$error = 0;
 
@@ -712,7 +755,7 @@ if ($action == 'writebookkeeping') {
 $form = new Form($db);
 
 // Export
-if ($action == 'exportcsv') {		// ISO and not UTF8 !
+if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'journal';
@@ -1139,7 +1182,7 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					$accountoshow = length_accountg($k);
 					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Purchase").')</span>';
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("AccountingJournalType3").')</span>';
 					} else {
 						print $accountoshow;
 					}

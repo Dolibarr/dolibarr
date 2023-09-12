@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Бухгалтерлік шот бойынша қарау
 VueBySubAccountAccounting=Бухгалтерлік қосалқы шот бойынша қарау
 
-MainAccountForCustomersNotDefined=Орнатуда анықталмаған клиенттердің негізгі бухгалтерлік шоты
-MainAccountForSuppliersNotDefined=Орнатуда анықталмаған жеткізушілердің негізгі бухгалтерлік шоты
-MainAccountForUsersNotDefined=Орнатуда анықталмаған пайдаланушылардың негізгі бухгалтерлік шоты
-MainAccountForVatPaymentNotDefined=ҚҚС төлеудің негізгі бухгалтерлік шоты баптауда анықталмаған
-MainAccountForSubscriptionPaymentNotDefined=Орнатуда анықталмаған абоненттік төлемнің негізгі бухгалтерлік шоты
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Бухгалтерлік есеп аймағы
