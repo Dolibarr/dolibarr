@@ -234,14 +234,14 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
 
-	// Credentials for AADE webservices, applicable only for Greece 
+	// Credentials for AADE webservices, applicable only for Greece
 	if ($mysoc->country_code == 'GR') {
-	    dolibarr_set_const($db, "MYDATA_AADE_USER", GETPOST("MYDATA_AADE_USER", 'alpha'), 'chaine', 0, '', $conf->entity);	
-	    dolibarr_set_const($db, "MYDATA_AADE_KEY", GETPOST("MYDATA_AADE_KEY", 'alpha'), 'chaine', 0, '', $conf->entity);	
-	    dolibarr_set_const($db, "AADE_WEBSERVICE_USER", GETPOST("AADE_WEBSERVICE_USER", 'alpha'), 'chaine', 0, '', $conf->entity);	
-	    dolibarr_set_const($db, "AADE_WEBSERVICE_KEY", GETPOST("AADE_WEBSERVICE_KEY", 'alpha'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MYDATA_AADE_USER", GETPOST("MYDATA_AADE_USER", 'alpha'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MYDATA_AADE_KEY", GETPOST("MYDATA_AADE_KEY", 'alpha'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "AADE_WEBSERVICE_USER", GETPOST("AADE_WEBSERVICE_USER", 'alpha'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "AADE_WEBSERVICE_KEY", GETPOST("AADE_WEBSERVICE_KEY", 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
-	
+
 	// Remove constant MAIN_INFO_SOCIETE_SETUP_TODO_WARNING
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_SETUP_TODO_WARNING", $conf->entity);
 
@@ -856,39 +856,39 @@ if ($mysoc->useRevenueStamp()) {
 
 print "</table>";
 
-// AADE webservices credentials, applicable only for Greece 
+// AADE webservices credentials, applicable only for Greece
 if ($mysoc->country_code == 'GR') {
-    print load_fiche_titre($langs->trans("AADEKeys"), '', '');	
-    print '<table class="noborder centpercent editmode">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("AccountParameter").'</td>';
-    print '<td>'.$langs->trans("Value").'</td>';
-    print '<td></td>';
-    print "</tr>\n";
+	print load_fiche_titre($langs->trans("AADEKeys"), '', '');
+	print '<table class="noborder centpercent editmode">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("AccountParameter").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
+	print "</tr>\n";
 
-    print '<tr class="oddeven"><td>';
-    print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_USER").'</span></td><td>';
-    print '<input class="minwidth300" type="text" name="MYDATA_AADE_USER" value="'.$conf->global->MYDATA_AADE_USER.'"';
-    print '</td><td></td></tr>';
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_USER").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="MYDATA_AADE_USER" value="'.$conf->global->MYDATA_AADE_USER.'"';
+	print '</td><td></td></tr>';
 
-    print '<tr class="oddeven"><td>';
-    print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_KEY").'</span></td><td>';
-    print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY="'.$conf->global->MYDATA_AADE_KEY.'"';
-    print '</td><td></td></tr>';
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY="'.$conf->global->MYDATA_AADE_KEY.'"';
+	print '</td><td></td></tr>';
 
-    print '<tr class="oddeven"><td>';
-    print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_USER").'</span></td><td>';
-    print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_USER" value="'.$conf->global->AADE_WEBSERVICE_USER.'"';
-    print '</td><td></td></tr>';
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_USER").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_USER" value="'.$conf->global->AADE_WEBSERVICE_USER.'"';
+	print '</td><td></td></tr>';
 
-    print '<tr class="oddeven"><td>';
-    print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_KEY").'</span></td><td>';
-    print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_KEY" value="'.$conf->global->AADE_WEBSERVICE_KEY.'"';
-    print '</td><td></td></tr>';
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_KEY" value="'.$conf->global->AADE_WEBSERVICE_KEY.'"';
+	print '</td><td></td></tr>';
 
-    print '<br>';
+	print '<br>';
 
-    print "</table>";
+	print "</table>";
 }
 
 print $form->buttonsSaveCancel("Save", '');
