@@ -66,9 +66,9 @@ if (isModEnabled('eventorganization')) {
 }
 
 if ($mysoc->country_code == 'GR') {
-    $u = $conf->global->AADE_WEBSERVICE_USER;
-    $p = $conf->global->AADE_WEBSERVICE_KEY;
-    $myafm = $mysoc->tva_intra;
+	$u = $conf->global->AADE_WEBSERVICE_USER;
+	$p = $conf->global->AADE_WEBSERVICE_KEY;
+	$myafm = $mysoc->tva_intra;
 }
 
 
@@ -1737,10 +1737,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<script type="text/javascript">';
 				print "function CheckVAT(a) {\n";
 				if ($mysoc->country_code == 'GR' && $object->country_code == 'GR') {
-					print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n"; 
-                }
-				else { print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n"; 
-				}print "}\n";
+					print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+				} else {
+					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+				}
+				print "}\n";
 				print '</script>';
 				print "\n";
 				$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
@@ -2512,9 +2513,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
 					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR') {
-						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n"; 
-                	}
-					else { print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n"; 
+						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+					} 
+					else { print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
 					}	
 					print "}\n";
 					print '</script>';
@@ -2983,11 +2984,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "\n";
 					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
-				    if ($mysoc->country_code == 'GR' && $object->country_code == 'GR') {
-					    print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n"; 
-				    }
-				    else { print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n"; 
-				    }
+					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR') {
+						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+					} 
+				    else { print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					}
 					print "}\n";
 					print '</script>';
 					print "\n";
@@ -3367,38 +3368,37 @@ function GRVAT(a, u, p, myafm) {
   var afm = a.replace(/\D/g, ""); // Remove non-digit characters from 'a'
 
   $.ajax({
-    type: "GET",
-    url: "/societe/checkvat/checkVatGr.php",
-    data: { u: u, p: p, myafm: myafm, afm: afm }, // Set request parameters
-    success: function(data) {
-      var obj = JSON.parse(data); // Parse response data as JSON
+	type: "GET",
+	url: "/societe/checkvat/checkVatGr.php",
+	data: { u: u, p: p, myafm: myafm, afm: afm }, // Set request parameters
+	success: function(data) {
+		var obj = JSON.parse(data); // Parse response data as JSON
 
-      // Update form fields based on retrieved data
-      if (obj.RgWsPublicBasicRt_out.afm === null) {
-        alert(obj.pErrorRec_out.errorDescr); // Display error message if AFM is null
-      } else {
-        $("#name").val(obj.RgWsPublicBasicRt_out.onomasia); // Set 'name' field value
-        $("#address").val(obj.RgWsPublicBasicRt_out.postalAddress + " " + obj.RgWsPublicBasicRt_out.postalAddressNo); // Set 'address' field value
-        $("#zipcode").val(obj.RgWsPublicBasicRt_out.postalZipCode); // Set 'zipcode' field value
-        $("#town").val(obj.RgWsPublicBasicRt_out.postalAreaDescription); // Set 'town' field value
-        $("#idprof2").val(obj.RgWsPublicBasicRt_out.doyDescr); // Set 'idprof2' field value
-        $("#name_alias_input").val(obj.RgWsPublicBasicRt_out.commerTitle); // Set 'name_alias' field value
+		// Update form fields based on retrieved data
+		if (obj.RgWsPublicBasicRt_out.afm === null) {
+			alert(obj.pErrorRec_out.errorDescr); // Display error message if AFM is null
+		} else {
+			$("#name").val(obj.RgWsPublicBasicRt_out.onomasia); // Set 'name' field value
+			$("#zipcode").val(obj.RgWsPublicBasicRt_out.postalZipCode); // Set 'zipcode' field value
+			$("#town").val(obj.RgWsPublicBasicRt_out.postalAreaDescription); // Set 'town' field value
+			$("#idprof2").val(obj.RgWsPublicBasicRt_out.doyDescr); // Set 'idprof2' field value
+			$("#name_alias_input").val(obj.RgWsPublicBasicRt_out.commerTitle); // Set 'name_alias' field value
 
-        if (obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser) {
-          var firmActUser = obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser;
-
-          if (Array.isArray(firmActUser)) {
-            var primaryFirmAct = firmActUser.find(item => item.firmActKindDescr === "ΚΥΡΙΑ"); // Find primary client activity
-            if (primaryFirmAct) {
-              $("#idprof1").val(primaryFirmAct.firmActDescr); // Set 'idprof1' field value
-            }
-          } else {
-            $("#idprof1").val(firmActUser.firmActDescr); // Set 'idprof1' field value
-          	}
-        }
+		if (obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser) {
+			var firmActUser = obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser;
+			
+		if (Array.isArray(firmActUser)) {
+			var primaryFirmAct = firmActUser.find(item => item.firmActKindDescr === "ΚΥΡΙΑ"); // Find primary client activity
+			if (primaryFirmAct) {
+				$("#idprof1").val(primaryFirmAct.firmActDescr); // Set 'idprof1' field value
+			}
+		} else {
+			$("#idprof1").val(firmActUser.firmActDescr); // Set 'idprof1' field value
+			}
 		}
-    }
-  });
+		}
+	}
+	});
 }
 
 </script>
