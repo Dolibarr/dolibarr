@@ -17,14 +17,14 @@
  */
 
 /**
- * 	\defgroup   webportal     Module WebPortal
+ *	\defgroup   webportal     Module WebPortal
  *  \brief      WebPortal module descriptor.
  *
  *  \file       core/modules/modWebPortal.class.php
  *  \ingroup    webportal
  *  \brief      Description and activation file for module WebPortal
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module WebPortal
@@ -75,7 +75,7 @@ class modWebPortal extends DolibarrModules
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
 		// Key used in llx_const table to save module status enabled/disabled (where WEBPORTAL is value of property name of module in uppercase)
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
@@ -104,12 +104,10 @@ class modWebPortal extends DolibarrModules
 			// Set this to 1 if module has its own theme directory (theme)
 			'theme' => 0,
 			// Set this to relative path of css file if module has its own css file
-			'css' => array(
-				//    '/webportal/css/webportal.css.php',
+			'css' => array(//    '/webportal/css/webportal.css.php',
 			),
 			// Set this to relative path of js file if module must load a js on all pages
-			'js' => array(
-				//   '/webportal/js/webportal.js.php',
+			'js' => array(//   '/webportal/js/webportal.js.php',
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			'hooks' => array(
@@ -268,13 +266,13 @@ class modWebPortal extends DolibarrModules
 		// Add here entries to declare new permissions
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Administer users of the customer/partner webportal module'; // Permission label
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'write';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'write';
 		//$r++;
 		//$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		//$this->rights[$r][1] = 'Delete objects of WebPortal'; // Permission label
-        //$this->rights[$r][3] = 0;
-        //$this->rights[$r][4] = 'delete';
+		//$this->rights[$r][3] = 0;
+		//$this->rights[$r][4] = 'delete';
 		//$r++;
 
 		// Main menu entries to add
@@ -282,19 +280,19 @@ class modWebPortal extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new menus
 		$this->menu[$r++] = array(
-			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'top', // This is a Top menu entry
-			'titre'=>'ModuleWebPortalName',
+			'fk_menu' => '', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'top', // This is a Top menu entry
+			'titre' => 'ModuleWebPortalName',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'webportal',
-			'leftmenu'=>'',
-			'url'=>'/webportal/public/index.php',
-			'langs'=>'webportal@webportal', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'isModEnabled("webportal")', // Define condition to show or hide menu entry. Use 'isModEnabled("webportal")' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->hasRight("webportal", "webportalpropal", "read")' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'mainmenu' => 'webportal',
+			'leftmenu' => '',
+			'url' => '/webportal/public/index.php',
+			'langs' => 'webportal@webportal', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => 'isModEnabled("webportal")', // Define condition to show or hide menu entry. Use 'isModEnabled("webportal")' if entry must be visible if module is enabled.
+			'perms' => '1', // Use 'perms'=>'$user->hasRight("webportal", "webportalpropal", "read")' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/*$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=webportal',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -346,8 +344,8 @@ class modWebPortal extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-	 *  @param      string  $options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
+	 * @param string $options Options when enabling module ('', 'noboxes')
+	 * @return     int                1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -381,8 +379,8 @@ class modWebPortal extends DolibarrModules
 	 *  Remove from database constants, boxes and permissions from Dolibarr database.
 	 *  Data directories are not deleted
 	 *
-	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int                 1 if OK, 0 if KO
+	 * @param string $options Options when enabling module ('', 'noboxes')
+	 * @return     int                 1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
 	{

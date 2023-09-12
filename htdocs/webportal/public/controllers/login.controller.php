@@ -8,12 +8,12 @@ class LoginController extends Controller
 	 *
 	 * @return  bool
 	 */
-    public function checkAccess()
-    {
-        $this->accessRight = true;
-        $context = Context::getInstance();
-        return !$context->userIslog();
-    }
+	public function checkAccess()
+	{
+		$this->accessRight = true;
+		$context = Context::getInstance();
+		return !$context->userIslog();
+	}
 
 	/**
 	 * Action method is called before html output
@@ -21,43 +21,43 @@ class LoginController extends Controller
 	 *
 	 * @return void
 	 */
-    public function action()
-    {
-        global $langs;
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            return;
-        }
+	public function action()
+	{
+		global $langs;
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			return;
+		}
 
-        $hookRes = $this->hookDoAction();
-        if (empty($hookRes)) {
-            $context->title = $langs->trans('WebPortalHomeTitle');
-            $context->desc = $langs->trans('WebPortalHomeDesc');
-            //$context->doNotDisplayHeaderBar=1;// hide default header
-        }
-    }
+		$hookRes = $this->hookDoAction();
+		if (empty($hookRes)) {
+			$context->title = $langs->trans('WebPortalHomeTitle');
+			$context->desc = $langs->trans('WebPortalHomeDesc');
+			//$context->doNotDisplayHeaderBar=1;// hide default header
+		}
+	}
 
-    /**
-     * Display
-     *
-     * @return void
-     */
-    public function display()
-    {
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            $this->display404();
-            return;
-        }
+	/**
+	 * Display
+	 *
+	 * @return void
+	 */
+	public function display()
+	{
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			$this->display404();
+			return;
+		}
 
-        $this->loadTemplate('header_login');
+		$this->loadTemplate('header_login');
 
-        $hookRes = $this->hookPrintPageView();
+		$hookRes = $this->hookPrintPageView();
 
-        if (empty($hookRes)) {
-            $this->loadTemplate('login');
-        }
+		if (empty($hookRes)) {
+			$this->loadTemplate('login');
+		}
 
-        $this->loadTemplate('footer');
-    }
+		$this->loadTemplate('footer');
+	}
 }

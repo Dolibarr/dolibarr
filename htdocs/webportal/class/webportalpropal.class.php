@@ -23,7 +23,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 
 /**
  * Class for WebPortalPropal
@@ -40,35 +40,35 @@ class WebPortalPropal extends Propal
 	 */
 	public $isextrafieldmanaged = 0;
 
-    /**
-     * Status list (short label)
-     */
-    const status_short_list = array(
-        Propal::STATUS_DRAFT => 'PropalStatusDraftShort',
-        Propal::STATUS_VALIDATED => 'PropalStatusValidatedShort',
-        Propal::STATUS_SIGNED => 'PropalStatusSignedShort',
-        Propal::STATUS_NOTSIGNED => 'PropalStatusNotSignedShort',
-        Propal::STATUS_BILLED => 'PropalStatusBilledShort',
-    );
+	/**
+	 * Status list (short label)
+	 */
+	const status_short_list = array(
+		Propal::STATUS_DRAFT => 'PropalStatusDraftShort',
+		Propal::STATUS_VALIDATED => 'PropalStatusValidatedShort',
+		Propal::STATUS_SIGNED => 'PropalStatusSignedShort',
+		Propal::STATUS_NOTSIGNED => 'PropalStatusNotSignedShort',
+		Propal::STATUS_BILLED => 'PropalStatusBilledShort',
+	);
 
-    /**
-     * @var Propal Propal for static methods
-     */
-    protected $propal_static = null;
+	/**
+	 * @var Propal Propal for static methods
+	 */
+	protected $propal_static = null;
 
 	/**
 	 *  'type' field format:
-	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
-	 *  	'select' (list of values are in 'options'),
-	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
-	 *  	'chkbxlst:...',
-	 *  	'varchar(x)',
-	 *  	'text', 'text:none', 'html',
-	 *   	'double(24,8)', 'real', 'price',
-	 *  	'date', 'datetime', 'timestamp', 'duration',
-	 *  	'boolean', 'checkbox', 'radio', 'array',
-	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *    'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *    'select' (list of values are in 'options'),
+	 *    'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
+	 *    'chkbxlst:...',
+	 *    'varchar(x)',
+	 *    'text', 'text:none', 'html',
+	 *    'double(24,8)', 'real', 'price',
+	 *    'date', 'datetime', 'timestamp', 'duration',
+	 *    'boolean', 'checkbox', 'radio', 'array',
+	 *    'mail', 'phone', 'url', 'password', 'ip'
+	 *        Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt('MY_SETUP_PARAM') or 'isModEnabled("multicurrency")' ...)
@@ -89,7 +89,7 @@ class WebPortalPropal extends Propal
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *    'validate' is 1 if need to validate with $this->validateField()
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -99,47 +99,47 @@ class WebPortalPropal extends Propal
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id",),
-        'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1,),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object",),
-        'datep' => array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>2, 'position'=>60,),
-        'fin_validite' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>2, 'position'=>65,),
-        'total_ht' => array('type'=>'price', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>2, 'position'=>125, 'isameasure'=>1,),
-        'total_tva' => array('type'=>'price', 'label'=>'VAT', 'enabled'=>1, 'visible'=>2, 'position'=>130, 'isameasure'=>1,),
-        'total_ttc' => array('type'=>'price', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>2, 'position'=>145, 'isameasure'=>1,),
-        'multicurrency_total_ht' => array('type'=>'price', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-2, 'position'=>245, 'isameasure'=>1,),
-        'multicurrency_total_tva' => array('type'=>'price', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-2, 'position'=>250, 'isameasure'=>1,),
-        'multicurrency_total_ttc' => array('type'=>'price', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-2, 'position'=>255, 'isameasure'=>1,),
-        'fk_statut' => array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'notnull'=>1, 'position'=>500, 'arrayofkeyval' => self::status_short_list,),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'css' => 'left', 'comment' => "Id",),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1,),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => '1', 'position' => 20, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'searchall' => 1, 'showoncombobox' => '1', 'validate' => '1', 'comment' => "Reference of object",),
+		'datep' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 2, 'position' => 60,),
+		'fin_validite' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 2, 'position' => 65,),
+		'total_ht' => array('type' => 'price', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => 2, 'position' => 125, 'isameasure' => 1,),
+		'total_tva' => array('type' => 'price', 'label' => 'VAT', 'enabled' => 1, 'visible' => 2, 'position' => 130, 'isameasure' => 1,),
+		'total_ttc' => array('type' => 'price', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => 2, 'position' => 145, 'isameasure' => 1,),
+		'multicurrency_total_ht' => array('type' => 'price', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 245, 'isameasure' => 1,),
+		'multicurrency_total_tva' => array('type' => 'price', 'label' => 'MulticurrencyAmountVAT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 250, 'isameasure' => 1,),
+		'multicurrency_total_ttc' => array('type' => 'price', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 255, 'isameasure' => 1,),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::status_short_list,),
 	);
 	//public $rowid;
 	//public $ref;
-    //public $datep;
-    //public $fin_validite;
-    //public $total_ht;
-    //public $total_tva;
-    //public $total_ttc;
-    //public $multicurrency_total_ht;
-    //public $multicurrency_total_tva;
-    //public $multicurrency_total_ttc;
-    public $fk_statut;
+	//public $datep;
+	//public $fin_validite;
+	//public $total_ht;
+	//public $total_tva;
+	//public $total_ttc;
+	//public $multicurrency_total_ht;
+	//public $multicurrency_total_tva;
+	//public $multicurrency_total_ttc;
+	public $fk_statut;
 	// END MODULEBUILDER PROPERTIES
 
 
-    /**
-     * Get propal for static method
-     *
-     * @return Propal
-     */
-    protected function getPropalStatic()
-    {
-        if (!$this->propal_static) {
-            $this->propal_static= new Propal($this->db);
-        }
+	/**
+	 * Get propal for static method
+	 *
+	 * @return Propal
+	 */
+	protected function getPropalStatic()
+	{
+		if (!$this->propal_static) {
+			$this->propal_static = new Propal($this->db);
+		}
 
-        return $this->propal_static;
-    }
+		return $this->propal_static;
+	}
 
 	/**
 	 * Constructor
@@ -152,178 +152,179 @@ class WebPortalPropal extends Propal
 
 		$this->db = $db;
 
-        $this->getPropalStatic();
+		$this->getPropalStatic();
 	}
 
-    /**
-     * getTooltipContentArray
-     *
-     * @param 	array 	$params 	Params to construct tooltip data
-     * @since 	v18
-     * @return 	array
-     */
-    public function getTooltipContentArray($params)
-    {
-        global $conf, $langs;
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params Params to construct tooltip data
+	 * @return    array
+	 * @since    v18
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
 
-        $datas = [];
+		$datas = [];
 
-        if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-            return ['optimize' => $langs->trans("ShowWebPortalPropal")];
-        }
-        $datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("WebPortalPropal").'</u>';
-        if (isset($this->status)) {
-            $datas['picto'] .= ' '.$this->getLibStatut(5);
-        }
-        $datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			return ['optimize' => $langs->trans("ShowWebPortalPropal")];
+		}
+		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalPropal") . '</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' ' . $this->getLibStatut(5);
+		}
+		$datas['ref'] .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        return $datas;
-    }
+		return $datas;
+	}
 
-    /**
-     *  Return a link to the object card (with optionaly the picto)
-     *
-     *	@param      int		$withpicto		          Add picto into link
-     *	@param      string	$option			          Where point the link ('expedition', 'document', ...)
-     *	@param      string	$get_params    	          Parametres added to url
-     *  @param	    int   	$notooltip		          1=Disable tooltip
-     *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *  @param      int     $addlinktonotes           -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
-     *	@return     string          		          String with URL
-     */
-    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
-    {
-        global $langs, $conf, $hookmanager;
+	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 * @param int $withpicto Add picto into link
+	 * @param string $option Where point the link ('expedition', 'document', ...)
+	 * @param string $get_params Parametres added to url
+	 * @param int $notooltip 1=Disable tooltip
+	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param int $addlinktonotes -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
+	 * @return     string                          String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
+	{
+		global $langs, $conf, $hookmanager;
 
-        if (!empty($conf->dol_no_mouse_hover)) {
-            $notooltip = 1; // Force disable tooltips
-        }
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
-        $result = '';
-        $params = [
-            'id' => $this->id,
-            'objecttype' => $this->element,
-            'option' => $option,
-            'nofetch' => 1,
-        ];
-        $classfortooltip = 'classfortooltip';
-        $dataparams = '';
-        if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-            $classfortooltip = 'classforajaxtooltip';
-            $dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-            $label = '';
-        } else {
-            $label = implode($this->getTooltipContentArray($params));
-        }
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="' . dol_escape_htmltag(json_encode($params)) . '"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
-        $url = '';
-        $option = 'nolink';
+		$url = '';
+		$option = 'nolink';
 
-        $linkclose = '';
+		$linkclose = '';
 
-        $linkstart = '<a href="'.$url.'"';
-        $linkstart .= $linkclose.'>';
-        $linkend = '</a>';
+		$linkstart = '<a href="' . $url . '"';
+		$linkstart .= $linkclose . '>';
+		$linkend = '</a>';
 
-        if ($option === 'nolink') {
-            $linkstart = '';
-            $linkend = '';
-        }
+		if ($option === 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
 
-        $result .= $linkstart;
-        if ($withpicto) {
-            $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
-        }
-        if ($withpicto != 2) {
-            $result .= $this->ref;
-        }
-        $result .= $linkend;
+		$result .= $linkstart;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams . ' class="' . (($withpicto != 2) ? 'paddingright ' : '') . $classfortooltip . '"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
+		$result .= $linkend;
 
-        global $action;
-        $hookmanager->initHooks(array($this->element . 'dao'));
-        $parameters = array('id'=>$this->id, 'getnomurl' => &$result);
-        $reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-        if ($reshook > 0) {
-            $result = $hookmanager->resPrint;
-        } else {
-            $result .= $hookmanager->resPrint;
-        }
-        return $result;
-    }
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+		return $result;
+	}
 
-    /**
-     *	Return a thumb for kanban views
-     *
-     *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-     *  @param		array		$arraydata				Array of data
-     *  @return		string								HTML Code for Kanban thumb.
-     */
-    public function getKanbanView($option = '', $arraydata = null)
-    {
-        global $conf, $langs;
+	/**
+	 *    Return a thumb for kanban views
+	 *
+	 * @param string $option Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param array $arraydata Array of data
+	 * @return        string                                HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $conf, $langs;
 
-        $selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-        $return = '<div class="box-flex-item box-flex-grow-zero">';
-        $return .= '<div class="info-box info-box-sm">';
-        $return .= '<span class="info-box-icon bg-infobox-action">';
-        $return .= img_picto('', $this->picto);
-        $return .= '</span>';
-        $return .= '<div class="info-box-content">';
-        $return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-        if ($selected >= 0) {
-            $return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-        }
-        if (property_exists($this, 'label')) {
-            $return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
-        }
-        if (property_exists($this, 'amount')) {
-            $return .= '<br>';
-            $return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
-        }
-        if (method_exists($this, 'getLibStatut')) {
-            $return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
-        }
-        $return .= '</div>';
-        $return .= '</div>';
-        $return .= '</div>';
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . (method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref) . '</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb' . $this->id . '" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="' . $this->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
+		}
+		if (property_exists($this, 'label')) {
+			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">' . $this->label . '</div>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br>';
+			$return .= '<span class="info-box-label amount">' . price($this->amount, 0, $langs, 1, -1, -1, $conf->currency) . '</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">' . $this->getLibStatut(3) . '</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
 
-        return $return;
-    }
+		return $return;
+	}
 
-    /**
-     *  Return the label of the status
-     *
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return	string 			       Label of status
-     */
-    public function getLabelStatus($mode = 0)
-    {
-        return $this->LibStatut($this->fk_statut, $mode);
-    }
+	/**
+	 *  Return the label of the status
+	 *
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return    string                   Label of status
+	 */
+	public function getLabelStatus($mode = 0)
+	{
+		return $this->LibStatut($this->fk_statut, $mode);
+	}
 
-    /**
-     *  Return the label of the status
-     *
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return	string 			       Label of status
-     */
-    public function getLibStatut($mode = 0)
-    {
-        return $this->LibStatut($this->fk_statut, $mode);
-    }
+	/**
+	 *  Return the label of the status
+	 *
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return    string                   Label of status
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->fk_statut, $mode);
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return the label of a given status
-     *
-     *  @param	int		$status        Id status
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return string 			       Label of status
-     */
-    public function LibStatut($status, $mode = 0)
-    {
-        // phpcs:enable
-        return $this->getPropalStatic()->LibStatut($status, $mode);
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Return the label of a given status
+	 *
+	 * @param int $status Id status
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return string                   Label of status
+	 */
+	public function LibStatut($status, $mode = 0)
+	{
+		// phpcs:enable
+		return $this->getPropalStatic()->LibStatut($status, $mode);
+	}
 }

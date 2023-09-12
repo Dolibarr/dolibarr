@@ -9,9 +9,9 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1);
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 $res = 0;
-if (!$res && file_exists('../../main.inc.php')) $res=@include '../../main.inc.php';				// to work if your module directory is into dolibarr root htdocs directory
-if (!$res && file_exists('../../../main.inc.php')) $res=@include '../../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
-if (!$res && file_exists('../../../../main.inc.php')) $res=@include '../../../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
+if (!$res && file_exists('../../main.inc.php')) $res = @include '../../main.inc.php';                // to work if your module directory is into dolibarr root htdocs directory
+if (!$res && file_exists('../../../main.inc.php')) $res = @include '../../../main.inc.php';            // to work if your module directory is into a subdir of root htdocs directory
+if (!$res && file_exists('../../../../main.inc.php')) $res = @include '../../../../main.inc.php';            // to work if your module directory is into a subdir of root htdocs directory
 if (!$res) die('Include of main fails');
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societeaccount.class.php';
@@ -25,8 +25,8 @@ dol_include_once('/webportal/class/webportalpartnership.class.php');
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
 // Note: the function dol_getprefix is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
 $prefix = dol_getprefix('');
-$sessionname = 'WEBPORTAL_SESSID_'.$prefix;
-$sessiontimeout = 'WEBPORTAL_SESSTIMEOUT_'.$prefix;
+$sessionname = 'WEBPORTAL_SESSID_' . $prefix;
+$sessiontimeout = 'WEBPORTAL_SESSTIMEOUT_' . $prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 }
@@ -45,7 +45,7 @@ $logged_user = new User($db);
 $anti_spam_session_key = 'dol_antispam_value';
 
 if (!defined('NOREQUIREDB') && empty($conf->webportal->enabled)) {
-    accessforbidden('Module not activated');
+	accessforbidden('Module not activated');
 }
 
 if (!defined('WEBPORTAL_NOREQUIRETRAN') || (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->accessNeedLoggedUser))) {
@@ -85,7 +85,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				$error++;
 			}
 			if (empty($password)) {
-                $context->setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Password")), 'errors');
+				$context->setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Password")), 'errors');
 				if (empty($focus_element)) $focus_element = 'password';
 				$error++;
 			}
@@ -102,15 +102,15 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				// fetch third-party account from login and account type
 				$thirdparty_account_id = $context->getThirdPartyAccountFromLogin($login, $password);
 				if ($thirdparty_account_id <= 0) {
-                    $error++;
-                    dol_syslog($langs->transnoentitiesnoconv('WebPortalErrorFetchThirdPartyAccountFromLogin', $login), LOG_WARNING);
-                    $context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorAuthentication'), 'errors');
+					$error++;
+					dol_syslog($langs->transnoentitiesnoconv('WebPortalErrorFetchThirdPartyAccountFromLogin', $login), LOG_WARNING);
+					$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorAuthentication'), 'errors');
 				} else {
 					$_SESSION["webportal_logged_thirdparty_account_id"] = $thirdparty_account_id;
-                    $webportal_logged_thirdparty_account_id = $thirdparty_account_id;
-                    $context->controller = 'default';
-                    $context->initController();
-                }
+					$webportal_logged_thirdparty_account_id = $thirdparty_account_id;
+					$context->controller = 'default';
+					$context->initController();
+				}
 			}
 		}
 
@@ -120,19 +120,19 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
 			}
 
-            $context->controller = 'login';
-            $context->initController();
+			$context->controller = 'login';
+			$context->initController();
 		}
 	}
 
 	if ($webportal_logged_thirdparty_account_id > 0) {
-        $error = 0;
+		$error = 0;
 
 		// We are already into an authenticated session
-        $websiteaccount = new SocieteAccount($db);
+		$websiteaccount = new SocieteAccount($db);
 		$result = $websiteaccount->fetch($webportal_logged_thirdparty_account_id);
 		if ($result <= 0) {
-            $error++;
+			$error++;
 
 			// Account has been removed after login
 			dol_syslog("Can't load third-party account (ID: $webportal_logged_thirdparty_account_id) even if session logged.", LOG_WARNING);
@@ -141,75 +141,75 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 			session_name($sessionname);
 			session_start();
 
-            $context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdPartyAccount', $webportal_logged_thirdparty_account_id), 'errors');
+			$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdPartyAccount', $webportal_logged_thirdparty_account_id), 'errors');
 		}
 
-        if (!$error) {
-            $user_id = getDolGlobalInt('WEBPORTAL_USER_LOGGED');
-            $result = $logged_user->fetch($user_id);
-            if ($result <= 0) {
-                $error++;
-                $error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', $user_id);
-                dol_syslog($error_msg, LOG_ERR);
-                $context->setEventMessage($error_msg, 'errors');
-            }
+		if (!$error) {
+			$user_id = getDolGlobalInt('WEBPORTAL_USER_LOGGED');
+			$result = $logged_user->fetch($user_id);
+			if ($result <= 0) {
+				$error++;
+				$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', $user_id);
+				dol_syslog($error_msg, LOG_ERR);
+				$context->setEventMessage($error_msg, 'errors');
+			}
 
-            if (!$error) {
-                // get third-party
-                $logged_thirdparty = $websiteaccount->thirdparty;
-                if (!$logged_thirdparty || !($logged_thirdparty->id > 0)) {
-                    $result = $websiteaccount->fetch_thirdparty();
-                    if ($result < 0) {
-                        $error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', $websiteaccount->fk_soc);
-                        //dol_syslog("Can't load third-party (ID: ".$websiteaccount->fk_soc.") even if session logged.", LOG_ERR);
-                        dol_syslog($error_msg, LOG_ERR);
-                        $context->setEventMessage($error_msg, 'errors');
-                        $error++;
-                    }
-                }
+			if (!$error) {
+				// get third-party
+				$logged_thirdparty = $websiteaccount->thirdparty;
+				if (!$logged_thirdparty || !($logged_thirdparty->id > 0)) {
+					$result = $websiteaccount->fetch_thirdparty();
+					if ($result < 0) {
+						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', $websiteaccount->fk_soc);
+						//dol_syslog("Can't load third-party (ID: ".$websiteaccount->fk_soc.") even if session logged.", LOG_ERR);
+						dol_syslog($error_msg, LOG_ERR);
+						$context->setEventMessage($error_msg, 'errors');
+						$error++;
+					}
+				}
 
-                if (!$error) {
-                    $logged_thirdparty = $websiteaccount->thirdparty;
+				if (!$error) {
+					$logged_thirdparty = $websiteaccount->thirdparty;
 
-                    // get member
-                    $logged_member = new WebPortalMember($db);
-                    $result = $logged_member->fetch(0, '', $websiteaccount->thirdparty->id);
-                    if ($result < 0) {
-                        $error++;
-                        $error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', $websiteaccount->thirdparty->id);
-                        dol_syslog($error_msg, LOG_ERR);
-                        $context->setEventMessage($error_msg, 'errors');
-                    }
+					// get member
+					$logged_member = new WebPortalMember($db);
+					$result = $logged_member->fetch(0, '', $websiteaccount->thirdparty->id);
+					if ($result < 0) {
+						$error++;
+						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', $websiteaccount->thirdparty->id);
+						dol_syslog($error_msg, LOG_ERR);
+						$context->setEventMessage($error_msg, 'errors');
+					}
 
-                    if (!$error) {
-                        // get partnership
-                        $logged_partnership = new WebPortalPartnership($db);
-                        $result = $logged_partnership->fetch(0, '', $logged_member->id, $websiteaccount->thirdparty->id);
-                        if ($result < 0) {
-                            $error++;
-                            $error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedPartnership', $websiteaccount->thirdparty->id, $logged_member->id);
-                            dol_syslog($error_msg, LOG_ERR);
-                            $context->setEventMessage($error_msg, 'errors');
-                        }
-                    }
+					if (!$error) {
+						// get partnership
+						$logged_partnership = new WebPortalPartnership($db);
+						$result = $logged_partnership->fetch(0, '', $logged_member->id, $websiteaccount->thirdparty->id);
+						if ($result < 0) {
+							$error++;
+							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedPartnership', $websiteaccount->thirdparty->id, $logged_member->id);
+							dol_syslog($error_msg, LOG_ERR);
+							$context->setEventMessage($error_msg, 'errors');
+						}
+					}
 
-                    if (!$error) {
-                        if ($logged_thirdparty->default_lang != $langs->defaultlang && !defined('WEBPORTAL_NOREQUIRETRAN')) {
-                            if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
-                                include_once DOL_DOCUMENT_ROOT . '/core/class/translate.class.php';
-                                $langs = new Translate("", $conf);
-                                $langs->setDefaultLang($logged_thirdparty->default_lang);
-                            }
-                            $langs->loadLangs(array('webportal@webportal', 'main'));
-                        }
+					if (!$error) {
+						if ($logged_thirdparty->default_lang != $langs->defaultlang && !defined('WEBPORTAL_NOREQUIRETRAN')) {
+							if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
+								include_once DOL_DOCUMENT_ROOT . '/core/class/translate.class.php';
+								$langs = new Translate("", $conf);
+								$langs->setDefaultLang($logged_thirdparty->default_lang);
+							}
+							$langs->loadLangs(array('webportal@webportal', 'main'));
+						}
 
-                        $context->logged_user = $logged_user;
-                        $context->logged_thirdparty = $logged_thirdparty;
-                        $context->logged_member = $logged_member;
-                        $context->logged_partnership = $logged_partnership;
-                    }
-                }
-            }
-        }
+						$context->logged_user = $logged_user;
+						$context->logged_thirdparty = $logged_thirdparty;
+						$context->logged_member = $logged_member;
+						$context->logged_partnership = $logged_partnership;
+					}
+				}
+			}
+		}
 	}
 }

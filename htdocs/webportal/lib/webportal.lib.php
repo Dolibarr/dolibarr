@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2023		Lionel Vessiller	<lvessiller@open-dsi.fr>
+/* Copyright (C) 2004-2017 	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

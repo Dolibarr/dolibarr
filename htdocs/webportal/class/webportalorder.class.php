@@ -23,7 +23,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 
 /**
  * Class for WebPortalOrder
@@ -40,35 +40,35 @@ class WebPortalOrder extends Commande
 	 */
 	public $isextrafieldmanaged = 0;
 
-    /**
-     * Status list (short label)
-     */
-    const status_short_list = array(
-        Commande::STATUS_DRAFT => 'StatusOrderDraftShort',
-        Commande::STATUS_VALIDATED => 'StatusOrderValidated',
-        Commande::STATUS_SHIPMENTONPROCESS => 'StatusOrderSentShort',
-        Commande::STATUS_CLOSED => 'StatusOrderDelivered',
-        Commande::STATUS_CANCELED => 'StatusOrderCanceledShort',
-    );
+	/**
+	 * Status list (short label)
+	 */
+	const status_short_list = array(
+		Commande::STATUS_DRAFT => 'StatusOrderDraftShort',
+		Commande::STATUS_VALIDATED => 'StatusOrderValidated',
+		Commande::STATUS_SHIPMENTONPROCESS => 'StatusOrderSentShort',
+		Commande::STATUS_CLOSED => 'StatusOrderDelivered',
+		Commande::STATUS_CANCELED => 'StatusOrderCanceledShort',
+	);
 
-    /**
-     * @var Commande Order for static methods
-     */
-    protected $order_static = null;
+	/**
+	 * @var Commande Order for static methods
+	 */
+	protected $order_static = null;
 
 	/**
 	 *  'type' field format:
-	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
-	 *  	'select' (list of values are in 'options'),
-	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
-	 *  	'chkbxlst:...',
-	 *  	'varchar(x)',
-	 *  	'text', 'text:none', 'html',
-	 *   	'double(24,8)', 'real', 'price',
-	 *  	'date', 'datetime', 'timestamp', 'duration',
-	 *  	'boolean', 'checkbox', 'radio', 'array',
-	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *    'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *    'select' (list of values are in 'options'),
+	 *    'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
+	 *    'chkbxlst:...',
+	 *    'varchar(x)',
+	 *    'text', 'text:none', 'html',
+	 *    'double(24,8)', 'real', 'price',
+	 *    'date', 'datetime', 'timestamp', 'duration',
+	 *    'boolean', 'checkbox', 'radio', 'array',
+	 *    'mail', 'phone', 'url', 'password', 'ip'
+	 *        Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt('MY_SETUP_PARAM') or 'isModEnabled("multicurrency")' ...)
@@ -89,7 +89,7 @@ class WebPortalOrder extends Commande
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *    'validate' is 1 if need to validate with $this->validateField()
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -99,47 +99,47 @@ class WebPortalOrder extends Commande
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-        'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10,),
-        'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1,),
-        'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>2, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>25,),
-        'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>2, 'position'=>60,),
-        'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>2, 'position'=>70,),
-        'total_ht' =>array('type'=>'price', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>2, 'position'=>125, 'isameasure'=>1,),
-        'total_tva' =>array('type'=>'price', 'label'=>'VAT', 'enabled'=>1, 'visible'=>2, 'position'=>130, 'isameasure'=>1,),
-        'total_ttc' =>array('type'=>'price', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>2, 'position'=>145, 'isameasure'=>1,),
-        'multicurrency_total_ht' =>array('type'=>'price', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-2, 'position'=>255, 'isameasure'=>1,),
-        'multicurrency_total_tva' =>array('type'=>'price', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-2, 'position'=>260, 'isameasure'=>1,),
-        'multicurrency_total_ttc' =>array('type'=>'price', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-2, 'position'=>265, 'isameasure'=>1,),
-        'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>500, 'notnull'=>-5, 'arrayofkeyval' => self::status_short_list,),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10,),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1,),
+		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 25,),
+		'date_commande' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 2, 'position' => 60,),
+		'date_livraison' => array('type' => 'date', 'label' => 'DateDeliveryPlanned', 'enabled' => 1, 'visible' => 2, 'position' => 70,),
+		'total_ht' => array('type' => 'price', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => 2, 'position' => 125, 'isameasure' => 1,),
+		'total_tva' => array('type' => 'price', 'label' => 'VAT', 'enabled' => 1, 'visible' => 2, 'position' => 130, 'isameasure' => 1,),
+		'total_ttc' => array('type' => 'price', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => 2, 'position' => 145, 'isameasure' => 1,),
+		'multicurrency_total_ht' => array('type' => 'price', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 255, 'isameasure' => 1,),
+		'multicurrency_total_tva' => array('type' => 'price', 'label' => 'MulticurrencyAmountVAT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 260, 'isameasure' => 1,),
+		'multicurrency_total_ttc' => array('type' => 'price', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 265, 'isameasure' => 1,),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 500, 'notnull' => -5, 'arrayofkeyval' => self::status_short_list,),
 	);
 	//public $rowid;
 	//public $ref;
-    //public $date_commande;
-    //public $date_livraison;
-    //public $total_ht;
-    //public $total_tva;
-    //public $total_ttc;
-    //public $multicurrency_total_ht;
-    //public $multicurrency_total_tva;
-    //public $multicurrency_total_ttc;
-    public $fk_statut;
+	//public $date_commande;
+	//public $date_livraison;
+	//public $total_ht;
+	//public $total_tva;
+	//public $total_ttc;
+	//public $multicurrency_total_ht;
+	//public $multicurrency_total_tva;
+	//public $multicurrency_total_ttc;
+	public $fk_statut;
 	// END MODULEBUILDER PROPERTIES
 
 
-    /**
-     * Get order for static method
-     *
-     * @return Commande
-     */
-    protected function getOrderStatic()
-    {
-        if (!$this->order_static) {
-            $this->order_static= new Commande($this->db);
-        }
+	/**
+	 * Get order for static method
+	 *
+	 * @return Commande
+	 */
+	protected function getOrderStatic()
+	{
+		if (!$this->order_static) {
+			$this->order_static = new Commande($this->db);
+		}
 
-        return $this->order_static;
-    }
+		return $this->order_static;
+	}
 
 	/**
 	 * Constructor
@@ -152,9 +152,9 @@ class WebPortalOrder extends Commande
 
 		$this->db = $db;
 
-        $this->getOrderStatic();
+		$this->getOrderStatic();
 
-        // translate label status
+		// translate label status
 //        $statusLabelList = array();
 //        foreach (self::status_short_list as $id => $transKey) {
 //            $statusFinalLabelList = array();
@@ -167,182 +167,183 @@ class WebPortalOrder extends Commande
 //        $this->fields['fk_statut']['arrayofkeyval'] = $statusLabelList;
 	}
 
-    /**
-     * getTooltipContentArray
-     *
-     * @param 	array 	$params 	Params to construct tooltip data
-     * @since 	v18
-     * @return 	array
-     */
-    public function getTooltipContentArray($params)
-    {
-        global $conf, $langs;
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params Params to construct tooltip data
+	 * @return    array
+	 * @since    v18
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
 
-        $datas = [];
+		$datas = [];
 
-        if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-            return ['optimize' => $langs->trans("ShowWebPortalOrder")];
-        }
-        $datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("WebPortalOrder").'</u>';
-        if (isset($this->status)) {
-            $datas['picto'] .= ' '.$this->getLibStatut(5);
-        }
-        $datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			return ['optimize' => $langs->trans("ShowWebPortalOrder")];
+		}
+		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalOrder") . '</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' ' . $this->getLibStatut(5);
+		}
+		$datas['ref'] .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        return $datas;
-    }
+		return $datas;
+	}
 
-    /**
-     *	Return clicable link of object (with eventually picto)
-     *
-     *	@param      int			$withpicto                Add picto into link
-     *	@param      string	    $option                   Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-     *	@param      int			$max          	          Max length to show
-     *	@param      int			$short			          ???
-     *  @param	    int   	    $notooltip		          1=Disable tooltip
-     *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *  @param		int			$addlinktonotes			  Add link to notes
-     *  @param		string		$target			  		  attribute target for link
-     *	@return     string          			          String with URL
-     */
-    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '')
-    {
-        global $conf, $langs, $hookmanager;
+	/**
+	 *    Return clicable link of object (with eventually picto)
+	 *
+	 * @param int $withpicto Add picto into link
+	 * @param string $option Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param int $max Max length to show
+	 * @param int $short ???
+	 * @param int $notooltip 1=Disable tooltip
+	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param int $addlinktonotes Add link to notes
+	 * @param string $target attribute target for link
+	 * @return     string                              String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '')
+	{
+		global $conf, $langs, $hookmanager;
 
-        if (!empty($conf->dol_no_mouse_hover)) {
-            $notooltip = 1; // Force disable tooltips
-        }
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
-        $result = '';
+		$result = '';
 
-        $url = '';
+		$url = '';
 
-        $option = 'nolink';
+		$option = 'nolink';
 
-        if ($short) {
-            return $url;
-        }
-        $params = [
-            'id' => $this->id,
-            'objecttype' => $this->element,
-            'option' => $option,
-            'nofetch' => 1,
-        ];
-        $classfortooltip = 'classfortooltip';
-        $dataparams = '';
-        if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-            $classfortooltip = 'classforajaxtooltip';
-            $dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-            $label = '';
-        } else {
-            $label = implode($this->getTooltipContentArray($params));
-        }
+		if ($short) {
+			return $url;
+		}
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="' . dol_escape_htmltag(json_encode($params)) . '"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
-        $linkclose = '';
+		$linkclose = '';
 
-        $linkstart = '<a href="'.$url.'"';
-        $linkstart .= $linkclose.'>';
-        $linkend = '</a>';
+		$linkstart = '<a href="' . $url . '"';
+		$linkstart .= $linkclose . '>';
+		$linkend = '</a>';
 
-        if ($option === 'nolink') {
-            $linkstart = '';
-            $linkend = '';
-        }
+		if ($option === 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
 
-        $result .= $linkstart;
-        if ($withpicto) {
-            $result .= img_object(($notooltip ? '' : $label), $this->picto, (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
-        }
-        if ($withpicto != 2) {
-            $result .= $this->ref;
-        }
-        $result .= $linkend;
+		$result .= $linkstart;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
+		$result .= $linkend;
 
-        global $action;
-        $hookmanager->initHooks(array($this->element . 'dao'));
-        $parameters = array('id'=>$this->id, 'getnomurl' => &$result);
-        $reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-        if ($reshook > 0) {
-            $result = $hookmanager->resPrint;
-        } else {
-            $result .= $hookmanager->resPrint;
-        }
-        return $result;
-    }
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+		return $result;
+	}
 
-    /**
-     *	Return clicable link of object (with eventually picto)
-     *
-     *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-     *  @param		array		$arraydata				Array of data
-     *  @return		string								HTML Code for Kanban thumb.
-     */
-    public function getKanbanView($option = '', $arraydata = null)
-    {
-        global $langs, $conf;
+	/**
+	 *    Return clicable link of object (with eventually picto)
+	 *
+	 * @param string $option Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param array $arraydata Array of data
+	 * @return        string                                HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs, $conf;
 
-        $selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-        $return = '<div class="box-flex-item box-flex-grow-zero">';
-        $return .= '<div class="info-box info-box-sm">';
-        $return .= '<div class="info-box-icon bg-infobox-action">';
-        $return .= img_picto('', 'order');
-        $return .= '</div>';
-        $return .= '<div class="info-box-content">';
-        $return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-        $return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', 'order');
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . (method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref) . '</span>';
+		$return .= '<input id="cb' . $this->id . '" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="' . $this->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 
-        if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
-            $return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
-        }
-        if (property_exists($this, 'total_ht')) {
-            $return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
-        }
-        if (method_exists($this, 'getLibStatut')) {
-            $return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
-        }
-        $return .= '</div>';
-        $return .= '</div>';
-        $return .= '</div>';
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150">' . $this->thirdparty->getNomUrl(1) . '</div>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= '<div class="info-box-ref amount">' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . ' ' . $langs->trans('HT') . '</div>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<div class="info-box-status margintoponly">' . $this->getLibStatut(5) . '</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
 
-        return $return;
-    }
+		return $return;
+	}
 
-    /**
-     *  Return the label of the status
-     *
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return	string 			       Label of status
-     */
-    public function getLabelStatus($mode = 0)
-    {
-        return $this->LibStatut($this->fk_statut, $this->billed, $mode);
-    }
+	/**
+	 *  Return the label of the status
+	 *
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return    string                   Label of status
+	 */
+	public function getLabelStatus($mode = 0)
+	{
+		return $this->LibStatut($this->fk_statut, $this->billed, $mode);
+	}
 
-    /**
-     *  Return the label of the status
-     *
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return	string 			       Label of status
-     */
-    public function getLibStatut($mode = 0)
-    {
-        return $this->LibStatut($this->fk_statut, $this->billed, $mode);
-    }
+	/**
+	 *  Return the label of the status
+	 *
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return    string                   Label of status
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->fk_statut, $this->billed, $mode);
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *	Return label of status
-     *
-     *	@param		int		$status      	  Id status
-     *  @param      int		$billed    		  If invoiced
-     *	@param      int		$mode        	  0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @param      int     $donotshowbilled  Do not show billed status after order status
-     *  @return     string					  Label of status
-     */
-    public function LibStatut($status, $billed, $mode, $donotshowbilled = 0)
-    {
-        // phpcs:enable
-        return $this->getOrderStatic()->LibStatut($status, $billed, $mode, $donotshowbilled);
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *    Return label of status
+	 *
+	 * @param int $status Id status
+	 * @param int $billed If invoiced
+	 * @param int $mode 0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param int $donotshowbilled Do not show billed status after order status
+	 * @return     string                      Label of status
+	 */
+	public function LibStatut($status, $billed, $mode, $donotshowbilled = 0)
+	{
+		// phpcs:enable
+		return $this->getOrderStatic()->LibStatut($status, $billed, $mode, $donotshowbilled);
+	}
 }

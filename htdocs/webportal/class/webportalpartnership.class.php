@@ -23,7 +23,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT . '/partnership/class/partnership.class.php';
 
 /**
  * Class for WebPortalPartnership
@@ -40,33 +40,33 @@ class WebPortalPartnership extends Partnership
 	 */
 	public $isextrafieldmanaged = 0;
 
-    /**
-     * Status list (short label)
-     */
-    const status_short_list = array(
-        Partnership::STATUS_DRAFT => 'Draft',
-        Partnership::STATUS_VALIDATED => 'Accepted',
-        Partnership::STATUS_APPROVED => 'Refused',
-        Partnership::STATUS_REFUSED => 'Suspended',
-        Partnership::STATUS_CANCELED => 'Terminated',
-    );
+	/**
+	 * Status list (short label)
+	 */
+	const status_short_list = array(
+		Partnership::STATUS_DRAFT => 'Draft',
+		Partnership::STATUS_VALIDATED => 'Accepted',
+		Partnership::STATUS_APPROVED => 'Refused',
+		Partnership::STATUS_REFUSED => 'Suspended',
+		Partnership::STATUS_CANCELED => 'Terminated',
+	);
 
-    /**
-     * @var Partnership Partnership for static methods
-     */
-    protected $partnership_static = null;
+	/**
+	 * @var Partnership Partnership for static methods
+	 */
+	protected $partnership_static = null;
 
 	/**
 	 *  'type' field format:
-	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
-	 *  	'select' (list of values are in 'options'),
-	 *  	'varchar(x)',
-	 *  	'text', 'html',
-	 *   	'double(24,8)', 'price',
-	 *  	'date', 'datetime',
-	 *  	'checkbox', 'radio',
-	 *  	'mail', 'phone', 'url', 'password'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *    'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *    'select' (list of values are in 'options'),
+	 *    'varchar(x)',
+	 *    'text', 'html',
+	 *    'double(24,8)', 'price',
+	 *    'date', 'datetime',
+	 *    'checkbox', 'radio',
+	 *    'mail', 'phone', 'url', 'password'
+	 *        Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt('MY_SETUP_PARAM') or 'isModEnabled("multicurrency")' ...)
@@ -87,9 +87,9 @@ class WebPortalPartnership extends Partnership
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *    'validate' is 1 if need to validate with $this->validateField()
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
-     *  'showonheader' is 1 to show on the top of the card (header section)
+	 *  'showonheader' is 1 to show on the top of the card (header section)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -98,70 +98,70 @@ class WebPortalPartnership extends Partnership
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-        'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id",),
-        'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>5, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object", 'showonheader' => 1,),
-        'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>15, 'notnull'=>1, 'visible'=>-2, 'default'=>'1', 'index'=>1,),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'css' => 'left', 'comment' => "Id",),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => '1', 'position' => 10, 'notnull' => 1, 'visible' => 5, 'noteditable' => '1', 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => '1', 'comment' => "Reference of object", 'showonheader' => 1,),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => '1', 'position' => 15, 'notnull' => 1, 'visible' => -2, 'default' => '1', 'index' => 1,),
 
-        'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>5, 'csslist'=>'',),
-        'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>5, 'index'=>1, 'css'=>'', 'csslist'=>'',),
-        'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
-        'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
-        'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-        'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-        'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-        'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-        'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
-        'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-        'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-        'date_partnership_start' => array('type'=>'date', 'label'=>'DatePartnershipStart', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>5,),
-        'date_partnership_end' => array('type'=>'date', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>0, 'visible'=>5,),
-        'url_to_check' => array('type'=>'varchar(255)', 'label'=>'UrlToCheck', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-5,),
-        'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
-        'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>-2,),
-        'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>73, 'notnull'=>0, 'visible'=>-2,),
-        'ip' => array('type'=>'varchar(250)', 'label'=>'Ip', 'enabled'=>'1', 'position'=>74, 'notnull'=>0, 'visible'=>-2,),
+		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label' => 'Type', 'enabled' => '1', 'position' => 20, 'notnull' => 1, 'visible' => 5, 'csslist' => '',),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => '1', 'position' => 50, 'notnull' => -1, 'visible' => 5, 'index' => 1, 'css' => '', 'csslist' => '',),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => '1', 'position' => 61, 'notnull' => 0, 'visible' => 0,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => '1', 'position' => 62, 'notnull' => 0, 'visible' => 0,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => '1', 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => '1', 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => '1', 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => '1', 'position' => 600, 'notnull' => 0, 'visible' => 0,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => '1', 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
+		'date_partnership_start' => array('type' => 'date', 'label' => 'DatePartnershipStart', 'enabled' => '1', 'position' => 52, 'notnull' => 1, 'visible' => 5,),
+		'date_partnership_end' => array('type' => 'date', 'label' => 'DatePartnershipEnd', 'enabled' => '1', 'position' => 53, 'notnull' => 0, 'visible' => 5,),
+		'url_to_check' => array('type' => 'varchar(255)', 'label' => 'UrlToCheck', 'enabled' => '1', 'position' => 70, 'notnull' => 0, 'visible' => -5,),
+		'count_last_url_check_error' => array('type' => 'integer', 'label' => 'CountLastUrlCheckError', 'enabled' => '1', 'position' => 71, 'notnull' => 0, 'visible' => -2, 'default' => '0',),
+		'last_check_backlink' => array('type' => 'datetime', 'label' => 'LastCheckBacklink', 'enabled' => '1', 'position' => 72, 'notnull' => 0, 'visible' => -2,),
+		'reason_decline_or_cancel' => array('type' => 'text', 'label' => 'ReasonDeclineOrCancel', 'enabled' => '1', 'position' => 73, 'notnull' => 0, 'visible' => -2,),
+		'ip' => array('type' => 'varchar(250)', 'label' => 'Ip', 'enabled' => '1', 'position' => 74, 'notnull' => 0, 'visible' => -2,),
 
-        'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>5, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>self::status_short_list, 'showonheader' => 1,),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => '1', 'position' => 2000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => self::status_short_list, 'showonheader' => 1,),
 	);
-    //public $rowid;
-    //public $ref;
-    //public $entity;
-    //public $fk_type;
-    //public $note_public;
-    //public $note_private;
-    //public $date_creation;
-    //public $tms;
-    //public $fk_user_creat;
-    //public $fk_user_modif;
-    //public $last_main_doc;
-    //public $import_key;
-    //public $model_pdf;
-    //public $date_partnership_start;
-    //public $date_partnership_end;
-    //public $url_to_check;
-    //public $count_last_url_check_error;
-    //public $last_check_backlink;
-    //public $reason_decline_or_cancel;
-    //public $fk_soc;
-    //public $fk_member;
-    //public $ip;
-    //public $status;
+	//public $rowid;
+	//public $ref;
+	//public $entity;
+	//public $fk_type;
+	//public $note_public;
+	//public $note_private;
+	//public $date_creation;
+	//public $tms;
+	//public $fk_user_creat;
+	//public $fk_user_modif;
+	//public $last_main_doc;
+	//public $import_key;
+	//public $model_pdf;
+	//public $date_partnership_start;
+	//public $date_partnership_end;
+	//public $url_to_check;
+	//public $count_last_url_check_error;
+	//public $last_check_backlink;
+	//public $reason_decline_or_cancel;
+	//public $fk_soc;
+	//public $fk_member;
+	//public $ip;
+	//public $status;
 	// END MODULEBUILDER PROPERTIES
 
-    /**
-     * Get partnership for static method
-     *
-     * @return Partnership
-     */
-    protected function getPartnershipStatic()
-    {
-        if (!$this->partnership_static) {
-            $this->partnership_static= new Partnership($this->db);
-        }
+	/**
+	 * Get partnership for static method
+	 *
+	 * @return Partnership
+	 */
+	protected function getPartnershipStatic()
+	{
+		if (!$this->partnership_static) {
+			$this->partnership_static = new Partnership($this->db);
+		}
 
-        return $this->partnership_static;
-    }
+		return $this->partnership_static;
+	}
 
 	/**
 	 * Constructor
@@ -174,26 +174,26 @@ class WebPortalPartnership extends Partnership
 
 		$this->db = $db;
 
-        $this->getPartnershipStatic();
+		$this->getPartnershipStatic();
 
-        // Translate some data of arrayofkeyval
-        if (is_object($langs)) {
-            foreach ($this->fields as $key => $val) {
-                if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-                    foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-                        $this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
-                    }
-                }
-            }
-        }
+		// Translate some data of arrayofkeyval
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
+				}
+			}
+		}
 	}
 
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
-	 * @since 	v18
-	 * @return 	array
+	 * @param array $params Params to construct tooltip data
+	 * @return    array
+	 * @since    v18
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -204,162 +204,163 @@ class WebPortalPartnership extends Partnership
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowWebPortalPartnership")];
 		}
-		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("WebPortalPartnership").'</u>';
+		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalPartnership") . '</u>';
 		if (isset($this->status)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5);
+			$datas['picto'] .= ' ' . $this->getLibStatut(5);
 		}
-		$datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['ref'] .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
 		return $datas;
 	}
 
-    /**
-     *  Return a link to the object card (with optionaly the picto)
-     *
-     *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-     *  @param  string  $option                     On what the link point to ('nolink', ...)
-     *  @param  int     $notooltip                  1=Disable tooltip
-     *  @param  string  $morecss                    Add more css on link
-     *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *  @return	string                              String with URL
-     */
-    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
-    {
-        global $conf, $langs, $hookmanager;
+	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 * @param int $withpicto Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 * @param string $option On what the link point to ('nolink', ...)
+	 * @param int $notooltip 1=Disable tooltip
+	 * @param string $morecss Add more css on link
+	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return    string                              String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $conf, $langs, $hookmanager;
 
-        if (!empty($conf->dol_no_mouse_hover)) {
-            $notooltip = 1; // Force disable tooltips
-        }
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
-        $option = 'nolink';
+		$option = 'nolink';
 
-        $result = '';
-        $params = [
-            'id' => $this->id,
-            'objecttype' => $this->element,
-            'option' => $option,
-        ];
-        $classfortooltip = 'classfortooltip';
-        $dataparams = '';
-        if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-            $classfortooltip = 'classforajaxtooltip';
-            $dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-            $label = '';
-        } else {
-            $label = implode($this->getTooltipContentArray($params));
-        }
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="' . dol_escape_htmltag(json_encode($params)) . '"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
-        $url = '';
-        //$url = DOL_URL_ROOT.'/partnership/partnership_card.php?id='.$this->id;
+		$url = '';
+		//$url = DOL_URL_ROOT.'/partnership/partnership_card.php?id='.$this->id;
 
-        if ($option != 'nolink') {
-            // Add param to save lastsearch_values or not
-            $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-                $add_save_lastsearch_values = 1;
-            }
-            if ($add_save_lastsearch_values) {
-                $url .= '&save_lastsearch_values=1';
-            }
-        }
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
 
-        $linkclose = '';
-        if (empty($notooltip)) {
-            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-                $label = $langs->trans("ShowPartnership");
-                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
-            $linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
-        } else {
-            $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
-        }
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$label = $langs->trans("ShowPartnership");
+				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
+			}
+			$linkclose .= ($label ? ' title="' . dol_escape_htmltag($label, 1) . '"' : ' title="tocomplete"');
+			$linkclose .= $dataparams . ' class="' . $classfortooltip . ($morecss ? ' ' . $morecss : '') . '"';
+		} else {
+			$linkclose = ($morecss ? ' class="' . $morecss . '"' : '');
+		}
 
-        if ($option == 'nolink') {
-            $linkstart = '<span';
-        } else {
-            $linkstart = '<a href="'.$url.'"';
-        }
-        $linkstart .= $linkclose.'>';
-        if ($option == 'nolink') {
-            $linkend = '</span>';
-        } else {
-            $linkend = '</a>';
-        }
+		if ($option == 'nolink') {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="' . $url . '"';
+		}
+		$linkstart .= $linkclose . '>';
+		if ($option == 'nolink') {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
 
-        $result .= $linkstart;
+		$result .= $linkstart;
 
-        if (empty($this->showphoto_on_popup)) {
-            if ($withpicto) {
-                $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
-            }
-        } else {
-            if ($withpicto) {
-                require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if (empty($this->showphoto_on_popup)) {
+			if ($withpicto) {
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams . ' class="' . (($withpicto != 2) ? 'paddingright ' : '') . $classfortooltip . '"'), 0, 0, $notooltip ? 0 : 1);
+			}
+		} else {
+			if ($withpicto) {
+				require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
-                list($class, $module) = explode('@', $this->picto);
-                $upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
-                $filearray = dol_dir_list($upload_dir, "files");
-                $filename = $filearray[0]['name'];
-                if (!empty($filename)) {
-                    $pospoint = strpos($filearray[0]['name'], '.');
+				list($class, $module) = explode('@', $this->picto);
+				$upload_dir = $conf->$module->multidir_output[$conf->entity] . "/$class/" . dol_sanitizeFileName($this->ref);
+				$filearray = dol_dir_list($upload_dir, "files");
+				$filename = $filearray[0]['name'];
+				if (!empty($filename)) {
+					$pospoint = strpos($filearray[0]['name'], '.');
 
-                    $pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-                    if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
-                        $result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
-                    } else {
-                        $result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
-                    }
+					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
+					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
+						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
+					} else {
+						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div>';
+					}
 
-                    $result .= '</div>';
-                } else {
-                    $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-                }
-            }
-        }
+					$result .= '</div>';
+				} else {
+					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="' . (($withpicto != 2) ? 'paddingright ' : '') . 'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+				}
+			}
+		}
 
-        if ($withpicto != 2) {
-            $result .= $this->ref;
-        }
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 
-        $result .= $linkend;
-        //if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
-        global $action, $hookmanager;
-        $hookmanager->initHooks(array('partnershipdao'));
-        $parameters = array('id'=>$this->id, 'getnomurl' => &$result);
-        $reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-        if ($reshook > 0) {
-            $result = $hookmanager->resPrint;
-        } else {
-            $result .= $hookmanager->resPrint;
-        }
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array('partnershipdao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 
-    /**
-     *  Return the label of the status
-     *
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return	string 			       Label of status
-     */
-    public function getLibStatut($mode = 0)
-    {
-        return $this->LibStatut($this->status, $mode);
-    }
+	/**
+	 *  Return the label of the status
+	 *
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return    string                   Label of status
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return the status
-     *
-     *  @param	int		$status        Id status
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return string 			       Label of status
-     */
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Return the status
+	 *
+	 * @param int $status Id status
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return string                   Label of status
+	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
-        return $this->getPartnershipStatic()->LibStatut($status, $mode);
+		// phpcs:enable
+		return $this->getPartnershipStatic()->LibStatut($status, $mode);
 	}
 }

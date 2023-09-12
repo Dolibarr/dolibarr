@@ -26,30 +26,30 @@ define('WEBPORTAL_NOREQUIRETRAN', 1);
 define('WEBPORTAL_NOLOGIN', 1);
 
 if (!defined('NOREQUIREHTML')) {
-    define('NOREQUIREHTML', '1');
+	define('NOREQUIREHTML', '1');
 }
 if (!defined('NOREQUIREAJAX')) {
-    define('NOREQUIREAJAX', '1');
+	define('NOREQUIREAJAX', '1');
 }
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 $res = 0;
-if (!$res && file_exists('../webportal.main.inc.php')) $res=@include '../webportal.main.inc.php';				// to work if your module directory is into dolibarr root htdocs directory
+if (!$res && file_exists('../webportal.main.inc.php')) $res = @include '../webportal.main.inc.php';                // to work if your module directory is into dolibarr root htdocs directory
 if (!$res) die('Include of main fails');
 
 // Destroy session
-dol_syslog("End of session ".session_id());
+dol_syslog("End of session " . session_id());
 if (session_status() === PHP_SESSION_ACTIVE) {
-    session_destroy();
+	session_destroy();
 }
 
 // Not sure this is required
 if (isset($_SESSION['webportal_logged_thirdparty_account_id'])) unset($_SESSION['webportal_logged_thirdparty_account_id']);
 
 if (GETPOST('noredirect')) {
-    return;
+	return;
 }
-header("Location: ".$context->rootUrl); // Default behaviour is redirect to index.php page
+header("Location: " . $context->rootUrl); // Default behaviour is redirect to index.php page
 
 // End of page
 $db->close();

@@ -29,86 +29,86 @@ dol_include_once('/webportal/public/class/html.formlistwebportal.class.php');
  */
 class OrderListController extends Controller
 {
-    /**
-     * @var FormListWebPortal Form for list
-     */
-    protected $formList;
+	/**
+	 * @var FormListWebPortal Form for list
+	 */
+	protected $formList;
 
 
-    /**
-     * Check current access to controller
-     *
-     * @param   void
-     * @return  bool
-     */
-    public function checkAccess()
-    {
-        $this->accessRight = isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS');
+	/**
+	 * Check current access to controller
+	 *
+	 * @param void
+	 * @return  bool
+	 */
+	public function checkAccess()
+	{
+		$this->accessRight = isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS');
 
-        return parent::checkAccess();
-    }
+		return parent::checkAccess();
+	}
 
-    /**
-     * Action method is called before html output
-     * can be used to manage security and change context
-     *
-     * @return  void
-     */
-    public function action()
-    {
-        global $db, $langs;
+	/**
+	 * Action method is called before html output
+	 * can be used to manage security and change context
+	 *
+	 * @return  void
+	 */
+	public function action()
+	{
+		global $db, $langs;
 
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            return;
-        }
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			return;
+		}
 
-        // Load translation files required by the page
-        $langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+		// Load translation files required by the page
+		$langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
-        $context->title = $langs->trans('WebPortalOrderListTitle');
-        $context->desc = $langs->trans('WebPortalOrderListDesc');
-        $context->menu_active[] = 'order_list';
+		$context->title = $langs->trans('WebPortalOrderListTitle');
+		$context->desc = $langs->trans('WebPortalOrderListDesc');
+		$context->menu_active[] = 'order_list';
 
-        // set form list
-        $formListWebPortal = new FormListWebPortal($db);
-        $formListWebPortal->init('order');
+		// set form list
+		$formListWebPortal = new FormListWebPortal($db);
+		$formListWebPortal->init('order');
 
-        // hook for action
-        $hookRes = $this->hookDoAction();
-        if (empty($hookRes)) {
-            $formListWebPortal->doActions();
-        }
+		// hook for action
+		$hookRes = $this->hookDoAction();
+		if (empty($hookRes)) {
+			$formListWebPortal->doActions();
+		}
 
-        $this->formList = $formListWebPortal;
-    }
+		$this->formList = $formListWebPortal;
+	}
 
-    /**
-     * Display
-     *
-     * @param   void
-     * @return  void
-     */
-    public function display()
-    {
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            $this->display404();
-            return;
-        }
+	/**
+	 * Display
+	 *
+	 * @param void
+	 * @return  void
+	 */
+	public function display()
+	{
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			$this->display404();
+			return;
+		}
 
-        $this->loadTemplate('header');
-        $this->loadTemplate('menu');
+		$this->loadTemplate('header');
+		$this->loadTemplate('menu');
 
-        $hookRes = $this->hookPrintPageView();
-        if (empty($hookRes)) {
-            print '<main class="container">';
-            //print '<figure>';
-            print $this->formList->elementList($context);
-            //print '</figure>';
-            print '</main>';
-        }
+		$hookRes = $this->hookPrintPageView();
+		if (empty($hookRes)) {
+			print '<main class="container">';
+			//print '<figure>';
+			print $this->formList->elementList($context);
+			//print '</figure>';
+			print '</main>';
+		}
 
-        $this->loadTemplate('footer');
-    }
+		$this->loadTemplate('footer');
+	}
 }

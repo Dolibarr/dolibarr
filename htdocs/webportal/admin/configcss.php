@@ -26,7 +26,7 @@
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-    $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"] . "/main.inc.php";
+	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"] . "/main.inc.php";
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
@@ -34,24 +34,24 @@ $tmp2 = realpath(__FILE__);
 $i = strlen($tmp) - 1;
 $j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-    $i--;
-    $j--;
+	$i--;
+	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1)) . "/main.inc.php")) {
-    $res = @include substr($tmp, 0, ($i + 1)) . "/main.inc.php";
+	$res = @include substr($tmp, 0, ($i + 1)) . "/main.inc.php";
 }
 if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1))) . "/main.inc.php")) {
-    $res = @include dirname(substr($tmp, 0, ($i + 1))) . "/main.inc.php";
+	$res = @include dirname(substr($tmp, 0, ($i + 1))) . "/main.inc.php";
 }
 // Try main.inc.php using relative path
 if (!$res && file_exists("../../main.inc.php")) {
-    $res = @include "../../main.inc.php";
+	$res = @include "../../main.inc.php";
 }
 if (!$res && file_exists("../../../main.inc.php")) {
-    $res = @include "../../../main.inc.php";
+	$res = @include "../../../main.inc.php";
 }
 if (!$res) {
-    die("Include of main fails");
+	die("Include of main fails");
 }
 
 global $conf, $db, $hookmanager, $langs, $user;
@@ -68,7 +68,7 @@ $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
 
 // Access control
 if (!$user->admin) {
-    accessforbidden();
+	accessforbidden();
 }
 
 // Parameters
@@ -82,22 +82,22 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
-    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 // Convert action set_XXX and del_XXX to set var (this is used when no javascript on for ajax_constantonoff)
 $regs = array();
 if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
-    if ($regs[1] == 'set') {
-        dolibarr_set_const($db, $regs[2], 1, 'chaine', 0, '', $conf->entity);
-    } else {
-        dolibarr_del_const($db, $regs[2], $conf->entity);
-    }
+	if ($regs[1] == 'set') {
+		dolibarr_set_const($db, $regs[2], 1, 'chaine', 0, '', $conf->entity);
+	} else {
+		dolibarr_del_const($db, $regs[2], $conf->entity);
+	}
 }
 
 if ($action == 'updatecss') {
-    dolibarr_set_const($db, "WEBPORTAL_CUSTOM_CSS", GETPOST('WEBPORTAL_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-    dolibarr_set_const($db, "WEBPORTAL_PARAMS_REV", ((int) $conf->global->WEBPORTAL_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "WEBPORTAL_CUSTOM_CSS", GETPOST('WEBPORTAL_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "WEBPORTAL_PARAMS_REV", ((int)$conf->global->WEBPORTAL_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -110,18 +110,18 @@ $page_name = "WebPortalCSS";
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
 
 llxHeader(
-    '',
-    $langs->trans($page_name),
-    $wikihelp,
-    '',
-    0,
-    0,
-    array(
-        '/includes/ace/src/ace.js',
-        '/includes/ace/src/ext-statusbar.js',
-        '/includes/ace/src/ext-language_tools.js',
-    ),
-    array()
+	'',
+	$langs->trans($page_name),
+	$wikihelp,
+	'',
+	0,
+	0,
+	array(
+		'/includes/ace/src/ace.js',
+		'/includes/ace/src/ext-statusbar.js',
+		'/includes/ace/src/ext-language_tools.js',
+	),
+	array()
 );
 
 // Subheader

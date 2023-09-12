@@ -29,20 +29,20 @@ dol_include_once('/webportal/public/class/html.formcardwebportal.class.php');
  */
 class PartnershipCardController extends Controller
 {
-    /**
-     * @var FormCardWebPortal Form for card
-     */
-    protected $formCard;
+	/**
+	 * @var FormCardWebPortal Form for card
+	 */
+	protected $formCard;
 
-    /**
+	/**
 	 * Check current access to controller
 	 *
 	 * @return  bool
 	 */
 	public function checkAccess()
-    {
-        $context = Context::getInstance();
-        $cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
+	{
+		$context = Context::getInstance();
+		$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
 		$this->accessRight = isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit')) && $context->logged_partnership && $context->logged_partnership->id > 0;
 		return parent::checkAccess();
 	}
@@ -54,63 +54,63 @@ class PartnershipCardController extends Controller
 	 * @return  void
 	 */
 	public function action()
-    {
+	{
 		global $db, $langs;
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-            return;
-        }
+			return;
+		}
 
-        // Load translation files required by the page
-        $langs->loadLangs(array('partnership'));
+		// Load translation files required by the page
+		$langs->loadLangs(array('partnership'));
 
 		$context->title = $langs->trans('WebPortalPartnershipCardTitle');
 		$context->desc = $langs->trans('WebPortalPartnershipCardDesc');
 		$context->menu_active[] = 'partnership_card';
 
-        // set form card
-        $cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
-        $permissiontoread = (int) isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit'));
-        $permissiontoadd = (int) isModEnabled('partnership') && in_array($cardAccess, array('edit'));
-        $permissiontodelete = 0;
-        $permissionnote = 0;
-        $permissiondellink = 0;
-        $formCardWebPortal = new FormCardWebPortal($db);
-        $formCardWebPortal->init('partnership', $context->logged_partnership->id, $permissiontoread, $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
+		// set form card
+		$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
+		$permissiontoread = (int)isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit'));
+		$permissiontoadd = (int)isModEnabled('partnership') && in_array($cardAccess, array('edit'));
+		$permissiontodelete = 0;
+		$permissionnote = 0;
+		$permissiondellink = 0;
+		$formCardWebPortal = new FormCardWebPortal($db);
+		$formCardWebPortal->init('partnership', $context->logged_partnership->id, $permissiontoread, $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
 
-        // hook for action
-        $hookRes = $this->hookDoAction();
-        if (empty($hookRes)) {
-            $formCardWebPortal->doActions();
-        }
+		// hook for action
+		$hookRes = $this->hookDoAction();
+		if (empty($hookRes)) {
+			$formCardWebPortal->doActions();
+		}
 
-        $this->formCard = $formCardWebPortal;
+		$this->formCard = $formCardWebPortal;
 	}
 
 	/**
 	 * Display
-     *
+	 *
 	 * @return  void
 	 */
-    public function display()
-    {
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            $this->display404();
-            return;
-        }
+	public function display()
+	{
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			$this->display404();
+			return;
+		}
 
-        $this->loadTemplate('header');
-        $this->loadTemplate('menu');
+		$this->loadTemplate('header');
+		$this->loadTemplate('menu');
 
-        $hookRes = $this->hookPrintPageView();
-        if (empty($hookRes)) {
-            print '<main class="container">';
-            print $this->formCard->elementCard($context);
-            print '</main>';
-        }
+		$hookRes = $this->hookPrintPageView();
+		if (empty($hookRes)) {
+			print '<main class="container">';
+			print $this->formCard->elementCard($context);
+			print '</main>';
+		}
 
-        $this->loadTemplate('footer');
-    }
+		$this->loadTemplate('footer');
+	}
 }

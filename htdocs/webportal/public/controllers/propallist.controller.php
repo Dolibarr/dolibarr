@@ -29,19 +29,19 @@ dol_include_once('/webportal/public/class/html.formlistwebportal.class.php');
  */
 class PropalListController extends Controller
 {
-    /**
-     * @var FormListWebPortal Form for list
-     */
-    protected $formList;
+	/**
+	 * @var FormListWebPortal Form for list
+	 */
+	protected $formList;
 
 
-    /**
+	/**
 	 * Check current access to controller
 	 *
 	 * @return  bool
 	 */
 	public function checkAccess()
-    {
+	{
 		$this->accessRight = isModEnabled('propal') && getDolGlobalInt('WEBPORTAL_PROPAL_LIST_ACCESS');
 
 		return parent::checkAccess();
@@ -54,62 +54,62 @@ class PropalListController extends Controller
 	 * @return  void
 	 */
 	public function action()
-    {
+	{
 		global $db, $langs;
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-            return;
-        }
+			return;
+		}
 
-        // Load translation files required by the page
-        $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
-        if (isModEnabled('expedition')) {
-            $langs->loadLangs(array('sendings'));
-        }
+		// Load translation files required by the page
+		$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
+		if (isModEnabled('expedition')) {
+			$langs->loadLangs(array('sendings'));
+		}
 
 		$context->title = $langs->trans('WebPortalPropalListTitle');
 		$context->desc = $langs->trans('WebPortalPropalListDesc');
 		$context->menu_active[] = 'propal_list';
 
-        // set form list
-        $formListWebPortal = new FormListWebPortal($db);
-        $formListWebPortal->init('propal');
+		// set form list
+		$formListWebPortal = new FormListWebPortal($db);
+		$formListWebPortal->init('propal');
 
-        // hook for action
-        $hookRes = $this->hookDoAction();
-        if (empty($hookRes)) {
-            $formListWebPortal->doActions();
-        }
+		// hook for action
+		$hookRes = $this->hookDoAction();
+		if (empty($hookRes)) {
+			$formListWebPortal->doActions();
+		}
 
-        $this->formList = $formListWebPortal;
+		$this->formList = $formListWebPortal;
 	}
 
 	/**
 	 * Display
-     *
+	 *
 	 * @return  void
 	 */
-    public function display()
-    {
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            $this->display404();
-            return;
-        }
+	public function display()
+	{
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			$this->display404();
+			return;
+		}
 
-        $this->loadTemplate('header');
-        $this->loadTemplate('menu');
+		$this->loadTemplate('header');
+		$this->loadTemplate('menu');
 
-        $hookRes = $this->hookPrintPageView();
-        if (empty($hookRes)) {
-            print '<main class="container">';
-            //print '<figure>';
-            print $this->formList->elementList($context);
-            //print '</figure>';
-            print '</main>';
-        }
+		$hookRes = $this->hookPrintPageView();
+		if (empty($hookRes)) {
+			print '<main class="container">';
+			//print '<figure>';
+			print $this->formList->elementList($context);
+			//print '</figure>';
+			print '</main>';
+		}
 
-        $this->loadTemplate('footer');
-    }
+		$this->loadTemplate('footer');
+	}
 }

@@ -7,111 +7,112 @@
  */
 
 /**
- * @param   array   $Tmenu
+ * @param array $Tmenu
  * @return  string
  */
 function getNav($Tmenu)
 {
-    $menu = '';
+	$menu = '';
 
-    foreach ($Tmenu as $item){
-        $menu.= getNavItem($item);
-    }
+	foreach ($Tmenu as $item) {
+		$menu .= getNavItem($item);
+	}
 
-    return $menu;
+	return $menu;
 }
 
 /**
- * @param   array   $item
- * @param   int     $deep
+ * @param array $item
+ * @param int $deep
  * @return  string
  */
 function getNavItem($item, $deep = 0)
 {
-    $context = Context::getInstance();
+	$context = Context::getInstance();
 
-    $menu = '';
+	$menu = '';
 
-    $itemDefault=array(
-        'active' => false,
-        'separator' => false,
-    );
+	$itemDefault = array(
+		'active' => false,
+		'separator' => false,
+	);
 
-    $item = array_replace($itemDefault, $item); // applique les valeurs par default
+	$item = array_replace($itemDefault, $item); // applique les valeurs par default
 
-    if($context->menuIsActive($item['id'])){
-        $item['active'] = true;
-    }
+	if ($context->menuIsActive($item['id'])) {
+		$item['active'] = true;
+	}
 
-    if(!empty($item['overrride'])){
-        $menu.= $item['overrride'];
-    }
-    elseif(!empty($item['children']))
-    {
+	if (!empty($item['overrride'])) {
+		$menu .= $item['overrride'];
+	} elseif (!empty($item['children'])) {
 
-        $menuChildren='';
-        $haveChildActive=false;
+		$menuChildren = '';
+		$haveChildActive = false;
 
-        foreach($item['children'] as $child){
+		foreach ($item['children'] as $child) {
 
-            $item = array_replace($itemDefault, $item); // applique les valeurs par default
+			$item = array_replace($itemDefault, $item); // applique les valeurs par default
 
-            if(!empty($child['separator'])){
-                $menuChildren.='<li role="separator" class="divider"></li>';
-            }
+			if (!empty($child['separator'])) {
+				$menuChildren .= '<li role="separator" class="divider"></li>';
+			}
 
-            if($context->menuIsActive($child['id'])){
-                $child['active'] = true;
-                $haveChildActive=true;
-            }
+			if ($context->menuIsActive($child['id'])) {
+				$child['active'] = true;
+				$haveChildActive = true;
+			}
 
-            if(!empty($child['children'])){
-                $menuChildren.= "\n\r".'<!-- print sub menu -->'."\n\r";
-                $menuChildren.= getNavItem($child, $deep+1);
-                $menuChildren.= "\n\r".'<!-- print sub menu -->'."\n\r";
-            }
-            else{
-                $menuChildren.='<li class="dropdown-item" data-deep="'.$deep.'" ><a href="'.$child['url'].'" class="'.(!empty($child['active'])?'active':'').'" ">'. $child['name'].'</a></li>';
-            }
+			if (!empty($child['children'])) {
+				$menuChildren .= "\n\r" . '<!-- print sub menu -->' . "\n\r";
+				$menuChildren .= getNavItem($child, $deep + 1);
+				$menuChildren .= "\n\r" . '<!-- print sub menu -->' . "\n\r";
+			} else {
+				$menuChildren .= '<li class="dropdown-item" data-deep="' . $deep . '" ><a href="' . $child['url'] . '" class="' . (!empty($child['active']) ? 'active' : '') . '" ">' . $child['name'] . '</a></li>';
+			}
 
-        }
+		}
 
-        $active ='';
-        if($haveChildActive || $item['active']){
-            $active = 'active';
-        }
+		$active = '';
+		if ($haveChildActive || $item['active']) {
+			$active = 'active';
+		}
 
-        $menu.= '<li data-deep="'.$deep.'" class="dropdown '.($deep>0?'dropdown-item dropdown-submenu':'nav-item').'  '.$active.'">';
-        $menu.= '<a href="#" class="'.($deep>0?'':'nav-link').' dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'. $item['name'].' <span class="caret"></span></a>';
-        $menu.= '<ul class="dropdown-menu ">'.$menuChildren.'</ul>';
-        $menu.= '</li>';
+		$menu .= '<li data-deep="' . $deep . '" class="dropdown ' . ($deep > 0 ? 'dropdown-item dropdown-submenu' : 'nav-item') . '  ' . $active . '">';
+		$menu .= '<a href="#" class="' . ($deep > 0 ? '' : 'nav-link') . ' dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">' . $item['name'] . ' <span class="caret"></span></a>';
+		$menu .= '<ul class="dropdown-menu ">' . $menuChildren . '</ul>';
+		$menu .= '</li>';
 
-    }
-    else {
-        $menu.= '<li data-deep="'.$deep.'" class="'.($deep>0?'dropdown-item':'nav-item ').' '.($item['active']?'active':'').'"><a  href="'.$item['url'].'" class="'.($deep>0?'':'nav-link').'" >'. $item['name'].'</a></li>';
-    }
+	} else {
+		$menu .= '<li data-deep="' . $deep . '" class="' . ($deep > 0 ? 'dropdown-item' : 'nav-item ') . ' ' . ($item['active'] ? 'active' : '') . '"><a  href="' . $item['url'] . '" class="' . ($deep > 0 ? '' : 'nav-link') . '" >' . $item['name'] . '</a></li>';
+	}
 
-    return $menu;
+	return $menu;
 }
 
 /**
- *   	uasort callback function to Sort menu fields
+ *    uasort callback function to Sort menu fields
  *
- *   	@param	array			$a    			PDF lines array fields configs
- *   	@param	array			$b    			PDF lines array fields configs
- *      @return	int								Return compare result
+ * @param array $a PDF lines array fields configs
+ * @param array $b PDF lines array fields configs
+ * @return    int                                Return compare result
  *
  *      // Sorting
  *      uasort ( $this->cols, array( $this, 'menuSort' ) );
  *
  */
-function menuSortInv($a, $b) {
+function menuSortInv($a, $b)
+{
 
-    if(empty($a['rank'])){ $a['rank'] = 0; }
-    if(empty($b['rank'])){ $b['rank'] = 0; }
-    if ($a['rank'] == $b['rank']) {
-        return 0;
-    }
+	if (empty($a['rank'])) {
+		$a['rank'] = 0;
+	}
+	if (empty($b['rank'])) {
+		$b['rank'] = 0;
+	}
+	if ($a['rank'] == $b['rank']) {
+		return 0;
+	}
 
-    return ($a['rank'] < $b['rank']) ? -1 : 1;
+	return ($a['rank'] < $b['rank']) ? -1 : 1;
 }

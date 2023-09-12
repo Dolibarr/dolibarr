@@ -25,8 +25,8 @@
 /**
  * Prepare array of tabs for WebPortalMember
  *
- * @param	WebPortalMember	$object		Member
- * @return 	array					    Array of tabs
+ * @param WebPortalMember $object Member
+ * @return    array                        Array of tabs
  */
 function webportalmemberPrepareHead($object)
 {
@@ -37,7 +37,7 @@ function webportalmemberPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/webportal/public/card.php", 1).'?id='.$object->id.'&element=member';
+	$head[$h][0] = dol_buildpath("/webportal/public/card.php", 1) . '?id=' . $object->id . '&element=member';
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
