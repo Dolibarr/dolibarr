@@ -143,6 +143,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+// TODO Test on reception module on only
 if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
 	$result = restrictedArea($user, 'reception', $object->id);
 } else {

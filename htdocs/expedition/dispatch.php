@@ -25,9 +25,9 @@
  */
 
 /**
- * \file htdocs/expedition/dispatch.php
+ * \file 	htdocs/expedition/dispatch.php
  * \ingroup expedition
- * \brief Page to dispatch shipments
+ * \brief 	Page to dispatch shipments
  */
 
 // Load Dolibarr environment
@@ -60,6 +60,9 @@ $fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
+$error = 0;
+$errors = array();
+
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -74,6 +77,7 @@ if (GETPOSTISSET("projectid")) {
 
 $object = new Expedition($db);
 $objectorder = new Commande($db);
+
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -271,8 +275,9 @@ if ($action == 'updatelines' && $usercancreate) {
 						}
 					}
 
-					// If module stock is enabled and the stock increase is done on purchase order dispatching
-					if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+					// If module stock is enabled and the stock decrease is done on edtion of this page
+					/*
+					if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_DISPATCH_ORDER)) {
 						$mouv = new MouvementStock($db);
 						$product = GETPOST($prod, 'int');
 						$entrepot = GETPOST($ent, 'int');
@@ -307,6 +312,7 @@ if ($action == 'updatelines' && $usercancreate) {
 							}
 						}
 					}
+					*/
 				}
 			}
 		}
@@ -317,6 +323,9 @@ if ($action == 'updatelines' && $usercancreate) {
 	} else {
 		$db->commit();
 		setEventMessages($langs->trans("ReceptionUpdated"), null);
+
+		header("Location: ".DOL_URL_ROOT.'/expedition/dispatch.php?id='.$object->id);
+		exit;
 	}
 } elseif ($action == 'setdate_livraison' && $usercancreate) {
 	$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
@@ -346,7 +355,8 @@ $morejs = array('/expedition/js/lib_dispatch.js.php');
 llxHeader('', $title, $help_url, '', 0, 0, $morejs);
 
 if ($object->id > 0 || !empty($object->ref)) {
-	$lines = $object->lines;
+	$lines = $object->lines;	// This is an array of detail of line, on line per source order line found intolines[]->fk_origin_line, then each line may have sub data
+	//var_dump($lines[0]->fk_origin_line); exit;
 
 	$num_prod = count($lines);
 
@@ -493,7 +503,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '<br>';
 	$disabled = 0;	// This is used to disable or not the bulk selection of target warehouse. No reason to have it disabled so forced to 0.
 
-	if ($object->statut == Reception::STATUS_DRAFT) {
+	if ($object->statut == Expedition::STATUS_DRAFT) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$formproduct->loadWarehouses();
@@ -847,8 +857,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 								}
 								// Qty to dispatch
 								print '<td class="right">';
-								print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : $objd->qty).'" data-expected="'.$objd->qty.'">';
+								print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : $objd->qty);
+								//var_dump($suggestedvalue);exit;
+								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
 								print '</td>';
 								print '<td>';
 								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
@@ -991,7 +1003,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 							}
 							// Qty to dispatch
 							print '<td class="right">';
-							print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+							print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
 							$amounttosuggest = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0));
 							if (count($products_dispatched)) {
 								// There is already existing lines into llx_expeditiondet, this means a plan for the shipment has already been started.
@@ -1055,14 +1067,14 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print '</div>';
 
 		if ($nbproduct) {
-			$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
+			//$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
 
 			print '<div class="center">';
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 			// modified by hook
 			if (empty($reshook)) {
-				if (empty($conf->reception->enabled)) {
+				/*if (empty($conf->reception->enabled)) {
 					print $langs->trans("Comment").' : ';
 					print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
 					print GETPOSTISSET("comment") ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
@@ -1075,6 +1087,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$dispatchBt = empty($conf->reception->enabled) ? $langs->trans("Receive") : $langs->trans("CreateReception");
 
 				print '<br>';
+				*/
+
 				print '<input type="submit" id="submitform" class="button" name="dispatch" value="'.$langs->trans("Save").'"';
 				$disabled = 0;
 				if (!$usercancreate) {
@@ -1111,11 +1125,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '<script type="text/javascript">
 		$(document).ready(function () {
 			$("select[name=fk_default_warehouse]").change(function() {
+				console.log("warehouse is modified");
 				var fk_default_warehouse = $("option:selected", this).val();
 				$("select[name^=entrepot_]").val(fk_default_warehouse).change();
 			});
 
 			$("#autoreset").click(function() {
+				console.log("we click on autoreset");
 				$(".autoresettr").each(function(){
 					id = $(this).attr("name");
 					idtab = id.split("_");
@@ -1146,7 +1162,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 				return false;
 			});
 
-			$(".resetline").click(function(){
+			$(".resetline").on("click", function(event) {
+				event.preventDefault();
 				id = $(this).attr("id");
 				id = id.split("reset_");
 				console.log("Reset trigger for id = qty_"+id[1]);

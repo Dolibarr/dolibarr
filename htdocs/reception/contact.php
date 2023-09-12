@@ -67,6 +67,8 @@ if ($id > 0 || !empty($ref)) {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// TODO Test on reception module on only
 if ($origin == 'reception') {
 	$result = restrictedArea($user, $origin, $object->id);
 } else {
