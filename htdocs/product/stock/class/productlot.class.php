@@ -102,18 +102,19 @@ class Productlot extends CommonObject
 	 */
 	public $fields = array(
 		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
-		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1, 'searchall'=>1),
-		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1),
+		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'picto' => 'product', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'maxwidth150'),
+		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1, 'picto'=>'lot'),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>5, 'position'=>60),
-		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>70),
-		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>1, 'visible'=>1, 'position'=>80),
-		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>90),
-		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>100),
-		//'qc_frequency'        => array('type'=>'varchar(6)', 'label'=>'QCFrequency', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_QUALITYCONTROL)?1:0', 'visible'=>5, 'position'=>110),
+		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>70),
+		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position'=>80),
+		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position'=>90),
+		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY", 0)', 'visible'=>5, 'position'=>100),
+		'qc_frequency'        => array('type'=>'integer', 'label'=>'QCFrequency', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>110),
+		'lifetime'        => array('type'=>'integer', 'label'=>'Lifetime', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>110),
 		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>5, 'position'=>62),
 		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
-		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => 0, 'position' => 310),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -2, 'position' => 310),
 		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>500),
 		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
@@ -141,7 +142,8 @@ class Productlot extends CommonObject
 	public $manufacturing_date = '';
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
-	//public $qc_frequency = '';
+	public $qc_frequency = '';
+	public $lifetime = '';
 	public $datec = '';
 	public $tms = '';
 
@@ -181,7 +183,8 @@ class Productlot extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		global $conf;
+		global $conf, $langs;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -208,6 +211,11 @@ class Productlot extends CommonObject
 		}
 
 		// Check parameters
+		if ($this->batch === '') {
+			$this->errors[] = $langs->trans("ErrorBadValueForBatch");
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			return -1;
+		}
 		// Put here code to add control on parameters values
 
 		// Insert request
@@ -221,7 +229,8 @@ class Productlot extends CommonObject
 		$sql .= 'manufacturing_date,';
 		$sql .= 'scrapping_date,';
 		//$sql .= 'commissionning_date,';
-		//$sql .= 'qc_frequency,';
+		$sql .= 'qc_frequency,';
+		$sql .= 'lifetime,';
 		$sql .= 'datec,';
 		$sql .= 'fk_user_creat,';
 		$sql .= 'fk_user_modif,';
@@ -236,7 +245,8 @@ class Productlot extends CommonObject
 		$sql .= ' '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'".$this->db->idate($this->manufacturing_date)."'").',';
 		$sql .= ' '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'".$this->db->idate($this->scrapping_date)."'").',';
 		//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
-		//$sql .= ' '.(!isset($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+		$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+		$sql .= ' '.(empty($this->lifetime) ? 'NULL' : $this->lifetime).',';
 		$sql .= ' '."'".$this->db->idate(dol_now())."'".',';
 		$sql .= ' '.(!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat).',';
 		$sql .= ' '.(!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif).',';
@@ -310,7 +320,8 @@ class Productlot extends CommonObject
 		$sql .= " t.manufacturing_date,";
 		$sql .= " t.scrapping_date,";
 		//$sql .= " t.commissionning_date,";
-		//$sql .= " t.qc_frequency,";
+		$sql .= " t.qc_frequency,";
+		$sql .= " t.lifetime,";
 		$sql .= " t.model_pdf,";
 		$sql .= " t.last_main_doc,";
 		$sql .= " t.datec,";
@@ -346,7 +357,8 @@ class Productlot extends CommonObject
 				$this->manufacturing_date = $this->db->jdate($obj->manufacturing_date);
 				$this->scrapping_date = $this->db->jdate($obj->scrapping_date);
 				//$this->commissionning_date = $this->db->jdate($obj->commissionning_date);
-				//$this->qc_frequency = $obj->qc_frequency;
+				$this->qc_frequency = $obj->qc_frequency;
+				$this->lifetime = $obj->lifetime;
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
@@ -428,7 +440,8 @@ class Productlot extends CommonObject
 		$sql .= ' manufacturing_date = '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'".$this->db->idate($this->manufacturing_date)."'" : 'null').',';
 		$sql .= ' scrapping_date = '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'".$this->db->idate($this->scrapping_date)."'" : 'null').',';
 		//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
-		//$sql .= ' qc_frequency = '.(!isset($this->qc_frequency) || dol_strlen($this->qc_frequency) != 0 ? "'".$this->db->escape($this->qc_frequency)."'" : 'null').',';
+		$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
+		$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
 		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").',';
@@ -490,6 +503,47 @@ class Productlot extends CommonObject
 
 		$this->db->begin();
 
+		// Check there is no stock for this lot
+		$sql = "SELECT pb.rowid FROM ".$this->db->prefix()."product_batch as pb, ".$this->db->prefix()."product_stock as ps";
+		$sql .= " WHERE pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($this->batch)."'";
+		$sql .= " AND ps.fk_product = ".((int) $this->fk_product);
+		$sql .= $this->db->plimit(1);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$error++;
+				$this->errors[] = 'Error Lot is used in stock (ID = '.$obj->rowid.'). Deletion not possible.';
+				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			}
+		} else {
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+		}
+
+		// Check there is no movement for this lot
+		$sql = "SELECT sm.rowid FROM ".$this->db->prefix()."stock_mouvement as sm";
+		$sql .= " WHERE sm.batch = '".$this->db->escape($this->batch)."'";
+		$sql .= " AND sm.fk_product = ".((int) $this->fk_product);
+		$sql .= $this->db->plimit(1);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$error++;
+				$this->errors[] = 'Error Lot was used in a stock movement (ID '.$obj->rowid.'). Deletion not possible.';
+				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			}
+		} else {
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+		}
+
+		// TODO
 		//if (!$error) {
 			//if (!$notrigger) {
 				// Uncomment this and change PRODUCTLOT to your own tag if you
@@ -958,7 +1012,7 @@ class Productlot extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

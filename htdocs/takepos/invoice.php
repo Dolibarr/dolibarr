@@ -459,9 +459,10 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
+	// If we add a line and no invoice yet, we create the invoice
 	if (($action == "addline" || $action == "freezone") && $placeid == 0) {
 		$invoice->socid = getDolGlobalString($constforcompanyid);
-		$invoice->date = dol_now();
+		$invoice->date = dol_now('tzuserrel');		// We use the local date, only the day will be saved.
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 		$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
@@ -470,6 +471,7 @@ if (empty($reshook)) {
 			$langs->load('errors');
 			dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
 		} else {
+			// Create invoice
 			$placeid = $invoice->create($user);
 			if ($placeid < 0) {
 				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
@@ -492,7 +494,7 @@ if (empty($reshook)) {
 		$price = $datapriceofproduct['pu_ht'];
 		$price_ttc = $datapriceofproduct['pu_ttc'];
 		//$price_min = $datapriceofproduct['price_min'];
-		$price_base_type = $datapriceofproduct['price_base_type'];
+		$price_base_type = empty($datapriceofproduct['price_base_type']) ? 'HT' : $datapriceofproduct['price_base_type'];
 		$tva_tx = $datapriceofproduct['tva_tx'];
 		$tva_npr = $datapriceofproduct['tva_npr'];
 
@@ -1317,7 +1319,9 @@ print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
 // In phone version only show when it is invoice page
 if (empty($mobilepage) || $mobilepage == "invoice") {
+	print '<!-- hidden var used by some js functions -->';
 	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
+	print '<input type="hidden" name="thirdpartyid" id="thirdpartyid" value="'.$invoice->socid.'">';
 }
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
@@ -1558,6 +1562,8 @@ if ($placeid > 0) {
 				}
 				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? '<b>' . $line->product_ref . '</b> - ' . $line->product_label : dolGetFirstLineOfText($line->desc, 1), $tooltiptext);
+				} elseif (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 2) {
+					$htmlforlines .= $form->textwithpicto($line->product_ref ? '<b>'.$line->product_ref.'<b>' : dolGetFirstLineOfText($line->desc, 1), $tooltiptext);
 				} else {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
 				}
@@ -1698,7 +1704,7 @@ if (($action == "valid" || $action == "history") && $invoice->type != Facture::T
 
 if ($action == "search") {
 	print '<center>
-	<input type="text" id="search" class="input-search-takepos" name="search" onkeyup="Search2(\'\', null);" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
+	<input type="text" id="search" class="input-nobottom" name="search" onkeyup="Search2(\'\', null);" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
 	</center>';
 }
 

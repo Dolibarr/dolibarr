@@ -262,8 +262,7 @@ while ($i <= $MAXAGENDA) {
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key.'" value="'.$offsettz_value.'" size="1"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowraponall right">';
-	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
-	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ?GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
+	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ? GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
 	print $formother->selectColor($color_value, "AGENDA_EXT_COLOR_".$id.'_'.$key, '', 1, '', 'hideifnotset');
 	print '</td>';
 	print "</tr>";

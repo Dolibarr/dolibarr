@@ -222,23 +222,8 @@ $permsgroupbyentity = array();
 $sql = "SELECT DISTINCT gr.fk_id, gu.entity";	// fk_id are permission id and entity is entity of the group
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";	// all groups of a user
-$sql .= " WHERE 1 = 1";
-// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
-if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		$sql .= " AND gu.entity IN (0,".$conf->entity.")";
-	} else {
-		//$sql .= " AND r.entity = ".((int) $conf->entity);
-	}
-} else {
-	$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
-	// The entity on the table usergroup_user should be useless and should never be used because it is alreay into gr and r.
-	// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
-	// other entities, so we are forced to add a filter here
-	$sql .= " AND gu.entity IN (0,".$conf->entity.")";
-	//$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
-}
-// End of strange business rule
+$sql .= " WHERE gr.entity = ".((int) $entity);
+$sql .= " AND gu.entity =".((int) $entity);
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql .= " AND gu.fk_user = ".((int) $object->id);
 
@@ -634,17 +619,17 @@ if ($result) {
 			print '</td>';
 		} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
 			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
-				if ($caneditperms) {
-					print '<td class="center">';
-					print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
-					print '</td>';
-				} else {
-					print '<td>&nbsp;</td>';
-				}
 				print '<td class="center nowrap">';
 				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
 				//print img_picto($langs->trans("Active"), 'tick');
 				print '</td>';
+				if ($caneditperms) {
+					print '<td class="">';
+					print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
+					print '</td>';
+				} else {
+					print '<td>c&nbsp;</td>';
+				}
 			} else {
 				// Do not own permission
 				if ($caneditperms) {
@@ -669,13 +654,11 @@ if ($result) {
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a></td>';
 			} else {
-				print '<td>&nbsp;</td>';
+				print '<td>aa';
+				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+				print '</td>';
 			}
 			print '<td class="center">';
-			if (!$caneditperms) {
-				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
-			}
-			//print '&nbsp;';
 			print '</td>';
 		}
 
@@ -690,6 +673,14 @@ if ($result) {
 		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
+			}
+		}
+		// Special warning cas for the permission "Allow to modify other users password
+		if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
+			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
+				in_array($obj->id, $permsuser) ||
+				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+					print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
 			}
 		}
 		print '</td>';

@@ -149,7 +149,7 @@ if ($resql) {
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) {
-					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+					sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
 					$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 				} else {
 					if ($oldemail != 'none') {
@@ -203,7 +203,7 @@ if ($resql) {
 		// Si il reste des envois en buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
 				$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 			} else {
 				if ($oldemail != 'none') {
@@ -230,16 +230,16 @@ if ($resql) {
 /**
  * Send email
  *
- * @param string $mode			Mode (test | confirm)
- * @param string $oldemail		Target email
- * @param string $message		Message to send
- * @param string $total			Total amount of unpayed invoices
- * @param string $userlang		Code lang to use for email output.
- * @param string $oldtarget		Target name
- * @param int $duration_value	duration value
- * @return int 					<0 if KO, >0 if OK
+ * @param string 	$mode				Mode (test | confirm)
+ * @param string 	$oldemail			Target email
+ * @param string 	$message			Message to send
+ * @param string 	$total				Total amount of unpayed invoices
+ * @param string 	$userlang			Code lang to use for email output.
+ * @param string 	$oldtarget			Target name
+ * @param int 		$duration_value		duration value
+ * @return int 							Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
+function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
 	global $conf, $langs;
 

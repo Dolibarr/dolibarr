@@ -271,6 +271,7 @@ $colortext = join(',', colorStringToArray($colortext));
 $colortextlink = join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries = $menumanager->showmenu('topnb');
+$nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
 	$nbtopmenuentries = max($nbtopmenuentries, 10);
 }
@@ -2706,7 +2707,7 @@ img.photorefnoborder {
 	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 .tdhrthin {
-	margin: 0;
+	margin: 0 !important;
 	padding-bottom: 0 !important;
 }
 /* Payment Screen : Pointer cursor in the autofill image */
@@ -5012,7 +5013,7 @@ table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 
-div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; }
+div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; text-align: center; }
 .backgreypublicpayment a { color: #222 !important; }
 .poweredbypublicpayment {
 	float: right;
@@ -5312,7 +5313,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 
@@ -5503,6 +5504,8 @@ td.cal_other_month {
 	opacity: 0.8;
 }
 
+.cal_available { background: #0060d450; }
+.cal_chosen { background: #0060d4; }
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -5645,6 +5648,10 @@ td.gtaskname {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+table.jPicker {
+	border-radius: 5px;
+	border: 1px solid #bbb !important;
+}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5719,6 +5726,9 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  font-size : 8pt;
  padding : 0px;
  margin : 0px;
+}
+.colorselector {
+	border: solid 1px #ddd !important;
 }
 
 
@@ -7705,7 +7715,7 @@ table.jPicker {
 	}
 
 	div.tmenucenter {
-		max-width: 24px;	/* size of viewport */
+		max-width: <?php echo max(24, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
 		text-overflow: clip;
 	}
 	.mainmenuaspan {

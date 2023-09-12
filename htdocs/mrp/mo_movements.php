@@ -256,7 +256,7 @@ $form = new Form($db);
 $formproject = new FormProjets($db);
 $formproduct = new FormProduct($db);
 $productstatic = new Product($db);
-$productlot = new ProductLot($db);
+$productlot = new Productlot($db);
 $warehousestatic = new Entrepot($db);
 $userstatic = new User($db);
 

@@ -16,7 +16,7 @@
 #
 # Generic
 #
-NewAsset=新资产
+NewAsset=新建资产
 AccountancyCodeAsset=科目代码（资产）
 AccountancyCodeDepreciationAsset=科目代码（折旧资产帐户）
 AccountancyCodeDepreciationExpense=科目代码（折旧费用帐户）
@@ -36,7 +36,7 @@ ModuleAssetsDesc=资产描述
 #
 AssetSetup=资产设置
 AssetSetupPage=资产设置页面
-ExtraFieldsAssetModel=互补属性 (资产的模型)
+ExtraFieldsAssetModel=自定义属性（资产的模型）
 
 AssetsType=资产模型
 AssetsTypeId=资产模型 ID
@@ -48,16 +48,16 @@ ASSET_ACCOUNTANCY_CATEGORY=固定资产科目组
 # Menu
 #
 MenuAssets=资产
-MenuNewAsset=新资产
+MenuNewAsset=新建资产
 MenuAssetModels=模型资产
 MenuListAssets=清单
-MenuNewAssetModel=新资产模型
+MenuNewAssetModel=新建资产模型
 MenuListAssetModels=清单
 
 #
 # Module
 #
-ConfirmDeleteAsset=您真的要移除该资产吗？
+ConfirmDeleteAsset=您真的要删除该资产吗？
 
 #
 # Tab
@@ -87,7 +87,7 @@ AssetTypeInProgress=进行中
 AssetTypeFinancial=Financial
 AssetNotDepreciated=Not depreciated
 AssetDisposal=处置
-AssetConfirmDisposalAsk=您确定要处置资产<b>%s</b>吗？
+AssetConfirmDisposalAsk=您确定要处置资产 <b> %s </b> 吗？
 AssetConfirmReOpenAsk=您确定要重新打开资产<b>%s</b>吗？
 
 #
@@ -140,11 +140,11 @@ AssetAccountancyCodeDepreciationEconomic=Economic depreciation
 AssetAccountancyCodeAsset=资产
 AssetAccountancyCodeDepreciationAsset=折旧
 AssetAccountancyCodeDepreciationExpense=Depreciation expense
-AssetAccountancyCodeValueAssetSold=Value of asset disposed
-AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
+AssetAccountancyCodeValueAssetSold=已处置资产的价值
+AssetAccountancyCodeReceivableOnAssignment=待处置应收账款
 AssetAccountancyCodeProceedsFromSales=Proceeds from disposal
 AssetAccountancyCodeVatCollected=Collected VAT
-AssetAccountancyCodeVatDeductible=Recovered VAT on assets
+AssetAccountancyCodeVatDeductible=已收回资产的增值税
 AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelerated depreciation (tax)
 AssetAccountancyCodeAcceleratedDepreciation=账户
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Depreciation expense
@@ -168,7 +168,7 @@ AssetDepreciationReversal=Reversal
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
+AssetErrorAssetOrAssetModelIDNotProvide=尚未提供资产或模型的 ID
 AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
 AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
 AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'

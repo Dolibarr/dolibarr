@@ -144,13 +144,13 @@ class Notify
 			$nb = count($listofnotiftodo);
 		}
 		if ($nb < 0) {
-			$texte = img_object($langs->trans("Notifications"), 'email').' '.$langs->trans("ErrorFailedToGetListOfNotificationsToSend");
+			$texte = img_object($langs->trans("Notifications"), 'email', 'class="pictofixedwidth"').$langs->trans("ErrorFailedToGetListOfNotificationsToSend");
 		} elseif ($nb == 0) {
-			$texte = img_object($langs->trans("Notifications"), 'email').' '.$langs->trans("NoNotificationsWillBeSent");
+			$texte = img_object($langs->trans("Notifications"), 'email', 'class="pictofixedwidth"').$langs->trans("NoNotificationsWillBeSent");
 		} elseif ($nb == 1) {
-			$texte = img_object($langs->trans("Notifications"), 'email').' '.$langs->trans("ANotificationsWillBeSent");
+			$texte = img_object($langs->trans("Notifications"), 'email', 'class="pictofixedwidth"').$langs->trans("ANotificationsWillBeSent");
 		} elseif ($nb >= 2) {
-			$texte = img_object($langs->trans("Notifications"), 'email').' '.$langs->trans("SomeNotificationsWillBeSent", $nb);
+			$texte = img_object($langs->trans("Notifications"), 'email', 'class="pictofixedwidth"').$langs->trans("SomeNotificationsWillBeSent", $nb);
 		}
 
 		if (is_array($listofnotiftodo)) {

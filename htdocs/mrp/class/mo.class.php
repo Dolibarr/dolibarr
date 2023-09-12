@@ -184,7 +184,6 @@ class Mo extends CommonObject
 	 */
 	public $date_end_planned;
 
-
 	/**
 	 * @var int ID bom
 	 */
@@ -199,6 +198,13 @@ class Mo extends CommonObject
 	 * @var int ID project
 	 */
 	public $fk_project;
+
+	/**
+	 * @var double	New quantity. When we update the quantity to produce, we set this to save old value before calling the ->update that call the updateProduction that need this
+	 * 				to recalculate all the quantities in lines to consume and produce.
+	 */
+	public $oldQty;
+
 
 	// If this object has a subtable with lines
 
@@ -246,6 +252,7 @@ class Mo extends CommonObject
 	 * @var array tpl
 	 */
 	public $tpl = array();
+
 
 	/**
 	 * Constructor
@@ -634,8 +641,6 @@ class Mo extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		global $langs;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -694,7 +699,7 @@ class Mo extends CommonObject
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new Bom($this->db);
+				$bom = new BOM($this->db);
 				$bom->fetch($this->fk_bom);
 				if ($bom->bomtype == 1) {
 					$role = 'toproduce';
@@ -771,7 +776,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * Update quantities in lines to consume and to produce.
+	 * Update quantities in lines to consume and/or lines to produce.
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
@@ -799,7 +804,7 @@ class Mo extends CommonObject
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
-							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
+							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and efficiency
 							$res = $moLine->update($user);
 							if (!$res) $error++;
 						}
@@ -1245,7 +1250,7 @@ class Mo extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

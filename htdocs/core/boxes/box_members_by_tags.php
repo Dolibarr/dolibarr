@@ -252,7 +252,7 @@ class box_members_by_tags extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror())
 				);
 			}
 		} else {

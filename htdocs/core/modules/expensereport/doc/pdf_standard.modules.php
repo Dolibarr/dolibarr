@@ -75,12 +75,6 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxpiece;
 	public $posxcomment;
 	public $posxtva;

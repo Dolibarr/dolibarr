@@ -304,7 +304,7 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
+input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -2532,7 +2532,7 @@ img.photorefnoborder {
 }
 
 .tdhrthin {
-	margin: 0;
+	margin: 0 !important;
 	padding-bottom: 0 !important;
 }
 
@@ -3474,6 +3474,8 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
+}
+div.tabBar {
 	background: var(--colorbacktabcard1);
 }
 div.tabBar tr.titre td {
@@ -4966,7 +4968,7 @@ table.table-fiche-title {
 }
 
 
-div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; }
+div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; text-align: center; }
 .backgreypublicpayment a { color: #222 !important; }
 .poweredbypublicpayment {
 	float: right;
@@ -5290,7 +5292,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {
@@ -5498,7 +5500,8 @@ td.event-past span  {
 	opacity: 0.5;
 }
 
-
+.cal_available { background: #0060d450; }
+.cal_chosen { background: #0060d4; }
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -5638,6 +5641,10 @@ td.event-past span  {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+table.jPicker {
+	border-radius: 5px;
+	border: 1px solid #bbb !important;
+}
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5713,7 +5720,9 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  padding : 0px;
  margin : 0px;
 }
-
+.colorselector {
+	border: solid 1px #ddd !important;
+}
 
 /* Style to overwrites JQuery styles */
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
@@ -7787,7 +7796,7 @@ table.jPicker {
 		max-width: 370px;
 	}
 }
-/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again (<?php echo $nbtopmenuentries ?> menu entries) */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
@@ -7797,16 +7806,16 @@ table.jPicker {
 		height: 23px;
 	}
 	div.tmenucenter {
-		max-width: <?php echo round(26); ?>px;	/* size of viewport */
-		  text-overflow: clip;
+		max-width: <?php echo max(26, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
+		text-overflow: clip;
 	}
 	span.mainmenuaspan {
 		margin-left: 1px;
 	}
 	.mainmenuaspan {
-		  font-size: 0.9em;
-		  padding-left: 0;
-		  padding-right: 0;
+		font-size: 0.9em;
+		padding-left: 0;
+		padding-right: 0;
 	}
 	.topmenuimage {
 		background-size: 20px auto;
@@ -8005,6 +8014,7 @@ table.jPicker {
 	}
 }
 
+
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {
@@ -8046,3 +8056,6 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+
+
+

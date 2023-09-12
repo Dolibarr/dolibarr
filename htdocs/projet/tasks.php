@@ -566,7 +566,13 @@ if ($id > 0 || !empty($ref)) {
 
 	// Project card
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+		$tmpurl = $_SESSION['pageforbacktolist']['project'];
+		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	} else {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	}
 
 	$morehtmlref = '<div class="refidno">';
 	// Title
@@ -1003,7 +1009,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 
 	// progress resume not searchable
-	print '<td class="liste_titre right"></td>';
+	if (!empty($arrayfields['t.progress_summary']['checked'])) {
+		print '<td class="liste_titre right"></td>';
+	}
 
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {

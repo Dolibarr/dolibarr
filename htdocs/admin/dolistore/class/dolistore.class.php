@@ -41,6 +41,7 @@ class Dolistore
 
 	public $per_page; // pagination: display per page
 	public $categorie; // the current categorie
+	public $categories; // an array of categories
 	public $search; // the search keywords
 
 	// setups
@@ -49,6 +50,8 @@ class Dolistore
 	public $lang; // the integer representing the lang in the store
 	public $debug_api; // usefull if no dialog
 
+	public $api;
+	public $products;
 
 	/**
 	 * Constructor
@@ -57,7 +60,7 @@ class Dolistore
 	 */
 	public function __construct($debug = false)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
 		$this->shop_url  = 'https://www.dolistore.com/index.php?controller=product&id_product=';

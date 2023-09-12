@@ -50,6 +50,12 @@ class Account extends CommonObject
 	public $table_element = 'bank_account';
 
 	/**
+	 * @var int  Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'account';
@@ -695,7 +701,7 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		// Chargement librairie pour acces fonction controle RIB
+		// Load librairies to check BAN
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$now = dol_now();
@@ -772,13 +778,13 @@ class Account extends CommonObject
 			$result = $this->update($user, 1);
 			if ($result > 0) {
 				$accline = new AccountLine($this->db);
-				$accline->datec = $this->db->idate($now);
+				$accline->datec = $now;
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
 				$accline->amount = price2num($this->solde);
 				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
-				$accline->datev = $this->db->idate($this->date_solde);
-				$accline->dateo = $this->db->idate($this->date_solde);
+				$accline->datev = $this->date_solde;
+				$accline->dateo = $this->date_solde;
 				$accline->fk_type = 'SOLD';
 
 				if ($accline->insert() < 0) {
@@ -1498,7 +1504,7 @@ class Account extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1539,25 +1545,19 @@ class Account extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-		$this->error_number = 0;
+		$error = 0;
 
-		// Call function to check BAN
-
+		// Call functions to check BAN
 		if (!checkIbanForAccount($this)) {
-			$this->error_number = 12;
+			$error++;
 			$this->error_message = 'IBANNotValid';
 		}
 		if (!checkSwiftForAccount($this)) {
-			$this->error_number = 12;
+			$error++;
 			$this->error_message = 'SwiftNotValid';
 		}
-		/*if (! checkBanForAccount($this))
-		{
-			$this->error_number = 12;
-			$this->error_message = 'BANControlError';
-		}*/
 
-		if ($this->error_number == 0) {
+		if (! $error) {
 			return 1;
 		} else {
 			return 0;
@@ -2131,6 +2131,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", ".($this->num_releve ? "'".$this->db->escape($this->num_releve)."'" : "null");
 		$sql .= ")";
 
+
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2331,7 +2332,7 @@ class AccountLine extends CommonObjectLine
 		dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!empty($cat)) {
+			if (!empty($cat) && $cat > 0) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
@@ -2344,6 +2345,7 @@ class AccountLine extends CommonObjectLine
 				$this->db->query($sql);
 
 				// No error check. Can fail if category already affected
+				// TODO Do no try the insert if link already exists
 			}
 
 			$this->rappro = 1;
