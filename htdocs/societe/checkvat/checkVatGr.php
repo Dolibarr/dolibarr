@@ -33,22 +33,25 @@ $result = checkVATGR($username, $password, $myafm, $afm);
 
 echo json_encode($result); // Encode the result as JSON and output
 
-// Function to check VAT
-function checkVATGR($username, $password, $AFMcalledby = '', $AFMcalledfor)
+/** 
+* Request VAT details
+*
+*/
+function checkVATGR($username, $password, $AFMcalledfor, $AFMcalledby = '')
 {
-    $client = new SoapClient("https://www1.gsis.gr/webtax2/wsgsis/RgWsPublic/RgWsPublicPort?WSDL", array('trace' => true));
-    $authHeader = new stdClass();
-    $authHeader->UsernameToken = new stdClass();
-    $authHeader->UsernameToken->Username = "$username";
-    $authHeader->UsernameToken->Password = "$password";
-    $Headers[] = new SoapHeader('http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', $authHeader, true);
-    $client->__setSoapHeaders($Headers);
-    $result = $client->rgWsPublicAfmMethod(
-        array(
-            'afmCalledBy' => "$AFMcalledby",
-            'afmCalledFor' => "$AFMcalledfor",
-        )
-    );
+	$client = new SoapClient("https://www1.gsis.gr/webtax2/wsgsis/RgWsPublic/RgWsPublicPort?WSDL", array('trace' => true));
+	$authHeader = new stdClass();
+	$authHeader->UsernameToken = new stdClass();
+	$authHeader->UsernameToken->Username = "$username";
+	$authHeader->UsernameToken->Password = "$password";
+	$Headers[] = new SoapHeader('http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', $authHeader, true);
+	$client->__setSoapHeaders($Headers);
+	$result = $client->rgWsPublicAfmMethod(
+		array(
+			'afmCalledBy' => "$AFMcalledby",
+			'afmCalledFor' => "$AFMcalledfor",
+		)
+	);
 
-    return $result;
+	return $result;
 }
