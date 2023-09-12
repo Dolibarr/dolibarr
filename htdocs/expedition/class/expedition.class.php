@@ -2837,8 +2837,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function delete($user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -2902,8 +2900,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");
