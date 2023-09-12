@@ -7,7 +7,9 @@
  */
 
 /**
- * @param array $Tmenu
+ * Get nav menu
+ *
+ * @param	array	$Tmenu	Array of menu
  * @return  string
  */
 function getNav($Tmenu)
@@ -22,8 +24,10 @@ function getNav($Tmenu)
 }
 
 /**
- * @param array $item
- * @param int $deep
+ * Get nav item
+ *
+ * @param	array	$item	Item of menu
+ * @param	int		$deep	Level of deep
  * @return  string
  */
 function getNavItem($item, $deep = 0)
@@ -91,14 +95,15 @@ function getNavItem($item, $deep = 0)
 }
 
 /**
- *    uasort callback function to Sort menu fields
+ * Sort menu
+ * uasort callback function to Sort menu fields
  *
- * @param array $a PDF lines array fields configs
- * @param array $b PDF lines array fields configs
- * @return    int                                Return compare result
+ * @param	array $a	PDF lines array fields configs
+ * @param 	array $b	PDF lines array fields configs
+ * @return 	int                                Return compare result
  *
- *      // Sorting
- *      uasort ( $this->cols, array( $this, 'menuSort' ) );
+ * 	// Sorting
+ * 	uasort ( $this->cols, array( $this, 'menuSort' ) );
  *
  */
 function menuSortInv($a, $b)

@@ -19,5 +19,3 @@ $context->controllerInstance->action();
  */
 
 $context->controllerInstance->display();
-
-

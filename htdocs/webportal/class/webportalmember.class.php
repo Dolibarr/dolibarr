@@ -43,7 +43,7 @@ class WebPortalMember extends Adherent
 	/**
 	 * Status list (short label)
 	 */
-	const status_short_list = array(
+	const STATUS_SHORT_LIST = array(
 		Adherent::STATUS_DRAFT => 'Draft',
 		Adherent::STATUS_VALIDATED => 'Validated',
 		Adherent::STATUS_RESILIATED => 'MemberStatusResiliatedShort',
@@ -142,7 +142,7 @@ class WebPortalMember extends Adherent
 		'birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'visible' => 4, 'position' => 290,),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 5, 'position' => 300,),
 
-		'status' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 5, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::status_short_list, 'showonheader' => 1,),
+		'status' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 5, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::STATUS_SHORT_LIST, 'showonheader' => 1,),
 	);
 	public $rowid;
 	//public $ref;

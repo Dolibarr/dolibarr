@@ -212,7 +212,7 @@ class FormWebPortal extends Form
 						$out .= ' selected'; // To preselect a value
 					}
 				} else {
-					$id = (string)$id; // if $id = 0, then $id = '0'
+					$id = (string) $id; // if $id = 0, then $id = '0'
 					if ($id != '' && ($id == $key || ($id == 'ifone' && count($array) == 1)) && !$disabled) {
 						$out .= ' selected'; // To preselect a value
 					}
@@ -762,7 +762,7 @@ class FormWebPortal extends Form
 						list($valb, $parent) = explode('|', $valb);
 					}
 					$out .= '<option value="' . $keyb . '"';
-					$out .= (((string)$value == $keyb) ? ' selected' : '');
+					$out .= (((string) $value == $keyb) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="' . $parent . '"' : '');
 					$out .= '>' . $valb . '</option>';
 				}
@@ -838,7 +838,7 @@ class FormWebPortal extends Form
 					}
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-						$sqlwhere .= " AND entity = " . ((int)$conf->entity);
+						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
 					//print $sql;
@@ -1110,7 +1110,7 @@ class FormWebPortal extends Form
 			if ($selectkey == 'rowid' && empty($value)) {
 				$sql .= " WHERE " . $selectkey . " = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE " . $selectkey . " = " . ((int)$value);
+				$sql .= " WHERE " . $selectkey . " = " . ((int) $value);
 			} else {
 				$sql .= " WHERE " . $selectkey . " = '" . $this->db->escape($value) . "'";
 			}

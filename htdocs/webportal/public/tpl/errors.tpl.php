@@ -1,8 +1,8 @@
 <?php
 // Protection to avoid direct call of template
-if (empty($context) || ! is_object($context)) {
-    print "Error, template page can't be called as URL";
-    exit;
+if (empty($context) || !is_object($context)) {
+	print "Error, template page can't be called as URL";
+	exit;
 }
 
 print '
@@ -19,12 +19,11 @@ print '
 				<div class="modal-body m-0 py-4">
 					';
 
-foreach ($context->errors as $err)
-{
-	print '<blockquote class="blockquote m-0">'.$err.'</blockquote>';
+foreach ($context->errors as $err) {
+	print '<blockquote class="blockquote m-0">' . $err . '</blockquote>';
 }
 
-print '				
+print '
 				</div>
 			</div>
 		</div>

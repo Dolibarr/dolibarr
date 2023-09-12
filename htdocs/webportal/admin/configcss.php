@@ -97,7 +97,7 @@ if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
 
 if ($action == 'updatecss') {
 	dolibarr_set_const($db, "WEBPORTAL_CUSTOM_CSS", GETPOST('WEBPORTAL_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "WEBPORTAL_PARAMS_REV", ((int)$conf->global->WEBPORTAL_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "WEBPORTAL_PARAMS_REV", ((int) $conf->global->WEBPORTAL_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
 }
 
 

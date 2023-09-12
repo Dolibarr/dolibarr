@@ -38,7 +38,6 @@ class OrderListController extends Controller
 	/**
 	 * Check current access to controller
 	 *
-	 * @param void
 	 * @return  bool
 	 */
 	public function checkAccess()
@@ -86,7 +85,6 @@ class OrderListController extends Controller
 	/**
 	 * Display
 	 *
-	 * @param void
 	 * @return  void
 	 */
 	public function display()

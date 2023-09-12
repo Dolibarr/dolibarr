@@ -135,10 +135,10 @@ class FormListWebPortal
 
 		// set form list
 		$this->object = $object;
-		$this->limit = GETPOSTISSET('limit') ? (int)GETPOST('limit', 'int') : -1;
+		$this->limit = GETPOSTISSET('limit') ? (int) GETPOST('limit', 'int') : -1;
 		$this->sortfield = GETPOST('sortfield', 'aZ09comma');
 		$this->sortorder = GETPOST('sortorder', 'aZ09comma');
-		$this->page = GETPOSTISSET('page') ? (int)GETPOST('page', 'int') : 1;
+		$this->page = GETPOSTISSET('page') ? (int) GETPOST('page', 'int') : 1;
 		$this->titleKey = $objectclass . 'ListTitle';
 
 		// Initialize array of search criterias
@@ -155,15 +155,15 @@ class FormListWebPortal
 				$dateStartArr = explode('-', $postDateStart);
 				$dateEndArr = explode('-', $postDateEnd);
 				if (count($dateStartArr) == 3) {
-					$dateStartYear = (int)$dateStartArr[0];
-					$dateStartMonth = (int)$dateStartArr[1];
-					$dateStartDay = (int)$dateStartArr[2];
+					$dateStartYear = (int) $dateStartArr[0];
+					$dateStartMonth = (int) $dateStartArr[1];
+					$dateStartDay = (int) $dateStartArr[2];
 					$search[$key . '_dtstart'] = dol_mktime(0, 0, 0, $dateStartMonth, $dateStartDay, $dateStartYear);
 				}
 				if (count($dateEndArr) == 3) {
-					$dateEndYear = (int)$dateEndArr[0];
-					$dateEndMonth = (int)$dateEndArr[1];
-					$dateEndDay = (int)$dateEndArr[2];
+					$dateEndYear = (int) $dateEndArr[0];
+					$dateEndMonth = (int) $dateEndArr[1];
+					$dateEndDay = (int) $dateEndArr[2];
 					$search[$key . '_dtend'] = dol_mktime(23, 59, 59, $dateEndMonth, $dateEndDay, $dateEndYear);
 				}
 			}
@@ -178,7 +178,7 @@ class FormListWebPortal
 		foreach ($object->fields as $key => $val) {
 			// If $val['visible']==0, then we never show the field
 			if (!empty($val['visible'])) {
-				$visible = (int)dol_eval($val['visible'], 1);
+				$visible = (int) dol_eval($val['visible'], 1);
 				$arrayfields['t.' . $key] = array(
 					'label' => $val['label'],
 					'checked' => (($visible < 0) ? 0 : 1),
@@ -347,7 +347,7 @@ class FormListWebPortal
 			$resql = $this->db->query($sqlforcount);
 			if ($resql) {
 				$objforcount = $this->db->fetch_object($resql);
-				$nbtotalofrecords = (int)$objforcount->nbtotalofrecords;
+				$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
 			} else {
 				dol_print_error($this->db);
 			}
@@ -405,9 +405,9 @@ class FormListWebPortal
 					}
 				}
 			} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && !empty($val)) {
-				$param .= '&search_' . $key . 'month=' . ((int)GETPOST('search_' . $key . 'month', 'int'));
-				$param .= '&search_' . $key . 'day=' . ((int)GETPOST('search_' . $key . 'day', 'int'));
-				$param .= '&search_' . $key . 'year=' . ((int)GETPOST('search_' . $key . 'year', 'int'));
+				$param .= '&search_' . $key . 'month=' . ((int) GETPOST('search_' . $key . 'month', 'int'));
+				$param .= '&search_' . $key . 'day=' . ((int) GETPOST('search_' . $key . 'day', 'int'));
+				$param .= '&search_' . $key . 'year=' . ((int) GETPOST('search_' . $key . 'year', 'int'));
 			} elseif ($search[$key] != '') {
 				$param .= '&search_' . $key . '=' . urlencode($search[$key]);
 			}
@@ -431,7 +431,7 @@ class FormListWebPortal
 		$pagination_param = $param . '&sortfield=' . $sortfield . '&sortorder=' . $sortorder;
 		$html .= '<nav id="webportal-' . $elementEn . '-pagination">';
 		$html .= '<ul>';
-		$html .= '<li><strong>' . $langs->trans($titleKey) . '</strong> (' . $nbtotalofrecords . ')' . '</li>';
+		$html .= '<li><strong>' . $langs->trans($titleKey) . '</strong> (' . $nbtotalofrecords . ')</li>';
 		$html .= '</ul>';
 		$html .= '<ul>';
 		//$html .= '<li>'.$limit.'</li>';
@@ -471,11 +471,7 @@ class FormListWebPortal
 				$html .= '<td data-label="' . $arrayfields['t.' . $key]['label'] . '">';
 				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					$html .= $this->form->selectarray('search_' . $key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', '');
-				}
-				//elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
-				//    $html .= $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', '', 1);
-				//}
-				elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
+				} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 					$postDateStart = GETPOST('search_' . $key . '_dtstart', 'alphanohtml');
 					$postDateEnd = GETPOST('search_' . $key . '_dtend', 'alphanohtml');
 
@@ -578,7 +574,7 @@ class FormListWebPortal
 			$payment = -1;
 			if ($elementEn == 'invoice') {
 				// store company
-				$idCompany = (int)$obj->fk_soc;
+				$idCompany = (int) $obj->fk_soc;
 				if (!isset($companyStaticList[$obj->fk_soc])) {
 					$companyStatic = new Societe($this->db);
 					$companyStatic->fetch($idCompany);

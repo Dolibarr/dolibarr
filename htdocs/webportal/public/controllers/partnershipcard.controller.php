@@ -71,8 +71,8 @@ class PartnershipCardController extends Controller
 
 		// set form card
 		$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
-		$permissiontoread = (int)isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit'));
-		$permissiontoadd = (int)isModEnabled('partnership') && in_array($cardAccess, array('edit'));
+		$permissiontoread = (int) isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit'));
+		$permissiontoadd = (int) isModEnabled('partnership') && in_array($cardAccess, array('edit'));
 		$permissiontodelete = 0;
 		$permissionnote = 0;
 		$permissiondellink = 0;

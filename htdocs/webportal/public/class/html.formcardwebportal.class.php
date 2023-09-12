@@ -312,9 +312,9 @@ class FormCardWebPortal
 					$dateMonth = 0;
 					$dateDay = 0;
 					if (count($dateArr) == 3) {
-						$dateYear = (int)$dateArr[0];
-						$dateMonth = (int)$dateArr[1];
-						$dateDay = (int)$dateArr[2];
+						$dateYear = (int) $dateArr[0];
+						$dateMonth = (int) $dateArr[1];
+						$dateDay = (int) $dateArr[2];
 					}
 					// extract time HH:ii:ss for hours, minutes and seconds
 					$postTime = GETPOST($key . '_time', 'alphanohtml');
@@ -324,13 +324,13 @@ class FormCardWebPortal
 					$timeSeconds = 0;
 					if (!empty($timeArr)) {
 						if (isset($timeArr[0])) {
-							$timeHours = (int)$timeArr[0];
+							$timeHours = (int) $timeArr[0];
 						}
 						if (isset($timeArr[1])) {
-							$timeMinutes = (int)$timeArr[1];
+							$timeMinutes = (int) $timeArr[1];
 						}
 						if (isset($timeArr[2])) {
-							$timeSeconds = (int)$timeArr[2];
+							$timeSeconds = (int) $timeArr[2];
 						}
 					}
 					$value = dol_mktime($timeHours, $timeMinutes, $timeSeconds, $dateMonth, $dateDay, $dateYear);
@@ -518,9 +518,9 @@ class FormCardWebPortal
 	}
 
 	/**
-	 *  Html for body (view mode)
-	 *
-	 * @return string
+	 * Html for body (view mode)
+	 * @param	string	$keyforbreak	[=''] Key for break left block
+	 * @return	string	Html for body
 	 */
 	protected function bodyView($keyforbreak = '')
 	{

@@ -3,6 +3,9 @@
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
+/**
+ * Class for DocumentController
+ */
 class DocumentController extends Controller
 {
 	/**
@@ -87,7 +90,7 @@ class DocumentController extends Controller
 		$original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
 		$modulepart = GETPOST('modulepart', 'alpha');
 		$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
-		$socId = (int)GETPOST('soc_id', 'int');
+		$socId = (int) GETPOST('soc_id', 'int');
 
 		// Security check
 		if (empty($modulepart)) {

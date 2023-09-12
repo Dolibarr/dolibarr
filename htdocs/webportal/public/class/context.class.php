@@ -278,10 +278,10 @@ class Context
 	 * Used for external link (like email or web page)
 	 * so remove token and contextual behavior associate with current user
 	 *
-	 * @param bool $controller Controller
-	 * @param string|array $moreParams More parameters
-	 * @param array $Tparams
-	 * @return  string
+	 * @param 	bool $controller 			Controller
+	 * @param 	string|array $moreParams	More parameters
+	 * @param	array $Tparams				Parameters
+	 * @return	string
 	 */
 	static public function getPublicControllerUrl($controller = false, $moreParams = '', $Tparams = array())
 	{
@@ -453,20 +453,20 @@ class Context
 	}
 
 	/**
-	 *    Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
+	 *  Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
 	 *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
 	 *
-	 * @param string $mesg Message string
-	 * @param array|null $mesgs Message array
-	 * @param string $style Which style to use ('mesgs' by default, 'warnings', 'errors')
-	 * @return    void
+	 * @param	string		$mesg	Message string
+	 * @param	array|null	$mesgs	Message array
+	 * @param	string		$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
+	 * @return	void
 	 */
-	function setEventMessages($mesg, $mesgs, $style = 'mesgs')
+	public function setEventMessages($mesg, $mesgs, $style = 'mesgs')
 	{
 		if (empty($mesg) && empty($mesgs)) {
 			dol_syslog(__METHOD__ . ' Try to add a message in stack, but value to add is empty message', LOG_WARNING);
 		} else {
-			if (!in_array((string)$style, array('mesgs', 'warnings', 'errors'))) {
+			if (!in_array((string) $style, array('mesgs', 'warnings', 'errors'))) {
 				dol_print_error('', 'Bad parameter style=' . $style . ' for setEventMessages');
 			}
 			if (empty($mesgs)) {

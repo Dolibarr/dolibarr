@@ -33,7 +33,6 @@ class Controller
 	/**
 	 * Constructeur de la classe
 	 *
-	 * @param void
 	 * @return void
 	 */
 	public function __construct()
@@ -48,7 +47,6 @@ class Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @param void
 	 * @return  int     < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function action()
@@ -59,7 +57,6 @@ class Controller
 	/**
 	 * Check current access to controller
 	 *
-	 * @param void
 	 * @return  bool
 	 */
 	public function checkAccess()
@@ -82,7 +79,6 @@ class Controller
 	/**
 	 * Display
 	 *
-	 * @param void
 	 * @return  void
 	 */
 	public function display()
@@ -103,7 +99,6 @@ class Controller
 	/**
 	 * Display error template
 	 *
-	 * @param void
 	 * @return  void
 	 */
 	public function display404()
@@ -116,8 +111,8 @@ class Controller
 	/**
 	 * Execute hook doActions
 	 *
-	 * @param array $parameters
-	 * @return  int        < 0 on error, 0 on success, 1 to replace standard code
+	 * @param	array		$parameters		Parameters
+	 * @return  int			< 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookDoAction($parameters = array())
 	{
@@ -139,8 +134,8 @@ class Controller
 	/**
 	 * Execute hook PrintPageView
 	 *
-	 * @param array $parameters
-	 * @return  int        < 0 on error, 0 on success, 1 to replace standard code
+	 * @param	array		$parameters		Parameters
+	 * @return	int			< 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookPrintPageView($parameters = array())
 	{
@@ -162,8 +157,9 @@ class Controller
 	/**
 	 * Load a template
 	 *
-	 * @param string $templateName
-	 * @param mixed $vars data to transmit to template
+	 * @param	string	$templateName	Template name
+	 * @param	mixed	$vars			Data to transmit to template
+	 * @return	bool	True if template found, else false
 	 */
 	public function loadTemplate($templateName, $vars = false)
 	{

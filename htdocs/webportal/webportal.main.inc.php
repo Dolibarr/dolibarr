@@ -77,7 +77,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 		if ($action == 'login') {
 			$login = GETPOST('login', 'alphanohtml');
 			$password = GETPOST('password', 'none');
-//			$security_code = GETPOST('security_code', 'alphanohtml');
+			// $security_code = GETPOST('security_code', 'alphanohtml');
 
 			if (empty($login)) {
 				$context->setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), 'errors');
@@ -89,14 +89,14 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				if (empty($focus_element)) $focus_element = 'password';
 				$error++;
 			}
-			// Verification security graphic code
-//			if (!$error && (array_key_exists($anti_spam_session_key, $_SESSION) === false ||
-//					(strtolower($_SESSION[$anti_spam_session_key]) !== strtolower($security_code)))
-//			) {
-//				$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
-//				if (empty($focus_element)) $focus_element = 'security_code';
-//				$error++;s
-//			}
+			// check security graphic code
+			//if (!$error && (array_key_exists($anti_spam_session_key, $_SESSION) === false ||
+			//		(strtolower($_SESSION[$anti_spam_session_key]) !== strtolower($security_code)))
+			//) {
+			//	$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
+			//	if (empty($focus_element)) $focus_element = 'security_code';
+			//	$error++;s
+			//}
 
 			if (!$error) {
 				// fetch third-party account from login and account type

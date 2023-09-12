@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * Class for LoginController
+ */
 class LoginController extends Controller
 {
 	/**

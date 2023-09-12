@@ -207,7 +207,7 @@ $item->helpText = $langs->transnoentities('WebPortalUserLoggedHelp');
 $setupnotempty += count($formSetup->items);
 
 
-$dirmodels = array_merge(array('/'), (array)$conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 
 /*
@@ -248,7 +248,7 @@ if ($action == 'updateMask') {
 	$file = '';
 	$classname = '';
 	$filefound = 0;
-	$dirmodels = array_merge(array('/'), (array)$conf->modules_parts['models']);
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir . "core/modules/webportal/doc/pdf_" . $modele . "_" . strtolower($tmpobjectkey) . ".modules.php", 0);
 		if (file_exists($file)) {
