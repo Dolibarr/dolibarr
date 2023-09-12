@@ -22,7 +22,7 @@
  *	\ingroup    export
  *	\brief      File of parent class for import file readers
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
 
 /**
@@ -41,6 +41,16 @@ class ModeleImports
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string[] warnings codes (or messages)
+	 */
+	public $warnings = array();
 
 	/**
 	 * @var string Code of driver
@@ -75,8 +85,35 @@ class ModeleImports
 
 	public $libversion = array();
 
+	/**
+	 * @var string charset
+	 */
 	public $charset;
 
+	/**
+	 * @var string picto
+	 */
+	public $picto;
+
+	/**
+	 * @var string description
+	 */
+	public $desc;
+
+	/**
+	 * @var string escape
+	 */
+	public $escape;
+
+	/**
+	 * @var string enclosure
+	 */
+	public $enclosure;
+
+	/**
+	 * @var Societe thirdparty
+	 */
+	public $thirdpartyobject;
 
 	/**
 	 * @var	array	Element mapping from table name
@@ -206,9 +243,9 @@ class ModeleImports
 	 */
 	public function listOfAvailableImportFormat($db, $maxfilenamelength = 0)
 	{
-		dol_syslog(get_class($this)."::listOfAvailableImportFormat");
+		dol_syslog(get_class($this) . "::listOfAvailableImportFormat");
 
-		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
 		$handle = opendir($dir);
 
 		// Recherche des fichiers drivers imports disponibles
@@ -219,8 +256,8 @@ class ModeleImports
 					$moduleid = $reg[1];
 
 					// Loading Class
-					$file = $dir."/import_".$moduleid.".modules.php";
-					$classname = "Import".ucfirst($moduleid);
+					$file = $dir . "/import_" . $moduleid . ".modules.php";
+					$classname = "Import" . ucfirst($moduleid);
 
 					require_once $file;
 					$module = new $classname($db, '');
@@ -318,7 +355,7 @@ class ModeleImports
 	 */
 	public function getElementFromTableWithPrefix($tableNameWithPrefix)
 	{
-		$tableElement = preg_replace('/^'.preg_quote($this->db->prefix(), '/').'/', '', $tableNameWithPrefix);
+		$tableElement = preg_replace('/^' . preg_quote($this->db->prefix(), '/') . '/', '', $tableNameWithPrefix);
 		$element = $tableElement;
 
 		if (isset(self::$mapTableToElement[$tableElement])) {
