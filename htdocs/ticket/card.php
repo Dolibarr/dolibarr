@@ -1245,7 +1245,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="submit" class="button small" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			// Button to edit Properties
-			if (isset($object->status) && $object->status < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {
+			if (isset($object->status) && ($object->status < $object::STATUS_NEED_MORE_INFO || !empty($conf->global->TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED)) && $user->rights->ticket->write) {
 				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 		}
