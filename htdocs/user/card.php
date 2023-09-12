@@ -962,7 +962,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// Administrator
 	if (!empty($user->admin)) {
-		print '<tr><td>'.$langs->trans("Administrator").'</td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc"), 1, 'star').'</td>';
 		print '<td>';
 		print $form->selectyesno('admin', GETPOST('admin'), 1, false, 0, 1);
 
@@ -1497,7 +1497,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		/*
-		 * Fiche en mode visu
+		 * View mode
 		 */
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
@@ -2149,7 +2149,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		/*
-		 * Card in edit mode
+		 * Edit mode
 		 */
 		if ($action == 'edit' && ($canedituser || $caneditpasswordandsee)) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
@@ -2216,7 +2216,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Administrator
-			print '<tr><td>'.$langs->trans("Administrator").'</td>';
+			print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc")).'</td>';
 			if ($object->socid > 0) {
 				$langs->load("admin");
 				print '<td>';
