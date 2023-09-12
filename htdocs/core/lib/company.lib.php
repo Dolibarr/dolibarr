@@ -261,7 +261,7 @@ function societe_prepare_head(Societe $object)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
 		$sql .= " WHERE fk_soc = ".((int) $object->id);
 		if (!empty($site_filter_list)) {
-			$sql .= " AND n.site IN (".$db->sanitize("'".implode("', '",$site_filter_list)."'", 1).")";
+			$sql .= " AND n.site IN (".$db->sanitize("'".implode("','",$site_filter_list)."'", 1).")";
 		}
 		$resql = $db->query($sql);
 		if ($resql) {
