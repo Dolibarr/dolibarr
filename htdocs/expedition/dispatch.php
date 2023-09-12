@@ -701,10 +701,6 @@ if ($object->id > 0 || !empty($object->ref)) {
 						print '</td>'; // Dispatch column
 						print '<td></td>'; // Warehouse column
 
-						/*$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;*/
-
 						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot, eb.batch, eb.eatby, eb.sellby, cd.fk_product FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
 						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_origin_line = cd.rowid";
