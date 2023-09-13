@@ -1111,13 +1111,15 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 
 		// Check if Extrafields is totalizable
-		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
-			if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
-				print '<td class="right">';
-				if ($value == 1) {
-					print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
+		if (!empty($extrafields->attributes['projet_task']['totalizable'])) {
+			foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
+				if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
+					print '<td class="right">';
+					if ($value == 1) {
+						print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
+					}
+					print '</td>';
 				}
-				print '</td>';
 			}
 		}
 

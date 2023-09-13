@@ -1278,8 +1278,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
 		}
 		$arrayfields['t.element_duration'] = array('label'=>$langs->trans("Duration"), 'checked'=>1);
-		$arrayfields['value'] = array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled) ? 0 : 1));
-		$arrayfields['valuebilled'] = array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((!empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT)) ? 0 : 1) && $projectstatic->usage_bill_time));
+		$arrayfields['value'] = array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>isModEnabled("salaries"));
+		$arrayfields['valuebilled'] = array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((getDolGlobalInt('PROJECT_HIDE_TASKS') || !getDolGlobalInt('PROJECT_BILL_TIME_SPENT')) ? 0 : 1) && $projectstatic->usage_bill_time));
 		// Extra fields
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -1407,7 +1407,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Form to convert time spent into invoice
 		if ($massaction == 'generateinvoice') {
-			if ($projectstatic->thirdparty->id > 0) {
+			if (!empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0) {
 				print '<table class="noborder centerpercent">';
 				print '<tr>';
 				print '<td class="titlefield">';
@@ -1497,7 +1497,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Form to convert time spent into invoice
 			print '<input type="hidden" name="massaction" value="confirm_createinter">';
 
-			if ($projectstatic->thirdparty->id > 0) {
+			if (!empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0) {
 				print '<br>';
 				print '<table class="noborder centpercent">';
 				print '<tr>';
@@ -1719,7 +1719,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		/*
 		 * Form to add a new line of time spent
 		 */
-		if ($action == 'createtime' && $user->rights->projet->time) {
+		if ($action == 'createtime' && $user->hasRight('projet', 'time')) {
 			print '<!-- table to add time spent -->' . "\n";
 			if (!empty($id)) {
 				print '<input type="hidden" name="taskid" value="' . $id . '">';
@@ -1743,7 +1743,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 				print '<td></td>';
 
-				if (isModEnabled("service") && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+				if (isModEnabled("service") && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td>'.$langs->trans("Product").'</td>';
 				}
 			}
@@ -1822,7 +1822,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td>';
 				print '</td>';
 
-				if (isModEnabled("service") && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+				if (isModEnabled("service") && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td class="nowraponall">';
 					print img_picto('', 'product');
 					print $form->select_produits('', 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
