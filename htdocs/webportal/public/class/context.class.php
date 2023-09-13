@@ -661,8 +661,8 @@ class Context
 
 		$sql = "SELECT sa.rowid as id";
 		$sql .= " FROM " . $this->db->prefix() . "societe_account as sa";
-		$sql .= " WHERE sa.login = '" . $this->db->escape($login) . "'";
-		$sql .= " AND sa.pass_crypted = '" . $this->db->escape($pass) . "'";
+		$sql .= " WHERE BINARY sa.login = '" . $this->db->escape($login) . "'"; // case sensitive
+		$sql .= " AND BINARY sa.pass_crypted = '" . $this->db->escape($pass) . "'"; // case sensitive
 		$sql .= " AND sa.site = 'dolibarr_portal'";
 		$sql .= " AND sa.status = 1";
 		$sql .= " AND sa.entity IN (" . getEntity('societe') . ")";

@@ -286,7 +286,7 @@ class modWebPortal extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu' => 'webportal',
 			'leftmenu' => '',
-			'url' => '/webportal/public/index.php',
+			'url' => getDolGlobalString('WEBPORTAL_ROOT_URL', '/webportal/public/index.php'),
 			'langs' => 'webportal@webportal', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("webportal")', // Define condition to show or hide menu entry. Use 'isModEnabled("webportal")' if entry must be visible if module is enabled.
