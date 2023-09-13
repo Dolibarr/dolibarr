@@ -349,26 +349,24 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !em
 if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
-    $error = 0;
+	$error = 0;
 
-    $ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
-    if ($ret < 0) {
-        $error++;
-        setEventMessages($extrafields->error, $object->errors, 'errors');
-        $action = 'edit_extras';
-    }
-    else {
-        $result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-        if ($result > 0) {
-            setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-            $action = 'view';
-        } else {
-            $error++;
-            setEventMessages($object->error, $object->errors, 'errors');
-            $action = 'edit_extras';
-        }
-    }
-
+	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	if ($ret < 0) {
+		$error++;
+		setEventMessages($extrafields->error, $object->errors, 'errors');
+		$action = 'edit_extras';
+	} else {
+		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
+		}
+	}
 }
 
 // Action to delete
