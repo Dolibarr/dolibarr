@@ -56,6 +56,7 @@ if (!empty($conf->paypal->enabled)) {
 }
 
 // Use browser-defined language
+$langs = new Translate('', $conf);
 $langs->setDefaultLang('auto');
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
