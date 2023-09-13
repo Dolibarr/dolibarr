@@ -3,6 +3,7 @@
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2019-2023 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
  * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
