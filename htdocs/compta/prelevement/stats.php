@@ -125,19 +125,19 @@ if ($resql) {
 		//print $st[$row[2]];
 		print '</td>';
 
-		print '<td align="center">';
+		print '<td align="center nowraponall">';
 		print $row[1];
 		print '</td>';
 
-		print '<td class="right">';
+		print '<td class="right nowraponall">';
 		print round($row[1] / $nbtotal * 100, 2)." %";
 		print '</td>';
 
-		print '<td class="right amount">';
+		print '<td class="right amount nowraponall">';
 		print price($row[0]);
 		print '</td>';
 
-		print '<td class="right">';
+		print '<td class="right nowraponall">';
 		print round($row[0] / $total * 100, 2)." %";
 		print '</td>';
 
@@ -147,7 +147,7 @@ if ($resql) {
 	}
 
 	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
-	print '<td class="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
+	print '<td class="center nowraponall">'.$nbtotal.'</td><td>&nbsp;</td><td class="right nowraponall">';
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";

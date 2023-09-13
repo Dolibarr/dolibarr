@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  */
 class DolibarrApi
 {
-
 	/**
 	 * @var DoliDb        $db Database object
 	 */

@@ -28,14 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last customer orders
  */
 class box_commandes extends ModeleBoxes
 {
-	public $boxcode = "lastcustomerorders";
-	public $boximg = "object_order";
+	public $boxcode  = "lastcustomerorders";
+	public $boximg   = "object_order";
 	public $boxlabel = "BoxLastCustomerOrders";
-	public $depends = array("commande");
+	public $depends  = array("commande");
 
 	/**
 	 * @var DoliDB Database handler.

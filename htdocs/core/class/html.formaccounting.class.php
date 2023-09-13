@@ -45,6 +45,12 @@ class FormAccounting extends Form
 	public $error = '';
 
 	/**
+	 * @var int Nb of accounts found
+	 */
+	public $nbaccounts;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param		DoliDB		$db      Database handler
@@ -229,7 +235,7 @@ class FormAccounting extends Form
 	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
 		// phpcs:enable
-		global $db, $langs, $user, $mysoc;
+		global $db, $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
@@ -287,7 +293,7 @@ class FormAccounting extends Form
 				$out .= '</select>';
 				//if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			} else {
-				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
+				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("AccountingCategories"));
 			}
 		} else {
 			dol_print_error($this->db);
@@ -390,7 +396,7 @@ class FormAccounting extends Form
 
 			$num_rows = $this->db->num_rows($resql);
 
-			if ($num_rows == 0 && (empty(getDolGlobalInt('CHARTOFACCOUNTS')) || getDolGlobalInt('CHARTOFACCOUNTS') < 0)) {
+			if ($num_rows == 0 && getDolGlobalInt('CHARTOFACCOUNTS') <= 0) {
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {
@@ -434,7 +440,10 @@ class FormAccounting extends Form
 			}
 		}
 
+
 		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+
+		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
 
 		return $out;
 	}

@@ -45,6 +45,8 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 
 $action = GETPOST('action', 'aZ09');
 
+$nbletter = GETPOST('ACCOUNTING_LETTERING_NBLETTERS', 'int');
+
 // Parameters ACCOUNTING_* and others
 $list = array(
 	'ACCOUNTING_LENGTH_GACCOUNT',
@@ -56,7 +58,8 @@ $list = array(
 
 $list_binding = array(
 	'ACCOUNTING_DATE_START_BINDING',
-	'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER'
+	'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER',
+	'ACCOUNTING_LETTERING_NBLETTERS'
 );
 
 $error = 0;
@@ -474,6 +477,24 @@ if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 print '</tr>';
 
 if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+	// Number of letters for lettering (3 by default (AAA), min 2 (AA))
+	print '<tr class="oddeven">';
+	print '<td>';
+	print $form->textwithpicto($langs->trans("ACCOUNTING_LETTERING_NBLETTERS"), $langs->trans("ACCOUNTING_LETTERING_NBLETTERS_DESC")) . '</td>';
+	print '<td class="right">';
+
+	if (empty($letter)) {
+		if (getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS')) {
+			$nbletter = getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS');
+		} else {
+			$nbletter = 3;
+		}
+	}
+
+	print '<input class="flat" name="ACCOUNTING_LETTERING_NBLETTERS" id="ACCOUNTING_LETTERING_NBLETTERS" value="' . $nbletter . '" type="number" step="1" min="2" max="3" >' . "\n";
+	print '</tr>';
+
+	// Auto Lettering when transfer in accountancy is realized
 	print '<tr class="oddeven">';
 	print '<td>';
 	print $form->textwithpicto($langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING"), $langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING_DESC")) . '</td>';

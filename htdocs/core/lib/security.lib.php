@@ -111,8 +111,8 @@ function dolGetRandomBytes($length)
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
- *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$chain		String to encode
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string
@@ -327,6 +327,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
 	} elseif ($type === 'clear') {
 		return '{CLEAR}' . $password;  // Just for test, plain text password is not secured !
 	}
+	return "";
 }
 
 /**
@@ -370,7 +371,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	/*print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
 	print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	print ", perm: user->right->".$features.($feature2 ? "->".$feature2 : "")."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
+	print ", perm: user->hasRight(".$features.($feature2 ? ",".$feature2 : "").", lire) = ".($feature2 ? $user->hasRight($features, $feature2, 'lire') : $user->hasRight($features, 'lire'))."<br>";
 	*/
 
 	$parentfortableentity = '';
@@ -387,6 +388,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	}
 	if ($features == 'facturerec') {
 		$features = 'facture';
+	}
+	if ($features == 'supplier_invoicerec') {
+		$features = 'fournisseur';
+		$feature2 = 'facture';
 	}
 	if ($features == 'mo') {
 		$features = 'mrp';
@@ -429,19 +434,21 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
-	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
+	if (!empty($hookmanager)) {
+		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
-	if (isset($hookmanager->resArray['result'])) {
-		if ($hookmanager->resArray['result'] == 0) {
-			if ($mode) {
-				return 0;
-			} else {
-				accessforbidden(); // Module returns 0, so access forbidden
+		if (isset($hookmanager->resArray['result'])) {
+			if ($hookmanager->resArray['result'] == 0) {
+				if ($mode) {
+					return 0;
+				} else {
+					accessforbidden(); // Module returns 0, so access forbidden
+				}
 			}
 		}
-	}
-	if ($reshook > 0) {		// No other test done.
-		return 1;
+		if ($reshook > 0) {		// No other test done.
+			return 1;
+		}
 	}
 
 	// Features/modules to check
@@ -614,6 +621,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'ecm') {
 				if (!$user->rights->ecm->upload) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'modulebuilder') {
+				if (!$user->hasRight('modulebuilder', 'run')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -1060,7 +1072,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		//print $sql;
 
 		// For events, check on users assigned to event
 		if ($feature === 'agenda' && $objectid > 0) {
@@ -1172,7 +1183,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		$langs->setDefaultLang();
 	}
 
-	$langs->load("errors");
+	$langs->loadLangs(array("main", "errors"));
 
 	if ($printheader) {
 		if (function_exists("llxHeader")) {
@@ -1180,6 +1191,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		} elseif (function_exists("llxHeaderVierge")) {
 			llxHeaderVierge('');
 		}
+		print '<div style="padding: 20px">';
 	}
 	print '<div class="error">';
 	if (empty($message)) {
@@ -1212,6 +1224,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		}
 	}
 	if ($printfooter && function_exists("llxFooter")) {
+		print '</div>';
 		llxFooter();
 	}
 

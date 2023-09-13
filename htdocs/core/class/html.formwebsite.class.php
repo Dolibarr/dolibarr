@@ -136,7 +136,7 @@ class FormWebsite
 					} else {
 						print '<option value="'.$obj->code.'">';
 					}
-					print $obj->label;
+					print $langs->trans($obj->label);
 					print '</option>';
 					$i++;
 				}

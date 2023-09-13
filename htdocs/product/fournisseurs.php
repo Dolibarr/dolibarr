@@ -102,8 +102,10 @@ if (!$sortorder) {
 $hookmanager->initHooks(array('pricesuppliercard', 'globalcard'));
 
 $object = new ProductFournisseur($db);
+$prod = new Product($db);
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
+	$prod->fetch($id, $ref);
 }
 
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
@@ -396,7 +398,7 @@ if ($id > 0 || $ref) {
 				$shownav = 0;
 			}
 
-			dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+			dol_banner_tab($prod, 'ref', $linkback, $shownav, 'ref');
 
 			print '<div class="fichecenter">';
 
@@ -652,7 +654,7 @@ if ($id > 0 || $ref) {
 					}
 					$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_supplier_price_expression ? $object->fk_supplier_price_expression : '0');
 					print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
-					print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
+					print '&nbsp; <div id="expression_editor" class="button smallpaddingimp">'.$langs->trans("PriceExpressionEditor").'</div>';
 					print '</td></tr>';
 					// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed
 					print '<script type="text/javascript">

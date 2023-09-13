@@ -1367,7 +1367,7 @@ if (!$variants) {
 					<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
 					<td class="right"><?php echo $prodstatic->stock_reel ?></td>
 					<td class="right">
-						<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/product/stock/product.php?id='.$currcomb->fk_product_child, 2) ?>"><?php echo img_edit() ?></a>
+						<a class="paddingleft paddingright editfielda" href="<?php echo dol_buildpath('/product/stock/product.php?id='.$currcomb->fk_product_child, 2) ?>"><?php echo img_edit() ?></a>
 					</td>
 					<?php
 					?>
