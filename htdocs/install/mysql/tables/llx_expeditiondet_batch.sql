@@ -25,6 +25,5 @@ CREATE TABLE llx_expeditiondet_batch (
   batch varchar(128) DEFAULT NULL,			-- serial/lot number
   qty double NOT NULL DEFAULT '0',			-- qty to move
   fk_origin_stock integer NOT NULL,			-- Not useful. ID into table llx_product_batch (llx_product_batch may be renamed into llx_product_stock_batch in another version). TODO We should add and use instead a fk_warehouse field
-  fk_warehouse integer DEFAULT NULL					-- ID of warehouse to use for the stock change
+  fk_warehouse integer DEFAULT NULL			-- ID of warehouse to use for the stock change
 ) ENGINE=innodb;
-
