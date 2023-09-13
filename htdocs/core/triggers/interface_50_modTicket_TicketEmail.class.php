@@ -460,7 +460,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	}
 
 	/**
-	 * Composes and sends a message concerning a ticket, to be sent to user assigned to the ticket.
+	 * Composes and sends a message concerning a ticket, to be sent to user assigned to the ticket
 	 *
 	 * @param string 	$sendto			Addresses to send the mail, format "first@address.net, second@address.net, " etc.
 	 * @param string 	$base_subject	email subject. Non-translated string.
