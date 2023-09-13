@@ -3,7 +3,7 @@
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1111,16 +1111,17 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 
 		// Check if Extrafields is totalizable
-		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
-			if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
-				print '<td class="right">';
-				if ($value == 1) {
-					print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
+		if ($extrafields->attributes['projet_task']['count'] > 0) {
+			foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
+				if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
+					print '<td class="right">';
+					if ($value == 1) {
+						print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
+					}
+					print '</td>';
 				}
-				print '</td>';
 			}
 		}
-
 		// Column for the drag and drop
 		print '<td class="liste_total"></td>';
 
