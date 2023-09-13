@@ -278,7 +278,7 @@ if ($mysoc->useLocalTax(1) || price2num($object->total_localtax1, 'MU')) { ?>
 					  } ?></td>
 </tr>
 <?php
-if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 	//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 	include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
@@ -290,7 +290,7 @@ if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" 
 	echo '</td></tr>';
 }
 
-if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
+if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 	$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
 	$sql .= " cp.code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";

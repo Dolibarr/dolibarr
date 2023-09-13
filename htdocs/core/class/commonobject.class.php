@@ -8451,23 +8451,25 @@ abstract class CommonObject
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 * @return array		Array of permission for the module
 	 */
 	public function getRights()
 	{
 		global $user;
 
+		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
+
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
-			return $user->rights->fournisseur->facture;
-		} elseif (!empty($user->rights->{$this->module}->{$element})) {
+			return empty($user->rights->fournisseur->facture) ? null : $user->rights->fournisseur->facture;
+		} elseif ($module && !empty($user->rights->$module->$element)) {
 			// for modules built with ModuleBuilder
-			return $user->rights->{$this->module}->{$element};
+			return $user->rights->$module->$element;
 		}
 
-		return $user->rights->{$element};
+		return $user->rights->$element;
 	}
 
 	/**
