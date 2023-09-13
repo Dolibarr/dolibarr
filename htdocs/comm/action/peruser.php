@@ -1042,6 +1042,8 @@ print "\n";
 print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".onclickopenref").click(function() {
+		console.log("We click on a class onclickopenref");
+
 		var ref=$(this).attr(\'ref\');
 		var res = ref.split("_");
 		var userid = res[1];
@@ -1060,7 +1062,7 @@ jQuery(document).ready(function() {
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&filtert="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
+			url = "'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&search_actioncode="+jQuery("#search_actioncode").val()+"&search_status="+jQuery("#selectsearch_status").val()+"&filtert="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
 			window.location.href = url;
 		}
 		else	/* One event */
