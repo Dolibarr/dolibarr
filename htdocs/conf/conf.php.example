@@ -284,11 +284,11 @@ $dolibarr_main_prod='1';
 // ==================================
 // To restrict commands you can execute by the backup feature, enter allowed command here.
 // Note: If you can, defining permission on OS linux (using SELinux for example) may be a better choice.
-// Default value: 'mysqldump, mysql, pg_dump, pgrestore'
+// Default value: 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump'
 // Examples:
 // $dolibarr_main_restrict_os_commands='mysqldump, /usr/local/bin/otherdumptool';
 //
-$dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
+$dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump';
 
 // dolibarr_main_restrict_ip
 // =========================
