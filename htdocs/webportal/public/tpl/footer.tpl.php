@@ -28,7 +28,7 @@ if (!empty($context->eventMessages['mesgs'])) {
 	$msgNum = 0;
 	foreach ($context->eventMessages['mesgs'] as $mesg) {
 		if ($msgNum > 0) {
-			$htmlSuccess .= '<br />';
+			$htmlSuccess .= '<br>';
 		}
 		$htmlSuccess .= $langs->trans($mesg);
 		$msgNum++;
@@ -48,7 +48,7 @@ if (!empty($context->eventMessages['warnings'])) {
 	$msgNum = 0;
 	foreach ($context->eventMessages['warnings'] as $mesg) {
 		if ($msgNum > 0) {
-			$htmlWarning .= '<br />';
+			$htmlWarning .= '<br>';
 		}
 		$htmlWarning .= $langs->trans($mesg);
 		$msgNum++;
@@ -64,7 +64,7 @@ if (!empty($context->eventMessages['errors'])) {
 	$msgNum = 0;
 	foreach ($context->eventMessages['errors'] as $mesg) {
 		if ($msgNum > 0) {
-			$htmlError .= '<br />';
+			$htmlError .= '<br>';
 		}
 		$htmlError .= $langs->trans($mesg);
 		$msgNum++;
