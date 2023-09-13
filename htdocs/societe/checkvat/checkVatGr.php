@@ -23,9 +23,11 @@
  *  \brief      Request VAT details from the Greek Ministry of Finance GSIS SOAP web service
  */
 
-$username = (isset($_REQUEST['u']) ? $_REQUEST['u'] : ''); // Get username from request
-$password = (isset($_REQUEST['p']) ? $_REQUEST['p'] : ''); // Get password from request
-$myafm = (isset($_REQUEST['myafm']) ? $_REQUEST['myafm'] : ''); // Get Vat from request
+require "../../main.inc.php";
+
+$username = getDolGlobalString('AADE_WEBSERVICE_USER'); // Get username from request
+$password = getDolGlobalString('AADE_WEBSERVICE_KEY'); // Get password from request
+$myafm = getDolGlobalString('MAIN_INFO_TVAINTRA'); // Get Vat from request
 $afm = (isset($_REQUEST['afm']) ? $_REQUEST['afm'] : ''); // Get client Vat from request
 
 // Make call to check VAT for Greek client
