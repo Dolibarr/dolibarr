@@ -858,7 +858,7 @@ print "</table>";
 
 // AADE webservices credentials, applicable only for Greece
 if ($mysoc->country_code == 'GR') {
-	print load_fiche_titre($langs->trans("AADEKeys"), '', '');
+	print load_fiche_titre($langs->trans("AADEWebserviceCredentials"), '', '');
 	print '<table class="noborder centpercent editmode">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("AccountParameter").'</td>';
@@ -868,22 +868,22 @@ if ($mysoc->country_code == 'GR') {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_USER").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="MYDATA_AADE_USER" value="'.$conf->global->MYDATA_AADE_USER.'"';
+	print '<input class="minwidth300" type="text" name="MYDATA_AADE_USER" value="'.getDolGlobalString('MYDATA_AADE_USER').'"';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY="'.$conf->global->MYDATA_AADE_KEY.'"';
+	print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY="'.getDolGlobalString('MYDATA_AADE_KEY').'"';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_USER").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_USER" value="'.$conf->global->AADE_WEBSERVICE_USER.'"';
+	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_USER" value="'.getDolGlobalString('AADE_WEBSERVICE_USER').'"';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_KEY" value="'.$conf->global->AADE_WEBSERVICE_KEY.'"';
+	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_KEY" value="'.getDolGlobalString('AADE_WEBSERVICE_KEY').'"';
 	print '</td><td></td></tr>';
 
 	print '<br>';
