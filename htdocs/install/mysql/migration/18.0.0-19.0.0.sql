@@ -110,3 +110,4 @@ ALTER TABLE llx_expeditiondet_batch ADD COLUMN fk_warehouse DEFAULT NULL;
 UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AND site IS NULL;
 ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
 
+ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_commandefourndet (fk_commandefourndet);
