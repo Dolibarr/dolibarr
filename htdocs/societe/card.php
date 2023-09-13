@@ -66,9 +66,9 @@ if (isModEnabled('eventorganization')) {
 }
 
 if ($mysoc->country_code == 'GR') {
-	$u = $conf->global->AADE_WEBSERVICE_USER;
-	$p = $conf->global->AADE_WEBSERVICE_KEY;
-	$myafm = $mysoc->tva_intra;
+	$u = getDolGlobalString('AADE_WEBSERVICE_USER');
+	$p = getDolGlobalString('AADE_WEBSERVICE_KEY');
+	$myafm = getDolGlobalString('MAIN_INFO_TVAINTRA');
 }
 
 
@@ -3370,7 +3370,7 @@ function GRVAT(a, u, p, myafm) {
   $.ajax({
 	type: "GET",
 	url: "/societe/checkvat/checkVatGr.php",
-	data: { u: u, p: p, myafm: myafm, afm: afm }, // Set request parameters
+	data: { u, p, myafm, afm }, // Set request parameters
 	success: function(data) {
 		var obj = JSON.parse(data); // Parse response data as JSON
 
