@@ -84,8 +84,8 @@ class SocieteAccount extends CommonObject
 		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
-		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'index'=>1),
-		'site' => array('type'=>'varchar(128)', 'label'=>'ExternalSite', 'visible'=>0, 'enabled'=>1, 'position'=>43, 'help'=>'Name of the website or service if this is account on an external website or service'),
+		'site' => array('type'=>'varchar(128)', 'label'=>'WebsiteTypeLabel', 'visible'=>0, 'enabled'=>0, 'position'=>41, 'notnull'=>1, 'default' => '', 'help'=>'Name of the website or service if this is account on an external website or service'),
+		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>0, 'enabled'=>0, 'position'=>42, 'notnull'=>-1, 'index'=>1),
 		'site_account' => array('type'=>'varchar(128)', 'label'=>'ExternalSiteAccount', 'visible'=>0, 'enabled'=>1, 'position'=>44, 'help'=>'A key to identify the account on external web site if this is an account on an external website'),
 		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>0, 'enabled'=>1, 'position'=>48, 'notnull'=>0, 'index'=>1, 'searchall'=>1, 'comment'=>'The id of third party in the external web site (for site_account if site_account defined)',),
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
@@ -168,13 +168,29 @@ class SocieteAccount extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$this->db = $db;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
+
+		// add site type list and set visible
+		$site_type_list = array();
+		if (isModEnabled('website')) {
+			$this->fields['fk_website']['visible'] = 1;
+			$this->fields['fk_website']['enabled'] = 1;
+			$this->fields['site']['visible'] = 1;
+			$this->fields['site']['enabled'] = 1;
+			$site_type_list['dolibarr_website'] = $langs->trans('WebsiteTypeDolibarrWebsite');
+		}
+		if (isModEnabled('webportal')) {
+			$this->fields['site']['visible'] = 1;
+			$this->fields['site']['enabled'] = 1;
+			$site_type_list['dolibarr_portal'] = $langs->trans('WebsiteTypeDolibarrPortal');
+		}
+		$this->fields['site']['arrayofkeyval'] = $site_type_list;
 	}
 
 	/**
