@@ -93,6 +93,11 @@ class Project extends CommonObject
 	public $title;
 
 	/**
+	 * @var int 	thirdparty id
+	 */
+	public $fk_soc;
+	
+	/**
 	 * @var int 	Date start
 	 * @deprecated
 	 * @see $date_start
