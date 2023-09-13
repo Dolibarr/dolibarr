@@ -156,7 +156,7 @@ function addDispatchLine(index, type, mode) {
 				$('tr[name="' + type + '_' + idrow + '"').remove();
 				$("tr[name^='" + type + "_'][name$='_" + index + "']:last .splitbutton").show();
 			} else {
-				console.log("Reset trigger for id = #qty_" + idrow);
+				console.log("fourn/js/lib_dispatch.js.php Reset trigger for id = #qty_" + idrow);
 				$("#qty_" + idrow).val("");
 			}
 		});
