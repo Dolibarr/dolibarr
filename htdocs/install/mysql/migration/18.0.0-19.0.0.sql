@@ -105,3 +105,8 @@ ALTER TABLE llx_bookcal_availabilities ADD COLUMN fk_bookcal_calendar integer NO
 ALTER TABLE llx_bookcal_calendar ADD COLUMN visibility integer NOT NULL DEFAULT 1;
 
 ALTER TABLE llx_expeditiondet_batch ADD COLUMN fk_warehouse DEFAULT NULL;
+
+-- Update website type
+UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AND site IS NULL;
+ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
+
