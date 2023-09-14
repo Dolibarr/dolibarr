@@ -2947,6 +2947,16 @@ if (empty($reshook)) {
 			} else {
 				dol_print_error($db);
 			}
+		} elseif ($action == 'calculate') {
+			$calculationrule = GETPOST('calculationrule');
+
+			$object->fetch($id);
+			$object->fetch_thirdparty();
+			$result = $object->update_price(0, (($calculationrule == 'totalofround') ? '0' : '1'), 0, $object->thirdparty);
+			if ($result <= 0) {
+				dol_print_error($db, $result);
+				exit;
+			}
 		}
 
 		if ($error) {
@@ -3933,7 +3943,28 @@ if ($action == 'create') {
 		}
 		echo '</td></tr>';
 		print '<tr><td>'.$langs->trans('AmountHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="2">'.price($objectsrc->total_tva).'<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+
+		if (GETPOST('calculationrule')) {
+			$calculationrule = GETPOST('calculationrule', 'alpha');
+		} else {
+			$calculationrule = (empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND) ? 'totalofround' : 'roundoftotal');
+		}
+		if ($calculationrule == 'totalofround') {
+			$calculationrulenum = 1;
+		} else {
+			$calculationrulenum = 2;
+		}
+		// Show link for "recalculate"
+		if ($object->getVentilExportCompta() == 0) {
+			$s = $langs->trans("ReCalculate").' ';
+			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
+			$s .= ' / ';
+			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
+			print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'));
+		}
+		print '</div></td></tr>';
+
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) {		// Localtax1
 			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
 		}
