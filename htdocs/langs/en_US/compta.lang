@@ -34,6 +34,7 @@ AccountingCredit=Credit
 Piece=Accounting Doc.
 AmountHTVATRealReceived=Net collected
 AmountHTVATRealPaid=Net paid
+MenuVAT=VAT
 VATToPay=Tax sales
 VATReceived=Tax received
 VATToCollect=Tax purchases
