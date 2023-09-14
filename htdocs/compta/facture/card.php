@@ -1542,7 +1542,7 @@ if (empty($reshook)) {
 									0,
 									0,
 									0
-									//,$langs->trans('Deposit') //Deprecated
+								//,$langs->trans('Deposit') //Deprecated
 								);
 							}
 
@@ -2549,7 +2549,7 @@ if (empty($reshook)) {
 			&& !$objectidnext
 			&& $object->is_last_in_cycle()
 			&& $usercanunvalidate
-			) {
+		) {
 			$outingError = 0;
 			$newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
 			if ($newCycle > 1) {
@@ -2563,7 +2563,7 @@ if (empty($reshook)) {
 						if ($next_invoice->type == Facture::TYPE_CREDIT_NOTE
 							&& $next_invoice->situation_counter == $object->situation_counter
 							&& $next_invoice->fk_facture_source == $object->id
-						  ) {
+						) {
 							$linkedCreditNotesList[] = $next_invoice->id;
 						}
 					}
@@ -3954,7 +3954,7 @@ if ($action == 'create') {
 			&& !$objectidnext
 			&& $object->is_last_in_cycle()
 			&& $usercanunvalidate
-			) {
+		) {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
 		}
 	}
@@ -4007,12 +4007,12 @@ if ($action == 'create') {
 					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
 				}
 				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-									// 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-									// => 1),
-									array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value));
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+					// 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+					// => 1),
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value));
 			}
 		}
 		if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) { 		// Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
@@ -4049,12 +4049,12 @@ if ($action == 'create') {
 					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
 				}
 				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-									// 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-									// => 1),
-									array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value));
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+					// 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+					// => 1),
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value));
 			}
 		}
 
@@ -4167,6 +4167,18 @@ if ($action == 'create') {
 			'no',
 			2
 		);
+	}
+
+	if ($action == 'calculate') {
+		$calculationrule = GETPOST('calculationrule');
+
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+		$result = $object->update_price(0, (($calculationrule == 'totalofround') ? '0' : '1'), 0, $object->thirdparty);
+		if ($result <= 0) {
+			dol_print_error($db, $result);
+			exit;
+		}
 	}
 
 	// Call Hook formConfirm
@@ -4646,8 +4658,27 @@ if ($action == 'create') {
 	print '<td class="nowrap amountcard">'.price($sign * $object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
 	// Vat
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap amountcard">'.price($sign * $object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
-	print '</tr>';
+
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap amountcard">'.price($sign * $object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+	if (GETPOST('calculationrule')) {
+		$calculationrule = GETPOST('calculationrule', 'alpha');
+	} else {
+		$calculationrule = (empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND) ? 'totalofround' : 'roundoftotal');
+	}
+	if ($calculationrule == 'totalofround') {
+		$calculationrulenum = 1;
+	} else {
+		$calculationrulenum = 2;
+	}
+	// Show link for "recalculate"
+	if ($object->getVentilExportCompta() == 0) {
+		$s = $langs->trans("ReCalculate").' ';
+		$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
+		$s .= ' / ';
+		$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
+		print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'));
+	}
+	print '</div></td></tr>';
 
 	// Amount Local Taxes
 	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) { 	// Localtax1
@@ -5291,9 +5322,9 @@ if ($action == 'create') {
 
 			// Reopen an invoice
 			if ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)
-				|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
-				|| ($object->type == Facture::TYPE_DEPOSIT && empty($discount->id))
-				|| ($object->type == Facture::TYPE_SITUATION && empty($discount->id)))
+					|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
+					|| ($object->type == Facture::TYPE_DEPOSIT && empty($discount->id))
+					|| ($object->type == Facture::TYPE_SITUATION && empty($discount->id)))
 				&& ($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || $usercanreopen)) {				// A paid invoice (partially or completely)
 				if ($object->close_code != 'replaced' || (!$objectidnext)) { 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted
@@ -5385,7 +5416,7 @@ if ($action == 'create') {
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
 					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $sumofpayment == 0)
-					) {
+				) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For deposit invoice
@@ -5442,7 +5473,7 @@ if ($action == 'create') {
 				&& !$objectidnext
 				&& $object->is_last_in_cycle()
 				&& $conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE
-				) {
+			) {
 				if ($usercanunvalidate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;invoiceAvoirWithLines=1&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">'.$langs->trans("CreateCreditNote").'</a>';
 				} else {
@@ -5470,7 +5501,7 @@ if ($action == 'create') {
 				&& $object->situation_counter > 1
 				&& $object->is_last_in_cycle()
 				&& $usercanunvalidate
-				) {
+			) {
 				if (($object->total_ttc - $totalcreditnotes) == 0) {
 					print '<a id="butSituationOut" class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=situationout">'.$langs->trans("RemoveSituationFromCycle").'</a>';
 				} else {

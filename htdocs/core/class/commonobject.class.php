@@ -798,7 +798,7 @@ abstract class CommonObject
 		}
 
 		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
-				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
+			&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
 			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
 			} else {
@@ -3443,9 +3443,21 @@ abstract class CommonObject
 					//var_dump($obj->total_ht.' '.$obj->total_tva.' '.$obj->total_localtax1.' '.$obj->total_localtax2.' =? '.$obj->total_ttc);
 					//var_dump($diff_when_using_price_ht.' '.$diff_on_current_total);
 
-					if ($diff_when_using_price_ht && $diff_on_current_total) {
-						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".$tmpcal[1].", total_ttc = ".$tmpcal[2]." WHERE rowid = ".$obj->rowid;
-						dol_syslog('We found unconsistent data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
+					if ($diff_on_current_total) {
+						// This should not happen, we should always have in table: total_ttc = total_ht + total_vat + total_localtax1 + total_localtax2
+						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
+						dol_syslog('We found unconsistent data into detailed line (diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (ht=".$obj->total_ht." vat=".$obj->total_tva." tax1=".$obj->total_localtax1." tax2=".$obj->total_localtax2." ttc=".$obj->total_ttc."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
+						$resqlfix = $this->db->query($sqlfix);
+						if (!$resqlfix) {
+							dol_print_error($this->db, 'Failed to update line');
+						}
+						$obj->total_tva = $tmpcal[1];
+						$obj->total_ttc = $tmpcal[2];
+					} elseif ($diff_when_using_price_ht && $roundingadjust == '0') {
+						// After calculation from HT, total is consistent but we have found a difference between VAT part in calculation and into database and
+						// we ask to force the use of rounding on line (like done on calculation) so we force update of line
+						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
+						dol_syslog('We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 						$resqlfix = $this->db->query($sqlfix);
 						if (!$resqlfix) {
 							dol_print_error($this->db, 'Failed to update line');
@@ -3586,7 +3598,6 @@ abstract class CommonObject
 					$this->errors[] = $this->db->lasterror();
 				}
 			}
-
 			if (!$error) {
 				return 1;
 			} else {
@@ -3817,7 +3828,7 @@ abstract class CommonObject
 						$classpath = 'adherents/class';
 						$module = 'adherent';
 					} elseif ($objecttype == 'contact') {
-						 $module = 'societe';
+						$module = 'societe';
 					}
 					// Set classfile
 					$classfile = strtolower($subelement);
@@ -5227,7 +5238,7 @@ abstract class CommonObject
 					$arrayofrecords = array(); // The write_file of templates of adherent class need this var
 					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
 				} else {
-					 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 				}
 				// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
@@ -5254,7 +5265,7 @@ abstract class CommonObject
 							$ecmfile = new EcmFiles($this->db);
 							$result = $ecmfile->fetch(0, '', ($rel_dir ? $rel_dir.'/' : '').$filename);
 
-							 // Set the public "share" key
+							// Set the public "share" key
 							$setsharekey = false;
 							if ($this->element == 'propal') {
 								$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL; // Replace this with 1 when feature to make online signature is ok
@@ -6130,12 +6141,12 @@ abstract class CommonObject
 						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 						$new_array_languages[$key] = $value;
 						break;
-						/*case 'select':	// Not required, we chosed value='0' for undefined values
-						 if ($value=='-1')
-						 {
-						 $this->array_options[$key] = null;
-						 }
-						 break;*/
+					/*case 'select':	// Not required, we chosed value='0' for undefined values
+					 if ($value=='-1')
+					 {
+					 $this->array_options[$key] = null;
+					 }
+					 break;*/
 				}
 			}
 
@@ -7771,7 +7782,7 @@ abstract class CommonObject
 		$buyPrice = 0;
 
 		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
-			 // When ForceBuyingPriceIfNull is set
+			// When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation
