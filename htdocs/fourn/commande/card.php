@@ -1347,7 +1347,7 @@ if (empty($reshook)) {
 								$object->special_code = $lines[$i]->special_code;
 
 								$result = $object->addline(
-									$desc,
+									empty($desc) ? $label : $desc,
 									$lines[$i]->subprice,
 									$lines[$i]->qty,
 									$tva_tx,
