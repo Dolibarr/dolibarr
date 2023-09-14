@@ -153,43 +153,6 @@ class TimeSpent extends CommonObject
 	public $note;
 	// END MODULEBUILDER PROPERTIES
 
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'timespent_timespentline';
-
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_timespent';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'TimeSpentline';
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('timespent_timespentdet');
-
-	// /**
-	//  * @var TimeSpentLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -269,13 +232,6 @@ class TimeSpent extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) {
-			$object->fetchLines();
-		}
-
-		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
 
 		// Reset some properties
 		unset($object->id);
@@ -359,25 +315,9 @@ class TimeSpent extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
+
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		$result = $this->fetchLinesCommon();
-		return $result;
-	}
-
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -993,28 +933,6 @@ class TimeSpent extends CommonObject
 	}
 
 	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new TimeSpentLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_timespent = '.((int) $this->id)));
-
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}
-
-	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
 	 *  @return string      		Object free reference
@@ -1106,35 +1024,5 @@ class TimeSpent extends CommonObject
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		//global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
 	}
 }
