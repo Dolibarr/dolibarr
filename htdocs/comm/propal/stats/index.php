@@ -26,6 +26,7 @@
  *		\brief      Page des stats propositions commerciales
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -51,7 +52,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
@@ -59,7 +60,7 @@ $endyear = $year;
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
 
-if ($mode == 'customer' && !$user->rights->propale->lire) {
+if ($mode == 'customer' && !$user->rights->propal->lire) {
 	accessforbidden();
 }
 if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) {
@@ -262,8 +263,8 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-$filter = 's.client IN (1,2,3)';
 print img_picto('', 'company', 'class="pictofixedwidth"');
+$filter = '(s.client:IN:1,2,3)';
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
 // ThirdParty Type
@@ -365,7 +366,7 @@ print '</td></tr></table>';
 
 
 print '</div></div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 
 print dol_get_fiche_end();

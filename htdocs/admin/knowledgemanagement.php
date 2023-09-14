@@ -69,11 +69,11 @@ if (!$user->admin) {
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskorder = GETPOST('maskorder', 'alpha');
 
-	if ($maskconstorder) {
-		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskorder, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -208,15 +208,15 @@ if ($action == 'edit') {
 			print '</td><td>';
 
 			if ($val['type'] == 'textarea') {
-				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
-				print $conf->global->{$constname};
+				print '<textarea class="flat" name="' . $constname . '" id="' . $constname . '" cols="50" rows="5" wrap="soft">' . "\n";
+				print getDolGlobalString($constname);
 				print "</textarea>\n";
-			} elseif ($val['type']== 'html') {
+			} elseif ($val['type'] == 'html') {
 				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+				$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 				$doleditor->Create();
 			} elseif ($val['type'] == 'yesno') {
-				print $form->selectyesno($constname, $conf->global->{$constname}, 1);
+				print $form->selectyesno($constname, getDolGlobalString($constname), 1);
 			} elseif (preg_match('/emailtemplate:/', $val['type'])) {
 				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
@@ -236,7 +236,7 @@ if ($action == 'edit') {
 						$arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
 					}
 				}
-				print $form->selectarray($constname, $arrayofmessagename, $conf->global->{$constname}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+				print $form->selectarray($constname, $arrayofmessagename, getDolGlobalString($constname), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 			} elseif (preg_match('/category:/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -244,13 +244,13 @@ if ($action == 'edit') {
 
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
-				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+				print $formother->select_categories($tmp[1], getDolGlobalString($constname), $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
-				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
+				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname);
 			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($constname).'">';
 			}
 			print '</td></tr>';
 		}
@@ -275,9 +275,9 @@ if ($action == 'edit') {
 				print '</td><td>';
 
 				if ($val['type'] == 'textarea') {
-					print dol_nl2br($conf->global->{$constname});
+					print dol_nl2br(getDolGlobalString($constname));
 				} elseif ($val['type']== 'html') {
-					print  $conf->global->{$constname};
+					print getDolGlobalString($constname);
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
 				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
@@ -286,14 +286,14 @@ if ($action == 'edit') {
 
 					$tmp = explode(':', $val['type']);
 
-					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
+					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
 					if ($template<0) {
 						setEventMessages(null, $formmail->errors, 'errors');
 					}
 					print $langs->trans($template->label);
 				} elseif (preg_match('/category:/', $val['type'])) {
 					$c = new Categorie($db);
-					$result = $c->fetch($conf->global->{$constname});
+					$result = $c->fetch(getDolGlobalInt($constname));
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					}
@@ -304,17 +304,17 @@ if ($action == 'edit') {
 					}
 					print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-					if ($conf->global->{$constname}==2) {
+					if (getDolGlobalString($constname)==2) {
 						print $langs->trans("Prospect");
-					} elseif ($conf->global->{$constname}==3) {
+					} elseif (getDolGlobalString($constname)==3) {
 						print $langs->trans("ProspectCustomer");
-					} elseif ($conf->global->{$constname}==1) {
+					} elseif (getDolGlobalInt($constname)==1) {
 						print $langs->trans("Customer");
-					} elseif ($conf->global->{$constname}==0) {
+					} elseif (getDolGlobalInt($constname)==0) {
 						print $langs->trans("NorProspectNorCustomer");
 					}
 				} else {
-					print  $conf->global->{$constname};
+					print getDolGlobalString($constname);
 				}
 				print '</td></tr>';
 			}
@@ -385,7 +385,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model

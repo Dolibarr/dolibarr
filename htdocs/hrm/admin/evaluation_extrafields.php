@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/evaluation_extrafields.php
- *		\ingroup    hrm
- *		\brief      Page to setup extra fields of hrm
+ *    \file       htdocs/hrm/admin/evaluation_extrafields.php
+ *    \ingroup    hrm
+ *    \brief      Page to setup extra fields of hrm evaluation
  */
 
 // Load Dolibarr environment
@@ -44,10 +44,12 @@ foreach ($tmptype2label as $key => $val) {
 	$type2label[$key] = $langs->transnoentitiesnoconv($val);
 }
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'hrm_evaluation'; //Must be the $table_element of the class that manage extrafield
 
+// Security Check
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -84,14 +86,6 @@ print dol_get_fiche_head($head, 'evaluationsAttributes', $langs->trans($page_nam
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 
 /*

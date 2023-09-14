@@ -117,42 +117,6 @@ class StockTransferLine extends CommonObjectLine
 	// END MODULEBUILDER PROPERTIES
 
 
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'stocktransfer_stocktransferlineline';
-
-	/**
-	 * @var int    Field with ID of parent key if this object has a parent
-	 */
-	//public $fk_element = 'fk_stocktransferline';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'StockTransferLineline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables = array();
-
-	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	 */
-	//protected $childtablesoncascade = array('stocktransfer_stocktransferlinedet');
-
-	/**
-	 * @var StockTransferLineLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -165,7 +129,7 @@ class StockTransferLine extends CommonObjectLine
 		$this->db = $db;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Example to show how to set values of fields definition dynamically
 		/*if ($user->rights->stocktransfer->stocktransferline->read) {
@@ -232,7 +196,6 @@ class StockTransferLine extends CommonObjectLine
 
 		// Reset some properties
 		unset($object->id);
-		unset($object->fk_user_creat);
 		unset($object->import_key);
 
 
@@ -330,8 +293,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -339,7 +300,7 @@ class StockTransferLine extends CommonObjectLine
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		else $sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();
@@ -562,8 +523,8 @@ class StockTransferLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransferline->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransferline->stocktransferline_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransferline->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransferline->stocktransferline_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -672,8 +633,8 @@ class StockTransferLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -696,8 +657,8 @@ class StockTransferLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -720,8 +681,8 @@ class StockTransferLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -760,8 +721,12 @@ class StockTransferLine extends CommonObjectLine
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -794,7 +759,7 @@ class StockTransferLine extends CommonObjectLine
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -904,28 +869,6 @@ class StockTransferLine extends CommonObjectLine
 	}
 
 	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new StockTransferLineLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_stocktransferline = '.((int) $this->id)));
-
-		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}
-
-	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
 	 *  @return string      		Object free reference
@@ -1003,8 +946,8 @@ class StockTransferLine extends CommonObjectLine
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_stocktransferline';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->STOCKTRANSFERLINE_ADDON_PDF)) {
 				$modele = $conf->global->STOCKTRANSFERLINE_ADDON_PDF;
 			}
@@ -1028,8 +971,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function doScheduledJob()
 	{
-		global $conf, $langs;
-
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		$error = 0;
@@ -1047,29 +988,5 @@ class StockTransferLine extends CommonObjectLine
 		$this->db->commit();
 
 		return $error;
-	}
-}
-
-/**
- * Class StockTransferLineLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class StockTransferLineLine
-{
-	// To complete with content of an object StockTransferLineLine
-	// We should have a field rowid, fk_stocktransferline and position
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDb $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
 	}
 }

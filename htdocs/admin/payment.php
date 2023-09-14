@@ -22,6 +22,7 @@
  *		\brief      Page to setup invoices payments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
@@ -50,9 +51,9 @@ if (empty($conf->global->PAYMENT_ADDON)) {
  */
 
 if ($action == 'updateMask') {
-	$maskconstpayment = GETPOST('maskconstpayment', 'alpha');
+	$maskconstpayment = GETPOST('maskconstpayment', 'aZ09');
 	$maskpayment = GETPOST('maskpayment', 'alpha');
-	if ($maskconstpayment) {
+	if ($maskconstpayment && preg_match('/_MASK$/', $maskconstpayment)) {
 		$res = dolibarr_set_const($db, $maskconstpayment, $maskpayment, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -167,7 +168,7 @@ foreach ($dirmodels as $reldir) {
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_payment_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 
@@ -189,7 +190,7 @@ foreach ($dirmodels as $reldir) {
 							if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -256,7 +257,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("PaymentOnDifferentThirdBills");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", $conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS, 1);
+print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", getDolGlobalInt('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS'), 1);
 print '</td><td class="right">';
 print "</td></tr>\n";
 
@@ -264,7 +265,7 @@ print "</td></tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("GroupPaymentsByModOnReports");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("PAYMENTS_REPORT_GROUP_BY_MOD", $conf->global->PAYMENTS_REPORT_GROUP_BY_MOD, 1);
+print $form->selectyesno("PAYMENTS_REPORT_GROUP_BY_MOD", getDolGlobalInt('PAYMENTS_REPORT_GROUP_BY_MOD'), 1);
 print '</td><td class="right">';
 print "</td></tr>\n";
 

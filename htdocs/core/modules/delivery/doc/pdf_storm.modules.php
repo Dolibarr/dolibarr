@@ -65,57 +65,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
-	 */
-	public $phpmin = array(5, 6);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
 
 	/**
 	 *	Constructor
@@ -124,7 +78,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills", "sendings", "companies"));
@@ -140,10 +94,10 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
@@ -153,13 +107,6 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		if (empty($this->emetteur->country_code)) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
-
-		$this->tva = array();
-		$this->tva_array = array();
-		$this->localtax1 = array();
-		$this->localtax2 = array();
-		$this->atleastoneratenotnull = 0;
-		$this->atleastonediscount = 0;
 	}
 
 
@@ -238,7 +185,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 						$objphoto->fetch($object->lines[$i]->fk_product);
 
-						if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+						if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 							$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 							$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 						} else {
@@ -252,7 +199,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 								$dir = $conf->product->dir_output.'/'.$midir;
 
 								foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-									if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+									if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 										if ($obj['photo_vignette']) {
 											$filename = $obj['photo_vignette'];
 										} else {
@@ -324,7 +271,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -343,7 +290,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -351,7 +298,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 				// Incoterm
 				$height_incoterms = 0;
-				if (!empty($conf->incoterm->enabled)) {
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$tab_top -= 2;
@@ -445,7 +392,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 							$pdf->setPage($pageposbefore + 1);
 
 							$curY = $tab_top_newpage;
@@ -485,7 +432,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 									if (!empty($tplidx)) {
 										$pdf->useTemplate($tplidx);
 									}
-									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+									if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 										$this->_pagehead($pdf, $object, 0, $outputlangs);
 									}
 									$pdf->setPage($pageposafter + 1);
@@ -571,7 +518,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -591,7 +538,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -634,9 +581,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -752,8 +697,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+		if ($object->statut == 0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -921,8 +866,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'DELIVERY_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
@@ -936,7 +880,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

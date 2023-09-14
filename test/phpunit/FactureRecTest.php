@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return FactureTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -79,7 +81,7 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -92,7 +94,7 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -105,7 +107,7 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -121,7 +123,7 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -140,18 +142,18 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobjectinv=new Facture($this->savdb);
+		$localobjectinv=new Facture($db);
 		$localobjectinv->initAsSpecimen();
 		$result = $localobjectinv->create($user);
 
 		print __METHOD__." result=".$result."\n";
 
-		$localobject=new FactureRec($this->savdb);
+		$localobject=new FactureRec($db);
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user, $localobjectinv->id);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertGreaterThan(0, $result, 'Create recurring invoice from common invoice');
+		$this->assertGreaterThan(0, $result, 'Create recurring invoice from common invoice: '.$localobject->error);
 
 		return $result;
 	}
@@ -173,7 +175,7 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new FactureRec($this->savdb);
+		$localobject=new FactureRec($db);
 		$result = $localobject->fetch($id);
 
 		print __METHOD__." result=".$result."\n";

@@ -9,12 +9,13 @@ HasAccessToken=Токен було створено та збережено в �
 NewTokenStored=Токен отримано та збережено
 ToCheckDeleteTokenOnProvider=Натисніть тут, щоб перевірити/видалити авторизацію, збережену постачальником OAuth %s
 TokenDeleted=Токен видалено
-RequestAccess=Натисніть тут, щоб запитати/відновити доступ та отримати новий маркер для збереження
-DeleteAccess=Натисніть тут, щоб видалити маркер
+RequestAccess=Click here to request/renew access and receive a new token
+DeleteAccess=Click here to delete token
 UseTheFollowingUrlAsRedirectURI=Використовуйте таку URL-адресу як URI переспрямування під час створення облікових даних у свого постачальника OAuth:
-ListOfSupportedOauthProviders=Введіть облікові дані, надані вашим постачальником OAuth2. Тут перелічено лише підтримуваних постачальників OAuth2. Ці служби можуть використовуватися іншими модулями, які потребують аутентифікації OAuth2.
-OAuthSetupForLogin=Сторінка для створення токена OAuth
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
 SeePreviousTab=Дивіться попередню вкладку
+OAuthProvider=OAuth provider
 OAuthIDSecret=Ідентифікатор та секрет OAuth
 TOKEN_REFRESH=Присутнє оновлення маркера
 TOKEN_EXPIRED=Термін дії токена закінчився
@@ -23,10 +24,13 @@ TOKEN_DELETE=Видалити збережений маркер
 OAUTH_GOOGLE_NAME=Сервіс Google OAuth
 OAUTH_GOOGLE_ID=Ідентифікатор Google OAuth
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Перейдіть до <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external"> цієї сторінки </a>, потім «Облікові дані», щоб створити облікові дані OAuth
 OAUTH_GITHUB_NAME=Служба OAuth GitHub
 OAUTH_GITHUB_ID=Ідентифікатор OAuth GitHub
 OAUTH_GITHUB_SECRET=Секрет OAuth GitHub
-OAUTH_GITHUB_DESC=Перейдіть до <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external"> цієї сторінки </a>, а потім «Зареєструйте нову програму», щоб створити облікові дані OAuth
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

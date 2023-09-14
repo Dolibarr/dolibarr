@@ -30,7 +30,7 @@ dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentjobpo
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for Job position
  */
 class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosition
 {
@@ -54,11 +54,12 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *	@param		Translate	$langs		Language
+	 *  @return     string      Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $conf, $db;
 
 		$langs->load("bills");
 
@@ -69,7 +70,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstjob" value="RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("RecruitmentJobPosition"), $langs->transnoentities("RecruitmentJobPosition"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -104,7 +105,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc);
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 

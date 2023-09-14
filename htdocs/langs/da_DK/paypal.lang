@@ -34,4 +34,3 @@ ARollbackWasPerformedOnPostActions=En tilbagekaldelse blev udført på alle post
 ValidationOfPaymentFailed=Bekræftelse af betaling er mislykket
 CardOwner=Kortholder
 PayPalBalance=Paypal kredit
-OnlineSubscriptionPaymentLine=Onlineabonnement opkrævet på %s<br>Betalt via %s<br>Oprindelses-IP-adresse: %s<br>Transaktions-id: %s

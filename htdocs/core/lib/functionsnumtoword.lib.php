@@ -16,12 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
+
 /**
  *  \file			htdocs/core/lib/functionsnumtoword.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
  */
-
 
 /**
  * Function to return a number into a text.
@@ -163,7 +163,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
  * @param	float 	    $numero			Number to convert
  * @param	Translate	$langs			Language
  * @param	string	    $numorcurrency	'number' or 'amount'
- * @return 	string  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ * @return 	string|int  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
  */
 function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {
@@ -187,7 +187,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 
 	/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
 	in case exist why ask $lang like a parameter?*/
-	if (((is_object($langs) && $langs->default == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency') {
+	if (((is_object($langs) && $langs->getDefaultLang(0) == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency') {
 		if ($numero >= 1 && $numero < 2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
 		} elseif ($numero >= 0 && $numero < 1) {
@@ -247,6 +247,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 		}
 		return $entexto;
 	}
+	return -1;
 }
 
 /**

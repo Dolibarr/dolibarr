@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2021	Thibault FOUCART	<support@ptibogxiv.net>
+/* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,11 @@
  *	\brief      Page with the content of the popup to enter payments
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
+// if (! defined('NOREQUIREUSER'))		define('NOREQUIREUSER', '1');		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');			// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
+// if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -39,21 +37,50 @@ if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
+$hookmanager->initHooks(array('takepospay'));
+
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
-if (!empty($conf->stripe->enabled)) {
+
+/*
+ * View
+ */
+
+$arrayofcss = array('/takepos/css/pos.css.php');
+$arrayofjs = array();
+
+$head = '';
+$title = '';
+$disablejs = 0;
+$disablehead = 0;
+
+$head='<link rel="stylesheet" href="css/pos.css.php">';
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$head .= '<link rel="stylesheet" href="css/colorful.css">';
+}
+
+top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+?>
+<body>
+<?php
+
+if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
 	$servicestatus = 0;
 	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
@@ -69,24 +96,34 @@ if (!empty($conf->stripe->enabled)) {
 	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
 	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
-	?>
+
+	$usestripeterminals = getDolGlobalString('STRIPE_LOCATION');
+
+	if ($usestripeterminals) {
+		?>
 <script src="https://js.stripe.com/terminal/v1/"></script>
 <script>
 var terminal = StripeTerminal.create({
   onFetchConnectionToken: fetchConnectionToken,
   onUnexpectedReaderDisconnect: unexpectedDisconnect,
 });
+
 function unexpectedDisconnect() {
   // In this function, your app should notify the user that the reader disconnected.
   // You can also include a way to attempt to reconnect to a reader.
   console.log("Disconnected from reader")
 }
+
 function fetchConnectionToken() {
-	<?php
-	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&servicestatus='.$servicestatus;
-	if (!empty($conf->global->STRIPE_LOCATION)) $urlconnexiontoken .= '&location='.$conf->global->STRIPE_LOCATION;
-	if (!empty($stripeacc)) $urlconnexiontoken .= '&stripeacc='.$stripeacc;
-	?>
+		<?php
+		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
+		if (!empty($conf->global->STRIPE_LOCATION)) {
+			$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
+		}
+		if (!empty($stripeacc)) {
+			$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
+		}
+		?>
   // Do not cache or hardcode the ConnectionToken. The SDK manages the ConnectionToken's lifecycle.
   return fetch('<?php echo $urlconnexiontoken; ?>', { method: "POST" })
 	.then(function(response) {
@@ -96,14 +133,13 @@ function fetchConnectionToken() {
 	  return data.secret;
 	});
 }
+
 </script>
-<?php }
+		<?php
+	}
+}
 
-/*
- * View
- */
-
-if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
 }
 
@@ -130,7 +166,7 @@ if ($invoiceid > 0) {
 	if ($invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 		if (empty($conf->global->$keyforstripeterminalbank)) { ?>
 		const config = {simulated: <?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?> true <?php } else { ?> false <?php } ?>
-			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>} 
+			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>}
   terminal.discoverReaders(config).then(function(discoverResult) {
 	if (discoverResult.error) {
 	  console.log('Failed to discover: ', discoverResult.error);
@@ -141,7 +177,7 @@ if ($invoiceid > 0) {
 	  // cashier here and let them select which to connect to (see below).
 	  selectedReader = discoverResult.discoveredReaders[0];
 	  //console.log('terminal.discoverReaders', selectedReader); // only active for development
-	  
+
 	  terminal.connectReader(selectedReader).then(function(connectResult) {
 		if (connectResult.error) {
 		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';
@@ -160,7 +196,7 @@ if ($invoiceid > 0) {
 		<?php } else { ?>
 	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
 		if (connectResult.error) {
-		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';
 			  console.log('Failed to connect: ', connectResult.error);
 		} else {
 		document.getElementById("card-present-alert").innerHTML = '';
@@ -174,16 +210,6 @@ if ($invoiceid > 0) {
 		<?php } } ?>
 </script>
 <?php
-
-$arrayofcss = array('/takepos/css/pos.css.php');
-$arrayofjs = array();
-
-$head = '';
-$title = '';
-$disablejs = 0;
-$disablehead = 0;
-
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 // Define list of possible payments
 $arrayOfValidPaymentModes = array();
@@ -213,20 +239,12 @@ if ($resql) {
 			$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
 			$arrayOfValidPaymentModes[] = $obj;
 		}
-		if (empty($conf->banque->enabled)) {
+		if (!isModEnabled('banque')) {
 			if ($paycode == 'CASH' || $paycode == 'CB') $arrayOfValidPaymentModes[] = $obj;
 		}
 	}
 }
 ?>
-<link rel="stylesheet" href="css/pos.css.php">
-<?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-</head>
-<body>
 
 <script>
 <?php
@@ -288,6 +306,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				$('.change2').addClass('colorwhite');
 			}
 		}
+
+		return true;
 	}
 
 	function reset()
@@ -313,7 +333,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
+		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
 				parent.$.colorbox.close();
@@ -323,12 +343,14 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				location.reload();
 			}
 		});
+
+		return true;
 	}
 
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {
 	  const bodyContent = JSON.stringify({ amount : amount, invoiceid : invoiceid });
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&servicestatus='.$servicestatus;
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.newToken().'&servicestatus='.$servicestatus;
 	if (!empty($stripeacc)) $urlpaymentintent .= '&stripeacc='.$stripeacc;
 	?>
   return fetch('<?php echo $urlpaymentintent; ?>', {
@@ -350,8 +372,10 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 	function capturePaymentIntent(paymentIntentId) {
 	const bodyContent = JSON.stringify({"id": paymentIntentId})
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&servicestatus='.$servicestatus;
-	if (!empty($stripeacc)) $urlpaymentintent .= '&stripeacc='.$stripeacc;
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.newToken().'&servicestatus='.urlencode($servicestatus);
+	if (!empty($stripeacc)) {
+		$urlpaymentintent .= '&stripeacc='.urlencode($stripeacc);
+	}
 	?>
   return fetch('<?php echo $urlpaymentintent; ?>', {
 	method: "POST",
@@ -388,7 +412,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			<?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
 			<?php } ?>
-		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
 		// Placeholder for handling result.error
@@ -398,7 +422,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		  console.log('terminal.collectPaymentMethod', result.paymentIntent);
 		  terminal.processPayment(result.paymentIntent).then(function(result) {
 		  if (result.error) {
-			document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';  
+			document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 			console.log(result.error)
 		} else if (result.paymentIntent) {
 			  paymentIntentId = result.paymentIntent.id;
@@ -409,9 +433,9 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
-				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>'; 
+				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>';
 				console.log("Capture paymentIntent successfull "+paymentIntentId);
-				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
+				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
 				parent.$.colorbox.close();
@@ -423,7 +447,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		});
 
 			}
-			});	
+			});
 		  }
 		});
 	  }
@@ -450,7 +474,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				url: '<?php echo DOL_URL_ROOT ?>/takepos/smpcb.php?status' }).done(function (data) {
 				console.log(data);
 				if (data === "SUCCESS") {
-					parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount=" + amountpayed + "&invoiceid=" + invoiceid, function () {
+					parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay=CB&amount=" + amountpayed + "&invoiceid=" + invoiceid, function () {
 						//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 						parent.$.colorbox.close();
 						//parent.setFocusOnSearchField();	// This does not have effect
@@ -524,14 +548,14 @@ $action_buttons = array(
 	),
 );
 $numpad = $conf->global->TAKEPOS_NUMPAD;
-if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
 	print '</span>';
 }
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').');">'.($numpad == 0 ? '8' : '20').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').');">'.($numpad == 0 ? '9' : '50').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').')">'.($numpad == 0 ? '7' : '10').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').')">'.($numpad == 0 ? '8' : '20').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').')">'.($numpad == 0 ? '9' : '50').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 0) {
 	$paycode = $arrayOfValidPaymentModes[0]->code;
@@ -550,14 +574,14 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><span class="hideonsmartphone"><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</span></button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><span class="hideonsmartphone"><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</span></button>';
 } else {
 	print '<button type="button" class="calcbutton2">'.$langs->trans("NoPaimementModesDefined").'</button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '4' : '1').');">'.($numpad == 0 ? '4' : '1').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '5' : '2').');">'.($numpad == 0 ? '5' : '2').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '6' : '5').');">'.($numpad == 0 ? '6' : '5').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '4' : '1').')">'.($numpad == 0 ? '4' : '1').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '5' : '2').')">'.($numpad == 0 ? '5' : '2').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '6' : '5').')">'.($numpad == 0 ? '6' : '5').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 1) {
 	$paycode = $arrayOfValidPaymentModes[1]->code;
@@ -576,15 +600,15 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br> '.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br> '.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '1' : '0.10').');">'.($numpad == 0 ? '1' : '0.10').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '2' : '0.20').');">'.($numpad == 0 ? '2' : '0.20').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '3' : '0.50').');">'.($numpad == 0 ? '3' : '0.50').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '1' : '0.10').')">'.($numpad == 0 ? '1' : '0.10').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '2' : '0.20').')">'.($numpad == 0 ? '2' : '0.20').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '3' : '0.50').')">'.($numpad == 0 ? '3' : '0.50').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 2) {
 	$paycode = $arrayOfValidPaymentModes[2]->code;
@@ -603,15 +627,15 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '0' : '0.01').');">'.($numpad == 0 ? '0' : '0.01').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'000\'' : '0.02').');">'.($numpad == 0 ? '000' : '0.02').'</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'.\'' : '0.05').');">'.($numpad == 0 ? '.' : '0.05').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '0' : '0.01').')">'.($numpad == 0 ? '0' : '0.01').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'000\'' : '0.02').')">'.($numpad == 0 ? '000' : '0.02').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'.\'' : '0.05').')">'.($numpad == 0 ? '.' : '0.05').'</button>';
 
 $i = 3;
 while ($i < count($arrayOfValidPaymentModes)) {
@@ -631,11 +655,11 @@ while ($i < count($arrayOfValidPaymentModes)) {
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
 	$i = $i + 1;
 }
 
-if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
 	print '<span id="StripeTerminal"></span>';
 	if (!empty($conf->global->$keyforstripeterminalbank)) {
@@ -645,8 +669,8 @@ if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty
 	}
 }
 
-if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
-	$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	if (!empty($conf->global->$keyforsumupbank)) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {
@@ -655,16 +679,28 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 	}
 }
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $object may have been modified by hook
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";
 foreach ($action_buttons as $button) {
 	$newclass = $class.($button["class"] ? " ".$button["class"] : "");
 	print '<button type="button" class="'.$newclass.'" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
-if ($conf->global->TAKEPOS_DELAYED_PAYMENT) {
-	print '<button type="button" class="calcbutton2" onclick="Validate(\'delayed\');">'.$langs->trans("Reported").'</button>';
+if (getDolGlobalString('TAKEPOS_DELAYED_PAYMENT')) {
+	print '<button type="button" class="calcbutton2" onclick="Validate(\'delayed\')">'.$langs->trans("Reported").'</button>';
 }
 ?>
+
+<?php
+// Add code from hooks
+$parameters=array();
+$hookmanager->executeHooks('completePayment', $parameters, $invoice);
+print $hookmanager->resPrint;
+?>
+
 </div>
 
 </body>

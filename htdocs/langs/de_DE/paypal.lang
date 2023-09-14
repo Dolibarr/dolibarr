@@ -34,4 +34,3 @@ ARollbackWasPerformedOnPostActions=Bei allen Post-Aktionen wurde ein Rollback du
 ValidationOfPaymentFailed=Validierung der Paypal-Zahlung gescheitert
 CardOwner=Karteninhaber
 PayPalBalance=PayPal-Gutschrift
-OnlineSubscriptionPaymentLine=Online-Mitgliedschaft erfasst am %s <br>Bezahlt über %s<br> Ursprungs-IP-Adresse: %s<br>Transaktions-ID: %s

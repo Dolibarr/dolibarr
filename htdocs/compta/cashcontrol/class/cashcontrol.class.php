@@ -106,6 +106,7 @@ class CashControl extends CommonObject
 	 * @var int Object Id
 	 */
 	public $id;
+	public $label;
 	public $opening;
 	public $status;
 	public $year_close;
@@ -127,6 +128,11 @@ class CashControl extends CommonObject
 	 * @var integer|string $date_modification
 	 */
 	public $date_modification;
+	/**
+	 * @var integer|string $date_modification
+	 * @deprecated
+	 */
+	public $tms;
 
 	/**
 	 * @var integer|string $date_valid
@@ -258,7 +264,7 @@ class CashControl extends CommonObject
 
 		/*
 		 $posmodule = $this->posmodule;
-		 if (! empty($user->rights->$posmodule->use))
+		 if (!empty($user->rights->$posmodule->use))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -423,7 +429,7 @@ class CashControl extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -468,5 +474,42 @@ class CashControl extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//var_dump($this->fields['rowid']);exit;
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, 1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'posmodule')) {
+			$return .= '<br><span class="opacitymedium">'.substr($langs->trans("Module/Application"), 0, 12).'</span> : <span class="info-box-label">'.$this->posmodule.'</span>';
+		}
+		if (property_exists($this, 'year_close')) {
+			$return .= '<br><span class="info-box-label opacitymedium" >'.$langs->trans("Year").'</span> : <span>'.$this->year_close.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

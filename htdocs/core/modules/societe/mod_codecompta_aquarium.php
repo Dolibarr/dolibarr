@@ -61,8 +61,14 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') {
 			$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
 		}
-		$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
-		$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
+
+		if (!empty($conf->global->COMPANY_AQUARIUM_NO_PREFIX)) {
+			$this->prefixcustomeraccountancycode = '';
+			$this->prefixsupplieraccountancycode = '';
+		} else {
+			$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
+			$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
+		}
 	}
 
 
@@ -98,12 +104,16 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) {
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
-		//if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
+		//if (!empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
 		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX)) {
 			$texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
 		}
+
+		if (!empty($conf->global->COMPANY_AQUARIUM_NO_PREFIX)) {
+			$texte .= $langs->trans('COMPANY_AQUARIUM_NO_PREFIX').' = '.$conf->global->COMPANY_AQUARIUM_NO_PREFIX."<br>\n";
+		}
 		$texte .= '</td>';
-		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition" name="modify" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr></table>';
 		$texte .= '</form>';
 

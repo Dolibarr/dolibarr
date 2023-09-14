@@ -16,6 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -25,7 +26,7 @@ $langs->loadLangs(array("admin", "products"));
 $action = GETPOST('action', 'alphanohtml');
 
 // Security check
-if (!$user->admin || empty($conf->variants->enabled)) {
+if (!$user->admin || !isModEnabled('variants')) {
 	accessforbidden();
 }
 
@@ -72,7 +73,7 @@ print '<th class="right" width="60">'.$langs->trans("Value").'</th>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td><td>';
-print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", $conf->global->PRODUIT_ATTRIBUTES_HIDECHILD, 1).'</td></tr>';
+print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD'), 1).'</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
 if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {

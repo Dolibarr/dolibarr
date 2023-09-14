@@ -148,7 +148,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
-			/*} elseif (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+			/*} elseif (!empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 			 {
 			 $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
 			 }*/
@@ -374,8 +374,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		$db->free($resql);
 	}
 
-	if (isModEnabled('accounting') && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') { 	// Entry in accountancy journal for each bank account
-		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy', 10);
+	if (isModEnabled('accounting') && $user->hasRight('accounting', 'comptarapport', 'lire') && $mainmenu == 'accountancy') { 	// Entry in accountancy journal for each bank account
+		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting', 'comptarapport', 'lire'), '', 'accountancy', 'accountancy_journal', 10);
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
@@ -400,7 +400,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 						$nature = "sells";
 					}
 					if ($objp->nature == 3
-						&& ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice'))
+						&& isModEnabled('supplier_invoice')
 						&& empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
 						$nature = "purchases";
 					}
@@ -430,13 +430,13 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($nature) {
 						$langs->load('accountancy');
 						$journallabel = $langs->transnoentities($objp->label); // Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
-						$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
+						$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 					}
 					$i++;
 				}
 			} else {
 				// Should not happend. Entries are added
-				$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
+				$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 			}
 		} else {
 			dol_print_error($db);

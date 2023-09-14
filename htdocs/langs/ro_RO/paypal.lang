@@ -34,4 +34,3 @@ ARollbackWasPerformedOnPostActions=A fost efectuată o revocare a tuturor acțiu
 ValidationOfPaymentFailed=Validarea plății a eșuat
 CardOwner=Deţinătorul cardului
 PayPalBalance=Credit Paypal
-OnlineSubscriptionPaymentLine=Abonament online înregistrat pe %s<br>Plătit prin %s<br> Adresa IP de origine: %s<br>ID tranzacție:%s

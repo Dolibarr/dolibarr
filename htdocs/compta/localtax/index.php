@@ -18,11 +18,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 /**
  *      \file       htdocs/compta/localtax/index.php
  *      \ingroup    tax
- *      \brief      Index page of IRPF reports
+ *      \brief      Index page of localtax reports
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -38,7 +40,7 @@ $localTaxType = GETPOST('localTaxType', 'int');
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -78,7 +80,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
 }
@@ -221,14 +223,14 @@ if ($localTaxType == 1) {
 	$LTPaid = 'LT1Paid';
 	$LTCustomer = 'LT1Customer';
 	$LTSupplier = 'LT1Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC1;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC1');
 } else {
 	$LT = 'LT2';
 	$LTSummary = 'LT2Summary';
 	$LTPaid = 'LT2Paid';
 	$LTCustomer = 'LT2Customer';
 	$LTSupplier = 'LT2Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC2;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC2');
 }
 
 $fsearch = '<!-- hidden fields for form -->';
@@ -244,7 +246,7 @@ $description .= $langs->trans($LT);
 $calcmode = $langs->trans("LTReportBuildWithOptionDefinedInModule").' ';
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
 
-//if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
+//if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
@@ -256,6 +258,9 @@ llxHeader('', $name);
 //$textprevyear="<a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current-1) . "\">".img_previous()."</a>";
 //$textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
 //print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'bill');
+
+$periodlink = '';
+$exportlink = '';
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
@@ -269,7 +274,7 @@ print load_fiche_titre($langs->transcountry($LTSummary, $mysoc->country_code), '
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width="30%">'.$langs->trans("Year")." ".$y."</td>";
+print '<td>'.$langs->trans("Year")."</td>";
 if ($CalcLT == 0) {
 	print '<td class="right">'.$langs->transcountry($LTCustomer, $mysoc->country_code).'</td>';
 	print '<td class="right">'.$langs->transcountry($LTSupplier, $mysoc->country_code).'</td>';
@@ -441,16 +446,6 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-	if (!is_array($x_coll) && $coll_listbuy == -1) {
-		$langs->load("errors");
-		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-		break;
-	}
-	if (!is_array($x_paye) && $coll_listbuy == -2) {
-		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-		break;
-	}
-
 
 	print '<tr class="oddeven">';
 	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0, 0, 0, $m, 1, $y), "%b %Y").'</a></td>';
@@ -476,8 +471,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -516,8 +511,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {

@@ -28,11 +28,16 @@
  *  \brief      Page of third party projects
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->loadLangs(array("companies", "projects"));
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'projects'));
+
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -43,6 +48,8 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectthirdparty'));
+
+$object = new Societe($db);
 
 
 /*
@@ -61,9 +68,7 @@ if ($reshook < 0) {
  *	View
  */
 
-$contactstatic = new Contact($db);
-
-$form = new Form($db);
+unset($_SESSION['pageforbacktolist']['project']);
 
 if ($socid) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -71,8 +76,6 @@ if ($socid) {
 
 	$langs->load("companies");
 
-
-	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Projects");
@@ -81,7 +84,7 @@ if ($socid) {
 	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);

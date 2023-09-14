@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,13 +24,11 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return array		Array with list of tab entries
  */
 function zapierAdminPrepareHead()
 {
 	global $langs, $conf;
-
-	$langs->load("zapier");
 
 	$h = 0;
 	$head = array();
@@ -52,7 +50,9 @@ function zapierAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@zapier:/zapier/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'zapier');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'zapier');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'zapier', 'remove');
 
 	return $head;
 }

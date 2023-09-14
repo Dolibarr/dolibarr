@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file			htdocs/blockedlog/lib/blockedlog.lib.php
- *	\ingroup		system
- *  \brief			Library for common blockedlog functions
+ *    \file       htdocs/blockedlog/lib/blockedlog.lib.php
+ *    \ingroup    system
+ *    \brief      Library for common blockedlog functions
  */
 
 /**

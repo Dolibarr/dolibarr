@@ -4,6 +4,7 @@
  * Copyright (C) 2005       Simon Tosser            <simon@kornog-computing.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  *		\brief      Page to setup late delays
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -136,12 +138,6 @@ $modules = array(
 
 $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
 
-if (!isset($conf->global->MAIN_DELAY_PROJECT_TO_CLOSE)) {
-	$conf->global->MAIN_DELAY_PROJECT_TO_CLOSE = 7; // Must be same value than into conf.class.php
-}
-if (!isset($conf->global->MAIN_DELAY_TASKS_TODO)) {
-	$conf->global->MAIN_DELAY_TASKS_TODO = 7; // Must be same value than into conf.class.php
-}
 if (!isset($conf->global->MAIN_DELAY_MEMBERS)) {
 	$conf->global->MAIN_DELAY_MEMBERS = 0; // Must be same value than into conf.class.php
 }
@@ -172,7 +168,7 @@ if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
 
 if ($action == 'update') {
 	foreach ($modules as $module => $delays) {
-		if (!empty($conf->$module->enabled)) {
+		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
 				if (GETPOST($delay['code']) != '') {
 					dolibarr_set_const($db, $delay['code'], GETPOST($delay['code']), 'chaine', 0, '', $conf->entity);
@@ -226,13 +222,13 @@ if ($action == 'edit') {
 	print '<td class="right">'.$langs->trans("LateWarningAfter").'</td></tr>';
 
 	foreach ($modules as $module => $delays) {
-		if (!empty($conf->$module->enabled)) {
+		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
+				$value = getDolGlobalInt($delay['code']);
 				print '<tr class="oddeven">';
-				print '<td width="20px">'.img_object('', $delay['img']).'</td>';
-				print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td class="nowraponall right">';
-				print '<input class="right maxwidth75" type="number" name="'.$delay['code'].'" value="'.$value.'"> '.$langs->trans("days").'</td></tr>';
+				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
+				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td><td class="nowraponall right">';
+				print '<input class="right maxwidth75" type="number" name="' . $delay['code'] . '" value="' . $value . '"> ' . $langs->trans("days") . '</td></tr>';
 			}
 		}
 	}
@@ -260,13 +256,13 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($modules as $module => $delays) {
-		if (!empty($conf->$module->enabled)) {
+		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
+				$value = getDolGlobalInt($delay['code']);
 				print '<tr class="oddeven">';
-				print '<td width="20px">'.img_object('', $delay['img']).'</td>';
-				print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';
-				print '<td class="right">'.$value.' '.$langs->trans("days").'</td></tr>';
+				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
+				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td>';
+				print '<td class="right">' . $value . ' ' . $langs->trans("days") . '</td></tr>';
 			}
 		}
 	}
@@ -317,18 +313,22 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 
 	$offset = 0;
 	$cursor = 10; // By default
-	//if (! empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
-	//if (! empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
-	$level0 = $offset; if (!empty($conf->global->MAIN_METEO_LEVEL0)) {
+	//if (!empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
+	//if (!empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
+	$level0 = $offset;
+	if (!empty($conf->global->MAIN_METEO_LEVEL0)) {
 		$level0 = $conf->global->MAIN_METEO_LEVEL0;
 	}
-	$level1 = $offset + 1 * $cursor; if (!empty($conf->global->MAIN_METEO_LEVEL1)) {
+	$level1 = $offset + $cursor;
+	if (!empty($conf->global->MAIN_METEO_LEVEL1)) {
 		$level1 = $conf->global->MAIN_METEO_LEVEL1;
 	}
-	$level2 = $offset + 2 * $cursor; if (!empty($conf->global->MAIN_METEO_LEVEL2)) {
+	$level2 = $offset + 2 * $cursor;
+	if (!empty($conf->global->MAIN_METEO_LEVEL2)) {
 		$level2 = $conf->global->MAIN_METEO_LEVEL2;
 	}
-	$level3 = $offset + 3 * $cursor; if (!empty($conf->global->MAIN_METEO_LEVEL3)) {
+	$level3 = $offset + 3 * $cursor;
+	if (!empty($conf->global->MAIN_METEO_LEVEL3)) {
 		$level3 = $conf->global->MAIN_METEO_LEVEL3;
 	}
 	$text = ''; $options = 'class="valignmiddle" height="60px"';
@@ -453,7 +453,7 @@ if ($action == 'edit') {
 	print '</form>';
 } else {
 	print '<br><br><div class="tabsAction">';
-	print '<a class="butAction" href="delais.php?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction reposition" href="delais.php?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 }
 

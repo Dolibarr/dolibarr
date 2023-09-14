@@ -22,6 +22,7 @@
  *  \brief      Page to show Dolibarr information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -148,25 +149,26 @@ print '<br>';
 // Session
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td colspan="2">'.session_save_path().'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").' (session.gc_maxlifetime)</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
-print '</td><td class="right">';
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Session").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td>'.session_save_path().'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td>'.session_name().'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td>'.session_id().'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").' (session.gc_maxlifetime)</td>';
+print '<td>';
+print ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
 print '<!-- session.gc_maxlifetime = '.ini_get("session.gc_maxlifetime").' -->'."\n";
 print '<!-- session.gc_probability = '.ini_get("session.gc_probability").' -->'."\n";
 print '<!-- session.gc_divisor = '.ini_get("session.gc_divisor").' -->'."\n";
 print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
 print "</td></tr>\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme.'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentTheme").'</td><td>'.$conf->theme.'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentMenuHandler").'</td><td>';
 print $conf->standard_menu;
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("Screen").'</td><td colspan="2">';
+print '<tr class="oddeven"><td>'.$langs->trans("Screen").'</td><td>';
 print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("Session").'</td><td colspan="2">';
+print '<tr class="oddeven"><td>'.$langs->trans("Session").'</td><td class="wordbreak">';
 $i = 0;
 foreach ($_SESSION as $key => $val) {
 	if ($i > 0) {
@@ -262,7 +264,7 @@ $daylight = round($c - $b);
 $val = ($a >= 0 ? '+' : '').$a;
 $val .= ' ('.($a == 'unknown' ? 'unknown' : ($a >= 0 ? '+' : '').($a * 3600)).')';
 $val .= ' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString();
-$val .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.($daylight === 'unknown' ? 'unknown' : ($a == $c ?yn($daylight) : yn(0).($daylight ? '  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')' : '')));
+$val .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.(is_null($daylight) ? 'unknown' : ($a == $c ?yn($daylight) : yn(0).($daylight ? '  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')' : '')));
 print $form->textwithtooltip($val, $txt, 2, 1, img_info(''));
 print '</td></tr>'."\n"; // value defined in http://fr3.php.net/manual/en/timezones.europe.php
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now('gmt'), 'dayhour', 'tzserver').'</td></tr>'."\n";
@@ -341,7 +343,6 @@ $configfileparameters = array(
 	'?dolibarr_main_auth_ldap_admin_pass' => 'dolibarr_main_auth_ldap_admin_pass',
 	'?dolibarr_main_auth_ldap_debug' => 'dolibarr_main_auth_ldap_debug',
 	'separator3' => '',
-	'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
 	'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
 	'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
 	'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
@@ -382,7 +383,7 @@ foreach ($configfileparameters as $key => $value) {
 		$newkey = preg_replace('/^\?/', '', $key);
 
 		if (preg_match('/^\?/', $key) && empty(${$newkey})) {
-			if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled)) {
+			if ($newkey != 'multicompany_transverse_mode' || !isModEnabled('multicompany')) {
 				continue; // We discard parameters starting with ?
 			}
 		}
@@ -410,7 +411,7 @@ foreach ($configfileparameters as $key => $value) {
 			} elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) {
 				print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			} elseif ($newkey == 'dolibarr_main_document_root_alt') {
-				$tmparray = explode(',', ${$newkey});
+				$tmparray = explode(',', $dolibarr_main_document_root_alt);
 				$i = 0;
 				foreach ($tmparray as $value2) {
 					if ($i > 0) {
@@ -428,10 +429,12 @@ foreach ($configfileparameters as $key => $value) {
 				global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
 				$valuetoshow = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
 				if (empty($dolibarr_main_prod)) {
-					print '<!-- '.${$newkey}.' -->';
+					print '<!-- '.$dolibarr_main_instance_unique_id.' (this will not be visible if $dolibarr_main_prod = 1 -->';
 					print showValueWithClipboardCPButton($valuetoshow, 0, '********');
+					print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("ThisValueCanBeReadBecauseInstanceIsNotInProductionMode").'</span>';
 				} else {
 					print '**********';
+					print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("SeeConfFile").'</span>';
 				}
 				if (empty($valuetoshow)) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
@@ -483,7 +486,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-if (empty($conf->multicompany->enabled) || !$user->entity) {
+if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td class="center width="80px"">'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }
 print "</tr>\n";
@@ -496,7 +499,7 @@ $sql .= ", type";
 $sql .= ", note";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
 } else {
@@ -526,7 +529,7 @@ if ($resql) {
 			print dol_escape_htmltag($obj->value);
 		}
 		print '</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) {
+		if (!isModEnabled('multicompany') || !$user->entity) {
 			print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		}
 		print "</tr>\n";

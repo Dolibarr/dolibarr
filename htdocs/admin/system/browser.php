@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -22,6 +22,7 @@
  *  \brief      Page to show Dolibarr informations
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -64,7 +65,7 @@ if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 }
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionId").'</td><td colspan="2">********</td></tr>'."\n";
 
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Screen").'</td><td colspan="2">';
 print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];

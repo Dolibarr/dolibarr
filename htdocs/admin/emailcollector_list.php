@@ -21,6 +21,7 @@
  *      \brief      List page for emailcollector
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-dol_include_once('/emailcollector/class/emailcollector.class.php');
+require_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollector.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array("admin", "other"));
@@ -49,7 +50,7 @@ $mode       = GETPOST('mode', 'aZ');
 $id = GETPOST('id', 'int');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -142,7 +143,7 @@ $permissiontodelete = $user->admin;
 if (!$user->admin) {
 	accessforbidden();
 }
-if (empty($conf->emailcollector->enabled)) {
+if (!isModEnabled('emailcollector')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -223,7 +224,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -272,28 +273,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
-/* If a group by is required
-$sql.= " GROUP BY ";
-foreach ($object->fields as $key => $val) {
-	$sql .= "t.".$db->escape($key).", ";
-}
-// Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-	}
-}
-// Add where from hooks
-$parameters=array();
-$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql = preg_replace('/,\s*$/', '', $sql);
-*/
-
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 
@@ -332,6 +314,22 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
 
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($title, $linkback, 'title_setup');
+
+
+$head = array();
+$h = 0;
+$head[$h][0] = DOL_URL_ROOT."/admin/emailcollector_list.php";
+$head[$h][1] = $langs->trans("Setup");
+$head[$h][2] = 'common';
+$h++;
+
+print dol_get_fiche_head($head, 'common', '', -1);
+
+
+
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
@@ -339,7 +337,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -387,11 +385,9 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-
 $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'email', 0, $newcardbutton.' '.$linkback, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 /*$topicmail="";
@@ -531,7 +527,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -555,11 +551,11 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -600,13 +596,17 @@ while ($i < $imaxinloop) {
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
-				print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '');
-				if (preg_match('/tdoverflow/', $cssforfield)) {
+				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
+				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
 					print ' title="'.dol_escape_htmltag($object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'lastresult') {
+					print '<div class="twolinesmax">';
+					print $object->showOutputField($val, $key, $object->$key, '');
+					print '</div>';
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, $object->id, '');
 				} else {
@@ -694,7 +694,22 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td></td>';
 print "</tr>\n";
 
-// Hide e-mail headers from collected messages
+// MAIN_IMAP_USE_PHPIMAP: Enable use of the PHP Imap library
+print '<tr class="oddeven"><td>';
+//print $form->textwithpicto($langs->trans("MAIN_IMAP_USE_PHPIMAP"), $langs->transnoentitiesnoconv("MAIN_IMAP_USE_PHPIMAPDesc"));
+print $langs->trans("MAIN_IMAP_USE_PHPIMAP");
+print '</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_IMAP_USE_PHPIMAP');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_IMAP_USE_PHPIMAP", $arrval, $conf->global->MAIN_IMAP_USE_PHPIMAP);
+}
+print '</td>';
+print '</tr>';
+
+// MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER: Hide e-mail headers from collected messages
 print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorHideMailHeaders"), $langs->transnoentitiesnoconv("EmailCollectorHideMailHeadersHelp")).'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
@@ -732,6 +747,10 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 
 	print $formfile->showdocuments('massfilesarea_emailcollector', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
+
+
+dol_get_fiche_end();
+
 
 // End of page
 llxFooter();

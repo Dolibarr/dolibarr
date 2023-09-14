@@ -30,6 +30,7 @@ if (!defined('NOSCANPOSTFORINJECTION')) {
 	define('NOSCANPOSTFORINJECTION', '1'); // Do not check anti CSRF attack test
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -58,7 +59,7 @@ if ($action == 'update') {
 
 	// exturl can be an url or a HTML string
 	$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
-	$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
+	$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1, array(), 1);
 	$exturl = dol_string_onlythesehtmlattributes($exturl);
 
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
@@ -111,7 +112,7 @@ print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
 print '<td><textarea class="flat minwidth500" name="EXTERNALSITE_URL">';
 
 $exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
-$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
+$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1, array(), 1);
 $exturl = dol_string_onlythesehtmlattributes($exturl);
 
 print (GETPOSTISSET('EXTERNALSITE_URL') ? $exturl : (empty($conf->global->EXTERNALSITE_URL) ? '' : $conf->global->EXTERNALSITE_URL));

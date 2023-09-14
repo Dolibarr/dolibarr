@@ -103,6 +103,10 @@ class ChargeSociales extends CommonObject
 	 */
 	public $paiementtype;
 
+	public $mode_reglement_id;
+	public $mode_reglement_code;
+	public $mode_reglement;
+
 	/**
 	 * @var int ID
 	 */
@@ -119,6 +123,7 @@ class ChargeSociales extends CommonObject
 	public $total;
 
 	public $totalpaid;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -453,8 +458,12 @@ class ChargeSociales extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paye = 1;
+
 			return 1;
 		} else {
 			return -1;
@@ -488,8 +497,12 @@ class ChargeSociales extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paye = 0;
+
 			return 1;
 		} else {
 			return -1;
@@ -585,7 +598,7 @@ class ChargeSociales extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -597,7 +610,7 @@ class ChargeSociales extends CommonObject
 			$this->ref = $this->label;
 		}
 
-		$label = img_picto('', 'tax').'<u class="paddingrightonly">'.$langs->trans("SocialContribution").'</u>';
+		$label = img_picto('', $this->picto, 'class="pictofixedwidth"').'<u class="paddingrightonly">'.$langs->trans("SocialContribution").'</u>';
 		if (isset($this->paye)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
@@ -612,7 +625,7 @@ class ChargeSociales extends CommonObject
 		}
 
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->facture->lire) {
+		if (empty($notooltip) && $user->hasRight("facture", "read")) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("SocialContribution");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
@@ -722,8 +735,10 @@ class ChargeSociales extends CommonObject
 			}
 
 			$this->db->free($result);
+			return 1;
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -748,5 +763,48 @@ class ChargeSociales extends CommonObject
 		$this->label = 'Social contribution label';
 		$this->type = 1;
 		$this->type_label = 'Type of social contribution';
+	}
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $conf, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'label')) {
+			$return .= ' &nbsp; <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
+		}
+		if (!empty($arraydata['project']) && $arraydata['project']->id > 0) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['project']->getNomUrl(1).'</span>';
+		}
+		if (property_exists($this, 'date_ech')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br>';
+			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+		}
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

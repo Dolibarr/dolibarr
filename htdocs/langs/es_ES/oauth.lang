@@ -9,12 +9,14 @@ HasAccessToken=Se ha generado y guardado en la base de datos local un token
 NewTokenStored=Token recibido y guardado
 ToCheckDeleteTokenOnProvider=Haga clic aquí para comprobar/eliminar la autorización guardada por el proveedor de OAuth %s
 TokenDeleted=Token eliminado
-RequestAccess=Haga clic aquí para consultar/renovar acceso y recibir un nuevo token a guardar
+GetAccess=Haga clic aquí para obtener un token
+RequestAccess=Haga clic aquí para solicitar/renovar el acceso y recibir un nuevo token
 DeleteAccess=Haga clic aquí para eliminar el token
 UseTheFollowingUrlAsRedirectURI=Utilice la siguiente dirección URL como redireccionamiento URI al crear su credencial de su proveedor OAuth:
-ListOfSupportedOauthProviders=Indique aquí la credencial proporcionada por su proveedor de OAuth2. Sólo son mostrados los proveedores OAuth2 soportados. Esta configuración puede ser usada por otros módulos que requieren autenticación OAuth2.
-OAuthSetupForLogin=Página para generar un token OAuth
+ListOfSupportedOauthProviders=Agregue sus proveedores de tokens OAuth2. Luego, vaya a la página de administración de su proveedor de OAuth para crear/obtener una ID y un secreto de OAuth y guárdelos aquí. Una vez hecho esto, cambie a la otra pestaña para generar su token.
+OAuthSetupForLogin=Página para administrar (generar/eliminar) tokens OAuth
 SeePreviousTab=Ver la pestaña previa
+OAuthProvider=Proveedor de OAuth
 OAuthIDSecret=ID OAuth y contraseña
 TOKEN_REFRESH=Refresco del token actual
 TOKEN_EXPIRED=Token expirado
@@ -23,10 +25,17 @@ TOKEN_DELETE=Eliminar token guardado
 OAUTH_GOOGLE_NAME=Servicio Oauth Google
 OAUTH_GOOGLE_ID=Id Oauth Google
 OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Vaya a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external">esta página</a> y luego "Credenciales" para crear credenciales de OAuth
 OAUTH_GITHUB_NAME=Servicio Oauth GitHub
 OAUTH_GITHUB_ID=Id Oauth Github
 OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Vaya a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external">en esta página</a> y luego "Registrar una nueva aplicación" para crear credenciales de OAuth.
+OAUTH_URL_FOR_CREDENTIAL=Vaya a <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external"> esta página <span class="fas fa-external-link-alt paddingleft"> </span> </a> para crear u obtener su ID y secreto de OAuth
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_ID=OAuth Client ID
+OAUTH_SECRET=Secreto OAuth
+OAUTH_TENANT=OAuth tenant
+OAuthProviderAdded=Proveedor de OAuth agregado
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Ya existe una entrada de OAuth para este proveedor y etiqueta
+URLOfServiceForAuthorization=URL proporcionada por el servicio OAuth para la autenticación
+Scopes=Permisos (Ámbitos)
+ScopeUndefined=Permisos (Ámbitos) indefinidos (ver pestaña anterior)

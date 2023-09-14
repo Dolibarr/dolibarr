@@ -21,11 +21,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require "../master.inc.php";
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php";
 require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
@@ -590,7 +608,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
  */
 function updateContact($authentication, $contact)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -610,7 +628,7 @@ function updateContact($authentication, $contact)
 		$error++; $errorcode = 'KO'; $errorlabel = "Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
-	if (!$error && ($id && $ref_ext)) {
+	if (!$error && ($contact['id'] && $contact['ref_ext'])) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
 	}

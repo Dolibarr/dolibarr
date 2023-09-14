@@ -119,13 +119,23 @@ class AdvanceTargetingMailing extends CommonObject
 			'3' => $langs->trans('ThirdParty'),
 			'4' => $langs->trans('ContactsWithThirdpartyFilter')
 		);
-		$this->type_statuscommprospect = array(
-			-1 => $langs->trans("StatusProspect-1"),
-			0 => $langs->trans("StatusProspect0"),
-			1 => $langs->trans("StatusProspect1"),
-			2 => $langs->trans("StatusProspect2"),
-			3 => $langs->trans("StatusProspect3")
-		);
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+		$customerStatic = new Client($this->db);
+		$customerStatic->loadCacheOfProspStatus();
+		if (!empty($customerStatic->cacheprospectstatus)) {
+			foreach ($customerStatic->cacheprospectstatus as $dataProspectSt) {
+				$this->type_statuscommprospect[$dataProspectSt['id']]=$dataProspectSt['label'];
+			}
+		} else {
+			$this->type_statuscommprospect = array(
+				-1 => $langs->trans("StatusProspect-1"),
+				0 => $langs->trans("StatusProspect0"),
+				1 => $langs->trans("StatusProspect1"),
+				2 => $langs->trans("StatusProspect2"),
+				3 => $langs->trans("StatusProspect3")
+			);
+		}
 	}
 
 	/**
@@ -506,6 +516,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$this->create($user);
 			}
 		}
+		return -1;
 	}
 
 
@@ -564,7 +575,7 @@ class AdvanceTargetingMailing extends CommonObject
 			if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust']) > 0) {
 				$sqlwhere[] = " (t.client IN (".$this->db->sanitize(implode(',', $arrayquery['cust_typecust']))."))";
 			}
-			if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status'] > 0)) {
+			if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status']) > 0) {
 				$sqlwhere[] = " (t.fk_stcomm IN (".$this->db->sanitize(implode(',', $arrayquery['cust_comm_status']))."))";
 			}
 			if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status']) > 0) {
@@ -805,7 +816,7 @@ class AdvanceTargetingMailing extends CommonObject
 					if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust']) > 0) {
 						$sqlwhere[] = " (ts.client IN (".$this->db->sanitize(implode(',', $arrayquery['cust_typecust']))."))";
 					}
-					if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status'] > 0)) {
+					if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status']) > 0) {
 						$sqlwhere[] = " (ts.fk_stcomm IN (".$this->db->sanitize(implode(',', $arrayquery['cust_comm_status']))."))";
 					}
 					if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status']) > 0) {

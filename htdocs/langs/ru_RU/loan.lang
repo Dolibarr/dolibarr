@@ -24,11 +24,11 @@ FinancialCommitment=Финансовые обязательства
 InterestAmount=Доля капитала
 CapitalRemain=Остается капитал
 TermPaidAllreadyPaid = Этот срок уже оплачен
-CantUseScheduleWithLoanStartedToPaid = Невозможно использовать планировщик для займа с начатым платежом
+CantUseScheduleWithLoanStartedToPaid = Не удается сгенерировать временную шкалу для кредита с начатым платежом
 CantModifyInterestIfScheduleIsUsed = Вы не можете изменить интерес, если используете расписание
 # Admin
 ConfigLoan=Настройка модуля займов
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Бухгалтерский учет капитала по умолчанию
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Учет процентов по счету по умолчанию
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Страхование бухгалтерского счета по умолчанию
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Счет (из плана счетов), который будет использоваться по умолчанию для капитала (модуль ссуды)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Счет (из Плана счетов), используемый по умолчанию для начисления процентов (Модуль ссуды)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Счет (из Плана счетов), который будет использоваться по умолчанию для страхования (модуль Кредит)
 CreateCalcSchedule=Изменить финансовое обязательство

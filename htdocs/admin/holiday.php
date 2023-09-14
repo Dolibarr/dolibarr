@@ -24,6 +24,7 @@
  *	\brief      Setup page of module Contracts
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -57,9 +58,9 @@ if (empty($conf->global->HOLIDAY_ADDON)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstholiday', 'alpha');
+	$maskconst = GETPOST('maskconstholiday', 'aZ09');
 	$maskvalue = GETPOST('maskholiday', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -141,7 +142,7 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
+	if (!($res1 > 0) || !($res2 > 0)) {
 		$error++;
 	}
 
@@ -212,7 +213,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model

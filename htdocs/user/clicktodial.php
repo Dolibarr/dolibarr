@@ -22,6 +22,7 @@
  *       \brief      Page for Click to dial datas
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
@@ -36,12 +37,13 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard', 'globalcard'));
+
 
 /*
  * Actions
@@ -104,7 +106,14 @@ if ($id > 0) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -121,7 +130,7 @@ if ($id > 0) {
 				$langs->load("errors");
 				print '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</span>';
 			} else {
-				print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
+				print '<br>'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("KeepEmptyToUseDefault").'</span>:<br>'.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
 			}
 			print '</td>';
 			print '</tr>';
@@ -148,7 +157,7 @@ if ($id > 0) {
 		print '<table class="border centpercent tableforfield">';
 
 		if (!empty($user->admin)) {
-			print '<tr><td class="titlefield">ClickToDial URL</td>';
+			print '<tr><td class="">ClickToDial URL</td>';
 			print '<td class="valeur">';
 			if (!empty($conf->global->CLICKTODIAL_URL)) {
 				$url = $conf->global->CLICKTODIAL_URL;
@@ -166,7 +175,7 @@ if ($id > 0) {
 			print '</tr>';
 		}
 
-		print '<tr><td class="titlefield">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+		print '<tr><td class="">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
 		print '<td class="valeur">'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'</td>';
 		print "</tr>";
 

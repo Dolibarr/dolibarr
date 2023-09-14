@@ -22,6 +22,7 @@
  *	\brief      Page des marges par client
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -30,20 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
-
-// Security check
-$socid = GETPOST('socid', 'int');
-$TSelectedProducts = GETPOST('products', 'array');
-$TSelectedCats = GETPOST('categories', 'array');
-
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', '', '');
-$result = restrictedArea($user, 'margins');
-
-
-$mesg = '';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -64,17 +51,28 @@ if (!$sortorder) {
 }
 
 $startdate = $enddate = '';
-
-if (!empty($_POST['startdatemonth'])) {
-	$startdate = dol_mktime(0, 0, 0, $_POST['startdatemonth'], $_POST['startdateday'], $_POST['startdateyear']);
+if (GETPOST('startdatemonth')) {
+	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'),  GETPOST('startdateday', 'int'),  GETPOST('startdateyear', 'int'));
 }
-if (!empty($_POST['enddatemonth'])) {
-	$enddate = dol_mktime(23, 59, 59, $_POST['enddatemonth'], $_POST['enddateday'], $_POST['enddateyear']);
+if (GETPOST('enddatemonth')) {
+	$enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear'));
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
+
+// Security check
+$socid = GETPOST('socid', 'int');
+$TSelectedProducts = GETPOST('products', 'array');
+$TSelectedCats = GETPOST('categories', 'array');
+
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', '', '');
+$result = restrictedArea($user, 'margins');
+
 
 /*
  * View
@@ -91,7 +89,8 @@ $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $titre = $langs->trans("Margins");
 $picto = 'margin';
 
@@ -111,7 +110,8 @@ if ($socid > 0) {
 	if ($soc->client) {
 		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td class="maxwidthonsmartphone" colspan="4">';
-		print img_picto('', 'company').$form->select_company($socid, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+		$filter = '(client:IN:1,3)';
+		print img_picto('', 'company').$form->select_company($socid, 'socid', $filter, 1, 0, 0);
 		print '</td></tr>';
 
 		$client = true;
@@ -125,7 +125,7 @@ if ($socid > 0) {
 } else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print img_picto('', 'company').$form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+	print img_picto('', 'company').$form->select_company(null, 'socid', '((client:=:1) OR (client:=:3))', 1, 0, 0);
 	print '</td></tr>';
 }
 
@@ -158,12 +158,12 @@ print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
+$TCats = $form->select_all_categories('product', array(), '', 64, 0, 1);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
+print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
 print '</tr>';
 
@@ -188,7 +188,7 @@ print '<table class="border centpercent">';
 
 // Total Margin
 print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
-print '<span id="totalMargin"></span>'; // set by jquery (see below)
+print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol($conf->currency).'</span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate
@@ -216,12 +216,14 @@ $invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABAND
 $sql = "SELECT";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 if ($client) {
-	$sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut as statut,";
+	$sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.type, f.fk_statut as statut,";
 }
 $sql .= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not, your database may be corrupted, you can update this)
-$sql .= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1 * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
-$sql .= " sum(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
+$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
+$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -263,13 +265,37 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 if ($client) {
-	$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut";
+	$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.type, f.fk_statut";
 } else {
 	$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client";
 }
 $sql .= $db->order($sortfield, $sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
+
+$param = '&socid='.((int) $socid);
+if (GETPOST('startdatemonth', 'int')) {
+	$param .= '&startdateyear='.GETPOST('startdateyear', 'int');
+	$param .= '&startdatemonth='.GETPOST('startdatemonth', 'int');
+	$param .= '&startdateday='.GETPOST('startdateday', 'int');
+}
+if (GETPOST('enddatemonth', 'int')) {
+	$param .= '&enddateyear='.GETPOST('enddateyear', 'int');
+	$param .= '&enddatemonth='.GETPOST('enddatemonth', 'int');
+	$param .= '&enddateday='.GETPOST('enddateday', 'int');
+}
+$listofproducts = GETPOST('products', 'array:int');
+if (is_array($listofproducts)) {
+	foreach ($listofproducts as $val) {
+		$param .= '&products[]='.$val;
+	}
+}
+$listofcateg = GETPOST('categories', 'array:int');
+if (is_array($listofcateg)) {
+	foreach ($listofcateg as $val) {
+		$param .= '&categories[]='.$val;
+	}
+}
 
 dol_syslog('margin::customerMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
@@ -293,19 +319,19 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	if (!empty($client)) {
-		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
-		print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;socid=".$socid, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center"', $sortfield, $sortorder);
 	} else {
-		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
+		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	}
-	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
-		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
-		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	}
 	print "</tr>\n";
 
@@ -330,9 +356,12 @@ if ($result) {
 
 			print '<tr class="oddeven">';
 			if ($client) {
-				print '<td>';
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
+				$invoicestatic->statut = $objp->statut;
+				$invoicestatic->type = $objp->type;
+
+				print '<td>';
 				print $invoicestatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="center">';
@@ -341,6 +370,7 @@ if ($result) {
 				$companystatic->id = $objp->socid;
 				$companystatic->name = $objp->name;
 				$companystatic->client = $objp->client;
+
 				print '<td>'.$companystatic->getNomUrl(1, 'margin').'</td>';
 			}
 
@@ -377,7 +407,7 @@ if ($result) {
 
 	print '<tr class="liste_total">';
 	if ($client) {
-		print '<td colspan=2>';
+		print '<td colspan="2">';
 	} else {
 		print '<td>';
 	}

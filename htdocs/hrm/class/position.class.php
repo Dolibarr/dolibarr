@@ -105,17 +105,17 @@ class Position extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		//'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
+		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'isModEnabled("contract")', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0),
-		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
-		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>51, 'notnull'=>1, 'visible'=>1,),
-		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>52, 'notnull'=>0, 'visible'=>1,),
-		'abort_comment' => array('type'=>'varchar(255)', 'label'=>'AbandonmentComment', 'enabled'=>'1', 'position'=>502, 'notnull'=>0, 'visible'=>1,),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>0,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>0,),
+		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
+		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>101, 'notnull'=>1, 'visible'=>1,),
+		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>1,),
+		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>3,),
+		'abort_comment' => array('type'=>'varchar(255)', 'label'=>'AbandonmentComment', 'enabled'=>'getDolGlobalInt("HRM_JOB_POSITON_ENDING_COMMENT")', 'position'=>502, 'notnull'=>0, 'visible'=>1,),
+		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>151, 'notnull'=>0, 'visible'=>0,),
+		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>152, 'notnull'=>0, 'visible'=>0,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 	);
@@ -188,7 +188,7 @@ class Position extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			//$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -385,7 +385,7 @@ class Position extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN (' . getEntity($this->table_element) . ')';
+			$sql .= ' WHERE t.entity IN (' . getEntity($this->element) . ')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
@@ -395,10 +395,10 @@ class Position extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key . '=' . $value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key . ' = \'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
+				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+					$sqlwhere[] = $key . ' = \'' . $this->db->idate($value) . '\'';
 				} elseif (strpos($value, '%') === false) {
 					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($this->db->escape($value)) . ')';
 				} else {
@@ -507,8 +507,8 @@ class Position extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->position->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->position->position_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->position->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->position->position_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -626,8 +626,8 @@ class Position extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -650,8 +650,8 @@ class Position extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -674,8 +674,8 @@ class Position extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -687,12 +687,12 @@ class Position extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 * @param int $withpicto Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 * @param string $option On what the link point to ('nolink', ...)
-	 * @param int $notooltip 1=Disable tooltip
-	 * @param string $morecss Add more css on link
-	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @return    string                              String with URL
+	 * @param 	int 		$withpicto 				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 * @param 	string 		$option 				On what the link point to ('nolink', ...)
+	 * @param 	int 		$notooltip 				1=Disable tooltip
+	 * @param 	string 		$morecss 				Add more css on link
+	 * @param 	int 		$save_lastsearch_value 	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return  string      						String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -716,7 +716,7 @@ class Position extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -766,7 +766,7 @@ class Position extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div>';
@@ -971,8 +971,8 @@ class Position extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql' => 'fk_position = ' . $this->id));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1036,6 +1036,8 @@ class Position extends CommonObject
 	}
 
 	/**
+	 * getForUser
+	 *
 	 * @param int $userid id of user we need to get position list
 	 * @return array|int of positions of user with for each of them the job fetched into that array
 	 */
@@ -1049,7 +1051,7 @@ class Position extends CommonObject
 	}
 
 	/**
-	 *  Create a document onto disk according to template module.
+	 * Create a document onto disk according to template module.
 	 *
 	 * @param string $modele Force template to use ('' to not force)
 	 * @param Translate $outputlangs objet lang a utiliser pour traduction
@@ -1115,6 +1117,44 @@ class Position extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $selected, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (!empty($arraydata['user'])) {
+			$return .= '<br><span class="info-box-label ">'.$arraydata['user'].'</span>';
+		}
+		if (!empty($arraydata['job'])) {
+			//$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("JobProfile").'</span> : ';
+			$return .= '<br><span class="info-box-label ">'.$arraydata['job'].'</span>';
+		}
+		if (property_exists($this, 'date_start') && property_exists($this, 'date_end')) {
+			$return .= '<br><div class ="margintoponly"><span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_start), 'day').'</span>';
+			$return .= ' - <span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_end), 'day').'</span></div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 

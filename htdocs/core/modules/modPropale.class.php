@@ -68,7 +68,7 @@ class modPropale extends DolibarrModules
 		$this->depends = array("modSociete"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->config_page_url = array("propal.php");
 		$this->langfiles = array("propal", "bills", "companies", "deliveries", "products");
 
@@ -78,7 +78,7 @@ class modPropale extends DolibarrModules
 
 		$this->const[$r][0] = "PROPALE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "azur";
+		$this->const[$r][2] = "cyan";
 		$this->const[$r][3] = 'Name of the proposal generation manager in PDF format';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -100,6 +100,13 @@ class modPropale extends DolibarrModules
 		$this->const[$r][0] = "PROPALE_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/proposals";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PROPOSAL_ALLOW_ONLINESIGN";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -191,37 +198,46 @@ class modPropale extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'co.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_client'=>"RefCustomer",
 			'c.fk_soc'=>"IdCompany", 'c.datec'=>"DateCreation", 'c.datep'=>"DatePropal", 'c.fin_validite'=>"DateEndPropal",
-			'c.total_ht'=>"TotalHT", 'c.total_ttc'=>"TotalTTC", 'c.fk_statut'=>'Status', 'c.note_public'=>"Note", 'c.date_livraison'=>'DeliveryDate',
-			'c.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin', 'c.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin',
-			'pj.ref'=>'ProjectRef', 'cd.rowid'=>'LineId', 'cd.description'=>"LineDescription", 'cd.product_type'=>'TypeOfLineServiceOrProduct',
-			'cd.tva_tx'=>"LineVATRate", 'cd.qty'=>"LineQty", 'cd.total_ht'=>"LineTotalHT", 'cd.total_tva'=>"LineTotalVAT", 'cd.total_ttc'=>"LineTotalTTC",
-			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
-		);
-		if (!empty($conf->multicurrency->enabled)) {
+			'c.total_ht'=>"TotalHT", 'c.total_ttc'=>"TotalTTC");
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
 			$this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
+		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array(
+			'c.fk_statut'=>'Status', 'c.note_public'=>"NotePublic", 'c.note_private'=>"NotePrivate", 'c.date_livraison'=>'DeliveryDate',
+			'c.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
+			'c.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin'));
+		if (isModEnabled("project")) {
+			$this->export_fields_array[$r]['pj.ref'] = 'ProjectRef';
+		}
+		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array(
+			'cd.rowid'=>'LineId', 'cd.description'=>"LineDescription", 'cd.product_type'=>'TypeOfLineServiceOrProduct',
+			'cd.tva_tx'=>"LineVATRate", 'cd.qty'=>"LineQty", 'cd.total_ht'=>"LineTotalHT", 'cd.total_tva'=>"LineTotalVAT", 'cd.total_ttc'=>"LineTotalTTC",
+		));
+		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array(
+			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
+		));
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('propal')));
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r]['c.entity'] = 'Entity';
 			}
 		}
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.code'=>'Text','s.phone'=>'Text',
 		//	's.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.datec'=>"Date",'c.datep'=>"Date",
-		//	'c.fin_validite'=>"Date",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",
+		//	'c.fin_validite'=>"Date",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.note_private'=>"Text",
 		//	'c.date_livraison'=>'Date','cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",
 		//	'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text'
 		//);
 		$this->export_TypeFields_array[$r] = array(
 			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text',
 			's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_client'=>"Text", 'c.datec'=>"Date", 'c.datep'=>"Date", 'c.fin_validite'=>"Date",
-			'c.total_ht'=>"Numeric", 'c.total_ttc'=>"Numeric", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.date_livraison'=>'Date',
+			'c.total_ht'=>"Numeric", 'c.total_ttc'=>"Numeric", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.note_private'=>"Text", 'c.date_livraison'=>'Date',
 			'pj.ref'=>'Text', 'cd.description'=>"Text", 'cd.product_type'=>'Boolean', 'cd.tva_tx'=>"Numeric", 'cd.qty'=>"Numeric", 'cd.total_ht'=>"Numeric",
 			'cd.total_tva'=>"Numeric", 'cd.total_ttc'=>"Numeric", 'p.ref'=>'Text', 'p.label'=>'Text',
 			'c.entity'=>'List:entity:label:rowid',
@@ -230,7 +246,11 @@ class modPropale extends DolibarrModules
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'co.code'=>'company', 's.phone'=>'company',
 			's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"propal", 'c.ref'=>"propal", 'c.ref_client'=>"propal",
 			'c.fk_soc'=>"propal", 'c.datec'=>"propal", 'c.datep'=>"propal", 'c.fin_validite'=>"propal", 'c.total_ht'=>"propal",
-			'c.total_ttc'=>"propal", 'c.fk_statut'=>"propal", 'c.note_public'=>"propal", 'c.date_livraison'=>"propal", 'pj.ref'=>'project', 'cd.rowid'=>'propal_line',
+			'c.total_ttc'=>"propal", 'c.fk_statut'=>"propal", 'c.note_public'=>"propal", 'c.note_private'=>"propal", 'c.date_livraison'=>"propal",
+			'c.fk_user_author'=>'user', 'uc.login'=>'user',
+			'c.fk_user_valid'=>'user', 'uv.login'=>'user',
+			'pj.ref'=>'project',
+			'cd.rowid'=>'propal_line',
 			'cd.description'=>"propal_line", 'cd.product_type'=>'propal_line', 'cd.tva_tx'=>"propal_line", 'cd.qty'=>"propal_line",
 			'cd.total_ht'=>"propal_line", 'cd.total_tva'=>"propal_line", 'cd.total_ttc'=>"propal_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'
 		);
@@ -296,11 +316,12 @@ class modPropale extends DolibarrModules
 			'c.total_ht' => 'TotalHT',
 			'c.total_ttc' => 'TotalTTC',
 			'c.fk_statut' => 'Status*',
-			'c.note_public' => 'Note',
+			'c.note_public' => 'NotePublic',
+			'c.note_private' => 'NotePrivate',
 			'c.date_livraison' => 'DeliveryDate',
 			'c.fk_user_valid' => 'ValidatedById'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['c.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -333,6 +354,7 @@ class modPropale extends DolibarrModules
 			'c.total_ttc' => '0',
 			'c.fk_statut' => '1',
 			'c.note_public' => '',
+			'c.note_private' => '',
 			'c.date_livraison' => '2020-01-01',
 			'c.fk_user_valid' => '1',
 			'c.multicurrency_code' => '',
@@ -388,7 +410,7 @@ class modPropale extends DolibarrModules
 			'cd.date_end' => 'End Date',
 			'cd.buy_price_ht' => 'LineBuyPriceHT'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['cd.multicurrency_subprice'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['cd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';

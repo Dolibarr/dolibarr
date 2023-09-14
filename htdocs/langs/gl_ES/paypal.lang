@@ -34,4 +34,3 @@ ARollbackWasPerformedOnPostActions=Foi executada unha reversión en todas as acc
 ValidationOfPaymentFailed=A validación do pago Paypal fallou
 CardOwner=Titular da tarxeta
 PayPalBalance=Crédito paypal
-OnlineSubscriptionPaymentLine=Subscrición en liña rexistrada en %s <br> Pago a través de %s <br> Enderezo IP de orixe: %s <br> ID de transacción: %s 

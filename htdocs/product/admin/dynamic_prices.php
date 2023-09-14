@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015	  Ion Agorria		  <ion@agorria.com>
+/* Copyright (C) 2015	    Ion Agorria             <ion@agorria.com>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
  *  \brief		Page for configuring dynamic prices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -182,7 +184,7 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 			print '</tr>';
 		}
 	} else {
-		print '<tr colspan="7"><td><span class="opacitymedium">';
+		print '<tr><td colspan="4"><span class="opacitymedium">';
 		print $langs->trans("None");
 		print '</span></td></tr>';
 	}

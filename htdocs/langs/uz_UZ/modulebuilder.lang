@@ -1,14 +1,16 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Module id
 ModuleBuilderDesc=Ushbu vositadan faqat tajribali foydalanuvchilar yoki ishlab chiquvchilar foydalanishi kerak. U o'z modulingizni yaratish yoki tahrirlash uchun yordamchi dasturlarni taqdim etadi. Muqobil <a href="%s" target="_blank" rel="noopener noreferrer"> qo'lda ishlab chiqish uchun hujjatlar bu yerda </a>.
 EnterNameOfModuleDesc=Bo'sh joy qoldirmasdan yaratish uchun modul/ilova nomini kiriting. So'zlarni ajratish uchun katta harflardan foydalaning (masalan: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Yaratish uchun ob'ekt nomini bo'sh joysiz kiriting. So'zlarni ajratish uchun katta harflardan foydalaning (Masalan: MyObject, Student, Teacher...). CRUD sinf fayli, shuningdek, API fayli, ob'ektni ro'yxatga olish/qo'shish/tahrirlash/o'chirish sahifalari va SQL fayllari yaratiladi.
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
 EnterNameOfDictionaryDesc=Boʻsh joy qoldirmasdan yaratish uchun lugʻat nomini kiriting. So'zlarni ajratish uchun katta harflardan foydalaning (Masalan: MyDico...). Sinf fayli, balki SQL fayli ham yaratiladi.
 ModuleBuilderDesc2=Modullar ishlab chiqarilgan / tahrirlangan yo'l (tashqi modullar uchun birinchi katalog %s da belgilangan): <strong> %s </strong>
 ModuleBuilderDesc3=Yaratilgan / tahrirlanadigan modullar topildi: <strong> %s </strong>
-ModuleBuilderDesc4=<strong> %s </strong> fayli modul katalogining ildizida mavjud bo'lganda modul "tahrirlanadigan" deb topildi
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=Yangi modul
 NewObjectInModulebuilder=Yangi ob'ekt
 NewDictionary=Yangi lug'at
+ModuleName=Module name
 ModuleKey=Modul kaliti
 ObjectKey=Ob'ekt kaliti
 DicKey=Lug'at kaliti
@@ -48,11 +50,14 @@ PathToModulePackage=Modul / dastur paketini zipga yo'naltirish
 PathToModuleDocumentation=Modul / dastur hujjatlari fayliga yo'l (%s)
 SpaceOrSpecialCharAreNotAllowed=Bo'sh joy yoki maxsus belgilarga ruxsat berilmaydi.
 FileNotYetGenerated=Fayl hali yaratilmagan
+GenerateCode=Generate code
 RegenerateClassAndSql=.Class va .sql fayllarini majburiy yangilash
 RegenerateMissingFiles=Yo'qotilgan fayllarni yaratish
 SpecificationFile=Hujjatlar fayli
 LanguageFile=Til uchun fayl
 ObjectProperties=Ob'ekt xususiyatlari
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=<strong> %s </strong> xususiyatini o'chirishni xohlaysizmi? Bu PHP sinfidagi kodni o'zgartiradi, shuningdek ob'ektni jadval ta'rifidan ustunni olib tashlaydi.
 NotNull=NULL emas
 NotNullDesc=1=Ma'lumotlar bazasini NO NULL ga o'rnating, 0=Nul qiymatlarga ruxsat bering, -1=Bo'sh bo'lsa, qiymatni NULLga majburlash orqali null qiymatlarga ruxsat bering ('' yoki 0)
@@ -81,15 +86,16 @@ IsAMeasure=Bu o'lchovdir
 DirScanned=Katalog skanerdan o'tkazildi
 NoTrigger=Trigger yo'q
 NoWidget=Vidjet yo‘q
-GoToApiExplorer=API Explorer
+ApiExplorer=API explorer
 ListOfMenusEntries=Menyu yozuvlari ro'yxati
 ListOfDictionariesEntries=Lug'at yozuvlari ro'yxati
 ListOfPermissionsDefined=Belgilangan ruxsatnomalar ro'yxati
 SeeExamples=Bu erda misollarni ko'ring
-EnabledDesc=Ushbu maydon faol bo'lishi sharti (Masalan: 1 yoki $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=Maydon ko'rinadimi? (Masalan: 0 = Hech qachon ko'rinmaydi, 1 = Ro'yxatda ko'rinadi va shakllarni yaratadi / yangilaydi / ko'radi, 2 = Faqat ro'yxatda ko'rinadi, 3 = Faqat shaklni yaratadi / yangilaydi / ko'radi (ro'yxatda emas), 4 = Ro'yxatda ko'rinadigan va faqat yangilash / ko'rish formasi (yaratilmaydi), 5 = Faqat ro'yxat ko'rinishida ko'rinadigan shakl (yaratilmaydi, yangilanmaydi). <br> <br> manfiy qiymatdan foydalanish maydon sukut bo'yicha ro'yxatda ko'rsatilmaydi, lekin ko'rish uchun tanlanishi mumkin). <br> <br> Bu ibora bo'lishi mumkin, masalan: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> Rights_day>
-DisplayOnPdfDesc=Ushbu maydonni mos keladigan PDF hujjatlarida ko'rsating, siz "Pozitsiya" maydonida pozitsiyani boshqarishingiz mumkin. <br> Bugungi kunda ma'lum compatibles PDF modellari: eratosthene (tartibi), espadon (kema), shimgichni (Xarajatlarni), ko'k (propal / narx), cornas (etkazib beruvchi tartib) <br> <br> <strong> hujjat uchun: </strong> <br> 0 = <br> 1 ko'rsatilmaydi = ko'rsatish <br> 2 = ko'rsatishi faqat bo'sh emas, agar <br> <br> <strong> uchun hujjat bosqichlari: </strong> <br> 0 = emas <br> 1 = keyin Tavsif ustun 4 = namoyish <br> ta'rifi keyin liniyasi Tavsif ustun 3 = namoyish <br> bir ustun ko'rsatiladi ko'rsatilgan faqat bo'sh bo'lmasa tavsif
-DisplayOnPdf=PDF-da ko'rsatish
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=Jami ro'yxatga kiritish uchun maydon qiymatini yig'ish mumkinmi? (Masalan: 1 yoki 0)
 SearchAllDesc=Ushbu maydon tezkor qidiruv vositasidan qidirish uchun foydalaniladimi? (Masalan: 1 yoki 0)
 SpecDefDesc=O'zingizning modulingiz bilan ta'minlamoqchi bo'lgan barcha boshqa hujjatlarni bu erga kiriting. Siz .md yoki undan yaxshiroq, boy .asciidoc sintaksisidan foydalanishingiz mumkin.
@@ -130,26 +136,44 @@ UseSpecificEditorURL = Muayyan tahrirlovchining URL manzilidan foydalaning
 UseSpecificFamily = Muayyan oiladan foydalaning
 UseSpecificAuthor = Muayyan muallifdan foydalaning
 UseSpecificVersion = Muayyan dastlabki versiyadan foydalaning
-IncludeRefGeneration=Ob'ektga havola maxsus raqamlash qoidalari bilan avtomatik ravishda yaratilishi kerak
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
 IncludeRefGenerationHelp=Maxsus raqamlash qoidalaridan foydalangan holda ma'lumotnomani avtomatik ravishda yaratishni boshqarish uchun kod qo'shmoqchi bo'lsangiz, buni belgilang
-IncludeDocGeneration=Ob'ekt uchun shablonlardan ba'zi hujjatlarni yaratmoqchiman
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=Agar buni belgilasangiz, yozuvga "Hujjat yaratish" katagini qo'shish uchun ba'zi kodlar hosil bo'ladi.
-ShowOnCombobox=Kombay qutisiga qiymatni ko'rsating
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=Maslahatlar uchun kalit
 CSSClass=Formani tahrirlash / yaratish uchun CSS
 CSSViewClass=O'qish shakli uchun CSS
 CSSListClass=Ro'yxat uchun CSS
 NotEditable=Tahrirlash mumkin emas
 ForeignKey=Chet el kaliti
-TypeOfFieldsHelp=Maydonlar turi: <br> varchar(99), double(24,8), real, text, html, datetime, timetamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' yozuvni yaratish uchun kombinatsiyadan keyin + tugmasini qo'shamiz degan ma'noni anglatadi <br> 'filtr' bu sql sharti, misol: 'status=1 AND fk_user=__USER_ID__ VA ob'ekt ENT (__SHARED_)'
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Ascii-dan HTML-ga o'zgartiruvchi
 AsciiToPdfConverter=Ascii-dan PDF-ga o'tkazuvchi
 TableNotEmptyDropCanceled=Stol bo'sh emas Drop bekor qilindi.
 ModuleBuilderNotAllowed=Modul yaratuvchisi mavjud, ammo sizning foydalanuvchingizga ruxsat berilmagan.
 ImportExportProfiles=Import va eksport rejimlari
-ValidateModBuilderDesc=Agar siz kiritish yoki yangilash vaqtida maydon mazmunini tekshirish uchun chaqirilayotgan ob'ektning $this->validateField() usuliga ega bo'lishni istasangiz, buni 1 ga o'rnating. Agar tekshirish talab qilinmasa, 0 ni o'rnating.
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
 WarningDatabaseIsNotUpdated=Ogohlantirish: Ma'lumotlar bazasi avtomatik ravishda yangilanmaydi, siz jadvallarni yo'q qilishingiz va jadvallarni qayta yaratish uchun modulni o'chirib qo'yishingiz kerak.
 LinkToParentMenu=Asosiy menyu (fk_xxxxmenu)
 ListOfTabsEntries=Yorliqlar ro'yxati
 TabsDefDesc=Bu yerda modulingiz tomonidan taqdim etilgan yorliqlarni belgilang
 TabsDefDescTooltip=Modul/ilovangiz tomonidan taqdim etilgan yorliqlar <strong> $this->tabs </strong> massivida modul identifikatori faylida aniqlanadi. Siz ushbu faylni qo'lda tahrirlashingiz yoki o'rnatilgan muharriridan foydalanishingiz mumkin.
+BadValueForType=Bad value for type %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object
+PermissionDeletedSuccesfuly=Permission has been successfully removed
+PermissionUpdatedSuccesfuly=Permission has been successfully updated
+PermissionAddedSuccesfuly=Permission has been successfully added
+MenuDeletedSuccessfuly=Menu has been successfully deleted
+MenuAddedSuccessfuly=Menu has been successfully added
+MenuUpdatedSuccessfuly=Menu has been successfully updated
+ApiObjectDeleted=API for object %s has been successfully deleted
+CRUDRead=Read
+CRUDCreateWrite=Create or Update
+FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.

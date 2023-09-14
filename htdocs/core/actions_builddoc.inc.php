@@ -66,13 +66,13 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		$outputlangs = $langs;
 		$newlang = '';
 
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($object->thirdparty->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->thirdparty->default_lang)) {
 			$newlang = $object->thirdparty->default_lang; // for proposal, order, invoice, ...
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($object->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->default_lang)) {
 			$newlang = $object->default_lang; // for thirdparty
 		}
 		if (!empty($newlang)) {

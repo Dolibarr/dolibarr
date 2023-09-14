@@ -4,7 +4,6 @@ SuppliersInvoice=Leverandørfaktura
 SupplierInvoices=Leverandør fakturaer
 ShowSupplierInvoice=Vis leverandørfaktura
 NewSupplier=Ny sælger
-NewSupplierInvoice = Ny leverandørfaktura
 History=Historie
 ListOfSuppliers=Liste over leverandører
 ShowSupplier=Vis sælger

@@ -83,6 +83,8 @@ class Opensurveysondage extends CommonObject
 
 	public $date_fin = '';
 
+	public $date_m;
+
 	/**
 	 * @var int status
 	 */
@@ -112,6 +114,11 @@ class Opensurveysondage extends CommonObject
 	 * @var int		Allow users see others vote
 	 */
 	public $allow_spy;
+
+	/**
+	 * @var array fields
+	 */
+	public $fields = array();
 
 
 	/**
@@ -274,7 +281,7 @@ class Opensurveysondage extends CommonObject
 				$this->sujet = $obj->sujet;
 				$this->fk_user_creat = $obj->fk_user_creat;
 
-				$this->date_m = $this->db->jdate($obj->tls);
+				$this->date_m = $this->db->jdate(!empty($obj->tls) ? $obj->tls : "");
 				$ret = 1;
 			} else {
 				$sondage = ($id ? 'id='.$id : 'sondageid='.$numsurvey);
@@ -419,6 +426,27 @@ class Opensurveysondage extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('opensurvey');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowSurvey").'</u>';
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.$this->title;
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -429,26 +457,32 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
 		}
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowSurvey").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
-		$label .= '<b>'.$langs->trans('Title').':</b> '.$this->title.'<br>';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
 		$url = DOL_URL_ROOT.'/opensurvey/card.php?id='.$this->id;
 
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -461,8 +495,8 @@ class Opensurveysondage extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -473,7 +507,7 @@ class Opensurveysondage extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -571,12 +605,14 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @param string $comment Comment content
 	 * @param string $comment_user Comment author
+	 * @param string $user_ip Comment author IP
 	 * @return boolean False in case of the query fails, true if it was successful
 	 */
-	public function addComment($comment, $comment_user)
+	public function addComment($comment, $comment_user, $user_ip = '')
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
-		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
+		$now = dol_now();
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment, date_creation, ip)";
+		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."','".$this->db->idate($now)."'".($user_ip ? ",'".$this->db->escape($user_ip)."'" : '').")";
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
@@ -628,8 +664,8 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *	Return status label of Order
 	 *
-	 *	@param      int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *	@return     string              Libelle
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *	@return string              	Label if status
 	 */
 	public function getLibStatut($mode)
 	{
@@ -640,9 +676,9 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Return label of status
 	 *
-	 *  @param		int		$status      	  Id statut
-	 *  @param      int		$mode        	  0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return     string					  Label of status
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string					Label of status
 	 */
 	public function LibStatut($status, $mode)
 	{
@@ -685,7 +721,7 @@ class Opensurveysondage extends CommonObject
 	{
 		$result = 0;
 
-		$sql .= " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql .= " WHERE id_sondage = '".$this->db->escape($this->ref)."'";
 
 		$resql = $this->db->query($sql);

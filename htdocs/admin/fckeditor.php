@@ -24,6 +24,7 @@
  *  \brief      Activation page for the FCKeditor module in the other modules
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
@@ -50,24 +51,26 @@ $modules = array(
 	'NOTE_PUBLIC' => 'FCKeditorForNotePublic',
 	'NOTE_PRIVATE' => 'FCKeditorForNotePrivate',
 	'SOCIETE' => 'FCKeditorForCompany',
-	'PRODUCTDESC' => 'FCKeditorForProduct',
+	//'PRODUCTDESC' => 'FCKeditorForProduct',
 	'DETAILS' => 'FCKeditorForProductDetails',
 	'USERSIGN' => 'FCKeditorForUserSignature',
 	'MAILING' => 'FCKeditorForMailing',
 	'MAIL' => 'FCKeditorForMail',
 	'TICKET' => 'FCKeditorForTicket',
+	'SPECIALCHAR' => 'SpecialChar activation',
 );
 // Conditions for the option to be offered
 $conditions = array(
 	'NOTE_PUBLIC' => 1,
 	'NOTE_PRIVATE' => 1,
 	'SOCIETE' => 1,
-	'PRODUCTDESC' => (!empty($conf->product->enabled) || !empty($conf->service->enabled)),
-	'DETAILS' => (isModEnabled('facture') || !empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
+	'PRODUCTDESC' => (isModEnabled("product") || isModEnabled("service")),
+	'DETAILS' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande') || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 	'USERSIGN' => 1,
-	'MAILING' => !empty($conf->mailing->enabled),
-	'MAIL' => (isModEnabled('facture') || !empty($conf->propal->enabled) || !empty($conf->commande->enabled)),
-	'TICKET' => !empty($conf->ticket->enabled),
+	'MAILING' => isModEnabled('mailing'),
+	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
+	'TICKET' => isModEnabled('ticket'),
+	'SPECIALCHAR' => 1,
 );
 // Picto
 $picto = array(
@@ -80,6 +83,7 @@ $picto = array(
 	'MAILING' => 'email',
 	'MAIL' => 'email',
 	'TICKET' => 'ticket',
+	'SPECIALCHAR' => 'generic'
 );
 
 
@@ -91,15 +95,16 @@ $picto = array(
 foreach ($modules as $const => $desc) {
 	if ($action == 'enable_'.strtolower($const)) {
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
+
 		// If fckeditor is active in the product/service description, it is activated in the forms
-		if ($const == 'PRODUCTDESC' && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+		if ($const == 'PRODUCTDESC' && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 			dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
 		}
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	if ($action == 'disable_'.strtolower($const)) {
-		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const, $conf->entity);
+		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "0", 'chaine', 0, '', $conf->entity);
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
@@ -164,9 +169,14 @@ if (empty($conf->use_javascript_ajax)) {
 		$constante = 'FCKEDITOR_ENABLE_'.$const;
 		print '<!-- constant = '.$constante.' -->'."\n";
 		print '<tr class="oddeven">';
-		print '<td width="16">'.img_object("", $picto[$const]).'</td>';
-		print '<td>'.$langs->trans($desc).'</td>';
-		print '<td class="center" width="100">';
+		print '<td class="width20">'.img_object("", $picto[$const]).'</td>';
+		print '<td>';
+		print $langs->trans($desc);
+		if ($const == 'DETAILS') {
+			print '<br><span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>';
+		}
+		print '</td>';
+		print '<td class="center centpercent width100">';
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -184,6 +194,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="page_y" value="">';
 
 	// Skins
 	show_skin(null, 1);
@@ -214,11 +225,12 @@ if (empty($conf->use_javascript_ajax)) {
 		$editor = new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST) ? $conf->global->FCKEDITOR_TEST : 'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
 		$editor->Create();
 	} else {
+		// CKEditor inline enabled with the contenteditable="true"
 		print '<div style="border: 1px solid #888;" contenteditable="true">';
 		print $conf->global->FCKEDITOR_TEST;
 		print '</div>';
 	}
-	print $form->buttonsSaveCancel("Save", '');
+	print $form->buttonsSaveCancel("Save", '', null, 0, 'reposition');
 	print '<div id="divforlog"></div>';
 	print '</form>'."\n";
 

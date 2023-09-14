@@ -584,6 +584,17 @@ begin
 
 	      if browser = 'iexplore.exe' then
 	      begin
+		    if FileExists (pfPath+'/Microsoft/Edge/Application/msedge.exe')  then
+		    begin
+		      if MsgBox(CustomMessage('MicrosoftEdgeDetected'),mbConfirmation,MB_YESNO) = IDYES then
+		      begin
+		        browser := pfPath+'/Microsoft/Edge/Application/msedge.exe';
+		      end;
+		    end;
+		  end;
+
+	      if browser = 'iexplore.exe' then
+	      begin
             if FileExists (pfPath+'/Internet Explorer/iexplore.exe')  then
             begin
                GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, pfPath+'/Internet Explorer', 'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');

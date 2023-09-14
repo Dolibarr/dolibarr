@@ -65,7 +65,7 @@ class modExpenseReport extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		// $this->conflictwith = array("modDeplacement"); // Deactivate for access on old information
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 7); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("companies", "trips");
 
@@ -211,7 +211,7 @@ class modExpenseReport extends DolibarrModules
 			'user_rib.owner_address' => 'user'
 
 		);
-		$this->export_alias_array[$r] = array('d.rowid'=>"idtrip", 'd.type'=>"type", 'd.note_private'=>'note_private', 'd.note_public'=>'note_public', 'u.lastname'=>'name', 'u.firstname'=>'firstname', 'u.login'=>'login');
+		//$this->export_alias_array[$r] = array('d.rowid'=>"idtrip", 'd.type'=>"type", 'd.note_private'=>'note_private', 'd.note_public'=>'note_public', 'u.lastname'=>'name', 'u.firstname'=>'firstname', 'u.login'=>'login');
 		$this->export_dependencies_array[$r] = array('expensereport_line'=>'ed.rowid', 'type_fees'=>'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		$keyforselect = 'expensereport';
@@ -244,6 +244,11 @@ class modExpenseReport extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf;
+
+		$result = $this->_load_tables('/install/mysql/', 'expensereport');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Remove permissions and default values
 		$this->remove($options);

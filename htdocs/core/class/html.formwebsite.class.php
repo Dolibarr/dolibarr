@@ -136,7 +136,7 @@ class FormWebsite
 					} else {
 						print '<option value="'.$obj->code.'">';
 					}
-					print $obj->label;
+					print $langs->trans($obj->label);
 					print '</option>';
 					$i++;
 				}
@@ -231,6 +231,8 @@ class FormWebsite
 	 */
 	public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)
 	{
+		global $conf, $langs;
+
 		$this->num = 0;
 
 		$atleastonepage = (is_array($website->lines) && count($website->lines) > 0);
@@ -239,12 +241,17 @@ class FormWebsite
 		if ($atleastonepage && $action != 'editsource') {
 			$out .= '<select name="'.$htmlname.'" id="'.$htmlname.'" class="maxwidth300'.($morecss ? ' '.$morecss : '').'">';
 		} else {
-			$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'" disabled="disabled">';
+			$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'"'.($action == 'editsource' ? ' disabled="disabled"' : '').'>';
 		}
 
 		if ($showempty || !$atleastonepage) {
-			$out .= '<option value="-1">&nbsp;</option>';
+			$out .= '<option class="optiongrey" value="-1">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>';
 		}
+
+		/*if (!empty($conf->use_javascript_ajax)) {
+			$valueoption = '<span class="classlink">'.img_picto('', 'add', 'class="paddingrightonly"').$langs->trans("AddPage").'</span>';
+			$out .= '<option value="-2" data-html="'.dol_escape_htmltag($valueoption).'">'.$valueoption.'</option>';
+		}*/
 
 		if ($atleastonepage) {
 			if (empty($pageid) && $action != 'createcontainer') {      // Page id is not defined, we try to take one

@@ -14,6 +14,7 @@ ErrorLoginAlreadyExists=A %s bejelentkezés már létezik.
 ErrorGroupAlreadyExists=A %s csoport már létezik.
 ErrorEmailAlreadyExists=A %s e-mail már létezik.
 ErrorRecordNotFound=A rekord nem található.
+ErrorRecordNotFoundShort=Not found
 ErrorFailToCopyFile=Nem sikerült átmásolni a(z) '<b>%s</b> fájlt a '<b>%s</b>' mappába.
 ErrorFailToCopyDir=Nem sikerült átmásolni a '<b>%s</b> könyvtárat a '<b>%s</b>' könyvtárba.
 ErrorFailToRenameFile=Nem sikerült átnevezni a(z) '<b>%s</b> fájlt '<b>%s</b>' névre.
@@ -48,6 +49,7 @@ ErrorBadImageFormat=A képfájl formátuma nem támogatott (a PHP nem támogatja
 ErrorBadDateFormat=A '%s' érték rossz dátumformátumú
 ErrorWrongDate=Nem helyes a dátum!
 ErrorFailedToWriteInDir=Nem sikerült írni a %s könyvtárba
+ErrorFailedToBuildArchive=Failed to build archive file %s
 ErrorFoundBadEmailInFile=Hibás e-mail szintaxist találtunk a fájl %s sorához (példa: %s, email=%s)
 ErrorUserCannotBeDelete=A felhasználó nem törölhető. Talán a Dolibarr entitásokhoz kapcsolódik.
 ErrorFieldsRequired=Néhány kötelező mező üresen maradt.
@@ -76,7 +78,7 @@ ErrorNoValueForCheckBoxType=Kérjük, töltse ki a jelölőnégyzetek listáját
 ErrorNoValueForRadioType=Kérjük, töltse ki a rádiólista értékét
 ErrorBadFormatValueList=A listaérték nem tartalmazhat több vesszőt: <u>%s</u>, de legalább egy kell hozzá: kulcs,érték
 ErrorFieldCanNotContainSpecialCharacters=A <b>%s</b> mező nem tartalmazhat speciális karaktereket.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=A <b>%s</b> mező nem tartalmazhat speciális karaktereket, nagybetűket és nem tartalmazhat csak számokat.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=The field <b>%s</b> must not contain special characters, nor upper case characters, and must start with an alphabetical character (a-z)
 ErrorFieldMustHaveXChar=A <b>%s</b> mezőnek legalább %s karakterből kell állnia.
 ErrorNoAccountancyModuleLoaded=Nincs aktiválva könyvelési modul
 ErrorExportDuplicateProfil=Ez a profilnév már létezik ehhez az exportkészlethez.
@@ -92,11 +94,12 @@ ErrorModuleRequireJavascript=A szolgáltatás működéséhez a JavaScriptet nem
 ErrorPasswordsMustMatch=Mindkét beírt jelszónak meg kell egyeznie egymással
 ErrorContactEMail=Technikai hiba történt. Kérjük, forduljon a rendszergazdához a következő e-mail címre: <b>%s</b>, és adja meg üzenetében a <b>%s</b> hibakódot, vagy adja hozzá az oldal képernyőpéldányát.
 ErrorWrongValueForField=Mező: <b>%s</b>: '<b>%s</b>' nem egyezik a <b>%s</b> reguláris kifejezéssel
+ErrorHtmlInjectionForField=<b> %s </b> mező : Az ' <b> %s a09a4b739f17f értéket nem tartalmazó
 ErrorFieldValueNotIn=Mező: <b>%s</b>: "<b>%s</b>" nem található a <b>%s</b>/<b>%s</b> mezőben
 ErrorFieldRefNotIn=Mező: <b>%s</b>: '<b>%s</b>' nem <b>%s</b> létező hivatkozás
+ErrorMultipleRecordFoundFromRef=Several record found when searching from ref <b>%s</b>. No way to know which ID to use.
 ErrorsOnXLines=%s hiba található
 ErrorFileIsInfectedWithAVirus=A víruskereső program nem tudta ellenőrizni a fájlt (lehet, hogy a fájlt vírus fertőzte meg)
-ErrorSpecialCharNotAllowedForField=Speciális karakterek nem engedélyezettek a "%s" mezőben
 ErrorNumRefModel=Létezik egy hivatkozás az adatbázisban (%s), és nem kompatibilis ezzel a számozási szabállyal. A modul aktiválásához távolítsa el a rekordot vagy az átnevezett hivatkozást.
 ErrorQtyTooLowForThisSupplier=A mennyiség túl alacsony ehhez a szállítóhoz, vagy ennek a szállítónak nincs ára meghatározva ehhez a termékhez
 ErrorOrdersNotCreatedQtyTooLow=Néhány rendelés nem jött létre a túl alacsony mennyiség miatt
@@ -241,6 +244,7 @@ ErrorObjectMustHaveStatusActiveToBeDisabled=A letiltáshoz az objektumok állapo
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Az objektumok állapotának 'Piszkozat' vagy 'Letiltva' állapotúnak kell lennie az engedélyezéshez
 ErrorNoFieldWithAttributeShowoncombobox=A „%s” objektum definíciójában egyetlen mező sem rendelkezik „showoncombobox” tulajdonsággal. Nem lehet megmutatni a kombolistát.
 ErrorFieldRequiredForProduct=A '%s' mező kitöltése kötelező a(z) %s termékhez
+AlreadyTooMuchPostOnThisIPAdress=You have already posted too much on this IP address.
 ProblemIsInSetupOfTerminal=Probléma a %s terminál beállításában.
 ErrorAddAtLeastOneLineFirst=Először adjon hozzá legalább egy sort
 ErrorRecordAlreadyInAccountingDeletionNotPossible=Hiba, a rekord már átkerült a könyvelésbe, a törlés nem lehetséges.
@@ -270,14 +274,14 @@ ErrorYouMustFirstSetupYourChartOfAccount=Először be kell állítania a számla
 ErrorFailedToFindEmailTemplate=Nem sikerült megtalálni a %s kódnevű sablont
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=A szolgáltatás időtartama nincs meghatározva. Nincs mód az óraárak kiszámítására.
 ErrorActionCommPropertyUserowneridNotDefined=A felhasználó tulajdonosa kötelező
-ErrorActionCommBadType=A kiválasztott eseménytípus (azonosító: %n, kód: %s) nem létezik az Eseménytípus szótárban
+ErrorActionCommBadType=A kiválasztott eseménytípus (azonosító: %s, kód: %s) nem létezik az Eseménytípus szótárban
 CheckVersionFail=A verzióellenőrzés sikertelen
 ErrorWrongFileName=A fájl nevében nem lehet __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Nem szerepel a Fizetési feltételek szótárban, kérjük módosítsa.
 ErrorIsNotADraft=%s nem piszkozat
 ErrorExecIdFailed=Nem lehet végrehajtani az "id" parancsot
-ErrorBadCharIntoLoginName=Jogosulatlan karakter a bejelentkezési névben
-ErrorRequestTooLarge=Hiba, a kérés túl nagy
+ErrorBadCharIntoLoginName=Unauthorized character in the field %s
+ErrorRequestTooLarge=Error, request too large or session expired
 ErrorNotApproverForHoliday=Nem Ön az %s szabadság jóváhagyója
 ErrorAttributeIsUsedIntoProduct=Ez az attribútum egy vagy több termékváltozatban használatos
 ErrorAttributeValueIsUsedIntoProduct=Ez az attribútumérték egy vagy több termékváltozatban használatos
@@ -285,13 +289,25 @@ ErrorPaymentInBothCurrency=Hiba, minden összeget ugyanabba az oszlopba kell be�
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Ön %s pénznemben próbálja kifizetni a számlákat %s pénznemű számláról
 ErrorInvoiceLoadThirdParty=Nem lehet betölteni harmadik féltől származó objektumot az „%s” számlához
 ErrorInvoiceLoadThirdPartyKey=Harmadik féltől származó „%s” kulcs nincs beállítva az „%s” számlához
-ErrorDeleteLineNotAllowedByObjectStatus=A sor törlését az objektum tényleges állapota nem teszi lehetővé
+ErrorDeleteLineNotAllowedByObjectStatus=A sor törlését az objektum aktuális állapota nem teszi lehetővé
 ErrorAjaxRequestFailed=Kérés sikertelen
+ErrorThirpdartyOrMemberidIsMandatory=Harmadik fél vagy partnerségi tag kötelező
+ErrorFailedToWriteInTempDirectory=Nem sikerült írni a temp könyvtárba
+ErrorQuantityIsLimitedTo=A mennyiség korlátozott: %s
+ErrorFailedToLoadThirdParty=Nem sikerült harmadik fél megtalálása/betöltése innen: id=%s, email=%s, name=%s
+ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account
+ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this thirdparty (or set to a value deleted on Stripe side). Create (or re-attach) it first.
+ErrorCharPlusNotSupportedByImapForSearch=IMAP search is not able to search into sender or recipient for a string containing the character +
+ErrorTableNotFound=Table <b>%s</b> not found
+ErrorValueForTooLow=Value for <b>%s</b> is too low
+ErrorValueCantBeNull=Value for <b>%s</b> can't be null
+ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
+ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=A PHP paraméter upload_max_filesize (%s) magasabb, mint a PHP post_max_size (%s) paramétere. Ez nem következetes beállítás.
 WarningPasswordSetWithNoAccount=Jelszó lett beállítva ehhez a taghoz. Felhasználói fiók azonban nem jött létre. Tehát ez a jelszó tárolva van, de nem használható a Dolibarr-ba való bejelentkezéshez. Külső modul/interfész használhatja, de ha nem kell bejelentkezési nevet vagy jelszót megadnia egy taghoz, akkor letilthatja a "Bejelentkezés kezelése minden taghoz" opciót a Tagmodul beállításainál. Ha kezelnie kell a bejelentkezést, de nincs szüksége jelszóra, a figyelmeztetés elkerülése érdekében hagyja üresen ezt a mezőt. Megjegyzés: Az e-mail bejelentkezésként is használható, ha a tag egy felhasználóhoz kapcsolódik.
-WarningMandatorySetupNotComplete=Kattintson ide a kötelező paraméterek beállításához
+WarningMandatorySetupNotComplete=Kattintson ide a fő paraméterek beállításához
 WarningEnableYourModulesApplications=Kattintson ide a modulok és alkalmazások engedélyezéséhez
 WarningSafeModeOnCheckExecDir=Figyelem, a PHP <b>safe_mode</b> opciója be van kapcsolva, ezért a parancsot a <b>safe_mode_exec_dir</b> php paraméter által deklarált könyvtárban kell tárolni.
 WarningBookmarkAlreadyExists=Már létezik egy könyvjelző ezzel a címmel vagy ezzel a céllal (URL).
@@ -300,7 +316,7 @@ WarningConfFileMustBeReadOnly=Figyelem, a konfigurációs fájlt (<b>htdocs/conf
 WarningsOnXLines=Figyelmeztetések <b>%s</b> forrásrekordon
 WarningNoDocumentModelActivated=Nincs modell a dokumentum generálásához aktiválva. A rendszer alapértelmezés szerint egy modellt választ, amíg nem ellenőrzi a modul beállítását.
 WarningLockFileDoesNotExists=Figyelem! A telepítés befejezése után le kell tiltania a telepítő/migrációs eszközöket egy <b>install.lock</b> fájl hozzáadásával a <b>%s</b> könyvtárba. A fájl létrehozásának elhagyása súlyos biztonsági kockázatot jelent.
-WarningUntilDirRemoved=Minden biztonsági figyelmeztetés (csak az adminisztrátorok számára látható) aktív marad mindaddig, amíg a biztonsági rés fennáll (vagy amíg az állandó MAIN_REMOVE_INSTALL_WARNING hozzáadásra kerül a Beállítás->Egyéb menüben).
+WarningUntilDirRemoved=This security warning will remain active as long as the vulnerability is present.
 WarningCloseAlways=Figyelem, a bezárás akkor is megtörténik, ha a forrás és a célelemek mennyisége eltér. Óvatosan engedélyezze ezt a funkciót.
 WarningUsingThisBoxSlowDown=Figyelem, ennek a doboznak a használata komolyan lelassítja az összes olyan oldalt, amelyen a doboz látható.
 WarningClickToDialUserSetupNotComplete=A ClickToDial információ beállítása a felhasználó számára nem fejeződött be (lásd a ClickToDial fület a felhasználói kártyán).
@@ -321,12 +337,10 @@ WarningCreateSubAccounts=Figyelem, nem hozhat létre közvetlenül alfiókot, l�
 WarningAvailableOnlyForHTTPSServers=Csak HTTPS biztonságos kapcsolat használata esetén érhető el.
 WarningModuleXDisabledSoYouMayMissEventHere=A %s modul nincs engedélyezve. Így sok eseményről lemaradhat itt.
 WarningPaypalPaymentNotCompatibleWithStrict=A 'Strict' érték miatt az online fizetési funkciók nem működnek megfelelően. Használja helyette a „Lax” szót.
+WarningThemeForcedTo=Figyelmeztetés, a témát a MAIN_FORCETHEME rejtett állandó az <b> %s </b> értékre kényszerítette
+WarningPagesWillBeDeleted=Figyelmeztetés, ezzel a webhely összes meglévő oldalát/tárolóját is törli. Előtte érdemes exportálnia webhelyét, hogy legyen biztonsági másolata a későbbi újra importáláshoz.
+WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation is disabled when option to decrease stock is set on "Invoice validation".
 
-<<<<<<< FEJ
-=======
-<<<<<<< FEJ
-<<<<<<< FEJ
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
 # Validate
 RequireValidValue = Az érték nem érvényes
 RequireAtLeastXString = Legalább %s karakter szükséges
@@ -347,12 +361,3 @@ BadSetupOfField = Hiba a mező rossz beállításában
 BadSetupOfFieldClassNotFoundForValidation = Hiba a mező rossz beállításában: Az osztály nem található az ellenőrzéshez
 BadSetupOfFieldFileNotFound = Hiba a mező rossz beállításában: A fájl nem található a felvételhez
 BadSetupOfFieldFetchNotCallable = Hiba a mező rossz beállításában: A lekérés nem hívható az osztályban
-<<<<<<< FEJ
-=======
-=======
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága

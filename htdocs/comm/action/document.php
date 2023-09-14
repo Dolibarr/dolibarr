@@ -26,6 +26,7 @@
  *       \brief      Page of documents linked to actions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -62,6 +63,9 @@ if ($id > 0) {
 	$object->fetch_thirdparty();
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('actioncard', 'globalcard'));
+
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -88,7 +92,8 @@ if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
-$permissiontoadd = $user->rights->agenda->myactions->read; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
+$permissiontoadd = $usercancreate;
 
 
 /*
@@ -104,7 +109,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
 
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
@@ -153,25 +158,39 @@ if ($object->id > 0) {
 	$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
 	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
+	// Add more views from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+	if (empty($reshook)) {
+		$out .= $hookmanager->resPrint;
+	} elseif ($reshook > 1) {
+		$out = $hookmanager->resPrint;
+	}
+
 	$linkback .= $out;
 
 	$morehtmlref = '<div class="refidno">';
 	// Thirdparty
 	//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
-		//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		$morehtmlref .= $langs->trans('Project').': ';
-		if (!empty($object->fk_project)) {
-			$proj = new Project($db);
-			$proj->fetch($object->fk_project);
-			$morehtmlref .= ' : '.$proj->getNomUrl(1);
-			if ($proj->title) {
-				$morehtmlref .= ' - '.$proj->title;
+		//$morehtmlref .= '<br>';
+		if (0) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+			if ($action != 'classify') {
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
-			$morehtmlref .= '';
+			if (!empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= $proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+				}
+			}
 		}
 	}
 	$morehtmlref .= '</div>';
@@ -286,7 +305,7 @@ if ($object->id > 0) {
 
 
 	$modulepart = 'actions';
-	$permissiontoadd = $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create;
+	$permissiontoadd = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

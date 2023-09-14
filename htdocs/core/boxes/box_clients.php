@@ -21,21 +21,21 @@
 /**
  *	\file       htdocs/core/boxes/box_clients.php
  *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\brief      Module for generating box to show last customers
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last thirdparties
+ * Class to manage the box to show last customers
  */
 class box_clients extends ModeleBoxes
 {
-	public $boxcode = "lastcustomers";
-	public $boximg = "object_company";
+	public $boxcode  = "lastcustomers";
+	public $boximg   = "object_company";
 	public $boxlabel = "BoxLastCustomers";
-	public $depends = array("societe");
+	public $depends  = array("societe");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -65,7 +65,7 @@ class box_clients extends ModeleBoxes
 			$this->enabled = 0; // disabled by this option
 		}
 
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
 	}
 
 	/**
@@ -86,7 +86,7 @@ class box_clients extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
 
-		if ($user->rights->societe->lire) {
+		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";

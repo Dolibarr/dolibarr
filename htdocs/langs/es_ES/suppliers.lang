@@ -4,7 +4,6 @@ SuppliersInvoice=Factura proveedor
 SupplierInvoices=Facturas proveedor
 ShowSupplierInvoice=Ver factura de proveedor
 NewSupplier=Nuevo proveedor
-NewSupplierInvoice = Nueva factura de proveedor
 History=Histórico
 ListOfSuppliers=Listado de proveedores
 ShowSupplier=Mostrar proveedor

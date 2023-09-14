@@ -24,6 +24,7 @@
  *		\brief      File of main public page for project module to catch lead
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -37,6 +38,8 @@ $langs->loadLangs(array("admin", "members"));
 $action = GETPOST('action', 'aZ09');
 
 $defaultoppstatus = getDolGlobalInt('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
+
+$visibility = GETPOST('PROJET_VISIBILITY', 'alpha');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -60,6 +63,7 @@ if ($action == 'setPROJECT_ENABLE_PUBLIC') {
 if ($action == 'update') {
 	$public = GETPOST('PROJECT_ENABLE_PUBLIC');
 	$defaultoppstatus = GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int');
+	$res = dolibarr_set_const($db, "PROJET_VISIBILITY", $visibility, 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "PROJECT_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD", $defaultoppstatus, 'chaine', 0, '', $conf->entity);
@@ -141,6 +145,15 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print $formproject->selectOpportunityStatus('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', GETPOSTISSET('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') ? GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int') : $defaultoppstatus, 1, 0, 0, 0, '', 0, 1);
 	print "</td></tr>\n";
 
+
+	// project visibility
+	$arrayofchoices = array('0' => $langs->trans("AssignedContacts"), '1' => $langs->trans("Everyone"));
+	print '<tr class="oddeven drag"><td>';
+	print $langs->trans("Visibility");
+	print '</td><td class="right">';
+	print $form->selectarray('PROJET_VISIBILITY', $arrayofchoices, getDolGlobalInt('PROJET_VISIBILITY'), 0);
+	print "</td></tr>\n";
+
 	print '</table>';
 	print '</div>';
 
@@ -158,7 +171,7 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';

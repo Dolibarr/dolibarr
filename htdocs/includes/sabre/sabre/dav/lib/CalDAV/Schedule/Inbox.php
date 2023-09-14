@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Schedule;
 
 use Sabre\CalDAV;
@@ -9,41 +11,39 @@ use Sabre\DAVACL;
 use Sabre\VObject;
 
 /**
- * The CalDAV scheduling inbox
+ * The CalDAV scheduling inbox.
  *
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Inbox extends DAV\Collection implements IInbox {
-
+class Inbox extends DAV\Collection implements IInbox
+{
     use DAVACL\ACLTrait;
 
     /**
-     * CalDAV backend
+     * CalDAV backend.
      *
      * @var Backend\BackendInterface
      */
     protected $caldavBackend;
 
     /**
-     * The principal Uri
+     * The principal Uri.
      *
      * @var string
      */
     protected $principalUri;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param Backend\SchedulingSupport $caldavBackend
      * @param string $principalUri
      */
-    function __construct(Backend\SchedulingSupport $caldavBackend, $principalUri) {
-
+    public function __construct(Backend\SchedulingSupport $caldavBackend, $principalUri)
+    {
         $this->caldavBackend = $caldavBackend;
         $this->principalUri = $principalUri;
-
     }
 
     /**
@@ -53,19 +53,18 @@ class Inbox extends DAV\Collection implements IInbox {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return 'inbox';
-
     }
 
     /**
-     * Returns an array with all the child nodes
+     * Returns an array with all the child nodes.
      *
      * @return \Sabre\DAV\INode[]
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         $objs = $this->caldavBackend->getSchedulingObjects($this->principalUri);
         $children = [];
         foreach ($objs as $obj) {
@@ -73,12 +72,12 @@ class Inbox extends DAV\Collection implements IInbox {
             $obj['principaluri'] = $this->principalUri;
             $children[] = new SchedulingObject($this->caldavBackend, $obj);
         }
-        return $children;
 
+        return $children;
     }
 
     /**
-     * Creates a new file in the directory
+     * Creates a new file in the directory.
      *
      * Data will either be supplied as a stream resource, or in certain cases
      * as a string. Keep in mind that you may have to support either.
@@ -97,27 +96,26 @@ class Inbox extends DAV\Collection implements IInbox {
      * return the same contents of what was submitted here, you are strongly
      * recommended to omit the ETag.
      *
-     * @param string $name Name of the file
+     * @param string          $name Name of the file
      * @param resource|string $data Initial payload
-     * @return null|string
+     *
+     * @return string|null
      */
-    function createFile($name, $data = null) {
-
+    public function createFile($name, $data = null)
+    {
         $this->caldavBackend->createSchedulingObject($this->principalUri, $name, $data);
-
     }
 
     /**
-     * Returns the owner principal
+     * Returns the owner principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->principalUri;
-
     }
 
     /**
@@ -132,8 +130,8 @@ class Inbox extends DAV\Collection implements IInbox {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return [
             [
                 'privilege' => '{DAV:}read',
@@ -152,16 +150,15 @@ class Inbox extends DAV\Collection implements IInbox {
             ],
             [
                 'privilege' => '{DAV:}unbind',
-                'principal' => $this->getOwner() . '/calendar-proxy-write',
+                'principal' => $this->getOwner().'/calendar-proxy-write',
                 'protected' => true,
             ],
             [
-                'privilege' => '{' . CalDAV\Plugin::NS_CALDAV . '}schedule-deliver',
+                'privilege' => '{'.CalDAV\Plugin::NS_CALDAV.'}schedule-deliver',
                 'principal' => '{DAV:}authenticated',
                 'protected' => true,
             ],
         ];
-
     }
 
     /**
@@ -178,11 +175,10 @@ class Inbox extends DAV\Collection implements IInbox {
      * The list of filters are specified as an array. The exact array is
      * documented by \Sabre\CalDAV\CalendarQueryParser.
      *
-     * @param array $filters
      * @return array
      */
-    function calendarQuery(array $filters) {
-
+    public function calendarQuery(array $filters)
+    {
         $result = [];
         $validator = new CalDAV\CalendarQueryValidator();
 
@@ -196,8 +192,7 @@ class Inbox extends DAV\Collection implements IInbox {
             // Destroy circular references to PHP will GC the object.
             $vObject->destroy();
         }
+
         return $result;
-
     }
-
 }

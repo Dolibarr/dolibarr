@@ -22,6 +22,7 @@
  *	\brief      Page to list surveys
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
@@ -39,6 +40,7 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'opensurveylist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $id = GETPOST('id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -174,16 +176,16 @@ $sql .= " WHERE p.entity IN (".getEntity('survey').")";
 if ($search_status != '-1' && $search_status != '') {
 	$sql .= natural_search("p.status", $search_status, 2);
 }
-if ($search_expired == 'expired') {
+if (!empty($search_expired) && $search_expired == 'expired') {
 	$sql .= " AND p.date_fin < '".$db->idate($now)."'";
 }
-if ($search_expired == 'opened') {
+if (!empty($search_expired) && $search_expired == 'opened') {
 	$sql .= " AND p.date_fin >= '".$db->idate($now)."'";
 }
-if ($search_ref) {
+if (!empty($search_ref)) {
 	$sql .= natural_search("p.id_sondage", $search_ref);
 }
-if ($search_title) {
+if (!empty($search_title)) {
 	$sql .= natural_search("p.titre", $search_title);
 }
 // Add where from extra fields
@@ -197,7 +199,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -241,7 +243,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 $fieldtosortuser = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 'firstname' : 'lastname';
 
@@ -326,6 +328,13 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_title" value="'.dol_escape_htmltag($search_title).'"></td>';
 print '<td class="liste_titre"></td>';
@@ -334,7 +343,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 $arraystatus = array('-1'=>'&nbsp;', '0'=>$langs->trans("Draft"), '1'=>$langs->trans("Opened"), '2'=>$langs->trans("Closed"));
-print '<td class="liste_titre" align="center">'.$form->selectarray('search_status', $arraystatus, $search_status).'</td>';
+print '<td class="liste_titre" align="center">'.$form->selectarray('search_status', $arraystatus, $search_status, 0, 0, 0, '', 0, 0, 0, '', 'onroghtofpage').'</td>';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -343,16 +352,22 @@ $parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>'."\n";
 
 
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+}
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.id_sondage", $param, "", "", $sortfield, $sortorder);
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "p.titre", $param, "", "", $sortfield, $sortorder);
 print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "p.format", $param, "", "", $sortfield, $sortorder);
@@ -368,7 +383,9 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+}
 print '</tr>'."\n";
 
 
@@ -401,7 +418,18 @@ while ($i < min($num, $limit)) {
 
 	// Show here line of result
 	print '<tr class="oddeven">';
-
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	// Ref
 	print '<td>';
 	print $opensurvey_static->getNomUrl(1);
@@ -477,15 +505,17 @@ while ($i < min($num, $limit)) {
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

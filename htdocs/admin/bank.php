@@ -243,7 +243,7 @@ while ($i < $nbofbank) {
 	}
 	print "</td>\n";
 
-	if ($conf->global->BANK_SHOW_ORDER_OPTION == $i) {
+	if (getDolGlobalInt('BANK_SHOW_ORDER_OPTION') == $i) {
 		print '<td class="center">';
 		print img_picto($langs->trans("Activated"), 'on');
 		print '</td>';
@@ -415,7 +415,7 @@ print '<tr class="oddeven"><td colspan="4" width="100">';
 print $langs->trans('BankColorizeMovementDesc');
 print "</td>";
 // Active
-if ($conf->global->BANK_COLORIZE_MOVEMENT) {
+if (getDolGlobalInt('BANK_COLORIZE_MOVEMENT')) {
 	print '<td class="center">'."\n";
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement&token='.newToken().'">';
 	print img_picto($langs->trans("Enabled"), 'switch_on');
@@ -429,7 +429,7 @@ if ($conf->global->BANK_COLORIZE_MOVEMENT) {
 
 print "</tr>\n";
 
-if (!empty($conf->global->BANK_COLORIZE_MOVEMENT)) {
+if (getDolGlobalInt('BANK_COLORIZE_MOVEMENT')) {
 	$i = 1;
 	while ($i <= 2) {
 		$key = $i;
@@ -471,7 +471,7 @@ print "</td><td>\n";
 print $langs->trans('AutoReportLastAccountStatement');
 print '</td>';
 // Active
-if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
+if (getDolGlobalString('BANK_REPORT_LAST_NUM_RELEVE')) {
 	print '<td class="center">'."\n";
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetreportlastnumreleve&token='.newToken().'">';
 	print img_picto($langs->trans("Enabled"), 'switch_on');
@@ -482,8 +482,18 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setreportlastnumreleve&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	print "</td>";
 }
-
 print "</tr>\n";
+
+// Allow SEPA Mandate OnLine Sign
+if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("AllowOnLineSign").'</td><td>'.$langs->trans("BankAccountModelModule").'</td>';
+	print '<td class="center" colspan="2">';
+	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+	print '</td></tr>';
+}
+
+
 print '</table>';
 print dol_get_fiche_end();
 

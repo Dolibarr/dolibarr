@@ -20,11 +20,12 @@
  */
 
 /**
- *	\defgroup   expedition     Module shipping
- *	\brief      Module pour gerer les expeditions de produits
- *	\file       htdocs/core/modules/modExpedition.class.php
- *	\ingroup    expedition
- *	\brief      Description and activation file for the module Expedition
+ *  \defgroup   expedition     Module Shipping
+ *  \brief      Module to manage product shipments
+ *
+ *  \file       htdocs/core/modules/modExpedition.class.php
+ *  \ingroup    expedition
+ *  \brief      Description and activation file for the module Expedition
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -70,7 +71,7 @@ class modExpedition extends DolibarrModules
 							);
 
 		// Config pages
-		$this->config_page_url = array("confexped.php");
+		$this->config_page_url = array("expedition.php");
 
 		// Dependencies
 		$this->depends = array("modCommande");
@@ -84,7 +85,7 @@ class modExpedition extends DolibarrModules
 
 		$this->const[$r][0] = "EXPEDITION_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "rouget";
+		$this->const[$r][2] = "espadon";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons expeditions en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -105,7 +106,7 @@ class modExpedition extends DolibarrModules
 
 		$this->const[$r][0] = "DELIVERY_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "typhon";
+		$this->const[$r][2] = "storm";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de reception en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -245,7 +246,7 @@ class modExpedition extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			's.rowid'=>"IdCompany", 's.nom'=>'ThirdParty', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'd.nom'=>'State', 'co.label'=>'Country',
 			'co.code'=>'CountryCode', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5',
-			's.idprof6'=>'ProfId6', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_customer'=>"RefCustomer", 'c.fk_soc'=>"IdCompany", 'c.date_creation'=>"DateCreation",
+			's.idprof6'=>'ProfId6', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_customer'=>"RefCustomer", 'c.fk_soc'=>"IdCompany", 'c.date_creation'=>"DateCreation",  'c.date_valid'=>"DateValidation",
 			'c.date_delivery'=>"DateDeliveryPlanned", 'c.tracking_number'=>"TrackingNumber", 'c.height'=>"Height", 'c.width'=>"Width", 'c.size'=>"Depth",
 			'c.size_units'=>'SizeUnits', 'c.weight'=>"Weight", 'c.weight_units'=>"WeightUnits", 'c.fk_statut'=>'Status', 'c.note_public'=>"NotePublic",
 			'ed.rowid'=>'LineId', 'cd.description'=>'Description', 'ed.qty'=>"Qty", 'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
@@ -262,7 +263,7 @@ class modExpedition extends DolibarrModules
 		//);
 		$this->export_TypeFields_array[$r] = array(
 			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text',
-			's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_customer'=>"Text", 'c.date_creation'=>"Date",
+			's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_customer'=>"Text", 'c.date_creation'=>"Date", 'c.date_valid'=>"Date",
 			'c.date_delivery'=>"Date", 'c.tracking_number'=>"Numeric", 'c.height'=>"Numeric", 'c.width'=>"Numeric", 'c.weight'=>"Numeric", 'c.fk_statut'=>'Status',
 			'c.note_public'=>"Text", 'ed.qty'=>"Numeric", 'd.nom'=>'Text'
 		);
@@ -270,7 +271,7 @@ class modExpedition extends DolibarrModules
 			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'd.nom'=>'company', 'co.label'=>'company',
 			'co.code'=>'company', 's.fk_pays'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.ape'=>'company', 's.siret'=>'company', 's.idprof4'=>'company',
 			's.idprof5'=>'company', 's.idprof6'=>'company', 'c.rowid'=>"shipment", 'c.ref'=>"shipment", 'c.ref_customer'=>"shipment", 'c.fk_soc'=>"shipment",
-			'c.date_creation'=>"shipment", 'c.date_delivery'=>"shipment", 'c.tracking_number'=>'shipment', 'c.height'=>"shipment", 'c.width'=>"shipment",
+			'c.date_creation'=>"shipment", 'c.date_valid'=>"shipment", 'c.date_delivery'=>"shipment", 'c.tracking_number'=>'shipment', 'c.height'=>"shipment", 'c.width'=>"shipment",
 			'c.size'=>'shipment', 'c.size_units'=>'shipment', 'c.weight'=>"shipment", 'c.weight_units'=>'shipment', 'c.fk_statut'=>"shipment", 'c.note_public'=>"shipment",
 			'ed.rowid'=>'shipment_line', 'cd.description'=>'shipment_line', 'ed.qty'=>"shipment_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product',
 			'p.weight'=>'product', 'p.weight_units'=>'product', 'p.volume'=>'product', 'p.volume_units'=>'product'
@@ -360,9 +361,11 @@ class modExpedition extends DolibarrModules
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'shipping' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','shipping',".((int) $conf->entity).")",
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'shipping', ".((int) $conf->entity).")",
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[3][2])."' AND type = 'delivery' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."','delivery',".((int) $conf->entity).")",
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."', 'delivery', ".((int) $conf->entity).")",
+			//"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name IN ('STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE') AND entity = ".((int) $conf->entity),
+			//"INSERT INTO ".MAIN_DB_PREFIX."const (name, value, entity) VALUES ('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', 1, ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

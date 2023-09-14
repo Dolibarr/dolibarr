@@ -355,7 +355,7 @@ class FormAdvTargetEmailing extends Form
 		$out = '';
 
 		$sql = "SELECT c.rowid, c.name, c.fk_element";
-		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as c";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_advtarget as c";
 		$sql .= " WHERE type_element = '".$this->db->escape($type_element)."'";
 		$sql .= " ORDER BY c.name";
 

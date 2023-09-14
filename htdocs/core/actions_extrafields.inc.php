@@ -28,8 +28,11 @@ $maxsizeint = 10;
 $mesg = array();
 
 $extrasize = GETPOST('size', 'intcomma');
-$type = GETPOST('type', 'alpha');
-$param = GETPOST('param', 'alpha');
+$type = GETPOST('type', 'alphanohtml');
+$param = GETPOST('param', 'alphanohtml');
+$css = GETPOST('css', 'alphanohtml');
+$cssview = GETPOST('cssview', 'alphanohtml');
+$csslist = GETPOST('csslist', 'alphanohtml');
 
 if ($type == 'double' && strpos($extrasize, ',') === false) {
 	$extrasize = '24,8';
@@ -161,9 +164,14 @@ if ($action == 'add') {
 				} else {
 					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
-						list($key, $value) = explode(',', $param_ligne);
-						if (!array_key_exists('options', $params)) {
-							$params['options'] = array();
+						if (strpos($param_ligne, ',')!==false) {
+							list($key, $value) = explode(',', $param_ligne);
+							if (!array_key_exists('options', $params)) {
+								$params['options'] = array();
+							}
+						} else {
+							$key=$param_ligne;
+							$value=null;
 						}
 						$params['options'][$key] = $value;
 					}
@@ -195,7 +203,8 @@ if ($action == 'add') {
 					GETPOST('langfile', 'alpha'),
 					1,
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha')
+					GETPOST('printable', 'alpha'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -363,9 +372,10 @@ if ($action == 'update') {
 					$computedvalue,
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-					GETPOST('enabled', 'alpha'),
+					GETPOST('enabled', 'nohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha')
+					GETPOST('printable', 'alpha'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');

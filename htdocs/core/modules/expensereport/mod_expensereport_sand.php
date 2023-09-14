@@ -57,9 +57,10 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $db, $conf, $langs;
 
@@ -82,9 +83,10 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">', $tooltip, 1, 1).'</td>';
+		$mask = empty($conf->global->EXPENSEREPORT_SAND_MASK) ? '' : $conf->global->EXPENSEREPORT_SAND_MASK;
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -128,7 +130,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->EXPENSEREPORT_SAND_MASK;
+		$mask = empty($conf->global->EXPENSEREPORT_SAND_MASK) ? '' : $conf->global->EXPENSEREPORT_SAND_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

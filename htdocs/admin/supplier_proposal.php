@@ -23,6 +23,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -54,9 +55,9 @@ $error = 0;
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstsupplier_proposal = GETPOST('maskconstsupplier_proposal', 'alpha');
+	$maskconstsupplier_proposal = GETPOST('maskconstsupplier_proposal', 'aZ09');
 	$masksupplier_proposal = GETPOST('masksupplier_proposal', 'alpha');
-	if ($maskconstsupplier_proposal) {
+	if ($maskconstsupplier_proposal && preg_match('/_MASK$/', $maskconstsupplier_proposal)) {
 		$res = dolibarr_set_const($db, $maskconstsupplier_proposal, $masksupplier_proposal, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -177,6 +178,37 @@ if ($action == 'set') {
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
+
+	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
 }
 
 
@@ -239,7 +271,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -498,23 +530,22 @@ print '<input type="submit" class="button button-edit" value="'.$langs->trans("M
 print "</td></tr>\n";
 print '</form>';
 
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled('banque')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
-	if (!empty($conf->use_javascript_ajax)) {
-		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL');
-	} else {
-		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
-		}
-	}
+	print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL');
 	print '</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
+
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td><td>&nbsp;</td>';
+print '<td class="right">';
+print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
 
 print '</table>';
 

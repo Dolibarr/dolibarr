@@ -2,7 +2,7 @@
 Module64000Name=Impressió amb un clic
 Module64000Desc=Activeu el sistema d'impressió d'un clic
 PrintingSetup=Configuració del sistema d'impressió d'un clic
-PrintingDesc=Aquest mòdul afegeix un botó Imprimeix a diversos mòduls per permetre que els documents s'imprimissin directament a una impressora sense necessitat d'obrir el document a una altra aplicació.
+PrintingDesc=Aquest mòdul afegeix un botó Imprimeix a diversos mòduls per a permetre que els documents s'imprimissin directament a una impressora sense necessitat d'obrir el document a una altra aplicació.
 MenuDirectPrinting=Treballs d'impressió amb un clic
 DirectPrint=Un clic Imprimeix
 PrintingDriverDesc=Configuració variables pel driver d'impressió
@@ -49,6 +49,6 @@ DirectPrintingJobsDesc=En aquesta pàgina es mostren les tasques d’impressió 
 GoogleAuthNotConfigured=Google OAuth no s'ha configurat. Activa el mòdul OAuth i estableix una identificació de Google / Secret.
 GoogleAuthConfigured=Les credencials OAuth de Google es troben en la configuració del mòdul OAuth.
 PrintingDriverDescprintgcp=Variables de configuració del driver d'impressió Google Cloud Print.
-PrintingDriverDescprintipp=Variables de configuració per imprimir amb el controlador Cups.
+PrintingDriverDescprintipp=Variables de configuració per al controlador d'impressió Cups.
 PrintTestDescprintgcp=Llista d'impressores per Google Cloud Print
 PrintTestDescprintipp=Llista d'impressores per a Cups.
