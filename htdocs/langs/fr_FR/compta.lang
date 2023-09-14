@@ -34,6 +34,7 @@ AccountingCredit=Crédit
 Piece=Pièce
 AmountHTVATRealReceived=HT collectée
 AmountHTVATRealPaid=HT payé
+MenuVAT=TVA
 VATToPay=TVA ventes
 VATReceived=TVA collectée
 VATToCollect=TVA achats
