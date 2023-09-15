@@ -402,8 +402,8 @@ function societe_prepare_head(Societe $object)
 		} else {
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-			$sql .= " WHERE entity = ".((int) $conf->entity);
-			$sql .= " AND fk_soc = ".((int) $object->id);
+			$sql .= " WHERE fk_soc = ".((int) $object->id);
+			$sql .= " AND entity IN (".getEntity('agenda').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
