@@ -2329,6 +2329,13 @@ if ($step == 6 && $datatoimport) {
 					$nbok++;
 				}
 			}
+
+			$reshook = $hookmanager->executeHooks('AfterImportInsert', $parameters);
+			if ($reshook < 0) {
+				$arrayoferrors[$sourcelinenb][] = [
+					'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+				];
+			}
 		}
 		// Close file
 		$obj->import_close_file();
