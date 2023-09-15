@@ -53,5 +53,6 @@ ReceptionBackToDraftInDolibarr=Reception %s back to draft
 ReceptionClassifyClosedInDolibarr=Reception %s classified Closed
 ReceptionUnClassifyCloseddInDolibarr=Reception %s re-open
 RestoreWithCurrentQtySaved=Fill quantities with latest saved values
+ReceptionsRecorded=Receptions recorded
 ReceptionUpdated=Reception sucessfully updated
 ReceptionDistribution=Reception distribution

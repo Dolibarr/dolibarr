@@ -160,6 +160,11 @@ abstract class CommonDocGenerator
 	public $posxtva;
 	public $posxtotalht;
 	public $postotalht;
+	public $posxunit;
+	public $posxdiscount;
+	public $posxworkload;
+	public $posxtimespent;
+	public $posxprogress;
 	public $atleastonephoto;
 	public $atleastoneratenotnull;
 	public $atleastonediscount;

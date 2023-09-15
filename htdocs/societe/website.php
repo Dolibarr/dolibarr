@@ -249,7 +249,7 @@ print '</div>';
 print dol_get_fiche_end();
 
 $newcardbutton = '';
-if (isModEnabled('website')) {
+if (isModEnabled('website') || isModEnabled('webportal')) {
 	if ($user->hasRight('societe', 'lire')) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans("AddWebsiteAccount"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id));
 	} else {
@@ -263,6 +263,13 @@ print '<br>';
 
 // Build and execute select
 // --------------------------------------------------------------------
+$site_filter_list = array();
+if (isModEnabled('website')) {
+	$site_filter_list[] = 'dolibarr_website';
+}
+if (isModEnabled('webportal')) {
+	$site_filter_list[] = 'dolibarr_portal';
+}
 $sql = 'SELECT ';
 foreach ($objectwebsiteaccount->fields as $key => $val) {
 	$sql .= "t.".$key.", ";
@@ -288,6 +295,9 @@ if ($objectwebsiteaccount->ismultientitymanaged == 1) {
 	$sql .= " WHERE 1 = 1";
 }
 $sql .= " AND fk_soc = ".((int) $object->id);
+if (!empty($site_filter_list)) {
+	$sql .= " AND t.site IN (".$db->sanitize("'".implode("','", $site_filter_list)."'", 1).")";
+}
 foreach ($search as $key => $val) {
 	$mode_search = (($objectwebsiteaccount->isInt($objectwebsiteaccount->fields[$key]) || $objectwebsiteaccount->isFloat($objectwebsiteaccount->fields[$key])) ? 1 : 0);
 	if ($search[$key] != '') {

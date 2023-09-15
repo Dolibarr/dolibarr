@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
@@ -133,7 +133,15 @@ class CompanyBankAccount extends Account
 	);
 	public $id;
 	public $type;
+	/**
+	 * @var int		Thirdparty ID
+	 * @deprecated	Use socid
+	 */
 	public $fk_soc;
+	/**
+	 * @var int		Thirdparty ID
+	 */
+	public $socid;
 
 	/**
 	 * Date creation record (datec)
@@ -416,7 +424,7 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
+		$sql = "SELECT rowid, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site";
 		$sql .= " ,last_main_doc";
@@ -440,11 +448,11 @@ class CompanyBankAccount extends Account
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->ref = $obj->fk_soc.'-'.$obj->label; // Generate an artificial ref
+				$this->ref = $obj->socid.'-'.$obj->label; // Generate an artificial ref
 
 				$this->id = $obj->rowid;
 				$this->type = $obj->type;
-				$this->socid           = $obj->fk_soc;
+				$this->socid           = $obj->socid;
 				$this->bank            = $obj->bank;
 				$this->code_banque     = $obj->code_banque;
 				$this->code_guichet    = $obj->code_guichet;
@@ -550,7 +558,7 @@ class CompanyBankAccount extends Account
 	 */
 	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
 	{
-		$sql1 = "SELECT rowid as id, fk_soc FROM ".MAIN_DB_PREFIX."societe_rib";
+		$sql1 = "SELECT rowid as id, fk_soc as socid FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
@@ -564,7 +572,7 @@ class CompanyBankAccount extends Account
 				$this->db->begin();
 
 				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
-				$sql2 .= " WHERE fk_soc = ".((int) $obj->fk_soc);
+				$sql2 .= " WHERE fk_soc = ".((int) $obj->socid);
 				if ($resetolddefaultfor) {
 					$sql2 .= " AND type = '".$this->db->escape($resetolddefaultfor)."'";
 				}

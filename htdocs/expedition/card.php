@@ -2541,6 +2541,10 @@ if ($action == 'create') {
 
 	// TODO Show also lines ordered but not delivered
 
+	if (empty($num_prod)) {
+		print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")).'</span></td></tr>';
+	}
+
 	print "</table>\n";
 	print '</tbody>';
 	print '</div>';
