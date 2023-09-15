@@ -121,7 +121,7 @@ class Partnership extends CommonObject
 		'date_partnership_start' => array('type'=>'date', 'label'=>'DatePartnershipStart', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>1,),
 		'date_partnership_end' => array('type'=>'date', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>0, 'visible'=>1,),
 		'url_to_check' => array('type'=>'url', 'label'=>'UrlToCheck', 'enabled'=>'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position'=>70, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflowmax100'),
-		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position'=>71, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
+		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position'=>71, 'notnull'=>0, 'visible'=>-4, 'default'=>'0',),
 		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position'=>72, 'notnull'=>0, 'visible'=>-4,),
 		'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>73, 'notnull'=>0, 'visible'=>-2,),
 		'ip' => array('type'=>'varchar(250)', 'label'=>'Ip', 'enabled'=>'1', 'position'=>74, 'notnull'=>0, 'visible'=>-2,),
