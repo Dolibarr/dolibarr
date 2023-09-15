@@ -310,7 +310,7 @@ class PartnershipUtils
 					if (!$backlinkfound) {
 						$tmpcount = $object->count_last_url_check_error + 1;
 
-						$nbminbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 2);
+						$nbminbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
 						$nbmaxbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', $nbminbacklinkerrorforcancel + 2);
 
 						// If $nbminbacklinkerrorforemail = 0, no autoemail
