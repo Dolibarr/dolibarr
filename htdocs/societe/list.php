@@ -984,7 +984,7 @@ if ($contextpage != 'poslist') {
 } elseif ($user->hasRight("societe", "creer")) {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
 	$label = 'MenuNewCustomer';
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
+	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
@@ -997,6 +997,9 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+if (!empty($place)) {
+	print '<input type="hidden" name="place" value="'.$place.'">';
+}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -1641,10 +1644,12 @@ while ($i < min($num, $limit)) {
 	// Staff
 	if (!empty($arrayfields['staff.code']['checked'])) {
 		print '<td class="center">';
-		if (!is_array($staffArray) || count($staffArray) == 0) {
-			$staffArray = $formcompany->effectif_array(1);
+		if (!empty($obj->staff_code)) {
+			if (empty($conf->cache['staffArray'])) {
+				$conf->cache['staffArray'] = $formcompany->effectif_array(1);
+			}
+			print $conf->cache['staffArray'][$obj->staff_code];
 		}
-		print $staffArray[$obj->staff_code];
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
