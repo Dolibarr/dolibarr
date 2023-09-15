@@ -377,7 +377,7 @@ class PartnershipUtils
 
 					$partnershipsprocessed[$object->id] = $object->ref;
 
-					$object->last_check_backlink = $this->db->idate($now);
+					$object->last_check_backlink = $now;
 
 					$object->update($user);
 				}
