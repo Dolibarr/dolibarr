@@ -2418,7 +2418,7 @@ if (empty($reshook)) {
 		$vat_rate = str_replace('*', '', $vat_rate);
 
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
-		$pu_ttc = GETPOSTISSET('price_ttc') ? price2num(GETPOST('price_ttc', 'int'), '', 2) : price2num(GETPOST('price_ht') * (1 + $vat_rate), '', 2);
+		$pu_ttc = GETPOSTISSET('price_ttc') ? price2num(GETPOST('price_ttc', 'int'), '', 2) : price2num(GETPOST('price_ht')) * (1 + $vat_rate);
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);

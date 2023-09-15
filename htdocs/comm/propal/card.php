@@ -1352,7 +1352,7 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
-		$pu_ttc = !empty(GETPOST('price_ttc', 'int')) ? price2num(GETPOST('price_ttc'), '', 2) : price2num(GETPOST('price_ht') * (1 + $vat_rate), '', 2);
+		$pu_ttc = !empty(GETPOST('price_ttc', 'int')) ? price2num(GETPOST('price_ttc'), '', 2) : price2num(GETPOST('price_ht')) * (1 + $vat_rate);
 
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
