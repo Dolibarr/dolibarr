@@ -260,6 +260,7 @@ function societe_prepare_head(Societe $object)
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
 		$sql .= " WHERE fk_soc = ".((int) $object->id);
+		$sql .= " AND entity IN (".getEntity('thirdpartyaccount').")";
 		if (!empty($site_filter_list)) {
 			$sql .= " AND n.site IN (".$db->sanitize("'".implode("','", $site_filter_list)."'", 1).")";
 		}
@@ -287,6 +288,7 @@ function societe_prepare_head(Societe $object)
 			$sql = "SELECT COUNT(n.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."partnership as n";
 			$sql .= " WHERE fk_soc = ".((int) $object->id);
+			$sql .= " AND entity IN (".getEntity('partnership').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -400,7 +402,8 @@ function societe_prepare_head(Societe $object)
 		} else {
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-			$sql .= " WHERE fk_soc = ".((int) $object->id);
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			$sql .= " AND fk_soc = ".((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
