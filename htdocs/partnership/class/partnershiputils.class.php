@@ -215,16 +215,19 @@ class PartnershipUtils
 	 *
 	 * CAN BE A CRON TASK
 	 *
-	 * @return  int                 0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 * @param	int		$maxpercall		Max per call
+	 * @return  int                 	0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function doWarningOfPartnershipIfDolibarrBacklinkNotfound()
+	public function doWarningOfPartnershipIfDolibarrBacklinkNotfound($maxpercall = 0)
 	{
 		global $conf, $langs, $user;
 
 		$managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR');
 
 		$partnership = new Partnership($this->db);
-		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL) ? 10 : $conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL); // Limit to 10 per call
+		if (empty($maxpercall)) {
+			$maxpercall = getDolGlobalInt('PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL', 10);
+		}
 
 		$langs->loadLangs(array("partnership", "member"));
 
@@ -278,8 +281,8 @@ class PartnershipUtils
 				if ($obj) {
 					if (!empty($partnershipsprocessed[$obj->rowid])) continue;
 
-					if ($somethingdoneonpartnership >= $MAXPERCALL) {
-						dol_syslog("We reach the limit of ".$MAXPERCALL." partnership processed, so we quit loop for this batch doWarningOfPartnershipIfDolibarrBacklinkNotfound to avoid to reach email quota.", LOG_WARNING);
+					if ($somethingdoneonpartnership >= $maxpercall) {
+						dol_syslog("We reach the limit of ".$maxpercall." partnership processed, so we quit loop for this batch doWarningOfPartnershipIfDolibarrBacklinkNotfound to avoid to reach email quota.", LOG_WARNING);
 						break;
 					}
 
