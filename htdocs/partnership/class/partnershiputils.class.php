@@ -255,7 +255,7 @@ class PartnershipUtils
 		$this->db->begin();
 
 		$sql = "SELECT p.rowid, p.status, p.".$fk_partner;
-		$sql .= ", p.last_check_backlink";
+		$sql .= ", p.url_to_check, p.last_check_backlink";
 		$sql .= ', partner.url, partner.email';
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p";
 		if ($managedfor == 'member') {
@@ -299,7 +299,7 @@ class PartnershipUtils
 						$fk_partner = $object->fk_soc;
 					}
 
-					$website = $obj->url;
+					$website = (empty($obj->url_to_check) ? $obj->url : $obj->url_to_check);
 
 					if (empty($website)) {
 						$websitenotfound .= ($websitenotfound ? ', ' : '').'Website not found for id="'.$fk_partner.'"'."\n";
