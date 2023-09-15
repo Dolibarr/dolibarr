@@ -89,6 +89,5 @@ ThisIsInformationOnDocumentToSignSociete_rib=This is information on SEPA Mandate
 SignatureProposalRef=Signature of quote/commercial proposal %s
 SignatureContractRef=Signature of contract %s
 SignatureFichinterRef=Signature of intervention %s
-SignatureSociete_ribRef=Signature of SEPA mandat %s
-SignSociete_rib=Signature of SEPA Mandate %s
+SignatureSociete_ribRef=Signature of SEPA Mandate %s
 FeatureOnlineSignDisabled=Feature for online signing disabled or document generated before the feature was enabled

@@ -101,7 +101,14 @@ ALTER TABLE llx_societe_rib ADD COLUMN online_sign_name		varchar(64) AFTER onlin
 
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PROPOSAL_ALLOW_ONLINESIGN', 1, '1', 'string', 0);
 
-
 ALTER TABLE llx_bookcal_availabilities ADD COLUMN fk_bookcal_calendar integer NOT NULL;
-
 ALTER TABLE llx_bookcal_calendar ADD COLUMN visibility integer NOT NULL DEFAULT 1;
+
+ALTER TABLE llx_expeditiondet_batch ADD COLUMN fk_warehouse integer DEFAULT NULL;
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_commandefourndet (fk_commandefourndet);
+
+-- Update website type
+UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AND site IS NULL;
+ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
+

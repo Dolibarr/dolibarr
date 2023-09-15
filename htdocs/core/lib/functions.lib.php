@@ -123,12 +123,18 @@ if (!function_exists('str_contains')) {
 function getMultidirOutput($object, $module = '')
 {
 	global $conf;
+
 	if (!is_object($object) && empty($module)) {
 		return null;
 	}
 	if (empty($module) && !empty($object->element)) {
 		$module = $object->element;
 	}
+	// Special case for backward compatibility
+	if ($module == 'fichinter') {
+		$module = 'ficheinter';
+	}
+
 	return $conf->$module->multidir_output[(!empty($object->entity) ? $object->entity : $conf->entity)];
 }
 

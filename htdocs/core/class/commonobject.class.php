@@ -5585,6 +5585,9 @@ abstract class CommonObject
 		// output format that does not support UTF8.
 		$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
 
+		// update model_pdf in object
+		$this->model_pdf = $modele;
+
 		if (in_array(get_class($this), array('Adherent'))) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
@@ -8618,19 +8621,20 @@ abstract class CommonObject
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 *
+	 * @return stdClass		Object of permission for the module
 	 */
 	public function getRights()
 	{
 		global $user;
 
-		$module = $this->module;
+		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
-			return $user->rights->fournisseur->facture;
+			return empty($user->rights->fournisseur->facture) ? null : $user->rights->fournisseur->facture;
 		} elseif ($module && !empty($user->rights->$module->$element)) {
 			// for modules built with ModuleBuilder
 			return $user->rights->$module->$element;

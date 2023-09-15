@@ -526,7 +526,7 @@ if ($result && $action == "dl" && !$error) {
 					}
 				}
 
-				$log .= '"'.$langs->trans($file['item']).'"';
+				$log .= '"'.$langs->transnoentitiesnoconv($file['item']).'"';
 				if (isModEnabled('multicompany') && is_object($mc)) {
 					$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
 				}

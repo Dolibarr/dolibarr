@@ -89,6 +89,5 @@ ThisIsInformationOnDocumentToSignSociete_rib=Ceci est une information sur le man
 SignatureProposalRef=Signature du devis ou proposition commerciale %s
 SignatureContractRef=Signature du contrat %s
 SignatureFichinterRef=Signature de l'intervention %s
-SignatureSociete_ribRef=Signature du manda SEPA %s
-SignSociete_rib=Signature du mandat SEPA %s
+SignatureSociete_ribRef=Signature du mandat SEPA %s
 FeatureOnlineSignDisabled=Fonctionnalité pour la signature en ligne désactivée ou document généré avant l'activation de la fonctionnalité

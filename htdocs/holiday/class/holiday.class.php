@@ -2471,15 +2471,18 @@ class Holiday extends CommonObject
 		if (property_exists($this, 'fk_type')) {
 			$return .= '<br>';
 			//$return .= '<span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
-			$return .= '<span class="info_box-label maxwidth100">'.$arraydata['labeltype'].'</span>';
+			$return .= '<div class="info_box-label tdoverflowmax100" title="'.dol_escape_htmltag($arraydata['labeltype']).'">'.dol_escape_htmltag($arraydata['labeltype']).'</div>';
 		}
 		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
-			$return .= '<br><span class="info-box-label small">'.dol_print_date($this->date_debut, 'day').'</span>';
+			$return .= '<span class="info-box-label small">'.dol_print_date($this->date_debut, 'day').'</span>';
 			$return .= ' <span class="opacitymedium small">'.$langs->trans("To").'</span> ';
 			$return .= '<span class="info-box-label small">'.dol_print_date($this->date_fin, 'day').'</span>';
+			if (!empty($arraydata['nbopenedday'])) {
+				$return .= ' ('.$arraydata['nbopenedday'].')';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

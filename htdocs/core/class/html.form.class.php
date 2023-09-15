@@ -730,7 +730,7 @@ class Form
 	}
 
 	/**
-	 *    Show a text with a picto and a tooltip on picto
+	 * Show a text with a picto and a tooltip on picto
 	 *
 	 * @param 	string 		$text 				Text to show
 	 * @param 	string 		$htmltext 			Content of tooltip

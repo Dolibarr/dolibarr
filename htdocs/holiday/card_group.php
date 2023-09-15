@@ -757,7 +757,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				} elseif ($object->halfday == 1) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Morning";
-				} elseif ($object->halfday == 2) {
+				} elseif ($object->halfday == 0 || $object->halfday == 2) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Afternoon";
 				}
