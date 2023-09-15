@@ -375,6 +375,8 @@ if (empty($reshook)) {
  * View
  */
 
+unset($_SESSION['pageforbacktolist']['project']);
+
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 

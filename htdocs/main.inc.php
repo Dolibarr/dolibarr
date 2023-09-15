@@ -1082,6 +1082,18 @@ if (!defined('NOLOGIN')) {
 					unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 				}
 			}
+			if (!empty($_GET['save_pageforbacktolist']) && !empty($_SERVER["HTTP_REFERER"])) {    // We must use $_GET here
+				if (empty($_SESSION['pageforbacktolist'])) {
+					$pageforbacktolistarray = array();
+				} else {
+					$pageforbacktolistarray = $_SESSION['pageforbacktolist'];
+				}
+				$tmparray = explode(':', $_GET['save_pageforbacktolist'], 2);
+				if (!empty($tmparray[0]) && !empty($tmparray[1])) {
+					$pageforbacktolistarray[$tmparray[0]] = $tmparray[1];
+					$_SESSION['pageforbacktolist'] = $pageforbacktolistarray;
+				}
+			}
 
 			$action = '';
 			$parameters = array();

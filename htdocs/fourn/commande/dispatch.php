@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2021 Juanjo Menent        <jmenent@2byte.es>
@@ -51,7 +51,7 @@ if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
-	// Security check
+// Security check
 $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
@@ -380,6 +380,8 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 
 	if ($result >= 0 && !$error) {
 		$db->commit();
+
+		setEventMessages($langs->trans("ReceptionsRecorded"), null, 'mesgs');
 
 		header("Location: dispatch.php?id=".$id);
 		exit();
