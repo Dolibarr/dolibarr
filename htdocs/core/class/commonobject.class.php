@@ -5585,6 +5585,9 @@ abstract class CommonObject
 		// output format that does not support UTF8.
 		$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
 
+		// update model_pdf in object
+		$this->model_pdf = $modele;
+
 		if (in_array(get_class($this), array('Adherent'))) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
