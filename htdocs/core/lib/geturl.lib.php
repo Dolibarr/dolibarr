@@ -240,8 +240,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	dol_syslog("getURLContent request=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		// This may contains binary data, so we dont output reponse by default.
-		dol_syslog("getURLContent request=".$request, LOG_DEBUG, '_curl');
-		dol_syslog("getURLContent response =".$response, LOG_DEBUG, '_curl');
+		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
 	}
 	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
 
