@@ -917,6 +917,7 @@ BackOffice=Back office
 Submit=Submit
 View=View
 Export=Export
+Import=Import
 Exports=Exports
 ExportFilteredList=Export filtered list
 ExportList=Export list
