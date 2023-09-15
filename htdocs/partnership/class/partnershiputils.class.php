@@ -239,7 +239,7 @@ class PartnershipUtils
 		$emailnotfound = '';
 		$websitenotfound = '';
 
-		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
+		$gracedelay = getDolGlobalInt('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL', 0);
 		if ($gracedelay < 1) {
 			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;
@@ -279,7 +279,9 @@ class PartnershipUtils
 
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					if (!empty($partnershipsprocessed[$obj->rowid])) continue;
+					if (!empty($partnershipsprocessed[$obj->rowid])) {
+						continue;
+					}
 
 					if ($somethingdoneonpartnership >= $maxpercall) {
 						dol_syslog("We reach the limit of ".$maxpercall." partnership processed, so we quit loop for this batch doWarningOfPartnershipIfDolibarrBacklinkNotfound to avoid to reach email quota.", LOG_WARNING);
