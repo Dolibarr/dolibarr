@@ -451,6 +451,7 @@ AccountancyClosureClose=Clôturer la période fiscale
 AccountancyClosureAccountingReversal=Extourner les écritures
 AccountancyClosureStep3NewFiscalPeriod=Prochaine période fiscale
 AccountancyClosureGenerateClosureBookkeepingRecords=Générer l'écriture d'à-nouveaux sur le nouvel exercice
+AccountancyClosureSeparateAuxiliaryAccounts=Séparer les comptes auxiliaires
 AccountancyClosureCloseSuccessfully=La période fiscale actuelle a été clôturée avec succès
 AccountancyClosureInsertAccountingReversalSuccessfully=Les écritures ont été extournées avec succès
 

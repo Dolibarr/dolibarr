@@ -2497,10 +2497,11 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int		$fiscal_period_id				Fiscal year ID
 	 * @param 	int		$new_fiscal_period_id			New fiscal year ID
+	 * @param 	bool	$separate_auxiliary_account		Separate auxiliary account
 	 * @param 	bool	$generate_bookkeeping_records	Generate closure bookkeeping records
 	 * @return	int										int <0 if KO, >0 if OK
 	 */
-	function closeFiscalPeriod($fiscal_period_id, $new_fiscal_period_id, $generate_bookkeeping_records = true)
+	function closeFiscalPeriod($fiscal_period_id, $new_fiscal_period_id, $separate_auxiliary_account = false, $generate_bookkeeping_records = true)
 	{
 		global $conf, $langs, $user;
 
@@ -2590,6 +2591,10 @@ class BookKeeping extends CommonObject
 				$sql = 'SELECT';
 				$sql .= " t.numero_compte,";
 				$sql .= " t.label_compte,";
+				if ($separate_auxiliary_account) {
+					$sql .= " t.subledger_account,";
+					$sql .= " t.subledger_label,";
+				}
 				$sql .= " aa.pcg_type,";
 				$sql .= " (SUM(t.credit) - SUM(t.debit)) as opening_balance";
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
@@ -2601,6 +2606,9 @@ class BookKeeping extends CommonObject
 				$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($fiscal_period->date_start) . "'";
 				$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($fiscal_period->date_end) . "'";
 				$sql .= ' GROUP BY t.numero_compte, t.label_compte, aa.pcg_type';
+				if ($separate_auxiliary_account) {
+					$sql .= ' ,t.subledger_account, t.subledger_label';
+				}
 				$sql .= $this->db->order("t.numero_compte", "ASC");
 
 				$resql = $this->db->query($sql);
@@ -2629,8 +2637,13 @@ class BookKeeping extends CommonObject
 							$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 							$bookkeeping->thirdparty_code = '';
 
-							$bookkeeping->subledger_account = '';
-							$bookkeeping->subledger_label = '';
+							if ($separate_auxiliary_account) {
+								$bookkeeping->subledger_account = $obj->subledger_account;
+								$bookkeeping->subledger_label = $obj->subledger_label;
+							} else {
+								$bookkeeping->subledger_account = '';
+								$bookkeeping->subledger_label = '';
+							}
 
 							$bookkeeping->numero_compte = $obj->numero_compte;
 							$bookkeeping->label_compte = $obj->label_compte;
@@ -2671,8 +2684,13 @@ class BookKeeping extends CommonObject
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = '';
 
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->subledger_label = '';
+						if ($separate_auxiliary_account) {
+							$bookkeeping->subledger_account = $obj->subledger_account;
+							$bookkeeping->subledger_label = $obj->subledger_label;
+						} else {
+							$bookkeeping->subledger_account = '';
+							$bookkeeping->subledger_label = '';
+						}
 
 						$bookkeeping->numero_compte = $accountingaccount->account_number;
 						$bookkeeping->label_compte = $accountingaccount->label;
