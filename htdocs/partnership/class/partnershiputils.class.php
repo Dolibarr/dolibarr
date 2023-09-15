@@ -349,8 +349,13 @@ class PartnershipUtils
 									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 
 									$to = $obj->email;
+									if ($managedfor == 'member') {
+										$trackid = 'mem'.$fk_partner;
+									} else {
+										$trackid = 'thi'.$fk_partner;
+									}
 
-									$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
+									$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
 									$result = $cmail->sendfile();
 									if (!$result || $cmail->error) {
 										$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
