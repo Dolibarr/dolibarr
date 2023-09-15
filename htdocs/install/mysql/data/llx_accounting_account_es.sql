@@ -36,10 +36,13 @@
 -- C-u align-regexp -> \('[^']+'\)\(\s-*\)\(, [0-9]);\) -> 2 -> 1 -> y ; Align active field
 --
 
--- Descriptif des plans comptables ES PCG08-PYME
--- ID 4000 - 4784
+-- ID  4000 -  4784 ES PCG08-PYME
 -- ADD 400000 to rowid # Do no remove this comment --
 
+--
+-- Descriptif des plans comptables ES PCG08-PYME
+-- Source https://www.boe.es/eli/es/rd/2007/11/16/1515 with some differences.
+--
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4001, 'PCG08-PYME',               'CAPIT',     '1',    '0', 'Financiación básica'                                                                                                , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4002, 'PCG08-PYME',              'ACTIVO',     '2',    '0', 'Activo no corriente'                                                                                                , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4003, 'PCG08-PYME',         'EXISTENCIAS',     '3',    '0', 'Existencias'                                                                                                        , 1);
@@ -433,6 +436,8 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4390, 'PCG08-PYME',               'FINAN',   '521', '4384', 'Deudas a corto plazo'                                                                                               , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4391, 'PCG08-PYME',               'FINAN',   '522', '4384', 'Deudas a corto plazo transformables en subvenciones donaciones y legados'                                           , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4392, 'PCG08-PYME',               'FINAN',   '523', '4384', 'Proveedores de inmovilizado a corto plazo'                                                                          , 1);
+-- Missing 524 Acreedores por arrendamiento financiero a corto plazo.
+-- Missing 525 Efectos a pagar a corto plazo.
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4393, 'PCG08-PYME',               'FINAN',   '526', '4384', 'Dividendo activo a pagar'                                                                                           , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4394, 'PCG08-PYME',               'FINAN',   '527', '4384', 'Intereses a corto plazo de deudas con entidades de crédito'                                                         , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4395, 'PCG08-PYME',               'FINAN',   '528', '4384', 'Intereses a corto plazo de deudas'                                                                                  , 1);
@@ -688,6 +693,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4646, 'PCG08-PYME',             'EXPENSE',  '6981', '4644', 'Pérdidas por deterioro de participaciones en instrumentos de patrimonio neto a corto plazo empresas asociadas'      , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4647, 'PCG08-PYME',             'EXPENSE',  '6985', '4644', 'Pérdidas por deterioro en valores representativos de deuda a corto plazo empresas del grupo'                        , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4648, 'PCG08-PYME',             'EXPENSE',  '6986', '4644', 'Pérdidas por deterioro en valores representativos de deuda a corto plazo empresas asociadas'                        , 1);
+-- Missing 6987 Pérdidas por deterioro en valores representativos de deuda a corto plazo, otras partes vinculadas.
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4649, 'PCG08-PYME',             'EXPENSE',  '6988', '4644', 'Pérdidas por deterioro en valores representativos de deuda a corto plazo de otras empresas'                         , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4650, 'PCG08-PYME',             'EXPENSE',   '699', '4617', 'Pérdidas por deterioro de crédito a corto plazo'                                                                    , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4651, 'PCG08-PYME',             'EXPENSE',  '6990', '4650', 'Pérdidas por deterioro de crédito a corto plazo empresas del grupo'                                                 , 1);
@@ -712,6 +718,12 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4670, 'PCG08-PYME',              'INCOME',  '7082', '4667', 'Devoluciones de ventas de productos semiterminados'                                                                 , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4671, 'PCG08-PYME',              'INCOME',  '7083', '4667', 'Devoluciones de ventas de subproductos y residuos'                                                                  , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4672, 'PCG08-PYME',              'INCOME',  '7084', '4667', 'Devoluciones de ventas de envases y embalajes'                                                                      , 1);
+-- Missing 709 «Rappels» sobre ventas.
+-- Missing 7090 «Rappels» sobre ventas de mercaderías.
+-- Missing 7091 «Rappels» sobre ventas de productos terminados.
+-- Missing 7092 «Rappels» sobre ventas de productos semiterminados.
+-- Missing 7093 «Rappels» sobre ventas de subproductos y residuos.
+-- Missing 7094 «Rappels» sobre ventas de envases y embalajes.
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4673, 'PCG08-PYME',              'INCOME',    '71', '4007', 'Variación de existencias'                                                                                           , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4674, 'PCG08-PYME',              'INCOME',   '710', '4673', 'Variación de existencias de productos en curso'                                                                     , 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 4675, 'PCG08-PYME',              'INCOME',   '711', '4673', 'Variación de existencias de productos semiterminados'                                                               , 1);
