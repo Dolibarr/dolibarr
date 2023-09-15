@@ -329,8 +329,8 @@ OldUser=古いユーザ
 NewUser=新規ユーザ
 NumberOfTicketsByMonth=1か月あたりのチケット数
 NbOfTickets=チケット数
-ExternalContributors=External contributors
-AddContributor=Add external contributor
+ExternalContributors=外部寄稿者
+AddContributor=外部貢献者の追加
 
 # notifications
 TicketCloseEmailSubjectCustomer=チケットは締め切られた

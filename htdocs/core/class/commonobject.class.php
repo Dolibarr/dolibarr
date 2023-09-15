@@ -5343,7 +5343,9 @@ abstract class CommonObject
 		if (isset($this->lines) && is_array($this->lines)) {
 			$nboflines = count($this->lines);
 			for ($i = 0; $i < $nboflines; $i++) {
-				$this->lines[$i] = clone $this->lines[$i];
+				if (is_object($this->lines[$i])) {
+					$this->lines[$i] = clone $this->lines[$i];
+				}
 			}
 		}
 	}
@@ -8472,19 +8474,20 @@ abstract class CommonObject
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 *
+	 * @return stdClass		Object of permission for the module
 	 */
 	public function getRights()
 	{
 		global $user;
 
-		$module = $this->module;
+		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
-			return $user->rights->fournisseur->facture;
+			return empty($user->rights->fournisseur->facture) ? null : $user->rights->fournisseur->facture;
 		} elseif ($module && !empty($user->rights->$module->$element)) {
 			// for modules built with ModuleBuilder
 			return $user->rights->$module->$element;
@@ -9147,15 +9150,21 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
-	 * @param   string   $alias   	String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields defintion.
-	 * @return  string				list of alias fields
+	 * @param   string  $alias   		String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields defintion.
+	 * @param	array	$excludefields	Array of fields to exclude
+	 * @return  string					List of alias fields
 	 */
-	public function getFieldList($alias = '')
+	public function getFieldList($alias = '', $excludefields = array())
 	{
 		$keys = array_keys($this->fields);
 		if (!empty($alias)) {
 			$keys_with_alias = array();
 			foreach ($keys as $fieldname) {
+				if (!empty($excludefields)) {
+					if (in_array($fieldname, $excludefields)) {	// The field is excluded and must not be in output
+						continue;
+					}
+				}
 				$keys_with_alias[] = $alias . '.' . $fieldname;
 			}
 			return implode(',', $keys_with_alias);

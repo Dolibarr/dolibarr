@@ -7,7 +7,7 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Plaanitavata programmide haldamise seadistamine
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+URLToLaunchCronJobs=URL kvalifitseeritud cron-tööde kontrollimiseks ja käivitamiseks brauserist
 OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Croni käivitatavate programmide URLile ligipääsu turvavõti
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
@@ -20,8 +20,8 @@ CronJobProfiles=List of predefined cron job profiles
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Latest run output
-CronLastResult=Latest result code
+CronLastOutput=Viimase käitamise väljund
+CronLastResult=Viimane tulemuse kood
 CronCommand=Käsk
 CronList=Plaanitud käivitused
 CronDelete=Delete scheduled jobs
@@ -34,8 +34,8 @@ CronNone=Mitte ükski
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Järgmine käivitus
-CronDtLastLaunch=Start date of latest execution
-CronDtLastResult=End date of latest execution
+CronDtLastLaunch=Viimase täitmise alguskuupäev
+CronDtLastResult=Viimase täitmise lõppkuupäev
 CronFrequency=Sagedus
 CronClass=Class
 CronMethod=Meetod

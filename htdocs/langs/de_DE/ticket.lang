@@ -329,8 +329,8 @@ OldUser=Alter Benutzer
 NewUser=Neuer Benutzer
 NumberOfTicketsByMonth=Anzahl der Tickets pro Monat
 NbOfTickets=Anzahl der Tickets
-ExternalContributors=External contributors
-AddContributor=Add external contributor
+ExternalContributors=Externe Mitwirkende
+AddContributor=Externen Mitwirkenden hinzufügen
 
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket geschlossen

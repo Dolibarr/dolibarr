@@ -4336,20 +4336,20 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Return list of payment methods
-	 *      Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
+	 * Return list of payment methods
+	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 * @param string $selected Id or code or preselected payment mode
-	 * @param string $htmlname Name of select field
-	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 * @param int $format 0=id+label, 1=code+code, 2=code+label, 3=id+code
-	 * @param int $empty 1=can be empty, 0 otherwise
-	 * @param int $noadmininfo 0=Add admin info, 1=Disable admin info
-	 * @param int $maxlength Max length of label
-	 * @param int $active Active or not, -1 = all
-	 * @param string $morecss Add more CSS on select tag
-	 * @param int $nooutput 1=Return string, do not send to output
-	 * @return    string|void                String for the HTML select component
+	 * @param 	string 	$selected 		Id or code or preselected payment mode
+	 * @param 	string 	$htmlname 		Name of select field
+	 * @param 	string 	$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param 	int 	$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 * @param 	int 	$empty 			1=can be empty, 0 otherwise
+	 * @param 	int 	$noadmininfo 	0=Add admin info, 1=Disable admin info
+	 * @param 	int 	$maxlength 		Max length of label
+	 * @param 	int 	$active 		Active or not, -1 = all
+	 * @param 	string 	$morecss 		Add more CSS on select tag
+	 * @param 	int 	$nooutput 		1=Return string, do not send to output
+	 * @return  string|void             String for the HTML select component
 	 */
 	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
 	{
@@ -7072,7 +7072,7 @@ class Form
 				$arrayofdateof = $adddateof;
 			}
 			foreach ($arrayofdateof as $valuedateof) {
-				$tmpadddateof = $valuedateof['adddateof'];
+				$tmpadddateof = $valuedateof['adddateof'] != '' ? $valuedateof['adddateof'] : 0;
 				$tmplabeladddateof = $valuedateof['labeladddateof'];
 				$tmparray = dol_getdate($tmpadddateof);
 				if (empty($tmplabeladddateof)) {

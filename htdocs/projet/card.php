@@ -463,7 +463,16 @@ if (empty($reshook)) {
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-			header("Location: list.php?restore_lastsearch_values=1");
+
+			if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+				$tmpurl = $_SESSION['pageforbacktolist']['project'];
+				$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+				$urlback = $tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1';
+			} else {
+				$urlback = DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1';
+			}
+
+			header("Location: ".$urlback);
 			exit;
 		} else {
 			dol_syslog($object->error, LOG_DEBUG);
@@ -1221,7 +1230,13 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		// Project card
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+			$tmpurl = $_SESSION['pageforbacktolist']['project'];
+			$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+			$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		} else {
+			$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		}
 
 		$morehtmlref = '<div class="refidno">';
 		// Title

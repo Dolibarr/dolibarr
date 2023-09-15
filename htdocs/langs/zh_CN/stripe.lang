@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe模块设置
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=通过 <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> 为您的客户提供信用卡/借记卡付款的在线支付页面。这可用于允许您的客户进行临时付款或与特定 Dolibarr 对象（发票、订单等）相关的付款
 StripeOrCBDoPayment=使用信用卡或Stripe付款
 FollowingUrlAreAvailableToMakePayments=以下网址可提供给客户的网页上，能够作出Dolibarr支付对象
 PaymentForm=付款方式
@@ -49,9 +49,9 @@ OAUTH_STRIPE_LIVE_ID=Stripe连接客户端ID（ca _...）
 BankAccountForBankTransfer=基金支付的银行账户
 StripeAccount=Stripe帐户
 StripeChargeList=Stripe费用清单
-StripeTransactionList=Stripe事务列表
+StripeTransactionList=Stripe 交易清单
 StripeCustomerId=Stripe客户ID
-StripePaymentId=Stripe payment id
+StripePaymentId=Stripe 付款 ID
 StripePaymentModes=Stripe支付模式
 LocalID=本地ID
 StripeID=Stripe ID

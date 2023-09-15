@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'projects'));
 
+$action = GETPOST('action', 'aZ09');
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
@@ -46,6 +48,8 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectthirdparty'));
+
+$object = new Societe($db);
 
 
 /*
@@ -64,9 +68,7 @@ if ($reshook < 0) {
  *	View
  */
 
-$contactstatic = new Contact($db);
-
-$form = new Form($db);
+unset($_SESSION['pageforbacktolist']['project']);
 
 if ($socid) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -74,8 +76,6 @@ if ($socid) {
 
 	$langs->load("companies");
 
-
-	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Projects");

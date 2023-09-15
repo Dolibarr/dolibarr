@@ -450,7 +450,7 @@ ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction fro
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
-ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=The export format setuped is not supported into this page

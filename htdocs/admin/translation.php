@@ -621,6 +621,10 @@ if ($mode == 'searchkey') {
 		print '</td></tr>'."\n";
 	}
 
+	if (empty($recordtoshow)) {
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
 	print '</table>';
 	print '</div>';
 }

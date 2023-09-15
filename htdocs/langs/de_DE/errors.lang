@@ -318,8 +318,10 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Fehler: Die URL Ihrer 
 ErrorMenuExistValue=Es existiert bereits ein Menü mit diesem Titel oder dieser URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG-Dateien sind ohne die Option %s nicht als externe Links zulässig
 ErrorTypeMenu=Es ist nicht möglich, ein weiteres Menü für dasselbe Modul in der Navigationsleiste hinzuzufügen (noch nicht unterstützt)
-ErrorTableExist=Table <b>%s</b> already exist
-ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
+ErrorTableExist=Tabelle <b>%s</b> existiert bereits
+ErrorDictionaryNotFound=Wörterbuch <b>%s</b> nicht gefunden
+ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.
@@ -360,7 +362,7 @@ WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Die automatische Freig
 WarningModuleNeedRefrech = Modul <b>%s</b> wurde deaktiviert. Vergessen Sie nicht, es zu aktivieren
 WarningPermissionAlreadyExist=Vorhandene Berechtigungen für dieses Objekt
 WarningGoOnAccountancySetupToAddAccounts=Wenn diese Liste leer ist, gehen Sie in das Menü %s - %s - %s um Konten für Ihren Kontenplan zu laden oder zu erstellen.
-WarningCorrectedInvoiceNotFound=Corrected invoice not found
+WarningCorrectedInvoiceNotFound=Korrigierte Rechnung nicht gefunden
 
 SwissQrOnlyVIR = Eine SwissQR-Rechnung kann nur Rechnungen hinzugefügt werden, die per Überweisung bezahlt werden sollen.
 SwissQrCreditorAddressInvalid = Die Kreditorenadresse ist ungültig (sind PLZ und Stadt festgelegt? (%s)

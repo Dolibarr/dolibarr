@@ -126,9 +126,9 @@ TicketParams=Paràmetres
 TicketsShowModuleLogo=Mostra el logotip del mòdul a la interfície pública
 TicketsShowModuleLogoHelp=Activeu aquesta opció per a ocultar el mòdul de logotip a les pàgines de la interfície pública
 TicketsShowCompanyLogo=Mostra el logotip de l'empresa en la interfície pública
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
-TicketsShowCompanyFooter=Display the footer of the company in the public interface
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Activeu aquesta opció per a mostrar el logotip de l'empresa principal a les pàgines de la interfície pública
+TicketsShowCompanyFooter=Mostra el peu de pàgina de l'empresa a la interfície pública
+TicketsShowCompanyFooterHelp=Activeu aquesta opció per a mostrar el peu de pàgina de l'empresa principal a les pàgines de la interfície pública
 TicketsEmailAlsoSendToMainAddress=També envieu una notificació a l’adreça de correu electrònic principal
 TicketsEmailAlsoSendToMainAddressHelp=Activeu aquesta opció per a enviar també un correu electrònic a l'adreça definida a la configuració "%s" (vegeu la pestanya "%s")
 TicketsLimitViewAssignedOnly=Restringir la visualització als tiquets assignats a l'usuari actual (no és efectiu per als usuaris externs, sempre estarà limitat al tercer de qui depengui)
@@ -329,8 +329,8 @@ OldUser=Usuari antic
 NewUser=Usuari nou
 NumberOfTicketsByMonth=Nombre d’entrades mensuals
 NbOfTickets=Nombre d’entrades
-ExternalContributors=External contributors
-AddContributor=Add external contributor
+ExternalContributors=Col·laboradors externs
+AddContributor=Afegeix un col·laborador extern
 
 # notifications
 TicketCloseEmailSubjectCustomer=Tiquet tancat

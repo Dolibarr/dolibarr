@@ -321,5 +321,5 @@ BatchNotFound=Δεν βρέθηκε παρτίδα / σειριακός αριθ
 StockMovementWillBeRecorded=Stock movement will be recorded
 StockMovementNotYetRecorded=Stock movement will not be affected by this step
 WarningThisWIllAlsoDeleteStock=Προειδοποίηση, αυτό θα διαγράψει επίσης όλες τις ποσότητες απόθεματος στην αποθήκη
-DeleteBatch=Delete lot/serial
-ConfirmDeleteBatch=Are you sure you want to delete lot/serial ?
+DeleteBatch=Διαγραφή παρτίδας/σειράς
+ConfirmDeleteBatch=Είστε σίγουροι ότι θέλετε να διαγράψετε την παρτίδα/σειρά;

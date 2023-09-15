@@ -869,7 +869,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 						// Ref
 						print '<td class="nowraponall">';
-						print $projecttmp->getNomUrl(1);
+						print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
 						print '</td>';
 
 						// Label
@@ -2435,7 +2435,8 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 
 	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
-	print '<footer class="center paddingleft paddingright opacitymedium centpercent">'."\n";
+	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
+	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
