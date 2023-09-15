@@ -305,51 +305,58 @@ class PartnershipUtils
 					if (!$backlinkfound) {
 						$tmpcount = $object->count_last_url_check_error + 1;
 
-						if ($tmpcount > 2 && $tmpcount <= 4) { // Send Warning Email
-							if (!empty($obj->email)) {
-								$emailnotfound .= ($emailnotfound ? ', ' : '').'Email not found for id="'.$fk_partner.'"'."\n";
-							} else {
-								$labeltemplate = '(SendingEmailOnPartnershipWillSoonBeCanceled)';
+						$nbminbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 2);
+						$nbmaxbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', $nbminbacklinkerrorforcancel + 2);
 
-								dol_syslog("Now we will send an email to partner id=".$fk_partner." with label ".$labeltemplate);
+						// If $nbminbacklinkerrorforemail = 0, no autoemail
+						if ($nbminbacklinkerrorforcancel > 0) {
+							if ($tmpcount > $nbminbacklinkerrorforcancel && $tmpcount <= $nbmaxbacklinkerrorforcancel) { // Send Warning Email
+								if (!empty($obj->email)) {
+									$emailnotfound .= ($emailnotfound ? ', ' : '').'Email not found for id="'.$fk_partner.'"'."\n";
+								} else {
+									// Example: 'SendingEmailOnPartnershipWillSoonBeCanceled'
+									$labeltemplate = '('.getDolGlobalString('PARTNERSHIP_SENDMAIL_IF_NO_LINK', 'SendingEmailOnPartnershipWillSoonBeCanceled').')';
 
-								// Send deployment email
-								include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-								include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-								$formmail = new FormMail($this->db);
+									dol_syslog("Now we will send an email to partner id=".$fk_partner." with label ".$labeltemplate);
 
-								// Define output language
-								$outputlangs = $langs;
-								$newlang = '';
-								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-								if (!empty($newlang)) {
-									$outputlangs = new Translate("", $conf);
-									$outputlangs->setDefaultLang($newlang);
-									$outputlangs->loadLangs(array('main', 'member', 'partnership'));
+									// Send deployment email
+									include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+									include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+									$formmail = new FormMail($this->db);
+
+									// Define output language
+									$outputlangs = $langs;
+									$newlang = '';
+									if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+									if (!empty($newlang)) {
+										$outputlangs = new Translate("", $conf);
+										$outputlangs->setDefaultLang($newlang);
+										$outputlangs->loadLangs(array('main', 'member', 'partnership'));
+									}
+
+									$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
+
+									$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+									complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+									$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+									$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+
+									$to = $obj->email;
+
+									$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
+									$result = $cmail->sendfile();
+									if (!$result || $cmail->error) {
+										$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
+										$this->errors[] = $cmail->error;
+										if (is_array($cmail->errors) && count($cmail->errors) > 0) $this->errors += $cmail->errors;
+									}
 								}
-
-								$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
-
-								$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-								complete_substitutions_array($substitutionarray, $outputlangs, $object);
-
-								$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
-								$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-								$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-
-								$to = $obj->email;
-
-								$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
-								$result = $cmail->sendfile();
-								if (!$result || $cmail->error) {
-									$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
-									$this->errors[] = $cmail->error;
-									if (is_array($cmail->errors) && count($cmail->errors) > 0) $this->errors += $cmail->errors;
-								}
+							} elseif ($tmpcount > $nbmaxbacklinkerrorforcancel) { // Cancel Partnership
+								$object->status = $object::STATUS_CANCELED;
+								$object->reason_decline_or_cancel = $langs->trans('BacklinkNotFoundOnPartnerWebsite');
 							}
-						} elseif ($tmpcount > 4) { // Cancel Partnership
-							$object->status = $object::STATUS_CANCELED;
-							$object->reason_decline_or_cancel = $langs->trans('BacklinkNotFoundOnPartnerWebsite');
 						}
 
 						$object->count_last_url_check_error = $tmpcount;
@@ -394,7 +401,7 @@ class PartnershipUtils
 	 */
 	private function checkDolibarrBacklink($website = null)
 	{
-		global $conf, $langs, $user;
+		global $conf;
 
 		$found 		= 0;
 		$error 		= 0;

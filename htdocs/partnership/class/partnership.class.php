@@ -1309,8 +1309,6 @@ class Partnership extends CommonObject
 	 */
 	public function doScheduledJob()
 	{
-		global $conf, $langs;
-
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		$error = 0;
@@ -1319,7 +1317,7 @@ class Partnership extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$now = dol_now();
+		//$now = dol_now();
 
 		$this->db->begin();
 
