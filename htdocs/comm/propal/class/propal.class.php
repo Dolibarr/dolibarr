@@ -1866,11 +1866,10 @@ class Propal extends CommonObject
 	 *
 	 *	@param		int			$only_product			Return only physical products
 	 *	@param		int			$loadalsotranslation	Return translation for products
-	 *	@param		string		$sqlfilters				Filter on other fields
-	 *
+	 *	@param		string		$sqlforgedfilters		Filter on other fields
 	 *	@return		int									<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $sqlfilters = '')
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $sqlforgedfilters = '')
 	{
 		// phpcs:enable
 		$this->lines = array();
@@ -1888,8 +1887,8 @@ class Propal extends CommonObject
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
 		}
-		if ($sqlfilters) {
-			$sql .= $sqlfilters;
+		if ($sqlforgedfilters) {
+			$sql .= $sqlforgedfilters;
 		}
 		$sql .= ' ORDER by d.rang';
 
@@ -3944,12 +3943,12 @@ class Propal extends CommonObject
 	/**
 	 * 	Retrieve an array of proposal lines
 	 *
-	 *	@param  string	$sqlfilters        	Filter on other fields
-	 * 	@return int							>0 if OK, <0 if KO
+	 *	@param  string	$sqlforgedfilters       Filter on other fields
+	 * 	@return int								>0 if OK, <0 if KO
 	 */
-	public function getLinesArray($sqlfilters = '')
+	public function getLinesArray($sqlforgedfilters = '')
 	{
-		return $this->fetch_lines(0, 0, $sqlfilters);
+		return $this->fetch_lines(0, 0, $sqlforgedfilters);
 	}
 
 	/**
