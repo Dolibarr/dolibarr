@@ -309,13 +309,13 @@ class Proposals extends DolibarrApi
 
 		if (!empty($sqlfilters)) {
 			$errormessage = '';
-			$sql = forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			$filters = forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
 
-		$this->propal->getLinesArray($sql);
+		$this->propal->getLinesArray($filters);
 		$result = array();
 		foreach ($this->propal->lines as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
