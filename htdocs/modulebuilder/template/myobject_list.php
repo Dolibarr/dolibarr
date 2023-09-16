@@ -700,6 +700,20 @@ while ($i < $imaxinloop) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
+	/*
+	$object->thirdparty = null;
+	if ($obj->fk_soc > 0) {
+		if (!empty($conf->cache['thirdparty'][$obj->fk_soc])) {
+			$companyobj = $conf->cache['thirdparty'][$obj->fk_soc];
+		} else {
+			$companyobj = new Societe($db);
+			$companyobj->fetch($obj->fk_soc);
+			$conf->cache['thirdparty'][$obj->fk_soc] = $companyobj;
+		}
+
+		$object->thirdparty = $companyobj;
+	}*/
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
@@ -713,6 +727,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
+		//print $object->getKanbanView('', array('thirdparty'=>$object->thirdparty, 'selected' => $selected));
 		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';

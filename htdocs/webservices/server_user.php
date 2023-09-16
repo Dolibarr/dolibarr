@@ -709,7 +709,7 @@ function setUserPassword($authentication, $shortuser)
 			$res = $userstat->fetch('', $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
-				if (is_numeric($res) && $res < 0) {
+				if (is_int($res) && $res < 0) {
 					$error++;
 					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
 				} else {

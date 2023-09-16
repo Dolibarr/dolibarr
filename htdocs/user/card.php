@@ -351,7 +351,7 @@ if (empty($reshook)) {
 				if (GETPOST('password', 'none')) {
 					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
 				}
-				if ($resPass < 0) {
+				if (is_int($resPass) && $resPass < 0) {
 					$langs->load("errors");
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -664,7 +664,7 @@ if (empty($reshook)) {
 					$object->oldcopy = clone $object;
 
 					$ret = $object->setPassword($user, GETPOST("password", "none"));
-					if ($ret < 0) {
+					if (is_int($ret) && $ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
@@ -679,7 +679,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		$newpassword = $object->setPassword($user, '');	// This will generate a new password
-		if ($newpassword < 0) {
+		if (is_int($newpassword) && $newpassword < 0) {
 			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
