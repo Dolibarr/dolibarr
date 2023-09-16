@@ -1378,6 +1378,7 @@ if (empty($reshook)) {
 								);
 
 								if ($result < 0) {
+									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 									break;
 								}
