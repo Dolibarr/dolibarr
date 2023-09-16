@@ -236,18 +236,18 @@ class PartnershipUtils
 		$emailnotfound = '';
 		$websitenotfound = '';
 
-		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
+		/*$gracedelay = getDolGlobalInt('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL');
 		if ($gracedelay < 1) {
 			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;
-		}
+		}*/
 
 		$fk_partner = ($managedfor == 'member') ? 'fk_member' : 'fk_soc';
 
 		dol_syslog(get_class($this)."::doWarningOfPartnershipIfDolibarrBacklinkNotfound Warning of partnership");
 
 		$now = dol_now();
-		$datetotest = dol_time_plus_duree($now, -1 * abs($gracedelay), 'd');
+		//$datetotest = dol_time_plus_duree($now, -1 * abs($gracedelay), 'd');
 
 		$this->db->begin();
 
@@ -276,7 +276,9 @@ class PartnershipUtils
 
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					if (!empty($partnershipsprocessed[$obj->rowid])) continue;
+					if (!empty($partnershipsprocessed[$obj->rowid])) {
+						continue;
+					}
 
 					if ($somethingdoneonpartnership >= $MAXPERCALL) {
 						dol_syslog("We reach the limit of ".$MAXPERCALL." partnership processed, so we quit loop for this batch doWarningOfPartnershipIfDolibarrBacklinkNotfound to avoid to reach email quota.", LOG_WARNING);
