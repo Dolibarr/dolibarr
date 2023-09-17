@@ -2064,6 +2064,10 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->hasRight('service',  'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="pictofixedwidth"'));
 			$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->hasRight('service',  'creer'));
 			$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->hasRight('service',  'read'));
+			if (isModEnabled('Stock')) {
+#				$newmenu->add("/product/reassort.php?type=1", $langs->trans("MenuStocks"), 1, $user->hasRight('service',  'read') && $user->hasRight('stock',  'lire')) && $conf->global->STOCK_SUPPORTS_SERVICES;
+				$newmenu->add("/product/reassort.php?type=1", $langs->trans("MenuStocks"), 1, $user->hasRight('service',  'read') && $user->hasRight('stock',  'lire'));
+			}
 			if (isModEnabled('propal') || isModEnabled('commande') || isModEnabled('facture') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
 				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->hasRight('service',  'read'));
 			}
