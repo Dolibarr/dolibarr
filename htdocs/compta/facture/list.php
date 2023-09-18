@@ -1154,7 +1154,7 @@ if ($resql) {
 		$param .= '&show_files='.urlencode($show_files);
 	}
 	if ($search_late) {
-		$param .= "&search_option=".urlencode($search_late);
+		$param .= "&search_late=".urlencode($search_late);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
