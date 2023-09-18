@@ -2030,10 +2030,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '</td>';
 
 			// Author of event
-			$out .= '<td class="tdoverflowmax150">';
-			//$userstatic->id=$histo[$key]['userid'];
-			//$userstatic->login=$histo[$key]['login'];
-			//$out.=$userstatic->getLoginUrl(1);
+			$out .= '<td class="tdoverflowmax125">';
 			if ($histo[$key]['userid'] > 0) {
 				if (isset($userlinkcache[$histo[$key]['userid']])) {
 					$link = $userlinkcache[$histo[$key]['userid']];
@@ -2061,9 +2058,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 				}
 			}
-			$out .= '<td class="tdoverflowmax150" title="'.$labeltype.'">';
+			$out .= '<td class="tdoverflowmax125" title="'.$labeltype.'">';
 			$out .= $actionstatic->getTypePicto();
-			$out .= $labeltype;
+			//if (empty($conf->dol_optimize_smallscreen)) {
+				$out .= $labeltype;
+			//}
 			$out .= '</td>';
 
 			// Title/Label of event
@@ -2115,9 +2114,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 			$out .= "</td>\n";
 
-			// Title of event
-			//$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
-
 			// Linked object
 			$out .= '<td class="nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
@@ -2131,8 +2127,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']] = $link;
 				}
 				$out .= $link;
-			} else {
-				$out .= '&nbsp;';
 			}
 			$out .= '</td>';
 
