@@ -1476,13 +1476,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
-				print '<td>';
-				print $langs->trans('ValidateInvoices');
-				print '</td>';
-				print '<td>';
-				print $form->selectyesno('validate_invoices', 0, 1);
-				print '</td>';
-				print '</tr>';*/
+				 print '<td>';
+				 print $langs->trans('ValidateInvoices');
+				 print '</td>';
+				 print '<td>';
+				 print $form->selectyesno('validate_invoices', 0, 1);
+				 print '</td>';
+				 print '</tr>';*/
 				print '</table>';
 
 				print '<br>';
@@ -1968,9 +1968,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		/*
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-		*/
+		 // Extra fields
+		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		 */
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields);
 		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
@@ -2052,9 +2052,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$totalarray['nbfield']++;
 		}
 		/*
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-		*/
+		 // Extra fields
+		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		 */
 		// Hook fields
 		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
@@ -2094,7 +2094,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (($action == 'editline' || $action == 'splitline') && GETPOST('lineid', 'int') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="' . GETPOST('lineid', 'int') . '">';
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
-					print ' ';
+					print '<br>';
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
 					if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
@@ -2285,13 +2285,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Note
 			if (!empty($arrayfields['t.note']['checked'])) {
-				print '<td class="small">';
 				if ($action == 'editline' && GETPOST('lineid', 'int') == $task_time->rowid) {
+					print '<td class="small">';
 					print '<textarea name="timespent_note_line" width="95%" rows="' . ROWS_1 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
+					print '</td>';
 				} else {
-					print dol_nl2br($task_time->note);
+					print '<td class="small tdoverflowmax150 classfortooltip" title="'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($task_time->note)).'">';
+					print dolGetFirstLineOfText($task_time->note);
+					print '</td>';
 				}
-				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2417,9 +2419,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 
 			/*
-			// Extra fields
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-			*/
+			 // Extra fields
+			 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+			 */
 
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'i' => $i, 'totalarray' => &$totalarray);
@@ -2432,7 +2434,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (($action == 'editline' || $action == 'splitline') && GETPOST('lineid', 'int') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="'.GETPOST('lineid', 'int').'">';
 					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save small" name="save" value="'.$langs->trans("Save").'">';
-					print ' ';
+					print '<br>';
 					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
 					if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
@@ -2443,11 +2445,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 							print '</a>';
 						}
 
-						print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_element.'&action=editline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+						print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=editline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_edit('default', 0, 'class="pictofixedwidth paddingleft"');
 						print '</a>';
 
-						print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_element.'&action=deleteline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+						print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=deleteline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_delete('default', 'class="pictodelete paddingleft"');
 						print '</a>';
 
