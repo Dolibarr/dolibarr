@@ -2001,9 +2001,11 @@ class Form
 				if(! empty($force_entity)) $sql .= ' WHERE ug.entity IN (1, '.$force_entity.')';
 				else $sql .= ' WHERE ug.entity IN (1, '.$conf->entity.')';
 			} else {
-				$sql .= " WHERE u.entity IN (0, ".$conf->entity.")";
+                if(! empty($force_entity)) $sql.= " WHERE u.entity IN (0, ".$force_entity.')';
+                else $sql.= " WHERE u.entity IN (0, ".$conf->entity.')';
 			}
 		}
+
 		if (!empty($user->socid)) {
 			$sql .= " AND u.fk_soc = ".((int) $user->socid);
 		}
