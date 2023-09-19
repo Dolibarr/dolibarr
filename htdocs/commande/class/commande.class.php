@@ -33,6 +33,7 @@
  *  \ingroup    commande
  *  \brief      class for orders
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -3730,8 +3731,8 @@ class Commande extends CommonOrder
 			}
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered');
-			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort').$billedtext;
 			$statusType = 'status6';
 		} else {
 			$labelStatus = $langs->transnoentitiesnoconv('Unknown');
