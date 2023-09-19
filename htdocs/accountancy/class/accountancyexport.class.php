@@ -1448,7 +1448,7 @@ class AccountancyExport
 						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').'\.pdf$';
 						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
 						if (!empty($fileFoundList)) {
-							$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
+							$attachmentFileNameTrunc = $line->doc_ref;
 							foreach ($fileFoundList as $fileFound) {
 								if (strstr($fileFound['name'], $objectFileName)) {
 									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
@@ -1645,7 +1645,7 @@ class AccountancyExport
 						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').'\.pdf$';
 						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
 						if (!empty($fileFoundList)) {
-							$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
+							$attachmentFileNameTrunc = $line->doc_ref;
 							foreach ($fileFoundList as $fileFound) {
 								if (strstr($fileFound['name'], $objectFileName)) {
 									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
