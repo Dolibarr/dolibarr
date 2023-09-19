@@ -385,7 +385,7 @@ class modSociete extends DolibarrModules
 			'c.statut'=>"Status",
 			's.rowid'=>"List:societe:nom::thirdparty", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
 			's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
-			's.client'=>"Text", 's.fournisseur'=>"Text",
+			's.client'=>"Numeric", 's.fournisseur'=>"Numeric",
 			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
 			't.libelle'=>"Text"
 		);
