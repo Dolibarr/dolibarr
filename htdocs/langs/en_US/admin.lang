@@ -2417,3 +2417,4 @@ ThisValueCanBeReadBecauseInstanceIsNotInProductionMode=This value can be read be
 SeeConfFile=See inside conf.php file on the server
 ReEncryptDesc=Reencrypt data if not yet encrypted
 PasswordFieldEncrypted=%s new record have this field been encrypted
+ExtrafieldsDeleted=Extrafields %s has been deleted

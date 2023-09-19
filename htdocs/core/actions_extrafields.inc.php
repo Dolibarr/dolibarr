@@ -401,8 +401,12 @@ if ($action == 'update') {
 // Delete attribute
 if ($action == 'delete') {
 	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
-		$result = $extrafields->delete(GETPOST("attrname", 'aZ09'), $elementtype);
+		$attributekey = GETPOST('attrname', 'aZ09');
+
+		$result = $extrafields->delete($attributekey, $elementtype);
 		if ($result >= 0) {
+			setEventMessages($langs->trans("ExtrafieldsDeleted", $attributekey), null, 'mesgs');
+
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
 		} else {
