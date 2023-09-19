@@ -2887,14 +2887,6 @@ if ($action == 'create' && $usercancreate) {
 				if ($object->statut == Commande::STATUS_VALIDATED && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=modif&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
-				// Create event
-				/*if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
-				{
-					// Add hidden condition because this is not a
-					// "workflow" action so should appears somewhere else on
-					// page.
-					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
-				}*/
 
 				// Create a purchase order
 				if (!empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_SALE_ORDER)) {
@@ -2927,7 +2919,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 				}
 
-				// Ship
+				// Create shipment
 				$numshipping = 0;
 				if (isModEnabled('expedition')) {
 					$numshipping = $object->countNbOfShipments();
@@ -2950,12 +2942,17 @@ if ($action == 'create' && $usercancreate) {
 				if (($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS) && $usercanclose) {
 					print dolGetButtonAction('', $langs->trans('ClassifyShipped'), 'default', $_SERVER["PHP_SELF"].'?action=shipped&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
-				// Create bill and Classify billed
-				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
-				if ($object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
+
+				// Create bill
+				if (isModEnabled('facture') && $object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
 					if (isModEnabled('facture') && $user->hasRight('facture', 'creer') && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
 						print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;token='.newToken().'&amp;origin='.urlencode($object->element).'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
 					}
+				}
+
+				// Set billed or unbilled
+				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
+				if ($object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
 					if ($usercancreate && $object->statut >= Commande::STATUS_VALIDATED && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && !getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')) {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
@@ -2965,6 +2962,7 @@ if ($action == 'create' && $usercancreate) {
 						print dolGetButtonAction('', $langs->trans('ClassifyUnBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifyunbilled&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
+
 				// Clone
 				if ($usercancreate) {
 					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&amp;token='.newToken().'&amp;id='.$object->id.'&amp;socid='.$object->socid, '');
