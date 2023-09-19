@@ -111,8 +111,8 @@ $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'alpha');
+$search_customer_code = GETPOST("search_customer_code", 'alphanohtml');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_company_code_client = GETPOST("search_type_thirdparty", 'alpha');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -350,6 +350,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_state = "";
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_customer_code = '';
 	$search_date_startday = '';
 	$search_date_startmonth = '';
 	$search_date_startyear = '';
@@ -699,8 +700,8 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
 }
-if ($search_company_code_client) {
-	$sql .= natural_search('s.code_client', $search_company_code_client);
+if ($search_customer_code) {
+	$sql .= natural_search('s.code_client', $search_customer_code);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -1095,6 +1096,9 @@ if ($resql) {
 	if ($search_type_thirdparty != '') {
 		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
+	if ($search_customer_code) {
+		$param .= '&search_customer_code='.urlencode($search_customer_code);
+	}
 	if ($search_sale > 0) {
 		$param .= '&search_sale='.urlencode($search_sale);
 	}
@@ -1423,7 +1427,7 @@ if ($resql) {
 	}
 	// Customer Code
 	if (!empty($arrayfields['s.code_client']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_code_client" value="'.dol_escape_htmltag($search_company_code_client).'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
