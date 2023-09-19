@@ -69,6 +69,17 @@ function getDolGlobalInt($key, $default = 0)
 }
 
 /**
+ * Is Dolibarr module enabled
+ * @param string $module module name to check
+ * @return int
+ */
+function isModEnabled($module)
+{
+	global $conf;
+	return !empty($conf->$module->enabled);
+}
+
+/**
  * Return a DoliDB instance (database handler).
  *
  * @param   string	$type		Type of database (mysql, pgsql...)

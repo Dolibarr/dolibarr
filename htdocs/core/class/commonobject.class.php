@@ -6415,6 +6415,11 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					}
 					break;
+				case 'link':
+					if ($this->array_options["options_".$key] === '') {
+						$this->array_options["options_".$key] = null;
+					}
+					break;
 				/*
 				case 'link':
 					$param_list = array_keys($attributeParam['options']);
@@ -9452,6 +9457,19 @@ abstract class CommonObject
 				$this->{$key} = $value;
 			}
 		}
+
+		// Force values to default values when known
+		foreach ($this->fields as $key => $value) {
+			// If fields are already set, do nothing
+			if (array_key_exists($key, $fields)) {
+				continue;
+			}
+
+			if (!empty($value['default'])) {
+				$this->$key = $value['default'];
+			}
+		}
+
 		return 1;
 	}
 

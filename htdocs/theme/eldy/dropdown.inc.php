@@ -290,7 +290,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-aling: right;
+	text-align: right;
 	color:#666;
 	cursor: pointer;
 }
