@@ -4321,7 +4321,19 @@ if ($module == 'initmodule') {
 										print '</td>';
 									} else {
 										print '<td class="tdoverflowmax200">';
-										print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
+										$pictoType = '';
+										if (preg_match('/(varchar)/', $proptype, $matches)) {
+											$pictoType = $matches[1];
+										}if (strpos($proptype, 'integer') === 0) {
+											$pictoType = substr($proptype, 0, 3);
+										}
+										if (strpos($proptype, 'timestamp') === 0) {
+											$pictoType = 'datetime';
+										}
+										if (strpos($proptype, 'real') === 0) {
+											$pictoType = 'double';
+										}
+										print (!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										if ($proparrayofkeyval) {
