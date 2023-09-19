@@ -553,6 +553,9 @@ dropdown-holder {
 	background: none;
 	color: #000 !important;
 }
+.dropdown-content a.butAction {
+	display: flex;
+}
 .dropdown-content .butAction:hover {
 	box-shadow: none;
 	text-decoration: underline;
