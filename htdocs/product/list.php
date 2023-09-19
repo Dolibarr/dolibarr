@@ -182,7 +182,7 @@ $fieldstosearchall = array(
 	'p.label'=>"ProductLabel",
 	'p.description'=>"Description",
 	"p.note"=>"Note",
-
+	'pfp.ref_fourn'=>'RefSupplier'
 );
 // multilang
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -192,6 +192,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 }
 if (isModEnabled('barcode')) {
 	$fieldstosearchall['p.barcode'] = 'Gencod';
+	$fieldstosearchall['pfp.barcode'] = 'GencodBuyPrice';
 }
 // Personalized search criterias. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel;p.description=Description;p.note=Note;'
 if (!empty($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS)) {
@@ -447,7 +448,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (isModEnabled('workstation')) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation ws ON (p.fk_default_workstation = ws.rowid)";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation as ws ON (p.fk_default_workstation = ws.rowid)";
 }
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
@@ -471,8 +472,13 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) {
+	// Clean $fieldstosearchall
+	$newfieldstosearchall = $fieldstosearchall;
+	unset($newfieldstosearchall['pfp.ref_fourn']);
+	unset($newfieldstosearchall['pfp.barcode']);
+
 	$sql .= ' AND (';
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall, 0, 1);
+	$sql .= natural_search(array_keys($newfieldstosearchall), $sall, 0, 1);
 	// Search also into a supplier reference 'pfp.ref_fourn'="RefSupplier"
 	$sql .= ' OR EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid';
 	$sql .= ' AND ('.natural_search('pfp.ref_fourn', $sall, 0, 1);
@@ -626,6 +632,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
