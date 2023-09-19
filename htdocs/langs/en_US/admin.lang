@@ -2415,3 +2415,5 @@ AllowPasswordResetBySendingANewPassByEmail=If a user A has this permission, and 
 AllowAnyPrivileges=If a user A has this permission, he can create a user B with all privileges then use this user B, or grant himself any other group with any permission. So it means user A owns all business privileges (only system access to setup pages will be forbidden)
 ThisValueCanBeReadBecauseInstanceIsNotInProductionMode=This value can be read because your instance is not set in production mode
 SeeConfFile=See inside conf.php file on the server
+ReEncryptDesc=Reencrypt data if not yet encrypted
+PasswordFieldEncrypted=%s new record have this field been encrypted

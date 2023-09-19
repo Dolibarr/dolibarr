@@ -414,3 +414,63 @@ if ($action == 'delete') {
 		$mesg = $langs->trans("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("AttributeCode"));
 	}
 }
+
+// Recrypt data password
+if ($action == 'encrypt') {
+	// Load $extrafields->attributes
+	$extrafields->fetch_name_optionals_label($elementtype);
+	$attributekey = GETPOST('attrname', 'aZ09');
+
+	if (!empty($extrafields->attributes[$elementtype]['type'][$attributekey]) && $extrafields->attributes[$elementtype]['type'][$attributekey] == 'password') {
+		if (!empty($extrafields->attributes[$elementtype]['param'][$attributekey]['options'])) {
+			if (array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$attributekey]['options'])) {
+				// We can encrypt data with dolCrypt()
+				$arrayofelement = getElementProperties($elementtype);
+				if (!empty($arrayofelement['table_element'])) {
+					if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity || empty($extrafields->attributes[$elementtype]['entityid'][$attributekey])) {
+						dol_syslog("Loop on each extafields of table ".$arrayofelement['table_element']);
+
+						$sql .= "SELECT te.rowid, te.".$attributekey;
+						$sql .= " FROM ".MAIN_DB_PREFIX.$arrayofelement['table_element']." as t, ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields as te';
+						$sql .= " WHERE te.fk_object = t.rowid";
+						$sql .= " AND te.".$attributekey." NOT LIKE 'dolcrypt:%'";
+						$sql .= " AND te.".$attributekey." IS NOT NULL";
+						$sql .= " AND te.".$attributekey." <> ''";
+						if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity) {
+							$sql .= " AND t.entity = ".getEntity($arrayofelement['table_element'], 0);
+						}
+
+						//print $sql;
+						$resql = $db->query($sql);
+						if ($resql) {
+							$num_rows = $db->num_rows($resql);
+							$i=0;
+							while ($i < $num_rows) {
+								$objtmp = $db->fetch_object($resql);
+								$id = $objtmp->rowid;
+								$pass = $objtmp->password;
+								if ($pass) {
+									$newpassword = dolEncrypt($pass);
+
+									$sqlupdate = "UPDATE ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields';
+									$sqlupdate .= " SET ".$attributekey." = '".$db->escape($newpassword)."'";
+									$sqlupdate .= " WHERE rowid = ".((int) $id);
+
+									$db->query($sqlupdate);
+								}
+
+								$i++;
+							}
+						}
+
+						if ($num_rows > 0) {
+							setEventMessages($langs->trans("PasswordFieldEncrypted", $num_rows), null, 'mesgs');
+						} else {
+							setEventMessages($langs->trans("PasswordFieldEncrypted", $num_rows), null, 'warnings');
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -9427,6 +9427,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
  *
  * @param   string      $element    Variable to check
  * @return  boolean                 Return true of variable is not empty
+ * @see getElementProperties()
  */
 function dol_validElement($element)
 {
@@ -11532,6 +11533,7 @@ function getElementProperties($element_type)
 	$module = $element_type;
 	$element = $element_type;
 	$subelement = $element_type;
+	$table_element = $element_type;
 
 	// If we ask a resource form external module (instead of default path)
 	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {	// 'myobject@mymodule'
@@ -11551,15 +11553,18 @@ function getElementProperties($element_type)
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
+		$table_element = 'actioncomm';
 	} elseif ($element_type == 'cronjob') {
 		$classpath = 'cron/class';
 		$module = 'cron';
+		$table_element = 'cron';
 	} elseif ($element_type == 'adherent_type') {
 		$classpath = 'adherents/class';
 		$classfile = 'adherent_type';
 		$module = 'adherent';
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
+		$table_element = 'adherent_type';
 	} elseif ($element_type == 'bank_account') {
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
@@ -11569,37 +11574,46 @@ function getElementProperties($element_type)
 		$classpath = 'categories/class';
 		$module = 'categorie';
 		$subelement = 'categorie';
+		$table_element = 'categorie';
 	} elseif ($element_type == 'contact') {
 		$classpath = 'contact/class';
 		$classfile = 'contact';
 		$module = 'societe';
 		$subelement = 'contact';
+		$table_element = 'socpeople';
 	} elseif ($element_type == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
+		$table_element = 'entrepot';
 	} elseif ($element_type == 'project') {
 		$classpath = 'projet/class';
 		$module = 'projet';
+		$table_element = 'projet';
 	} elseif ($element_type == 'project_task') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$subelement = 'task';
+		$table_element = 'projet_task';
 	} elseif ($element_type == 'facture' || $element_type == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$subelement = 'facture';
+		$table_element = 'facture';
 	} elseif ($element_type == 'commande' || $element_type == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$subelement = 'commande';
+		$table_element = 'commande';
 	} elseif ($element_type == 'propal') {
 		$classpath = 'comm/propal/class';
+		$table_element = 'propal';
 	} elseif ($element_type == 'shipping') {
 		$classpath = 'expedition/class';
 		$classfile = 'expedition';
 		$classname = 'Expedition';
 		$module = 'expedition';
+		$table_element = 'expedition';
 	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
@@ -11618,6 +11632,7 @@ function getElementProperties($element_type)
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$subelement = 'contrat';
+		$table_element = 'contract';
 	} elseif ($element_type == 'mailing') {
 		$classpath = 'comm/mailing/class';
 		$module = 'mailing';
@@ -11628,6 +11643,7 @@ function getElementProperties($element_type)
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
+		$table_element = 'adherent';
 	} elseif ($element_type == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
@@ -11637,18 +11653,22 @@ function getElementProperties($element_type)
 		$classname = 'Mo';
 		$module = 'mrp';
 		$subelement = '';
+		$table_element = 'mrp_mo';
 	} elseif ($element_type == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
+		$table_element = 'cabinetmedcons';
 	} elseif ($element_type == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
+		$table_element = 'fichinter';
 	} elseif ($element_type == 'dolresource' || $element_type == 'resource') {
 		$classpath = 'resource/class';
 		$module = 'resource';
 		$subelement = 'dolresource';
+		$table_element = 'resource';
 	} elseif ($element_type == 'propaldet') {
 		$classpath = 'comm/propal/class';
 		$module = 'propal';
@@ -11664,6 +11684,7 @@ function getElementProperties($element_type)
 		$element = 'order_supplier';
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
+		$table_element = 'commande_fournisseur';
 	} elseif ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
@@ -11671,9 +11692,11 @@ function getElementProperties($element_type)
 		$element = 'invoice_supplier';
 		$subelement = '';
 		$classname = 'FactureFournisseur';
+		$table_element = 'facture_fourn';
 	} elseif ($element_type == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
+		$table_element = 'product';
 	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
@@ -11684,12 +11707,14 @@ function getElementProperties($element_type)
 		$classname = 'Productlot';
 		$element = 'productlot';
 		$subelement = '';
+		$table_element = 'product_lot';
 	} elseif ($element_type == 'websitepage') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
 		$classname = 'Websitepage';
 		$module = 'website';
 		$subelement = 'websitepage';
+		$table_element = 'website_page';
 	} elseif ($element_type == 'fiscalyear') {
 		$classpath = 'core/class';
 		$module = 'accounting';
@@ -11697,10 +11722,12 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'chargesociales') {
 		$classpath = 'compta/sociales/class';
 		$module = 'tax';
+		$table_element = 'chargesociales';
 	} elseif ($element_type == 'tva') {
 		$classpath = 'compta/tva/class';
 		$module = 'tax';
 		$subdir = '/vat';
+		$table_element = 'tva';
 	}
 
 	if (empty($classfile)) {
@@ -11737,6 +11764,7 @@ function getElementProperties($element_type)
 	$element_properties = array(
 		'module' => $module,
 		'element' => $element,
+		'table_element' => $table_element,
 		'subelement' => $subelement,
 		'classpath' => $classpath,
 		'classfile' => $classfile,
@@ -11754,6 +11782,7 @@ function getElementProperties($element_type)
  * @param	string  	$element_type 	Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
  * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
  * @return 	int|object 					object || 0 || <0 if error
+ * @see getElementProperties()
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 {
