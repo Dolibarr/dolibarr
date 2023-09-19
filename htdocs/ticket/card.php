@@ -184,7 +184,7 @@ if (empty($reshook)) {
 				$object->ref = $getRef;
 			}
 
-			$object->fk_soc = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
+			$object->fk_soc = $object->socid = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
 			$object->subject = GETPOST("subject", 'alphanohtml');
 			$object->message = GETPOST("message", 'restricthtml');
 
@@ -194,7 +194,7 @@ if (empty($reshook)) {
 			$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
 			$object->severity_code = GETPOST("severity_code", 'alpha');
 			$object->severity_label = $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
-			$object->email_from = $user->email;
+			$object->email_from = $object->origin_email = $user->email;
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 
