@@ -109,6 +109,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Type
 		$typetoshow = $type2label[$extrafields->attributes[$elementtype]['type'][$key]];
 		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax100">';
+		print getPictoForType($extrafields->attributes[$elementtype]['type'][$key]);
 		print dol_escape_htmltag($typetoshow);
 		print "</td>\n";
 		// Size
