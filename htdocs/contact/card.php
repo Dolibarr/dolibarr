@@ -156,11 +156,11 @@ if (empty($reshook)) {
 
 			if ($result > 0) {
 				$result2 = $nuser->setPassword($user, GETPOST("password"), 0, 0, 1); // Do not use GETPOST(alpha)
-				if ($result2) {
-					$db->commit();
-				} else {
+				if (is_int($result2) && $result2 < 0) {
 					$error = $nuser->error; $errors = $nuser->errors;
 					$db->rollback();
+				} else {
+					$db->commit();
 				}
 			} else {
 				$error = $nuser->error; $errors = $nuser->errors;

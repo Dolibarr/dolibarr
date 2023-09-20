@@ -994,8 +994,8 @@ while ($i < $imaxinloop) {
 	$object->lastname = $obj->lastname;
 	$object->employee = $obj->employee;
 	$object->photo = $obj->photo;
-	$object->datestartvalidity = $obj->datestartvalidity;
-	$object->dateendvalidity = $obj->dateendvalidity;
+	$object->datestartvalidity = $db->jdate($obj->datestartvalidity);
+	$object->dateendvalidity = $db->jdate($obj->dateendvalidity);
 
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 

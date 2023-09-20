@@ -424,7 +424,7 @@ if ($action == 'afteradd') {
 						$style .= ' cal_other_month_right';
 					}
 					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-					show_day_events($max_day_in_prev_month + $tmpday, $prev_month, $prev_year);
+					show_bookcal_day_events($max_day_in_prev_month + $tmpday, $prev_month, $prev_year);
 					echo "  </td>\n";
 				} elseif ($tmpday <= $max_day_in_month) {
 					/* Show days of the current month */
@@ -449,7 +449,7 @@ if ($action == 'afteradd') {
 						$isdatechosen = true;
 					}
 					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-					show_day_events($tmpday, $month, $year, $today);
+					show_bookcal_day_events($tmpday, $month, $year, $today);
 					echo "</td>\n";
 				} else {
 					/* Show days after the current month (next month) */
@@ -458,7 +458,7 @@ if ($action == 'afteradd') {
 						$style .= ' cal_other_month_right';
 					}
 					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-					show_day_events($tmpday - $max_day_in_month, $next_month, $next_year);
+					show_bookcal_day_events($tmpday - $max_day_in_month, $next_month, $next_year);
 					echo "</td>\n";
 				}
 				$tmpday++;
@@ -560,7 +560,7 @@ llxFooter('', 'public');
  * @param   int		$today 					Today's day
  * @return	void
  */
-function show_day_events($day, $month, $year, $today = 0)
+function show_bookcal_day_events($day, $month, $year, $today = 0)
 {
 	global $conf;
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
@@ -569,7 +569,7 @@ function show_day_events($day, $month, $year, $today = 0)
 
 	$dateint = sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day);
 	$eventdatetime = dol_mktime(-1, -1, -1, $month, $day, $year);
-	//print 'show_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint;
+	//print 'show_bookcal_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint;
 
 	print "\n";
 

@@ -290,7 +290,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($objectwebsiteaccount->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity('societeaccount').")";
+	$sql .= " WHERE t.entity IN (".getEntity('thirdpartyaccount').")";
 } else {
 	$sql .= " WHERE 1 = 1";
 }

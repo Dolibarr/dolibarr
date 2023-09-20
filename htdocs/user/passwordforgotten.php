@@ -151,7 +151,7 @@ if (empty($reshook)) {
 					$message .= $messagewarning;
 				} else {
 					$newpassword = $edituser->setPassword($user, '', 1);
-					if (is_numeric($newpassword) && $newpassword < 0) {
+					if (is_int($newpassword) && $newpassword < 0) {
 						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
