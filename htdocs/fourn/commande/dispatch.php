@@ -776,6 +776,9 @@ if ($id > 0 || !empty($ref)) {
 				print "</tr>\n";
 			}
 
+			$splitAsciiCode = getDolGlobalInt('RECEPTION_BATCH_NEW_LINE_ASCII_CODE');
+			$serialInputFirst = true;
+
 			$nbfreeproduct = 0; // Nb of lins of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 									// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
@@ -784,6 +787,8 @@ if ($id > 0 || !empty($ref)) {
 
 			// Loop on each source order line (may be more or less than current number of lines in llx_commande_fournisseurdet)
 			while ($i < $num) {
+				$jsLine = '';
+
 				$objp = $db->fetch_object($resql);
 
 				// On n'affiche pas les produits libres
@@ -980,15 +985,51 @@ if ($id > 0 || !empty($ref)) {
 						}
 
 						// Qty to dispatch
+						$qtyToDispatch = GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0);
 						print '<td class="right">';
 						print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
+						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right qtydispatchinput" value="'.$qtyToDispatch.'">';
 						print '</td>';
 
 						print '<td>';
 						if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 							$type = 'batch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+
+							if ($splitAsciiCode > 0) {
+								$serialInput = dol_escape_js('lot_number' . $suffix);
+								if ($serialInputFirst === true) {
+									$jsLine .= 'jQuery("#' . $serialInput . '").focus();';
+									$serialInputFirst = false;
+								}
+								$jsLine .= 'jQuery("#' . $serialInput . '").keypress(function(event){';
+								$jsLine .= '	var splitAsciiCode = "' . dol_escape_js($splitAsciiCode) . '";';
+								$jsLine .= '	var i = ' . dol_escape_js($i) . ';';
+								$jsLine .= '	var type = "' . dol_escape_js($type) . '";';
+								$jsLine .= '	var qtyToDispatch = "' . dol_escape_js($qtyToDispatch) . '";';
+								$jsLine .= '	if (event.which == splitAsciiCode) {';
+								$jsLine .= '		if (jQuery("#qty_"+(qtyToDispatch-1)+"_"+i).length <= 0) {'; // max input lines to dispatch not reached
+								$jsLine .= '			addDispatchLine(i, type);';
+								$jsLine .= '		} else {';
+								$jsLine .= '			var serialInputNext = jQuery(this).closest("tr").nextAll(":has(.inputlotnumber):first").find(".inputlotnumber");'; // next input for serial number
+								$jsLine .= '			if (serialInputNext.length > 0) {'; // found a next serial input
+								$jsLine .= '				serialInputNext.focus();';
+								$jsLine .= '			} else {'; // no next serial input : so go to create button
+								$jsLine .= '				jQuery("input[name=\"dispatch\"]").focus();';
+								$jsLine .= '			}';
+								$jsLine .= '		}';
+								$jsLine .= '		return false;'; // stop propagation and avoid to submit form or to have separator char
+								$jsLine .= '	}';
+								$jsLine .= '});';
+
+								// output js
+								$js = '<script type="text/javascript">';
+								$js .= 'jQuery(document).ready(function(){';
+								$js .= $jsLine;
+								$js .= '});';
+								$js .= '</script>';
+								print $js;
+							}
 						} else {
 							$type = 'dispatch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
