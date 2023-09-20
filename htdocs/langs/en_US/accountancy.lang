@@ -450,7 +450,7 @@ AccountancyClosureStep3=Step 3 : Extract entries (Optional)
 AccountancyClosureClose=Close fiscal period
 AccountancyClosureAccountingReversal=Extract entries
 AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
-AccountancyClosureGenerateClosureBookkeepingRecords=Add closing bookkeeping records
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "has-new" entry on the next fiscal period
 AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
 AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping records has been inserted successfully
 
@@ -460,7 +460,7 @@ ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
-AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ?
+AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
 AccountancyClosureConfirmAccountingReversal=Are you sure you want to accounting reversal ?
 
 ## Error
