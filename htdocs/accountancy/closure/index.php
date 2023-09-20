@@ -119,9 +119,10 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'confirm_step_2' && $confirm == "yes") {
 			$new_fiscal_period_id = GETPOST('new_fiscal_period_id', 'int');
+			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
 			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
 
-			$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $generate_bookkeeping_records);
+			$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $separate_auxiliary_account, $generate_bookkeeping_records);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
@@ -204,6 +205,12 @@ if (isset($current_fiscal_period)) {
 			'type' => 'checkbox',
 			'label' => $langs->trans('AccountancyClosureGenerateClosureBookkeepingRecords'),
 			'value' => 1
+		);
+		$form_question['separate_auxiliary_account'] = array(
+			'name' => 'separate_auxiliary_account',
+			'type' => 'checkbox',
+			'label' => $langs->trans('AccountancyClosureSeparateAuxiliaryAccounts'),
+			'value' => 0
 		);
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
