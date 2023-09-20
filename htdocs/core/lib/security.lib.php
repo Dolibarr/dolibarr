@@ -145,7 +145,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 
 	if (function_exists('openssl_encrypt') && empty($dolibarr_disable_dolcrypt_for_debug)) {
                 if (empty($key)) {
-                        return 'Error dolEncrypt encrypt key is empty';
+                        return $chain;
                 }
 
 		$ivlen = 16;
