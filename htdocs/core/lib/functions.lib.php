@@ -11193,7 +11193,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *
  * @param string    	$label      	Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string    	$actionType 	'default', 'delete', 'danger', 'email', ...
+ * @param string 		$actionType 	'default', 'danger', 'email', 'clone', 'cancel', 'delete', ...
  * @param string|array 	$url        	Url for link or array of subbutton description ('label'=>, 'url'=>, 'lang'=>, 'perm'=> )
  * 										Example when an array is used: $arrayforbutaction = array(
  *                                      10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
