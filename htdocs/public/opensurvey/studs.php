@@ -500,7 +500,7 @@ while ($compteur < $num) {
 	print '<tr>'."\n";
 
 	// Name
-	print '<td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
+	print '<td class="nom">'.img_picto($obj->name, 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->name).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (!$testligneamodifier) {
@@ -829,7 +829,7 @@ print '<br>';
 $comments = $object->getComments();
 
 if ($comments) {
-	print '<br><u><span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span></u><br>'."\n";
+	print '<br>'.img_picto('', 'note', 'class="pictofixedwidth"').'<span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span><br>'."\n";
 
 	foreach ($comments as $obj) {
 		// ligne d'un usager pré-authentifié
@@ -840,7 +840,7 @@ if ($comments) {
 			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', 'nomarginleft').'</a> ';
 		}
 		//else print img_picto('', 'ellipsis-h', '', false, 0, 0, '', 'nomarginleft').' ';
-		print dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
+		print img_picto('', 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }
 

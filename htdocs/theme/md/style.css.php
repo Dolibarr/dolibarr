@@ -7623,7 +7623,7 @@ table.jPicker {
 }
 
 /* ============================================================================== */
-/* CSS style used for small screen                                                */
+/* CSS style used for survey                                                      */
 /* ============================================================================== */
 
 .opensurveydescription * {
@@ -7643,6 +7643,18 @@ table.jPicker {
 	padding: 15px;
 	border-radius: 8px;
 }
+.survey_borders .resultats .nom {
+	text-align: <?php echo $left; ?>
+}
+.survey_borders .resultats .sujet {
+	min-width: 100px;
+}
+
+
+/* ============================================================================== */
+/* CSS style used for small screen                                                */
+/* ============================================================================== */
+
 @media only screen and (max-width: 767px)
 {
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
