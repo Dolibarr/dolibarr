@@ -448,7 +448,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$npfilter = "";
 	}
 
-	if ($managedfor == 'member') $npfilter .= " AND te.fk_member > 0 "; else $npfilter .= " AND te.fk_soc > 0 ";
+	if ($managedfor == 'member') {
+		$npfilter .= " AND te.fk_member > 0 ";
+	} else {
+		$npfilter .= " AND te.fk_soc > 0 ";
+	}
 	$object->next_prev_filter = $npfilter;
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
