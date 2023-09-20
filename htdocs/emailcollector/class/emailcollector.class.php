@@ -1735,7 +1735,6 @@ class EmailCollector extends CommonObject
 					$overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
 				}
 				// GET IMAP email structure/content
-
 				global $htmlmsg, $plainmsg, $charset, $attachments;
 
 				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
@@ -2606,15 +2605,25 @@ class EmailCollector extends CommonObject
 								}
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
-							$pj = getAttachments($imapemail, $connection);
-							foreach ($pj as $key => $val) {
-								$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+							$data = [];
+							if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+								foreach ($attachments as $attachment) {
+									if ($attachment->getName() === 'undefined') {
+										continue;
+									}
+									$data[$attachment->getName()] = $attachment->getContent();
+								}
+							} else {
+								$pj = getAttachments($imapemail, $connection);
+								foreach ($pj as $key => $val) {
+									$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+								}
 							}
-							if (count($pj) > 0) {
+							if (count($data) > 0) {
 								$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($from)."%'";
 								$resql = $this->db->query($sql);
 								if ($this->db->num_rows($resql) == 0) {
-									$this->errors[] = 'User Not allowed to add documents';
+									$this->errors[] = "User Not allowed to add documents ({$from})";
 								}
 								$arrayobject = array(
 									'propale' => array('table' => 'propal',
@@ -2757,9 +2766,8 @@ class EmailCollector extends CommonObject
 									}
 								}
 								foreach ($dirs as $target) {
+									$prefix = $this->actions[$this->id]['actionparam'];
 									foreach ($data as $filename => $content) {
-										$prefix = $this->actions[$this->id]['actionparam'];
-
 										$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
 										if ($resr == -1) {
 											$this->errors[] = 'Doc not saved';
