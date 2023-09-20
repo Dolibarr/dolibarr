@@ -4322,15 +4322,16 @@ if ($module == 'initmodule') {
 									} else {
 										print '<td class="tdoverflowmax200">';
 										$pictoType = '';
-										if (preg_match('/(varchar)/', $proptype, $matches)) {
-											$pictoType = $matches[1];
-										}if (strpos($proptype, 'integer') === 0) {
+										$matches = array();
+										if (preg_match('/^varchar/', $proptype, $matches)) {
+											$pictoType = 'varchar';
+										} elseif (preg_match('/^integer:/', $proptype, $matches)) {
+											$pictoType = 'link';
+										} elseif (strpos($proptype, 'integer') === 0) {
 											$pictoType = substr($proptype, 0, 3);
-										}
-										if (strpos($proptype, 'timestamp') === 0) {
+										} elseif (strpos($proptype, 'timestamp') === 0) {
 											$pictoType = 'datetime';
-										}
-										if (strpos($proptype, 'real') === 0) {
+										} elseif (strpos($proptype, 'real') === 0) {
 											$pictoType = 'double';
 										}
 										print (!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
