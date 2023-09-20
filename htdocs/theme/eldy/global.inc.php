@@ -7696,9 +7696,22 @@ table.jPicker {
 	background-size: 22px auto;
 	top: 2px;
 }
+.opensurveydescription * {
+	width: 100%;
+}
 .imgopensurveywizard
 {
 	padding: 0 4px 0 4px;
+}
+.survey_borders {
+	margin-left: 100px;
+	margin-right: 100px;
+	text-align: start;
+}
+.survey_intro {
+	background-color: #f0f0f0;
+	padding: 15px;
+	border-radius: 8px;
 }
 @media only screen and (max-width: 767px)
 {
@@ -7744,6 +7757,12 @@ table.jPicker {
 	}
 	.poweredbyimg {
 		width: 48px;
+	}
+
+	.survey_borders {
+		margin-left: 10px;
+		margin-right: 10px;
+		text-align: start;
 	}
 }
 
