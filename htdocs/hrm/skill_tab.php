@@ -336,7 +336,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$ret .= '</form>';
 			print $ret;
 		} else {
-			print $object->national_registration_number;
+			print showValueWithClipboardCPButton(!empty($object->national_registration_number) ? $object->national_registration_number : '');
 		}
 		print '</td>';
 		print '</tr>'."\n";
