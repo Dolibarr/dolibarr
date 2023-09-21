@@ -2418,3 +2418,7 @@ SeeConfFile=See inside conf.php file on the server
 ReEncryptDesc=Reencrypt data if not yet encrypted
 PasswordFieldEncrypted=%s new record have this field been encrypted
 ExtrafieldsDeleted=Extrafields %s has been deleted
+AsciiKeyNone=None
+AsciiKeyEnter=Key enter
+AsciiKeySemiColon=Key semi-colon
+RECEPTION_BATCH_NEW_LINE_ASCII_CODE=Key to detect a new line for the reception of serial numbers
