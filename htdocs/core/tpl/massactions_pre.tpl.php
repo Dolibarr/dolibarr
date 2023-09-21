@@ -73,7 +73,8 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	$formquestion = array();
 	if (!empty($categ_types)) {
 		foreach ($categ_types as $categ_type) {
-			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 2);
+			//$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 2); //does not show the category hierarchy
+			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], '', 'parent', 64, 0, 1); //show the category hierarchy
 			$formquestion[] = array(
 				'type' => 'other',
 				'name' => 'affecttag_'.$categ_type['code'],
