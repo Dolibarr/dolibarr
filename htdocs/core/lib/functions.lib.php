@@ -4138,7 +4138,6 @@ function getPictoForType($key)
 		'html'=>'code',
 		'int'=>'sort-numeric-down',
 		'double'=>'sort-numeric-down',
-		'int'=>'sort-numeric-down',
 		'price'=>'currency',
 		'pricecy'=>'multicurrency',
 		'password' => 'key',

@@ -556,6 +556,11 @@ dropdown-holder {
 	box-shadow: none;
 	text-decoration: underline;
 }
+.dropdown-content .butActionRefused {
+    margin-left: 0;
+    margin-right: 0;
+    border: none;
+}
 
 .dropdown-holder.open .dropdown-content {
 	display: block;

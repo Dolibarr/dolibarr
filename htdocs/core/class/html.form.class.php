@@ -5017,18 +5017,18 @@ class Form
 	/**
 	 *    Return list of categories having choosed type
 	 *
-	 * @param string|int $type Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param string $selected Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
-	 * @param string $htmlname HTML field name
-	 * @param int $maxlength Maximum length for labels
-	 * @param int|string|array $markafterid Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+	 * @param string|int 		$type 		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param string 			$selected 	Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
+	 * @param string 			$htmlname 	HTML field name
+	 * @param int 				$maxlength 	Maximum length for labels
+	 * @param int|string|array 	$markafterid Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
 	 *                                      $markafterid can be an :
 	 *                                      - int (id of category)
 	 *                                      - string (categories ids seprated by comma)
 	 *                                      - array (list of categories ids)
-	 * @param int $outputmode 0=HTML select string, 1=Array, 2=Array extended
-	 * @param int $include [=0] Removed or 1=Keep only
-	 * @param string $morecss More CSS
+	 * @param int 				$outputmode 0=HTML select string, 1=Array, 2=Array extended
+	 * @param int 				$include 	[=0] Removed or 1=Keep only
+	 * @param string 			$morecss 	More CSS
 	 * @return    string|array
 	 * @see select_categories()
 	 */
