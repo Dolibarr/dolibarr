@@ -996,7 +996,13 @@ if ($id > 0 || !empty($ref)) {
 							$type = 'batch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 
-							if ($splitAsciiCode > 0) {
+							// only for serial number : batch status = 2 (not for product lot : batch status = 1)
+							$canSearchSerial = false;
+							if ($tmpproduct->status_batch == 2 && $splitAsciiCode > 0) {
+								$canSearchSerial = true;
+							}
+
+							if ($canSearchSerial === true) {
 								$serialInput = dol_escape_js('lot_number' . $suffix);
 								if ($serialInputFirst === true) {
 									$jsLine .= 'jQuery("#' . $serialInput . '").focus();';
