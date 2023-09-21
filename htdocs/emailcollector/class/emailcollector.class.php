@@ -1633,7 +1633,12 @@ class EmailCollector extends CommonObject
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
 				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
-				// $operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+					/** @var Webklex\PHPIMAP\Message $imapemail */
+					// $operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+				} else {
+					$operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+				}
 				$operationslog .= " - References: ".dol_escape_htmltag($headers['References']??'')." - Subject: ".dol_escape_htmltag($headers['Subject']);
 				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References']??'')." Subject: ".$headers['Subject']);
 
@@ -1742,7 +1747,7 @@ class EmailCollector extends CommonObject
 
 				global $htmlmsg, $plainmsg, $charset, $attachments;
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
@@ -2891,12 +2896,7 @@ class EmailCollector extends CommonObject
 												if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$attributes = $attachment->getAttributes();
-														$typeattachment = 'attachment';
-														if (isset($attributes['disposition'])) {
-															// use $typeattachment to filter
-															$typeattachment = $attributes['disposition']->get()[0];
-														}
+														$typeattachment = (string) $attachment->getDisposition();
 														$filename = $attachment->getFilename();
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
@@ -3028,15 +3028,9 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
-													require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$attributes = $attachment->getAttributes();
-														$typeattachment = 'attachment';
-														if (isset($attributes['disposition'])) {
-															// use $typeattachment to filter
-															$typeattachment = $attributes['disposition']->get()[0];
-														}
+														$typeattachment = (string) $attachment->getDisposition();
 														$filename = $attachment->getFilename();
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
