@@ -488,7 +488,7 @@ class Ticket extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->datec = dol_now();
+		$this->datec = dol_now('tzuser');
 		if (empty($this->track_id)) {
 			$this->track_id = generate_random_id(16);
 		}
