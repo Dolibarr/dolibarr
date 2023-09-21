@@ -445,6 +445,7 @@ if ($action == 'encrypt') {
 						}
 
 						//print $sql;
+						$nbupdatedone = 0;
 						$resql = $db->query($sql);
 						if ($resql) {
 							$num_rows = $db->num_rows($resql);
@@ -460,17 +461,24 @@ if ($action == 'encrypt') {
 									$sqlupdate .= " SET ".$attributekey." = '".$db->escape($newpassword)."'";
 									$sqlupdate .= " WHERE rowid = ".((int) $id);
 
-									$db->query($sqlupdate);
+									$resupdate = $db->query($sqlupdate);
+									if ($resupdate) {
+										$nbupdatedone++;
+									} else {
+										setEventMessages($db->lasterror(), '', 'errors');
+										$error++;
+										break;
+									}
 								}
 
 								$i++;
 							}
 						}
 
-						if ($num_rows > 0) {
-							setEventMessages($langs->trans("PasswordFieldEncrypted", $num_rows), null, 'mesgs');
+						if ($nbupdatedone > 0) {
+							setEventMessages($langs->trans("PasswordFieldEncrypted", $nbupdatedone), null, 'mesgs');
 						} else {
-							setEventMessages($langs->trans("PasswordFieldEncrypted", $num_rows), null, 'warnings');
+							setEventMessages($langs->trans("PasswordFieldEncrypted", $nbupdatedone), null, 'warnings');
 						}
 					}
 				}
