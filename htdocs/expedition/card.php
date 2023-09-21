@@ -2420,7 +2420,7 @@ if ($action == 'create') {
 
 				// Warehouse source
 				if (isModEnabled('stock')) {
-					print '<td class="linecolwarehousesource left">';
+					print '<td class="linecolwarehousesource tdoverflowmax200">';
 					if ($lines[$i]->entrepot_id > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
