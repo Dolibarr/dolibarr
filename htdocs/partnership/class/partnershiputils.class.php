@@ -147,7 +147,7 @@ class PartnershipUtils
 							$partnershipsprocessed[$object->id] = $object->ref;
 
 							// Send an email to inform member
-							$labeltemplate = '(SendingEmailOnPartnershipCanceled)';
+							$labeltemplate = '('.getDolGlobalString('PARTNERSHIP_SENDMAIL_IF_AUTO_CANCEL', 'SendingEmailOnPartnershipCanceled').')';
 
 							dol_syslog("Now we will send an email to member id=".$object->fk_member." with label ".$labeltemplate);
 
@@ -175,16 +175,59 @@ class PartnershipUtils
 							$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 							$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 
+							// We are in the case of autocancellation subscription because of missing backlink
+							$fk_partner = $object->fk_member;
+
 							$adherent = new Adherent($this->db);
 							$adherent->fetch($object->fk_member);
-							$to = $adherent->email;
+							$sendto = $adherent->email;
 
-							$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
+							$trackid = 'par'.$object->id;
+							$sendcontext = 'standard';
+
+							$cmail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, '', $sendcontext);
+
 							$result = $cmail->sendfile();
-							if (!$result || $cmail->error) {
+
+							if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
 								$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
 								$this->errors[] = $cmail->error;
 								if (is_array($cmail->errors) && count($cmail->errors) > 0) $this->errors += $cmail->errors;
+							} else {
+								// Initialisation of datas of object to call trigger
+								if (is_object($object)) {
+									$actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+									$attachedfiles = array();
+
+									$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+									$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
+									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);; // Short text ($langs->transnoentities('MailSentBy')...);
+									if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+										$object->actionmsg2		= $subject; // Short text
+									}
+
+									$object->trackid = $trackid;
+									$object->fk_element = $object->id;
+									$object->elementtype = $object->element;
+									if (is_array($attachedfiles) && count($attachedfiles) > 0) {
+										$object->attachedfiles = $attachedfiles;
+									}
+
+									$object->email_from = $from;
+									$object->email_subject = $subject;
+									$object->email_to = $sendto;
+									$object->email_subject = $subject;
+
+									$triggersendname = 'PARTNERSHIP_SENTBYMAIL';
+									// Call of triggers (you should have set $triggersendname to execute trigger)
+									if (!empty($triggersendname)) {
+										$result = $object->call_trigger($triggersendname, $user);
+										if ($result < 0) {
+											$error++;
+										}
+									}
+									// End call of triggers
+								}
 							}
 						}
 					}
@@ -239,18 +282,18 @@ class PartnershipUtils
 		$emailnotfound = '';
 		$websitenotfound = '';
 
-		$gracedelay = getDolGlobalInt('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL', 0);
+		/*$gracedelay = getDolGlobalInt('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL');
 		if ($gracedelay < 1) {
 			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;
-		}
+		}*/
 
 		$fk_partner = ($managedfor == 'member') ? 'fk_member' : 'fk_soc';
 
 		dol_syslog(get_class($this)."::doWarningOfPartnershipIfDolibarrBacklinkNotfound Warning of partnership");
 
 		$now = dol_now();
-		$datetotest = dol_time_plus_duree($now, -1 * abs($gracedelay), 'd');
+		//$datetotest = dol_time_plus_duree($now, -1 * abs($gracedelay), 'd');
 
 		$this->db->begin();
 
@@ -348,19 +391,57 @@ class PartnershipUtils
 									$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 
-									$to = $obj->email;
-									if ($managedfor == 'member') {
-										$trackid = 'mem'.$fk_partner;
-									} else {
-										$trackid = 'thi'.$fk_partner;
-									}
+									$sendto = $obj->email;
 
-									$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+									$trackid = 'par'.$object->id;
+									$sendcontext = 'standard';
+
+									$cmail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, '', $sendcontext);
+
 									$result = $cmail->sendfile();
-									if (!$result || $cmail->error) {
+
+									if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
 										$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
 										$this->errors[] = $cmail->error;
 										if (is_array($cmail->errors) && count($cmail->errors) > 0) $this->errors += $cmail->errors;
+									} else {
+										// Initialisation of datas of object to call trigger
+										if (is_object($object)) {
+											$actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+											$attachedfiles = array();
+
+											if ($managedfor != 'member') {
+												$object->socid = $fk_partner; // To link to a company
+											}
+											$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+											$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
+											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);; // Short text ($langs->transnoentities('MailSentBy')...);
+											if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+												$object->actionmsg2		= $subject; // Short text
+											}
+
+											$object->trackid = $trackid;
+											$object->fk_element = $object->id;
+											$object->elementtype = $object->element;
+											if (is_array($attachedfiles) && count($attachedfiles) > 0) {
+												$object->attachedfiles = $attachedfiles;
+											}
+
+											$object->email_from = $from;
+											$object->email_subject = $subject;
+											$object->email_to = $sendto;
+											$object->email_subject = $subject;
+
+											$triggersendname = 'PARTNERSHIP_SENTBYMAIL';
+											// Call of triggers (you should have set $triggersendname to execute trigger)
+											if (!empty($triggersendname)) {
+												$result = $object->call_trigger($triggersendname, $user);
+												if ($result < 0) {
+													$error++;
+												}
+											}
+											// End call of triggers
+										}
 									}
 								}
 							} elseif ($tmpcount > $nbmaxbacklinkerrorforcancel) { // Cancel Partnership
