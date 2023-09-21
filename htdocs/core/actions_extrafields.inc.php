@@ -453,7 +453,7 @@ if ($action == 'encrypt') {
 							while ($i < $num_rows) {
 								$objtmp = $db->fetch_object($resql);
 								$id = $objtmp->rowid;
-								$pass = $objtmp->password;
+								$pass = $objtmp->$attributekey;
 								if ($pass) {
 									$newpassword = dolEncrypt($pass);
 
