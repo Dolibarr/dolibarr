@@ -1162,8 +1162,13 @@ if ($action == 'create') {
 				$warehouseObj->get_children_warehouses($warehouse_id, $warehousePicking);
 			}
 
+			$splitAsciiCode = getDolGlobalInt('SHIPPING_BATCH_NEW_LINE_ASCII_CODE');
+			$serialInputFirst = true;
+
 			$indiceAsked = 0;
 			while ($indiceAsked < $numAsked) {
+				$jsLine = '';
+
 				$product = new Product($db);
 
 				$line = $object->lines[$indiceAsked];
@@ -1534,7 +1539,70 @@ if ($action == 'create') {
 							}
 						} else {
 							print '<!-- Case warehouse not already known and product need lot -->';
-							print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
+							print '<td></td>';
+							// only for serial number : batch status = 2 (not for product lot : batch status = 1)
+							$canSearchSerial = false;
+							if ($product->status_batch == 2 && $splitAsciiCode > 0) {
+								$canSearchSerial = true;
+							}
+							$serialInput = "serial_searchl".$indiceAsked;
+							print '<td>';
+							if ($canSearchSerial === true) {
+								print '<input type="text" id="' . $serialInput . '" name="' . $serialInput . '" value="">';
+							}
+							print '</td>';
+							print '</tr>'; // end line and start a new one for lot/serial
+
+							// serial search script
+							if ($canSearchSerial === true) {
+								$serialInput = dol_escape_js($serialInput);
+								if ($serialInputFirst === true) {
+									$jsLine .= 'jQuery("#' . $serialInput . '").focus();';
+									$serialInputFirst = false;
+								}
+								$jsLine .= 'var lineIndex = "' . dol_escape_js($indiceAsked) . '";';
+								// remove all quantities for this product only if form not already submit
+								if (!GETPOSTISSET('idl'.$indiceAsked)) {
+									$jsLine .= 'jQuery("input[name^=\"qtyl"+lineIndex+"\"]").val(0);';
+								}
+								$jsLine .= 'jQuery("#' . $serialInput . '").keypress(function(event){';
+								$jsLine .= '	var splitAsciiCode = "' . dol_escape_js($splitAsciiCode) . '";';
+								$jsLine .= '	if (event.which == splitAsciiCode) {';
+								$jsLine .= '		var serialToSearch = this.value;'; // search qty input for this serial number
+								$jsLine .= '		var serialInput = "batchl"+lineIndex+"_"+serialToSearch;';
+								$jsLine .= '		if (jQuery("#"+serialInput).length > 0) {';
+								$jsLine .= '			var serialInputName = jQuery("#"+serialInput).prop("name");';
+								$jsLine .= '			var inputSuffix = serialInputName.substr(6);'; // remove "batchl" in serial input name to find suffix
+								$jsLine .= '			jQuery("#qtyl"+inputSuffix).val(1);'; // set qty to 1 for serial number
+								$jsLine .= '			jQuery("#' . $serialInput . '").val("");'; // reset value to search
+								$jsLine .= '			var qtyDispatched = 0;';
+								$jsLine .= '			jQuery("input[name^=\"qtyl"+lineIndex+"\"]").each(function(idInput, qtyInputElem) {';
+								$jsLine .= '				qtyDispatched += parseFloat(jQuery(qtyInputElem).val());';
+								$jsLine .= '			});';
+								$jsLine .= '			var qtyAsked = parseFloat(jQuery("#qtyasked"+lineIndex).val());';
+								$jsLine .= '			var qtyRemain = qtyAsked - qtyDispatched;';
+								$jsLine .= '			console.log("qtyRemain=", qtyRemain);';
+								$jsLine .= '			if (qtyRemain <= 0) {'; // all serial numbers are set for this product : so change to next serial input
+								$jsLine .= '				var serialInputNext = jQuery(this).closest("tr").nextAll(":has(input[name^=\"serial_searchl\"]):first").find("input[name^=\"serial_searchl\"]");'; // next input for serial number
+								$jsLine .= '				if (serialInputNext.length > 0) {'; // found a next serial input
+								$jsLine .= '					serialInputNext.focus();';
+								$jsLine .= '				} else {'; // no next serial input : so go to create button
+								$jsLine .= '					jQuery("input[name=\"add\"]").focus();';
+								$jsLine .= '				}';
+								$jsLine .= '			}';
+								$jsLine .= '		}';
+								$jsLine .= '		return false;'; // stop propagation and avoid to submit form or to have separator char
+								$jsLine .= '	}';
+								$jsLine .= '});';
+
+								// output js
+								$js = '<script type="text/javascript">';
+								$js .= 'jQuery(document).ready(function(){';
+								$js .= $jsLine;
+								$js .= '});';
+								$js .= '</script>';
+								print $js;
+							}
 
 							$subj = 0;
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1600,7 +1668,7 @@ if ($action == 'create') {
 										print $tmpwarehouseObject->getNomUrl(0).' / ';
 
 										print '<!-- Show details of lot -->';
-										print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+										print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" id="batchl'.$indiceAsked.'_'.$dbatch->batch.'" value="'.$dbatch->id.'">';
 
 										//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
 										print $langs->trans("Batch").': ';

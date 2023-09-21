@@ -54,6 +54,23 @@ if (empty($conf->global->EXPEDITION_ADDON_NUMBER)) {
 	$conf->global->EXPEDITION_ADDON_NUMBER = 'mod_expedition_safor';
 }
 
+// Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
+$useFormSetup = 1;
+
+if (!class_exists('FormSetup')) {
+	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formsetup.class.php';
+}
+
+$formSetup = new FormSetup($db);
+
+// Enable access for the membership record
+$batchNewLineAsciiCodeList = array(
+	-1 => $langs->trans('AsciiKeyNone'),
+	13 => $langs->trans('AsciiKeyEnter'),
+	59 => $langs->trans('AsciiKeySemiColon'),
+);
+$item = $formSetup->newItem('SHIPPING_BATCH_NEW_LINE_ASCII_CODE')->setAsSelect($batchNewLineAsciiCodeList);
+
 
 /*
  * Actions
@@ -171,6 +188,23 @@ print '<br>';
 $head = expedition_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'shipment');
+
+// Setup page goes here
+echo '<span class="opacitymedium">' . $langs->trans("SendingsSetup") . '</span><br><br>';
+
+
+if ($action == 'edit') {
+	print $formSetup->generateOutput(true);
+	print '<br>';
+} elseif (!empty($formSetup->items)) {
+	print $formSetup->generateOutput();
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&token=' . newToken() . '">' . $langs->trans("Modify") . '</a>';
+	print '</div>';
+} else {
+	print '<br>' . $langs->trans("NothingToSetup");
+}
+
 
 // Shipment numbering model
 
