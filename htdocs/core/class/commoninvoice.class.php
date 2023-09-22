@@ -48,6 +48,8 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $socid;
 
+	public $paye;
+
 	/**
 	 * Invoice date (date)
 	 *
