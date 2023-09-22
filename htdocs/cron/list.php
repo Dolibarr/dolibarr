@@ -239,6 +239,18 @@ $pagetitle = $langs->trans("CronList");
 
 llxHeader('', $pagetitle);
 
+$TTestNotAllowed = array();
+$sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';
+$resultTest = $db->query($sqlTest);
+if ($resultTest) {
+	while ($objTest = $db->fetch_object($resultTest)) {
+		$veriftest = verifCond($objTest->test);
+		if (!$veriftest) {
+			$TTestNotAllowed[$objTest->rowid] = $objTest->rowid;
+		}
+	}
+}
+
 $sql = "SELECT";
 $sql .= " t.rowid,";
 $sql .= " t.tms,";
@@ -273,6 +285,9 @@ $sql .= " t.libname,";
 $sql .= " t.test";
 $sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql .= " WHERE entity IN (0,".$conf->entity.")";
+if (!empty($TTestNotAllowed)) {
+	$sql .= ' AND t.rowid NOT IN ('.$db->sanitize(implode(',', $TTestNotAllowed)).')';
+}
 if ($search_status >= 0 && $search_status < 2 && $search_status != '') {
 	$sql .= " AND t.status = ".(empty($search_status) ? '0' : '1');
 }
@@ -299,7 +314,6 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -507,13 +521,6 @@ if ($num > 0) {
 			break;
 		}
 
-		if (isset($obj->test)) {
-			$veriftest = verifCond($obj->test);
-			if (!$veriftest) {
-				continue; // Discard line with test = false
-			}
-		}
-
 		$reg = array();
 		if (preg_match('/:(.*)$/', $obj->label, $reg)) {
 			$langs->load($reg[1]);
@@ -647,10 +654,10 @@ if ($num > 0) {
 		print '</td>';
 
 		// Duration
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center nowraponall" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
-			print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'all');
-			//print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
+			$nbseconds = max($datelastresult - $datelastrun, 1);
+			print $nbseconds.' '.($nbseconds > 1 ? $langs->trans("SecondShort") : $langs->trans("SecondShort"));
 		}
 		print '</td>';
 

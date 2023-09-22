@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Megtekintés számviteli számla szerint
 VueBySubAccountAccounting=Megtekintés számviteli alszámla szerint
 
-MainAccountForCustomersNotDefined=A beállításban nem definiált ügyfelek fő számviteli számlája
-MainAccountForSuppliersNotDefined=A beállításban nem definiált szállítók fő számviteli számlája
-MainAccountForUsersNotDefined=Fő számviteli számla a beállításban nem definiált felhasználók számára
-MainAccountForVatPaymentNotDefined=Az ÁFA befizetés fő számviteli számlája nincs meghatározva a beállításban
-MainAccountForSubscriptionPaymentNotDefined=Az előfizetési fizetéshez szükséges fő számla nincs megadva a beállításban
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=A beállításban nincs megadva számviteli számla
 
 AccountancyArea=Számviteli terület

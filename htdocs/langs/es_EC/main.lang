@@ -551,3 +551,4 @@ ContactAddedAutomatically=Contacto agregado de roles de terceros de contacto
 ClientTZ=Zona horaria del cliente
 Terminate=Terminar
 Terminated=Terminado
+UserExpired=Muerto

@@ -175,6 +175,7 @@ if ($filtertype != 1) {
 
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolworkstation right">';
+	print $formproduct->selectWorkstations($line->fk_default_workstation, 'idworkstations', 1);
 	print '</td>';
 
 	$coldisplay++;

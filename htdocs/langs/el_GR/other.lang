@@ -54,7 +54,7 @@ Notify_WITHDRAW_TRANSMIT=Μετάδοση ανάληψης
 Notify_WITHDRAW_CREDIT=Πίστωση ανάληψης
 Notify_WITHDRAW_EMIT=Εκτέλεση ανάληψης
 Notify_COMPANY_CREATE=Τρίτο μέρος δημιουργήθηκε
-Notify_COMPANY_SENTBYMAIL=Mails sent from the page of third party
+Notify_COMPANY_SENTBYMAIL=Emails απεσταλμένα από την καρτέλα Πελάτη/Προμηθευτή
 Notify_BILL_VALIDATE=Το τιμολόγιο πελάτη επικυρώθηκε
 Notify_BILL_UNVALIDATE=Το τιμολόγιο πελάτη δεν είναι επικυρωμένο
 Notify_BILL_PAYED=Το τιμολόγιο πελάτη πληρώθηκε
@@ -194,7 +194,7 @@ StatsByNumberOfUnits=Στατιστικά στοιχεία για το σύνο�
 StatsByNumberOfEntities=Στατιστικά στοιχεία για τον αριθμό των παραπομπών οντοτήτων (αριθμός τιμολογίων ή παραγγελιών...)
 NumberOf=Αριθμός %s
 NumberOfUnits=Αριθμός μονάδων σε %s
-AmountIn=Amount in %s
+AmountIn=Ποσό %s
 NumberOfUnitsMos=Αριθμός μονάδων προς παραγωγή σε παραγγελίες παραγωγής
 EMailTextInterventionAddedContact=Μια νέα παρέμβαση %s σας έχει εκχωρηθεί.
 EMailTextInterventionValidated=Η παρέμβαση %s έχει επικυρωθεί.
@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = Είστε σίγουροι ότι θέλετε να "
 ConfirmBtnCommonTitle = Επιβεβαιώστε την ενέργειά σας
 CloseDialog = Κλείσιμο
 Autofill = Αυτόματη συμπλήρωση
+OrPasteAnURL=ή Επικολλήστε μια διεύθυνση URL
 
 # externalsite
 ExternalSiteSetup=Ρύθμιση συνδέσμου σε εξωτερικό ιστότοπο

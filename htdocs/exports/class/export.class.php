@@ -586,9 +586,10 @@ class Export
 	 *      @param      array		$array_selected     Filter on array of fields to export
 	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
 	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
+	 * 		@param		string		$separator			separator to fill $objmodel->separator with the new separator
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
-	public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
+	public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '', $separator = '')
 	{
 		// phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -611,6 +612,10 @@ class Export
 		$classname = "Export".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
+
+		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator)) {
+			$objmodel->separator = $separator;
+		}
 
 		if (!empty($sqlquery)) {
 			$sql = $sqlquery;
@@ -706,6 +711,44 @@ class Export
 									$remaintopay = $tmpobjforcomputecall->getRemainToPay();
 								}
 								$obj->$alias = $remaintopay;
+							} elseif (is_array($this->array_export_special[$indice][$key]) &&
+								!empty($this->array_export_special[$indice][$key]['rule']) &&
+								$this->array_export_special[$indice][$key]['rule'] == 'compute'
+							) {
+								// Custom compute
+								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
+								$value = '';
+								if (!empty($this->array_export_special[$indice][$key]['class']) &&
+									!empty($this->array_export_special[$indice][$key]['classfile']) &&
+									!empty($this->array_export_special[$indice][$key]['method'])
+								) {
+									if (!dol_include_once($this->array_export_special[$indice][$key]['classfile'])) {
+										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['classfile']} not found";
+										return -1;
+									}
+
+									if (!class_exists($this->array_export_special[$indice][$key]['class'])) {
+										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['class']} class doesn't exist";
+										return -1;
+									}
+
+									$className = $this->array_export_special[$indice][$key]['class'];
+									$tmpObject = new $className($this->db);
+									if (!method_exists($tmpObject, $this->array_export_special[$indice][$key]['method'])) {
+										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['method']} method doesn't exist";
+										return -1;
+									}
+
+									$methodName = $this->array_export_special[$indice][$key]['method'];
+									$params = [];
+									if (!empty($this->array_export_special[$indice][$key]['method_params'])) {
+										foreach ($this->array_export_special[$indice][$key]['method_params'] as $paramName) {
+											$params[] = $obj->$paramName ?? null;
+										}
+									}
+									$value = $tmpObject->$methodName(...$params);
+								}
+								$obj->$alias = $value;
 							} else {
 								// TODO FIXME
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field

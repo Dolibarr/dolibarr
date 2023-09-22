@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Аз ҳисоби ҳисоби баҳисобгирӣ дидан кунед
 VueBySubAccountAccounting=Бо зерсохтори баҳисобгирӣ дидан кунед
 
-MainAccountForCustomersNotDefined=Ҳисоби асосии баҳисобгирии муштариён, ки дар танзим муайян нашудаанд
-MainAccountForSuppliersNotDefined=Ҳисоби асосии баҳисобгирии фурӯшандагон, ки дар танзим муайян нашудаанд
-MainAccountForUsersNotDefined=Ҳисоби асосии баҳисобгирӣ барои корбароне, ки дар танзим муайян нашудаанд
-MainAccountForVatPaymentNotDefined=Ҳисоби асосии баҳисобгирии пардохти ААИ дар танзим муқаррар нашудааст
-MainAccountForSubscriptionPaymentNotDefined=Ҳисоби асосии баҳисобгирии пардохти обуна дар танзимот муайян нашудааст
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Минтақаи баҳисобгирӣ
