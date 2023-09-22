@@ -1960,7 +1960,7 @@ class CommandeFournisseur extends CommonOrder
 				// Predefine quantity according to packaging
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$prod = new Product($this->db);
-					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid));
+					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', (empty($this->fk_soc) ? $this->socid : $this->fk_soc));
 
 					if ($qty < $prod->packaging) {
 						$qty = $prod->packaging;
@@ -4123,10 +4123,17 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			return -1;
 		}
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".((int) $this->id);
+		$sql1 = 'UPDATE '.MAIN_DB_PREFIX."commandedet SET fk_commandefourndet = NULL WHERE rowid=".((int) $this->id);
+		$resql = $this->db->query($sql1);
+		if (!$resql) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$sql2 = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
+		$resql = $this->db->query($sql2);
 		if ($resql) {
 			if (!$notrigger) {
 				// Call trigger

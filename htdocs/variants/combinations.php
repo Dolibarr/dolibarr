@@ -416,8 +416,8 @@ if (!empty($id) || !empty($ref)) {
 
 	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = " fk_product_type = ".$object->type;
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.((int) $object->type).'">'.$langs->trans("BackToList").'</a>';
+	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '');
 

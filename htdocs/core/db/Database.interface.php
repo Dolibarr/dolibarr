@@ -190,7 +190,8 @@ interface Database
 	public function escape($stringtoencode);
 
 	/**
-	 *	Escape a string to insert data into a like
+	 *	Escape a string to insert data into a like.
+	 *  Can be used this way: LIKE '%".dbhandler->escapeforlike(dbhandler->escape(...))."%'
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped

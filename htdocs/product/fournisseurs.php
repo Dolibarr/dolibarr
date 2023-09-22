@@ -391,7 +391,7 @@ if ($id > 0 || $ref) {
 			print dol_get_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = " fk_product_type = ".$object->type;
+			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
