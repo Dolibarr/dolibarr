@@ -228,18 +228,6 @@ class Facture extends CommonInvoice
 
 	public $date_pointoftax;
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 	/**
 	 * @var int Situation cycle reference number
 	 */
