@@ -85,7 +85,7 @@ if (empty($accounting_product_mode)) {
 	$accounting_product_mode = 'ACCOUNTANCY_SELL';
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : !getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -727,7 +727,7 @@ if ($resql) {
 			// TODO ADJUST DESCRIPTION SIZE
 			// print '<td class="left">' . $obj->description . '</td>';
 			// TODO: we should set a user defined value to adjust user square / wide screen size
-			$trunclength = !getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
+			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 			print '<td>'.nl2br(dol_trunc($obj->description, $trunclength)).'</td>';
 		}
 
