@@ -42,8 +42,8 @@ define('VERSION', "1.0");
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
 	print 'You must run this tool being into the root of the project.'."\n";
-	print 'Usage:   '.constant('PRODUCT').'.php pathto/index.html  [--dir-scc=pathtoscc] [--dir-phpstan=pathtophpstan]'."\n";
-	print 'Example: '.constant('PRODUCT').'.php dev/tools/apstats.php documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
+	print 'Usage:   '.constant('PRODUCT').'.php  pathto/outputfile.html  [--dir-scc=pathtoscc] [--dir-phpstan=pathtophpstan]'."\n";
+	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
 	exit(0);
 }
 
@@ -255,16 +255,16 @@ th,td {
 }
 </style>';
 
-$html .= '<body>';
+$html .= '<body>'."\n";
 
-$html .= '<header>';
-$html .= '<h1>Advanced Project Statistics</h1>';
+$html .= '<header>'."\n";
+$html .= '<h1>Advanced Project Statistics</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
-$html .= '<span class="opacity">Generated on '.$currentDate.'</span>';
-$html .= '</header>';
+$html .= '<span class="opacity">Generated on '.$currentDate.'</span>'."\n";
+$html .= '</header>'."\n";
 
-$html .= '<section class="chapter">';
-$html .= '<h2>Lines of code</h2>';
+$html .= '<section class="chapter">'."\n";
+$html .= '<h2>Lines of code</h2>'."\n";
 $html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
 $html .= '<th class="left">Language</td>';
@@ -322,24 +322,36 @@ $html .= '<td></td>';
 $html .= '</tr>';
 $html .= '</table>';
 
-$html .= '</section>';
+$html .= '</section>'."\n";
 
-$html .= '<section class="chapter">';
-$html .= '<h2>Project value</h2><br>';
+$html .= '<section class="chapter">'."\n";
+$html .= '<h2>Project value</h2><br>'."\n";
 $html .= '<div class="box inline-box back1">';
 $html .= 'COCOMO (Basic organic model) value:<br>';
-$html .= '<b>$'.formatNumber($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency'], 2).'</b>';
+$html .= '<b>$'.formatNumber((empty($arraycocomo['proj']['currency']) ? 0 : $arraycocomo['proj']['currency']) + (empty($arraycocomo['dep']['currency']) ? 0 : $arraycocomo['dep']['currency']), 2).'</b>';
 $html .= '</div>';
 $html .= '<div class="box inline-box back2">';
 $html .= 'COCOMO (Basic organic model) effort<br>';
 $html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
 $html .= ' monthes people</b><br>';
-$html .= '</section>';
+$html .= '</section>'."\n";
 
-$html .= '<section class="chapter">';
-$html .= '<h2>Technical debt ('.count($output_arrtd).')</h2><br>';
-$html .= join('<br>'."\n", $output_arrtd);
-$html .= '</section>';
+$html .= '<section class="chapter">'."\n";
+$html .= '<h2>Technical debt ('.count($output_arrtd).')</h2><br>'."\n";
+$html .= '<div class="list_technical_debt">'."\n";
+$html .= '<table class="list_technical_debt">'."\n";
+$html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+foreach ($output_arrtd as $line) {
+	$reg = array();
+	//print $line."\n";
+	preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
+	if (!empty($reg[1])) {
+		$html .= '<tr><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+	}
+}
+$html .= '</table>';
+$html .= '</div>';
+$html .= '</section>'."\n";
 
 $html .= '
 <script>
