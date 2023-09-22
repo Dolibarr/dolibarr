@@ -1217,7 +1217,7 @@ if ($resql) {
 		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createsupplierbills">';
 
-		print '<table class="noborder" width="100%" >';
+		print '<table class="noborder centpercent">';
 		print '<tr>';
 		print '<td class="titlefield">';
 		print $langs->trans('DateInvoice');
@@ -1244,11 +1244,11 @@ if ($resql) {
 		print '</tr>';
 		print '</table>';
 
-		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
 		print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
+		print '<br>';
 		print '<br>';
 	}
 
