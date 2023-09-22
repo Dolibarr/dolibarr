@@ -82,7 +82,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								$subject_assignee = 'TicketAssignedToYou';
 								$body_assignee = 'TicketAssignedEmailBody';
 								$see_ticket_assignee = 'SeeThisTicketIntomanagementInterface';
-								
+
 								if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 									$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
@@ -194,7 +194,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$this->errors = $userstat->errors;
 					}
 				}
-				
+
 				// Send email to customer
 				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
@@ -470,7 +470,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 * @param Translate $langs			the translation object
 	 * @return void
 	 */
-	private function composeAndSendAssigneeMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs) {
+	private function composeAndSendAssigneeMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs)
+	{
 		global $conf, $user;
 
 		// Init to avoid errors
